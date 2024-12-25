@@ -1,0 +1,366 @@
+#include "types.hpp"
+#include "utility.hpp"
+#include "cpu/instructions.hpp"
+#include "cpu/core/registers.hpp"
+
+#include <limits>
+
+/*
+ * Rd = Rd + Rm + C Flag
+ * N Flag = Rd[31]
+ * Z Flag = if Rd == 0 then 1 else 0
+ * C Flag = CarryFrom(Rd + Rm + C Flag)
+ * V Flag = OverflowFrom(Rd + Rm + C Flag)
+ */
+void instructions::thumb::math::ADC(const thumbcode_t &code, REGISTERS &reg) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+
+    const u32 Rd = reg.read(Rd_id);
+    const u32 Rm = reg.read(code, 3, 5);
+    const bool c_flag = reg.read_cpsr(id::cpsr::C);
+
+    const u64 result = (Rd + Rm + c_flag);
+
+    reg.write(Rd_id, (result & (std::numeric_limits<u32>::max()))); // basically the same as static_cast<u32>
+
+    reg.write_cpsr(id::cpsr::N, (reg.read(Rd_id)) & (1 << 31));
+    reg.write_cpsr(id::cpsr::Z, (reg.read(Rd_id) == 0));
+    reg.write_cpsr(id::cpsr::C, util::carry_add(result));
+    reg.write_cpsr(id::cpsr::V, util::overflow_add(Rd, Rm, c_flag));
+
+    reg.thumb_increment_PC();
+}
+
+
+/*
+ * Rd = Rn + immed_3
+ * N Flag = Rd[31]
+ * Z Flag = if Rd == 0 then 1 else 0
+ * C Flag = CarryFrom(Rn + immed_3)
+ * V Flag = OverflowFrom(Rn + immed_3)
+ */
+void instructions::thumb::math::ADD1(const thumbcode_t &code, REGISTERS &reg) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+    const u8 immed_3 = util::bit_fetcher<u8>(code, 6, 8);
+
+    const u32 Rn = reg.read(code, 3, 5);
+
+    reg.write(Rd_id, Rn + immed_3);
+
+    const u32 Rd = reg.read(Rd_id);
+
+    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
+    reg.write_cpsr(id::cpsr::C, util::carry_add(Rn, immed_3));
+    reg.write_cpsr(id::cpsr::V, util::overflow_add(Rn, immed_3));
+
+    reg.thumb_increment_PC();
+}
+
+
+/*
+ * Rd = Rd + immed_8
+ * N Flag = Rd[31]
+ * Z Flag = if Rd == 0 then 1 else 0
+ * C Flag = CarryFrom(Rd + immed_8)
+ * V Flag = OverflowFrom(Rd + immed_8)
+ */
+void instructions::thumb::math::ADD2(const thumbcode_t &code, REGISTERS &reg) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
+    const u8 immed_8 = util::bit_fetcher<u8>(code, 0, 7);
+
+    reg.write(Rd_id, reg.read(Rd_id) + immed_8);
+
+    const u32 Rd = reg.read(Rd_id);
+
+    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
+    reg.write_cpsr(id::cpsr::C, util::carry_add(Rd, immed_8));
+    reg.write_cpsr(id::cpsr::V, util::overflow_add(Rd, immed_8));
+
+    reg.thumb_increment_PC();
+}
+
+
+/*
+ * Rd = Rn + Rm
+ * N Flag = Rd[31]
+ * Z Flag = if Rd == 0 then 1 else 0
+ * C Flag = CarryFrom(Rn + Rm)
+ * V Flag = OverflowFrom(Rn + Rm)
+ */
+void instructions::thumb::math::ADD3(const thumbcode_t &code, REGISTERS &reg) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+
+    const u32 Rn = reg.read(code, 3, 5);
+    const u32 Rm = reg.read(code, 6, 8);
+
+    reg.write(Rd_id, Rn + Rm);
+
+    const u32 Rd = reg.read(Rd_id);
+
+    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
+    reg.write_cpsr(id::cpsr::C, util::carry_add(Rn, Rm));
+    reg.write_cpsr(id::cpsr::V, util::overflow_add(Rn, Rm));
+
+    reg.thumb_increment_PC();
+}
+
+
+/*
+ * Rd = Rd + Rm
+ */
+void instructions::thumb::math::ADD4(const thumbcode_t &code, REGISTERS &reg) {
+    u8 Rd_bits = util::bit_fetcher<u8>(code, 0, 2);
+    u8 Rm_bits = util::bit_fetcher<u8>(code, 3, 5);
+    const bool H1 = code.test(7);
+    const bool H2 = code.test(6);
+
+    // branchless version of "if H1/H2 is true, add 8" 
+    Rd_bits = Rd_bits + (8 * H1);
+    Rm_bits = Rm_bits + (8 * H2);
+
+    const id::reg Rd_id = reg.fetch_reg_id(Rd_bits);
+    const id::reg Rm_id = reg.fetch_reg_id(Rm_bits);
+
+    const u32 Rd = reg.read(Rd_id);
+    const u32 Rm = reg.read(Rm_id);
+
+    reg.write(Rd_id, Rd + Rm);
+
+    reg.thumb_increment_PC();
+}
+
+
+/*
+ * Rd = (PC AND 0xFFFFFFFC) + (immed_8 << 2)
+ */
+void instructions::thumb::math::ADD5(const thumbcode_t &code, REGISTERS &reg) {
+    const u8 immed_8 = util::bit_fetcher<u8>(code, 0, 7);
+
+    const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
+
+    reg.write(Rd_id, (reg.PC & 0xFFFFFFFC) + (immed_8 << 2));
+
+    reg.thumb_increment_PC();
+}
+
+
+/*
+ * Rd = SP + (immed_8 << 2)
+ */
+void instructions::thumb::math::ADD6(const thumbcode_t &code, REGISTERS &reg) {
+    const u8 immed_8 = util::bit_fetcher<u8>(code, 0, 7);
+    const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
+
+    reg.write(Rd_id, (reg.read(id::reg::SP) + (immed_8 << 2)));
+
+    reg.thumb_increment_PC();
+}
+
+
+/*
+ * SP = SP + (immed_7 << 2)
+ */
+void instructions::thumb::math::ADD7(const thumbcode_t &code, REGISTERS &reg) {
+    const u8 immed_7 = util::bit_fetcher<u8>(code, 0, 6);
+
+    reg.write(id::reg::SP, (reg.read(id::reg::SP) + (immed_7 << 2)));
+
+    reg.thumb_increment_PC();
+}
+
+
+/*
+ * Rd = Rd - Rm - NOT(C Flag)
+ * N Flag = Rd[31]
+ * Z Flag = if Rd == 0 then 1 else 0
+ * C Flag = NOT BorrowFrom(Rd - Rm - NOT(C Flag))
+ * V Flag = OverflowFrom(Rd - Rm - NOT(C Flag))
+ */
+void instructions::thumb::math::SBC(const thumbcode_t &code, REGISTERS &reg) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+
+    const u32 Rm = reg.fetch_reg_id(code, 3, 5);
+
+    reg.write(Rd_id, (reg.read(Rd_id) - Rm - !reg.read_cpsr(id::cpsr::C)));
+
+    const u32 Rd = reg.read(Rd_id);
+
+    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
+    reg.write_cpsr(id::cpsr::C, !util::borrow_sub(Rd, Rm, !reg.read_cpsr(id::cpsr::C)));
+    reg.write_cpsr(id::cpsr::V, util::overflow_sub(Rd, Rm, !reg.read_cpsr(id::cpsr::C)));
+
+    reg.thumb_increment_PC();
+}
+
+
+void instructions::thumb::math::SUB1(const thumbcode_t &code, REGISTERS &reg) {
+
+}
+
+
+void instructions::thumb::math::SUB2(const thumbcode_t &code, REGISTERS &reg) {
+
+}
+
+
+void instructions::thumb::math::SUB3(const thumbcode_t &code, REGISTERS &reg) {
+
+}
+
+
+void instructions::thumb::math::SUB4(const thumbcode_t &code, REGISTERS &reg) {
+
+}
+
+
+/*
+ * Rd = (Rm * Rd)[31:0]
+ * N Flag = Rd[31]
+ * Z Flag = if Rd == 0 then 1 else 0
+ * C Flag = unaffected
+ * V Flag = unaffected
+ */
+void instructions::thumb::math::MUL(const thumbcode_t &code, REGISTERS &reg) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+
+    const u32 Rm = reg.read(code, 3, 5);
+
+    reg.write(Rd_id, ((Rm * reg.read(Rd_id)) & 0xFFFFFFFF));
+
+    const u32 Rd = reg.read(Rd_id);
+
+    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
+
+    reg.thumb_increment_PC();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+ * if ConditionPassed(cond) then
+ *   Rd = Rn + shifter_operand + C Flag
+ *   if S == 1 and Rd == R15 then
+ *     CPSR = SPSR
+ *   else if S == 1 then
+ *     N Flag = Rd[31]
+ *     Z Flag = if Rd == 0 then 1 else 0
+ *     C Flag = CarryFrom(Rn + shifter_operand + C Flag)
+ *     V Flag = OverflowFrom(Rn + shifter_operand + C Flag)
+ */
+void instructions::math::ADC(const code_t &code, REGISTERS &reg) {
+    const u16 shifter_operand = util::bit_fetcher<u16>(code, 0, 11);
+
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rn = reg.read(code, 16, 19);
+
+    const bool S = code.test(20);
+    const bool I = code.test(25);
+
+    reg.write(Rd_id, (Rn + shifter_operand + reg.read_cpsr(id::cpsr::C)));
+
+    const u32 Rd = reg.read(Rd_id);
+
+    if ((S == 1) && (Rd == reg.read(id::reg::R15))) {
+        reg.write_cpsr(id::reg::CURRENT_SPSR);
+    } else if (S == 1) {
+        reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
+        reg.write_cpsr(id::cpsr::Z, (Rd == 0));
+        reg.write_cpsr(id::cpsr::C, util::carry_add(Rn, shifter_operand, reg.read_cpsr(id::cpsr::C)));
+        reg.write_cpsr(id::cpsr::V, util::overflow_add(Rn, shifter_operand, reg.read_cpsr(id::cpsr::C)));
+    }
+
+
+    reg.increment_PC();
+}
+
+
+/*
+ * if ConditionPassed(cond) then
+ *   Rd = Rn + shifter_operand
+ *   if S == 1 and Rd == R15 then
+ *     CPSR = SPSR
+ *   else if S == 1 then
+ *     N Flag = Rd[31]
+ *     Z Flag = if Rd == 0 then 1 else 0
+ *     C Flag = CarryFrom(Rn + shifter_operand)
+ *     V Flag = OverflowFrom(Rn + shifter_operand)
+ */
+void instructions::math::ADD(const code_t &code, REGISTERS &reg) {
+    const u16 shifter_operand = util::bit_fetcher<u16>(code, 0, 11);
+
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rn = reg.read(code, 16, 19);
+
+    const bool S = code.test(20);
+    const bool I = code.test(25);
+
+    reg.write(Rd_id, (Rn + shifter_operand));
+
+    if ((S == 1) && (Rd_id == id::reg::R15)) {
+        reg.write_cpsr(id::reg::CURRENT_SPSR);
+    } else if (S == 1) {
+        const u32 Rd = reg.read(Rd_id);
+        reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
+        reg.write_cpsr(id::cpsr::Z, (Rd == 0));
+        reg.write_cpsr(id::cpsr::C, util::carry_add(Rn, shifter_operand));
+        reg.write_cpsr(id::cpsr::V, util::overflow_add(Rn, shifter_operand));
+    }
+
+    reg.increment_PC();
+}

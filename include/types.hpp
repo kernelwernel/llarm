@@ -1,0 +1,36 @@
+#pragma once
+
+#include <cstdint>
+#include <string_view>
+#include <bitset>
+#include <functional>
+#include <tuple>
+#include <filesystem>
+
+#if defined(__clang__)
+const constinit bool GCC = 0;
+const constinit bool CLANG = 1;
+#elif defined(__GNUC__)
+const constinit bool GCC = 1;
+const constinit bool CLANG = 0;
+#else
+const constinit bool GCC = 0;
+const constinit bool CLANG = 0;
+#endif
+
+using u8  = std::uint8_t;
+using u16 = std::uint16_t;
+using u32 = std::uint32_t;
+using u64 = std::uint64_t;
+using i8  = std::int8_t;
+using i16 = std::int16_t;
+using i32 = std::int32_t;
+using i64 = std::int64_t;
+
+using code_t = std::bitset<32>;
+using thumbcode_t = std::bitset<16>;
+
+using sv = std::string_view;
+namespace fs = std::filesystem;
+
+using args_t = std::tuple<fs::path>;
