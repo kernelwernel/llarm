@@ -8,6 +8,8 @@
 #include "cpu/exception.hpp"
 #include "cpu/core/core.hpp"
 #include "cpu/ram.hpp"
+#include "cpu/mmu.hpp"
+#include "cpu/tlb.hpp"
 #include "cpu/memory.hpp"
 #include "cpu/coprocessor.hpp"
 
@@ -20,12 +22,14 @@
 void core::initialise(const std::vector<u8> &binary, input_args &args) {
 
     // initialisations
+    SETTINGS settings(args);
     REGISTERS reg;
     RAM ram;
-    SETTINGS settings(args);
+    TLB tlb(ram);
     COPROCESSOR coprocessor(settings);
+    MMU mmu(ram);
     MEMORY memory(binary, ram, coprocessor);
-    INSTRUCTION_SET instruction_set(reg, memory);
+    INSTRUCTION_SET instruction_set(reg, memory, coprocessor);
     SYSTEM sys(reg, instruction_set, coprocessor);
     EXCEPTION exception(reg, coprocessor, instruction_set);
     FETCH fetch(instruction_set, reg, memory);

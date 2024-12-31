@@ -22,6 +22,11 @@
 }
 
 
+[[nodiscard]] bool REGISTERS::is_priviledged() {
+    return (read_mode() != id::mode::USER);
+}
+
+
 [[nodiscard]] u8 REGISTERS::read_cpsr(const id::cpsr cpsr_macro) {
     switch (cpsr_macro) {
         case id::cpsr::M: return (CPSR & 0b11111);

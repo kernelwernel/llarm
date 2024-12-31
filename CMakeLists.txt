@@ -1,7 +1,7 @@
 # basic info
 cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 project(
-    Armulator
+    charm
     DESCRIPTION "Hobby ARM emulator"
     LANGUAGES CXX
 )
@@ -92,7 +92,7 @@ set(PROJECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(LIB_DIR "${PROJECT_DIR}/lib")
 set(BUILD_DIR "${PROJECT_DIR}/build")
 set(OBJ_DIR "${BUILD_DIR}/objects")
-set(TARGET "armulator")
+set(TARGET "charm")
 
 
 

@@ -7,7 +7,7 @@
 
 
 
-INSTRUCTION_SET::INSTRUCTION_SET(REGISTERS& reg, MEMORY& memory) : reg(reg), memory(memory) {
+INSTRUCTION_SET::INSTRUCTION_SET(REGISTERS& reg, MEMORY& memory, COPROCESSOR& coprocessor) : reg(reg), memory(memory), coprocessor(coprocessor) {
     arm_table = {
         { id::instruction::NOP, { opcodes::NOP, instructions::misc::NOP } }
     };

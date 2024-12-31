@@ -7,3 +7,4 @@ executed. The mnemonic extension for this condition was NV.
 
 - [ ] make the MMU
 - [ ] make the coprocessor
+- [ ] add an UNPREDICTABLE message throughout every part of the emulator once it's complete (based on the docs)
