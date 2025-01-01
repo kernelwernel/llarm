@@ -241,6 +241,16 @@ namespace id {
     enum class cp15 : u8 {
         NULL_REG = 0,
         R0_ID,
+        R0_ID_IMPLEMENTOR,
+        R0_ID_PPN, // PPN = primary part number
+        R0_ID_PPN_TOP,
+        R0_ID_PPN_LOWER,
+        R0_ID_REVISION,
+        R0_ID_POST7_VARIANT,
+        R0_ID_POST7_ARCH,
+        R0_ID_7_VARIANT,
+        R0_ID_7_A,
+        R0_ID_PRE7_ID,
         R0_CACHE,
 
         R1_CONTROL,
@@ -349,12 +359,100 @@ namespace id {
         R14_RESERVED,
 
         R15_IMPL
-    }
+    };
 
 
     enum class memory : u8 {
-        NO_ACCESS_PERMISSION,
+        NO_ACCESS_PERMISSION = 1,
         READ_WRITE,
         READ
+    };
+
+
+    enum class product_family : u8 {
+        ARM1 = 1,
+        ARM2,
+        ARM2aS,
+        ARM6,
+        ARM7,
+        ARM7T,
+        ARM7EJ,
+        ARM8,
+        ARM9T,
+        ARM9E,
+        ARM10E,
+        ARM11,
+        SecurCore,
+        CORTEX_M,
+        CORTEX_R,
+        CORTEX_A_32,
+        CORTEX_A_64,
+        CORTEX_X,
+        NEOVERSE,
+    };
+
+    enum class base_arch : u8 {
+        ARMv1 = 1,
+        ARMv2,
+        ARMv3,
+        ARMv4,
+        ARMv5,
+        ARMv6,
+        ARMv7,
+        ARMv8,
+        ARMv9
+    }
+
+    enum class specific_arch : u8 {
+        ARMv1 = 1,
+        ARMv2,
+        ARMv2a,
+        ARMv3,
+        ARMv4,
+        ARMv4T,
+        ARMv5, // assuming this exists, idk
+        ARMv5T, // same
+        ARMv5TE,
+        ARMv5TEJ,
+        ARMv6,
+        ARMv6T2,
+        ARMv6Z,
+        ARMv6K,
+        ARMv6_M,
+        ARMv7_A,
+        ARMv7_M,
+        ARMv7_R,
+        ARMv7E_M,
+        ARMv8_A,
+        ARMv8_R,
+        ARMv8_M_BASELINE,
+        ARMv8_M_MAINLINE,
+        ARMv8_1_M_MAINLINE,
+        ARMv8_2_A,
+        ARMv8_3_A,
+        ARMv8_4_A, // third party
+        ARMv8_5_A, // third party
+        ARMv8_6_A, // third party
+        ARMv9_A,
+        ARMv9_2_A,
+    };
+
+    enum class processor : u8 {
+        // TODO  (https://en.wikipedia.org/wiki/List_of_ARM_processors)
+        // https://sourceware.org/binutils/docs/as/ARM-Options.html
+        ARM3 = 1,
+        ARM600,
+        ARM610,
+        ARM620
+    };
+
+    enum class implementor : u8 {
+        ARM = 1,
+        DEC, // digital equipment corporation
+        MOTOROLA,
+        QUALCOMM,
+        MARVELL, 
+        INTEL,
+        CHARM // custom
     };
 }

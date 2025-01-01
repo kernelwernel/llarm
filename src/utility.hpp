@@ -40,6 +40,70 @@ namespace util {
     }
 
 
+
+    void modify_bits(u32 &original, const u32 start, const u32 end, const u32 value) {
+        if (start > end || start > 31 || end > 31) {
+            throw std::invalid_argument("Invalid bit range");
+        }
+
+        // create the mask, this looks wonky as hell ngl
+        const u32 mask = ((1U << (end - start + 1)) - 1) << start;
+
+        u32 original_copy = original;
+
+        original_copy &= ~mask;
+
+        const u32 masked_value = (1U << (end - start + 1)) - 1;
+        if (value & ~masked_value) {
+            throw std::invalid_argument("Value does not fit in the specified bit range");
+        }
+
+        original_copy |= (value << start) & mask;
+
+        original = original_copy;
+    }
+
+
+    // for example, ARMv5TEJ will be simplified to ARMv5
+    id::base_arch conv_specific_arch_to_base_arch(const id::specific_arch arch) {
+        switch (arch) {
+            case id::specific_arch::ARMv1: return id::base_arch::ARMv1;
+            case id::specific_arch::ARMv2: 
+            case id::specific_arch::ARMv2a: return id::base_arch::ARMv2;
+            case id::specific_arch::ARMv3: return id::base_arch::ARMv3;
+            case id::specific_arch::ARMv4: 
+            case id::specific_arch::ARMv4T: return id::base_arch::ARMv4;
+            case id::specific_arch::ARMv5: 
+            case id::specific_arch::ARMv5T: 
+            case id::specific_arch::ARMv5TE: 
+            case id::specific_arch::ARMv5TEJ: return id::base_arch::ARMv5;
+            case id::specific_arch::ARMv6: 
+            case id::specific_arch::ARMv6T2: 
+            case id::specific_arch::ARMv6Z: 
+            case id::specific_arch::ARMv6K: 
+            case id::specific_arch::ARMv6_M: return id::base_arch::ARMv6;
+            case id::specific_arch::ARMv7_A: 
+            case id::specific_arch::ARMv7_M: 
+            case id::specific_arch::ARMv7_R: 
+            case id::specific_arch::ARMv7E_M: return id::base_arch::ARMv7;
+            case id::specific_arch::ARMv8_A: 
+            case id::specific_arch::ARMv8_R: 
+            case id::specific_arch::ARMv8_M_BASELINE: 
+            case id::specific_arch::ARMv8_M_MAINLINE: 
+            case id::specific_arch::ARMv8_1_M_MAINLINE: 
+            case id::specific_arch::ARMv8_2_A: 
+            case id::specific_arch::ARMv8_3_A: 
+            case id::specific_arch::ARMv8_4_A: 
+            case id::specific_arch::ARMv8_5_A: 
+            case id::specific_arch::ARMv8_6_A: return id::base_arch::ARMv8;
+            case id::specific_arch::ARMv9_A: 
+            case id::specific_arch::ARMv9_2_A: return id::base_arch::ARMv9;
+        }
+    }
+
+
+
+
     id::coprocessor fetch_cp_id(const u8 raw_cp_num) {
         switch(raw_cp_num) {
             case 0b0000: return id::coprocessor::CP0;

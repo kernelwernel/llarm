@@ -148,9 +148,22 @@ public:
             return;
         };
 
+        // TODO REPLACE THE ABOVE LAMBDAS WITH UTIL FUNCTIONS
+
 
         switch (reg) {
             case id::cp15::R0_ID: R0_ID = value; return;
+            case id::cp15::R0_ID_IMPLEMENTOR: // TODO
+            case id::cp15::R0_ID_PPN: swap_bits(R0_ID, 4, );
+            case id::cp15::R0_ID_PPN_TOP: // TODO If bits[15:12] of the ID code are 0x7, the ID code is interpreted as follows:
+            case id::cp15::R0_ID_PPN_LOWER:
+            case id::cp15::R0_ID_REVISION: swap_bits(R0_ID, 0, 3);
+            case id::cp15::R0_ID_POST7_VARIANT: // TODO
+            case id::cp15::R0_ID_POST7_ARCH: // TODO
+            case id::cp15::R0_ID_7_VARIANT: // TODO
+            case id::cp15::R0_ID_7_A: // TODO
+            case id::cp15::R0_ID_PRE7_ID: // TODO
+
             case id::cp15::R0_CACHE: R0_CACHE = value; return;
             case id::cp15::R1_CONTROL: R1_CONTROL = value; return;
             case id::cp15::R1_M: 
@@ -345,8 +358,9 @@ public:
         }
     }
 
-    COPROCESSOR(memory, settings) : settings(settings) {
+    COPROCESSOR(MEMORY& memory, SETTINGS& settings) : settings(settings) {
         // CP15 setup
+        set_R0_processor_id();
 
 
         // R1
@@ -355,11 +369,95 @@ public:
 
 
 private:
+    void set_R0_processor_id() {
+        bool pre_arm7 = false;
+        bool arm7 = false;
+        bool post_arm7 = false;
 
+        switch (settings.product_family) {
+            case id::product_family::ARM1:
+            case id::product_family::ARM2:
+            case id::product_family::ARM2aS:
+            case id::product_family::ARM6: pre_arm7 = true; break;
+            case id::product_family::ARM7:
+            case id::product_family::ARM7T:
+            case id::product_family::ARM7EJ: arm7 = true; break;
+            default: 
+                post_arm7 = true; break;
+        }
+
+
+        // revision, this is universal to all ID types
+        write_cp15(id::cp15::R0_ID_REVISION, settings.revision);
+
+
+        if (pre_arm7) {
+            switch (settings.processor) {
+                case id::processor::ARM3:   write_cp15(id::cp15::R0_ID_PRE7_ID, 0x4156030); break;
+                case id::processor::ARM600: write_cp15(id::cp15::R0_ID_PRE7_ID, 0x4156060); break;
+                case id::processor::ARM610: write_cp15(id::cp15::R0_ID_PRE7_ID, 0x4156061); break;
+                case id::processor::ARM620: write_cp15(id::cp15::R0_ID_PRE7_ID, 0x4156062); break;
+                // TODO: ADD MORE
+                // could be useful:
+                // https://github.com/NetBSD/src/blob/461e4391743c2e1fdff97bb2b351cfb1a5fd083a/sys/arch/arm/include/cputypes.h#L113
+            }
+        } else {
+            // https://developer.arm.com/documentation/ddi0406/b/Appendices/ARMv4-and-ARMv5-Differences/System-Control-coprocessor--CP15--support/c0--ID-support?lang=en#CHDGAGJH
+
+            if (arm7) {
+                // variant (ARM7 specific)
+                write_cp15(id::cp15::R0_ID_7_VARIANT, settings.variant);
+
+                // A bit
+                if (settings.specific_arch == id::specific_arch::ARMv3) {
+                    write_cp15(id::cp15::R0_ID_7_A, false);
+                } else if (settings.specific_arch == id::specific_arch::ARMv4T) {
+                    write_cp15(id::cp15::R0_ID_7_A, true);
+                } else {
+                    // TODO: add an error, not sure here
+                }
+            } else if (post_arm7) {
+                // architecure
+                switch (settings.specific_arch) {
+                    case id::specific_arch::ARMv4:    write_cp15(id::cp15::R0_ID_POST7_ARCH, 0x1); break;
+                    case id::specific_arch::ARMv4T:   write_cp15(id::cp15::R0_ID_POST7_ARCH, 0x2); break;
+                    case id::specific_arch::ARMv5:    write_cp15(id::cp15::R0_ID_POST7_ARCH, 0x3); break; // obsolete
+                    case id::specific_arch::ARMv5T:   write_cp15(id::cp15::R0_ID_POST7_ARCH, 0x4); break;
+                    case id::specific_arch::ARMv5TE:  write_cp15(id::cp15::R0_ID_POST7_ARCH, 0x5); break;
+                    case id::specific_arch::ARMv5TEJ: write_cp15(id::cp15::R0_ID_POST7_ARCH, 0x6); break;
+                    case id::specific_arch::ARMv6:    write_cp15(id::cp15::R0_ID_POST7_ARCH, 0x7); break;
+                    default: write_cp15(id::cp15::R0_ID_POST7_ARCH, 0xF); // defined by CPUID scheme, TODO: research wtf this actually is
+                }
+
+                // variant (post-ARM7 specific)
+                write_cp15(id::cp15::R0_ID_POST7_VARIANT, settings.variant)
+            }
+
+            // implementor
+            // source: https://developer.arm.com/documentation/ddi0406/b/System-Level-Architecture/Virtual-Memory-System-Architecture--VMSA-/CP15-registers-for-a-VMSA-implementation/c0--Main-ID-Register--MIDR-?lang=en
+            switch (settings.implementor) {
+                case id::implementor::ARM:      write_cp15(id::cp15::R0_ID_IMPLEMENTOR, 0x41); break; // A
+                case id::implementor::DEC:      write_cp15(id::cp15::R0_ID_IMPLEMENTOR, 0x44); break; // D
+                case id::implementor::MOTOROLA: write_cp15(id::cp15::R0_ID_IMPLEMENTOR, 0x4D); break; // M
+                case id::implementor::QUALCOMM: write_cp15(id::cp15::R0_ID_IMPLEMENTOR, 0x51); break; // Q
+                case id::implementor::MARVELL:  write_cp15(id::cp15::R0_ID_IMPLEMENTOR, 0x56); break; // V
+                case id::implementor::INTEL:    write_cp15(id::cp15::R0_ID_IMPLEMENTOR, 0x69); break; // i
+                case id::implementor::CHARM:    write_cp15(id::cp15::R0_ID_IMPLEMENTOR, 0x43); break; // C (custom)
+            }
+
+            // primary part number
+            write_cp15(id::cp15::R0_ID_PPN, settings.ppn);
+        }
+
+        // last minute CPU checks just in case
+    }
 
 
 };
 
+
+
+/*
 0b00000 to 0b01010UNPREDICTABLE-
 
 auto get_size = [](const u8 raw_size_bits) -> u64 {
@@ -386,8 +484,6 @@ auto get_size = [](const u8 raw_size_bits) -> u64 {
     case 0b11111: return std::pow(2, 32); // 4GB
 };
 
-
-
 Bit[12] must be zero
 Bits[13:12] must be zero
 Bits[14:12] must be zero
@@ -408,3 +504,13 @@ Bits[28:12] must be zero
 Bits[29:12] must be zero
 Bits[30:12] must be zero
 Bits[31:12] must be zero
+*/
+
+
+
+
+// NOTES:
+/*
+MRC p15,0,<Rt>,c0,c0,0    ; Read CP15 Main ID Register
+MRC p15,0,<Rt>,c0,c0,1    ; Read CP15 Cache Type Register
+*/
