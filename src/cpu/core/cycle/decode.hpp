@@ -1,11 +1,11 @@
 #pragma once
 
 #include "types.hpp"
-#include "types_extra.hpp"
 #include "id.hpp"
 #include "constants.hpp"
 #include "cpu/instruction_set.hpp"
 #include "cpu/core/registers.hpp"
+#include "settings.hpp"
 
 #include <bitset>
 #include <tuple>
@@ -14,38 +14,52 @@
 struct DECODE {
 private:
     struct arm_scan {
-        id::instruction instruction_id;
-        std::function<bool(const code_t&)> opcode_function;
+        id::arm_instruction instruction_id;
+        std::function<bool(const arm_code_t&)> opcode_function;
     };
 
     struct thumb_scan {
-        id::instruction instruction_id;
-        std::function<bool(const thumbcode_t&)> opcode_function;
+        id::thumb_instruction instruction_id;
+        std::function<bool(const thumb_code_t&)> opcode_function;
+    };
+
+    struct jazelle_scan {
+        id::jazelle_instruction instruction_id;
+        std::function<bool(const jazelle_code_t)> opcode_function;
     };
 
     INSTRUCTION_SET& inst_set;
     REGISTERS& reg;
+    MEMORY& memory;
+    SETTINGS& settings;
 
     std::vector<arm_scan> arm_vector;
     std::vector<thumb_scan> thumb_vector;
+    std::vector<jazelle_scan> jazelle_vector;
 
 
-    [[nodiscard]] id::instruction identifier(const code_t &raw_code) const;
+    id::arm_instruction arm_identifier(const arm_code_t &raw_code) const;
 
     // TODO: benchmark with maybe a std::execution iterator
-    [[nodiscard]] id::instruction thumb_identifier(const thumbcode_t &raw_code) const;
+    id::thumb_instruction thumb_identifier(const thumb_code_t &raw_code) const;
 
-    [[nodiscard]] bool condition_match(const id::cond cond) const;
+    id::jazelle_instruction jazelle_identifier(const jazelle_code_t raw_code) const;
+
+    bool condition_match(const id::cond cond) const;
 
     void loader();
 
 public:
     DECODE(
         INSTRUCTION_SET& inst_set,
-        REGISTERS& reg
+        REGISTERS& reg,
+        MEMORY& memory,
+        SETTINGS& settings
     );
 
-    [[nodiscard]] decoded_t decode(const code_t &raw_code) const;
+    arm_decoded_t arm_decode(const arm_code_t &raw_code) const;
 
-    [[nodiscard]] thumb_decoded_t thumb_decode(const thumbcode_t &raw_code) const;
+    thumb_decoded_t thumb_decode(const thumb_code_t &raw_code) const;
+
+    jazelle_decoded_t jazelle_decode(const jazelle_code_t raw_code) const;
 };

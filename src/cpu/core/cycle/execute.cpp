@@ -13,14 +13,23 @@ void EXECUTE::loader() {
         INSTRUCTION_SET::thumb_struct data = inst.second;
         thumb_map[inst.first] = data.function;
     }
+
+    for (const auto &inst : inst_set.jazelle_table) {
+        INSTRUCTION_SET::jazelle_struct data = inst.second;
+        jazelle_map[inst.first] = data.function;
+    }
 }
 
-void EXECUTE::execute(const decoded_t &code) const {
+void EXECUTE::arm_execute(const arm_decoded_t &code) const {
     arm_map.at(code.first)(code.second, reg);
 }
 
 void EXECUTE::thumb_execute(const thumb_decoded_t &code) const {
     thumb_map.at(code.first)(code.second, reg);
+}
+
+void EXECUTE::jazelle_execute(const jazelle_decoded_t &code) const {
+    jazelle_map.at(code.first)(code.second, reg);
 }
 
 EXECUTE::EXECUTE(

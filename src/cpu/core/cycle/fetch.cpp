@@ -1,20 +1,20 @@
 #include "types.hpp"
 #include "cpu/core/cycle/fetch.hpp"
 
-[[nodiscard]] code_t FETCH::converter(const std::vector<u8> &raw_code) const {
+[[nodiscard]] arm_code_t FETCH::arm_converter(const std::vector<u8> &raw_code) const {
     u32 result = 0;
     result |= raw_code[0];
     result |= raw_code[1] << 8;
     result |= raw_code[2] << 16;
     result |= raw_code[3] << 24;
-    return code_t(result);
+    return arm_code_t(result);
 }
 
-[[nodiscard]] thumbcode_t FETCH::thumb_converter(const std::vector<u8> &raw_code) const {
+[[nodiscard]] thumb_code_t FETCH::thumb_converter(const std::vector<u8> &raw_code) const {
     u32 result = 0;
     result |= raw_code[0];
     result |= raw_code[1] << 8;
-    return thumbcode_t(result);
+    return thumb_code_t(result);
 }
 
 FETCH::FETCH(
@@ -25,12 +25,16 @@ FETCH::FETCH(
 
 }
 
-[[nodiscard]] code_t FETCH::fetch() const {
-    std::vector<u8> raw_code = ram.read(reg.PC, reg.PC + 4);
+[[nodiscard]] arm_code_t FETCH::arm_fetch() const {
+    std::vector<u8> raw_code = memory.read(reg.PC, reg.PC + 4);
     return converter(raw_code);
 }
 
-[[nodiscard]] thumbcode_t FETCH::thumb_fetch() const {
-    std::vector<u8> raw_code = ram.read(reg.PC, reg.PC + 2);
+[[nodiscard]] thumb_code_t FETCH::thumb_fetch() const {
+    std::vector<u8> raw_code = memory.read(reg.PC, reg.PC + 2);
     return thumb_converter(raw_code);
+}
+
+[[nodiscard]] jazelle_code_t FETCH::jazelle_fetch() const {
+    return memory.read(reg.PC);
 }

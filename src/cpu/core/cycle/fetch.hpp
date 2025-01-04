@@ -11,9 +11,9 @@ private:
     REGISTERS& reg;
     MEMORY& memory;
 
-    [[nodiscard]] code_t converter(const std::vector<u8> &raw_code) const;
+    arm_code_t arm_converter(const std::vector<u8> &raw_code) const;
     
-    [[nodiscard]] thumbcode_t thumb_converter(const std::vector<u8> &raw_code) const;
+    thumb_code_t thumb_converter(const std::vector<u8> &raw_code) const;
 
 public:
     FETCH(
@@ -22,7 +22,9 @@ public:
         MEMORY& memory
     );
 
-    [[nodiscard]] code_t fetch() const;
+    arm_code_t arm_fetch() const;
 
-    [[nodiscard]] thumbcode_t thumb_fetch() const;
+    thumb_code_t thumb_fetch() const;
+
+    jazelle_code_t jazelle_fetch() const;
 };

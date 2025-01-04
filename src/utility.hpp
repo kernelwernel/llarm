@@ -10,7 +10,7 @@ namespace util {
 
     // 0-based counting btw
     template <typename T>
-    T bit_fetcher(const code_t &input, const u8 start, const u8 end) {
+    T bit_fetcher(const arm_code_t &input, const u8 start, const u8 end) {
         if (start >= end) [[unlikely]] {
             // TODO: think of an error
         }
@@ -20,7 +20,7 @@ namespace util {
     }
 
     template <typename T>
-    T bit_fetcher(const thumbcode_t &input, const u8 start, const u8 end) {
+    T bit_fetcher(const thumb_code_t &input, const u8 start, const u8 end) {
         if (start >= end) [[unlikely]] {
             // TODO: think of an error
         }

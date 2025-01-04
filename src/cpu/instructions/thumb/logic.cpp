@@ -1,6 +1,6 @@
 #include "types.hpp"
 #include "utility.hpp"
-#include "cpu/instructions.hpp"
+#include "cpu/instructions/instructions.hpp"
 #include "cpu/core/registers.hpp"
 
 #include <bit>
@@ -12,7 +12,7 @@
  * C Flag = unaffected
  * V Flag = unaffected
  */
-void instructions::thumb::logic::AND(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::logic::AND(const thumb_code_t &code, REGISTERS &reg) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
@@ -42,7 +42,7 @@ void instructions::thumb::logic::AND(const thumbcode_t &code, REGISTERS &reg) {
  * Z Flag = if Rd == 0 then 1 else 0
  * V Flag = unaffected
  */
-void instructions::thumb::logic::ASR1(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::logic::ASR1(const thumb_code_t &code, REGISTERS &reg) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
@@ -85,7 +85,7 @@ void instructions::thumb::logic::ASR1(const thumbcode_t &code, REGISTERS &reg) {
  * Z Flag = if Rd == 0 then 1 else 0
  * V Flag = unaffected
  */
-void instructions::thumb::logic::ASR2(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::logic::ASR2(const thumb_code_t &code, REGISTERS &reg) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
     const id::reg Rs_id = reg.fetch_reg_id(code, 3, 5);
 
@@ -121,7 +121,7 @@ void instructions::thumb::logic::ASR2(const thumbcode_t &code, REGISTERS &reg) {
  * C Flag = unaffected
  * V Flag = unaffected
  */
-void instructions::thumb::logic::BIC(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::logic::BIC(const thumb_code_t &code, REGISTERS &reg) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
     const id::reg Rm_id = reg.fetch_reg_id(code, 3, 5);
 
@@ -143,7 +143,7 @@ void instructions::thumb::logic::BIC(const thumbcode_t &code, REGISTERS &reg) {
  * C Flag = unaffected
  * V Flag = unaffected
  */
-void instructions::thumb::logic::EOR(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::logic::EOR(const thumb_code_t &code, REGISTERS &reg) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
@@ -170,7 +170,7 @@ void instructions::thumb::logic::EOR(const thumbcode_t &code, REGISTERS &reg) {
  * Z Flag = if Rd == 0 then 1 else 0
  * V Flag = unaffected
  */
-void instructions::thumb::logic::LSL1(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::logic::LSL1(const thumb_code_t &code, REGISTERS &reg) {
     const u8 immed_5 = util::bit_fetcher<u8>(code, 6, 10);
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
@@ -209,7 +209,7 @@ void instructions::thumb::logic::LSL1(const thumbcode_t &code, REGISTERS &reg) {
  * Z Flag = if Rd == 0 then 1 else 0
  * V Flag = unaffected
  */
-void instructions::thumb::logic::LSL2(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::logic::LSL2(const thumb_code_t &code, REGISTERS &reg) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
     const u32 Rs = reg.read(code, 3, 5);
@@ -247,7 +247,7 @@ void instructions::thumb::logic::LSL2(const thumbcode_t &code, REGISTERS &reg) {
  * Z Flag = if Rd == 0 then 1 else 0
  * V Flag = unaffected
  */
-void instructions::thumb::logic::LSR1(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::logic::LSR1(const thumb_code_t &code, REGISTERS &reg) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
     const u8 immed_5 = util::bit_fetcher<u8>(code, 6, 10);
@@ -287,7 +287,7 @@ void instructions::thumb::logic::LSR1(const thumbcode_t &code, REGISTERS &reg) {
  * Z Flag = if Rd == 0 then 1 else 0
  * V Flag = unaffected
  */
-void instructions::thumb::logic::LSR2(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::logic::LSR2(const thumb_code_t &code, REGISTERS &reg) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
     const u32 Rs = reg.read(code, 3, 5);
@@ -321,7 +321,7 @@ void instructions::thumb::logic::LSR2(const thumbcode_t &code, REGISTERS &reg) {
  * C Flag = NOT BorrowFrom(0 - Rm)
  * V Flag = OverflowFrom(0 - Rm)
  */
-void instructions::thumb::logic::NEG(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::logic::NEG(const thumb_code_t &code, REGISTERS &reg) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
@@ -346,7 +346,7 @@ void instructions::thumb::logic::NEG(const thumbcode_t &code, REGISTERS &reg) {
  * C Flag = unaffected
  * V Flag = unaffected
  */
-void instructions::thumb::logic::ORR(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::logic::ORR(const thumb_code_t &code, REGISTERS &reg) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
@@ -376,7 +376,7 @@ void instructions::thumb::logic::ORR(const thumbcode_t &code, REGISTERS &reg) {
  * Z Flag = if Rd == 0 then 1 else 0
  * V Flag = unaffected
  */
-void instructions::thumb::logic::ROR(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::logic::ROR(const thumb_code_t &code, REGISTERS &reg) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
     const u32 Rs = reg.read(code, 3, 5);
@@ -408,7 +408,7 @@ void instructions::thumb::logic::ROR(const thumbcode_t &code, REGISTERS &reg) {
  * C Flag = unaffected
  * V Flag = unaffected
  */
-void instructions::thumb::logic::TST(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::logic::TST(const thumb_code_t &code, REGISTERS &reg) {
     const u32 Rn = reg.read(code, 0, 2);
     const u32 Rm = reg.read(code, 3, 5);
 
@@ -418,129 +418,4 @@ void instructions::thumb::logic::TST(const thumbcode_t &code, REGISTERS &reg) {
     reg.write_cpsr(id::cpsr::Z, (alu_out == 0));
 
     reg.thumb_increment_PC();
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
- * if ConditionPassed(cond) then
- *   Rd = Rn AND shifter_operand
- *   if S == 1 and Rd == R15 then
- *     CPSR = SPSR
- *   else if S == 1 then
- *     N Flag = Rd[31]
- *     Z Flag = if Rd == 0 then 1 else 0
- *     C Flag = shifter_carry_out
- *     V Flag = unaffected
- */
-void instructions::logic::AND(const code_t &code, REGISTERS &reg) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
-
-    const u16 shifter_operand = util::bit_fetcher<u16>(code, 0, 11);
-    const u32 Rn = reg.read(code, 16, 19);
-
-    const bool S = code.test(20);
-    const bool I = code.test(25);
-
-    reg.write(Rd_id, Rn & shifter_operand);
-
-    if ((S == 1) && (Rd_id == id::reg::R15)) {
-        reg.write_cpsr(id::reg::CURRENT_SPSR);
-    } else if (S == 1) {
-        const u32 Rd = reg.read(Rd_id);
-        reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
-        reg.write_cpsr(id::cpsr::Z, (Rd == 0));
-        //TODO:
-        //reg.write_cpsr(id::cpsr::C, ());
-    }
-
-    reg.increment_PC();
-}
-
-
-/*
- * if Rm == 0
- *   Rd = 32
- * else
- *   Rd = 31 - (bit position of most significant ’1’ in Rm)
- */
-void instructions::logic::CLZ(const code_t &code, REGISTERS &reg) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
-
-    const u32 Rm = reg.read(code, 0, 3);
-
-    if (Rm == 0) {
-        reg.write(Rd_id, 32);
-    } else {
-        reg.write(Rd_id, 31 - (std::bit_width(Rm) - 1));
-    }
-
-    reg.increment_PC();
-}
-
-
-
-
-
-/*
- * if ConditionPassed(cond) then
- *   Rd = Rn EOR shifter_operand
- *   if S == 1 and Rd == R15 then
- *     CPSR = SPSR
- *   else if S == 1 then
- *     N Flag = Rd[31]
- *     Z Flag = if Rd == 0 then 1 else 0
- *     C Flag = shifter_carry_out
- *     V Flag = unaffected
- */
-void instructions::logic::EOR(const code_t &code, REGISTERS &reg) {
-    
 }

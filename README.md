@@ -1,6 +1,6 @@
 # CHARM
 
-An ARM emulation framework library for C++
+An ARM emulation infrastructure for C++
 
 
 (add logo here with the binlex table looking thingy)
@@ -16,3 +16,4 @@ An ARM emulation framework library for C++
 - useful for:
     - debuggers
     - any device that uses ARM (nintendos, phones, etc)
+

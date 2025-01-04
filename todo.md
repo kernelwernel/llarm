@@ -8,3 +8,8 @@ executed. The mnemonic extension for this condition was NV.
 - [ ] make the MMU
 - [ ] make the coprocessor
 - [ ] add an UNPREDICTABLE message throughout every part of the emulator once it's complete (based on the docs)
+- [ ] add jazelle support
+- [ ] add 26-bit support
+- [ ] figure out a good mechanism for reading/writing to cp registers
+- [ ] replace the cp15 writing lambdas with utility functions
+- [ ] finish making the cp15 control register 1 

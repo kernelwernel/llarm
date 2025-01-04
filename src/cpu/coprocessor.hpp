@@ -1,5 +1,8 @@
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1
 
+// https://developer.arm.com/documentation/ddi0360/f/control-coprocessor-cp15/summary-of-control-coprocessor-cp15-registers-and-operations
+// ^ could be useful
+
 #pragma once
 
 #include "types.hpp"
@@ -67,7 +70,7 @@ public:
 
     u32 R15_IMPL = 0; // implementation defined, not important
 
-
+/*
     u32 read_cp15(const id::cp15 reg) {
         switch (reg) {
             case id::cp15::R0_ID: return R0_ID;
@@ -129,6 +132,7 @@ public:
             case id::cp15::R15_IMPL: return R15_IMPL;
         }
     }
+    */
 
 
     void write_cp15(const id::cp15 reg, const u32 value) {
@@ -165,16 +169,34 @@ public:
             case id::cp15::R0_ID_PRE7_ID: // TODO
 
             case id::cp15::R0_CACHE: R0_CACHE = value; return;
+            case id::cp15::R0_CACHE_CTYPE: // TODO
+            case id::cp15::R0_CACHE_S: // TODO
+            case id::cp15::R0_CACHE_DSIZE: // TODO
+            case id::cp15::R0_CACHE_ISIZE: // TODO
             case id::cp15::R1_CONTROL: R1_CONTROL = value; return;
             case id::cp15::R1_M: 
                 if (settings.is_mmu_enabled || settings.is_protection_unit_enabled) {
                     flip(0); 
                 }
-
                 return;
             case id::cp15::R1_A:     modify_bit(R1_CONTROL, 1);  return;
-            case id::cp15::R1_C:     modify_bit(R1_CONTROL, 2);  return;
-            case id::cp15::R1_W:     modify_bit(R1_CONTROL, 3);  return;
+            case id::cp15::R1_C:
+                // cache remains as 1 if it can't be disabled
+                if (settings.cache_cannot_disable) {
+                    return
+                }
+
+                if (settings.has_cache) {
+                    modify_bit(R1_CONTROL, 2); 
+                }
+                return;
+            case id::cp15::R1_W:
+                if (settings.write_buffer_cannot_disable) {
+                    return;
+                }
+
+                modify_bit(R1_CONTROL, 3);
+                return;
             case id::cp15::R1_P:     modify_bit(R1_CONTROL, 4);  return;
             case id::cp15::R1_D:     modify_bit(R1_CONTROL, 5);  return;
             case id::cp15::R1_L:     modify_bit(R1_CONTROL, 6);  return;
@@ -360,7 +382,8 @@ public:
 
     COPROCESSOR(MEMORY& memory, SETTINGS& settings) : settings(settings) {
         // CP15 setup
-        set_R0_processor_id();
+        setup_R0_processor_id();
+        setup_R0_cache();
 
 
         // R1
@@ -369,7 +392,7 @@ public:
 
 
 private:
-    void set_R0_processor_id() {
+    void setup_R0_processor_id() {
         bool pre_arm7 = false;
         bool arm7 = false;
         bool post_arm7 = false;
@@ -449,7 +472,58 @@ private:
             write_cp15(id::cp15::R0_ID_PPN, settings.ppn);
         }
 
-        // last minute CPU checks just in case
+        // last minute CPU checks just in case (TODO)
+
+    }
+
+
+    // TODO (B2-9)
+    void setup_R0_cache() {
+        const bool unified = settings.has_unified_cache;
+        const bool separate = settings.has_separate_cache;
+
+        if (unified) {
+            write_cp15(id::cp15::R0_CACHE_S, false);
+        } else if (separate) {
+            write_cp15(id::cp15::R0_CACHE_S, true);
+        } else {
+            // TODO error
+        }
+    }
+
+
+    void setup_R1_CONTROL() {
+        // M
+        write_cp15(id::cp15::R1_M, settings.is_mmu_enabled);
+
+        // A
+        write_cp15(id::cp15::R1_A, settings.has_alignment_fault_checking);
+
+        // C
+        if (settings.has_cache) {
+            if (settings.cache_cannot_disable) {
+                write_cp15(id::cp15::R1_C, true);
+            } else if (settings.has_unified_cache) {
+                write_cp15(id::cp15::R1_C, true);
+            } else if (settings.has_separate_data_cache && settings.has_separate_cache) {
+                write_cp15(id::cp15::R1_C, true);
+            } else {
+                write_cp15(id::cp15::R1_C, false); // maybe, idk
+                // error TODO
+            }
+        } else {
+            write_cp15(id::cp15::R1_C, false); // no cache present
+        }
+
+        // W
+        if (settings.has_write_buffer) {
+            write_cp15(id::cp15::R1_W, true);
+        } else {
+            write_cp15(id::cp15::R1_W, false); // no write buffer present
+        }
+
+        // P
+        
     }
 
 

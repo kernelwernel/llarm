@@ -338,21 +338,21 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
     out::error("Couldn't find suitable match for register identification in identifier()");
 }
 
-[[nodiscard]] id::reg REGISTERS::fetch_reg_id(const code_t &code, const u8 start, const u8 end) noexcept {
+[[nodiscard]] id::reg REGISTERS::fetch_reg_id(const arm_code_t &code, const u8 start, const u8 end) noexcept {
     const u8 Rd_bits = util::bit_fetcher<u8>(code.to_ulong(), start, end);
     return fetch_reg_id(Rd_bits);
 }
 
-[[nodiscard]] id::reg REGISTERS::fetch_reg_id(const thumbcode_t &code, const u8 start, const u8 end) noexcept {
+[[nodiscard]] id::reg REGISTERS::fetch_reg_id(const thumb_code_t &code, const u8 start, const u8 end) noexcept {
     const u8 Rd_bits = util::bit_fetcher<u8>(code.to_ulong(), start, end);
     return fetch_reg_id(Rd_bits);
 }
 
-[[nodiscard]] u32 REGISTERS::read(const code_t &code, const u8 start, const u8 end) noexcept {
+[[nodiscard]] u32 REGISTERS::read(const arm_code_t &code, const u8 start, const u8 end) noexcept {
     return read(fetch_reg_id(code, start, end));
 }
 
-[[nodiscard]] u32 REGISTERS::read(const thumbcode_t &code, const u8 start, const u8 end) noexcept {
+[[nodiscard]] u32 REGISTERS::read(const thumb_code_t &code, const u8 start, const u8 end) noexcept {
     return read(fetch_reg_id(code, start, end));
 }
 
@@ -385,7 +385,7 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
 }
 
 
-[[nodiscard]] id::cond REGISTERS::fetch_cond_id(const code_t &code) {
+[[nodiscard]] id::cond REGISTERS::fetch_cond_id(const arm_code_t &code) {
     switch ((code.to_ulong() & 0xF0000000) >> 28) {
         case constants::cond::EQ: return id::cond::EQ;
         case constants::cond::NE: return id::cond::NE;

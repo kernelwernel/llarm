@@ -73,16 +73,16 @@ public:
     void write_cpsr(const id::reg reg_id);
 
     [[nodiscard]] id::reg fetch_reg_id(const u8) noexcept;
-    [[nodiscard]] id::reg fetch_reg_id(const code_t&, const u8, const u8) noexcept;
-    [[nodiscard]] id::reg fetch_reg_id(const thumbcode_t&, const u8, const u8) noexcept;
+    [[nodiscard]] id::reg fetch_reg_id(const arm_code_t&, const u8, const u8) noexcept;
+    [[nodiscard]] id::reg fetch_reg_id(const thumb_code_t&, const u8, const u8) noexcept;
 
     [[nodiscard]] id::cond fetch_cond_id(const u8);
-    [[nodiscard]] id::cond fetch_cond_id(const code_t&);
+    [[nodiscard]] id::cond fetch_cond_id(const arm_code_t&);
     [[nodiscard]] id::mode fetch_mode_id(const constants::mode);
 
     [[nodiscard]] u32 read(const id::reg);
-    [[nodiscard]] u32 read(const code_t&, const u8, const u8) noexcept;
-    [[nodiscard]] u32 read(const thumbcode_t&, const u8, const u8) noexcept;
+    [[nodiscard]] u32 read(const arm_code_t&, const u8, const u8) noexcept;
+    [[nodiscard]] u32 read(const thumb_code_t&, const u8, const u8) noexcept;
     [[nodiscard]] u32 read(const u8) noexcept;
 
     void write(const id::reg, const u32);

@@ -12,6 +12,17 @@ public:
     bool is_fcse_enabled;
     bool has_coprocessor;
     bool has_cache;
+    bool cache_cannot_disable;
+    bool has_unified_cache;
+    bool has_separate_cache; // should be enabled if either 2 caches below are enabled 
+    bool has_separate_inst_cache;
+    bool has_separate_data_cache;
+    bool has_alignment_fault_checking;
+    bool has_write_buffer;
+    bool write_buffer_cannot_disable;
+    bool backwards_compat_support_26_bits;
+    bool no_clock_constraint; // basically means it'll execute as fast as the host machine can run without clock delays for accuracy reasons
+    u8 thumb_version; // either 1 or 2
     u16 clock_speed_mhz; 
     u64 memsize;
     id::base_arch arch;

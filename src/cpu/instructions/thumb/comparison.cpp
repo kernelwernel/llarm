@@ -1,6 +1,6 @@
 #include "types.hpp"
 #include "utility.hpp"
-#include "cpu/instructions.hpp"
+#include "cpu/instructions/instructions.hpp"
 #include "cpu/core/registers.hpp"
 
 /*
@@ -10,7 +10,7 @@
  * C Flag = NOT BorrowFrom(Rn + Rm)
  * V Flag = OverflowFrom(Rn + Rm)
  */
-void instructions::thumb::compare::CMN(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::compare::CMN(const thumb_code_t &code, REGISTERS &reg) {
     /*
     const u32 Rn = reg.read(code, 0, 2);
     const u32 Rm = reg.read(code, 3, 5);
@@ -34,7 +34,7 @@ void instructions::thumb::compare::CMN(const thumbcode_t &code, REGISTERS &reg) 
  * V Flag = OverflowFrom(Rn - immed_8)
  */
 // DOUBLE CHECK IF overflow_sub works as intended
-void instructions::thumb::compare::CMP1(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::compare::CMP1(const thumb_code_t &code, REGISTERS &reg) {
     const u32 Rn = reg.read(code, 8, 10);
     const u8 immed_8 = util::bit_fetcher<u8>(code, 0, 7);
 
@@ -57,7 +57,7 @@ void instructions::thumb::compare::CMP1(const thumbcode_t &code, REGISTERS &reg)
  * V Flag = OverflowFrom(Rn - Rm)
  */
 // DOUBLE CHECK IF overflow_sub works as intended
-void instructions::thumb::compare::CMP2(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::compare::CMP2(const thumb_code_t &code, REGISTERS &reg) {
     const u32 Rn = reg.read(code, 0, 2);
     const u32 Rm = reg.read(code, 3, 5);
 
@@ -79,7 +79,7 @@ void instructions::thumb::compare::CMP2(const thumbcode_t &code, REGISTERS &reg)
  * C Flag = NOT BorrowFrom(Rn - Rm)
  * V Flag = OverflowFrom(Rn - Rm)
  */
-void instructions::thumb::compare::CMP3(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::compare::CMP3(const thumb_code_t &code, REGISTERS &reg) {
     u8 Rn_bits = util::bit_fetcher<u8>(code, 0, 2);
     u8 Rm_bits = util::bit_fetcher<u8>(code, 3, 5);
 
@@ -104,18 +104,3 @@ void instructions::thumb::compare::CMP3(const thumbcode_t &code, REGISTERS &reg)
 
     reg.thumb_increment_PC();
 }
-
-
-
-/*
- * if ConditionPassed(cond) then
- *   alu_out = Rn + shifter_operand
- *   N Flag = alu_out[31]
- *   Z Flag = if alu_out == 0 then 1 else 0
- *   C Flag = CarryFrom(Rn + shifter_operand)
- *   V Flag = OverflowFrom(Rn + shifter_operand)
- */
-void instructions::compare::CMN(const code_t &code, REGISTERS &reg) {
-
-}
-

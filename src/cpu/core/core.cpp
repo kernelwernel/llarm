@@ -33,7 +33,7 @@ void core::initialise(const std::vector<u8> &binary, input_args &args) {
     SYSTEM sys(reg, instruction_set, coprocessor);
     EXCEPTION exception(reg, coprocessor, instruction_set);
     FETCH fetch(instruction_set, reg, memory);
-    DECODE decode(instruction_set, reg);
+    DECODE decode(instruction_set, reg, memory);
     EXECUTE execute(instruction_set, reg);
 
 
@@ -47,16 +47,35 @@ void core::initialise(const std::vector<u8> &binary, input_args &args) {
     //for (;;) {
         switch (instruction_set.set) {
             case id::instruction_sets::ARM: {
-                const code_t raw_code = fetch.fetch();
-                const decoded_t code = decode.decode(raw_code);
-                execute.execute(code);
+                const arm_code_t raw_arm_code = fetch.arm_fetch();
+                const arm_decoded_t code = decode.arm_decode(raw_arm_code);
+                execute.arm_execute(code);
                 break;
             }
 
             case id::instruction_sets::THUMB: {
-                const thumbcode_t raw_thumb_code = fetch.thumb_fetch();
+                const thumb_code_t raw_thumb_code = fetch.thumb_fetch();
                 const thumb_decoded_t thumb_code = decode.thumb_decode(raw_thumb_code);
                 execute.thumb_execute(thumb_code);
+                break;
+            }
+
+            case id::instruction_sets::JAZELLE: {
+                // this might look strange, but the fetch and decode stages are switched 
+                // because Java bytecode can have varying instruction sizes unlike ARM 
+                // (32-bit) or Thumb (16-bit). Only the opcode is known to have 1 byte 
+                // while the operands take up space depending on which instruction it's 
+                // being run. So basically this code will DECODE which instruction this 
+                // is, FETCH the appropriate operands based on the identified instruction's 
+                // operand size, then EXECUTE that instruction. It's weird, but whatever.
+
+                // fetch
+                const jazelle_code_t raw_jazelle_code = fetch.jazelle_fetch();
+                // decode
+
+                // execute
+
+
                 break;
             }
         }

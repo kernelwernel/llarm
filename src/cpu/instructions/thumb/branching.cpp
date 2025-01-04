@@ -1,13 +1,13 @@
 #include "types.hpp"
 #include "utility.hpp"
-#include "cpu/instructions.hpp"
+#include "cpu/instructions/instructions.hpp"
 #include "cpu/core/registers.hpp"
 
 /*
  * if ConditionPassed(cond) then
  *   PC = PC + (SignExtend(signed_immed_8) << 1)
  */
-void instructions::thumb::branching::B1(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::branching::B1(const thumb_code_t &code, REGISTERS &reg) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
     const i8 signed_immed_8 = util::bit_fetcher<i8>(code, 0, 7);
@@ -23,7 +23,7 @@ void instructions::thumb::branching::B1(const thumbcode_t &code, REGISTERS &reg)
 /*
  * PC = PC + (SignExtend(signed_immed_11) << 1)
  */
-void instructions::thumb::branching::B2(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::branching::B2(const thumb_code_t &code, REGISTERS &reg) {
     const i16 signed_immed_10 = util::bit_fetcher<i16>(code, 0, 10);
 
     reg.write(id::reg::PC, (reg.PC + ((static_cast<i32>(signed_immed_10)) << 1)));
@@ -41,7 +41,7 @@ void instructions::thumb::branching::B2(const thumbcode_t &code, REGISTERS &reg)
  *   LR = (address of next instruction) | 1
  *   T Flag = 0
  */
-void instructions::thumb::branching::BL(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::branching::BL(const thumb_code_t &code, REGISTERS &reg) {
     const u16 offset_11 = util::bit_fetcher<u16>(code, 0, 10);
     const u8 H = util::bit_fetcher<u8>(code, 11, 12);
 
@@ -62,7 +62,7 @@ void instructions::thumb::branching::BL(const thumbcode_t &code, REGISTERS &reg)
  *   LR = (address of next instruction) | 1
  *   T Flag = 0
  */
-void instructions::thumb::branching::BLX1(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::branching::BLX1(const thumb_code_t &code, REGISTERS &reg) {
     const u16 offset_11 = util::bit_fetcher<u16>(code, 0, 10);
     const u8 H = util::bit_fetcher<u8>(code, 11, 12);
 
@@ -77,7 +77,7 @@ void instructions::thumb::branching::BLX1(const thumbcode_t &code, REGISTERS &re
  * T Flag = Rm[0]
  * PC = Rm[31:1] << 1
  */
-void instructions::thumb::branching::BLX2(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::branching::BLX2(const thumb_code_t &code, REGISTERS &reg) {
     u8 Rm_bits = reg.fetch_reg_id(code, 3, 5);
     const bool H2 = code.test(6);
 
@@ -94,7 +94,7 @@ void instructions::thumb::branching::BLX2(const thumbcode_t &code, REGISTERS &re
  * T Flag = Rm[0]
  * PC = Rm[31:1] << 1
  */
-void instructions::thumb::branching::BX(const thumbcode_t &code, REGISTERS &reg) {
+void instructions::thumb::branching::BX(const thumb_code_t &code, REGISTERS &reg) {
     u8 Rm_bits = reg.fetch_reg_id(code, 3, 5);
     const bool H2 = code.test(6);
 
@@ -104,41 +104,4 @@ void instructions::thumb::branching::BX(const thumbcode_t &code, REGISTERS &reg)
 
     reg.write_cpsr(id::cpsr::T, (Rm & 1));
     reg.write(id::reg::PC, ((Rm & 0xFFFFFFFE) << 1));
-}
-
-
-/*
- * if ConditionPassed(cond) then
- *   if L == 1 then
- *     LR = address of the instruction after the branch instruction
- *   PC = PC + (SignExtend(signed_immed_24) << 2)
- */
-//TODO
-void instructions::branching::B(const code_t &code, REGISTERS &reg) {
-    const i32 signed_immed_24 = util::bit_fetcher<i32>(code, 3, 5);
-    const bool L = code.test(24);
-
-    if (L == 1) {
-        
-    }
-
-}
-
-
-/*
- * if ConditionPassed(cond) then
- *   T Flag = Rm[0]
- *   PC = Rm AND 0xFFFFFFFE
- */
-// TODO
-void instructions::branching::BX(const code_t &code, REGISTERS &reg) {
-    const u32 Rm = reg.read(code, 0, 3);
-
-    if ((Rm & 1) == 0) {
-        // arm
-    } else {
-        // thumb
-    }
-
-    reg.write(id::reg::PC, Rm & 0xFFFFFFFE);
 }

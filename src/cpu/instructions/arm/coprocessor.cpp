@@ -1,14 +1,14 @@
 #include "types.hpp"
 #include "utility.hpp"
-#include "cpu/instructions.hpp"
+#include "cpu/instructions/instructions.hpp"
 #include "cpu/core/registers.hpp"
 
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1
-void instructions::coprocessor::CDP(const code_t &code, REGISTERS& reg) {
+void instructions::arm::coprocessor::CDP(const arm_code_t &code, REGISTERS& reg) {
 
 }
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1
-void instructions::coprocessor::LDC(const code_t &code, REGISTERS& reg) {
+void instructions::arm::coprocessor::LDC(const arm_code_t &code, REGISTERS& reg) {
 
 }
 
@@ -18,7 +18,7 @@ void instructions::coprocessor::LDC(const code_t &code, REGISTERS& reg) {
  *   send Rd value to Coprocessor[cp_num]
  */
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1
-void instructions::coprocessor::MCR(const code_t &code, REGISTERS& reg) {
+void instructions::arm::coprocessor::MCR(const arm_code_t &code, REGISTERS& reg) {
     if (reg.is_priviledged() == false) {
         // TODO: UNDEFINED INSTRUCTION EXCEPTION
     }
@@ -66,7 +66,7 @@ void instructions::coprocessor::MCR(const code_t &code, REGISTERS& reg) {
  *     Rd = data
  */
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1
-void instructions::coprocessor::MRC(const code_t &code, REGISTERS& reg) {
+void instructions::arm::coprocessor::MRC(const arm_code_t &code, REGISTERS& reg) {
     if (reg.is_priviledged() == false) {
         // TODO: UNDEFINED INSTRUCTION EXCEPTION
     }
@@ -95,6 +95,6 @@ void instructions::coprocessor::MRC(const code_t &code, REGISTERS& reg) {
 }
 
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1
-void instructions::coprocessor::STC(const code_t &code, REGISTERS& reg) {
+void instructions::arm::coprocessor::STC(const arm_code_t &code, REGISTERS& reg) {
 
 }
