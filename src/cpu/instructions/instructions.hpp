@@ -52,6 +52,7 @@ struct instructions {
         }
         namespace misc {
             void NOP([[maybe_unused]] const arm_code_t&, [[maybe_unused]] REGISTERS&) noexcept;
+            void PSR(const arm_code_t&, [[maybe_unused]] REGISTERS&) noexcept;
             void SWI(const arm_code_t&, REGISTERS&); // TODO
         }
         namespace load {
@@ -137,14 +138,14 @@ struct instructions {
         namespace branching {
             void B1(const thumb_code_t&, REGISTERS&);
             void B2(const thumb_code_t&, REGISTERS&);
-            void BL(const thumb_code_t&, REGISTERS&); // TODO
-            void BLX1(const thumb_code_t&, REGISTERS&); // TODO
-            void BLX2(const thumb_code_t&, REGISTERS&); // TODO
-            void BX(const thumb_code_t&, REGISTERS&);
+            void BL(const thumb_code_t&, REGISTERS&);
+            void BLX1(const thumb_code_t&, REGISTERS&); // (v5, idk if thumb2)
+            void BLX2(const thumb_code_t&, REGISTERS&); // (v5, idk if thumb2), and double check
+            void BX(const thumb_code_t&, REGISTERS&); // double check
         }
         namespace misc {
             void NOP([[maybe_unused]] const thumb_code_t&, [[maybe_unused]] REGISTERS&) noexcept;
-            void BKPT(const thumb_code_t&, REGISTERS&); // TODO
+            void BKPT(const thumb_code_t&, REGISTERS&); // (v5)
             void SWI(const thumb_code_t&, REGISTERS&); // TODO
         }
         namespace load {
@@ -167,6 +168,7 @@ struct instructions {
             void STR2(const thumb_code_t&, REGISTERS&); // TODO
             void STR3(const thumb_code_t&, REGISTERS&); // TODO
             void STRB1(const thumb_code_t&, REGISTERS&); // TODO
+            void STRB2(const thumb_code_t&, REGISTERS&); // TODO
             void STRH1(const thumb_code_t&, REGISTERS&); // TODO
             void STRH2(const thumb_code_t&, REGISTERS&); // TODO
             void PUSH(const thumb_code_t&, REGISTERS&); // TODO

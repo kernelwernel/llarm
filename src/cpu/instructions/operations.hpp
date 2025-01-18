@@ -1,45 +1,6 @@
-#pragma once
-
 #include "types.hpp"
-#include "id.hpp"
-#include "constants.hpp"
 
-#include <bitset>
-
-namespace util {
-
-    // 0-based counting btw
-    template <typename T>
-    T bit_fetcher(const code_t &input, const u8 start, const u8 end) {
-        if (start >= end) [[unlikely]] {
-            // TODO: think of an error
-        }
-
-        const u32 mask = ((1U << (end - start + 1)) - 1);
-        return static_cast<T>((input.to_ulong() >> start) & mask);
-    }
-
-    template <typename T>
-    T bit_fetcher(const thumbcode_t &input, const u8 start, const u8 end) {
-        if (start >= end) [[unlikely]] {
-            // TODO: think of an error
-        }
-
-        const u32 mask = ((1U << (end - start + 1)) - 1);
-        return static_cast<T>((input.to_ulong() >> start) & mask);
-    }
-
-    template <typename T>
-    T bit_fetcher(const u32 input, const u8 start, const u8 end) {
-        if (start >= end) [[unlikely]] {
-            // TODO: think of an error
-        }
-
-        const u32 mask = ((1U << (end - start + 1)) - 1);
-        return static_cast<T>((input >> start) & mask);
-    }
-
-
+namespace operation {
     [[nodiscard]] bool carry_add(const u64&);
     [[nodiscard]] bool carry_add(const u32, const u32);
     [[nodiscard]] bool carry_add(const u32, const u32, const u32);
@@ -53,8 +14,14 @@ namespace util {
     [[nodiscard]] bool overflow_sub(const i32, const i32);
     [[nodiscard]] bool overflow_sub(const i32, const i32, const i32);
 
-    [[nodiscard]] bool arithmetic_shift_right(u32 num, const u8 shift);
+    bool signed_overflow_sub(const u32, const u32);
+    bool signed_overflow_add(const u32, const u32);
 
+    u16 sign_extend(const u16 value) {}
+
+
+    [[nodiscard]] bool arithmetic_shift_right(u32 num, const u8 shift); // why is this not a reference? research more...
+}
 
 /*
     overflow:
@@ -76,4 +43,5 @@ namespace util {
     
     }
 */
-}
+
+// TODO: doube check if all of these work as intended, hella important

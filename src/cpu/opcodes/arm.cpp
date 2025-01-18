@@ -47,6 +47,21 @@
     return (raw_code.none());
 }
 
+[[nodiscard]] bool opcodes::PSR(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 0) &&
+        (raw_code.test(26) == 0) &&
+        (raw_code.test(24) == 1) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(20) == 1) &&
+        (raw_code.test(15) == 1) &&
+        (raw_code.test(14) == 1) &&
+        (raw_code.test(13) == 1) &&
+        (raw_code.test(12) == 1)
+    );
+}
+
+
 [[nodiscard]] bool opcodes::B_BL(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&

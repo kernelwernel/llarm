@@ -5,6 +5,10 @@
 
 #include <map>
 
+// TODO If an exception occurs when the processor is in a 26-bit mode, only the PC bits from R15[25:2] are
+// copied to the link register. The remaining bits in the link register are zeroed. The PSR bits from
+// R15[31:26] and R15[1:0] are copied into the SPSR, ready for a normal 32-bit return sequence.
+
 
 /*
  * R14_svc = UNPREDICTABLE value
@@ -24,7 +28,7 @@ void EXCEPTION::reset() {
     reg.write_cpsr(id::cpsr::F, 1);
     reg.write_cpsr(id::cpsr::I, 1);
 
-    if (coprocessor.read(id::cp15::R1_V)) {
+    if (coprocessor.read(id::cp::CP15_R1_V)) {
         reg.write(id::reg::PC, 0xFFFF0000);
     } else {
         reg.write(id::reg::PC, 0x00000000);
@@ -50,7 +54,7 @@ void EXCEPTION::undefined() {
     reg.write_cpsr(id::cpsr::T, 0);
     reg.write_cpsr(id::cpsr::I, 1);
 
-    if (coprocessor.read(id::cp15::R1_V)) {
+    if (coprocessor.read(id::cp::CP15_R1_V)) {
         reg.write(id::reg::PC, 0xFFFF0004);
     } else {
         reg.write(id::reg::PC, 0x00000004);
@@ -76,7 +80,7 @@ void EXCEPTION::swi() {
     reg.write_cpsr(id::cpsr::T, 0);
     reg.write_cpsr(id::cpsr::I, 1);
 
-    if (coprocessor.read(id::cp15::R1_V)) {
+    if (coprocessor.read(id::cp::CP15_R1_V)) {
         reg.write(id::reg::PC, 0xFFFF0008);
     } else {
         reg.write(id::reg::PC, 0x00000008);
@@ -102,7 +106,7 @@ void EXCEPTION::prefetch_abort() {
     reg.write_cpsr(id::cpsr::T, 0);
     reg.write_cpsr(id::cpsr::I, 1);
 
-    if (coprocessor.read(id::cp15::R1_V)) {
+    if (coprocessor.read(id::cp::CP15_R1_V)) {
         reg.write(id::reg::PC, 0xFFFF000C);
     } else {
         reg.write(id::reg::PC, 0x0000000C);
@@ -128,7 +132,7 @@ void EXCEPTION::data_abort() {
     reg.write_cpsr(id::cpsr::T, 0);
     reg.write_cpsr(id::cpsr::I, 1);
 
-    if (coprocessor.read(id::cp15::R1_V)) {
+    if (coprocessor.read(id::cp::CP15_R1_V)) {
         reg.write(id::reg::PC, 0xFFFF0010);
     } else {
         reg.write(id::reg::PC, 0x00000010);
@@ -154,7 +158,7 @@ void EXCEPTION::irq() {
     reg.write_cpsr(id::cpsr::T, 0);
     reg.write_cpsr(id::cpsr::I, 1);
 
-    if (coprocessor.read(id::cp15::R1_V)) {
+    if (coprocessor.read(id::cp::CP15_R1_V)) {
         reg.write(id::reg::PC, 0xFFFF0018);
     } else {
         reg.write(id::reg::PC, 0x00000018);
@@ -182,7 +186,7 @@ void EXCEPTION::fiq() {
     reg.write_cpsr(id::cpsr::F, 1);
     reg.write_cpsr(id::cpsr::I, 1);
 
-    if (coprocessor.read(id::cp15::R1_V)) {
+    if (coprocessor.read(id::cp::CP15_R1_V)) {
         reg.write(id::reg::PC, 0xFFFF001C);
     } else {
         reg.write(id::reg::PC, 0x0000001C);

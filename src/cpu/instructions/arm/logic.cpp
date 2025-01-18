@@ -44,7 +44,7 @@ void instructions::arm::logic::AND(const arm_code_t &code, REGISTERS &reg) {
         //reg.write_cpsr(id::cpsr::C, ());
     }
 
-    reg.increment_PC();
+    reg.arm_increment_PC();
 }
 
 
@@ -65,7 +65,7 @@ void instructions::arm::logic::CLZ(const arm_code_t &code, REGISTERS &reg) {
         reg.write(Rd_id, 31 - (std::bit_width(Rm) - 1));
     }
 
-    reg.increment_PC();
+    reg.arm_increment_PC();
 }
 
 

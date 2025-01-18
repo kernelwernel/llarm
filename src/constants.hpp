@@ -5,6 +5,10 @@
 namespace constants {
 
     enum class mode : u8 {
+        USER_26 = 0b00000,
+        FIQ_26 = 0b00001,
+        IRQ_26 = 0b00010,
+        SUPERVISOR_26 = 0b00011,
         USER = 0b10000,
         SUPERVISOR = 0b10011,
         ABORT = 0b10111,

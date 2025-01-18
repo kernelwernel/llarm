@@ -11,6 +11,7 @@ private:
     COPROCESSOR& coprocessor;
 
 public:
+/*
     void switch_mode(const id::mode mode) {
         switch (mode) {
             case id::mode::USER:       reg.write_cpsr(id::cpsr::M, constants::mode::USER); return;
@@ -36,7 +37,7 @@ public:
                 out::error("No known enum value for read_mode()");
         }
     }
-
+*/
     bool is_thumb() noexcept {
         return (reg.read_cpsr(id::cpsr::T) == 1);
     }
@@ -47,20 +48,30 @@ public:
 
     void switch_to_arm() {
         reg.write_cpsr(id::cpsr::T, 0);
-        instruction_set.set = id::instruction_sets::ARM;
+        globals.instruction_set = id::instruction_sets::ARM;
     }
 
     void switch_to_thumb() {
         reg.write_cpsr(id::cpsr::T, 1);
-        instruction_set.set = id::instruction_sets::THUMB;
+        globals.instruction_set = id::instruction_sets::THUMB;
     }
 
     void enable_mmu() {
-        coprocessor.write_control(id::cp15::R1_M, true);
+        coprocessor.write_control(id::cp::CP15_R1_M, true);
     }
 
     void disable_mmu() {
-        coprocessor.write_control(id::cp15::R1_M, false);  
+        coprocessor.write_control(id::cp::CP15_R1_M, false);  
+    }
+
+    bool switch_to_26_bit_arch() {
+        coprocessor.write_cp15(id::cp::CP15_R1_P, false);
+        coprocessor.write_cp15(id::cp::CP15_R1_D, false);
+    }
+
+    bool switch_to_32_bit_arch() {
+        coprocessor.write_cp15(id::cp::CP15_R1_P, true);
+        coprocessor.write_cp15(id::cp::CP15_R1_D, true);
     }
 
     SYSTEM(
@@ -71,3 +82,6 @@ public:
 
     }
 }
+
+
+// TODO remove this fucking garbage

@@ -9,7 +9,8 @@
 
 INSTRUCTION_SET::INSTRUCTION_SET(REGISTERS& reg, MEMORY& memory, COPROCESSOR& coprocessor) : reg(reg), memory(memory), coprocessor(coprocessor) {
     arm_table = {
-        { id::arm_instruction::NOP, { opcodes::arm::NOP, instructions::misc::NOP } }
+        { id::arm_instruction::NOP, { opcodes::arm::NOP, instructions::misc::NOP } },
+        { id::arm_instruction::PSR, { opcodes::arm::PSR, instructions::misc::PSR } },
     };
 
     thumb_table = {

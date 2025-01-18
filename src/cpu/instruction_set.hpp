@@ -26,6 +26,9 @@ public:
     REGISTERS& reg;
     MEMORY& memory;
     COPROCESSOR& coprocessor;
+    
+
+
 
 private:
     using arm_table_t = std::map<id::arm_instruction, arm_struct>;
@@ -37,7 +40,22 @@ public:
     thumb_table_t thumb_table;
     jazelle_table_t thumb_table;
 
-    id::instruction_sets set;
+    void add_arm_instruction(const arm_struct &instruction) {
+        // this is definitely NOT gonna compile
+        // 
+        // auto last_instruction = arm_table.crbegin();
+        // const u8 last_id = last_instruction->first;
+// 
+        // arm_table.emplace((last_id + 1), instruction);
+    }
+    
+    void add_thumb_instruction() {
+        
+    }
+
+    void add_jazelle_instruction() {
+        
+    }
 
     INSTRUCTION_SET(REGISTERS& reg, MEMORY& memory, COPROCESSOR& coprocessor);
 };

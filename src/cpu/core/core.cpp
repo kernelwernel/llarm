@@ -3,6 +3,7 @@
 #include "id.hpp"
 
 #include "cpu/core/registers.hpp"
+#include "cpu/core/globals.hpp"
 #include "cpu/instruction_set.hpp"
 //#include "cpu/clock.hpp"
 #include "cpu/exception.hpp"
@@ -23,12 +24,12 @@ void core::initialise(const std::vector<u8> &binary, input_args &args) {
 
     // initialisations
     SETTINGS settings(args);
-    REGISTERS reg;
-    RAM ram;
-    TLB tlb(ram);
+    GLOBALS globals;
     COPROCESSOR coprocessor(settings);
+    REGISTERS reg(coprocessor, globals);
+    RAM ram;
     MMU mmu(ram);
-    MEMORY memory(binary, ram, coprocessor);
+    MEMORY memory(binary, ram, coprocessor, mmu);
     INSTRUCTION_SET instruction_set(reg, memory, coprocessor);
     SYSTEM sys(reg, instruction_set, coprocessor);
     EXCEPTION exception(reg, coprocessor, instruction_set);
@@ -38,14 +39,14 @@ void core::initialise(const std::vector<u8> &binary, input_args &args) {
 
 
     // setup/boot
-    sys.switch_mode(id::mode::SUPERVISOR);
-    sys.switch_to_thumb();
-    sys.disable_mmu();
+    reg.switch_mode(id::mode::SUPERVISOR);
+    reg.write_cpsr(id::cpsr::T, 1); // switch to thumb  // TODO: double check if it actually starts in thumb mode
+    coprocessor.write_control(id::cp::CP15_R1_M, false); // disable MMU
 
 
     // instruction cycle 
     //for (;;) {
-        switch (instruction_set.set) {
+        switch (globals.instruction_set) {
             case id::instruction_sets::ARM: {
                 const arm_code_t raw_arm_code = fetch.arm_fetch();
                 const arm_decoded_t code = decode.arm_decode(raw_arm_code);

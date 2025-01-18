@@ -3,6 +3,7 @@
 #include "types.hpp"
 #include "cpu/ram.hpp"
 #include "cpu/coprocessor.hpp"
+#include "utility.hpp"
 
 #include <bitset>
 #include <vector>
@@ -13,19 +14,11 @@ struct MEMORY {
 private:
     RAM& ram;
     COPROCESSOR& coprocessor;
+    MMU& mmu;
 
-    // page/block sizes
-    constexpr u32 tiny  = std::pow(2, 10); // 1KB
-    constexpr u32 small = std::pow(2, 12); // 4KB
-    constexpr u32 large = std::pow(2, 16); // 64KB
 
-    // section size
-    constexpr u32 section = std::pow(2, 20); // 1MB
 
-    // protection unit
-    struct PU {
 
-    };
 
 
 public:
@@ -65,32 +58,32 @@ public:
      */
 
 
-    void write(const std::vector<u8> &data, const u32 address) {
-        if (is_access_permission_invalid()) {
+    void write(const std::vector<u8> &data, const u32 address, const u8 bytes) {
+        if (mmu.is_access_permission_invalid(address)) {
             // TODO: FIND AN ERROR MESSAGE
         }
 
         ram.write(data, address);
     }
 
-    void write(const u8 data, const u32 address) {
-        if (is_access_permission_invalid()) {
+    void write(const u8 data, const u32 address, const u8 bytes) {
+        if (mmu.is_access_permission_invalid(address)) {
             // TODO: FIND AN ERROR MESSAGE
         }
 
         ram.write(data, address);
     }
 
-    void write(const u16 data, const u32 address) {
-        if (is_access_permission_invalid()) {
+    void write(const u16 data, const u32 address, const u8 bytes) {
+        if (mmu.is_access_permission_invalid(address)) {
             // TODO: FIND AN ERROR MESSAGE
         }
 
         ram.write(data, address);
     }
 
-    void write(const u32 data, const u32 address) {
-        if (is_access_permission_invalid()) {
+    void write(const u32 data, const u32 address, const u8 bytes) {
+        if (mmu.is_access_permission_invalid(address)) {
             // TODO: FIND AN ERROR MESSAGE
         }
 
@@ -98,7 +91,7 @@ public:
     }
 
     std::vector<u8> read(const u32 start, const u32 end) {
-        if (is_access_permission_invalid()) {
+        if (mmu.is_access_permission_invalid(address)) {
             // TODO: FIND AN ERROR MESSAGE
         }
 
@@ -106,7 +99,7 @@ public:
     }
 
     u8 read(const u32 address) {
-        if (is_access_permission_invalid()) {
+        if (mmu.is_access_permission_invalid(address)) {
             // TODO: FIND AN ERROR MESSAGE
         }
 
@@ -117,20 +110,14 @@ public:
         ram.reset();
     }
 
-    bool is_access_permission_invalid() {
-        if (coprocessor.read(id::cp15::R1_M) == false) {
-            return false;
-        }
 
-        // TODO: CONTINUE WITH THE CHECK
-        return true;
-    }
 
     MEMORY(
         const std::vector<u8> &binary, 
         RAM& ram, 
-        COPROCESSOR& coprocessor
-    ) : ram(ram), coprocessor(coprocessor) {
+        COPROCESSOR& coprocessor,
+        MMU& mmu
+    ) : ram(ram), coprocessor(coprocessor), mmu(mmu) {
         ram.write(binary, 0); // write the entire machine code into RAM
     }
 

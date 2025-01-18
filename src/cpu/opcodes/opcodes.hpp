@@ -51,6 +51,7 @@ namespace opcodes {
         [[nodiscard]] bool SWPB(const arm_code_t &raw_code) noexcept;
         [[nodiscard]] bool TEQ(const arm_code_t &raw_code) noexcept;
         [[nodiscard]] bool TST(const arm_code_t &raw_code) noexcept;
+        [[nodiscard]] bool PSR(const arm_code_t &raw_code) noexcept;
 
         namespace v4 {
             [[nodiscard]] bool STRH(const arm_code_t &raw_code) noexcept;

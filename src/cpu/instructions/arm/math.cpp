@@ -31,7 +31,7 @@ void instructions::arm::math::ADC(const arm_code_t &code, REGISTERS &reg) {
     const u32 Rd = reg.read(Rd_id);
 
     if ((S == 1) && (Rd == reg.read(id::reg::R15))) {
-        reg.write_cpsr(id::reg::CURRENT_SPSR);
+        reg.write_cpsr(id::reg::SPSR);
     } else if (S == 1) {
         reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
         reg.write_cpsr(id::cpsr::Z, (Rd == 0));
@@ -40,7 +40,7 @@ void instructions::arm::math::ADC(const arm_code_t &code, REGISTERS &reg) {
     }
 
 
-    reg.increment_PC();
+    reg.arm_increment_PC();
 }
 
 
@@ -67,7 +67,7 @@ void instructions::arm::math::ADD(const arm_code_t &code, REGISTERS &reg) {
     reg.write(Rd_id, (Rn + shifter_operand));
 
     if ((S == 1) && (Rd_id == id::reg::R15)) {
-        reg.write_cpsr(id::reg::CURRENT_SPSR);
+        reg.write_cpsr(id::reg::SPSR);
     } else if (S == 1) {
         const u32 Rd = reg.read(Rd_id);
         reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
@@ -76,5 +76,11 @@ void instructions::arm::math::ADD(const arm_code_t &code, REGISTERS &reg) {
         reg.write_cpsr(id::cpsr::V, util::overflow_add(Rn, shifter_operand));
     }
 
-    reg.increment_PC();
+    reg.arm_increment_PC();
 }
+
+
+void RSB(const arm_code_t&, REGISTERS&); // TODO
+void RSC(const arm_code_t&, REGISTERS&); // TODO
+void SBC(const arm_code_t&, REGISTERS&); // TODO
+void SUB(const arm_code_t&, REGISTERS&); // TODO

@@ -197,23 +197,92 @@ void instructions::thumb::math::SBC(const thumb_code_t &code, REGISTERS &reg) {
 }
 
 
+/**
+ * Rd = Rn - immed_3
+ * N Flag = Rd[31]
+ * Z Flag = if Rd == 0 then 1 else 0
+ * C Flag = NOT BorrowFrom(Rn - immed_3)
+ * V Flag = OverflowFrom(Rn - immed_3)
+ */
 void instructions::thumb::math::SUB1(const thumb_code_t &code, REGISTERS &reg) {
+    const u8 immed_3 = util::bit_fetcher<u8>(code, 6, 8);
+    const id::reg Rn_id = reg.fetch_reg_id(code, 3, 5);
+    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
+    const u32 Rn = reg.read(Rn_id);
+
+    reg.write(Rd_id, (Rn - immed_3));
+
+    const u32 Rd = reg.read(Rd_id);
+
+    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
+    reg.write_cpsr(id::cpsr::C, !util::borrow_sub(Rn, immed_3));
+    reg.write_cpsr(id::cpsr::V, util::overflow_sub(Rn, immed_3));
+
+    reg.thumb_increment_PC();
 }
 
 
+/**
+ * Rd = Rd - immed_8
+ * N Flag = Rd[31]
+ * Z Flag = if Rd == 0 then 1 else 0
+ * C Flag = NOT BorrowFrom(Rd - immed_8)
+ * V Flag = OverflowFrom(Rd - immed_8)
+ */
 void instructions::thumb::math::SUB2(const thumb_code_t &code, REGISTERS &reg) {
+    const u8 immed_8 = util::bit_fetcher<u8>(code, 0, 7);
+    const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
 
+    reg.write(Rd_id, (reg.read(Rd_id) - immed_8));
+
+    const u32 Rd = reg.read(Rd_id);
+
+    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
+    reg.write_cpsr(id::cpsr::C, !util::borrow_sub(Rd, immed_8));
+    reg.write_cpsr(id::cpsr::V, util::overflow_sub(Rd, immed_8));
+
+    reg.thumb_increment_PC();
 }
 
 
+/**
+ * Rd = Rn - Rm
+ * N Flag = Rd[31]
+ * Z Flag = if Rd == 0 then 1 else 0
+ * C Flag = NOT BorrowFrom(Rn - Rm)
+ * V Flag = OverflowFrom(Rn - Rm)
+ */
 void instructions::thumb::math::SUB3(const thumb_code_t &code, REGISTERS &reg) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+    const id::reg Rn_id = reg.fetch_reg_id(code, 3, 5);
+    const id::reg Rm_id = reg.fetch_reg_id(code, 6, 8);
 
+    reg.write(Rd_id, (reg.read(Rn_id) - reg.read(Rm_id)));
+
+    const u32 Rd = reg.read(Rd_id);
+    const u32 Rn = reg.read(Rn_id);
+    const u32 Rm = reg.read(Rm_id);
+
+    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
+    reg.write_cpsr(id::cpsr::C, !util::borrow_sub(Rn, Rm));
+    reg.write_cpsr(id::cpsr::V, util::overflow_sub(Rn, Rm));
+
+    reg.thumb_increment_PC();
 }
 
-
+/**
+ * SP = SP - (immed_7 << 2)
+ */
 void instructions::thumb::math::SUB4(const thumb_code_t &code, REGISTERS &reg) {
+    const u8 immed_7 = util::bit_fetcher<u8>(code, 0, 6);
 
+    reg.write(id::reg::SP, (reg.read(id::reg::SP) - (immed_7 << 2)));
+
+    reg.thumb_increment_PC();
 }
 
 
@@ -238,51 +307,3 @@ void instructions::thumb::math::MUL(const thumb_code_t &code, REGISTERS &reg) {
 
     reg.thumb_increment_PC();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

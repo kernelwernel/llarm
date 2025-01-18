@@ -11,15 +11,19 @@
  *     LR = address of the instruction after the branch instruction
  *   PC = PC + (SignExtend(signed_immed_24) << 2)
  */
-//TODO
 void instructions::arm::branching::B(const arm_code_t &code, REGISTERS &reg) {
     const i32 signed_immed_24 = util::bit_fetcher<i32>(code, 3, 5);
     const bool L = code.test(24);
 
     if (L == 1) {
-        
+        reg.write(id::reg::LR, reg.read(id::reg::PC) + 4); // TODO: check if this is correct
     }
 
+    const u32 address = (reg.read(id::reg::PC) + (operation::sign_extend(signed_immed_24) << 2));
+
+    // All 32 bits are stored in the Link register (R14) after a Branch with Link instruction or an exception entry.
+
+    reg.write(id::reg::PC, address);
 }
 
 
@@ -32,11 +36,9 @@ void instructions::arm::branching::B(const arm_code_t &code, REGISTERS &reg) {
 void instructions::arm::branching::BX(const arm_code_t &code, REGISTERS &reg) {
     const u32 Rm = reg.read(code, 0, 3);
 
-    if ((Rm & 1) == 0) {
-        // arm
-    } else {
-        // thumb
-    }
+    reg.write_cpsr(id::cpsr::T, (Rm & 1));
 
-    reg.write(id::reg::PC, Rm & 0xFFFFFFFE);
+    u32 address = (Rm & 0xFFFFFFFE);
+
+    reg.write(id::reg::PC, address);
 }

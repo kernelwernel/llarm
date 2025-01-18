@@ -11,10 +11,9 @@
  * V Flag = OverflowFrom(Rn + Rm)
  */
 void instructions::thumb::compare::CMN(const thumb_code_t &code, REGISTERS &reg) {
-    /*
     const u32 Rn = reg.read(code, 0, 2);
     const u32 Rm = reg.read(code, 3, 5);
-    const u64 alu_out = Rn + Rm;
+    const i32 alu_out = Rn + Rm;
 
     reg.write_cpsr(id::cpsr::N, (alu_out & (1 << 31)));
     reg.write_cpsr(id::cpsr::Z, (alu_out == 0));
@@ -22,7 +21,6 @@ void instructions::thumb::compare::CMN(const thumb_code_t &code, REGISTERS &reg)
     reg.write_cpsr(id::cpsr::V, util::overflow_add(Rn, Rm));
 
     reg.thumb_increment_PC();
-    */
 }
 
 
@@ -33,12 +31,11 @@ void instructions::thumb::compare::CMN(const thumb_code_t &code, REGISTERS &reg)
  * C Flag = NOT BorrowFrom(Rn - immed_8)
  * V Flag = OverflowFrom(Rn - immed_8)
  */
-// DOUBLE CHECK IF overflow_sub works as intended
 void instructions::thumb::compare::CMP1(const thumb_code_t &code, REGISTERS &reg) {
     const u32 Rn = reg.read(code, 8, 10);
     const u8 immed_8 = util::bit_fetcher<u8>(code, 0, 7);
 
-    const u32 alu_out = Rn - immed_8;
+    const i32 alu_out = Rn - immed_8;
 
     reg.write_cpsr(id::cpsr::N, (alu_out & (1 << 31)));
     reg.write_cpsr(id::cpsr::Z, (alu_out == 0));
@@ -56,7 +53,6 @@ void instructions::thumb::compare::CMP1(const thumb_code_t &code, REGISTERS &reg
  * C Flag = NOT BorrowFrom(Rn - Rm)
  * V Flag = OverflowFrom(Rn - Rm)
  */
-// DOUBLE CHECK IF overflow_sub works as intended
 void instructions::thumb::compare::CMP2(const thumb_code_t &code, REGISTERS &reg) {
     const u32 Rn = reg.read(code, 0, 2);
     const u32 Rm = reg.read(code, 3, 5);

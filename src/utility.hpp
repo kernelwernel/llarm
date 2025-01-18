@@ -39,9 +39,18 @@ namespace util {
         return static_cast<T>((input >> start) & mask);
     }
 
+    u32 bit_fetcher(const u32 input, const u8 start, const u8 end) {
+        if (start >= end) [[unlikely]] {
+            // TODO: think of an error
+        }
+
+        const u32 mask = ((1U << (end - start + 1)) - 1);
+        return ((input >> start) & mask);
+    }
 
 
-    void modify_bits(u32 &original, const u32 start, const u32 end, const u32 value) {
+
+    void modify_bit_range(u32 &original, const u16 start, const u16 end, const u32 value) {
         if (start > end || start > 31 || end > 31) {
             throw std::invalid_argument("Invalid bit range");
         }
@@ -54,6 +63,7 @@ namespace util {
         original_copy &= ~mask;
 
         const u32 masked_value = (1U << (end - start + 1)) - 1;
+
         if (value & ~masked_value) {
             throw std::invalid_argument("Value does not fit in the specified bit range");
         }
@@ -64,28 +74,69 @@ namespace util {
     }
 
 
+    void modify_bit(u32 &original, const u8 index const bool value) {
+        if (index > 31) {
+            throw std::out_of_range("Index must be between 0 and 31.");
+        }
+
+        if (value) {
+            original |= (1U << index);
+        } else {
+            original &= ~(1U << index);
+        }
+    }
+
+    // 1-based counting
+    constexpr u32 trim(const u32 original, const u8 lhs, const u8 rhs) noexcept {
+        if (lhs + rhs >= 32) {
+            // TODO thing of a dev warning message here
+            return 0;
+        }
+
+        u32 original_copy = original;
+
+        original_copy >>= rhs;
+        original_copy <<= rhs + lhs;
+        original_copy >>= lhs;
+
+        return original_copy;
+    }
+
+
+    u32 swap_bits(const u32 original, const u8 index, const u8 width, const u32 value) {
+        const u32 mask = ((1u << width) - 1) << index;
+        u32 original_copy = original;
+        original_copy &= ~mask;
+        original_copy |= (value << index) & mask;
+        return original_copy;
+    };
+
+
+
+
+
     // for example, ARMv5TEJ will be simplified to ARMv5
-    id::base_arch conv_specific_arch_to_base_arch(const id::specific_arch arch) {
+    id::arch conv_specific_arch_to_arch(const id::specific_arch arch) {
         switch (arch) {
-            case id::specific_arch::ARMv1: return id::base_arch::ARMv1;
+            case id::specific_arch::ARMv1: return id::arch::ARMv1;
             case id::specific_arch::ARMv2: 
-            case id::specific_arch::ARMv2a: return id::base_arch::ARMv2;
-            case id::specific_arch::ARMv3: return id::base_arch::ARMv3;
+            case id::specific_arch::ARMv2a: return id::arch::ARMv2;
+            case id::specific_arch::ARMv3: return id::arch::ARMv3;
             case id::specific_arch::ARMv4: 
-            case id::specific_arch::ARMv4T: return id::base_arch::ARMv4;
+            case id::specific_arch::ARMv4T: return id::arch::ARMv4;
             case id::specific_arch::ARMv5: 
             case id::specific_arch::ARMv5T: 
             case id::specific_arch::ARMv5TE: 
-            case id::specific_arch::ARMv5TEJ: return id::base_arch::ARMv5;
+            case id::specific_arch::ARMv5TEJ: return id::arch::ARMv5;
             case id::specific_arch::ARMv6: 
             case id::specific_arch::ARMv6T2: 
             case id::specific_arch::ARMv6Z: 
             case id::specific_arch::ARMv6K: 
-            case id::specific_arch::ARMv6_M: return id::base_arch::ARMv6;
+            case id::specific_arch::ARMv6_M: return id::arch::ARMv6;
             case id::specific_arch::ARMv7_A: 
             case id::specific_arch::ARMv7_M: 
             case id::specific_arch::ARMv7_R: 
-            case id::specific_arch::ARMv7E_M: return id::base_arch::ARMv7;
+            case id::specific_arch::ARMv7E_M: return id::arch::ARMv7;
             case id::specific_arch::ARMv8_A: 
             case id::specific_arch::ARMv8_R: 
             case id::specific_arch::ARMv8_M_BASELINE: 
@@ -95,9 +146,9 @@ namespace util {
             case id::specific_arch::ARMv8_3_A: 
             case id::specific_arch::ARMv8_4_A: 
             case id::specific_arch::ARMv8_5_A: 
-            case id::specific_arch::ARMv8_6_A: return id::base_arch::ARMv8;
+            case id::specific_arch::ARMv8_6_A: return id::arch::ARMv8;
             case id::specific_arch::ARMv9_A: 
-            case id::specific_arch::ARMv9_2_A: return id::base_arch::ARMv9;
+            case id::specific_arch::ARMv9_2_A: return id::arch::ARMv9;
         }
     }
 
@@ -127,44 +178,55 @@ namespace util {
     }
 
 
-    id::cp15 fetch_cp15_reg_id(const u8 raw_cp15_num) {
-        switch(raw_cp15_num) {
-            case 0b0000: return id::cp15::R0;
-            case 0b0001: return id::cp15::R1;
-            case 0b0010: return id::cp15::R2;
-            case 0b0011: return id::cp15::R3;
-            case 0b0100: return id::cp15::R4;
-            case 0b0101: return id::cp15::R5;
-            case 0b0110: return id::cp15::R6;
-            case 0b0111: return id::cp15::R7;
-            case 0b1000: return id::cp15::R8;
-            case 0b1001: return id::cp15::R9;
-            case 0b1010: return id::cp15::R10;
-            case 0b1011: return id::cp15::R11;
-            case 0b1100: return id::cp15::R12;
-            case 0b1101: return id::cp15::R13;
-            case 0b1110: return id::cp15::R14;
-            case 0b1111: return id::cp15::R15;
-            default: // TODO: throw undefined exception
+
+    consteval u32 get_kb(const u16 kb) {
+        switch (kb) {
+            case 1: return std::pow(2, 10); // 1KB
+            case 2: return std::pow(2, 11); // 2KB
+            case 4: return std::pow(2, 12); // 4KB
+            case 8: return std::pow(2, 13); // 8KB
+            case 16: return std::pow(2, 14); // 16KB
+            case 32: return std::pow(2, 15); // 32KB
+            case 64: return std::pow(2, 16); // 64KB
+            case 128: return std::pow(2, 17); // 128KB
+            case 256: return std::pow(2, 18); // 256KB
+            case 512: return std::pow(2, 19); // 512KB
+            default: return 0;
         }
     }
 
+    consteval u32 get_mb(const u16 mb) {
+        switch(mb) {
+            case 1: return std::pow(2, 20); // 1MB
+            case 2: return std::pow(2, 21); // 2MB
+            case 4: return std::pow(2, 22); // 4MB
+            case 8: return std::pow(2, 23); // 8MB
+            case 16: return std::pow(2, 24); // 16MB
+            case 32: return std::pow(2, 25); // 32MB
+            case 64: return std::pow(2, 26); // 64MB
+            case 128: return std::pow(2, 27); // 128MB
+            case 256: return std::pow(2, 28); // 256MB
+            case 512: return std::pow(2, 29); // 512MB
+            default: return 0;
+        }
+    }
+    
+    consteval u64 get_gb(const u16 gb) {
+        switch (gb) {
+            case 1: return std::pow(2, 30); // 1GB
+            case 2: return std::pow(2, 31); // 2GB
+            case 4: return std::pow(2, 32); // 4GB
+            case 8: return std::pow(2, 33); // 8GB
+            case 16: return std::pow(2, 34); // 16GB
+            case 32: return std::pow(2, 35); // 32GB
+            case 64: return std::pow(2, 36); // 64GB
+            case 128: return std::pow(2, 37); // 128GB
+            case 256: return std::pow(2, 38); // 256GB
+            case 512: return std::pow(2, 39); // 512GB
+            default: return 0;
+        }
+    }
 
-
-    [[nodiscard]] bool carry_add(const u64&);
-    [[nodiscard]] bool carry_add(const u32, const u32);
-    [[nodiscard]] bool carry_add(const u32, const u32, const u32);
-
-    [[nodiscard]] bool borrow_add(const u32, const u32);
-    [[nodiscard]] bool borrow_sub(const u32, const u32);
-    [[nodiscard]] bool borrow_sub(const u32, const u32, const u32);
-
-    [[nodiscard]] bool overflow_add(const i32, const i32);
-    [[nodiscard]] bool overflow_add(const i32, const i32, const i32);
-    [[nodiscard]] bool overflow_sub(const i32, const i32);
-    [[nodiscard]] bool overflow_sub(const i32, const i32, const i32);
-
-    [[nodiscard]] bool arithmetic_shift_right(u32 num, const u8 shift);
 
 
 /*

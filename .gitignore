@@ -4,4 +4,7 @@ archive/
 build/
 cmake_test/
 name_ideas/
-links.md/
+links.md
+references/
+src/*.png
+todo.

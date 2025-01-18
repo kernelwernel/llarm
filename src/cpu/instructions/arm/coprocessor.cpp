@@ -3,6 +3,8 @@
 #include "cpu/instructions/instructions.hpp"
 #include "cpu/core/registers.hpp"
 
+// NOTE: MSR is still available in backwards compatible 26-bit mode
+
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1
 void instructions::arm::coprocessor::CDP(const arm_code_t &code, REGISTERS& reg) {
 
@@ -50,7 +52,7 @@ void instructions::arm::coprocessor::MCR(const arm_code_t &code, REGISTERS& reg)
     */
 
 
-    reg.increment_PC();
+    reg.arm_increment_PC();
 }
 
 
@@ -91,7 +93,7 @@ void instructions::arm::coprocessor::MRC(const arm_code_t &code, REGISTERS& reg)
         reg.write(Rd_id, data);
     }
 
-    reg.increment_PC();
+    reg.arm_increment_PC();
 }
 
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1

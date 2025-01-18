@@ -31,7 +31,7 @@ namespace id {
         A,   // imprecise data abort disable bit
         E,   // data endianness bit
         IT,  // if-then state bits
-        GRE, // greater-than-or-equal-to bits (it's GE but there's a conflict with a different macro so yeah)
+        GE, // greater-than-or-equal-to bits
         DNM, // the "do not modify" bits
         J = 26,   // Java state bit
         Q,   // sticky overflow bit
@@ -76,14 +76,14 @@ namespace id {
         R14_svc,
         R14_abt,
         PC,
-        R15 = PC, // program counter
+        R15, // program counter (this is not the same as R15 due to 26-bit arch restraints)
         CPSR,
+        SPSR,
         SPSR_svc,
         SPSR_abt,
         SPSR_und,
         SPSR_irq,
         SPSR_fiq,
-        CURRENT_SPSR
     };
 
     enum class arm_instruction : u8 {
@@ -375,7 +375,11 @@ namespace id {
         UNDEFINED,  // supports software emulation of hardware coprocessors
         FIQ,        // high-speed data transfer or channel process
         IRQ,        // general purpose interrupt handling
-        SYSTEM      // runs privileged OS tasks (ARMv4 and above)
+        SYSTEM,     // runs privileged OS tasks (ARMv4 and above)
+        USER_26,
+        FIQ_26,
+        IRQ_26,
+        SUPERVISOR_26
     };
 
     enum class cond : u8 {
@@ -429,153 +433,132 @@ namespace id {
         CP15  // system control
     };
 
-    enum class cp_reg : u8 {
-        CP15_R0 = 1,
-        CP15_R1,
-        CP15_R2,
-        CP15_R3,
-        CP15_R4,
-        CP15_R5,
-        CP15_R6,
-        CP15_R7,
-        CP15_R8,
-        CP15_R9,
-        CP15_R10,
-        CP15_R11,
-        CP15_R12,
-        CP15_R13,
-        CP15_R14,
-        CP15_R15
-        // more can be added here for different registers
-    };
-
-
-    enum class cp15 : u8 {
+    // coprocessor registers and bits
+    enum class cp : u8 {
         NULL_REG = 0,
-        R0_ID,
-        R0_ID_IMPLEMENTOR,
-        R0_ID_PPN, // PPN = primary part number
-        R0_ID_PPN_TOP,
-        R0_ID_PPN_LOWER,
-        R0_ID_REVISION,
-        R0_ID_POST7_VARIANT,
-        R0_ID_POST7_ARCH,
-        R0_ID_7_VARIANT,
-        R0_ID_7_A,
-        R0_ID_PRE7_ID,
-        R0_CACHE,
-        R0_CACHE_CTYPE,
-        R0_CACHE_S,
-        R0_CACHE_DSIZE,
-        R0_CACHE_ISIZE,
-        
+        CP15_R0_ID,
+        CP15_R0_ID_IMPLEMENTOR,
+        CP15_R0_ID_PPN, // PPN = primary part number
+        CP15_R0_ID_PPN_TOP,
+        CP15_R0_ID_PPN_LOWER,
+        CP15_R0_ID_REVISION,
+        CP15_R0_ID_POST7_VARIANT,
+        CP15_R0_ID_POST7_ARCH,
+        CP15_R0_ID_7_VARIANT,
+        CP15_R0_ID_7_A,
+        CP15_R0_ID_PRE7_ID,
+        CP15_R0_CACHE,
+        CP15_R0_CACHE_CTYPE,
+        CP15_R0_CACHE_S,
+        CP15_R0_CACHE_DSIZE,
+        CP15_R0_CACHE_ISIZE,
 
-        R1_CONTROL,
-        R1_M, // MMU or Protection Unit enable disable
-        R1_A, // alignment fault checking
-        R1_C, // unified cache
-        R1_W, // write buffer
-        R1_P, // 26-bit backwards-compatibility configurations (PROG32)
-        R1_D, // 26-bit backwards-compatibility configurations (DATA32)
-        R1_L, // abort model of the processor
-        R1_B, // endianness of the memory system
-        R1_S, // system protection bit
-        R1_R, // ROM protection bit
-        R1_F, // IMPLEMENTATION DEFINED
-        R1_Z, // branch prediction
-        R1_I, // instruction cache
-        R1_V, // high vectors
-        R1_RR, // cache strategy
-        R1_L4, // ARMv5+ backwards compatibility
+        CP15_R1_CONTROL,
+        CP15_R1_M, // MMU or Protection Unit enable disable
+        CP15_R1_A, // alignment fault checking
+        CP15_R1_C, // unified cache
+        CP15_R1_W, // write buffer
+        CP15_R1_P, // 26-bit backwards-compatibility configurations (PROG32)
+        CP15_R1_D, // 26-bit backwards-compatibility configurations (DATA32)
+        CP15_R1_L, // abort model of the processor
+        CP15_R1_B, // endianness of the memory system
+        CP15_R1_S, // system protection bit
+        CP15_R1_R, // ROM protection bit
+        CP15_R1_F, // IMPLEMENTATION DEFINED
+        CP15_R1_Z, // branch prediction
+        CP15_R1_I, // instruction cache
+        CP15_R1_V, // high vectors
+        CP15_R1_RR, // cache strategy
+        CP15_R1_L4, // ARMv5+ backwards compatibility
 
-        R2_MMU,
-        R2_MMU_TRANSLATION_BASE,
-        R2_PU,
-        R2_PU_C0,
-        R2_PU_C1,
-        R2_PU_C2,
-        R2_PU_C3,
-        R2_PU_C4,
-        R2_PU_C5,
-        R2_PU_C6,
-        R2_PU_C7,
-    
-        R3_MMU,
-        R3_MMU_D0,
-        R3_MMU_D1,
-        R3_MMU_D2,
-        R3_MMU_D3,
-        R3_MMU_D4,
-        R3_MMU_D5,
-        R3_MMU_D6,
-        R3_MMU_D7,
-        R3_MMU_D8,
-        R3_MMU_D9,
-        R3_MMU_D10,
-        R3_MMU_D11,
-        R3_MMU_D12,
-        R3_MMU_D13,
-        R3_MMU_D14,
-        R3_MMU_D15,
-        R3_PU,
-        R3_PU_B0,
-        R3_PU_B1,
-        R3_PU_B2,
-        R3_PU_B3,
-        R3_PU_B4,
-        R3_PU_B5,
-        R3_PU_B6,
-        R3_PU_B7,
+        CP15_R2_MMU,
+        CP15_R2_MMU_TRANSLATION_BASE,
+        CP15_R2_PU,
+        CP15_R2_PU_C0,
+        CP15_R2_PU_C1,
+        CP15_R2_PU_C2,
+        CP15_R2_PU_C3,
+        CP15_R2_PU_C4,
+        CP15_R2_PU_C5,
+        CP15_R2_PU_C6,
+        CP15_R2_PU_C7,
 
-        R4_MMU,
-        R4_PU,
+        CP15_R3_MMU,
+        CP15_R3_MMU_D0,
+        CP15_R3_MMU_D1,
+        CP15_R3_MMU_D2,
+        CP15_R3_MMU_D3,
+        CP15_R3_MMU_D4,
+        CP15_R3_MMU_D5,
+        CP15_R3_MMU_D6,
+        CP15_R3_MMU_D7,
+        CP15_R3_MMU_D8,
+        CP15_R3_MMU_D9,
+        CP15_R3_MMU_D10,
+        CP15_R3_MMU_D11,
+        CP15_R3_MMU_D12,
+        CP15_R3_MMU_D13,
+        CP15_R3_MMU_D14,
+        CP15_R3_MMU_D15,
+        CP15_R3_PU,
+        CP15_R3_PU_B0,
+        CP15_R3_PU_B1,
+        CP15_R3_PU_B2,
+        CP15_R3_PU_B3,
+        CP15_R3_PU_B4,
+        CP15_R3_PU_B5,
+        CP15_R3_PU_B6,
+        CP15_R3_PU_B7,
 
-        R5_MMU,
-        R5_MMU_DOMAIN,
-        R5_MMU_STATUS,
-        R5_PU,
-        R5_PU_AP0,
-        R5_PU_AP1,
-        R5_PU_AP2,
-        R5_PU_AP3,
-        R5_PU_AP4,
-        R5_PU_AP5,
-        R5_PU_AP6,
-        R5_PU_AP7,
+        CP15_R4_MMU,
+        CP15_R4_PU,
 
-        R6_MMU,
-        R6_MMU_FAR, // fault address
-        R6_PU,
-        R6_PU_BASE_ADDRESS, 
-        R6_PU_SIZE,
-        R6_PU_E,  
+        CP15_R5_MMU,
+        CP15_R5_MMU_DOMAIN,
+        CP15_R5_MMU_STATUS,
+        CP15_R5_PU,
+        CP15_R5_PU_AP0,
+        CP15_R5_PU_AP1,
+        CP15_R5_PU_AP2,
+        CP15_R5_PU_AP3,
+        CP15_R5_PU_AP4,
+        CP15_R5_PU_AP5,
+        CP15_R5_PU_AP6,
+        CP15_R5_PU_AP7,
 
-        R7_CACHE,
-        R7_CACHE_INDEX,
-        R7_CACHE_SET,
+        CP15_R6_MMU,
+        CP15_R6_MMU_FAR, // fault address
+        CP15_R6_PU,
+        CP15_R6_PU_BASE_ADDRESS, 
+        CP15_R6_PU_SIZE,
+        CP15_R6_PU_E,  
 
-        R8_MMU,
-        R8_PU,
+        CP15_R7_CACHE,
+        CP15_R7_CACHE_INDEX,
+        CP15_R7_CACHE_SET,
 
-        R9_CACHE,
-        R9_CACHE_INDEX,
-        R9_CACHE_L,
+        CP15_R8_MMU,
+        CP15_R8_PU,
 
-        R10_MMU,
-        R10_MMU_BASE,
-        R10_MMU_VICTIM,
-        R10_MMU_P,
-        R10_PU,
+        CP15_R9_CACHE,
+        CP15_R9_CACHE_INDEX,
+        CP15_R9_CACHE_L,
 
-        R11_RESERVED,
-        
-        R12_RESERVED,
+        CP15_R10_MMU,
+        CP15_R10_MMU_BASE,
+        CP15_R10_MMU_VICTIM,
+        CP15_R10_MMU_P,
+        CP15_R10_PU,
 
-        R13_PID,
-        
-        R14_RESERVED,
+        CP15_R11_RESERVED,
+        CP15_
+        CP15_R12_RESERVED,
 
-        R15_IMPL
+        CP15_R13_PID,
+        //CP15_ ????????????????/
+        CP15_R14_RESERVED,
+
+        CP15_R15_IMPL
     };
 
 
@@ -585,6 +568,20 @@ namespace id {
         READ
     };
 
+
+    enum class first_level_descriptor : u8 {
+        FAULT = 1, 
+        COARSE_PAGE_TABLE, 
+        SECTION,
+        FINE_PAGE_TABLE,
+    };
+
+    enum class second_level_descriptor : u8 {
+        FAULT = 1, 
+        LARGE,
+        SMALL,
+        TINY
+    };
 
     enum class product_family : u8 {
         ARM1 = 1,
@@ -608,7 +605,7 @@ namespace id {
         NEOVERSE,
     };
 
-    enum class base_arch : u8 {
+    enum class arch : u8 {
         ARMv1 = 1,
         ARMv2,
         ARMv3,
@@ -618,7 +615,7 @@ namespace id {
         ARMv7,
         ARMv8,
         ARMv9
-    }
+    };
 
     enum class specific_arch : u8 {
         ARMv1 = 1,
@@ -665,11 +662,34 @@ namespace id {
 
     enum class implementor : u8 {
         ARM = 1,
+        BRCM, // broadcom 
         DEC, // digital equipment corporation
         MOTOROLA,
         QUALCOMM,
         MARVELL, 
         INTEL,
         CHARM // custom
+    };
+
+    enum class error : u8 {
+        UNKNOWN = 0,
+        REG_26_NO_COMPAT
+    };
+
+    enum class warning : u8 {
+        UNKNOWN = 0,
+        SBZ, 
+        UNPREDICTABLE,
+        DNM
+    };
+
+    enum class dev_warning : u8 {
+        UNKNOWN = 0,
+        TRIM_IS_ALL_ZERO
+    };
+
+    enum class dev_error : u8 {
+        UNKNOWN = 0,
+        TRIM_IS_ALL_ZERO
     };
 }
