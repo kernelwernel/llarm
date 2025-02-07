@@ -16,6 +16,7 @@
 struct COPROCESSOR {
 private:
     SETTINGS& settings;
+    MMU& mmu;
 
 public:
     // ID codes
@@ -47,7 +48,16 @@ public:
 
     // Memory protection and control
     u32 R6_MMU = 0; // fault address 
-    u32 R6_PU  = 0; // protection area control
+
+    // protection area control
+    u32 R6_PU_0 = 0;
+    u32 R6_PU_1 = 0;
+    u32 R6_PU_2 = 0;
+    u32 R6_PU_3 = 0;
+    u32 R6_PU_4 = 0;
+    u32 R6_PU_5 = 0;
+    u32 R6_PU_6 = 0;
+    u32 R6_PU_7 = 0;
 
     // Cache and write buffer
     u32 R7_CACHE = 0; // cache/write buffer control
@@ -163,7 +173,13 @@ public:
             case id::cp::CP15_R0_CACHE_ISIZE: // TODO
             case id::cp::CP15_R1_CONTROL: R1_CONTROL = value; return;
             case id::cp::CP15_R1_M: 
-                if (settings.is_mmu_enabled || settings.is_protection_unit_enabled) {
+                if (settings.is_protection_unit_enabled) {
+                    if ((R6_PU_0 + R6_PU_1 + R6_PU_2 + R6_PU_3 + R6_PU_4 + R6_PU_5 + R6_PU_6 + R6_PU_7) == 0) {
+                        // TODO warning: PU must have at least a single protection region setup
+                    }
+
+                    util::modify_bit(R1_CONTROL, 0, value); 
+                } else if (settings.is_mmu_enabled) {
                     util::modify_bit(R1_CONTROL, 0, value); 
                 }
                 return;
@@ -273,7 +289,14 @@ public:
             case id::cp::CP15_R1_L4:    util::modify_bit(R1_CONTROL, 15, value); return; // TODO (B2-16)
 
             case id::cp::CP15_R2_MMU:   R2_MMU = value; return;
-            case id::cp::CP15_R2_MMU_TRANSLATION_BASE: // TODO
+            case id::cp::CP15_R2_MMU_TRANSLATION_BASE:  
+                if (R2_MMU == value) {
+                    return;
+                }
+
+                util::swap_bits(R2_MMU, 14, value);
+                mmu.flush_tlb(); // B3-3
+                return;
             case id::cp::CP15_R2_PU:    R2_PU = value; return;
             case id::cp::CP15_R2_PU_C0: util::modify_bit(R2_PU, 0, value); return;
             case id::cp::CP15_R2_PU_C1: util::modify_bit(R2_PU, 1, value); return;
@@ -327,10 +350,100 @@ public:
             case id::cp::CP15_R5_PU_AP7: util::swap_bits(R5_PU, 14, 2, value); return;
             case id::cp::CP15_R6_MMU:    R6_MMU; return;
             case id::cp::CP15_R6_MMU_FAR: // TODO
-            case id::cp::CP15_R6_PU:     R6_PU = value; return;
-            case id::cp::CP15_R6_PU_BASE_ADDRESS: util::swap_bits(R6_PU, 12, 19, value); return; // TODO: test if this works
-            case id::cp::CP15_R6_PU_SIZE:   util::swap_bits(R6_PU, 1, 5, value); return; // same
-            case id::cp::CP15_R6_PU_E:      util::modify_bit(R6_PU, 0, value); return;
+            case id::cp::CP15_R6_PU_0:              R6_PU_0 = value; return;
+            case id::cp::CP15_R6_PU_0_BASE_ADDRESS: 
+                globals.mpu_address_changes = true;
+                util::swap_bits(R6_PU_0, 12, 19, value); return; // TODO: test if this works
+            case id::cp::CP15_R6_PU_0_SIZE:         
+                globals.mpu_address_changes = true;
+                util::swap_bits(R6_PU_0, 1, 5, value); return; // same
+            case id::cp::CP15_R6_PU_0_E:            
+                globals.mpu_address_changes = true;
+                util::modify_bit(R6_PU_0, 0, value); return;
+            case id::cp::CP15_R6_PU_1:              
+                globals.mpu_address_changes = true;
+                R6_PU_1 = value; return;
+            case id::cp::CP15_R6_PU_1_BASE_ADDRESS: 
+                globals.mpu_address_changes = true;
+                util::swap_bits(R6_PU_1, 12, 19, value); return; // TODO: test if this works
+            case id::cp::CP15_R6_PU_1_SIZE:         
+                globals.mpu_address_changes = true;
+                util::swap_bits(R6_PU_1, 1, 5, value); return; // same
+            case id::cp::CP15_R6_PU_1_E:            
+                globals.mpu_address_changes = true;
+                util::modify_bit(R6_PU_1, 0, value); return;
+            case id::cp::CP15_R6_PU_2:              
+                globals.mpu_address_changes = true;
+                R6_PU_2 = value; return;
+            case id::cp::CP15_R6_PU_2_BASE_ADDRESS: 
+                globals.mpu_address_changes = true;
+                util::wap_bits(R6_PU_2 12, 19, value); return; // TODO: test if this works
+            case id::cp::CP15_R6_PU_2_SIZE:         
+                globals.mpu_address_changes = true;
+                util::swap_bits(R6_PU_2, 1, 5, value); return; // same
+            case id::cp::CP15_R6_PU_2_E:            
+                globals.mpu_address_changes = true;
+                util::modify_bit(R6_PU_2, 0, value); return;
+            case id::cp::CP15_R6_PU_3:              
+                globals.mpu_address_changes = true;
+                R6_PU_3 = value; return;
+            case id::cp::CP15_R6_PU_3_BASE_ADDRESS: 
+                globals.mpu_address_changes = true;
+                util::swap_bits(R6_PU_3, 12, 19, value); return; // TODO: test if this works
+            case id::cp::CP15_R6_PU_3_SIZE:         
+                globals.mpu_address_changes = true;
+                util::swap_bits(R6_PU_3, 1, 5, value); return; // same
+            case id::cp::CP15_R6_PU_3_E:            
+                globals.mpu_address_changes = true;
+                util::modify_bit(R6_PU_3, 0, value); return;
+            case id::cp::CP15_R6_PU_4:              
+                globals.mpu_address_changes = true;
+                R6_PU_4 = value; return;
+            case id::cp::CP15_R6_PU_4_BASE_ADDRESS: 
+                globals.mpu_address_changes = true;
+                util::swap_bits(R6_PU_4, 12, 19, value); return; // TODO: test if this works
+            case id::cp::CP15_R6_PU_4_SIZE:         
+                globals.mpu_address_changes = true;
+                util::swap_bits(R6_PU_4, 1, 5, value); return; // same
+            case id::cp::CP15_R6_PU_4_E:            
+                globals.mpu_address_changes = true;
+                util::modify_bit(R6_PU_4, 0, value); return;
+            case id::cp::CP15_R6_PU_5:              
+                globals.mpu_address_changes = true;
+                R6_PU_5 = value; return;
+            case id::cp::CP15_R6_PU_5_BASE_ADDRESS: 
+                globals.mpu_address_changes = true;
+                util::swap_bits(R6_PU_5, 12, 19, value); return; // TODO: test if this works
+            case id::cp::CP15_R6_PU_5_SIZE:         
+                globals.mpu_address_changes = true;
+                util::swap_bits(R6_PU_5, 1, 5, value); return; // same
+            case id::cp::CP15_R6_PU_5_E:            
+                globals.mpu_address_changes = true;
+                util::modify_bit(R6_PU_5, 0, value); return;
+            case id::cp::CP15_R6_PU_6:              
+                globals.mpu_address_changes = true;
+                R6_PU_6 = value; return;
+            case id::cp::CP15_R6_PU_6_BASE_ADDRESS: 
+                globals.mpu_address_changes = true;
+                util::swap_bits(R6_PU_6, 12, 19, value); return; // TODO: test if this works
+            case id::cp::CP15_R6_PU_6_SIZE:         
+                globals.mpu_address_changes = true;
+                util::swap_bits(R6_PU_6, 1, 5, value); return; // same
+            case id::cp::CP15_R6_PU_6_E:            
+                globals.mpu_address_changes = true;
+                util::modify_bit(R6_PU_6, 0, value); return;
+            case id::cp::CP15_R6_PU_7:              
+                globals.mpu_address_changes = true;
+                R6_PU_7 = value; return;
+            case id::cp::CP15_R6_PU_7_BASE_ADDRESS: 
+                globals.mpu_address_changes = true;
+                util::swap_bits(R6_PU_7, 12, 19, value); return; // TODO: test if this works
+            case id::cp::CP15_R6_PU_7_SIZE:         
+                globals.mpu_address_changes = true;
+                util::swap_bits(R6_PU_7, 1, 5, value); return; // same
+            case id::cp::CP15_R6_PU_7_E:            
+                globals.mpu_address_changes = true;
+                util::modify_bit(R6_PU_7, 0, value); return;
             case id::cp::CP15_R7_CACHE:     R7_CACHE = value; return;
             case id::cp::CP15_R7_CACHE_INDEX: // TODO
             case id::cp::CP15_R7_CACHE_SET: // TODO
@@ -443,7 +556,7 @@ public:
     }
 
 
-
+    // ??????????????????????????????????/////
     id::memory get_access_perm_type(const id::cp15 region) {
         u8 raw_permission_bits = 0;
 
@@ -477,13 +590,13 @@ public:
         }
     }
 
-    COPROCESSOR(MEMORY& memory, SETTINGS& settings) : settings(settings) {
-        // CP15 setup
+    COPROCESSOR(MMU& mmu, SETTINGS& settings) : mmu(mmu), settings(settings) {
+        // R0 setup
         setup_R0_processor_id();
         setup_R0_cache();
 
 
-        // R1
+        // R1 setup
         
     }
 
@@ -564,7 +677,12 @@ private:
                 case id::implementor::QUALCOMM: write_cp15(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x51); break; // Q
                 case id::implementor::MARVELL:  write_cp15(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x56); break; // V
                 case id::implementor::INTEL:    write_cp15(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x69); break; // i
-                case id::implementor::CHARM:    write_cp15(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x43); break; // C (custom)
+                case id::implementor::CHARM:    
+                    if (settings.anti_emulation_detection) {
+                        write_cp15(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x41); break; // if emulation should not be detected, implement ARM instead
+                    } else {
+                        write_cp15(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x43); break; // C (CHARM, custom)
+                    }
             }
 
             // primary part number
@@ -670,29 +788,6 @@ private:
 /*
 0b00000 to 0b01010UNPREDICTABLE-
 
-auto get_size = [](const u8 raw_size_bits) -> u64 {
-    case 0b01011: return std::pow(2, 12); // 4KB
-    case 0b01100: return std::pow(2, 13); // 8KB
-    case 0b01101: return std::pow(2, 14); // 16KB
-    case 0b01110: return std::pow(2, 15); // 32KB
-    case 0b01111: return std::pow(2, 16); // 64KB
-    case 0b10000: return std::pow(2, 17); // 128KB
-    case 0b10001: return std::pow(2, 18); // 256KB
-    case 0b10010: return std::pow(2, 19); // 512KB
-    case 0b10011: return std::pow(2, 20); // 1MB
-    case 0b10100: return std::pow(2, 21); // 2MB
-    case 0b10101: return std::pow(2, 22); // 4MB
-    case 0b10110: return std::pow(2, 23); // 8MB
-    case 0b10111: return std::pow(2, 24); // 16MB
-    case 0b11000: return std::pow(2, 25); // 32MB
-    case 0b11001: return std::pow(2, 26); // 64MB
-    case 0b11010: return std::pow(2, 27); // 128MB
-    case 0b11011: return std::pow(2, 28); // 256MB
-    case 0b11100: return std::pow(2, 29); // 512MB
-    case 0b11101: return std::pow(2, 30); // 1GB
-    case 0b11110: return std::pow(2, 31); // 2GB
-    case 0b11111: return std::pow(2, 32); // 4GB
-};
 
 Bit[12] must be zero
 Bits[13:12] must be zero

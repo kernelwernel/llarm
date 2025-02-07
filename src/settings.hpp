@@ -38,14 +38,17 @@ public:
     bool branch_prediction_cannot_disable;
     bool has_high_vectors;
     bool has_debug_hardware;
+    bool anti_emulation_detection;
 
-    u8 thumb_version; // either 1 or 2
+    u8 thumb_version; // either 1 or 2, 0 if not supported
+    u8 core_count;
     u16 clock_speed_mhz; 
     u64 memsize;
     id::arch arch;
     id::specific_arch specific_arch;
     id::product_family product_family;
     id::implementor implementor;
+    u8 custom_implementor_char;
     id::processor processor;
     u8 variant; // cpu variant, implementation defined
     u16 ppn; // primary part number, implementation defined

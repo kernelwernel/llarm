@@ -7,11 +7,28 @@
 
 
 
-INSTRUCTION_SET::INSTRUCTION_SET(REGISTERS& reg, MEMORY& memory, COPROCESSOR& coprocessor) : reg(reg), memory(memory), coprocessor(coprocessor) {
+INSTRUCTION_SET::INSTRUCTION_SET(REGISTERS& reg, MEMORY& memory, COPROCESSOR& coprocessor, SETTINGS& settings) : reg(reg), memory(memory), coprocessor(coprocessor), settings(settings) {
     arm_table = {
-        { id::arm_instruction::NOP, { opcodes::arm::NOP, instructions::misc::NOP } },
-        { id::arm_instruction::PSR, { opcodes::arm::PSR, instructions::misc::PSR } },
+        { id::arm_instruction::NOP, { opcodes::arm::NOP, instructions::arm::misc::NOP } }
+        //{ id::arm_instruction::PSR, { opcodes::arm::PSR, instructions::misc::PSR } },
     };
+
+    if (settings.is_dsp_enabled()) {
+        arm_table.emplace_back(id::arm_instruction::LDRD, { opcodes::arm::LDRD, instructions::arm::DSP::LDRD });
+        arm_table.emplace_back(id::arm_instruction::MCRR, { opcodes::arm::MCRR, instructions::arm::DSP::MCRR });
+        arm_table.emplace_back(id::arm_instruction::MRRC, { opcodes::arm::MRRC, instructions::arm::DSP::MRRC });
+        arm_table.emplace_back(id::arm_instruction::PLD, { opcodes::arm::PLD, instructions::arm::DSP::PLD });
+        arm_table.emplace_back(id::arm_instruction::QADD, { opcodes::arm::QADD, instructions::arm::DSP::QADD });
+        arm_table.emplace_back(id::arm_instruction::QDADD, { opcodes::arm::QDADD, instructions::arm::DSP::QDADD });
+        arm_table.emplace_back(id::arm_instruction::QDSUB, { opcodes::arm::QDSUB, instructions::arm::DSP::QDSUB });
+        arm_table.emplace_back(id::arm_instruction::QSUB, { opcodes::arm::QSUB, instructions::arm::DSP::QSUB });
+        arm_table.emplace_back(id::arm_instruction::SMLA, { opcodes::arm::SMLA, instructions::arm::DSP::SMLA });
+        arm_table.emplace_back(id::arm_instruction::SMLAL, { opcodes::arm::SMLAL, instructions::arm::DSP::SMLAL });
+        arm_table.emplace_back(id::arm_instruction::SMLAW, { opcodes::arm::SMLAW, instructions::arm::DSP::SMLAW });
+        arm_table.emplace_back(id::arm_instruction::SMUL, { opcodes::arm::SMUL, instructions::arm::DSP::SMUL });
+        arm_table.emplace_back(id::arm_instruction::SMULW, { opcodes::arm::SMULW, instructions::arm::DSP::SMULW });
+        arm_table.emplace_back(id::arm_instruction::STRD, { opcodes::arm::STRD, instructions::arm::DSP::STRD });
+    }
 
     thumb_table = {
         // math

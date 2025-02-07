@@ -8,6 +8,8 @@
 
 namespace util {
 
+    // TODO: maybe replace this with the 0-shifter strategy
+
     // 0-based counting btw
     template <typename T>
     T bit_fetcher(const arm_code_t &input, const u8 start, const u8 end) {
@@ -44,8 +46,12 @@ namespace util {
             // TODO: think of an error
         }
 
-        const u32 mask = ((1U << (end - start + 1)) - 1);
-        return ((input >> start) & mask);
+        u32 copy = input;
+
+        copy <<= (31 - end);
+        copy >>= (31 - end + start);
+
+        return copy;
     }
 
 
@@ -103,13 +109,16 @@ namespace util {
     }
 
 
-    u32 swap_bits(const u32 original, const u8 index, const u8 width, const u32 value) {
+    void swap_bits(u32 &original, const u8 index, const u8 width, const u32 value) {
         const u32 mask = ((1u << width) - 1) << index;
-        u32 original_copy = original;
-        original_copy &= ~mask;
-        original_copy |= (value << index) & mask;
-        return original_copy;
+        original &= ~mask;
+        original |= (value << index) & mask;
     };
+
+    void swap_bits(u32 &original, const u8 index, const u32 value) {
+        swap_bits(original, index, (31 - index), value);
+    };
+
 
 
 
@@ -154,79 +163,53 @@ namespace util {
 
 
 
-
-    id::coprocessor fetch_cp_id(const u8 raw_cp_num) {
-        switch(raw_cp_num) {
-            case 0b0000: return id::coprocessor::CP0;
-            case 0b0001: return id::coprocessor::CP1;
-            case 0b0010: return id::coprocessor::CP2;
-            case 0b0011: return id::coprocessor::CP3;
-            case 0b0100: return id::coprocessor::CP4;
-            case 0b0101: return id::coprocessor::CP5;
-            case 0b0110: return id::coprocessor::CP6;
-            case 0b0111: return id::coprocessor::CP7;
-            case 0b1000: return id::coprocessor::CP8;
-            case 0b1001: return id::coprocessor::CP9;
-            case 0b1010: return id::coprocessor::CP10;
-            case 0b1011: return id::coprocessor::CP11;
-            case 0b1100: return id::coprocessor::CP12;
-            case 0b1101: return id::coprocessor::CP13;
-            case 0b1110: return id::coprocessor::CP14;
-            case 0b1111: return id::coprocessor::CP15;
-            default: // TODO: throw undefined exception
-        }
-    }
-
-
-
     consteval u32 get_kb(const u16 kb) {
         switch (kb) {
-            case 1: return std::pow(2, 10); // 1KB
-            case 2: return std::pow(2, 11); // 2KB
-            case 4: return std::pow(2, 12); // 4KB
-            case 8: return std::pow(2, 13); // 8KB
-            case 16: return std::pow(2, 14); // 16KB
-            case 32: return std::pow(2, 15); // 32KB
-            case 64: return std::pow(2, 16); // 64KB
+            case 1:   return std::pow(2, 10); // 1KB
+            case 2:   return std::pow(2, 11); // 2KB
+            case 4:   return std::pow(2, 12); // 4KB
+            case 8:   return std::pow(2, 13); // 8KB
+            case 16:  return std::pow(2, 14); // 16KB
+            case 32:  return std::pow(2, 15); // 32KB
+            case 64:  return std::pow(2, 16); // 64KB
             case 128: return std::pow(2, 17); // 128KB
             case 256: return std::pow(2, 18); // 256KB
             case 512: return std::pow(2, 19); // 512KB
-            default: return 0;
+            default: static_assert(false, "get_kb: invalid argument (must be either 1 or a power of 2)");
         }
     }
 
     consteval u32 get_mb(const u16 mb) {
         switch(mb) {
-            case 1: return std::pow(2, 20); // 1MB
-            case 2: return std::pow(2, 21); // 2MB
-            case 4: return std::pow(2, 22); // 4MB
-            case 8: return std::pow(2, 23); // 8MB
-            case 16: return std::pow(2, 24); // 16MB
-            case 32: return std::pow(2, 25); // 32MB
-            case 64: return std::pow(2, 26); // 64MB
+            case 1:   return std::pow(2, 20); // 1MB
+            case 2:   return std::pow(2, 21); // 2MB
+            case 4:   return std::pow(2, 22); // 4MB
+            case 8:   return std::pow(2, 23); // 8MB
+            case 16:  return std::pow(2, 24); // 16MB
+            case 32:  return std::pow(2, 25); // 32MB
+            case 64:  return std::pow(2, 26); // 64MB
             case 128: return std::pow(2, 27); // 128MB
             case 256: return std::pow(2, 28); // 256MB
             case 512: return std::pow(2, 29); // 512MB
-            default: return 0;
+            default: static_assert(false, "get_mb: invalid argument (must be either 1 or a power of 2)");
         }
     }
     
     consteval u64 get_gb(const u16 gb) {
         switch (gb) {
-            case 1: return std::pow(2, 30); // 1GB
-            case 2: return std::pow(2, 31); // 2GB
-            case 4: return std::pow(2, 32); // 4GB
-            case 8: return std::pow(2, 33); // 8GB
-            case 16: return std::pow(2, 34); // 16GB
-            case 32: return std::pow(2, 35); // 32GB
-            case 64: return std::pow(2, 36); // 64GB
+            case 1:   return std::pow(2, 30); // 1GB
+            case 2:   return std::pow(2, 31); // 2GB
+            case 4:   return std::pow(2, 32); // 4GB
+            case 8:   return std::pow(2, 33); // 8GB
+            case 16:  return std::pow(2, 34); // 16GB
+            case 32:  return std::pow(2, 35); // 32GB
+            case 64:  return std::pow(2, 36); // 64GB
             case 128: return std::pow(2, 37); // 128GB
             case 256: return std::pow(2, 38); // 256GB
             case 512: return std::pow(2, 39); // 512GB
-            default: return 0;
+            default: static_assert(false, "get_gb: invalid argument (must be either 1 or a power of 2)");
         }
     }
-
 
 
 /*

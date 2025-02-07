@@ -79,6 +79,23 @@ namespace opcodes {
             [[nodiscard]] bool UMLAL(const arm_code_t &raw_code) noexcept;
             [[nodiscard]] bool UMULL(const arm_code_t &raw_code) noexcept;
         }
+
+        namespace DSP {
+            [[nodiscard]] bool LDRD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool MCRR(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool MRRC(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool PLD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool QADD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool QDADD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool QDSUB(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool QSUB(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool SMLA(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool SMLAL(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool SMLAW(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool SMUL(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool SMULW(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool STRD(const arm_code_t &raw_code) noexcept;
+        }
     }
 
     namespace thumb {

@@ -82,6 +82,22 @@ struct instructions {
             void MRS(const arm_code_t&, REGISTERS&);// TODO
             void MSR(const arm_code_t&, REGISTERS&);// TODO
         }
+        namespace DSP {
+            void LDRD(const arm_code_t&, REGISTERS&); // TODO
+            void MCRR(const arm_code_t&, REGISTERS&); // TODO
+            void MRRC(const arm_code_t&, REGISTERS&); // TODO
+            void PLD(const arm_code_t&, REGISTERS&); // TODO
+            void QADD(const arm_code_t&, REGISTERS&); // TODO
+            void QDADD(const arm_code_t&, REGISTERS&); // TODO
+            void QDSUB(const arm_code_t&, REGISTERS&); // TODO
+            void QSUB(const arm_code_t&, REGISTERS&); // TODO
+            void SMLA(const arm_code_t&, REGISTERS&); // TODO
+            void SMLAL(const arm_code_t&, REGISTERS&); // TODO
+            void SMLAW(const arm_code_t&, REGISTERS&); // TODO
+            void SMUL(const arm_code_t&, REGISTERS&); // TODO
+            void SMULW(const arm_code_t&, REGISTERS&); // TODO
+            void STRD(const arm_code_t&, REGISTERS&); // TODO
+        }
     }
 
 

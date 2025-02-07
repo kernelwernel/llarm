@@ -26,6 +26,7 @@ public:
     REGISTERS& reg;
     MEMORY& memory;
     COPROCESSOR& coprocessor;
+    SETTINGS& settings;
     
 
 
@@ -57,5 +58,5 @@ public:
         
     }
 
-    INSTRUCTION_SET(REGISTERS& reg, MEMORY& memory, COPROCESSOR& coprocessor);
+    INSTRUCTION_SET(REGISTERS& reg, MEMORY& memory, COPROCESSOR& coprocessor, SETTINGS& settings);
 };

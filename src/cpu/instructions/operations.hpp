@@ -1,4 +1,5 @@
 #include "types.hpp"
+#include <vector>
 
 namespace operation {
     [[nodiscard]] bool carry_add(const u64&);
@@ -21,6 +22,10 @@ namespace operation {
 
 
     [[nodiscard]] bool arithmetic_shift_right(u32 num, const u8 shift); // why is this not a reference? research more...
+
+    std::vector<id::reg> register_list(const u8 reg_list);
+
+    id::coprocessor fetch_cp_id(const u8 raw_cp_num);
 }
 
 /*

@@ -11,6 +11,7 @@ An ARM emulation framework for C++
 
 
 # Technical features
+CHARM has the goal of emulating pretty much everything about the ARM architecture up to v(something):
 - 26-bit architecture compatibility
 - Thumb, Thumb2 and Jazelle compatibility (WIP)
 - MMU and MPU support (WIP)
@@ -20,7 +21,7 @@ An ARM emulation framework for C++
 
 
 
-# Why not use unicorn engine and what are its differences?
+# Why not use unicorn engine and what are the differences?
 While unicorn serves a similar purpose to CHARM, there are key differences between the two:
     - virtualization support 
     - and providing a wide range of CPU architectures (x86, RISC-V, SPARC, etc...),
@@ -38,4 +39,5 @@ Additionally, unicorn uses the GPLv2 license, which means proprietary software c
     - ARM emulation
     - program monitoring and logging
     - messing around and learning the architecure in a hands-on approach
+    - embedded systems development
     - and much more

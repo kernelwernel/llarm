@@ -104,7 +104,7 @@ void instructions::thumb::branching::BLX2(const thumb_code_t &code, REGISTERS &r
 
     reg.write(id::reg::LR, (next_instruction_address | 1));
     reg.write_cpsr(id::cpsr::T, (Rm & 1));
-    reg.write(id::reg::PC, (util::trim(Rm, 0, 1) << 1));
+    reg.write(id::reg::PC, (util::trim(Rm, 0, 1) << 1)); // TODO replace with bit_fetcher
 }
 
 

@@ -88,7 +88,23 @@ namespace id {
 
     enum class arm_instruction : u8 {
         UNKNOWN = 0,
-        NOP
+        NOP,
+
+        // Enhanced DSP instructions
+        LDRD,
+        MCRR,
+        MRRC,
+        PLD,
+        QADD,
+        QDADD,
+        QDSUB,
+        QSUB,
+        SMLA,
+        SMLAL,
+        SMLAW,
+        SMUL,
+        SMULW,
+        STRD
     }
 
     enum class thumb_instruction : u8 {
@@ -528,10 +544,38 @@ namespace id {
 
         CP15_R6_MMU,
         CP15_R6_MMU_FAR, // fault address
-        CP15_R6_PU,
-        CP15_R6_PU_BASE_ADDRESS, 
-        CP15_R6_PU_SIZE,
-        CP15_R6_PU_E,  
+        CP15_R6_PU_0,
+        CP15_R6_PU_0_BASE_ADDRESS, 
+        CP15_R6_PU_0_SIZE,
+        CP15_R6_PU_0_E,  
+        CP15_R6_PU_1,
+        CP15_R6_PU_1_BASE_ADDRESS, 
+        CP15_R6_PU_1_SIZE,
+        CP15_R6_PU_1_E,  
+        CP15_R6_PU_2,
+        CP15_R6_PU_2_BASE_ADDRESS, 
+        CP15_R6_PU_2_SIZE,
+        CP15_R6_PU_2_E,  
+        CP15_R6_PU_3,
+        CP15_R6_PU_3_BASE_ADDRESS, 
+        CP15_R6_PU_3_SIZE,
+        CP15_R6_PU_3_E,  
+        CP15_R6_PU_4,
+        CP15_R6_PU_4_BASE_ADDRESS, 
+        CP15_R6_PU_4_SIZE,
+        CP15_R6_PU_4_E,  
+        CP15_R6_PU_5,
+        CP15_R6_PU_5_BASE_ADDRESS, 
+        CP15_R6_PU_5_SIZE,
+        CP15_R6_PU_5_E,  
+        CP15_R6_PU_6,
+        CP15_R6_PU_6_BASE_ADDRESS, 
+        CP15_R6_PU_6_SIZE,
+        CP15_R6_PU_6_E,  
+        CP15_R6_PU_7,
+        CP15_R6_PU_7_BASE_ADDRESS, 
+        CP15_R6_PU_7_SIZE,
+        CP15_R6_PU_7_E,  
 
         CP15_R7_CACHE,
         CP15_R7_CACHE_INDEX,
@@ -551,11 +595,9 @@ namespace id {
         CP15_R10_PU,
 
         CP15_R11_RESERVED,
-        CP15_
         CP15_R12_RESERVED,
 
         CP15_R13_PID,
-        //CP15_ ????????????????/
         CP15_R14_RESERVED,
 
         CP15_R15_IMPL
@@ -569,18 +611,61 @@ namespace id {
     };
 
 
-    enum class first_level_descriptor : u8 {
+    enum class first_level : u8 {
         FAULT = 1, 
-        COARSE_PAGE_TABLE, 
-        SECTION,
-        FINE_PAGE_TABLE,
+        COARSE, 
+        FINE,
+        SECTION
     };
 
-    enum class second_level_descriptor : u8 {
+    enum class second_level : u8 {
         FAULT = 1, 
         LARGE,
         SMALL,
         TINY
+    };
+
+    enum class access_perm : u8 {
+        NO_ACCESS,
+        READ_ONLY,
+        READ_WRITE,
+        UNPREDICTABLE,
+    };
+
+    enum class access_type : u8 {
+        READ,
+        WRITE,
+        READ_WRITE,
+        INSTRUCTION_FETCH
+    };
+
+    enum class access_domain : u8 {
+        NO_ACCESS,
+        CLIENT,
+        RESERVED,
+        MANAGER
+    };
+
+    enum class aborts : u8 {
+        ALIGNMENT,
+        TRANSLATION,
+        SECTION_TRANSLATION,
+        PAGE_TRANSLATION,
+        PAGE_DOMAIN,
+        SUB_PAGE_PERMISSION,
+        SECTION_DOMAIN,
+        SECTION_PERMISSION
+    };
+
+    enum class pu_region : u8 { // pu = protection unit
+        REGION_0 = 0,
+        REGION_1
+        REGION_2,
+        REGION_3,
+        REGION_4,
+        REGION_5,
+        REGION_6,
+        REGION_7
     };
 
     enum class product_family : u8 {
@@ -654,10 +739,103 @@ namespace id {
     enum class processor : u8 {
         // TODO  (https://en.wikipedia.org/wiki/List_of_ARM_processors)
         // https://sourceware.org/binutils/docs/as/ARM-Options.html
-        ARM3 = 1,
+        ARM1,
+        ARM2,
+        ARM250,
+        ARM3,
+        ARM60,
         ARM600,
         ARM610,
-        ARM620
+        ARM620, // where?
+        ARM700,
+        ARM710,
+        ARM710a,
+        ARM7TDMI_S,
+        ARM710T,
+        ARM720T,
+        ARM740T,
+        ARM7EJ_S,
+        ARM810,
+        ARM9TDMI,
+        ARM920T,
+        ARM922T,
+        ARM940T,
+        ARM946E_S,
+        ARM966E_S,
+        ARM968E_S,
+        ARM926EJ_S,
+        ARM996HS,
+        ARM1020E,
+        ARM1022E,
+        ARM1026EJ_S,
+        ARM1136JF_S,
+        ARM1156T2F_S,
+        ARM1176JZF_S,
+        ARM11MPCore,
+        SC000,
+        SC100,
+        SC300,
+        Cortex_M0,
+        Cortex_M0_PLUS,
+        Cortex_M1,
+        Cortex_M3,
+        Cortex_M4,
+        Cortex_M7,
+        Cortex_M23,
+        Cortex_M33,
+        Cortex_M35P,
+        Cortex_M52,
+        Cortex_M55,
+        Cortex_M85,
+        Cortex_R4,
+        Cortex_R5,
+        Cortex_R7,
+        Cortex_R8,
+        Cortex_R52,
+        Cortex_R52_PLUS,
+        Cortex_R82,
+        Cortex_A5,
+        Cortex_A7,
+        Cortex_A8,
+        Cortex_A9,
+        Cortex_A12,
+        Cortex_A15,
+        Cortex_A17,
+        Cortex_A32,
+        Cortex_A34,
+        Cortex_A35,
+        Cortex_A53,
+        Cortex_A57,
+        Cortex_A72,
+        Cortex_A73,
+        Cortex_A55,
+        Cortex_A65,
+        Cortex_A65AE,
+        Cortex_A75,
+        Cortex_A76,
+        Cortex_A76AE,
+        Cortex_A77,
+        Cortex_A78,
+        Cortex_A78AE,
+        Cortex_A78C,
+        Cortex_A510,
+        Cortex_A710,
+        Cortex_A715,
+        Cortex_A520,
+        Cortex_A720,
+        Cortex_A725,
+        Cortex_X1,
+        Cortex_X2,
+        Cortex_X3,
+        Cortex_X4,
+        Cortex_X925,
+        Neoverse_N1,
+        Neoverse_E1,
+        Neoverse_V1,
+        Neoverse_N2,
+        Neoverse_V2,
+        Neoverse_N3,
+        Neoverse_V3
     };
 
     enum class implementor : u8 {

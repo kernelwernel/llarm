@@ -4,6 +4,7 @@
 #include "cpu/ram.hpp"
 #include "cpu/coprocessor.hpp"
 #include "utility.hpp"
+#include "mmu.hpp"
 
 #include <bitset>
 #include <vector>
@@ -17,6 +18,22 @@ private:
     MMU& mmu;
 
 
+    // this is specific to the 26-bit architecture
+    bool is_address_invalid(const u32 address) {
+        if (settings.no_26_bits) {
+            return false;
+        }
+    
+        // 26-bit architecture cannot have an address above (2^26)-1
+        if (coprocessor.is_26_bit_arch_address()) {
+            if (address > (std::pow(2, 26) - 1)) {
+                // TODO: "ADDRESS EXCEPTION" HERE
+                return false;
+            }
+        }
+
+        return true;
+    }
 
 
 
@@ -24,87 +41,133 @@ private:
 public:
 
 
-    /*
-     * MMU NOTES:
-     *
-     * - For caches and write buffers which are not allowed to be enabled while the MMU is disabled, 
-     *   the values of the C and B bits for a memory access are irrelevant.
-     *
-     * - For caches and write buffers which are allowed to be enabled while the MMU is disabled, a
-     *   data access is treated as uncachable and unbufferable (C == 0, B == 0). An instruction fetch is
-     *   treated as uncachable (C == 0) in a system with a unified TLB, and as cachable (C == 1) in a
-     *   system with a separate instruction TLB.
-     * 
-     * - when the MMU is disabled, no aborts are generated
-     * 
-     * - Before the MMU is enabled, suitable translation tables must be set up 
-     *   in memory and all relevant CP15 registers must be programmed.
-     * 
-     * 
-     * 
-     * MEMORY SIZES:
-     * - Sections are comprised of 1MB blocks of memory.
-     * 
-     * - Three different page sizes are supported:
-     *   - Tiny pages: Consist of 1KB blocks of memory.
-     *   - Small pages: Consist of 4KB blocks of memory.
-     *   - Large pages: Consist of 64KB blocks of memory.
-     * 
-     * CP15 reg 2 is the translation table base register:
-     *  - the first-level page table must reside on a 16KB boundary.
-     *  - bits 31:14 are significant, 13:0 should be 0
-     * 
-     * 
-     */
 
+    void write(const std::vector<u8> &data, u32 address, const u8 bytes) {
+        if (is_address_invalid(address)) {
 
-    void write(const std::vector<u8> &data, const u32 address, const u8 bytes) {
-        if (mmu.is_access_permission_invalid(address)) {
-            // TODO: FIND AN ERROR MESSAGE
+        }
+
+        if (mmu.is_mmu_enabled()) {
+            address = mmu.translate_address(address);
         }
 
         ram.write(data, address);
     }
 
-    void write(const u8 data, const u32 address, const u8 bytes) {
-        if (mmu.is_access_permission_invalid(address)) {
-            // TODO: FIND AN ERROR MESSAGE
+    void write(const u8 data, u32 address, const u8 bytes) {
+        if (is_address_invalid(address)) {
+
+        }
+
+        if (mmu.is_mmu_enabled()) {
+            address = mmu.translate_address(address);
         }
 
         ram.write(data, address);
     }
 
-    void write(const u16 data, const u32 address, const u8 bytes) {
-        if (mmu.is_access_permission_invalid(address)) {
-            // TODO: FIND AN ERROR MESSAGE
+    void write(const u16 data, u32 address, const u8 bytes) {
+        if (is_address_invalid(address)) {
+
+        }
+
+        if (mmu.is_mmu_enabled()) {
+            address = mmu.translate_address(address);
         }
 
         ram.write(data, address);
     }
 
-    void write(const u32 data, const u32 address, const u8 bytes) {
-        if (mmu.is_access_permission_invalid(address)) {
-            // TODO: FIND AN ERROR MESSAGE
+    void write(const u32 data, u32 address, const u8 bytes) {
+        if (is_address_invalid(address)) {
+
+        }
+
+        if (mmu.is_mmu_enabled()) {
+            address = mmu.translate_address(address);
         }
 
         ram.write(data, address);
     }
 
     std::vector<u8> read(const u32 start, const u32 end) {
-        if (mmu.is_access_permission_invalid(address)) {
-            // TODO: FIND AN ERROR MESSAGE
-        }
+        // TODO
+
+        //if (is_address_invalid(address)) {
+//
+        //}
 
         return ram.read(start, end);
     }
 
-    u8 read(const u32 address) {
-        if (mmu.is_access_permission_invalid(address)) {
-            // TODO: FIND AN ERROR MESSAGE
+    u8 read(u32 address) {
+        if (is_address_invalid(address)) {
+
+        }
+
+        if (mmu.is_mmu_enabled()) {
+            address = mmu.translate_address(address);
         }
 
         return ram.read(address);
     }
+
+
+    // lord have mercy
+    template <is_integral T>
+    T read(u32 address) {
+        if (is_address_invalid(address)) {
+
+        }
+        if constexpr (std::is_same_v<T, u8>) {
+            return read(address);
+        } else if constexpr (std::is_same_v<T, u16>) {
+            return (
+                (static_cast<u16>(read(address + 1)) << 8) | 
+                (read(address))
+            );
+        } else if constexpr (std::is_same_v<T, u32>) {
+            return (
+                (static_cast<u32>(read(address + 3)) << 24) | 
+                (read(address + 2) << 16) | 
+                (read(address + 1) << 8) | 
+                (read(address))
+            );
+        } else if constexpr (std::is_same_v<T, u64>) {
+            return (
+                (static_cast<u64>(read(address + 7)) << 56) | 
+                (read(address + 6) << 48) | 
+                (read(address + 5) << 40) | 
+                (read(address + 4) << 32) | 
+                (read(address + 3) << 24) | 
+                (read(address + 2) << 16) | 
+                (read(address + 1) << 8) | 
+                (read(address))
+            );
+        }
+    }
+
+
+
+
+
+// TODO, MAYBE ALL OF THESE CAN REPLACE MOST OF THE FUNCTIONS ABOVE
+
+    u8 byte_read(const u32 address) {
+
+    }
+
+    u16 halfword_read(const u32 address) {
+        
+    }
+
+    u32 word_read(const u32 address) {
+        
+    }
+
+
+
+
 
     void reset() {
         ram.reset();

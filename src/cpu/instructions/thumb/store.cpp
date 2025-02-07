@@ -15,7 +15,11 @@ void instructions::thumb::store::STMIA(const thumb_code_t& code, REGISTERS& reg)
 
 
 /**
- * 
+ * address = Rn + (immed_5 * 4)
+ * if address[1:0] == 0b00
+ *    Memory[address,4] = Rd
+ * else
+ *    Memory[address,4] = UNPREDICTABLE
  */
 void instructions::thumb::store::STR1(const thumb_code_t& code, REGISTERS& reg) { // TODO
 

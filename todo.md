@@ -51,7 +51,28 @@ executed. The mnemonic extension for this condition was NV.
 - [ ] finish making the cp15 control register 1 
 - [ ] make a PC read/write function wrapper
 
+MMU EMULATION TODO:
+- [X] understand the first level descriptor formats
+- [ ] create the fault descriptor format
+- [X] create the fine descriptor format
+- [X] create the coarse descriptor format
+- [X] create the section descriptor format
+- [ ] check if the first-level fetch is actually just a u32 lookup
+- [ ] create the second-level large descriptor
+- [ ] create the second-level small descriptor
+- [ ] create the second-level tiny descriptor
+- [ ] create the second-level fault descriptor
+- [ ] check if the second-level descriptors are basically coarse and fine tables that are separate, basically 2 tables rounded up as 1
+- [ ] understand the protection unit architecture 
+- [ ] understand the TLB walk hardware
+- [ ] make the TLB walk hardware
+- [ ] add the aborts in specific places
+- [ ] create the abort handlers
 
+
+
+notes:
+- big endian in v1 and v2 while little by default in v3 and above (source: https://en.wikipedia.org/wiki/ARM_architecture_family)
 
 - [ ] A1
 - [ ] A2

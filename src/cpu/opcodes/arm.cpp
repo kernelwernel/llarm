@@ -715,3 +715,222 @@
         (raw_code.test(4) == 1)
     );
 }
+
+
+
+
+[[nodiscard]] bool opcodes::DSP::LDRD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 0) &&
+        (raw_code.test(26) == 0) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(20) == 0) &&
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::DSP::MCRR(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 1) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::DSP::MRRC(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 1) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::DSP::PLD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(31) == 1) &&
+        (raw_code.test(30) == 1) &&
+        (raw_code.test(29) == 1) &&
+        (raw_code.test(28) == 1) &&
+        (raw_code.test(27) == 0) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(24) == 1) &&
+        (raw_code.test(22) == 1) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 1) &&
+        (raw_code.test(15) == 1) &&
+        (raw_code.test(14) == 1) &&
+        (raw_code.test(13) == 1) &&
+        (raw_code.test(12) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::DSP::QADD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 0) &&
+        (raw_code.test(26) == 0) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(24) == 1) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 0) &&
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::DSP::QDADD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 0) &&
+        (raw_code.test(26) == 0) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(24) == 1) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 1) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 0) &&
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::DSP::QDSUB(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 0) &&
+        (raw_code.test(26) == 0) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(24) == 1) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 0) &&
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::DSP::QSUB(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 0) &&
+        (raw_code.test(26) == 0) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(24) == 1) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 0) &&
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::DSP::SMLA(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 0) &&
+        (raw_code.test(26) == 0) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(24) == 1) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 0) &&
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::DSP::SMLAL(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 0) &&
+        (raw_code.test(26) == 0) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(24) == 1) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 1) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 0) &&
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::DSP::SMLAW(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 0) &&
+        (raw_code.test(26) == 0) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(24) == 1) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 0) &&
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::DSP::SMUL(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 0) &&
+        (raw_code.test(26) == 0) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(24) == 1) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 0) &&
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::DSP::SMULW(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 0) &&
+        (raw_code.test(26) == 0) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(24) == 1) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 0) &&
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(5) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::DSP::STRD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 0) &&
+        (raw_code.test(26) == 0) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(20) == 0) &&
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 1) &&
+        (raw_code.test(4) == 1) &&
+    );
+}

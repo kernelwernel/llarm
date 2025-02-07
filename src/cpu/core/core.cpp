@@ -13,6 +13,7 @@
 #include "cpu/tlb.hpp"
 #include "cpu/memory.hpp"
 #include "cpu/coprocessor.hpp"
+#include "cpu/mpu.hpp"
 
 #include "cpu/core/cycle/fetch.hpp"
 #include "cpu/core/cycle/decode.hpp"
@@ -23,25 +24,25 @@
 void core::initialise(const std::vector<u8> &binary, input_args &args) {
 
     // initialisations
-    SETTINGS settings(args);
     GLOBALS globals;
-    COPROCESSOR coprocessor(settings);
-    REGISTERS reg(coprocessor, globals);
     RAM ram;
     MMU mmu(ram);
+    MPU
+    SETTINGS settings(args);
+    COPROCESSOR coprocessor(settings, mmu);
+    REGISTERS reg(coprocessor, globals);
     MEMORY memory(binary, ram, coprocessor, mmu);
-    INSTRUCTION_SET instruction_set(reg, memory, coprocessor);
-    SYSTEM sys(reg, instruction_set, coprocessor);
+    INSTRUCTION_SET instruction_set(reg, memory, coprocessor, settings);
     EXCEPTION exception(reg, coprocessor, instruction_set);
     FETCH fetch(instruction_set, reg, memory);
     DECODE decode(instruction_set, reg, memory);
     EXECUTE execute(instruction_set, reg);
 
 
-    // setup/boot
+    // core setup and boot
     reg.switch_mode(id::mode::SUPERVISOR);
     reg.write_cpsr(id::cpsr::T, 1); // switch to thumb  // TODO: double check if it actually starts in thumb mode
-    coprocessor.write_control(id::cp::CP15_R1_M, false); // disable MMU
+    coprocessor.write_control(id::cp::CP15_R1_M, false); // disable MMU/PU
 
 
     // instruction cycle 
