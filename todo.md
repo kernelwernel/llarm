@@ -68,6 +68,11 @@ MMU EMULATION TODO:
 - [ ] make the TLB walk hardware
 - [ ] add the aborts in specific places
 - [ ] create the abort handlers
+- [ ] replace the swap_bits with something more reliable
+- [ ] write the reference page for each instruction 
+
+
+- search "on reset" to see what kind of stuff needs to be set up upon a reset
 
 
 

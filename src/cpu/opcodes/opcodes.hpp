@@ -79,7 +79,6 @@ namespace opcodes {
             [[nodiscard]] bool UMLAL(const arm_code_t &raw_code) noexcept;
             [[nodiscard]] bool UMULL(const arm_code_t &raw_code) noexcept;
         }
-
         namespace DSP {
             [[nodiscard]] bool LDRD(const arm_code_t &raw_code) noexcept;
             [[nodiscard]] bool MCRR(const arm_code_t &raw_code) noexcept;
@@ -95,6 +94,72 @@ namespace opcodes {
             [[nodiscard]] bool SMUL(const arm_code_t &raw_code) noexcept;
             [[nodiscard]] bool SMULW(const arm_code_t &raw_code) noexcept;
             [[nodiscard]] bool STRD(const arm_code_t &raw_code) noexcept;
+        }
+        namespace VFP {
+            [[nodiscard]] bool FABSD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FABSS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FADDD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FADDS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FCMPD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FCMPED(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FCMPES(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FCMPEZD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FCMPEZS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FCMPS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FCMPZD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FCMPZS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FCPYD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FCPYS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FCVTDS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FCVTSD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FDIVD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FDIVS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FDIVS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FLDD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FLDMD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FLDMS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FLDMX(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FLDS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FMACD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FMACS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FMDHR(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FMDLR(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FMRDH(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FMRDL(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FMRS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FMRX(const arm_code_t &raw_code) noexcept; 
+            [[nodiscard]] bool FMSCD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FMSCS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FMSR(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FMSTAT(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FMULD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FMULS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FMXR(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FNEGD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FNEGS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FNMACD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FNMACS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FNMSCD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FNMSCS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FNMULD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FNMULS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FSITOD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FSITOS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FSQRTD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FSQRTS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FSTD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FSTMD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FSTMS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FSTMX(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FSTS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FSUBD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FSUBS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FTOSID(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FTOSIS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FTOUID(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FTOUIS(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FUITOD(const arm_code_t &raw_code) noexcept;
+            [[nodiscard]] bool FUITOS(const arm_code_t &raw_code) noexcept;
         }
     }
 

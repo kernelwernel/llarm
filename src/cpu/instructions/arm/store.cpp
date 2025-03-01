@@ -1,0 +1,9 @@
+            void STM1(const arm_code_t&, REGISTERS&); // TODO
+            void STM2(const arm_code_t&, REGISTERS&); // TODO
+            void STR(const arm_code_t&, REGISTERS&); // TODO
+            void STRB(const arm_code_t&, REGISTERS&); // TODO
+            void STRBT(const arm_code_t&, REGISTERS&); // TODO
+            void STRH(const arm_code_t&, REGISTERS&); // TODO
+            void STRT(const arm_code_t&, REGISTERS&); // TODO
+            void SWP(const arm_code_t&, REGISTERS&); // TODO
+            void SWPB(const arm_code_t&, REGISTERS&); // TODO

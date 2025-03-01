@@ -123,29 +123,6 @@ std::vector<id::reg> operation::register_list(const u8 reg_list) {
 }
 
 
-id::coprocessor operation::fetch_cp_id(const u8 raw_cp_num) {
-    switch(raw_cp_num) {
-        case 0b0000: return id::coprocessor::CP0;
-        case 0b0001: return id::coprocessor::CP1;
-        case 0b0010: return id::coprocessor::CP2;
-        case 0b0011: return id::coprocessor::CP3;
-        case 0b0100: return id::coprocessor::CP4;
-        case 0b0101: return id::coprocessor::CP5;
-        case 0b0110: return id::coprocessor::CP6;
-        case 0b0111: return id::coprocessor::CP7;
-        case 0b1000: return id::coprocessor::CP8;
-        case 0b1001: return id::coprocessor::CP9;
-        case 0b1010: return id::coprocessor::CP10;
-        case 0b1011: return id::coprocessor::CP11;
-        case 0b1100: return id::coprocessor::CP12;
-        case 0b1101: return id::coprocessor::CP13;
-        case 0b1110: return id::coprocessor::CP14;
-        case 0b1111: return id::coprocessor::CP15;
-        default: // TODO: throw undefined exception
-    }
-}
-
-
 /*
     overflow:
     Returns 1 if the addition or subtraction specified as 

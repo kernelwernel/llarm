@@ -1,9 +1,8 @@
 #pragma once
 
-#include "types.hpp"
-#include "cpu/instruction_set.hpp"
-#include "cpu/core/registers.hpp"
-#include "cpu/core/cycle/decode.hpp"
+#include "../../../types.hpp"
+#include "../../instruction_set.hpp"
+#include "../registers.hpp"
 
 struct EXECUTE {
 private:

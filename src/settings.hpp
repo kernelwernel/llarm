@@ -1,14 +1,15 @@
+#pragma once
+
 #include "types.hpp"
 #include "id.hpp"
 
-class SETTINGS {
-public:
+struct SETTINGS {
     bool is_thumb_enabled;
     bool is_arm_enabled;
     bool is_jazelle_enabled;
     bool is_enhanced_DSP_enabled;
-    bool is_protection_unit_enabled;
-    bool is_mmu_enabled;
+    bool is_mpu_enabled; // not to be confused with both
+    bool is_mmu_enabled; // not to be confused with both
     bool is_fcse_enabled;
     bool has_coprocessor;
     bool has_cache;
@@ -32,14 +33,32 @@ public:
     bool is_big_endian;
     bool only_little_endian; // TODO
     bool only_big_endian; // TODO
-    bool has_system_protection_bit;
-    bool has_rom_protection_bit;
+    bool has_system_protection_bit; // disabled if no MMU
+    bool has_rom_protection_bit; // disabled if no MMU
+    bool has_F_bit_enabled_cp15; // implementation defined
     bool has_branch_prediction;
     bool branch_prediction_cannot_disable;
     bool has_high_vectors;
+    bool has_normal_cache_strategy;
+    bool has_predictable_cache_strategy;
+    bool is_L4_bit_enabled_cp15;
     bool has_debug_hardware;
     bool anti_emulation_detection;
+    bool is_vfp_enabled;
+    bool is_vfp_double_precision_enabled;
 
+
+    // NOTE: MAKE SURE ALL OF THESE MATCH TO THE M BIT (B2-11)
+    u32 unified_cache_size; // make sure it matches with setup_R0_cache()'s list of supported sizes
+    u32 data_cache_size; // both should be the same if unified
+    u32 instruction_cache_size;  // both should be the same if unified
+    u8 data_cache_line_length_bytes; // in 8-64 bytes for all 3
+    u8 instruction_cache_line_length_bytes; // in 8-64 bytes for all 3
+    u8 data_cache_assoc_way; 
+    u8 instruction_cache_assoc_way; 
+    u8 cache_ctype_field; // 0b0000, 0b0001, 0b0010, 0b0110, 0b0111 are supported
+
+    u8 vfp_version;
     u8 thumb_version; // either 1 or 2, 0 if not supported
     u8 core_count;
     u16 clock_speed_mhz; 
@@ -53,7 +72,7 @@ public:
     u8 variant; // cpu variant, implementation defined
     u16 ppn; // primary part number, implementation defined
     u8 revision; // implementation defined
-}
+};
 
 
 // MAKE SURE TO DO SANITY CHECKS ON:

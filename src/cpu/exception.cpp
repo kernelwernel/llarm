@@ -24,9 +24,9 @@
  */
 void EXCEPTION::reset() {
     reg.switch_mode(id::mode::SUPERVISOR);
-    reg.write_cpsr(id::cpsr::T, 0);
-    reg.write_cpsr(id::cpsr::F, 1);
-    reg.write_cpsr(id::cpsr::I, 1);
+    reg.write(id::cpsr::T, 0);
+    reg.write(id::cpsr::F, 1);
+    reg.write(id::cpsr::I, 1);
 
     if (coprocessor.read(id::cp::CP15_R1_V)) {
         reg.write(id::reg::PC, 0xFFFF0000);
@@ -51,8 +51,8 @@ void EXCEPTION::undefined() {
     reg.switch_mode(id::mode::UNDEFINED);
     reg.write(id::reg::R14_und, reg.PC + 4);
     reg.write(id::reg::SPSR_und, reg.CPSR);
-    reg.write_cpsr(id::cpsr::T, 0);
-    reg.write_cpsr(id::cpsr::I, 1);
+    reg.write(id::cpsr::T, 0);
+    reg.write(id::cpsr::I, 1);
 
     if (coprocessor.read(id::cp::CP15_R1_V)) {
         reg.write(id::reg::PC, 0xFFFF0004);
@@ -74,11 +74,11 @@ void EXCEPTION::undefined() {
  *   PC = 0x00000008
  */
 void EXCEPTION::swi() {
-    reg.switch_mode(id::mode::SUPERVISOR);
     reg.write(id::reg::R14_svc, reg.PC + 4);
     reg.write(id::reg::SPSR_svc, reg.CPSR);
-    reg.write_cpsr(id::cpsr::T, 0);
-    reg.write_cpsr(id::cpsr::I, 1);
+    reg.switch_mode(id::mode::SUPERVISOR);
+    reg.write(id::cpsr::T, 0);
+    reg.write(id::cpsr::I, 1);
 
     if (coprocessor.read(id::cp::CP15_R1_V)) {
         reg.write(id::reg::PC, 0xFFFF0008);
@@ -86,6 +86,8 @@ void EXCEPTION::swi() {
         reg.write(id::reg::PC, 0x00000008);
     }
 }
+
+
 
 
 /*
@@ -103,8 +105,8 @@ void EXCEPTION::prefetch_abort() {
     reg.switch_mode(id::mode::ABORT);
     reg.write(id::reg::R14_abt, reg.PC + 4);
     reg.write(id::reg::SPSR_abt, reg.CPSR);
-    reg.write_cpsr(id::cpsr::T, 0);
-    reg.write_cpsr(id::cpsr::I, 1);
+    reg.write(id::cpsr::T, 0);
+    reg.write(id::cpsr::I, 1);
 
     if (coprocessor.read(id::cp::CP15_R1_V)) {
         reg.write(id::reg::PC, 0xFFFF000C);
@@ -129,8 +131,8 @@ void EXCEPTION::data_abort() {
     reg.switch_mode(id::mode::ABORT);
     reg.write(id::reg::R14_abt, reg.PC + 8);
     reg.write(id::reg::SPSR_abt, reg.CPSR);
-    reg.write_cpsr(id::cpsr::T, 0);
-    reg.write_cpsr(id::cpsr::I, 1);
+    reg.write(id::cpsr::T, 0);
+    reg.write(id::cpsr::I, 1);
 
     if (coprocessor.read(id::cp::CP15_R1_V)) {
         reg.write(id::reg::PC, 0xFFFF0010);
@@ -155,8 +157,8 @@ void EXCEPTION::irq() {
     reg.switch_mode(id::mode::IRQ);
     reg.write(id::reg::R14_irq, reg.PC + 8);
     reg.write(id::reg::SPSR_irq, reg.CPSR);
-    reg.write_cpsr(id::cpsr::T, 0);
-    reg.write_cpsr(id::cpsr::I, 1);
+    reg.write(id::cpsr::T, 0);
+    reg.write(id::cpsr::I, 1);
 
     if (coprocessor.read(id::cp::CP15_R1_V)) {
         reg.write(id::reg::PC, 0xFFFF0018);
@@ -182,9 +184,9 @@ void EXCEPTION::fiq() {
     reg.switch_mode(id::mode::FIQ);
     reg.write(id::reg::R14_fiq, reg.PC + 8);
     reg.write(id::reg::SPSR_fiq, reg.CPSR);
-    reg.write_cpsr(id::cpsr::T, 0);
-    reg.write_cpsr(id::cpsr::F, 1);
-    reg.write_cpsr(id::cpsr::I, 1);
+    reg.write(id::cpsr::T, 0);
+    reg.write(id::cpsr::F, 1);
+    reg.write(id::cpsr::I, 1);
 
     if (coprocessor.read(id::cp::CP15_R1_V)) {
         reg.write(id::reg::PC, 0xFFFF001C);
@@ -196,8 +198,7 @@ void EXCEPTION::fiq() {
 
 EXCEPTION::EXCEPTION(
     REGISTERS& reg, 
-    COPROCESSOR& coprocessor,
-    INSTRUCTION_SET& instruction_set
-) : reg(reg), coprocessor(coprocessor), instruction_set(instruction_set) {
+    COPROCESSOR& coprocessor
+) : reg(reg), coprocessor(coprocessor) {
 
 }

@@ -1,48 +1,52 @@
-#include "types.hpp"
-#include "settings.hpp"
-#include "id.hpp"
+#include "../../types.hpp"
+#include "../../settings.hpp"
+#include "../../id.hpp"
 
-#include "cpu/core/registers.hpp"
-#include "cpu/core/globals.hpp"
-#include "cpu/instruction_set.hpp"
-//#include "cpu/clock.hpp"
-#include "cpu/exception.hpp"
-#include "cpu/core/core.hpp"
-#include "cpu/ram.hpp"
-#include "cpu/mmu.hpp"
-#include "cpu/tlb.hpp"
-#include "cpu/memory.hpp"
-#include "cpu/coprocessor.hpp"
-#include "cpu/mpu.hpp"
+#include "registers.hpp"
+#include "globals.hpp"
+#include "../instruction_set.hpp"
+#include "../exception.hpp"
+#include "../core/core.hpp"
+#include "../memory/memory.hpp"
+#include "../memory/mmu.hpp"
+#include "../memory/ram.hpp"
+#include "../memory/fcse.hpp"
+#include "../coprocessor/coprocessor.hpp"
+//#include "cpu/mpu.hpp"
 
-#include "cpu/core/cycle/fetch.hpp"
-#include "cpu/core/cycle/decode.hpp"
-#include "cpu/core/cycle/execute.hpp"
+#include "cycle/fetch.hpp"
+#include "cycle/decode.hpp"
+#include "cycle/execute.hpp"
+#include "vfp.hpp"
 
 #include <vector>
 
-void core::initialise(const std::vector<u8> &binary, input_args &args) {
+void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
 
     // initialisations
     GLOBALS globals;
     RAM ram;
-    MMU mmu(ram);
-    MPU
-    SETTINGS settings(args);
-    COPROCESSOR coprocessor(settings, mmu);
+    SETTINGS settings;
+    COPROCESSOR coprocessor(settings, globals);
+    ARCH_26_BIT arch_26(coprocessor);
+    MMU mmu(globals, ram, coprocessor);
+    FCSE fcse(coprocessor, settings);
+    //MPU mpu(globals, coprocessor);
     REGISTERS reg(coprocessor, globals);
-    MEMORY memory(binary, ram, coprocessor, mmu);
+    //VFP vfp(reg);
+    EXCEPTION exception(reg, coprocessor);
+    MEMORY memory(binary, coprocessor, ram, mmu, fcse, settings);
     INSTRUCTION_SET instruction_set(reg, memory, coprocessor, settings);
-    EXCEPTION exception(reg, coprocessor, instruction_set);
     FETCH fetch(instruction_set, reg, memory);
-    DECODE decode(instruction_set, reg, memory);
+    DECODE decode(instruction_set, reg, memory, settings);
     EXECUTE execute(instruction_set, reg);
 
 
     // core setup and boot
     reg.switch_mode(id::mode::SUPERVISOR);
-    reg.write_cpsr(id::cpsr::T, 1); // switch to thumb  // TODO: double check if it actually starts in thumb mode
-    coprocessor.write_control(id::cp::CP15_R1_M, false); // disable MMU/PU
+    reg.write(id::cpsr::T, 1); // switch to thumb  // TODO: double check if it actually starts in thumb mode
+    coprocessor.write(id::cp::CP15_R1_M, false); // disable MMU/MPU
+    memory.reset();
 
 
     // instruction cycle 
@@ -72,7 +76,7 @@ void core::initialise(const std::vector<u8> &binary, input_args &args) {
                 // operand size, then EXECUTE that instruction. It's weird, but whatever.
 
                 // fetch
-                const jazelle_code_t raw_jazelle_code = fetch.jazelle_fetch();
+                //const jazelle_code_t raw_jazelle_code = fetch.jazelle_fetch();
                 // decode
 
                 // execute

@@ -53,19 +53,46 @@ void instructions::arm::misc::PSR(const arm_code_t &code, [[maybe_unused]] REGIS
             break;
     }
 
-    reg.write_cpsr(id::cpsr::N, (alu_out & (1 << 31)));
-    reg.write_cpsr(id::cpsr::Z, (alu_out == 0));
-    reg.write_cpsr(id::cpsr::C, C);
-    reg.write_cpsr(id::cpsr::V, V);
+    reg.write(id::cpsr::N, (alu_out & (1 << 31)));
+    reg.write(id::cpsr::Z, (alu_out == 0));
+    reg.write(id::cpsr::C, C);
+    reg.write(id::cpsr::V, V);
 
 
     if ((reg.read(id::reg::R15) & 0b11) == 0b00) { // user mode
         return; // all the flag bit updates are done
     } else { // privileged
-        reg.write_cpsr(id::cpsr::I, ());
-        reg.write_cpsr(id::cpsr::F, ());
-
-        reg.write_cpsr(id::cpsr::M, ());
+        reg.write(id::cpsr::I, ());// TODO
+        reg.write(id::cpsr::F, ());// TODO
+        reg.write(id::cpsr::M, ());// TODO
     }
+
+    reg.arm_increment_PC();
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *   R14_svc = address of next instruction after the SWI instruction
+ *   SPSR_svc = CPSR
+ *   CPSR[4:0] = 0b10011 // Enter Supervisor mode
+ *   CPSR[5] = 0 // Execute in ARM state
+ *   CPSR[7] = 1 // Disable normal interrupts
+ *   if high vectors configured then
+ *     PC = 0xFFFF0008
+ *   else
+ *     PC = 0x00000008
+ */
+void instructions::arm::misc::SWI(const arm_code_t &code, REGISTERS &reg) {
+    reg.write(id::reg::R14_svc, reg.PC + 4);
+    reg.write(id::reg::SPSR_svc, reg.CPSR);
+    reg.switch_mode(id::mode::SUPERVISOR);
+    reg.write(id::cpsr::T, 0);
+    reg.write(id::cpsr::I, 1);
+
+    if (coprocessor.read(id::cp::CP15_R1_V)) {
+        reg.write(id::reg::PC, 0xFFFF0008);
+    } else {
+        reg.write(id::reg::PC, 0x00000008);
+    }
+}

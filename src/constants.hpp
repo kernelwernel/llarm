@@ -4,19 +4,19 @@
 
 namespace constants {
 
-    enum class mode : u8 {
-        USER_26 = 0b00000,
-        FIQ_26 = 0b00001,
-        IRQ_26 = 0b00010,
-        SUPERVISOR_26 = 0b00011,
-        USER = 0b10000,
-        SUPERVISOR = 0b10011,
-        ABORT = 0b10111,
-        UNDEFINED = 0b11011,
-        FIQ = 0b10001,
-        IRQ = 0b10010,
-        SYSTEM = 0b11111
-    };
+    namespace mode {
+        constexpr u8 USER_26 = 0b00000;
+        constexpr u8 FIQ_26 = 0b00001;
+        constexpr u8 IRQ_26 = 0b00010;
+        constexpr u8 SUPERVISOR_26 = 0b00011;
+        constexpr u8 USER = 0b10000;
+        constexpr u8 SUPERVISOR = 0b10011;
+        constexpr u8 ABORT = 0b10111;
+        constexpr u8 UNDEFINED = 0b11011;
+        constexpr u8 FIQ = 0b10001;
+        constexpr u8 IRQ = 0b10010;
+        constexpr u8 SYSTEM = 0b11111;
+    }
 
     enum cond : u8 {
         EQ = 0b0000, // equal

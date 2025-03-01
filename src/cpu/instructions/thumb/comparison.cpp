@@ -15,10 +15,10 @@ void instructions::thumb::compare::CMN(const thumb_code_t &code, REGISTERS &reg)
     const u32 Rm = reg.read(code, 3, 5);
     const i32 alu_out = Rn + Rm;
 
-    reg.write_cpsr(id::cpsr::N, (alu_out & (1 << 31)));
-    reg.write_cpsr(id::cpsr::Z, (alu_out == 0));
-    reg.write_cpsr(id::cpsr::C, !util::borrow_add(Rn, Rm));
-    reg.write_cpsr(id::cpsr::V, util::overflow_add(Rn, Rm));
+    reg.write(id::cpsr::N, (alu_out & (1 << 31)));
+    reg.write(id::cpsr::Z, (alu_out == 0));
+    reg.write(id::cpsr::C, !util::borrow_add(Rn, Rm));
+    reg.write(id::cpsr::V, util::overflow_add(Rn, Rm));
 
     reg.thumb_increment_PC();
 }
@@ -37,10 +37,10 @@ void instructions::thumb::compare::CMP1(const thumb_code_t &code, REGISTERS &reg
 
     const i32 alu_out = Rn - immed_8;
 
-    reg.write_cpsr(id::cpsr::N, (alu_out & (1 << 31)));
-    reg.write_cpsr(id::cpsr::Z, (alu_out == 0));
-    reg.write_cpsr(id::cpsr::C, !util::borrow_sub(Rn, immed_8));
-    reg.write_cpsr(id::cpsr::V, util::overflow_sub(Rn, immed_8));
+    reg.write(id::cpsr::N, (alu_out & (1 << 31)));
+    reg.write(id::cpsr::Z, (alu_out == 0));
+    reg.write(id::cpsr::C, !util::borrow_sub(Rn, immed_8));
+    reg.write(id::cpsr::V, util::overflow_sub(Rn, immed_8));
 
     reg.thumb_increment_PC();
 }
@@ -59,10 +59,10 @@ void instructions::thumb::compare::CMP2(const thumb_code_t &code, REGISTERS &reg
 
     const i32 alu_out = Rn - Rm;
 
-    reg.write_cpsr(id::cpsr::N, (alu_out & (1 << 31)));
-    reg.write_cpsr(id::cpsr::Z, (alu_out == 0));
-    reg.write_cpsr(id::cpsr::C, !util::borrow_sub(Rn, Rm));
-    reg.write_cpsr(id::cpsr::V, util::overflow_sub(Rn, Rm));
+    reg.write(id::cpsr::N, (alu_out & (1 << 31)));
+    reg.write(id::cpsr::Z, (alu_out == 0));
+    reg.write(id::cpsr::C, !util::borrow_sub(Rn, Rm));
+    reg.write(id::cpsr::V, util::overflow_sub(Rn, Rm));
 
     reg.thumb_increment_PC();
 }
@@ -93,10 +93,10 @@ void instructions::thumb::compare::CMP3(const thumb_code_t &code, REGISTERS &reg
 
     const i32 alu_out = Rn - Rm;
 
-    reg.write_cpsr(id::cpsr::N, (alu_out & (1 << 31)));
-    reg.write_cpsr(id::cpsr::Z, (alu_out == 0));
-    reg.write_cpsr(id::cpsr::C, !util::borrow_sub(Rn, Rm));
-    reg.write_cpsr(id::cpsr::V, util::overflow_sub(Rn, Rm));
+    reg.write(id::cpsr::N, (alu_out & (1 << 31)));
+    reg.write(id::cpsr::Z, (alu_out == 0));
+    reg.write(id::cpsr::C, !util::borrow_sub(Rn, Rm));
+    reg.write(id::cpsr::V, util::overflow_sub(Rn, Rm));
 
     reg.thumb_increment_PC();
 }

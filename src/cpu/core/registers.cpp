@@ -9,7 +9,7 @@
 
 [[nodiscard]] id::mode REGISTERS::read_mode() {
     if (coprocessor.is_26_bit_arch_program()) { // 26-bit mode arch
-        switch (read_cpsr(id::cpsr::M)) {
+        switch (read(id::cpsr::M)) {
             case constants::mode::USER_26: return id::mode::USER_26;
             case constants::mode::FIQ_26: return id::mode::FIQ_26;
             case constants::mode::IRQ_26: return id::mode::IRQ_26;
@@ -18,7 +18,7 @@
                 out::error("No known enum value for read_mode()");
         }
     } else { // 32-bit mode arch
-        switch (read_cpsr(id::cpsr::M)) {
+        switch (read(id::cpsr::M)) {
             case constants::mode::USER: return id::mode::USER;
             case constants::mode::SUPERVISOR: return id::mode::SUPERVISOR;
             case constants::mode::ABORT: return id::mode::ABORT;
@@ -52,49 +52,12 @@
     ))
 }
 
-[[nodiscard]] u8 REGISTERS::read_cpsr(const id::cpsr cpsr_macro) {
-    if (coprocessor.is_26_bit_arch_program()) { // 26-bit
-        switch (cpsr_macro) {
-            case id::cpsr::M: return (CPSR & 0b11);
-            case id::cpsr::N: return (CPSR & (1 << 31));
-            case id::cpsr::Z: return (CPSR & (1 << 30));
-            case id::cpsr::C: return (CPSR & (1 << 29));
-            case id::cpsr::V: return (CPSR & (1 << 28));
-            case id::cpsr::I: return (CPSR & (1 << 27));
-            case id::cpsr::F: return (CPSR & (1 << 26));
-            default:
-                out::error("No known enum value for read_cpsr() (26-bit)");
-        }
-    } else {
-        switch (cpsr_macro) {
-            case id::cpsr::M: return (CPSR & 0b11111);
-            case id::cpsr::T: return (CPSR & (1 << 5));
-            case id::cpsr::F: return (CPSR & (1 << 6));
-            case id::cpsr::I: return (CPSR & (1 << 7));
-            case id::cpsr::A: return (CPSR & (1 << 8));
-            case id::cpsr::E: return (CPSR & (1 << 9));
-            //case id::cpsr::IT: return 0; TODO: think of a good exception here 
-            case id::cpsr::GE: return ((CPSR >> 16) & 0b1111);
-            case id::cpsr::DNM: return ((CPSR >> 20) & 0b1111);
-            case id::cpsr::J: return (CPSR & (1 << 24));
-            case id::cpsr::Q: return (CPSR & (1 << 27));
-            case id::cpsr::V: return (CPSR & (1 << 28));
-            case id::cpsr::C: return (CPSR & (1 << 29));
-            case id::cpsr::Z: return (CPSR & (1 << 30));
-            case id::cpsr::N: return (CPSR & (1 << 31));
-            default:
-                out::error("No known enum value for read_cpsr()");
-        }
-    }
+
+void REGISTERS::write(const id::reg destination_reg_id, const id::reg source_reg_id) {
+    write(destination_reg_id, read(source_reg_id));
 }
 
-
-void REGISTERS::write_cpsr(const id::reg reg_id) {
-    CPSR = read(reg_id);
-}
-
-
-void REGISTERS::write_cpsr(const id::cpsr cpsr_macro, const u8 value) {
+void REGISTERS::write(const id::cpsr cpsr_macro, const u8 value) {
 
     // 26-bit mode uses bits in R15 as its version of the 32-bit mode CPSR, we're knee deep in some real funky shit here.
     if (coprocessor.is_26_bit_arch_program()) [[unlikely]] {
@@ -114,14 +77,14 @@ void REGISTERS::write_cpsr(const id::cpsr cpsr_macro, const u8 value) {
                     default: break;
                 }
 
-                util::modify_bit_range(R15_copy, 0, 1, value); break;
+                util::swap_bits(R15_copy, 0, 1, value); break;
             case id::cpsr::N: util::modify_bit(R15_copy, 31, value); break;
             case id::cpsr::Z: util::modify_bit(R15_copy, 30, value); break;
             case id::cpsr::C: util::modify_bit(R15_copy, 29, value); break;
             case id::cpsr::V: util::modify_bit(R15_copy, 28, value); break;
             case id::cpsr::I: util::modify_bit(R15_copy, 27, value); break;
             case id::cpsr::F: util::modify_bit(R15_copy, 26, value); break;
-            default: out::error("No known enum value for write_cpsr() (26-bit)");
+            default: out::error("No known enum value for write() (26-bit)");
         }
 
         write(id::reg::R15, R15_copy);
@@ -131,7 +94,7 @@ void REGISTERS::write_cpsr(const id::cpsr cpsr_macro, const u8 value) {
         static constinit u32 DNM_mask = (0b1111 << 20);
 
         switch (cpsr_macro) {
-            case id::cpsr::M: util::modify_bit_range(CPSR, 0, 4, value); return;
+            case id::cpsr::M: util::swap_bits(CPSR, 0, 4, value); return;
             case id::cpsr::T: 
                 if (value == true) {
                     globals.instruction_set = id::instruction_sets::THUMB;
@@ -160,8 +123,141 @@ void REGISTERS::write_cpsr(const id::cpsr cpsr_macro, const u8 value) {
             case id::cpsr::Z: CPSR |= (value << 30); return;
             case id::cpsr::N: CPSR |= (value << 31); return;
             default:
-                out::error("No known enum value for write_cpsr()");
+                out::error("No known enum value for write()");
         }
+    }
+}
+
+
+
+void REGISTERS::write(const id::reg register_id, const u32 value) {
+    access_check(register_id);
+
+    switch (register_id) {
+        case id::reg::R0: R0 = value; return;
+        case id::reg::R1: R1 = value; return;
+        case id::reg::R2: R2 = value; return;
+        case id::reg::R3: R3 = value; return;
+        case id::reg::R4: R4 = value; return;
+        case id::reg::R5: R5 = value; return;
+        case id::reg::R6: R6 = value; return;
+        case id::reg::R7: R7 = value; return;
+        case id::reg::R15: R15 = value; return;
+        case id::reg::PC: write_PC(value); return;
+        case id::reg::CPSR: 
+            if (coprocessor.is_only_26_bit_arch()) {
+                out::error("CPSR does not exist in pure 26-bit architecture");
+            }
+            return CPSR;
+        default: break;
+    }
+
+    const id::mode mode = read_mode();
+
+    if (register_id == id::reg::SPSR) {
+        switch (mode) {
+            case id::mode::FIQ:
+            case id::mode::FIQ_26: SPSR_fiq = value; return;
+            case id::mode::IRQ:
+            case id::mode::IRQ_26: SPSR_irq = value; return;
+            case id::mode::SUPERVISOR:
+            case id::mode::SUPERVISOR_26: SPSR_svc = value; return;
+            case id::mode::ABORT: SPSR_abt = value; return;
+            case id::mode::UNDEFINED: SPSR_und = value; return;
+            default: // TODO add error or warning idk
+        }
+    }
+
+    switch (mode) {
+        case id::mode::SYSTEM:
+            if (static_cast<u8>(settings.arch) < 4) {
+                break; // maybe add a warning/error, idk
+            }
+        case id::mode::USER:
+        case id::mode::USER_26:
+            switch (register_id) {
+                case id::reg::R8:  R8 = value; return;
+                case id::reg::R9:  R9 = value; return;
+                case id::reg::R10: R10 = value; return;
+                case id::reg::R11: R11 = value; return;
+                case id::reg::R12: R12 = value; return;
+                case id::reg::R13: R13 = value; return;
+                case id::reg::R14: R14 = value; return;
+                default: break;
+            }
+            break;
+    
+        case id::mode::FIQ:
+        case id::mode::FIQ_26:
+            switch (register_id) {
+                case id::reg::R8_fiq:  R8_fiq = value; return;
+                case id::reg::R9_fiq:  R9_fiq = value; return;
+                case id::reg::R10_fiq: R10_fiq = value; return;
+                case id::reg::R11_fiq: R11_fiq = value; return;
+                case id::reg::R12_fiq: R12_fiq = value; return;
+                case id::reg::R13_fiq: R13_fiq = value; return;
+                case id::reg::R14_fiq: R14_fiq = value; return;
+                case id::reg::SPSR_fiq: SPSR_fiq = value; return;
+            }
+            break;
+        
+        case id::mode::IRQ:
+        case id::mode::IRQ_26:
+            switch (register_id) {
+                case id::reg::R8:  R8 = value; return;
+                case id::reg::R9:  R9 = value; return;
+                case id::reg::R10: R10 = value; return;
+                case id::reg::R11: R11 = value; return;
+                case id::reg::R12: R12 = value; return;
+                case id::reg::R13_irq:  R13_irq = value; return;
+                case id::reg::R14_irq:  R14_irq = value; return;
+                case id::reg::SPSR_irq: SPSR_irq = value; return; 
+                default: break;
+            }
+            break;
+
+        case id::mode::SUPERVISOR:
+        case id::mode::SUPERVISOR_26:
+            switch (register_id) {
+                case id::reg::R8:  R8 = value; return;
+                case id::reg::R9:  R9 = value; return;
+                case id::reg::R10: R10 = value; return;
+                case id::reg::R11: R11 = value; return;
+                case id::reg::R12: R12 = value; return;
+                case id::reg::R13_svc:  R13_svc = value; return;
+                case id::reg::R14_svc:  R14_svc = value; return;
+                case id::reg::SPSR_svc: SPSR_svc = value; return; 
+                default: break;
+            }
+            break;
+
+        case id::mode::ABORT:
+            switch (register_id) {
+                case id::reg::R8:  R8 = value; return;
+                case id::reg::R9:  R9 = value; return;
+                case id::reg::R10: R10 = value; return;
+                case id::reg::R11: R11 = value; return;
+                case id::reg::R12: R12 = value; return;
+                case id::reg::R13_abt:  R13_abt = value; return;
+                case id::reg::R14_abt:  R14_abt = value; return;
+                case id::reg::SPSR_abt: SPSR_abt = value; return; 
+                default: break;
+            }
+            break;
+
+        case id::mode::UNDEFINED:
+            switch (register_id) {
+                case id::reg::R8:  R8 = value; return;
+                case id::reg::R9:  R9 = value; return;
+                case id::reg::R10: R10 = value; return;
+                case id::reg::R11: R11 = value; return;
+                case id::reg::R12: R12 = value; return;
+                case id::reg::R13_und:  R13_und = value; return;
+                case id::reg::R14_und:  R14_und = value; return;
+                case id::reg::SPSR_und: SPSR_und = value; return; 
+                default: break;
+            }
+            break;
     }
 }
 
@@ -189,6 +285,42 @@ void REGISTERS::write_cpsr(const id::cpsr cpsr_macro, const u8 value) {
 
 
 
+
+[[nodiscard]] u8 REGISTERS::read(const id::cpsr cpsr_macro) {
+    if (coprocessor.is_26_bit_arch_program()) { // 26-bit
+        switch (cpsr_macro) {
+            case id::cpsr::M: return (CPSR & 0b11);
+            case id::cpsr::N: return (CPSR & (1 << 31));
+            case id::cpsr::Z: return (CPSR & (1 << 30));
+            case id::cpsr::C: return (CPSR & (1 << 29));
+            case id::cpsr::V: return (CPSR & (1 << 28));
+            case id::cpsr::I: return (CPSR & (1 << 27));
+            case id::cpsr::F: return (CPSR & (1 << 26));
+            default:
+                out::error("No known enum value for read() (26-bit)");
+        }
+    } else {
+        switch (cpsr_macro) {
+            case id::cpsr::M: return (CPSR & 0b11111);
+            case id::cpsr::T: return (CPSR & (1 << 5));
+            case id::cpsr::F: return (CPSR & (1 << 6));
+            case id::cpsr::I: return (CPSR & (1 << 7));
+            case id::cpsr::A: return (CPSR & (1 << 8));
+            case id::cpsr::E: return (CPSR & (1 << 9));
+            //case id::cpsr::IT: return 0; TODO: think of a good exception here 
+            case id::cpsr::GE: return ((CPSR >> 16) & 0b1111);
+            case id::cpsr::DNM: return ((CPSR >> 20) & 0b1111);
+            case id::cpsr::J: return (CPSR & (1 << 24));
+            case id::cpsr::Q: return (CPSR & (1 << 27));
+            case id::cpsr::V: return (CPSR & (1 << 28));
+            case id::cpsr::C: return (CPSR & (1 << 29));
+            case id::cpsr::Z: return (CPSR & (1 << 30));
+            case id::cpsr::N: return (CPSR & (1 << 31));
+            default:
+                out::error("No known enum value for read()");
+        }
+    }
+}
 
 
 [[nodiscard]] u32 REGISTERS::read(const id::reg register_id) {
@@ -397,139 +529,6 @@ void access_check(const id::reg register_id) {
 
 
 
-void REGISTERS::write(const id::reg register_id, const u32 value) {
-    access_check(register_id);
-
-    switch (register_id) {
-        case id::reg::R0: R0 = value; return;
-        case id::reg::R1: R1 = value; return;
-        case id::reg::R2: R2 = value; return;
-        case id::reg::R3: R3 = value; return;
-        case id::reg::R4: R4 = value; return;
-        case id::reg::R5: R5 = value; return;
-        case id::reg::R6: R6 = value; return;
-        case id::reg::R7: R7 = value; return;
-        case id::reg::R15: R15 = value; return;
-        case id::reg::PC: write_PC(value); return;
-        case id::reg::CPSR: 
-            if (coprocessor.is_only_26_bit_arch()) {
-                out::error("CPSR does not exist in pure 26-bit architecture");
-            }
-            return CPSR;
-        default: break;
-    }
-
-    const id::mode mode = read_mode();
-
-    if (register_id == id::reg::SPSR) {
-        switch (mode) {
-            case id::mode::FIQ:
-            case id::mode::FIQ_26: SPSR_fiq = value; return;
-            case id::mode::IRQ:
-            case id::mode::IRQ_26: SPSR_irq = value; return;
-            case id::mode::SUPERVISOR:
-            case id::mode::SUPERVISOR_26: SPSR_svc = value; return;
-            case id::mode::ABORT: SPSR_abt = value; return;
-            case id::mode::UNDEFINED: SPSR_und = value; return;
-            default: // TODO add error or warning idk
-        }
-    }
-
-    switch (mode) {
-        case id::mode::SYSTEM:
-            if (static_cast<u8>(settings.arch) < 4) {
-                break; // maybe add a warning/error, idk
-            }
-        case id::mode::USER:
-        case id::mode::USER_26:
-            switch (register_id) {
-                case id::reg::R8:  R8 = value; return;
-                case id::reg::R9:  R9 = value; return;
-                case id::reg::R10: R10 = value; return;
-                case id::reg::R11: R11 = value; return;
-                case id::reg::R12: R12 = value; return;
-                case id::reg::R13: R13 = value; return;
-                case id::reg::R14: R14 = value; return;
-                default: break;
-            }
-            break;
-    
-        case id::mode::FIQ:
-        case id::mode::FIQ_26:
-            switch (register_id) {
-                case id::reg::R8_fiq:  R8_fiq = value; return;
-                case id::reg::R9_fiq:  R9_fiq = value; return;
-                case id::reg::R10_fiq: R10_fiq = value; return;
-                case id::reg::R11_fiq: R11_fiq = value; return;
-                case id::reg::R12_fiq: R12_fiq = value; return;
-                case id::reg::R13_fiq: R13_fiq = value; return;
-                case id::reg::R14_fiq: R14_fiq = value; return;
-                case id::reg::SPSR_fiq: SPSR_fiq = value; return;
-            }
-            break;
-        
-        case id::mode::IRQ:
-        case id::mode::IRQ_26:
-            switch (register_id) {
-                case id::reg::R8:  R8 = value; return;
-                case id::reg::R9:  R9 = value; return;
-                case id::reg::R10: R10 = value; return;
-                case id::reg::R11: R11 = value; return;
-                case id::reg::R12: R12 = value; return;
-                case id::reg::R13_irq:  R13_irq = value; return;
-                case id::reg::R14_irq:  R14_irq = value; return;
-                case id::reg::SPSR_irq: SPSR_irq = value; return; 
-                default: break;
-            }
-            break;
-
-        case id::mode::SUPERVISOR:
-        case id::mode::SUPERVISOR_26:
-            switch (register_id) {
-                case id::reg::R8:  R8 = value; return;
-                case id::reg::R9:  R9 = value; return;
-                case id::reg::R10: R10 = value; return;
-                case id::reg::R11: R11 = value; return;
-                case id::reg::R12: R12 = value; return;
-                case id::reg::R13_svc:  R13_svc = value; return;
-                case id::reg::R14_svc:  R14_svc = value; return;
-                case id::reg::SPSR_svc: SPSR_svc = value; return; 
-                default: break;
-            }
-            break;
-
-        case id::mode::ABORT:
-            switch (register_id) {
-                case id::reg::R8:  R8 = value; return;
-                case id::reg::R9:  R9 = value; return;
-                case id::reg::R10: R10 = value; return;
-                case id::reg::R11: R11 = value; return;
-                case id::reg::R12: R12 = value; return;
-                case id::reg::R13_abt:  R13_abt = value; return;
-                case id::reg::R14_abt:  R14_abt = value; return;
-                case id::reg::SPSR_abt: SPSR_abt = value; return; 
-                default: break;
-            }
-            break;
-
-        case id::mode::UNDEFINED:
-            switch (register_id) {
-                case id::reg::R8:  R8 = value; return;
-                case id::reg::R9:  R9 = value; return;
-                case id::reg::R10: R10 = value; return;
-                case id::reg::R11: R11 = value; return;
-                case id::reg::R12: R12 = value; return;
-                case id::reg::R13_und:  R13_und = value; return;
-                case id::reg::R14_und:  R14_und = value; return;
-                case id::reg::SPSR_und: SPSR_und = value; return; 
-                default: break;
-            }
-            break;
-    }
-}
-
-
-
 
 
 
@@ -580,7 +579,7 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
 }
 
 [[nodiscard]] id::reg REGISTERS::fetch_reg_id(const arm_code_t &code, const u8 start, const u8 end) noexcept {
-    const u8 Rd_bits = util::bit_fetcher<u8>(code.to_ulong(), start, end);
+    const u8 Rd_bits = util::bit_fetcher<u8, u32>(code.to_ulong(), start, end);
     
     id::reg reg_id = fetch_reg_id(Rd_bits);
 
@@ -601,7 +600,7 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
 }
 
 [[nodiscard]] id::reg REGISTERS::fetch_reg_id(const thumb_code_t &code, const u8 start, const u8 end) noexcept {
-    const u8 Rd_bits = util::bit_fetcher<u8>(code.to_ulong(), start, end);
+    const u8 Rd_bits = util::bit_fetcher<u8, u32>(code.to_ulong(), start, end);
     return fetch_reg_id(Rd_bits);
 }
 
@@ -645,26 +644,7 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
 
 
 [[nodiscard]] id::cond REGISTERS::fetch_cond_id(const arm_code_t &code) {
-    switch ((code.to_ulong() & 0xF0000000) >> 28) {
-        case constants::cond::EQ: return id::cond::EQ;
-        case constants::cond::NE: return id::cond::NE;
-        case constants::cond::CS: return id::cond::CS;
-        case constants::cond::CC: return id::cond::CC;
-        case constants::cond::MI: return id::cond::MI;
-        case constants::cond::PL: return id::cond::PL;
-        case constants::cond::VS: return id::cond::VS;
-        case constants::cond::VC: return id::cond::VC;
-        case constants::cond::HI: return id::cond::HI;
-        case constants::cond::LS: return id::cond::LS;
-        case constants::cond::GE: return id::cond::GE;
-        case constants::cond::LT: return id::cond::LT;
-        case constants::cond::GT: return id::cond::GT;
-        case constants::cond::LE: return id::cond::LE;
-        case constants::cond::AL: return id::cond::AL;
-        case constants::cond::NV: return id::cond::NV;
-    }
-
-    out::error("No match found with conditon constant in fetch_cond_id()");
+    return fetch_cond_id(util::bit_fetcher<u8>(code, 28, 31));
 }
 
 
@@ -684,53 +664,58 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
 
 [[nodiscard]] bool REGISTERS::check_cond(const id::cond cond) {
     switch (cond) {
-        case id::cond::EQ: return (read_cpsr(id::cpsr::Z) == 1);
-        case id::cond::NE: return (read_cpsr(id::cpsr::Z) == 0);
-        case id::cond::CS: return (read_cpsr(id::cpsr::C) == 1);
-        case id::cond::CC: return (read_cpsr(id::cpsr::C) == 0);
-        case id::cond::MI: return (read_cpsr(id::cpsr::N) == 1);
-        case id::cond::PL: return (read_cpsr(id::cpsr::N) == 0);
-        case id::cond::VS: return (read_cpsr(id::cpsr::V) == 1);
-        case id::cond::VC: return (read_cpsr(id::cpsr::V) == 0);
+        case id::cond::EQ: return (read(id::cpsr::Z) == 1);
+        case id::cond::NE: return (read(id::cpsr::Z) == 0);
+        case id::cond::CS: return (read(id::cpsr::C) == 1);
+        case id::cond::CC: return (read(id::cpsr::C) == 0);
+        case id::cond::MI: return (read(id::cpsr::N) == 1);
+        case id::cond::PL: return (read(id::cpsr::N) == 0);
+        case id::cond::VS: return (read(id::cpsr::V) == 1);
+        case id::cond::VC: return (read(id::cpsr::V) == 0);
         case id::cond::HI: 
             return (
-                (read_cpsr(id::cpsr::C) == 1) && 
-                (read_cpsr(id::cpsr::Z) == 0)
+                (read(id::cpsr::C) == 1) && 
+                (read(id::cpsr::Z) == 0)
             );
         case id::cond::LS:
             return (
-                (read_cpsr(id::cpsr::C) == 0) ||
-                (read_cpsr(id::cpsr::Z) == 1)
+                (read(id::cpsr::C) == 0) ||
+                (read(id::cpsr::Z) == 1)
             );
         case id::cond::GE:
             return (
-                (read_cpsr(id::cpsr::N)) == 
-                (read_cpsr(id::cpsr::V))
+                (read(id::cpsr::N)) == 
+                (read(id::cpsr::V))
             );
         case id::cond::LT:
             return (
-                (read_cpsr(id::cpsr::N)) != 
-                (read_cpsr(id::cpsr::V))
+                (read(id::cpsr::N)) != 
+                (read(id::cpsr::V))
             );
         case id::cond::GT:
             return (
-                (read_cpsr(id::cpsr::Z) == 0) &&
+                (read(id::cpsr::Z) == 0) &&
                 (
-                    (read_cpsr(id::cpsr::N)) == 
-                    (read_cpsr(id::cpsr::V))
+                    (read(id::cpsr::N)) == 
+                    (read(id::cpsr::V))
                 )
             );
         case id::cond::LE:
             return (
-                (read_cpsr(id::cpsr::Z) == 1) ||
+                (read(id::cpsr::Z) == 1) ||
                 (
-                    (read_cpsr(id::cpsr::N)) != 
-                    (read_cpsr(id::cpsr::V))
+                    (read(id::cpsr::N)) != 
+                    (read(id::cpsr::V))
                 )
             );
         case id::cond::AL: return true;
         case id::cond::NV: return true;
     }
+}
+
+[[nodiscard]] bool REGISTERS::check_cond(const arm_code_t &code) {
+    const id::cond cond_id = fetch_cond_id(code);
+    return check_cond(cond_id);
 }
 
 void REGISTERS::thumb_increment_PC() {

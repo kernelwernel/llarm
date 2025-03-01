@@ -25,8 +25,8 @@ void instructions::thumb::movement::MOV1(const thumb_code_t &code, REGISTERS& re
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
-    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
+    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::Z, (Rd == 0));
 
     reg.thumb_increment_PC();
 }
@@ -47,10 +47,10 @@ void instructions::thumb::movement::MOV2(const thumb_code_t &code, REGISTERS& re
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
-    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
-    reg.write_cpsr(id::cpsr::C, false);
-    reg.write_cpsr(id::cpsr::V, false);
+    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::Z, (Rd == 0));
+    reg.write(id::cpsr::C, false);
+    reg.write(id::cpsr::V, false);
 
     reg.thumb_increment_PC();
 }
@@ -88,8 +88,8 @@ void instructions::thumb::movement::MVN(const thumb_code_t &code, REGISTERS& reg
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
-    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
+    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::Z, (Rd == 0));
 
     reg.thumb_increment_PC();
 }

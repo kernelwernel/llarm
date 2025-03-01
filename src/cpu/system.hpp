@@ -1,10 +1,11 @@
+#pragma once
+
 #include "id.hpp"
 #include "core/registers.hpp"
 #include "instruction_set.hpp"
 #include "coprocessor.hpp"
 
-
-class SYSTEM {
+struct SYSTEM {
 private:
     REGISTERS& reg;
     INSTRUCTION_SET& instruction_set;
@@ -14,18 +15,18 @@ public:
 /*
     void switch_mode(const id::mode mode) {
         switch (mode) {
-            case id::mode::USER:       reg.write_cpsr(id::cpsr::M, constants::mode::USER); return;
-            case id::mode::SUPERVISOR: reg.write_cpsr(id::cpsr::M, constants::mode::SUPERVISOR); return;
-            case id::mode::ABORT:      reg.write_cpsr(id::cpsr::M, constants::mode::ABORT); return;
-            case id::mode::UNDEFINED:  reg.write_cpsr(id::cpsr::M, constants::mode::UNDEFINED); return;
-            case id::mode::FIQ:        reg.write_cpsr(id::cpsr::M, constants::mode::FIQ); return;
-            case id::mode::IRQ:        reg.write_cpsr(id::cpsr::M, constants::mode::IRQ); return;
-            case id::mode::SYSTEM:     reg.write_cpsr(id::cpsr::M, constants::mode::SYSTEM); return;
+            case id::mode::USER:       reg.write(id::cpsr::M, constants::mode::USER); return;
+            case id::mode::SUPERVISOR: reg.write(id::cpsr::M, constants::mode::SUPERVISOR); return;
+            case id::mode::ABORT:      reg.write(id::cpsr::M, constants::mode::ABORT); return;
+            case id::mode::UNDEFINED:  reg.write(id::cpsr::M, constants::mode::UNDEFINED); return;
+            case id::mode::FIQ:        reg.write(id::cpsr::M, constants::mode::FIQ); return;
+            case id::mode::IRQ:        reg.write(id::cpsr::M, constants::mode::IRQ); return;
+            case id::mode::SYSTEM:     reg.write(id::cpsr::M, constants::mode::SYSTEM); return;
         }
     }
 
     id::mode read_mode() {
-        switch (read_cpsr(id::cpsr::M)) {
+        switch (read(id::cpsr::M)) {
             case constants::mode::USER: return id::mode::USER;
             case constants::mode::SUPERVISOR: return id::mode::SUPERVISOR;
             case constants::mode::ABORT: return id::mode::ABORT;
@@ -39,20 +40,20 @@ public:
     }
 */
     bool is_thumb() noexcept {
-        return (reg.read_cpsr(id::cpsr::T) == 1);
+        return (reg.read(id::cpsr::T) == 1);
     }
 
     bool is_arm() noexcept {
-        return (reg.read_cpsr(id::cpsr::T) == 0);
+        return (reg.read(id::cpsr::T) == 0);
     }
 
     void switch_to_arm() {
-        reg.write_cpsr(id::cpsr::T, 0);
+        reg.write(id::cpsr::T, 0);
         globals.instruction_set = id::instruction_sets::ARM;
     }
 
     void switch_to_thumb() {
-        reg.write_cpsr(id::cpsr::T, 1);
+        reg.write(id::cpsr::T, 1);
         globals.instruction_set = id::instruction_sets::THUMB;
     }
 

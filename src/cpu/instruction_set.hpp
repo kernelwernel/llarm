@@ -1,12 +1,12 @@
 #pragma once
 
-#include "cpu/core/registers.hpp"
-#include "cpu/memory.hpp"
+#include "core/registers.hpp"
+#include "memory/memory.hpp"
 
 #include <map>
 #include <variant>
 
-class INSTRUCTION_SET {
+struct INSTRUCTION_SET {
 public:
     struct arm_struct {
         std::function<bool(const arm_code_t&)> opcode;
@@ -27,7 +27,6 @@ public:
     MEMORY& memory;
     COPROCESSOR& coprocessor;
     SETTINGS& settings;
-    
 
 
 
@@ -39,7 +38,7 @@ private:
 public:
     arm_table_t arm_table;
     thumb_table_t thumb_table;
-    jazelle_table_t thumb_table;
+    jazelle_table_t jazelle_table;
 
     void add_arm_instruction(const arm_struct &instruction) {
         // this is definitely NOT gonna compile

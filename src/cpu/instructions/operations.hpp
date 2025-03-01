@@ -1,7 +1,15 @@
-#include "types.hpp"
-#include <vector>
+#pragma once
 
-namespace operation {
+#include "types.hpp"
+#include "../core/registers.hpp"
+#include <vector>
+#include <bit>
+
+struct OPERATION {
+private:
+    REGISTERS& reg;
+
+public:
     [[nodiscard]] bool carry_add(const u64&);
     [[nodiscard]] bool carry_add(const u32, const u32);
     [[nodiscard]] bool carry_add(const u32, const u32, const u32);
@@ -25,7 +33,9 @@ namespace operation {
 
     std::vector<id::reg> register_list(const u8 reg_list);
 
-    id::coprocessor fetch_cp_id(const u8 raw_cp_num);
+
+private:
+    OPERATION(REGISTERS& reg) : reg(reg) {}
 }
 
 /*

@@ -6,7 +6,8 @@
 
 #include <bitset>
 #include <tuple>
-#include <iostream> //tmp
+
+// to whoever is reading this, i'm deeply sorry for the awful code below.
 
 [[nodiscard]] id::arm_instruction DECODE::arm_identifier(const arm_code_t &raw_code) const {
     for (const auto &scan : arm_vector) {
@@ -41,7 +42,7 @@
 }
 
 [[nodiscard]] bool DECODE::condition_match(const id::cond cond) const {
-    return (cond == inst_set.reg.check_cond(cond));
+    return (cond == reg.check_cond(cond));
 }
 
 void DECODE::loader() {

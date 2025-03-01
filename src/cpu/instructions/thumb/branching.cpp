@@ -56,7 +56,7 @@ void instructions::thumb::branching::BL(const thumb_code_t &code, REGISTERS &reg
     } else if (H == 0b01) {
         reg.write(id::reg::PC, ((reg.read(id::reg::LR) + (offset_11 << 1)) & 0xFFFFFFFC));
         reg.write(id::reg::LR, (next_instruction_address | 1));
-        reg.write_cpsr(id::cpsr::T, false);
+        reg.write(id::cpsr::T, false);
     }
 }
 
@@ -86,7 +86,7 @@ void instructions::thumb::branching::BLX1(const thumb_code_t &code, REGISTERS &r
     } else if (H == 0b01) { // TODO: v5 specific
         reg.write(id::reg::PC, ((reg.read(id::reg::LR) + (offset_11 << 1)) & 0xFFFFFFFC));
         reg.write(id::reg::LR, (next_instruction_address | 1));
-        reg.write_cpsr(id::cpsr::T, false);
+        reg.write(id::cpsr::T, false);
     }
 }
 
@@ -103,7 +103,7 @@ void instructions::thumb::branching::BLX2(const thumb_code_t &code, REGISTERS &r
     const u32 next_instruction_address = reg.read(id::reg::PC) + 2;
 
     reg.write(id::reg::LR, (next_instruction_address | 1));
-    reg.write_cpsr(id::cpsr::T, (Rm & 1));
+    reg.write(id::cpsr::T, (Rm & 1));
     reg.write(id::reg::PC, (util::trim(Rm, 0, 1) << 1)); // TODO replace with bit_fetcher
 }
 
@@ -115,6 +115,6 @@ void instructions::thumb::branching::BLX2(const thumb_code_t &code, REGISTERS &r
 void instructions::thumb::branching::BX(const thumb_code_t &code, REGISTERS &reg) {
     const u32 Rm = reg.fetch_reg_id(code, 3, 6);
 
-    reg.write_cpsr(id::cpsr::T, (Rm & 1));
+    reg.write(id::cpsr::T, (Rm & 1));
     reg.write(id::reg::PC, ((Rm & 0xFFFFFFFE) << 1));
 }

@@ -39,5 +39,3 @@ namespace out {
     }
 
 }
-//#if (!CLANG)
-//#endif

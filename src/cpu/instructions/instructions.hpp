@@ -13,10 +13,8 @@ struct instructions {
             void SBC(const arm_code_t&, REGISTERS&); // TODO
             void SUB(const arm_code_t&, REGISTERS&); // TODO
         }
-        namespace compare {
-            void CMN(const arm_code_t&, REGISTERS&);  // TODO
-        }
         namespace logic {
+            void CMN(const arm_code_t&, REGISTERS&);  // TODO
             void AND(const arm_code_t&, REGISTERS&); // TODO
             void CMN(const arm_code_t&, REGISTERS&); // TODO
             void CMP(const arm_code_t&, REGISTERS&); // TODO
@@ -56,10 +54,10 @@ struct instructions {
             void SWI(const arm_code_t&, REGISTERS&); // TODO
         }
         namespace load {
-            void LDM1(const arm_code_t&, REGISTERS&); // TODO
+            void LDM1(const arm_code_t&, REGISTERS&); // TODO, ADD CHECK FOR L4 BIT
             void LDM2(const arm_code_t&, REGISTERS&); // TODO
             void LDM3(const arm_code_t&, REGISTERS&); // TODO
-            void LDR(const arm_code_t&, REGISTERS&); // TODO
+            void LDR(const arm_code_t&, REGISTERS&); // TODO, ADD CHECK FOR L4 BIT
             void LDRB(const arm_code_t&, REGISTERS&); // TODO
             void LDRBT(const arm_code_t&, REGISTERS&); // TODO
             void LDRH(const arm_code_t&, REGISTERS&); // TODO
@@ -97,6 +95,71 @@ struct instructions {
             void SMUL(const arm_code_t&, REGISTERS&); // TODO
             void SMULW(const arm_code_t&, REGISTERS&); // TODO
             void STRD(const arm_code_t&, REGISTERS&); // TODO
+        }
+        namespace VFP {
+            void FABSD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FABSS(const arm_code_t&, REGISTERS&); // TODO
+            void FADDD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FADDS(const arm_code_t&, REGISTERS&); // TODO
+            void FCMPD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FCMPED(const arm_code_t&, REGISTERS&); // TODO, D
+            void FCMPES(const arm_code_t&, REGISTERS&); // TODO
+            void FCMPEZD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FCMPEZS(const arm_code_t&, REGISTERS&); // TODO
+            void FCMPS(const arm_code_t&, REGISTERS&); // TODO
+            void FCMPZD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FCMPZS(const arm_code_t&, REGISTERS&); // TODO
+            void FCPYD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FCPYS(const arm_code_t&, REGISTERS&); // TODO
+            void FCVTDS(const arm_code_t&, REGISTERS&); // TODO, D
+            void FCVTSD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FDIVD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FDIVS(const arm_code_t&, REGISTERS&); // TODO
+            void FLDD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FLDMD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FLDMS(const arm_code_t&, REGISTERS&); // TODO
+            void FLDMX(const arm_code_t&, REGISTERS&); // TODO
+            void FLDS(const arm_code_t&, REGISTERS&); // TODO
+            void FMACD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FMACS(const arm_code_t&, REGISTERS&); // TODO
+            void FMDHR(const arm_code_t&, REGISTERS&); // TODO, D
+            void FMDLR(const arm_code_t&, REGISTERS&); // TODO, D
+            void FMRDH(const arm_code_t&, REGISTERS&); // TODO, D
+            void FMRDL(const arm_code_t&, REGISTERS&); // TODO, D
+            void FMRS(const arm_code_t&, REGISTERS&); // TODO
+            void FMRX(const arm_code_t&, REGISTERS&); // TODO 
+            void FMSCD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FMSCS(const arm_code_t&, REGISTERS&); // TODO
+            void FMSR(const arm_code_t&, REGISTERS&); // TODO
+            void FMSTAT(const arm_code_t&, REGISTERS&); // TODO
+            void FMULD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FMULS(const arm_code_t&, REGISTERS&); // TODO
+            void FMXR(const arm_code_t&, REGISTERS&); // TODO
+            void FNEGD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FNEGS(const arm_code_t&, REGISTERS&); // TODO
+            void FNMACD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FNMACS(const arm_code_t&, REGISTERS&); // TODO
+            void FNMSCD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FNMSCS(const arm_code_t&, REGISTERS&); // TODO
+            void FNMULD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FNMULS(const arm_code_t&, REGISTERS&); // TODO
+            void FSITOD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FSITOS(const arm_code_t&, REGISTERS&); // TODO
+            void FSQRTD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FSQRTS(const arm_code_t&, REGISTERS&); // TODO
+            void FSTD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FSTMD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FSTMS(const arm_code_t&, REGISTERS&); // TODO
+            void FSTMX(const arm_code_t&, REGISTERS&); // TODO
+            void FSTS(const arm_code_t&, REGISTERS&); // TODO
+            void FSUBD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FSUBS(const arm_code_t&, REGISTERS&); // TODO
+            void FTOSID(const arm_code_t&, REGISTERS&); // TODO, D
+            void FTOSIS(const arm_code_t&, REGISTERS&); // TODO
+            void FTOUID(const arm_code_t&, REGISTERS&); // TODO, D
+            void FTOUIS(const arm_code_t&, REGISTERS&); // TODO
+            void FUITOD(const arm_code_t&, REGISTERS&); // TODO, D
+            void FUITOS(const arm_code_t&, REGISTERS&); // TODO
         }
     }
 
@@ -176,7 +239,7 @@ struct instructions {
             void LDRH2(const thumb_code_t&, REGISTERS&); // TODO
             void LDRSB(const thumb_code_t&, REGISTERS&); // TODO
             void LDRSH(const thumb_code_t&, REGISTERS&); // TODO
-            void POP(const thumb_code_t&, REGISTERS&); // TODO
+            void POP(const thumb_code_t&, REGISTERS&); // TODO, ADD CHECK FOR L4 BIT
         }
         namespace store {
             void STMIA(const thumb_code_t&, REGISTERS&); // TODO

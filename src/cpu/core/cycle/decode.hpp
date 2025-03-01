@@ -1,17 +1,23 @@
 #pragma once
 
-#include "types.hpp"
-#include "id.hpp"
-#include "constants.hpp"
-#include "cpu/instruction_set.hpp"
-#include "cpu/core/registers.hpp"
-#include "settings.hpp"
+#include "../../../types.hpp"
+#include "../../../id.hpp"
+#include "../../../constants.hpp"
+#include "../../../settings.hpp"
+#include "../../instruction_set.hpp"
+#include "../registers.hpp"
 
 #include <bitset>
 #include <tuple>
 #include <functional>
 
 struct DECODE {
+private:
+    INSTRUCTION_SET& inst_set;
+    REGISTERS& reg;
+    MEMORY& memory;
+    SETTINGS& settings;
+
 private:
     struct arm_scan {
         id::arm_instruction instruction_id;
@@ -27,11 +33,6 @@ private:
         id::jazelle_instruction instruction_id;
         std::function<bool(const jazelle_code_t)> opcode_function;
     };
-
-    INSTRUCTION_SET& inst_set;
-    REGISTERS& reg;
-    MEMORY& memory;
-    SETTINGS& settings;
 
     std::vector<arm_scan> arm_vector;
     std::vector<thumb_scan> thumb_vector;
@@ -55,7 +56,13 @@ public:
         REGISTERS& reg,
         MEMORY& memory,
         SETTINGS& settings
-    );
+    ) : inst_set(inst_set),
+        reg(reg),
+        memory(memory),
+        settings(settings)
+    {
+        
+    }
 
     arm_decoded_t arm_decode(const arm_code_t &raw_code) const;
 

@@ -1,7 +1,7 @@
 #include "types.hpp"
 #include "utility.hpp"
-#include "cpu/instructions/instructions.hpp"
-#include "cpu/core/registers.hpp"
+#include "../../cpu/instructions/instructions.hpp"
+#include "../../cpu/core/registers.hpp"
 
 
 
@@ -36,9 +36,12 @@ void instructions::arm::branching::B(const arm_code_t &code, REGISTERS &reg) {
 void instructions::arm::branching::BX(const arm_code_t &code, REGISTERS &reg) {
     const u32 Rm = reg.read(code, 0, 3);
 
-    reg.write_cpsr(id::cpsr::T, (Rm & 1));
+    reg.write(id::cpsr::T, (Rm & 1));
 
     u32 address = (Rm & 0xFFFFFFFE);
 
     reg.write(id::reg::PC, address);
 }
+
+
+void BL(const arm_code_t&, REGISTERS&); // TODO

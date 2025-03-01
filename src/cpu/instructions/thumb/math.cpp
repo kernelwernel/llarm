@@ -17,16 +17,16 @@ void instructions::thumb::math::ADC(const thumb_code_t &code, REGISTERS &reg) {
 
     const u32 Rd = reg.read(Rd_id);
     const u32 Rm = reg.read(code, 3, 5);
-    const bool c_flag = reg.read_cpsr(id::cpsr::C);
+    const bool c_flag = reg.read(id::cpsr::C);
 
     const u64 result = (Rd + Rm + c_flag);
 
     reg.write(Rd_id, (result & (std::numeric_limits<u32>::max()))); // basically the same as static_cast<u32>
 
-    reg.write_cpsr(id::cpsr::N, (reg.read(Rd_id)) & (1 << 31));
-    reg.write_cpsr(id::cpsr::Z, (reg.read(Rd_id) == 0));
-    reg.write_cpsr(id::cpsr::C, util::carry_add(result));
-    reg.write_cpsr(id::cpsr::V, util::overflow_add(Rd, Rm, c_flag));
+    reg.write(id::cpsr::N, (reg.read(Rd_id)) & (1 << 31));
+    reg.write(id::cpsr::Z, (reg.read(Rd_id) == 0));
+    reg.write(id::cpsr::C, util::carry_add(result));
+    reg.write(id::cpsr::V, util::overflow_add(Rd, Rm, c_flag));
 
     reg.thumb_increment_PC();
 }
@@ -49,10 +49,10 @@ void instructions::thumb::math::ADD1(const thumb_code_t &code, REGISTERS &reg) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
-    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
-    reg.write_cpsr(id::cpsr::C, util::carry_add(Rn, immed_3));
-    reg.write_cpsr(id::cpsr::V, util::overflow_add(Rn, immed_3));
+    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::Z, (Rd == 0));
+    reg.write(id::cpsr::C, util::carry_add(Rn, immed_3));
+    reg.write(id::cpsr::V, util::overflow_add(Rn, immed_3));
 
     reg.thumb_increment_PC();
 }
@@ -73,10 +73,10 @@ void instructions::thumb::math::ADD2(const thumb_code_t &code, REGISTERS &reg) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
-    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
-    reg.write_cpsr(id::cpsr::C, util::carry_add(Rd, immed_8));
-    reg.write_cpsr(id::cpsr::V, util::overflow_add(Rd, immed_8));
+    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::Z, (Rd == 0));
+    reg.write(id::cpsr::C, util::carry_add(Rd, immed_8));
+    reg.write(id::cpsr::V, util::overflow_add(Rd, immed_8));
 
     reg.thumb_increment_PC();
 }
@@ -99,10 +99,10 @@ void instructions::thumb::math::ADD3(const thumb_code_t &code, REGISTERS &reg) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
-    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
-    reg.write_cpsr(id::cpsr::C, util::carry_add(Rn, Rm));
-    reg.write_cpsr(id::cpsr::V, util::overflow_add(Rn, Rm));
+    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::Z, (Rd == 0));
+    reg.write(id::cpsr::C, util::carry_add(Rn, Rm));
+    reg.write(id::cpsr::V, util::overflow_add(Rn, Rm));
 
     reg.thumb_increment_PC();
 }
@@ -184,14 +184,14 @@ void instructions::thumb::math::SBC(const thumb_code_t &code, REGISTERS &reg) {
 
     const u32 Rm = reg.fetch_reg_id(code, 3, 5);
 
-    reg.write(Rd_id, (reg.read(Rd_id) - Rm - !reg.read_cpsr(id::cpsr::C)));
+    reg.write(Rd_id, (reg.read(Rd_id) - Rm - !reg.read(id::cpsr::C)));
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
-    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
-    reg.write_cpsr(id::cpsr::C, !util::borrow_sub(Rd, Rm, !reg.read_cpsr(id::cpsr::C)));
-    reg.write_cpsr(id::cpsr::V, util::overflow_sub(Rd, Rm, !reg.read_cpsr(id::cpsr::C)));
+    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::Z, (Rd == 0));
+    reg.write(id::cpsr::C, !util::borrow_sub(Rd, Rm, !reg.read(id::cpsr::C)));
+    reg.write(id::cpsr::V, util::overflow_sub(Rd, Rm, !reg.read(id::cpsr::C)));
 
     reg.thumb_increment_PC();
 }
@@ -215,10 +215,10 @@ void instructions::thumb::math::SUB1(const thumb_code_t &code, REGISTERS &reg) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
-    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
-    reg.write_cpsr(id::cpsr::C, !util::borrow_sub(Rn, immed_3));
-    reg.write_cpsr(id::cpsr::V, util::overflow_sub(Rn, immed_3));
+    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::Z, (Rd == 0));
+    reg.write(id::cpsr::C, !util::borrow_sub(Rn, immed_3));
+    reg.write(id::cpsr::V, util::overflow_sub(Rn, immed_3));
 
     reg.thumb_increment_PC();
 }
@@ -239,10 +239,10 @@ void instructions::thumb::math::SUB2(const thumb_code_t &code, REGISTERS &reg) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
-    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
-    reg.write_cpsr(id::cpsr::C, !util::borrow_sub(Rd, immed_8));
-    reg.write_cpsr(id::cpsr::V, util::overflow_sub(Rd, immed_8));
+    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::Z, (Rd == 0));
+    reg.write(id::cpsr::C, !util::borrow_sub(Rd, immed_8));
+    reg.write(id::cpsr::V, util::overflow_sub(Rd, immed_8));
 
     reg.thumb_increment_PC();
 }
@@ -266,10 +266,10 @@ void instructions::thumb::math::SUB3(const thumb_code_t &code, REGISTERS &reg) {
     const u32 Rn = reg.read(Rn_id);
     const u32 Rm = reg.read(Rm_id);
 
-    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
-    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
-    reg.write_cpsr(id::cpsr::C, !util::borrow_sub(Rn, Rm));
-    reg.write_cpsr(id::cpsr::V, util::overflow_sub(Rn, Rm));
+    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::Z, (Rd == 0));
+    reg.write(id::cpsr::C, !util::borrow_sub(Rn, Rm));
+    reg.write(id::cpsr::V, util::overflow_sub(Rn, Rm));
 
     reg.thumb_increment_PC();
 }
@@ -302,8 +302,8 @@ void instructions::thumb::math::MUL(const thumb_code_t &code, REGISTERS &reg) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write_cpsr(id::cpsr::N, (Rd & (1 << 31)));
-    reg.write_cpsr(id::cpsr::Z, (Rd == 0));
+    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::Z, (Rd == 0));
 
     reg.thumb_increment_PC();
 }

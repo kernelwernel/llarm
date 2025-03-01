@@ -934,3 +934,1476 @@
         (raw_code.test(4) == 1) &&
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[[nodiscard]] bool opcodes::VFP::FABSD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 0) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 0) &&
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+
+[[nodiscard]] bool opcodes::VFP::FABSS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 0) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 0) &&
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+
+[[nodiscard]] bool opcodes::VFP::FADDD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 0) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FADDS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+        (raw_code.test(6) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+
+[[nodiscard]] bool opcodes::VFP::FCMPD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 1) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+
+[[nodiscard]] bool opcodes::VFP::FCMPED(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 1) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FCMPES(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 1) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+
+[[nodiscard]] bool opcodes::VFP::FCMPEZD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 1) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+
+[[nodiscard]] bool opcodes::VFP::FCMPEZS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 1) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+
+[[nodiscard]] bool opcodes::VFP::FCMPS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 1) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+
+[[nodiscard]] bool opcodes::VFP::FCMPZD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 1) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+
+[[nodiscard]] bool opcodes::VFP::FCMPZS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 1) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+
+[[nodiscard]] bool opcodes::VFP::FCPYD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 0) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FCPYS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 0) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FCVTDS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 1) &&
+        (raw_code.test(17) == 1) &&
+        (raw_code.test(16) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FCVTSD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 1) &&
+        (raw_code.test(17) == 1) &&
+        (raw_code.test(16) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FDIVD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 0) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FDIVS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+        (raw_code.test(6) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FLDD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(24) == 1) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FLDMD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FLDMS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FLDMX(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FLDS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(24) == 1) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FMACD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 0) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FMACS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(6) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FMDHR(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(4) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FMDLR(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(4) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FMRDH(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(4) == 1)
+    );
+}
+
+/*
+[[nodiscard]] bool opcodes::VFP::(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == ) &&
+        (raw_code.test(20) == ) &&
+
+        (raw_code.test(19) == ) &&
+        (raw_code.test(18) == ) &&
+        (raw_code.test(17) == ) &&
+        (raw_code.test(16) == ) &&
+
+        (raw_code.test(11) == ) &&
+        (raw_code.test(10) == ) &&
+        (raw_code.test(9) == ) &&
+        (raw_code.test(8) == ) &&
+
+        (raw_code.test(7) == ) &&
+        (raw_code.test(6) == ) &&
+        (raw_code.test(5) == ) &&
+        (raw_code.test(4) == )
+    );
+}
+*/
+
+
+[[nodiscard]] bool opcodes::VFP::FMRDL(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(4) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FMRS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(4) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FMRX(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(22) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(4) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FMSCD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 0) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FMSCS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(6) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FMSR(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(4) == 1)
+    );
+}
+
+
+[[nodiscard]] bool opcodes::VFP::FMSTAT(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(22) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 0) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 1) &&
+
+        (raw_code.test(15) == 1) &&
+        (raw_code.test(14) == 1) &&
+        (raw_code.test(13) == 1) &&
+        (raw_code.test(12) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(4) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FMULD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 0) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FMULS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(6) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FMXR(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(22) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(4) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FNEGD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 0) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FNEGS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 0) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FNMACD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FNMACS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FNMSCD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FNMSCS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FNMULD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FNMULS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+
+[[nodiscard]] bool opcodes::VFP::FSITOD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 1) &&
+        (raw_code.test(18) == 0) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FSITOS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 1) &&
+        (raw_code.test(18) == 0) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+
+[[nodiscard]] bool opcodes::VFP::FSQRTD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 0) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+
+[[nodiscard]] bool opcodes::VFP::FSQRTS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 0) &&
+        (raw_code.test(18) == 0) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(7) == 1) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FSTD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(24) == 1) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FSTMD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FSTMS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FSTMX(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FSTS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(24) == 1) &&
+        (raw_code.test(21) == 0) &&
+        (raw_code.test(20) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FSUBD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FSUBS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FTOSID(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 1) &&
+        (raw_code.test(18) == 1) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FTOSIS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 1) &&
+        (raw_code.test(18) == 1) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 1) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FTOUID(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 1) &&
+        (raw_code.test(18) == 1) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(5) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FTOUIS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 1) &&
+        (raw_code.test(18) == 1) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FUITOD(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(22) == 0) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 1) &&
+        (raw_code.test(18) == 0) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 1) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
+[[nodiscard]] bool opcodes::VFP::FUITOS(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(23) == 1) &&
+        (raw_code.test(21) == 1) &&
+        (raw_code.test(20) == 1) &&
+
+        (raw_code.test(19) == 1) &&
+        (raw_code.test(18) == 0) &&
+        (raw_code.test(17) == 0) &&
+        (raw_code.test(16) == 0) &&
+
+        (raw_code.test(11) == 1) &&
+        (raw_code.test(10) == 0) &&
+        (raw_code.test(9) == 1) &&
+        (raw_code.test(8) == 0) &&
+
+        (raw_code.test(7) == 0) &&
+        (raw_code.test(6) == 1) &&
+        (raw_code.test(4) == 0)
+    );
+}

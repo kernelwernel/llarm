@@ -3,17 +3,26 @@
 #include "cpu/instruction_set.hpp"
 #include "cpu/instructions.hpp"
 #include "cpu/core/registers.hpp"
-#include "cpu/memory.hpp"
+#include "cpu/memory/memory.hpp"
 
 
 
-INSTRUCTION_SET::INSTRUCTION_SET(REGISTERS& reg, MEMORY& memory, COPROCESSOR& coprocessor, SETTINGS& settings) : reg(reg), memory(memory), coprocessor(coprocessor), settings(settings) {
+INSTRUCTION_SET::INSTRUCTION_SET(
+    REGISTERS& reg, 
+    MEMORY& memory, 
+    COPROCESSOR& coprocessor, 
+    SETTINGS& settings
+) : reg(reg), 
+    memory(memory), 
+    coprocessor(coprocessor),
+    settings(settings)
+{
     arm_table = {
         { id::arm_instruction::NOP, { opcodes::arm::NOP, instructions::arm::misc::NOP } }
         //{ id::arm_instruction::PSR, { opcodes::arm::PSR, instructions::misc::PSR } },
     };
 
-    if (settings.is_dsp_enabled()) {
+    if (settings.is_enhanced_DSP_enabled) {
         arm_table.emplace_back(id::arm_instruction::LDRD, { opcodes::arm::LDRD, instructions::arm::DSP::LDRD });
         arm_table.emplace_back(id::arm_instruction::MCRR, { opcodes::arm::MCRR, instructions::arm::DSP::MCRR });
         arm_table.emplace_back(id::arm_instruction::MRRC, { opcodes::arm::MRRC, instructions::arm::DSP::MRRC });
@@ -28,6 +37,76 @@ INSTRUCTION_SET::INSTRUCTION_SET(REGISTERS& reg, MEMORY& memory, COPROCESSOR& co
         arm_table.emplace_back(id::arm_instruction::SMUL, { opcodes::arm::SMUL, instructions::arm::DSP::SMUL });
         arm_table.emplace_back(id::arm_instruction::SMULW, { opcodes::arm::SMULW, instructions::arm::DSP::SMULW });
         arm_table.emplace_back(id::arm_instruction::STRD, { opcodes::arm::STRD, instructions::arm::DSP::STRD });
+    }
+
+
+    if (settings.is_vfp_enabled) {
+        arm_table.emplace_back(id::arm_instruction::FABSS, { opcodes::arm::FABSS, instruction::arm::VFP::FABSS });
+        arm_table.emplace_back(id::arm_instruction::FADDS, { opcodes::arm::FADDS, instruction::arm::VFP::FADDS });
+        arm_table.emplace_back(id::arm_instruction::FCMPES, { opcodes::arm::FCMPES, instruction::arm::VFP::FCMPES });
+        arm_table.emplace_back(id::arm_instruction::FCMPEZS, { opcodes::arm::FCMPEZS, instruction::arm::VFP::FCMPEZS });
+        arm_table.emplace_back(id::arm_instruction::FCMPS, { opcodes::arm::FCMPS, instruction::arm::VFP::FCMPS });
+        arm_table.emplace_back(id::arm_instruction::FCMPZS, { opcodes::arm::FCMPZS, instruction::arm::VFP::FCMPZS });
+        arm_table.emplace_back(id::arm_instruction::FCPYS, { opcodes::arm::FCPYS, instruction::arm::VFP::FCPYS });
+        arm_table.emplace_back(id::arm_instruction::FDIVS, { opcodes::arm::FDIVS, instruction::arm::VFP::FDIVS });
+        arm_table.emplace_back(id::arm_instruction::FLDMS, { opcodes::arm::FLDMS, instruction::arm::VFP::FLDMS });
+        arm_table.emplace_back(id::arm_instruction::FLDMX, { opcodes::arm::FLDMX, instruction::arm::VFP::FLDMX });
+        arm_table.emplace_back(id::arm_instruction::FLDS, { opcodes::arm::FLDS, instruction::arm::VFP::FLDS });
+        arm_table.emplace_back(id::arm_instruction::FMACS, { opcodes::arm::FMACS, instruction::arm::VFP::FMACS });
+        arm_table.emplace_back(id::arm_instruction::FMRS, { opcodes::arm::FMRS, instruction::arm::VFP::FMRS });
+        arm_table.emplace_back(id::arm_instruction::FMRX, { opcodes::arm::FMRX, instruction::arm::VFP::FMRX });
+        arm_table.emplace_back(id::arm_instruction::FMSCS, { opcodes::arm::FMSCS, instruction::arm::VFP::FMSCS });
+        arm_table.emplace_back(id::arm_instruction::FMSR, { opcodes::arm::FMSR, instruction::arm::VFP::FMSR });
+        arm_table.emplace_back(id::arm_instruction::FMSTAT, { opcodes::arm::FMSTAT, instruction::arm::VFP::FMSTAT });
+        arm_table.emplace_back(id::arm_instruction::FMULS, { opcodes::arm::FMULS, instruction::arm::VFP::FMULS });
+        arm_table.emplace_back(id::arm_instruction::FMXR, { opcodes::arm::FMXR, instruction::arm::VFP::FMXR });
+        arm_table.emplace_back(id::arm_instruction::FNEGS, { opcodes::arm::FNEGS, instruction::arm::VFP::FNEGS });
+        arm_table.emplace_back(id::arm_instruction::FNMACS, { opcodes::arm::FNMACS, instruction::arm::VFP::FNMACS });
+        arm_table.emplace_back(id::arm_instruction::FNMSCS, { opcodes::arm::FNMSCS, instruction::arm::VFP::FNMSCS });
+        arm_table.emplace_back(id::arm_instruction::FNMULS, { opcodes::arm::FNMULS, instruction::arm::VFP::FNMULS });
+        arm_table.emplace_back(id::arm_instruction::FSITOS, { opcodes::arm::FSITOS, instruction::arm::VFP::FSITOS });
+        arm_table.emplace_back(id::arm_instruction::FSQRTS, { opcodes::arm::FSQRTS, instruction::arm::VFP::FSQRTS });
+        arm_table.emplace_back(id::arm_instruction::FSTMS, { opcodes::arm::FSTMS, instruction::arm::VFP::FSTMS });
+        arm_table.emplace_back(id::arm_instruction::FSTMX, { opcodes::arm::FSTMX, instruction::arm::VFP::FSTMX });
+        arm_table.emplace_back(id::arm_instruction::FSTS, { opcodes::arm::FSTS, instruction::arm::VFP::FSTS });
+        arm_table.emplace_back(id::arm_instruction::FSUBS, { opcodes::arm::FSUBS, instruction::arm::VFP::FSUBS });
+        arm_table.emplace_back(id::arm_instruction::FTOSIS, { opcodes::arm::FTOSIS, instruction::arm::VFP::FTOSIS });
+        arm_table.emplace_back(id::arm_instruction::FTOUIS, { opcodes::arm::FTOUIS, instruction::arm::VFP::FTOUIS });
+        arm_table.emplace_back(id::arm_instruction::FUITOS, { opcodes::arm::FUITOS, instruction::arm::VFP::FUITOS });
+        
+        if (settings.is_vfp_double_precision_enabled) {
+            arm_table.emplace_back(id::arm_instruction::FADDD, { opcodes::arm::FADDD, instruction::arm::VFP::FADDD });
+            arm_table.emplace_back(id::arm_instruction::FABSD, { opcodes::arm::FABSD, instruction::arm::VFP::FABSD });
+            arm_table.emplace_back(id::arm_instruction::FCMPD, { opcodes::arm::FCMPD, instruction::arm::VFP::FCMPD });
+            arm_table.emplace_back(id::arm_instruction::FCMPED, { opcodes::arm::FCMPED, instruction::arm::VFP::FCMPED });
+            arm_table.emplace_back(id::arm_instruction::FCMPEZD, { opcodes::arm::FCMPEZD, instruction::arm::VFP::FCMPEZD });
+            arm_table.emplace_back(id::arm_instruction::FCMPZD, { opcodes::arm::FCMPZD, instruction::arm::VFP::FCMPZD });
+            arm_table.emplace_back(id::arm_instruction::FCPYD, { opcodes::arm::FCPYD, instruction::arm::VFP::FCPYD });
+            arm_table.emplace_back(id::arm_instruction::FCVTDS, { opcodes::arm::FCVTDS, instruction::arm::VFP::FCVTDS });
+            arm_table.emplace_back(id::arm_instruction::FCVTSD, { opcodes::arm::FCVTSD, instruction::arm::VFP::FCVTSD });
+            arm_table.emplace_back(id::arm_instruction::FDIVD, { opcodes::arm::FDIVD, instruction::arm::VFP::FDIVD });
+            arm_table.emplace_back(id::arm_instruction::FLDD, { opcodes::arm::FLDD, instruction::arm::VFP::FLDD });
+            arm_table.emplace_back(id::arm_instruction::FLDMD, { opcodes::arm::FLDMD, instruction::arm::VFP::FLDMD });
+            arm_table.emplace_back(id::arm_instruction::FMACD, { opcodes::arm::FMACD, instruction::arm::VFP::FMACD });
+            arm_table.emplace_back(id::arm_instruction::FMDHR, { opcodes::arm::FMDHR, instruction::arm::VFP::FMDHR });
+            arm_table.emplace_back(id::arm_instruction::FMDLR, { opcodes::arm::FMDLR, instruction::arm::VFP::FMDLR });
+            arm_table.emplace_back(id::arm_instruction::FMRDH, { opcodes::arm::FMRDH, instruction::arm::VFP::FMRDH });
+            arm_table.emplace_back(id::arm_instruction::FMRDL, { opcodes::arm::FMRDL, instruction::arm::VFP::FMRDL });
+            arm_table.emplace_back(id::arm_instruction::FMSCD, { opcodes::arm::FMSCD, instruction::arm::VFP::FMSCD });
+            arm_table.emplace_back(id::arm_instruction::FMULD, { opcodes::arm::FMULD, instruction::arm::VFP::FMULD });
+            arm_table.emplace_back(id::arm_instruction::FNEGD, { opcodes::arm::FNEGD, instruction::arm::VFP::FNEGD });
+            arm_table.emplace_back(id::arm_instruction::FNMACD, { opcodes::arm::FNMACD, instruction::arm::VFP::FNMACD });
+            arm_table.emplace_back(id::arm_instruction::FNMSCD, { opcodes::arm::FNMSCD, instruction::arm::VFP::FNMSCD });
+            arm_table.emplace_back(id::arm_instruction::FNMULD, { opcodes::arm::FNMULD, instruction::arm::VFP::FNMULD });
+            arm_table.emplace_back(id::arm_instruction::FSITOD, { opcodes::arm::FSITOD, instruction::arm::VFP::FSITOD });
+            arm_table.emplace_back(id::arm_instruction::FSQRTD, { opcodes::arm::FSQRTD, instruction::arm::VFP::FSQRTD });
+            arm_table.emplace_back(id::arm_instruction::FSTD, { opcodes::arm::FSTD, instruction::arm::VFP::FSTD });
+            arm_table.emplace_back(id::arm_instruction::FSTMD, { opcodes::arm::FSTMD, instruction::arm::VFP::FSTMD });
+            arm_table.emplace_back(id::arm_instruction::FSUBD, { opcodes::arm::FSUBD, instruction::arm::VFP::FSUBD });
+            arm_table.emplace_back(id::arm_instruction::FTOSID, { opcodes::arm::FTOSID, instruction::arm::VFP::FTOSID });
+            arm_table.emplace_back(id::arm_instruction::FTOUID, { opcodes::arm::FTOUID, instruction::arm::VFP::FTOUID });
+            arm_table.emplace_back(id::arm_instruction::FUITOD, { opcodes::arm::FUITOD, instruction::arm::VFP::FUITOD });
+        }
     }
 
     thumb_table = {

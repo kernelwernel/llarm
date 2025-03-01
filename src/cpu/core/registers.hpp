@@ -1,15 +1,17 @@
 #pragma once
 
-#include "id.hpp"
-#include "types.hpp"
-#include "constants.hpp"
-#include "coprocessor.hpp"
+#include "../../id.hpp"
+#include "../../types.hpp"
+#include "../../constants.hpp"
+#include "../coprocessor/coprocessor.hpp"
+#include "../memory/26_bit_arch.hpp"
 #include "globals.hpp"
 
 struct REGISTERS {
 private:
     COPROCESSOR& coprocessor;
     GLOBALS& globals;
+    ARCH_26_BIT& arch_26;
 
 public:
     // unbanked
@@ -68,15 +70,13 @@ public:
     u32 SPSR_fiq = 0;
 
 public:
-    [[nodiscard]] id::mode read_mode();
-
     [[nodiscard]] bool is_priviledged();
     [[nodiscard]] bool is_exception();
 
-    [[nodiscard]] u8 read_cpsr(const id::cpsr);
+    [[nodiscard]] u8 read(const id::cpsr);
 
-    void write_cpsr(const id::cpsr, const u8);
-    void write_cpsr(const id::reg reg_id);
+    void write(const id::cpsr, const u8);
+    void write(const id::reg reg_id);
 
     [[nodiscard]] id::reg fetch_reg_id(const u8) noexcept;
     [[nodiscard]] id::reg fetch_reg_id(const arm_code_t&, const u8, const u8) noexcept;
@@ -84,7 +84,6 @@ public:
 
     [[nodiscard]] id::cond fetch_cond_id(const u8);
     [[nodiscard]] id::cond fetch_cond_id(const arm_code_t&);
-    [[nodiscard]] id::mode fetch_mode_id(const constants::mode);
 
     [[nodiscard]] u32 read(const id::reg);
     [[nodiscard]] u32 read(const arm_code_t&, const u8, const u8) noexcept;
@@ -94,26 +93,27 @@ public:
     void write(const id::reg, const u32);
 
     [[nodiscard]] bool check_cond(const id::cond);
+    [[nodiscard]] bool check_cond(const arm_code_t&);
 
 
     void switch_mode(const id::mode mode) {
         switch (mode) {
-            case id::mode::USER:          reg.write_cpsr(id::cpsr::M, constants::mode::USER); return;
-            case id::mode::SUPERVISOR:    reg.write_cpsr(id::cpsr::M, constants::mode::SUPERVISOR); return;
-            case id::mode::ABORT:         reg.write_cpsr(id::cpsr::M, constants::mode::ABORT); return;
-            case id::mode::UNDEFINED:     reg.write_cpsr(id::cpsr::M, constants::mode::UNDEFINED); return;
-            case id::mode::FIQ:           reg.write_cpsr(id::cpsr::M, constants::mode::FIQ); return;
-            case id::mode::IRQ:           reg.write_cpsr(id::cpsr::M, constants::mode::IRQ); return;
-            case id::mode::SYSTEM:        reg.write_cpsr(id::cpsr::M, constants::mode::SYSTEM); return;
-            case id::mode::FIQ_26:        reg.write_cpsr(id::cpsr::M, constants::mode::FIQ_26); return;
-            case id::mode::IRQ_26:        reg.write_cpsr(id::cpsr::M, constants::mode::IRQ_26); return;
-            case id::mode::SUPERVISOR_26: reg.write_cpsr(id::cpsr::M, constants::mode::SUPERVISOR_26); return;
-            case id::mode::USER_26:       reg.write_cpsr(id::cpsr::M, constants::mode::USER_26); return;
+            case id::mode::USER:          write(id::cpsr::M, constants::mode::USER); return;
+            case id::mode::SUPERVISOR:    write(id::cpsr::M, constants::mode::SUPERVISOR); return;
+            case id::mode::ABORT:         write(id::cpsr::M, constants::mode::ABORT); return;
+            case id::mode::UNDEFINED:     write(id::cpsr::M, constants::mode::UNDEFINED); return;
+            case id::mode::FIQ:           write(id::cpsr::M, constants::mode::FIQ); return;
+            case id::mode::IRQ:           write(id::cpsr::M, constants::mode::IRQ); return;
+            case id::mode::SYSTEM:        write(id::cpsr::M, constants::mode::SYSTEM); return;
+            case id::mode::FIQ_26:        write(id::cpsr::M, constants::mode::FIQ_26); return;
+            case id::mode::IRQ_26:        write(id::cpsr::M, constants::mode::IRQ_26); return;
+            case id::mode::SUPERVISOR_26: write(id::cpsr::M, constants::mode::SUPERVISOR_26); return;
+            case id::mode::USER_26:       write(id::cpsr::M, constants::mode::USER_26); return;
         }
     }
 
     id::mode read_mode() {
-        switch (read_cpsr(id::cpsr::M)) {
+        switch (read(id::cpsr::M)) {
             case constants::mode::USER: return id::mode::USER;
             case constants::mode::SUPERVISOR: return id::mode::SUPERVISOR;
             case constants::mode::ABORT: return id::mode::ABORT;
@@ -125,8 +125,7 @@ public:
             case constants::mode::IRQ_26: return id::mode::IRQ_26;
             case constants::mode::SUPERVISOR_26: return id::mode::SUPERVISOR_26;
             case constants::mode::USER_26: return id::mode::USER_26;
-            default:
-                out::error("No known enum value for read_mode()");
+            default: out::error("No known enum value for read_mode()");
         }
     }
 
@@ -138,7 +137,7 @@ public:
         // [31:2]
         static constinit u32 pc_mask_32 = 0xFFFFFFFC;
 
-        if (coprocessor.is_26_bit_arch_address()) {
+        if (arch_26.is_26_arch_address()) {
             return ((R15 & pc_mask_26) >> 2); 
         } else {
             return ((R15 & pc_mask_32) >> 2);
@@ -147,8 +146,8 @@ public:
 
 
     void write_PC(const u32 address) {
-        if (coprocessor.is_26_bit_arch_address()) {
-            R15 = util::swap_bits(R15, 2, 26, (address & 0x03FFFFFF));
+        if (arch_26.is_26_arch_address()) {
+            util::swap_bits(R15, 2, 25, (address & 0x03FFFFFF));
         } else {
             R15 = address;
         }
@@ -158,7 +157,14 @@ public:
 
     void arm_increment_PC();
 
-    REGISTERS(COPROCESSOR& coprocessor, GLOBALS& globals) : coprocessor(coprocessor), globals(globals) {
+    REGISTERS(
+        COPROCESSOR& coprocessor, 
+        GLOBALS& globals,
+        ARCH_26_BIT& arch_26
+    ) : coprocessor(coprocessor), 
+        globals(globals),
+        arch_26(arch_26)
+    {
 
     }
 };

@@ -1,8 +1,12 @@
+#pragma once
+
 #include "ram.hpp"
-#include "coprocessor.hpp"
-#include "types.hpp"
-#include "globals.hpp"
-#include "utility.hpp"
+#include "structure.hpp"
+#include "../core/globals.hpp"
+#include "../coprocessor/coprocessor.hpp"
+#include "../../types.hpp"
+#include "../../utility.hpp"
+#include "../../out.hpp"
 
 #include <map>
 
@@ -12,7 +16,6 @@
  *   C = cachability
  *   AP = access permission
  */
-
 struct MMU {
 private:
     GLOBALS& globals;
@@ -20,12 +23,12 @@ private:
     COPROCESSOR& coprocessor;
 
     // page/block sizes
-    constexpr u32 tiny_page = util::get_kb(1); // 1KB
-    constexpr u32 small_page = util::get_kb(4); // 4KB
-    constexpr u32 large_page = util::get_kb(64); // 64KB
+    static constexpr u32 tiny_page = util::get_kb(1); // 1KB
+    static constexpr u32 small_page = util::get_kb(4); // 4KB
+    static constexpr u32 large_page = util::get_kb(64); // 64KB
 
     // section size
-    constexpr u32 section = util::get_mb(1); // 1MB
+    static constexpr u32 section = util::get_mb(1); // 1MB
 
 
 
@@ -36,28 +39,6 @@ private:
 
     std::map<u32, u32> second_level_table_coarse {}; // holds large and small page translations (256)
     std::map<u32, u32> second_level_table_fine {}; // holds large, small, and tiny page translations (B3-7) (1024)
-
-
-    bool is_mmu_enabled() {
-        return (coprocessor.read(id::cp::CP15_R1_M) == true);
-    }
-
-
-    // specific to is_access_permission_invalid
-    consteval u8 make_bytecode(
-        const u8 AP_bits, 
-        const bool S,
-        const bool R,
-        const bool is_privileged
-    ) {
-        return (
-            !is_privileged |
-            (is_privileged << 1) |
-            (R << 2) |
-            (S << 3) |
-            (AP_bits << 4)
-        );
-    }
 
 
 
@@ -79,32 +60,57 @@ private:
         // and switch-friendly, but also because it's much easier to handle that way.
         // the full table is situation in B3-16 which should make more sense.
         const u8 bytecode = (
-            !globals.is_privileged |
+            !globals.is_privileged | // is user
             (globals.is_privileged << 1) |
             (R << 2) |
             (S << 3) |
             (raw_AP_bits << 4)
         );
-        //make_bytecode(raw_AP_bits, S, R, globals.is_privileged);
+
+        constexpr u8 AP00_USER = 0b000001; // AP = 00, user
+        constexpr u8 AP00_PRIV = 0b000010; // AP = 00, priv
+        constexpr u8 AP00_USER_S = 0b001001; // AP = 00, user, S
+        constexpr u8 AP00_PRIV_S = 0b001010; // AP = 00, priv, S
+        constexpr u8 AP00_USER_R = 0b000101; // AP = 00, user, R
+        constexpr u8 AP00_PRIV_R = 0b000110; // AP = 00, priv, R
+        constexpr u8 AP00_USER_S_R = 0b001101; // AP = 00, user, S, R
+        constexpr u8 AP00_PRIV_S_R = 0b001110; // AP = 00, priv, S, R
+        constexpr u8 AP01_USER = 0b0101; // AP = 01, user
+        constexpr u8 AP01_PRIV = 0b0110; // AP = 01, priv
+        constexpr u8 AP10_USER = 0b1001; // AP = 10, user
+        constexpr u8 AP10_PRIV = 0b1010; // AP = 10, priv
+        constexpr u8 AP11_USER = 0b1101; // AP = 11, user
+        constexpr u8 AP11_PRIV = 0b1110; // AP = 11, priv
 
         id::access_perm AP_id;
 
         switch (bytecode) {
-            case make_bytecode(0b00, false, false, false): AP_id = id::access_perm::NO_ACCESS; break; // AP = 00, user
-            case make_bytecode(0b00, false, false, true):  AP_id = id::access_perm::NO_ACCESS; break; // AP = 00, priv
-            case make_bytecode(0b00, true, false, false):  AP_id = id::access_perm::NO_ACCESS; break; // AP = 00, user, S
-            case make_bytecode(0b00, true, false, true):   AP_id = id::access_perm::READ_ONLY; break; // AP = 00, priv, S
-            case make_bytecode(0b00, false, true, false):  AP_id = id::access_perm::READ_ONLY; break; // AP = 00, user, R
-            case make_bytecode(0b00, false, true, true):   AP_id = id::access_perm::READ_ONLY; break; // AP = 00, priv, R
-            case make_bytecode(0b00, true, true, false):   AP_id = id::access_perm::UNPREDICTABLE; break; // AP = 00, user, S, R
-            case make_bytecode(0b00, true, true, true):    AP_id = id::access_perm::UNPREDICTABLE; break; // AP = 00, priv, S, R
-            case make_bytecode(0b01, false, false, false): AP_id = id::access_perm::NO_ACCESS;  break;  // AP = 01, user
-            case make_bytecode(0b01, false, false, true):  AP_id = id::access_perm::READ_WRITE; break; // AP = 01, priv
-            case make_bytecode(0b10, false, false, false): AP_id = id::access_perm::READ_ONLY;  break;  // AP = 10, user
-            case make_bytecode(0b10, false, false, true):  AP_id = id::access_perm::READ_WRITE; break; // AP = 10, priv
-            case make_bytecode(0b11, false, false, false): AP_id = id::access_perm::READ_WRITE; break; // AP = 11, user
-            case make_bytecode(0b11, false, false, true):  AP_id = id::access_perm::READ_WRITE; break; // AP = 11, priv
-            default: out::error("something went horribly wrong here...");
+            case AP00_USER: AP_id = id::access_perm::NO_ACCESS; break; // AP = 00, user
+            case AP00_PRIV: AP_id = id::access_perm::NO_ACCESS; break; // AP = 00, priv
+            case AP00_USER_S: AP_id = id::access_perm::NO_ACCESS; break; // AP = 00, user, S
+            case AP00_PRIV_S: AP_id = id::access_perm::READ_ONLY; break; // AP = 00, priv, S
+            case AP00_USER_R: AP_id = id::access_perm::READ_ONLY; break; // AP = 00, user, R
+            case AP00_PRIV_R: AP_id = id::access_perm::READ_ONLY; break; // AP = 00, priv, R
+            case AP00_USER_S_R: AP_id = id::access_perm::UNPREDICTABLE; break; // AP = 00, user, S, R
+            case AP00_PRIV_S_R: AP_id = id::access_perm::UNPREDICTABLE; break; // AP = 00, priv, S, R
+            default:
+                // this section is the same as above, but without the S and R bits 
+                // because they're irrelevant after this point when AP != 00
+                const u8 access_bytecode = (
+                    !globals.is_privileged |
+                    (globals.is_privileged << 1) |
+                    (raw_AP_bits << 2)
+                );
+
+                switch (access_bytecode) {
+                    case AP01_USER: AP_id = id::access_perm::NO_ACCESS;  break; // AP = 01, user
+                    case AP01_PRIV: AP_id = id::access_perm::READ_WRITE; break; // AP = 01, priv
+                    case AP10_USER: AP_id = id::access_perm::READ_ONLY;  break; // AP = 10, user
+                    case AP10_PRIV: AP_id = id::access_perm::READ_WRITE; break; // AP = 10, priv
+                    case AP11_USER: AP_id = id::access_perm::READ_WRITE; break; // AP = 11, user
+                    case AP11_PRIV: AP_id = id::access_perm::READ_WRITE; break; // AP = 11, priv
+                    default: out::error("something went horribly wrong here...");
+                }
         }
 
         switch (AP_id) {
@@ -158,22 +164,28 @@ private:
     u32 second_level_fetch(const u32 key, const id::first_level first_level_type) {
         switch (first_level_type) {
             case id::first_level::FINE: 
-                auto it = second_level_table_fine.find(key);
+                auto it_fine = second_level_table_fine.find(key);
 
-                if (it != second_level_table_fine.end()) {
-                    return it->second;
+                if (it_fine != second_level_table_fine.end()) {
+                    return it_fine->second;
                 } else {
                     // not found, do a table walk (i think)
                 }
+                return 0; // temporary, only here to remove errors 
+                break;
 
             case id::first_level::COARSE: 
-                auto it = second_level_table_coarse.find(key);
+                auto it_coarse = second_level_table_coarse.find(key);
 
-                if (it != second_level_table_coarse.end()) {
-                    return it->second;
+                if (it_coarse != second_level_table_coarse.end()) {
+                    return it_coarse->second;
                 } else {
                     // not found, do a table walk (i think)
                 }
+                return 0; // temporary, only here to remove errors 
+                break;
+            
+            default: return 0; // this should never be reached
         }
     }
 
@@ -225,8 +237,8 @@ private:
                 }
         }
     
-        const bool B = (entry & (1 << 2));
-        const bool C = (entry & (1 << 3));
+        // const bool B = (entry & (1 << 2)); // TODO DO SOMETHING WITH THESE
+        // const bool C = (entry & (1 << 3)); // TODO DO SOMETHING WITH THESE
         
         const u32 section_base_address = 0;
 
@@ -302,13 +314,13 @@ private:
         //    // TODO: permission fault
         //}
     
-        const bool C = (entry & (1 << 3));
-        const bool B = (entry & (1 << 2));
-
-        const u8 AP0 = util::bit_fetcher(entry, 4, 5);
-        const u8 AP1 = util::bit_fetcher(entry, 6, 7);
-        const u8 AP2 = util::bit_fetcher(entry, 8, 9);
-        const u8 AP3 = util::bit_fetcher(entry, 10, 11);
+        // const bool C = (entry & (1 << 3)); // TODO: DO SOMETHING WITH THESE
+        // const bool B = (entry & (1 << 2)); // TODO: DO SOMETHING WITH THESE
+// 
+        // const u8 AP0 = util::bit_fetcher(entry, 4, 5); // TODO: DO SOMETHING WITH THESE
+        // const u8 AP1 = util::bit_fetcher(entry, 6, 7); // TODO: DO SOMETHING WITH THESE
+        // const u8 AP2 = util::bit_fetcher(entry, 8, 9); // TODO: DO SOMETHING WITH THESE
+        // const u8 AP3 = util::bit_fetcher(entry, 10, 11); // TODO: DO SOMETHING WITH THESE
 
         const u32 small_page_base_address = util::bit_fetcher(entry, 12, 31);
         const u16 page_index = util::bit_fetcher(address, 0, 11);
@@ -326,8 +338,8 @@ private:
             // TODO: permission fault
         }
 
-        const bool C = (entry & (1 << 3));
-        const bool B = (entry & (1 << 2));
+        // const bool C = (entry & (1 << 3)); // TODO: DO SOMETHING WITH THESE
+        // const bool B = (entry & (1 << 2)); // TODO: DO SOMETHING WITH THESE
 
         const u32 tiny_page_base_address = util::bit_fetcher(entry, 10, 31);
         const u16 page_index = util::bit_fetcher(address, 0, 9);
@@ -338,25 +350,45 @@ private:
     }
 
 public:
+    bool is_mmu_enabled() {
+        return (
+            (coprocessor.read(id::cp::CP15_R1_M) == true) &&
+            (settings.is_mmu_enabled)
+        );
+    }
+
+    struct translation_struct {
+        id::aborts status;
+        u32 virtual_address;
+    };
+
     // translate the virtual address to a physical address
-    u32 mmu_translate_address(const u32 address, const id::access_type access_type, const u8 access_byte_size) {
+    translation_struct translate_address(const u32 address, const id::access_type access_type, const u8 access_byte_size) {
+        translation_struct ret = {};
+
+        // default return values
+        ret.status = id::aborts::NO_ABORT;
+        ret.virtual_address = 0;
+
         if (
             (coprocessor.read(id::cp::CP15_R1_A)) && // check if allignment fault is enabled
             (access_type != id::access_type::INSTRUCTION_FETCH)
         ) {
             switch (access_byte_size) {
-                case 1: /* byte */ 
+                case 1: // byte
                     break; // there are no alignment faults for byte accesses
 
-                case 2: /* halfword */
+                case 2: // halfword 
                     if ((address & 1) != 0) {
-                        // alignment fault
+                        ret.status = id::aborts::ALIGNMENT;
+                        return ret;
                     }
                     break;
 
-                case 4: /* word*/
+                case 4: // word
                     if ((address & 0b11) != 0b00) {
-                        // alignment fault
+                        ret.status = id::aborts::ALIGNMENT;
+                        return ret;
                     }
                     break;
 
@@ -374,30 +406,92 @@ public:
         u32 second_key = 0;
 
         switch (get_first_level_entry_id(first_level_entry)) {
-            case id::first_level::FAULT: return 0; // TODO: translation fault
             case id::first_level::COARSE: second_key = first_coarse(first_level_entry); break;
             case id::first_level::FINE: second_key = first_coarse(first_level_entry); break;
-            case id::first_level::SECTION: return first_section(first_level_entry, address, access_type);
+            case id::first_level::FAULT: 
+                ret.status = id::aborts::TRANSLATION; 
+                return ret; 
+            case id::first_level::SECTION: 
+                ret.status = id::aborts::NO_ABORT;
+                ret.virtual_address = first_section(first_level_entry, address, access_type);
+                return ret;
         };
 
         const u32 second_level_entry = second_level_fetch(second_key);
 
         const id::second_level entry_id = get_second_level_entry_id(second_level_entry);
 
-        const u8 raw_domain_bits = 0;
+        u8 raw_domain_bits = 0;
 
         if (entry_id != id::second_level::FAULT) {
             raw_domain_bits = util::bit_fetcher(first_level_entry, 5, 8);
         }
 
         switch (entry_id) {
-            case id::second_level::FAULT: return 0; // TODO: translation fault
-            case id::second_level::LARGE: return second_large(second_level_entry, address, access_type, raw_domain_bits);
-            case id::second_level::SMALL: return second_small(second_level_entry, address, access_type, raw_domain_bits);
-            case id::second_level::TINY:  return second_tiny(second_level_entry, address, access_type, raw_domain_bits);
+            case id::second_level::FAULT:                 
+                ret.status = id::aborts::TRANSLATION; 
+                return ret;
+            case id::second_level::LARGE: 
+                ret.status = id::aborts::NO_ABORT; 
+                ret.virtual_address = second_large(second_level_entry, address, access_type, raw_domain_bits);
+                return ret;
+            case id::second_level::SMALL: 
+                ret.status = id::aborts::NO_ABORT; 
+                ret.virtual_address = second_small(second_level_entry, address, access_type, raw_domain_bits);
+                return ret;
+            case id::second_level::TINY:  
+                ret.status = id::aborts::NO_ABORT; 
+                ret.virtual_address = second_tiny(second_level_entry, address, access_type, raw_domain_bits);
+                return ret;
         }
+
+        return ret;
     }
 
+
+
+    memory_struct write_manager(const u32 address, const u8 access_size) {
+        translation_struct translation = translate_address(address, id::access_type::WRITE, access_size);
+
+        memory_struct data = {};
+
+        if (translation.status == id::aborts::NO_ABORT) {
+            data.new_address = translation.virtual_address;
+        } else {
+            data.is_successful = false;
+            data.abort_code = translation.status;
+            data.value = 0;
+            return data;
+        }
+
+        data.is_successful = true;
+        data.abort_code = id::aborts::NO_ABORT;
+        data.value = 0;
+
+        return data;
+    }
+
+
+    memory_struct read_manager(const u32 address, const u8 access_size) {
+        translation_struct translation = translate_address(address, id::access_type::READ, access_size);
+
+        memory_struct data = {};
+
+        if (translation.status == id::aborts::NO_ABORT) {
+            data.new_address = translation.virtual_address;
+        } else {
+            data.is_successful = false;
+            data.abort_code = translation.status;
+            data.value = 0; // will be updated later
+            return data;
+        }
+
+        data.is_successful = true;
+        data.abort_code = id::aborts::NO_ABORT;
+        data.value = 0; // will be updated later
+
+        return data;
+    }
 
 
     void table_walk();
@@ -408,8 +502,19 @@ public:
         second_level_table.clear();
     }
 
+    void reset() {
+        
+    }
 
-    MMU(GLOBALS& globals, RAM& ram, COPROCESSOR& coprocessor) : globals(globals), ram(ram), coprocessor(coprocessor) {
+
+    MMU(
+        GLOBALS& globals, 
+        RAM& ram, 
+        COPROCESSOR& coprocessor
+    ) : globals(globals), 
+        ram(ram), 
+        coprocessor(coprocessor) 
+    {
         
     }
 };

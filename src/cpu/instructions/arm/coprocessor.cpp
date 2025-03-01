@@ -33,8 +33,34 @@ void instructions::arm::coprocessor::MCR(const arm_code_t &code, REGISTERS& reg)
     const u8 opcode_1 = util::bit_fetcher<u8>(code, 21, 23);
 
 
+    // write-only special case for R8_MMU register in CP15 (B3-26)
+    if (cp_num == 15 && CRn == 8) {
+        const u8 bytecode = ((opcode_2 << 4) | CRm);
+
+        switch (bytecode) {
+            // Invalidate entire unified TLB or both instruction and data TLBs
+            case 0b0000111:
+
+            // Invalidate unified single entry
+            case 0b0010111: 
+
+            // Invalidate entire instruction TLB
+            case 0b0000101: 
+
+            // Invalidate instruction single entry
+            case 0b0010101: 
+
+            // Invalidate entire data TLB
+            case 0b0000110: 
+
+            // Invalidate data single entry
+            case 0b0010110: 
+        }
+
+    }
+
     // TODO: implement the cache invalidator
-    /*
+    /*.
     Function<opcode2><CRm>DataInstruction
     Invalidate entire unified TLB
     or both instruction and data
@@ -80,15 +106,15 @@ void instructions::arm::coprocessor::MRC(const arm_code_t &code, REGISTERS& reg)
     const u8 CRn = util::bit_fetcher<u8>(code, 16, 19); // cp register
     const u8 opcode_1 = util::bit_fetcher<u8>(code, 21, 23); // cp opcode (?)
 
-    const id::coprocessor cp_id = util::fetch_cp_id(cp_num);
+    const id::coprocessor cp_id = coprocessor.fetch_cp_id(cp_num);
 
     const u32 data = coprocessor.read();
 
     if (Rd_id == id::reg::R15) {
-        reg.write_cpsr(id::cpsr::N, (data & (1 << 31)));
-        reg.write_cpsr(id::cpsr::Z, (data & (1 << 30)));
-        reg.write_cpsr(id::cpsr::C, (data & (1 << 29)));
-        reg.write_cpsr(id::cpsr::V, (data & (1 << 28)));
+        reg.write(id::cpsr::N, (data & (1 << 31)));
+        reg.write(id::cpsr::Z, (data & (1 << 30)));
+        reg.write(id::cpsr::C, (data & (1 << 29)));
+        reg.write(id::cpsr::V, (data & (1 << 28)));
     } else {
         reg.write(Rd_id, data);
     }

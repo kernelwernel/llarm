@@ -44,7 +44,7 @@ void instructions::thumb::store::STR2(const thumb_code_t& code, REGISTERS& reg) 
  *    Memory[address,4] = UNPREDICTABLE
  */
 void instructions::thumb::store::STR3(const thumb_code_t& code, REGISTERS& reg) { // TODO
-    const u8 immed_8 = utill::bit_fetcher<u8>(code, 0, 7);
+    const u8 immed_8 = util::bit_fetcher<u8>(code, 0, 7);
     const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
 
     const u32 address = (reg.read(id::reg::SP) + (immed_8 * 4));
@@ -69,7 +69,7 @@ void instructions::thumb::store::STRB1(const thumb_code_t& code, REGISTERS& reg)
     const u8 immed_5 = util::bit_fetcher(code, 6, 10);
 
     const u32 address = (reg.read(Rn_id) + immed_5);
-    memory.write(util::bit_fetcher<u8>(reg.read(Rd_id), 0, 7), address , 1);
+    memory.write(util::bit_fetcher<u8, u32>(reg.read(Rd_id), 0, 7), address , 1);
 
     reg.thumb_increment_PC();
 }

@@ -1,43 +1,51 @@
-#include "types.hpp"
-#include "utility.hpp"
-#include "globals.hpp"
-#include "logs.hpp"
+#pragma once
+
+#include "../../types.hpp"
+#include "../../utility.hpp"
+#include "../../logs.hpp"
+#include "../core/globals.hpp"
+#include "../coprocessor/coprocessor.hpp"
+#include "structure.hpp"
 
 // memory protection unit
 struct MPU {
 private:
     GLOBALS& globals;
     COPROCESSOR& coprocessor;
+    SETTINGS& settings;
 
 public:
     u64 get_size(const u8 raw_size_bits) {
-        case 0b01011: return util::get_kb(4); // 4KB
-        case 0b01100: return util::get_kb(8); // 8KB
-        case 0b01101: return util::get_kb(16); // 16KB
-        case 0b01110: return util::get_kb(32); // 32KB
-        case 0b01111: return util::get_kb(64); // 64KB
-        case 0b10000: return util::get_kb(128); // 128KB
-        case 0b10001: return util::get_kb(256); // 256KB
-        case 0b10010: return util::get_kb(512); // 512KB
-        case 0b10011: return util::get_mb(1); // 1MB
-        case 0b10100: return util::get_mb(2); // 2MB
-        case 0b10101: return util::get_mb(4); // 4MB
-        case 0b10110: return util::get_mb(8); // 8MB
-        case 0b10111: return util::get_mb(16); // 16MB
-        case 0b11000: return util::get_mb(32); // 32MB
-        case 0b11001: return util::get_mb(64); // 64MB
-        case 0b11010: return util::get_mb(128); // 128MB
-        case 0b11011: return util::get_mb(256); // 256MB
-        case 0b11100: return util::get_mb(512); // 512MB
-        case 0b11101: return util::get_gb(1); // 1GB
-        case 0b11110: return util::get_gb(2); // 2GB
-        case 0b11111: return util::get_gb(4); // 4GB
+        switch (raw_size_bits) {
+            case 0b01011: return util::get_kb(4); // 4KB
+            case 0b01100: return util::get_kb(8); // 8KB
+            case 0b01101: return util::get_kb(16); // 16KB
+            case 0b01110: return util::get_kb(32); // 32KB
+            case 0b01111: return util::get_kb(64); // 64KB
+            case 0b10000: return util::get_kb(128); // 128KB
+            case 0b10001: return util::get_kb(256); // 256KB
+            case 0b10010: return util::get_kb(512); // 512KB
+            case 0b10011: return util::get_mb(1); // 1MB
+            case 0b10100: return util::get_mb(2); // 2MB
+            case 0b10101: return util::get_mb(4); // 4MB
+            case 0b10110: return util::get_mb(8); // 8MB
+            case 0b10111: return util::get_mb(16); // 16MB
+            case 0b11000: return util::get_mb(32); // 32MB
+            case 0b11001: return util::get_mb(64); // 64MB
+            case 0b11010: return util::get_mb(128); // 128MB
+            case 0b11011: return util::get_mb(256); // 256MB
+            case 0b11100: return util::get_mb(512); // 512MB
+            case 0b11101: return util::get_gb(1); // 1GB
+            case 0b11110: return util::get_gb(2); // 2GB
+            case 0b11111: return util::get_gb(4); // 4GB
+            default: return 0; // idk what to put here, research the docs TODO
+        }
     };
 
     id::access_perm get_access_perm(const u8 AP) {
         if (globals.is_privileged) {
             if (AP == 0b00) {
-                return id::access_perm::NO_ACCESS
+                return id::access_perm::NO_ACCESS;
             }
 
             return id::access_perm::READ_WRITE;
@@ -50,7 +58,14 @@ public:
             }
         }
 
-        out::error("something went horribly wrong here...") // TODO
+        out::error("something went horribly wrong here..."); // TODO
+    }
+
+    bool is_mpu_enabled() {
+        return (
+            (coprocessor.read(id::cp::CP15_R1_M) == true) &&
+            (settings.is_mpu_enabled)
+        );
     }
 
 
@@ -80,21 +95,14 @@ public:
     bool region_7_enabled = false;
 
 
-    /*
-    enum : u8 {
-        REGION_0_PRIORITY = 0,
-        REGION_1_PRIORITY,
-        REGION_2_PRIORITY,
-        REGION_3_PRIORITY,
-        REGION_4_PRIORITY,
-        REGION_5_PRIORITY,
-        REGION_6_PRIORITY,
-        REGION_7_PRIORITY
-    };
-    */
+    memory_struct is_access_valid(const u32 address, const id::access_type access_type) {
+        memory_struct data = {};
 
-    bool is_mpu_access_valid(const u32 address, const id::access_type access_type) {
-        if (globals.mpu_address_changes) {
+        // these are irrelevant
+        data.value = 0;
+        data.new_address = address;
+
+        if (globals.mpu_address_change) {
             region_0_start = coprocessor.read(id::cp::CP15_R6_PU_0_BASE_ADDRESS);
             region_1_start = coprocessor.read(id::cp::CP15_R6_PU_1_BASE_ADDRESS);
             region_2_start = coprocessor.read(id::cp::CP15_R6_PU_2_BASE_ADDRESS);
@@ -134,31 +142,74 @@ public:
         else if (address >= region_1_start && address <= region_1_end && region_1_enabled) { AP_region_id = id::cp::CP15_R5_PU_AP1; }
         else if (address >= region_0_start && address <= region_0_end && region_0_enabled) { AP_region_id = id::cp::CP15_R5_PU_AP0; }
         else {
-            // abort
-            return false;
+            // at this point, an abort is performed 
+            data.is_successful = false;
+
+            if (access_type == id::access_type::INSTRUCTION_FETCH) {
+                data.abort_code = id::aborts::PREFETCH_ABORT;
+            } else {
+                data.abort_code = id::aborts::ABORT;
+            }
+
+            return data;
         }
 
         const u8 AP_bits = coprocessor.read(AP_region_id);
-        const id::access_perm AP_perm = get_access_perm(AP_bits);
+        const id::access_perm AP_id = get_access_perm(AP_bits);
 
-        switch (AP_perm) {
+        switch (AP_id) {
             case id::access_perm::READ_WRITE: 
-                return (
+                data.is_successful = (
+                    (access_type == id::access_type::INSTRUCTION_FETCH) ||
                     (access_type == id::access_type::READ_WRITE) ||
                     (access_type == id::access_type::READ) ||
                     (access_type == id::access_type::WRITE)
                 );
                 break;
+
             case id::access_perm::READ_ONLY:
-                return (
-                    (access_type == id::access_type::READ_WRITE) ||
+                data.is_successful = (
+                    (access_type == id::access_type::INSTRUCTION_FETCH) ||
+                    (access_type == id::access_type::READ_WRITE) || // this overlaps with the read permission, so this is valid
                     (access_type == id::access_type::READ)
                 );
                 break;
-            case id::access_perm::NO_ACCESS: return false;
+
+            case id::access_perm::UNPREDICTABLE: // TODO add an unpredictable log here
+            case id::access_perm::NO_ACCESS: 
+                data.is_successful = false;
+                if (access_type == id::access_type::INSTRUCTION_FETCH) {
+                    data.abort_code = id::aborts::PREFETCH_ABORT;
+                } else {
+                    data.abort_code = id::aborts::ABORT;
+                }
+                return data;
         }
 
-        return false;
+        data.abort_code = id::aborts::NO_ABORT;
+
+        return data;
+    }
+
+
+    memory_struct write_manager(const u32 address, const u8 access_size) {
+        memory_struct data = {};
+
+        const memory_struct mpu_access = is_access_valid(address, id::access_type::WRITE);
+
+        if (mpu_access.is_successful) {
+            data.is_successful = true;
+            data.abort_code = id::aborts::NO_ABORT;
+            data.value = 0;
+            data.new_address = address;
+        } else {
+            data.is_successful = false;
+            data.abort_code = id::aborts::ABORT;
+            data.value = 0;
+            data.new_address = address;
+        }
+
+        return data;
     }
 
 
@@ -178,10 +229,10 @@ public:
 
         // 
 
-        if ((address % size) != 0) {
-            // error
+        //if ((address % size) != 0) {
+            // unpredictable
 
-        }
+        //}
 
         // Some implementations (typically those with separate 
         // instruction and data caches) provide two separate sets
@@ -191,8 +242,51 @@ public:
         // if the address doesn't lie in any protection region, a memory access abort is made 
     }
 
+    void reset() {
+        region_0_start = 0;
+        region_1_start = 0;
+        region_2_start = 0;
+        region_3_start = 0;
+        region_4_start = 0;
+        region_5_start = 0;
+        region_6_start = 0;
+        region_7_start = 0;
+        region_0_end = 0;
+        region_1_end = 0;
+        region_2_end = 0;
+        region_3_end = 0;
+        region_4_end = 0;
+        region_5_end = 0;
+        region_6_end = 0;
+        region_7_end = 0;
+        region_0_enabled = false;
+        region_1_enabled = false;
+        region_2_enabled = false;
+        region_3_enabled = false;
+        region_4_enabled = false;
+        region_5_enabled = false;
+        region_6_enabled = false;
+        region_7_enabled = false;
 
-    MPU(GLOBALS& globals, COPROCESSOR& coprocessor) : globals(globals), coprocessor(coprocessor) {
+        coprocessor.write(id::cp::CP15_R6_PU_0, 0);
+        coprocessor.write(id::cp::CP15_R6_PU_1, 0);
+        coprocessor.write(id::cp::CP15_R6_PU_2, 0);
+        coprocessor.write(id::cp::CP15_R6_PU_3, 0);
+        coprocessor.write(id::cp::CP15_R6_PU_4, 0);
+        coprocessor.write(id::cp::CP15_R6_PU_5, 0);
+        coprocessor.write(id::cp::CP15_R6_PU_6, 0);
+        coprocessor.write(id::cp::CP15_R6_PU_7, 0);
+    }
+
+
+    MPU(
+        GLOBALS& globals, 
+        COPROCESSOR& coprocessor,
+        SETTINGS& settings
+    ) : globals(globals), 
+        coprocessor(coprocessor),
+        settings(settings)
+    {
         
     }
 };
