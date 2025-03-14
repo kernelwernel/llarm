@@ -50,6 +50,7 @@ executed. The mnemonic extension for this condition was NV.
 - [ ] replace the cp15 writing lambdas with utility functions
 - [ ] finish making the cp15 control register 1 
 - [ ] make a PC read/write function wrapper
+- [ ] re-evalute Rd_id variables that can be the PC in the ARM instructions section (potentially unpredictable)
 
 MMU EMULATION TODO:
 - [X] understand the first level descriptor formats

@@ -1,9 +1,15 @@
-            void STM1(const arm_code_t&, REGISTERS&); // TODO
-            void STM2(const arm_code_t&, REGISTERS&); // TODO
-            void STR(const arm_code_t&, REGISTERS&); // TODO
-            void STRB(const arm_code_t&, REGISTERS&); // TODO
-            void STRBT(const arm_code_t&, REGISTERS&); // TODO
-            void STRH(const arm_code_t&, REGISTERS&); // TODO
-            void STRT(const arm_code_t&, REGISTERS&); // TODO
-            void SWP(const arm_code_t&, REGISTERS&); // TODO
-            void SWPB(const arm_code_t&, REGISTERS&); // TODO
+#include "../../../types.hpp"
+#include "../../core/registers.hpp"
+#include "../instructions.hpp"
+
+
+
+void INSTRUCTIONS::arm::store::STM1(const arm_code_t&) {}; // TODO
+void INSTRUCTIONS::arm::store::STM2(const arm_code_t&) {}; // TODO
+void INSTRUCTIONS::arm::store::STR(const arm_code_t&) {}; // TODO
+void INSTRUCTIONS::arm::store::STRB(const arm_code_t&) {}; // TODO
+void INSTRUCTIONS::arm::store::STRBT(const arm_code_t&) {}; // TODO
+void INSTRUCTIONS::arm::store::STRH(const arm_code_t&) {}; // TODO
+void INSTRUCTIONS::arm::store::STRT(const arm_code_t&) {}; // TODO
+void INSTRUCTIONS::arm::store::SWP(const arm_code_t&) {}; // TODO
+void INSTRUCTIONS::arm::store::SWPB(const arm_code_t&) {}; // TODO

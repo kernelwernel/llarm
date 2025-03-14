@@ -1,0 +1,2 @@
+- make sure all the instructions have the new shifter operands mechanism
+- double check all instructions

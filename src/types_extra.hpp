@@ -3,6 +3,7 @@
 #include <bitset>
 #include <functional>
 #include <tuple>
+#include <concepts>
 
 #include "types.hpp"
 #include "id.hpp"
@@ -37,3 +38,53 @@ concept is_integral = (
     std::same_as<T, u32> ||
     std::same_as<T, u64>
 );
+
+
+#if __cplusplus > 202100L
+#define CPP 23
+#ifdef __CHARM_DEBUG__
+#pragma message("using post-C++23, set back to C++23 standard")
+#endif
+#elif __cplusplus == 202100L
+#define CPP 23
+#ifdef __CHARM_DEBUG__
+#pragma message("using C++23")
+#endif
+#elif __cplusplus == 202002L
+#define CPP 20
+#ifdef __CHARM_DEBUG__
+#pragma message("using C++20")
+#endif
+#elif __cplusplus == 201703L
+#define CPP 17
+#ifdef __CHARM_DEBUG__
+#pragma message("using C++17")
+#endif
+#elif __cplusplus == 201402L
+#define CPP 14
+#ifdef __CHARM_DEBUG__
+#pragma message("using C++14")
+#endif
+#elif __cplusplus == 201103L
+#define CPP 11
+#ifdef __CHARM_DEBUG__
+#pragma message("using C++11")
+#endif
+#elif __cplusplus < 201103L
+#define CPP 1
+#ifdef __CHARM_DEBUG__
+#pragma message("using pre-C++11")
+#endif
+#else
+#define CPP 0
+#ifdef __CHARM_DEBUG__
+#pragma message("Unknown C++ standard")
+#endif
+#endif
+
+
+#if (CPP >= 20) 
+#define CHARM_CONSTEVAL consteval
+#else
+#define CHARM_CONSTEVAL constexpr
+#endif

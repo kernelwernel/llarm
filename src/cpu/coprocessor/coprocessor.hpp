@@ -19,7 +19,6 @@
 
 struct COPROCESSOR {
 private:
-    SETTINGS& settings;
     CP15& cp15;
 
 public:
@@ -46,17 +45,16 @@ public:
     }
 
 
-    COPROCESSOR(SETTINGS& settings, GLOBALS& globals) : settings(settings) {
-        // add more CP registers here
-        CP15 cp15(settings, globals);
+    COPROCESSOR(CP15& cp15) : cp15(cp15) {
+
     }
 
 
 
 public:
-    id::cp cp_reg_identifier() {
-
-    }
+    //id::cp cp_reg_identifier() {
+//
+    //}
 
 
     void write(const id::cp cp_reg_id, const u64 value) {
@@ -84,6 +82,78 @@ public:
 
         // TODO: ERROR (unknown CP reg id)
         return 0;
+    }
+
+
+    u32 read(
+        const u8 CRn, 
+        const u8 opcode_1, 
+        const u8 CRm, 
+        const u8 opcode_2
+    ) {
+        if ((opcode_1 != 0) && (CRn != 15)) {
+            return 0; // TODO: add warning or error idk, this doesn't exist
+        }
+
+        // coprocessor number
+        switch (CRn) {
+            case 0:
+                if (CRm == 0) {
+                    if (opcode_2 == 0) { 
+                        return read(id::cp::CP15_R0_ID); 
+                    } else if (opcode_2 == 1) { 
+                        return read(id::cp::CP15_R0_CACHE);
+                    }
+                }
+
+                break;
+
+            case 1:
+                if (CRm == 0) {
+                    if (opcode_2 == 0) { 
+                        return read(id::cp::CP15_R1); 
+                    }
+                }
+
+                break;
+
+            case 2:
+                if (CRm == 0) {
+                    // ?????? TODO
+                }
+
+                break;
+
+            case 3:
+            // TODO rewrite thi, because MMU and PU merge together as registers cuz they're non-mutually exclusive
+                if ((CRm == 0) && (opcode_2 == 0)) {
+                    return read(id::cp::CP15_R3_MMU);
+                }
+
+                break;
+
+            case 4:
+                return read(id::cp::CP15_R4);
+
+            case 5:
+                if (CRm == 0) {
+
+                }
+
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+            default: break;
+        }
+
+        return 0; // error or warning
     }
 };
 

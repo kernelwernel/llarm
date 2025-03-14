@@ -2,8 +2,7 @@
 
 #include "../../types.hpp"
 #include "../../utility.hpp"
-#include "../../settings.hpp"
-#include "../coprocessor/coprocessor.hpp"
+#include "../exception.hpp"
 #include "mmu.hpp"
 #include "mpu.hpp"
 #include "ram.hpp"
@@ -16,33 +15,28 @@
 
 struct MEMORY {
 private:
-    COPROCESSOR& coprocessor;
     RAM& ram;
     MMU& mmu;
     MPU& mpu;
     FCSE& fcse;
     ARCH_26_BIT& arch_26;
-    SETTINGS& settings;
-
-
-
-
+    EXCEPTION& exception;
 
 public:
     void manage_abort(const id::aborts abort_code) {
         switch (abort_code) {
             case id::aborts::NO_ABORT: return;
-            case id::aborts::ALIGNMENT: 
-            case id::aborts::ABORT: 
-            case id::aborts::PREFETCH_ABORT:
-            case id::aborts::ADDRESS_EXCEPTION: 
-            case id::aborts::TRANSLATION: 
-            case id::aborts::SECTION_TRANSLATION: 
-            case id::aborts::PAGE_TRANSLATION: 
-            case id::aborts::PAGE_DOMAIN: 
-            case id::aborts::SUB_PAGE_PERMISSION: 
-            case id::aborts::SECTION_DOMAIN: 
-            case id::aborts::SECTION_PERMISSION: return; // TODO FOR ALL THE ABOVE TOO
+            case id::aborts::ALIGNMENT:
+            case id::aborts::ABORT:
+            case id::aborts::ADDRESS_EXCEPTION:
+            case id::aborts::TRANSLATION:
+            case id::aborts::SECTION_TRANSLATION:
+            case id::aborts::PAGE_TRANSLATION:
+            case id::aborts::PAGE_DOMAIN:
+            case id::aborts::SUB_PAGE_PERMISSION:
+            case id::aborts::SECTION_DOMAIN:
+            case id::aborts::SECTION_PERMISSION: exception.data_abort(); return;
+            case id::aborts::PREFETCH_ABORT: exception.prefetch_abort(); return;
         }
     }
 
@@ -64,15 +58,15 @@ public:
 
 
     template <is_integral T>
-    memory_struct write(const T value, u32 address, const u8 access_size) {
-        memory_struct data = {};
+    memory_struct<> write(const T value, u32 address, const u8 access_size) {
+        memory_struct<> data = {};
 
-        if (arch_26.has_26_arch_backwards_compatible()) {
+        if (arch_26.is_26_arch_backwards_compatible()) {
             if (
                 (arch_26.is_26_arch_address()) && 
                 (arch_26.is_26_arch_address_unsupported(address))
             ) {
-                data.is_successful = false;
+                data.has_failed = true;
                 data.abort_code = id::aborts::ADDRESS_EXCEPTION;
                 data.value = 0;
                 data.new_address = 0;
@@ -89,7 +83,7 @@ public:
         } else if (mpu.is_mpu_enabled()) {
             data = mpu.write_manager(address, access_size); // not to be confused with mmu and mpu   
         } else {
-            data.is_successful = true;
+            data.has_failed = false;
             data.abort_code = id::aborts::NO_ABORT;
             data.value = 0;
             data.new_address = address;
@@ -130,14 +124,25 @@ public:
     //}
 
 
+
     // There is no plan B.
     // There is also no plan A.
     // I don't know what I'm doing with my life.
     template <is_integral T>
-    T read(
+    memory_struct<T> read(
         u32 address, 
+        u8 access_size,
         const id::access_type type = id::access_type::READ
     ) {
+        memory_struct<T> data = {};
+
+        data.has_failed = false;
+        data.abort_code = id::aborts::NO_ABORT;
+        data.value = 0;
+        data.new_address = 0;
+
+        return data; // TEMPORARY
+/*
         if (arch_26.is_26_arch_address_unsupported(address)) {
 
         }
@@ -146,30 +151,30 @@ public:
             return read(address);
         } else if constexpr (std::is_same_v<T, u16>) {
             return (
-                (static_cast<u16>(read(address + 1)) << 8) | 
-                (read(address))
+                (static_cast<u16>(read<u8>(address + 1)) << 8) | 
+                (read<u8>(address))
             );
         } else if constexpr (std::is_same_v<T, u32>) {
             return (
                 (static_cast<u32>(read(address + 3)) << 24) | 
-                (read(address + 2) << 16) | 
-                (read(address + 1) << 8) | 
-                (read(address))
+                (read<u8>(address + 2) << 16) | 
+                (read<u8>(address + 1) << 8) | 
+                (read<u8>(address))
             );
         } else if constexpr (std::is_same_v<T, u64>) {
             return (
-                (static_cast<u64>(read(address + 7)) << 56) | 
-                (static_cast<u64>(read(address + 6)) << 48) | 
-                (static_cast<u64>(read(address + 5)) << 40) | 
-                (static_cast<u64>(read(address + 4)) << 32) | 
-                (static_cast<u64>(read(address + 3)) << 24) | 
-                (static_cast<u64>(read(address + 2)) << 16) | 
-                (static_cast<u64>(read(address + 1)) << 8) | 
-                (static_cast<u64>(read(address)))
+                (static_cast<u64>(read<u8>(address + 7)) << 56) | 
+                (static_cast<u64>(read<u8>(address + 6)) << 48) | 
+                (static_cast<u64>(read<u8>(address + 5)) << 40) | 
+                (static_cast<u64>(read<u8>(address + 4)) << 32) | 
+                (static_cast<u64>(read<u8>(address + 3)) << 24) | 
+                (static_cast<u64>(read<u8>(address + 2)) << 16) | 
+                (static_cast<u64>(read<u8>(address + 1)) << 8) | 
+                (static_cast<u64>(read<u8>(address)))
             );
         }
+*/
     }
-
 
 
     void reset() {
@@ -180,20 +185,18 @@ public:
 
     MEMORY(
         const std::vector<u8> &binary, 
-        COPROCESSOR& coprocessor,
         RAM& ram, 
         MMU& mmu,
         MPU& mpu,
         FCSE& fcse,
         ARCH_26_BIT& arch_26,
-        SETTINGS& settings
-    ) : coprocessor(coprocessor),
-        ram(ram), 
+        EXCEPTION& exception
+    ) : ram(ram), 
         mmu(mmu), 
         mpu(mpu),
         fcse(fcse),
         arch_26(arch_26),
-        settings(settings)
+        exception(exception)
     {
         ram.write(binary, 0); // write the entire machine code into RAM
     }

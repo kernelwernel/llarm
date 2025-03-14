@@ -1,14 +1,14 @@
 #include <iostream>
 
-#include "constants.hpp"
-#include "id.hpp"
-#include "utility.hpp"
-#include "out.hpp"
-#include "cpu/core/registers.hpp"
+#include "../../constants.hpp"
+#include "../../id.hpp"
+#include "../../utility.hpp"
+#include "../../out.hpp"
+#include "registers.hpp"
 
 
-[[nodiscard]] id::mode REGISTERS::read_mode() {
-    if (coprocessor.is_26_bit_arch_program()) { // 26-bit mode arch
+id::mode REGISTERS::read_mode() {
+    if (arch_26.is_26_arch_program()) { // 26-bit mode arch
         switch (read(id::cpsr::M)) {
             case constants::mode::USER_26: return id::mode::USER_26;
             case constants::mode::FIQ_26: return id::mode::FIQ_26;
@@ -33,7 +33,7 @@
 }
 
 
-[[nodiscard]] bool REGISTERS::is_priviledged() {
+bool REGISTERS::is_priviledged() {
     const id::mode mode = read_mode();
 
     return (!(
@@ -42,14 +42,14 @@
     ));
 }
 
-[[nodiscard]] bool REGISTERS::is_exception() {
+bool REGISTERS::is_exception() {
     const id::mode mode = read_mode();
     
     return (!(
         (mode == id::mode::USER) || 
         (mode == id::mode::USER_26) || 
         (mode == id::mode::SYSTEM)
-    ))
+    ));
 }
 
 
@@ -60,7 +60,7 @@ void REGISTERS::write(const id::reg destination_reg_id, const id::reg source_reg
 void REGISTERS::write(const id::cpsr cpsr_macro, const u8 value) {
 
     // 26-bit mode uses bits in R15 as its version of the 32-bit mode CPSR, we're knee deep in some real funky shit here.
-    if (coprocessor.is_26_bit_arch_program()) [[unlikely]] {
+    if (arch_26.is_26_arch_program()) [[unlikely]] {
         u32 R15_copy = read(id::reg::R15);
 
         switch (cpsr_macro) {
@@ -143,12 +143,13 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
         case id::reg::R6: R6 = value; return;
         case id::reg::R7: R7 = value; return;
         case id::reg::R15: R15 = value; return;
-        case id::reg::PC: write_PC(value); return;
+        [[likely]] case id::reg::PC: write_PC(value); return;
         case id::reg::CPSR: 
-            if (coprocessor.is_only_26_bit_arch()) {
+            if (arch_26.is_only_26_arch()) {
                 out::error("CPSR does not exist in pure 26-bit architecture");
             }
-            return CPSR;
+            CPSR = value;
+            return;
         default: break;
     }
 
@@ -164,14 +165,14 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
             case id::mode::SUPERVISOR_26: SPSR_svc = value; return;
             case id::mode::ABORT: SPSR_abt = value; return;
             case id::mode::UNDEFINED: SPSR_und = value; return;
-            default: // TODO add error or warning idk
+            default: out::error("TODO"); // TODO add error or warning idk
         }
     }
 
     switch (mode) {
         case id::mode::SYSTEM:
             if (static_cast<u8>(settings.arch) < 4) {
-                break; // maybe add a warning/error, idk
+                out::error("TODO"); // maybe add a warning/error, idk
             }
         case id::mode::USER:
         case id::mode::USER_26:
@@ -198,6 +199,7 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
                 case id::reg::R13_fiq: R13_fiq = value; return;
                 case id::reg::R14_fiq: R14_fiq = value; return;
                 case id::reg::SPSR_fiq: SPSR_fiq = value; return;
+                default: break;
             }
             break;
         
@@ -258,6 +260,8 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
                 default: break;
             }
             break;
+
+        default: out::error("unknown idk TODO");
     }
 }
 
@@ -286,8 +290,8 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
 
 
 
-[[nodiscard]] u8 REGISTERS::read(const id::cpsr cpsr_macro) {
-    if (coprocessor.is_26_bit_arch_program()) { // 26-bit
+u8 REGISTERS::read(const id::cpsr cpsr_macro) {
+    if (arch_26.is_26_arch_program()) { // 26-bit
         switch (cpsr_macro) {
             case id::cpsr::M: return (CPSR & 0b11);
             case id::cpsr::N: return (CPSR & (1 << 31));
@@ -323,7 +327,7 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
 }
 
 
-[[nodiscard]] u32 REGISTERS::read(const id::reg register_id) {
+u32 REGISTERS::read(const id::reg register_id) {
     access_check(register_id);
 
     switch (register_id) {
@@ -338,7 +342,7 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
         case id::reg::R15: return R15;
         case id::reg::PC: return read_PC(); // R15 and PC are the same, except for 26-bit arch 
         case id::reg::CPSR: 
-            if (coprocessor.is_only_26_bit_arch()) {
+            if (arch_26.is_only_26_arch()) {
                 out::error("CPSR does not exist in pure 26-bit architecture");
             }
             return CPSR;
@@ -357,14 +361,14 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
             case id::mode::SUPERVISOR_26: return SPSR_svc; 
             case id::mode::ABORT: return SPSR_abt; 
             case id::mode::UNDEFINED: return SPSR_und; 
-            default: // TODO add error or warning idk
+            default: out::error("TODO"); // TODO add error or warning idk
         }
     }
 
     switch (mode) {
         case id::mode::SYSTEM:
             if (static_cast<u8>(settings.arch) < 4) {
-                break; // maybe add a warning/error, idk
+                out::error("TODO"); // maybe add a warning/error, idk
             }
         case id::mode::USER:
         case id::mode::USER_26:
@@ -391,6 +395,7 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
                 case id::reg::R13_fiq: return R13_fiq;
                 case id::reg::R14_fiq: return R14_fiq;
                 case id::reg::SPSR_fiq: return SPSR_fiq;
+                default: break;
             }
             break;
         
@@ -468,12 +473,12 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
 
 
 
-void access_check(const id::reg register_id) {
-    if (coprocessor.no_26_bit_arch_support()) {
+void REGISTERS::access_check(const id::reg register_id) {
+    if (arch_26.no_26_arch_support()) {
         return;
     }
 
-    if (coprocessor.is_only_26_bit_arch()) {
+    if (arch_26.is_only_26_arch()) {
         switch (register_id) {
             case id::reg::CPSR: out::error("CPSR does not exist in pure 26-bit architecture");
             case id::reg::SPSR: out::error("SPSR does not exist in pure 26-bit architecture");
@@ -482,10 +487,11 @@ void access_check(const id::reg register_id) {
             case id::reg::SPSR_und: out::error("SPSR_und does not exist in pure 26-bit architecture");
             case id::reg::SPSR_irq: out::error("SPSR_irq does not exist in pure 26-bit architecture");
             case id::reg::SPSR_fiq: out::error("SPSR_fiq does not exist in pure 26-bit architecture");
+            default: break;
         }
     }
 
-    if (coprocessor.is_26_bit_arch_program() && coprocessor.is_26_bit_arch_backwards_support()) {
+    if (arch_26.is_26_arch_program() && arch_26.is_26_arch_backwards_compatible()) {
         switch (register_id) {
             case id::reg::R13_abt:
             case id::reg::R14_abt:
@@ -554,7 +560,7 @@ void access_check(const id::reg register_id) {
 
 
 
-[[nodiscard]] id::reg REGISTERS::fetch_reg_id(const u8 value) noexcept {
+id::reg REGISTERS::fetch_reg_id(const u8 value) noexcept {
     switch (value) {
         case 0: return id::reg::R0;
         case 1: return id::reg::R1;
@@ -578,7 +584,7 @@ void access_check(const id::reg register_id) {
     out::error("Couldn't find suitable match for register identification in identifier()");
 }
 
-[[nodiscard]] id::reg REGISTERS::fetch_reg_id(const arm_code_t &code, const u8 start, const u8 end) noexcept {
+id::reg REGISTERS::fetch_reg_id(const arm_code_t &code, const u8 start, const u8 end) noexcept {
     const u8 Rd_bits = util::bit_fetcher<u8, u32>(code.to_ulong(), start, end);
     
     id::reg reg_id = fetch_reg_id(Rd_bits);
@@ -589,7 +595,7 @@ void access_check(const id::reg register_id) {
     // The whole point is to convert to a PC ID instead of an R15 ID
     // because the PC ID has more responsibilities to manage in 26-bit mode.
     if (
-        (coprocessor.is_26_bit_arch_program()) &&
+        (arch_26.is_26_arch_program()) &&
         (reg_id == id::reg::R15) &&
         ((start == 16) && (end == 19))
     ) {
@@ -599,27 +605,27 @@ void access_check(const id::reg register_id) {
     return reg_id;
 }
 
-[[nodiscard]] id::reg REGISTERS::fetch_reg_id(const thumb_code_t &code, const u8 start, const u8 end) noexcept {
+id::reg REGISTERS::fetch_reg_id(const thumb_code_t &code, const u8 start, const u8 end) noexcept {
     const u8 Rd_bits = util::bit_fetcher<u8, u32>(code.to_ulong(), start, end);
     return fetch_reg_id(Rd_bits);
 }
 
-[[nodiscard]] u32 REGISTERS::read(const arm_code_t &code, const u8 start, const u8 end) noexcept {
+u32 REGISTERS::read(const arm_code_t &code, const u8 start, const u8 end) noexcept {
     id::reg reg_id = fetch_reg_id(code, start, end);
     return read(reg_id);
 }
 
-[[nodiscard]] u32 REGISTERS::read(const thumb_code_t &code, const u8 start, const u8 end) noexcept {
+u32 REGISTERS::read(const thumb_code_t &code, const u8 start, const u8 end) noexcept {
     const id::reg reg_id = fetch_reg_id(code, start, end);
     return read(reg_id);
 }
 
-[[nodiscard]] u32 REGISTERS::read(const u8 reg_bits) noexcept {
+u32 REGISTERS::read(const u8 reg_bits) noexcept {
     return read(fetch_reg_id(reg_bits));
 }
 
 
-[[nodiscard]] id::cond REGISTERS::fetch_cond_id(const u8 cond) {
+id::cond REGISTERS::fetch_cond_id(const u8 cond) {
     switch (cond) {
         case constants::cond::EQ: return id::cond::EQ;
         case constants::cond::NE: return id::cond::NE;
@@ -643,12 +649,12 @@ void access_check(const id::reg register_id) {
 }
 
 
-[[nodiscard]] id::cond REGISTERS::fetch_cond_id(const arm_code_t &code) {
+id::cond REGISTERS::fetch_cond_id(const arm_code_t &code) {
     return fetch_cond_id(util::bit_fetcher<u8>(code, 28, 31));
 }
 
 
-[[nodiscard]] id::mode REGISTERS::fetch_mode_id(const constants::mode mode) {
+id::mode REGISTERS::fetch_mode_id(const u8 mode) {
     switch (mode) {
         case constants::mode::USER: return id::mode::USER;
         case constants::mode::FIQ: return id::mode::FIQ;
@@ -657,12 +663,17 @@ void access_check(const id::reg register_id) {
         case constants::mode::ABORT: return id::mode::ABORT;
         case constants::mode::UNDEFINED: return id::mode::UNDEFINED;
         case constants::mode::SYSTEM: return id::mode::SYSTEM;
+        case constants::mode::USER_26: return id::mode::USER_26;
+        case constants::mode::FIQ_26: return id::mode::FIQ_26;
+        case constants::mode::IRQ_26: return id::mode::IRQ_26;
+        case constants::mode::SUPERVISOR_26: return id::mode::SUPERVISOR_26;
+        default: out::error("TODO");
     };
 }
 
 
 
-[[nodiscard]] bool REGISTERS::check_cond(const id::cond cond) {
+bool REGISTERS::check_cond(const id::cond cond) {
     switch (cond) {
         case id::cond::EQ: return (read(id::cpsr::Z) == 1);
         case id::cond::NE: return (read(id::cpsr::Z) == 0);
@@ -710,18 +721,19 @@ void access_check(const id::reg register_id) {
             );
         case id::cond::AL: return true;
         case id::cond::NV: return true;
+        default: out::error("TODO");
     }
 }
 
-[[nodiscard]] bool REGISTERS::check_cond(const arm_code_t &code) {
+bool REGISTERS::check_cond(const arm_code_t &code) {
     const id::cond cond_id = fetch_cond_id(code);
     return check_cond(cond_id);
 }
 
 void REGISTERS::thumb_increment_PC() {
-    PC += 2;
+    write(id::reg::PC, read(id::reg::PC) + 2);
 }
 
 void REGISTERS::arm_increment_PC() {
-    PC += 4;
+    write(id::reg::PC, read(id::reg::PC) + 4);
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 /*
  * IDEAS ON HOW TO HANDLE EXCEPTIONS:
  *
@@ -7,14 +9,11 @@
  * 4. return a 0 as a NULL, then analyse after the function has returned
  */
 
-#pragma once
-
 #include "../types.hpp"
 #include "../constants.hpp"
 #include "../id.hpp"
 #include "core/registers.hpp"
 #include "coprocessor/coprocessor.hpp"
-#include "instruction_set.hpp"
 
 #include <map>
 
@@ -30,7 +29,7 @@ public:
         u32 high_vector_address;
     };
 
-    std::map<id::exception, exception_struct> table;
+    std::map<id::exception_mode, exception_struct> table;
 
     void reset();
     void undefined();

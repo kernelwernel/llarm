@@ -1,16 +1,16 @@
-#include "types.hpp"
-#include "utility.hpp"
-#include "cpu/instructions/instructions.hpp"
-#include "cpu/core/registers.hpp"
+#include "../../../types.hpp"
+#include "../../../utility.hpp"
+#include "../../core/registers.hpp"
+#include "../instructions.hpp"
 
 // NOTE: MSR is still available in backwards compatible 26-bit mode
 
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1
-void instructions::arm::coprocessor::CDP(const arm_code_t &code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::coprocessor_inst::CDP(const arm_code_t &code) {
 
 }
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1
-void instructions::arm::coprocessor::LDC(const arm_code_t &code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::coprocessor_inst::LDC(const arm_code_t &code) {
 
 }
 
@@ -20,17 +20,17 @@ void instructions::arm::coprocessor::LDC(const arm_code_t &code, REGISTERS& reg)
  *   send Rd value to Coprocessor[cp_num]
  */
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1
-void instructions::arm::coprocessor::MCR(const arm_code_t &code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::coprocessor_inst::MCR(const arm_code_t &code) {
     if (reg.is_priviledged() == false) {
         // TODO: UNDEFINED INSTRUCTION EXCEPTION
     }
 
-    const u8 CRm = util::bit_fetcher<u8>(code, 0, 3);
-    const u8 opcode_2 = util::bit_fetcher<u8>(code, 5, 7);
-    const u8 cp_num = util::bit_fetcher<u8>(code, 8, 11);
-    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
-    const u8 CRn = util::bit_fetcher<u8>(code, 16, 19);
-    const u8 opcode_1 = util::bit_fetcher<u8>(code, 21, 23);
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 CRm = util::bit_fetcher<u8>(code, 0, 3);
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 opcode_2 = util::bit_fetcher<u8>(code, 5, 7);
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 cp_num = util::bit_fetcher<u8>(code, 8, 11);
+    [[maybe_unused]] /* TODO, REMOVE */ const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 CRn = util::bit_fetcher<u8>(code, 16, 19);
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 opcode_1 = util::bit_fetcher<u8>(code, 21, 23);
 
 
     // write-only special case for R8_MMU register in CP15 (B3-26)
@@ -55,6 +55,8 @@ void instructions::arm::coprocessor::MCR(const arm_code_t &code, REGISTERS& reg)
 
             // Invalidate data single entry
             case 0b0010110: 
+
+            default: out::error("TODO, idk maybe there's just an undefined exception here, research more");
         }
 
     }
@@ -94,35 +96,36 @@ void instructions::arm::coprocessor::MCR(const arm_code_t &code, REGISTERS& reg)
  *     Rd = data
  */
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1
-void instructions::arm::coprocessor::MRC(const arm_code_t &code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::coprocessor_inst::MRC(const arm_code_t &code) {
     if (reg.is_priviledged() == false) {
         // TODO: UNDEFINED INSTRUCTION EXCEPTION
     }
 
-    const u8 CRm = util::bit_fetcher<u8>(code, 0, 3); // cp register type
-    const u8 opcode_2 = util::bit_fetcher<u8>(code, 5, 7); // extra
-    const u8 cp_num = util::bit_fetcher<u8>(code, 8, 11); // cp id
-    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15); // transfer arm register
-    const u8 CRn = util::bit_fetcher<u8>(code, 16, 19); // cp register
-    const u8 opcode_1 = util::bit_fetcher<u8>(code, 21, 23); // cp opcode (?)
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 CRm = util::bit_fetcher<u8>(code, 0, 3); // cp register type
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 opcode_2 = util::bit_fetcher<u8>(code, 5, 7); // extra
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 cp_num = util::bit_fetcher<u8>(code, 8, 11); // cp id
+    [[maybe_unused]] /* TODO, REMOVE */ const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15); // transfer arm register
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 CRn = util::bit_fetcher<u8>(code, 16, 19); // cp register
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 opcode_1 = util::bit_fetcher<u8>(code, 21, 23); // cp opcode (?)
 
-    const id::coprocessor cp_id = coprocessor.fetch_cp_id(cp_num);
+    [[maybe_unused]] /* TODO, REMOVE */ const id::coprocessor cp_id = coprocessor.fetch_cp_id(cp_num);
 
-    const u32 data = coprocessor.read();
-
-    if (Rd_id == id::reg::R15) {
-        reg.write(id::cpsr::N, (data & (1 << 31)));
-        reg.write(id::cpsr::Z, (data & (1 << 30)));
-        reg.write(id::cpsr::C, (data & (1 << 29)));
-        reg.write(id::cpsr::V, (data & (1 << 28)));
-    } else {
-        reg.write(Rd_id, data);
-    }
+    // TODO
+    //const u32 data = coprocessor.read();
+//
+    //if (Rd_id == id::reg::R15) {
+    //    reg.write(id::cpsr::N, (data & (1 << 31)));
+    //    reg.write(id::cpsr::Z, (data & (1 << 30)));
+    //    reg.write(id::cpsr::C, (data & (1 << 29)));
+    //    reg.write(id::cpsr::V, (data & (1 << 28)));
+    //} else {
+    //    reg.write(Rd_id, data);
+    //}
 
     reg.arm_increment_PC();
 }
 
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1
-void instructions::arm::coprocessor::STC(const arm_code_t &code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::coprocessor_inst::STC(const arm_code_t &code) {
 
 }

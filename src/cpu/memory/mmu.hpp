@@ -21,6 +21,7 @@ private:
     GLOBALS& globals;
     RAM& ram;
     COPROCESSOR& coprocessor;
+    SETTINGS& settings;
 
     // page/block sizes
     static constexpr u32 tiny_page = util::get_kb(1); // 1KB
@@ -30,7 +31,7 @@ private:
     // section size
     static constexpr u32 section = util::get_mb(1); // 1MB
 
-
+/*
 
     // translation lookaside buffers
     
@@ -163,7 +164,7 @@ private:
 
     u32 second_level_fetch(const u32 key, const id::first_level first_level_type) {
         switch (first_level_type) {
-            case id::first_level::FINE: 
+            case id::first_level::FINE: {
                 auto it_fine = second_level_table_fine.find(key);
 
                 if (it_fine != second_level_table_fine.end()) {
@@ -172,9 +173,9 @@ private:
                     // not found, do a table walk (i think)
                 }
                 return 0; // temporary, only here to remove errors 
-                break;
+            }
 
-            case id::first_level::COARSE: 
+            case id::first_level::COARSE: {
                 auto it_coarse = second_level_table_coarse.find(key);
 
                 if (it_coarse != second_level_table_coarse.end()) {
@@ -183,10 +184,12 @@ private:
                     // not found, do a table walk (i think)
                 }
                 return 0; // temporary, only here to remove errors 
-                break;
+            }
             
-            default: return 0; // this should never be reached
+            default: break;
         }
+
+        return 0; // this should never be reached
     }
 
     id::access_domain fetch_domain(const u8 raw_domain_bits) {
@@ -348,6 +351,7 @@ private:
 
         return physical_address;
     }
+*/
 
 public:
     bool is_mmu_enabled() {
@@ -364,12 +368,17 @@ public:
 
     // translate the virtual address to a physical address
     translation_struct translate_address(const u32 address, const id::access_type access_type, const u8 access_byte_size) {
+
+
         translation_struct ret = {};
 
         // default return values
         ret.status = id::aborts::NO_ABORT;
         ret.virtual_address = 0;
 
+        return ret; // temporary
+
+/*
         if (
             (coprocessor.read(id::cp::CP15_R1_A)) && // check if allignment fault is enabled
             (access_type != id::access_type::INSTRUCTION_FETCH)
@@ -446,49 +455,56 @@ public:
         }
 
         return ret;
+*/
     }
 
 
-
-    memory_struct write_manager(const u32 address, const u8 access_size) {
+    memory_struct<> write_manager(const u32 address, const u8 access_size) {
         translation_struct translation = translate_address(address, id::access_type::WRITE, access_size);
 
-        memory_struct data = {};
+        memory_struct<> data = {};
 
+        /* TEMPORARY*/ data.new_address = 0;
+        /* TEMPORARY*/ data.has_failed = false;
+        /* TEMPORARY*/ data.abort_code = translation.status;
+        /* TEMPORARY*/ data.value = 0;
+        /* TEMPORARY*/ return data;
+
+/*
         if (translation.status == id::aborts::NO_ABORT) {
             data.new_address = translation.virtual_address;
         } else {
-            data.is_successful = false;
+            data.has_failed = true;
             data.abort_code = translation.status;
             data.value = 0;
             return data;
         }
 
-        data.is_successful = true;
+        data.has_failed = false;
         data.abort_code = id::aborts::NO_ABORT;
         data.value = 0;
 
         return data;
+*/
     }
 
-
-    memory_struct read_manager(const u32 address, const u8 access_size) {
+    template <is_integral T>
+    memory_struct<T> read_manager(const u32 address, const u8 access_size) {
         translation_struct translation = translate_address(address, id::access_type::READ, access_size);
 
-        memory_struct data = {};
+        memory_struct<T> data = {};
 
         if (translation.status == id::aborts::NO_ABORT) {
+            data.has_failed = false;
+            data.abort_code = id::aborts::NO_ABORT;
             data.new_address = translation.virtual_address;
-        } else {
-            data.is_successful = false;
-            data.abort_code = translation.status;
             data.value = 0; // will be updated later
-            return data;
+        } else {
+            data.has_failed = true;
+            data.abort_code = translation.status;
+            data.new_address = 0;
+            data.value = 0; // will be updated later
         }
-
-        data.is_successful = true;
-        data.abort_code = id::aborts::NO_ABORT;
-        data.value = 0; // will be updated later
 
         return data;
     }
@@ -498,8 +514,9 @@ public:
 
 
     void flush_tlb() {
-        first_level_table.clear();
-        second_level_table.clear();
+        // first_level_table.clear();
+        // second_level_table.clear();
+        // TEMPORARY
     }
 
     void reset() {
@@ -510,10 +527,12 @@ public:
     MMU(
         GLOBALS& globals, 
         RAM& ram, 
-        COPROCESSOR& coprocessor
+        COPROCESSOR& coprocessor,
+        SETTINGS& settings
     ) : globals(globals), 
         ram(ram), 
-        coprocessor(coprocessor) 
+        coprocessor(coprocessor),
+        settings(settings)
     {
         
     }

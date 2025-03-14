@@ -1,7 +1,7 @@
-#include "types.hpp"
-#include "constants.hpp"
-#include "id.hpp"
-#include "cpu/exception.hpp"
+#include "../types.hpp"
+#include "../constants.hpp"
+#include "../id.hpp"
+#include "exception.hpp"
 
 #include <map>
 
@@ -9,6 +9,7 @@
 // copied to the link register. The remaining bits in the link register are zeroed. The PSR bits from
 // R15[31:26] and R15[1:0] are copied into the SPSR, ready for a normal 32-bit return sequence.
 
+// TODO check the PC increment thingy with the current instruction, i don't think what i did was right with the +8 thing (A6-3)
 
 /*
  * R14_svc = UNPREDICTABLE value
@@ -48,8 +49,16 @@ void EXCEPTION::reset() {
  * PC = 0x00000004
  */
 void EXCEPTION::undefined() {
+    u8 inc = 0;
+
+    if (reg.read(id::cpsr::T)) { // is in thumb mode
+        inc = 2;
+    } else { // is in arm mode
+        inc = 4;
+    }
+
     reg.switch_mode(id::mode::UNDEFINED);
-    reg.write(id::reg::R14_und, reg.PC + 4);
+    reg.write(id::reg::R14_und, reg.read(id::reg::PC) + inc);
     reg.write(id::reg::SPSR_und, reg.CPSR);
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
@@ -74,7 +83,15 @@ void EXCEPTION::undefined() {
  *   PC = 0x00000008
  */
 void EXCEPTION::swi() {
-    reg.write(id::reg::R14_svc, reg.PC + 4);
+    u8 inc = 0;
+
+    if (reg.read(id::cpsr::T)) { // is in thumb mode
+        inc = 2;
+    } else { // is in arm mode
+        inc = 4;
+    }
+
+    reg.write(id::reg::R14_svc, reg.read(id::reg::PC) + inc);
     reg.write(id::reg::SPSR_svc, reg.CPSR);
     reg.switch_mode(id::mode::SUPERVISOR);
     reg.write(id::cpsr::T, 0);
@@ -103,7 +120,7 @@ void EXCEPTION::swi() {
  */
 void EXCEPTION::prefetch_abort() {
     reg.switch_mode(id::mode::ABORT);
-    reg.write(id::reg::R14_abt, reg.PC + 4);
+    reg.write(id::reg::R14_abt, reg.read(id::reg::PC) + 4);
     reg.write(id::reg::SPSR_abt, reg.CPSR);
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
@@ -129,7 +146,7 @@ void EXCEPTION::prefetch_abort() {
  */ 
 void EXCEPTION::data_abort() {
     reg.switch_mode(id::mode::ABORT);
-    reg.write(id::reg::R14_abt, reg.PC + 8);
+    reg.write(id::reg::R14_abt, reg.read(id::reg::PC) + 8);
     reg.write(id::reg::SPSR_abt, reg.CPSR);
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
@@ -155,7 +172,7 @@ void EXCEPTION::data_abort() {
  */
 void EXCEPTION::irq() {
     reg.switch_mode(id::mode::IRQ);
-    reg.write(id::reg::R14_irq, reg.PC + 8);
+    reg.write(id::reg::R14_irq, reg.read(id::reg::PC) + 4);
     reg.write(id::reg::SPSR_irq, reg.CPSR);
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
@@ -182,7 +199,7 @@ void EXCEPTION::irq() {
  */
 void EXCEPTION::fiq() {
     reg.switch_mode(id::mode::FIQ);
-    reg.write(id::reg::R14_fiq, reg.PC + 8);
+    reg.write(id::reg::R14_fiq, reg.read(id::reg::PC) + 4);
     reg.write(id::reg::SPSR_fiq, reg.CPSR);
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::F, 1);

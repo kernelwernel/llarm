@@ -50,7 +50,7 @@ public:
         return settings.only_26_bits;
     }
 
-    bool has_26_arch_backwards_compatible() {
+    bool is_26_arch_backwards_compatible() {
         return settings.backwards_compat_support_26_bits;
     }
 

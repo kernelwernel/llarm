@@ -1,24 +1,47 @@
-#include "types.hpp"
-#include "cpu/core/cycle/fetch.hpp"
+#include "../../../types.hpp"
+#include "fetch.hpp"
 
 FETCH::FETCH(
-    INSTRUCTION_SET& inst_set,
     REGISTERS& reg,
     MEMORY& memory
-) : inst_set(inst_set), reg(reg), memory(memory) {
+) : reg(reg), memory(memory) {
 
 }
 
-[[nodiscard]] arm_code_t FETCH::arm_fetch() const {
-    const arm_code_t tmp(memory.read<u32>(reg.PC, id::access_type::INSTRUCTION_FETCH));
+FETCH::arm_fetch_struct FETCH::arm_fetch() {
+    arm_fetch_struct tmp = {};
+
+    const memory_struct access = memory.read<u32>(reg.read(id::reg::PC), 4, id::access_type::INSTRUCTION_FETCH);
+    
+    if (access.has_failed) {
+        memory.manage_abort(access.abort_code);
+        tmp.has_failed = true;
+        tmp.code = arm_code_t(0);
+    } else {
+        tmp.has_failed = false;
+        tmp.code = arm_code_t(access.value);
+    }
+
     return tmp;
 }
 
-[[nodiscard]] thumb_code_t FETCH::thumb_fetch() const {
-    const thumb_code_t tmp(memory.read<u16>(reg.PC, id::access_type::INSTRUCTION_FETCH));
+FETCH::thumb_fetch_struct FETCH::thumb_fetch() {
+    thumb_fetch_struct tmp = {};
+
+    const memory_struct access = memory.read<u16>(reg.read(id::reg::PC), 2, id::access_type::INSTRUCTION_FETCH);
+    
+    if (access.has_failed) {
+        memory.manage_abort(access.abort_code);
+        tmp.has_failed = true;
+        tmp.code = thumb_code_t(0);
+    } else {
+        tmp.has_failed = false;
+        tmp.code = thumb_code_t(access.value);
+    }
+
     return tmp;
 }
 
-[[nodiscard]] jazelle_code_t FETCH::jazelle_fetch() const {
-    return memory.read(reg.PC);
-}
+//jazelle_code_t FETCH::jazelle_fetch() const {
+//    return memory.read(reg.read(id::reg::PC));
+//}

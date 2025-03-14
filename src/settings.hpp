@@ -2,6 +2,7 @@
 
 #include "types.hpp"
 #include "id.hpp"
+#include "utility.hpp"
 
 struct SETTINGS {
     bool is_thumb_enabled;
@@ -10,25 +11,25 @@ struct SETTINGS {
     bool is_enhanced_DSP_enabled;
     bool is_mpu_enabled; // not to be confused with both
     bool is_mmu_enabled; // not to be confused with both
-    bool is_fcse_enabled;
+    /**/ bool is_fcse_enabled;
     bool has_coprocessor;
-    bool has_cache;
-    bool cache_cannot_disable;
-    bool has_unified_cache;
-    bool has_separate_cache; // should be enabled if either 2 caches below are enabled 
-    bool has_separate_inst_cache;
-    bool has_separate_data_cache;
-    bool instruction_cache_cannot_disable;
-    bool data_cache_cannot_disable;
-    bool has_alignment_fault_checking;
-    bool has_write_buffer;
-    bool write_buffer_cannot_disable;
+    /**/ bool has_cache;
+    /**/ bool cache_cannot_disable;
+    /**/ bool has_unified_cache;
+    /**/ bool has_separate_cache; // should be enabled if either 2 caches below are enabled 
+    /**/ bool has_separate_inst_cache;
+    /**/ bool has_separate_data_cache;
+    /**/ bool instruction_cache_cannot_disable;
+    /**/ bool data_cache_cannot_disable;
+    /**/ bool has_alignment_fault_checking;
+    /**/ bool has_write_buffer;
+    /**/ bool write_buffer_cannot_disable;
     bool backwards_compat_support_26_bits; // "all non-T variants of ARM architecture version 4 and above can optionally implement the 26-bit address space." (A8-2)
     bool only_26_bits; // ARMv1, ARMv2, and ARMv2a
     bool no_26_bits; // ARMv3G
-    bool no_clock_constraint; // basically means it'll execute as fast as the host machine can run without clock delays for accuracy reasons
-    bool is_abort_model_early;
-    bool is_abort_model_late;
+    /**/ bool no_clock_constraint; // basically means it'll execute as fast as the host machine can run without clock delays for accuracy reasons
+    /**/ bool is_abort_model_early;
+    /**/ bool is_abort_model_late;
     bool is_little_endian;
     bool is_big_endian;
     bool only_little_endian; // TODO
@@ -39,32 +40,34 @@ struct SETTINGS {
     bool has_branch_prediction;
     bool branch_prediction_cannot_disable;
     bool has_high_vectors;
-    bool has_normal_cache_strategy;
-    bool has_predictable_cache_strategy;
-    bool is_L4_bit_enabled_cp15;
+    /**/ bool has_normal_cache_strategy;
+    /**/ bool has_predictable_cache_strategy;
+    /**/ bool is_L4_bit_enabled_cp15;
     bool has_debug_hardware;
     bool anti_emulation_detection;
     bool is_vfp_enabled;
     bool is_vfp_double_precision_enabled;
 
+    // /**/ = "not sure what to do with this, todo"
+
 
     // NOTE: MAKE SURE ALL OF THESE MATCH TO THE M BIT (B2-11)
-    u32 unified_cache_size; // make sure it matches with setup_R0_cache()'s list of supported sizes
-    u32 data_cache_size; // both should be the same if unified
-    u32 instruction_cache_size;  // both should be the same if unified
-    u8 data_cache_line_length_bytes; // in 8-64 bytes for all 3
-    u8 instruction_cache_line_length_bytes; // in 8-64 bytes for all 3
-    u8 data_cache_assoc_way; 
-    u8 instruction_cache_assoc_way; 
-    u8 cache_ctype_field; // 0b0000, 0b0001, 0b0010, 0b0110, 0b0111 are supported
+    /**/ u32 unified_cache_size; // make sure it matches with setup_R0_cache()'s list of supported sizes
+    /**/ u32 data_cache_size; // both should be the same if unified
+    /**/ u32 instruction_cache_size;  // both should be the same if unified
+    /**/ u8 data_cache_line_length_bytes; // in 8-64 bytes for all 3
+    /**/ u8 instruction_cache_line_length_bytes; // in 8-64 bytes for all 3
+    /**/ u8 data_cache_assoc_way; 
+    /**/ u8 instruction_cache_assoc_way; 
+    /**/ u8 cache_ctype_field; // 0b0000, 0b0001, 0b0010, 0b0110, 0b0111 are supported
 
-    u8 vfp_version;
+    /**/ u8 vfp_version;
     u8 thumb_version; // either 1 or 2, 0 if not supported
-    u8 core_count;
-    u16 clock_speed_mhz; 
-    u64 memsize;
+    /**/ u8 core_count;
+    /**/ u16 clock_speed_mhz; 
+    /**/ u64 memsize;
     id::arch arch;
-    id::specific_arch specific_arch;
+    /**/ id::specific_arch specific_arch;
     id::product_family product_family;
     id::implementor implementor;
     u8 custom_implementor_char;
@@ -72,6 +75,105 @@ struct SETTINGS {
     u8 variant; // cpu variant, implementation defined
     u16 ppn; // primary part number, implementation defined
     u8 revision; // implementation defined
+
+    void sanitize() {
+        // only jazelle 
+        if (
+            (is_thumb_enabled == false) &&
+            (is_arm_enabled == false) &&
+            (is_jazelle_enabled == true)
+        ) {
+            
+        }
+
+        if (
+            (is_mpu_enabled == true) &&
+            (is_mmu_enabled == true)
+        ) {
+
+        }
+
+        // i'm not sure if enabling FCSE while MMU or MPU is active is valid, research more
+
+        if (
+            (backwards_compat_support_26_bits && only_26_bits) || 
+            (backwards_compat_support_26_bits && no_26_bits) || 
+            (only_26_bits && no_26_bits)
+        ) {
+            // only one of them should be enabled, can't have more than 2
+        }
+
+        if ((backwards_compat_support_26_bits || only_26_bits || no_26_bits) == false) {
+            // at least one should be enabled
+        }
+
+        if (
+            (is_little_endian && only_big_endian) ||
+            (is_big_endian && only_little_endian)
+        ) {
+            // mismatched endianness constraints
+        }
+
+        if (
+            (is_mmu_enabled && has_system_protection_bit) ||
+            (is_mmu_enabled && has_rom_protection_bit)
+        ) {
+            // system or rom protection settings shouldn't be enabled without an MMU
+        }
+
+        if (
+            (is_mpu_enabled && has_system_protection_bit) ||
+            (is_mpu_enabled && has_rom_protection_bit)
+        ) {
+            // system or rom protection settings shouldn't be enabled without an MPU
+        }
+
+        if (    
+            (has_branch_prediction == false) &&
+            (branch_prediction_cannot_disable == true)
+        ) {
+
+        }
+
+        if (
+            (is_vfp_enabled == false) && 
+            (is_vfp_double_precision_enabled == true)
+        ) {
+
+        }
+
+        if (
+            (thumb_version == 0) && 
+            (is_thumb_enabled == true)
+        ) {
+            // thumb must have a valid version specified
+        }
+
+        if (
+            (!((thumb_version == 1) || (thumb_version == 2))) &&
+            (is_thumb_enabled == true)
+        ) {
+            // thumb must have a valid version specified
+        }
+
+        if (
+            ((thumb_version == 1) || (thumb_version == 2)) &&
+            (is_thumb_enabled == false)
+        ) {
+            // thumb setting must be enabled
+        }
+
+        if (util::conv_specific_arch_to_arch(specific_arch) == arch) {
+            // the specific arch does not match with the base arch
+        }
+
+
+        // all of the checks above should mostly just set a default correct value instead of crashing completely
+    }
+
+    SETTINGS() {
+
+    }
 };
 
 

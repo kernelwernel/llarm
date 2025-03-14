@@ -1,15 +1,14 @@
-#include "cpu/instructions/instructions.hpp"
-#include "types.hpp"
-#include "utility.hpp"
-#include "operations.hpp"
-#include <iostream>
+#include "../../../types.hpp"
+#include "../../core/registers.hpp"
+#include "../instructions.hpp"
 
-void instructions::arm::misc::NOP([[maybe_unused]] const arm_code_t &code, [[maybe_unused]] REGISTERS& reg) noexcept {
+void INSTRUCTIONS::arm::misc::NOP(const arm_code_t &code) noexcept {
+    reg.arm_increment_PC();
     return;
 }
 
 
-/** TODO (A2-9)
+/** TODO, this part needs to be extensively analysed (A2-9)
  * if ConditionPassed(<cond>) then
  *    case <opc> of
  *        0b00 // TSTP
@@ -21,16 +20,17 @@ void instructions::arm::misc::NOP([[maybe_unused]] const arm_code_t &code, [[may
  *        0b11 // CMNP
  *            <alu_out> = Rn + <shifter_operand>
  *    endcase
- *    if R15[1:0] == 0b00 then /* M[1:0] == 0b00, User mode
+ *    if R15[1:0] == 0b00 then // M[1:0] == 0b00, User mode
  *        R15[31:28] = <alu_out>[31:28] // update just NZCV
  *    else // a privileged mode
  *        R15[31:26] = <alu_out>[31:26] // update NZCVIF and ...
  *        R15[1:0] = <alu_out>[1:0] // ... update M[1:0]
  */
-void instructions::arm::misc::PSR(const arm_code_t &code, [[maybe_unused]] REGISTERS& reg) noexcept {
-    const u8 opc = util::bit_fetcher(code, 21, 22);
+void INSTRUCTIONS::arm::misc::PSR(const arm_code_t &code) noexcept {
+    const u8 opc = util::bit_fetcher<u8>(code, 21, 22);
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
-    const u16 shifter_operand = util::bit_fetcher(code, 0, 11);
+
+    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
     
     u32 alu_out = 0;
 
@@ -38,18 +38,18 @@ void instructions::arm::misc::PSR(const arm_code_t &code, [[maybe_unused]] REGIS
     bool V = false;
 
     switch (opc) {
-        case 0b00: alu_out = (reg.read(Rn_id) & shifter_operand); break;
-        case 0b01: alu_out = (reg.read(Rn_id) ^ shifter_operand); break;
+        case 0b00: alu_out = (reg.read(Rn_id) & shifter_operand.value); break;
+        case 0b01: alu_out = (reg.read(Rn_id) ^ shifter_operand.value); break;
         case 0b10: // substraction
-            alu_out = (reg.read(Rn_id) - shifter_operand); 
-            V = operation::signed_overflow_sub(reg.read(Rn_id), shifter_operand);
-            C = !operation::borrow_sub(reg.read(Rn_id), shifter_operand);
+            alu_out = (reg.read(Rn_id) - shifter_operand.value); 
+            V = operation.signed_overflow_sub(reg.read(Rn_id), shifter_operand.value);
+            C = !operation.borrow_sub(reg.read(Rn_id), shifter_operand.value);
             break;
 
         case 0b11: // addition
-            alu_out = (reg.read(Rn_id) + shifter_operand);
-            V = operation::signed_overflow_add(reg.read(Rn_id), shifter_operand);
-            C = operation::borrow_add(reg.read(Rn_id), shifter_operand);
+            alu_out = (reg.read(Rn_id) + shifter_operand.value);
+            V = operation.signed_overflow_add(reg.read(Rn_id), shifter_operand.value);
+            C = operation.borrow_add(reg.read(Rn_id), shifter_operand.value);
             break;
     }
 
@@ -62,9 +62,9 @@ void instructions::arm::misc::PSR(const arm_code_t &code, [[maybe_unused]] REGIS
     if ((reg.read(id::reg::R15) & 0b11) == 0b00) { // user mode
         return; // all the flag bit updates are done
     } else { // privileged
-        reg.write(id::cpsr::I, ());// TODO
-        reg.write(id::cpsr::F, ());// TODO
-        reg.write(id::cpsr::M, ());// TODO
+        reg.write(id::cpsr::I, (0));// TODO
+        reg.write(id::cpsr::F, (0));// TODO
+        reg.write(id::cpsr::M, (0));// TODO
     }
 
     reg.arm_increment_PC();
@@ -83,8 +83,8 @@ void instructions::arm::misc::PSR(const arm_code_t &code, [[maybe_unused]] REGIS
  *   else
  *     PC = 0x00000008
  */
-void instructions::arm::misc::SWI(const arm_code_t &code, REGISTERS &reg) {
-    reg.write(id::reg::R14_svc, reg.PC + 4);
+void INSTRUCTIONS::arm::misc::SWI(const arm_code_t &code) {
+    reg.write(id::reg::R14_svc, reg.read(id::reg::PC) + 4);
     reg.write(id::reg::SPSR_svc, reg.CPSR);
     reg.switch_mode(id::mode::SUPERVISOR);
     reg.write(id::cpsr::T, 0);

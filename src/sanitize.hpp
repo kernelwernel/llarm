@@ -11,7 +11,7 @@ namespace sanitize {
     //using input_args_t = std::tuple<fs::
 
     /*
-    [[nodiscard]] bool sanitize::is_binary_valid() noexcept { 
+    bool sanitize::is_binary_valid() noexcept { 
 
         // 1: check for elf magic
         // 2: check for arm machine value
@@ -26,7 +26,7 @@ namespace sanitize {
         const std::vector<const char*> args(argv + 1, argv + argc); // easier this way
         const std::uint32_t arg_count = argc - 1;
 
-        static constexpr std::array<std::pair<sv, id::arguments>, 6> table {{
+        constexpr std::array<std::pair<sv, id::arguments>, 6> table {{
             { "-h",          id::arguments::HELP },
             { "--help",      id::arguments::HELP },
             { "-v",          id::arguments::VERBOSE },

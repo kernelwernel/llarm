@@ -4,16 +4,16 @@
 #include "types_extra.hpp"
 #include "id.hpp"
 #include "constants.hpp"
+#include "out.hpp"
 
 #include <bitset>
 
 namespace util {
-
     // TODO: maybe replace this with the 0-shifter strategy
 
     // 0-based counting btw
     template <typename T>
-    T bit_fetcher(const arm_code_t &input, const u8 start, const u8 end) {
+    inline T bit_fetcher(const arm_code_t &input, const u8 start, const u8 end) {
         if (start >= end) [[unlikely]] {
             // TODO: think of an error
         }
@@ -23,7 +23,7 @@ namespace util {
     }
 
     template <typename T>
-    T bit_fetcher(const thumb_code_t &input, const u8 start, const u8 end) {
+    inline T bit_fetcher(const thumb_code_t &input, const u8 start, const u8 end) {
         if (start >= end) [[unlikely]] {
             // TODO: think of an error
         }
@@ -33,7 +33,7 @@ namespace util {
     }
 
     template <typename T, typename M>
-    T bit_fetcher(const M input, const u8 start, const u8 end) {
+    inline T bit_fetcher(const M input, const u8 start, const u8 end) {
         if (start >= end) [[unlikely]] {
             // TODO: think of an error
         }
@@ -42,7 +42,7 @@ namespace util {
         return static_cast<T>((input >> start) & mask);
     }
 
-    u32 bit_fetcher(const u32 input, const u8 start, const u8 end) {
+    inline u32 bit_fetcher(const u32 input, const u8 start, const u8 end) {
         if (start >= end) [[unlikely]] {
             // TODO: think of an error
         }
@@ -59,7 +59,7 @@ namespace util {
 
 
 
-    void modify_bit(u32 &original, const u8 index, const bool value) {
+    inline void modify_bit(u32 &original, const u8 index, const bool value) {
         if (index > 31) {
             throw std::out_of_range("Index must be between 0 and 31.");
         }
@@ -72,7 +72,7 @@ namespace util {
     }
 
     // 1-based counting
-    constexpr u32 trim(const u32 original, const u8 lhs, const u8 rhs) noexcept {
+    inline constexpr u32 trim(const u32 original, const u8 lhs, const u8 rhs) noexcept {
         if (lhs + rhs >= 32) {
             // TODO thing of a dev warning message here
             return 0;
@@ -88,7 +88,7 @@ namespace util {
     }
 
 
-    void swap_bits(u32 &original, const u8 start, const u8 end, const u32 value) {
+    inline void swap_bits(u32 &original, const u8 start, const u8 end, const u32 value) {
         if (start >= 32 || end >= 32 || start >= end) {
             // TODO, ERROR
             return;
@@ -106,7 +106,7 @@ namespace util {
 
 
     // for example, ARMv5TEJ will be simplified to ARMv5
-    id::arch conv_specific_arch_to_arch(const id::specific_arch arch) {
+    inline id::arch conv_specific_arch_to_arch(const id::specific_arch arch) {
         switch (arch) {
             case id::specific_arch::ARMv1: return id::arch::ARMv1;
             case id::specific_arch::ARMv2: 
@@ -139,10 +139,11 @@ namespace util {
             case id::specific_arch::ARMv8_6_A: return id::arch::ARMv8;
             case id::specific_arch::ARMv9_A: 
             case id::specific_arch::ARMv9_2_A: return id::arch::ARMv9;
+            default: out::error("TODO");
         }
     }
 
-    consteval u32 get_kb(const u16 kb) {
+    inline CHARM_CONSTEVAL u32 get_kb(const u16 kb) {
         switch (kb) {
             case 1:   return (1 << 10); // 1KB
             case 2:   return (1 << 11); // 2KB
@@ -154,12 +155,12 @@ namespace util {
             case 128: return (1 << 17); // 128KB
             case 256: return (1 << 18); // 256KB
             case 512: return (1 << 19); // 512KB
-            // TODO: figure out a static assert check if it's not valid
+            // TODO: figure out a assert check if it's not valid
             default: return 0;
         }
     }
 
-    consteval u32 get_mb(const u16 mb) {
+    inline CHARM_CONSTEVAL u32 get_mb(const u16 mb) {
         switch(mb) {
             case 1:   return (1 << 20); // 1MB
             case 2:   return (1 << 21); // 2MB
@@ -171,12 +172,12 @@ namespace util {
             case 128: return (1 << 27); // 128MB
             case 256: return (1 << 28); // 256MB
             case 512: return (1 << 29); // 512MB
-            // TODO: figure out a static assert check if it's not valid
+            // TODO: figure out a assert check if it's not valid
             default: return 0;
         }
     }
     
-    consteval u64 get_gb(const u16 gb) {
+    inline CHARM_CONSTEVAL u64 get_gb(const u16 gb) {
         switch (gb) {
             case 1:   return (1ULL << 30); // 1GB
             case 2:   return (1ULL << 31); // 2GB
@@ -188,33 +189,11 @@ namespace util {
             case 128: return (1ULL << 37); // 128GB
             case 256: return (1ULL << 38); // 256GB
             case 512: return (1ULL << 39); // 512GB
-            // TODO: figure out a static assert check if it's not valid
+            // TODO: figure out a assert check if it's not valid
             default: return 0;
         }
     }
 
     constexpr u64 lower_mask_64 = 0x00000000FFFFFFFF;
     constexpr u64 upper_mask_64 = 0xFFFFFFFF00000000;
-
-
-/*
-    overflow:
-    Returns 1 if the addition or subtraction specified as 
-    its parameter caused a 32-bit signed overflow. 
-
-    Addition generates an overflow if both operands have the same sign 
-    (bit[31]), and the sign of the result is different to
-    the sign of both operands. 
-    
-    Subtraction causes an overflow
-     if the operands have different signs, and the first
-    operand and the result have different signs.
-    This delivers further information about an addition or 
-    subtraction which occurred earlier in the pseudo-code.
-    The addition or subtraction is not repeated
-
-    bool overflow_sub(const u64 &sum) {
-    
-    }
-*/
 }

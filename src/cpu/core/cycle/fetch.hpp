@@ -7,20 +7,28 @@
 
 struct FETCH {
 private:
-    INSTRUCTION_SET& inst_set;
     REGISTERS& reg;
     MEMORY& memory;
 
 public:
     FETCH(
-        INSTRUCTION_SET& inst_set, 
         REGISTERS& reg,
         MEMORY& memory
     );
 
-    arm_code_t arm_fetch() const;
+    struct arm_fetch_struct {
+        arm_code_t code;
+        bool has_failed;
+    };
 
-    thumb_code_t thumb_fetch() const;
+    struct thumb_fetch_struct {
+        thumb_code_t code;
+        bool has_failed;
+    };
 
-    jazelle_code_t jazelle_fetch() const;
+    arm_fetch_struct arm_fetch();
+
+    thumb_fetch_struct thumb_fetch();
+
+    //jazelle_code_t jazelle_fetch() const;
 };

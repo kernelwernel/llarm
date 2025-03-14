@@ -1,8 +1,6 @@
-#include "types.hpp"
-#include "utility.hpp"
-#include "cpu/instructions/instructions.hpp"
-#include "cpu/core/registers.hpp"
-
+#include "../../../types.hpp"
+#include "../../core/registers.hpp"
+#include "../instructions.hpp"
 
 /**
  * if ConditionPassed(cond) then
@@ -15,14 +13,24 @@
  *     C Flag = shifter_carry_out
  *     V Flag = unaffected
  */
-void MOV(const arm_code_t &code, REGISTERS &reg) {
-    const u16 shifter_operand = util::bit_fetcher<u16>(code, 0, 11);
+void INSTRUCTIONS::arm::movement::MOV(const arm_code_t &code) {
+    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
     
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
 
     const bool S = code.test(20);
 
-    reg.write(Rd_id, 
+    reg.write(Rd_id, shifter_operand.value);
+
+    const u32 Rd = reg.read(Rd_id);
+
+    if ((S == 1) && (Rd_id == id::reg::R15)) {
+        reg.write(id::reg::CPSR, id::reg::SPSR);
+    } else {
+        reg.write(id::cpsr::N, (Rd & (1 << 31)));
+        reg.write(id::cpsr::Z, (Rd == 0));
+        reg.write(id::cpsr::C, (shifter_operand.carry));
+    }
 
     reg.arm_increment_PC();
 } 
@@ -39,12 +47,28 @@ void MOV(const arm_code_t &code, REGISTERS &reg) {
  *     C Flag = shifter_carry_out
  *     V Flag = unaffected
  */
-void MVN(const arm_code_t &code, REGISTERS &reg) {
-    const u16 shifter_operand = util::bit_fetcher<u16>(code, 0, 11);
+void INSTRUCTIONS::arm::movement::MVN(const arm_code_t &code) {
+    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
     
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
 
     const bool S = code.test(20);
 
-    reg.arm_increment_PC();  
+    reg.write(Rd_id, ~shifter_operand.value);
+
+    const u32 Rd = reg.read(Rd_id);
+
+    if ((S == 1) && (Rd_id == id::reg::R15)) {
+        reg.write(id::reg::CPSR, id::reg::SPSR);
+    } else {
+        reg.write(id::cpsr::N, (Rd & (1 << 31)));
+        reg.write(id::cpsr::Z, (Rd == 0));
+        reg.write(id::cpsr::C, (shifter_operand.carry));
+    }
+
+    reg.arm_increment_PC();
 }
+
+
+void INSTRUCTIONS::arm::movement::MRS(const arm_code_t&) {};// TODO
+void INSTRUCTIONS::arm::movement::MSR(const arm_code_t&) {};// TODO

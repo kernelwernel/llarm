@@ -95,8 +95,8 @@ public:
     bool region_7_enabled = false;
 
 
-    memory_struct is_access_valid(const u32 address, const id::access_type access_type) {
-        memory_struct data = {};
+    memory_struct<> is_access_valid(const u32 address, const id::access_type access_type) {
+        memory_struct<> data = {};
 
         // these are irrelevant
         data.value = 0;
@@ -143,7 +143,7 @@ public:
         else if (address >= region_0_start && address <= region_0_end && region_0_enabled) { AP_region_id = id::cp::CP15_R5_PU_AP0; }
         else {
             // at this point, an abort is performed 
-            data.is_successful = false;
+            data.has_failed = true;
 
             if (access_type == id::access_type::INSTRUCTION_FETCH) {
                 data.abort_code = id::aborts::PREFETCH_ABORT;
@@ -159,25 +159,25 @@ public:
 
         switch (AP_id) {
             case id::access_perm::READ_WRITE: 
-                data.is_successful = (
+                data.has_failed = (!(
                     (access_type == id::access_type::INSTRUCTION_FETCH) ||
                     (access_type == id::access_type::READ_WRITE) ||
                     (access_type == id::access_type::READ) ||
                     (access_type == id::access_type::WRITE)
-                );
+                ));
                 break;
 
             case id::access_perm::READ_ONLY:
-                data.is_successful = (
+                data.has_failed = (!(
                     (access_type == id::access_type::INSTRUCTION_FETCH) ||
                     (access_type == id::access_type::READ_WRITE) || // this overlaps with the read permission, so this is valid
                     (access_type == id::access_type::READ)
-                );
+                ));
                 break;
 
             case id::access_perm::UNPREDICTABLE: // TODO add an unpredictable log here
             case id::access_perm::NO_ACCESS: 
-                data.is_successful = false;
+                data.has_failed = true;
                 if (access_type == id::access_type::INSTRUCTION_FETCH) {
                     data.abort_code = id::aborts::PREFETCH_ABORT;
                 } else {
@@ -192,19 +192,19 @@ public:
     }
 
 
-    memory_struct write_manager(const u32 address, const u8 access_size) {
-        memory_struct data = {};
+    memory_struct<> write_manager(const u32 address, const u8 access_size) {
+        memory_struct<> data = {};
 
-        const memory_struct mpu_access = is_access_valid(address, id::access_type::WRITE);
+        const memory_struct<> mpu_access = is_access_valid(address, id::access_type::WRITE);
 
-        if (mpu_access.is_successful) {
-            data.is_successful = true;
-            data.abort_code = id::aborts::NO_ABORT;
+        if (mpu_access.has_failed) {
+            data.has_failed = true;
+            data.abort_code = id::aborts::ABORT;
             data.value = 0;
             data.new_address = address;
         } else {
-            data.is_successful = false;
-            data.abort_code = id::aborts::ABORT;
+            data.has_failed = false;
+            data.abort_code = id::aborts::NO_ABORT;
             data.value = 0;
             data.new_address = address;
         }

@@ -3,7 +3,7 @@
 #include "types.hpp"
 
 namespace id {
-    enum class exception : u8 {
+    enum class exception_mode : u8 {
         RESET = 1,
         UNDEFINED,
         SWI, // software interrupt
@@ -89,6 +89,7 @@ namespace id {
     enum class arm_instruction : u8 {
         UNKNOWN = 0,
         NOP,
+        B,
 
         // Enhanced DSP instructions
         LDRD,
@@ -550,7 +551,7 @@ namespace id {
         CP15_R0_CACHE_ISIZE_ASSOC,
         CP15_R0_CACHE_ISIZE_SIZE,
 
-        CP15_R1_CONTROL,
+        CP15_R1,
         CP15_R1_M, // MMU or Protection Unit enable disable
         CP15_R1_A, // alignment fault checking
         CP15_R1_C, // unified cache
@@ -568,6 +569,7 @@ namespace id {
         CP15_R1_RR, // cache strategy
         CP15_R1_L4, // ARMv5+ backwards compatibility
 
+        CP15_R2,
         CP15_R2_MMU,
         CP15_R2_MMU_TRANSLATION_BASE,
         CP15_R2_PU,
@@ -580,6 +582,7 @@ namespace id {
         CP15_R2_PU_C6,
         CP15_R2_PU_C7,
 
+        CP15_R3,
         CP15_R3_MMU,
         CP15_R3_MMU_D0,
         CP15_R3_MMU_D1,
@@ -607,9 +610,11 @@ namespace id {
         CP15_R3_PU_B6,
         CP15_R3_PU_B7,
 
+        CP15_R4,
         CP15_R4_MMU,
         CP15_R4_PU,
 
+        CP15_R5,
         CP15_R5_MMU,
         CP15_R5_MMU_DOMAIN,
         CP15_R5_MMU_STATUS,
@@ -658,28 +663,30 @@ namespace id {
         CP15_R6_PU_7_SIZE,
         CP15_R6_PU_7_E,  
 
-        CP15_R7_CACHE,
+        CP15_R7,
         CP15_R7_CACHE_INDEX,
         CP15_R7_CACHE_SET,
 
-        CP15_R8_MMU,
-        CP15_R8_PU,
+        CP15_R8_MMU, // write-only functionalities
+        CP15_R8_PU, // reserved
 
-        CP15_R9_CACHE,
+        CP15_R9,
         CP15_R9_CACHE_INDEX,
         CP15_R9_CACHE_L,
 
+        CP15_R10,
         CP15_R10_MMU,
         CP15_R10_MMU_BASE,
         CP15_R10_MMU_VICTIM,
         CP15_R10_MMU_P,
         CP15_R10_PU,
 
-        CP15_R11_RESERVED,
-        CP15_R12_RESERVED,
+        CP15_R11,
+        CP15_R12,
+        CP15_R13,
         CP15_R13_PID,
-        CP15_R14_RESERVED,
-        CP15_R15_IMPL,
+        CP15_R14,
+        CP15_R15,
 
         CP15_END
     };
@@ -1010,7 +1017,13 @@ namespace id {
         Neoverse_N2,
         Neoverse_V2,
         Neoverse_N3,
-        Neoverse_V3
+        Neoverse_V3,
+
+        // custom processors intended for specific use cases 
+        // if no real-world ARM processor is being used or set
+        CHARM_FAST,
+        CHARM_MINIMAL,
+        CHARM_DEFAULT
     };
 
     enum class implementor : u8 {

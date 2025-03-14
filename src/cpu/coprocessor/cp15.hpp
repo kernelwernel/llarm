@@ -17,42 +17,59 @@
 
 #include <bit>
 
+/**
+ * NOTE: 
+ * MMU = memory management unit
+ * MPU = memory protection unit
+ * 
+ * The registers in CP15 are very wonky and confusing to conceptually understand.
+ * A lot of them have shared functionalities where their usage depends on whether
+ * the memory system is an MMU or an MPU, which both are non-homogenous and can't 
+ * work together at the same time. For example, the R2 register has different 
+ * interpretations: the MMU sees it as a translation table address, while the MPU 
+ * sees it as a storage for cachability bits. 
+ * 
+ * But the wonkiness doesn't end there. R0 has different use cases depending on
+ * the MCR/MRC instruction's operands. It can both be used to store the processor's
+ * information and ID, while on the other hand it can be used to store information
+ * about the cache. 
+ * 
+ * Just thought I should clarify this. It took me a while to figure this out, so I
+ * hope this will clear any misunderstandings as to why the registers and the file
+ * itself is structured in this unintuitive way. Also, hope you have a great day :)
+ */
 struct CP15 {
 private:
     SETTINGS& settings;
     GLOBALS& globals;
-    //MMU& mmu;
 
 public:
+
     // ID codes
     u32 R0_ID = 0;    // processor ID 
     u32 R0_CACHE = 0; // Cache 
 
-    // Control bits 
-    u32 R1_CONTROL = 0; // miscellaneous control bits
-
-    // NOTE: 
-    // MMU = memory management unit
-    // PU = protection unit
+    // control bits 
+    u32 R1 = 0;
     
-    // Memory protection and control
-    u32 R2_MMU = 0; // translation table
-    u32 R2_PU  = 0; // cachability bits
+    // MMU: translation table
+    // MPU: cachability bits
+    u32 R2 = 0;
     
-    // Memory protection and control 
-    u32 R3_MMU = 0; // domain access control
-    u32 R3_PU  = 0; // bufferability bits
+    // MMU: domain access control
+    // MPU: bufferability bits
+    u32 R3 = 0;
 
-    // Memory protection and control
-    u32 R4_MMU = 0; // reserved
-    u32 R4_PU  = 0; // reserved
+    // MMU: reserved
+    // MPU: reserved
+    u32 R4 = 0;
 
-    // Memory protection and control
-    u32 R5_MMU = 0; // fault status
-    u32 R5_PU  = 0; // access permission bits
+    // MMU: fault status
+    // MPU: access permission bits
+    u32 R5 = 0;
 
-    // Memory protection and control
-    u32 R6_MMU = 0; // fault address 
+    // MMU: fault address
+    u32 R6 = 0;
 
     // protection area control
     u32 R6_PU_0 = 0;
@@ -64,30 +81,34 @@ public:
     u32 R6_PU_6 = 0;
     u32 R6_PU_7 = 0;
 
-    // Cache and write buffer
-    u32 R7_CACHE = 0; // cache/write buffer control
+    // cache/write buffer control
+    u32 R7 = 0;
 
-    // Memory protection and control
-    // u32 R8_MMU = 0; // TLB control, this register doesn't really exist (B3-26)
-    u32 R8_PU  = 0; // reserved
+    // MMU: TLB control, this register doesn't really exist (B3-26
+    // MPU: reserved
+    u32 R8 = 0; // reserved
 
-    // Cache and write buffer 
-    u32 R9_CACHE = 0; // cache lockdown
+    // cache lockdown
+    u32 R9 = 0;
 
-    // Memory protection and control
-    u32 R10_MMU = 0; // TLB lockdown
-    u32 R10_PU  = 0; // reserved
-    
-    u32 R11_RESERVED = 0;
+    // MMU: TLB lockdown
+    // MPU: reserved
+    u32 R10;
 
-    u32 R12_RESERVED = 0;
+    // reserved
+    u32 R11 = 0;
 
-    // Process ID
-    u32 R13_PID = 0; // process ID
+    // reserved
+    u32 R12 = 0;
 
-    u32 R14_RESERVED = 0;
+    // FCSE: process ID
+    u32 R13 = 0;
 
-    u32 R15_IMPL = 0; // implementation defined, not important
+    // reserved
+    u32 R14 = 0;
+
+     // implementation defined, not important
+    u32 R15 = 0;
 
 private:
     static constexpr bool FORCED = true;
@@ -128,76 +149,80 @@ public:
             case id::cp::CP15_R0_CACHE_ISIZE_M: return (R0_CACHE & (1 << 2));
             case id::cp::CP15_R0_CACHE_ISIZE_ASSOC: return util::bit_fetcher(R0_CACHE, 3, 5);
             case id::cp::CP15_R0_CACHE_ISIZE_SIZE: return util::bit_fetcher(R0_CACHE, 6, 8);
-            case id::cp::CP15_R1_CONTROL: return R1_CONTROL;
-            case id::cp::CP15_R1_M: return (R1_CONTROL & 1);
-            case id::cp::CP15_R1_A: return (R1_CONTROL & (1 << 1));
-            case id::cp::CP15_R1_C: return (R1_CONTROL & (1 << 2));
-            case id::cp::CP15_R1_W: return (R1_CONTROL & (1 << 3));
-            case id::cp::CP15_R1_P: return (R1_CONTROL & (1 << 4));
-            case id::cp::CP15_R1_D: return (R1_CONTROL & (1 << 5));
-            case id::cp::CP15_R1_L: return (R1_CONTROL & (1 << 6));
-            case id::cp::CP15_R1_B: return (R1_CONTROL & (1 << 7));
-            case id::cp::CP15_R1_S: return (R1_CONTROL & (1 << 8));
-            case id::cp::CP15_R1_R: return (R1_CONTROL & (1 << 9));
-            case id::cp::CP15_R1_F: return (R1_CONTROL & (1 << 10));
-            case id::cp::CP15_R1_Z: return (R1_CONTROL & (1 << 11));
-            case id::cp::CP15_R1_I: return (R1_CONTROL & (1 << 12));
-            case id::cp::CP15_R1_V: return (R1_CONTROL & (1 << 13));
-            case id::cp::CP15_R1_RR: return (R1_CONTROL & (1 << 14));
-            case id::cp::CP15_R1_L4: return (R1_CONTROL & (1 << 15));
-            case id::cp::CP15_R2_MMU: return R2_MMU;
-            case id::cp::CP15_R2_MMU_TRANSLATION_BASE: return util::bit_fetcher(R2_MMU, 14, 31);
-            case id::cp::CP15_R2_PU: return R2_PU;
-            case id::cp::CP15_R2_PU_C0: return (R2_PU & 1);
-            case id::cp::CP15_R2_PU_C1: return (R2_PU & (1 << 1));
-            case id::cp::CP15_R2_PU_C2: return (R2_PU & (1 << 2));
-            case id::cp::CP15_R2_PU_C3: return (R2_PU & (1 << 3));
-            case id::cp::CP15_R2_PU_C4: return (R2_PU & (1 << 4));
-            case id::cp::CP15_R2_PU_C5: return (R2_PU & (1 << 5));
-            case id::cp::CP15_R2_PU_C6: return (R2_PU & (1 << 6));
-            case id::cp::CP15_R2_PU_C7: return (R2_PU & (1 << 7));
-            case id::cp::CP15_R3_MMU: return R3_MMU;
-            case id::cp::CP15_R3_MMU_D0: return util::bit_fetcher(R3_MMU, 0, 1);
-            case id::cp::CP15_R3_MMU_D1: return util::bit_fetcher(R3_MMU, 2, 3);
-            case id::cp::CP15_R3_MMU_D2: return util::bit_fetcher(R3_MMU, 4, 5);
-            case id::cp::CP15_R3_MMU_D3: return util::bit_fetcher(R3_MMU, 6, 7);
-            case id::cp::CP15_R3_MMU_D4: return util::bit_fetcher(R3_MMU, 8, 9);
-            case id::cp::CP15_R3_MMU_D5: return util::bit_fetcher(R3_MMU, 10, 11);
-            case id::cp::CP15_R3_MMU_D6: return util::bit_fetcher(R3_MMU, 12, 13);
-            case id::cp::CP15_R3_MMU_D7: return util::bit_fetcher(R3_MMU, 14, 15);
-            case id::cp::CP15_R3_MMU_D8: return util::bit_fetcher(R3_MMU, 16, 17);
-            case id::cp::CP15_R3_MMU_D9: return util::bit_fetcher(R3_MMU, 18, 19);
-            case id::cp::CP15_R3_MMU_D10: return util::bit_fetcher(R3_MMU, 20, 21);
-            case id::cp::CP15_R3_MMU_D11: return util::bit_fetcher(R3_MMU, 22, 23);
-            case id::cp::CP15_R3_MMU_D12: return util::bit_fetcher(R3_MMU, 24, 25);
-            case id::cp::CP15_R3_MMU_D13: return util::bit_fetcher(R3_MMU, 26, 27);
-            case id::cp::CP15_R3_MMU_D14: return util::bit_fetcher(R3_MMU, 28, 29);
-            case id::cp::CP15_R3_MMU_D15: return util::bit_fetcher(R3_MMU, 30, 31);
-            case id::cp::CP15_R3_PU: return R3_PU;
-            case id::cp::CP15_R3_PU_B0: return (R3_PU & 1);
-            case id::cp::CP15_R3_PU_B1: return (R3_PU & (1 << 1));
-            case id::cp::CP15_R3_PU_B2: return (R3_PU & (1 << 2));
-            case id::cp::CP15_R3_PU_B3: return (R3_PU & (1 << 3));
-            case id::cp::CP15_R3_PU_B4: return (R3_PU & (1 << 4));
-            case id::cp::CP15_R3_PU_B5: return (R3_PU & (1 << 5));
-            case id::cp::CP15_R3_PU_B6: return (R3_PU & (1 << 6));
-            case id::cp::CP15_R3_PU_B7: return (R3_PU & (1 << 7));
-            case id::cp::CP15_R4_MMU: return R4_MMU;
-            case id::cp::CP15_R4_PU: return R4_PU;
-            case id::cp::CP15_R5_MMU: return R5_MMU;
-            case id::cp::CP15_R5_MMU_DOMAIN: return util::bit_fetcher(R5_MMU, 4, 7);
-            case id::cp::CP15_R5_MMU_STATUS: return util::bit_fetcher(R5_MMU, 0, 3);
-            case id::cp::CP15_R5_PU: return R5_PU;
-            case id::cp::CP15_R5_PU_AP0: return util::bit_fetcher(R5_PU, 0, 1);
-            case id::cp::CP15_R5_PU_AP1: return util::bit_fetcher(R5_PU, 2, 3);
-            case id::cp::CP15_R5_PU_AP2: return util::bit_fetcher(R5_PU, 4, 5);
-            case id::cp::CP15_R5_PU_AP3: return util::bit_fetcher(R5_PU, 6, 7);
-            case id::cp::CP15_R5_PU_AP4: return util::bit_fetcher(R5_PU, 8, 9);
-            case id::cp::CP15_R5_PU_AP5: return util::bit_fetcher(R5_PU, 10, 11);
-            case id::cp::CP15_R5_PU_AP6: return util::bit_fetcher(R5_PU, 12, 13);
-            case id::cp::CP15_R5_PU_AP7: return util::bit_fetcher(R5_PU, 14, 15);
-            case id::cp::CP15_R6_MMU: return R6_MMU;
-            case id::cp::CP15_R6_MMU_FAR: return R6_MMU; // same as above, this is added for the sake of completeness 
+            case id::cp::CP15_R1: return R1;
+            case id::cp::CP15_R1_M: return (R1 & 1);
+            case id::cp::CP15_R1_A: return (R1 & (1 << 1));
+            case id::cp::CP15_R1_C: return (R1 & (1 << 2));
+            case id::cp::CP15_R1_W: return (R1 & (1 << 3));
+            case id::cp::CP15_R1_P: return (R1 & (1 << 4));
+            case id::cp::CP15_R1_D: return (R1 & (1 << 5));
+            case id::cp::CP15_R1_L: return (R1 & (1 << 6));
+            case id::cp::CP15_R1_B: return (R1 & (1 << 7));
+            case id::cp::CP15_R1_S: return (R1 & (1 << 8));
+            case id::cp::CP15_R1_R: return (R1 & (1 << 9));
+            case id::cp::CP15_R1_F: return (R1 & (1 << 10));
+            case id::cp::CP15_R1_Z: return (R1 & (1 << 11));
+            case id::cp::CP15_R1_I: return (R1 & (1 << 12));
+            case id::cp::CP15_R1_V: return (R1 & (1 << 13));
+            case id::cp::CP15_R1_RR: return (R1 & (1 << 14));
+            case id::cp::CP15_R1_L4: return (R1 & (1 << 15));
+            case id::cp::CP15_R2: return R2;
+            case id::cp::CP15_R2_MMU: return R2;
+            case id::cp::CP15_R2_MMU_TRANSLATION_BASE: return util::bit_fetcher(R2, 14, 31);
+            case id::cp::CP15_R2_PU: return R2;
+            case id::cp::CP15_R2_PU_C0: return (R2 & 1);
+            case id::cp::CP15_R2_PU_C1: return (R2 & (1 << 1));
+            case id::cp::CP15_R2_PU_C2: return (R2 & (1 << 2));
+            case id::cp::CP15_R2_PU_C3: return (R2 & (1 << 3));
+            case id::cp::CP15_R2_PU_C4: return (R2 & (1 << 4));
+            case id::cp::CP15_R2_PU_C5: return (R2 & (1 << 5));
+            case id::cp::CP15_R2_PU_C6: return (R2 & (1 << 6));
+            case id::cp::CP15_R2_PU_C7: return (R2 & (1 << 7));
+            case id::cp::CP15_R3: return R3;
+            case id::cp::CP15_R3_MMU: return R3;
+            case id::cp::CP15_R3_MMU_D0: return util::bit_fetcher(R3, 0, 1);
+            case id::cp::CP15_R3_MMU_D1: return util::bit_fetcher(R3, 2, 3);
+            case id::cp::CP15_R3_MMU_D2: return util::bit_fetcher(R3, 4, 5);
+            case id::cp::CP15_R3_MMU_D3: return util::bit_fetcher(R3, 6, 7);
+            case id::cp::CP15_R3_MMU_D4: return util::bit_fetcher(R3, 8, 9);
+            case id::cp::CP15_R3_MMU_D5: return util::bit_fetcher(R3, 10, 11);
+            case id::cp::CP15_R3_MMU_D6: return util::bit_fetcher(R3, 12, 13);
+            case id::cp::CP15_R3_MMU_D7: return util::bit_fetcher(R3, 14, 15);
+            case id::cp::CP15_R3_MMU_D8: return util::bit_fetcher(R3, 16, 17);
+            case id::cp::CP15_R3_MMU_D9: return util::bit_fetcher(R3, 18, 19);
+            case id::cp::CP15_R3_MMU_D10: return util::bit_fetcher(R3, 20, 21);
+            case id::cp::CP15_R3_MMU_D11: return util::bit_fetcher(R3, 22, 23);
+            case id::cp::CP15_R3_MMU_D12: return util::bit_fetcher(R3, 24, 25);
+            case id::cp::CP15_R3_MMU_D13: return util::bit_fetcher(R3, 26, 27);
+            case id::cp::CP15_R3_MMU_D14: return util::bit_fetcher(R3, 28, 29);
+            case id::cp::CP15_R3_MMU_D15: return util::bit_fetcher(R3, 30, 31);
+            case id::cp::CP15_R3_PU: return R3;
+            case id::cp::CP15_R3_PU_B0: return (R3 & 1);
+            case id::cp::CP15_R3_PU_B1: return (R3 & (1 << 1));
+            case id::cp::CP15_R3_PU_B2: return (R3 & (1 << 2));
+            case id::cp::CP15_R3_PU_B3: return (R3 & (1 << 3));
+            case id::cp::CP15_R3_PU_B4: return (R3 & (1 << 4));
+            case id::cp::CP15_R3_PU_B5: return (R3 & (1 << 5));
+            case id::cp::CP15_R3_PU_B6: return (R3 & (1 << 6));
+            case id::cp::CP15_R3_PU_B7: return (R3 & (1 << 7));
+            case id::cp::CP15_R4: return R4;
+            case id::cp::CP15_R4_MMU: return R4;
+            case id::cp::CP15_R4_PU: return R4;
+            case id::cp::CP15_R5: return R5;
+            case id::cp::CP15_R5_MMU: return R5;
+            case id::cp::CP15_R5_MMU_DOMAIN: return util::bit_fetcher(R5, 4, 7);
+            case id::cp::CP15_R5_MMU_STATUS: return util::bit_fetcher(R5, 0, 3);
+            case id::cp::CP15_R5_PU: return R5;
+            case id::cp::CP15_R5_PU_AP0: return util::bit_fetcher(R5, 0, 1);
+            case id::cp::CP15_R5_PU_AP1: return util::bit_fetcher(R5, 2, 3);
+            case id::cp::CP15_R5_PU_AP2: return util::bit_fetcher(R5, 4, 5);
+            case id::cp::CP15_R5_PU_AP3: return util::bit_fetcher(R5, 6, 7);
+            case id::cp::CP15_R5_PU_AP4: return util::bit_fetcher(R5, 8, 9);
+            case id::cp::CP15_R5_PU_AP5: return util::bit_fetcher(R5, 10, 11);
+            case id::cp::CP15_R5_PU_AP6: return util::bit_fetcher(R5, 12, 13);
+            case id::cp::CP15_R5_PU_AP7: return util::bit_fetcher(R5, 14, 15);
+            case id::cp::CP15_R6_MMU: return R6;
+            case id::cp::CP15_R6_MMU_FAR: return R6; // same as above, this is added for the sake of completeness 
             case id::cp::CP15_R6_PU_0: return R6_PU_0;
             case id::cp::CP15_R6_PU_0_BASE_ADDRESS: return util::bit_fetcher(R6_PU_0, 12, 31);
             case id::cp::CP15_R6_PU_0_SIZE: return util::bit_fetcher(R6_PU_0, 1, 5);
@@ -230,24 +255,27 @@ public:
             case id::cp::CP15_R6_PU_7_BASE_ADDRESS: return util::bit_fetcher(R6_PU_7, 12, 31);
             case id::cp::CP15_R6_PU_7_SIZE: return util::bit_fetcher(R6_PU_7, 1, 5);
             case id::cp::CP15_R6_PU_7_E: return (R6_PU_7 & 1);
-            case id::cp::CP15_R7_CACHE: return R7_CACHE;
+            case id::cp::CP15_R7: return R7;
             case id::cp::CP15_R7_CACHE_INDEX: // TODO
             case id::cp::CP15_R7_CACHE_SET: // TODO
             case id::cp::CP15_R8_MMU: return 0; // UNPREDICTABLE
-            case id::cp::CP15_R8_PU: return R8_PU;
-            case id::cp::CP15_R9_CACHE: return R9_CACHE;
+            case id::cp::CP15_R8_PU: return R8;
+            case id::cp::CP15_R9: return R9;
             case id::cp::CP15_R9_CACHE_INDEX: // TODO
             case id::cp::CP15_R9_CACHE_L: // TODO
-            case id::cp::CP15_R10_MMU: return R10_MMU;
+            case id::cp::CP15_R10: return R10;
+            case id::cp::CP15_R10_MMU: return R10;
             case id::cp::CP15_R10_MMU_BASE: // TODO: SEE PAGE B3-27
             case id::cp::CP15_R10_MMU_VICTIM: // TODO: SEE PAGE B3-27
-            case id::cp::CP15_R10_MMU_P: return (R10_MMU & 1);
-            case id::cp::CP15_R10_PU: return R10_PU;
-            case id::cp::CP15_R11_RESERVED: return R11_RESERVED;
-            case id::cp::CP15_R12_RESERVED: return R12_RESERVED;
-            case id::cp::CP15_R13_PID: return R13_PID;
-            case id::cp::CP15_R14_RESERVED: return R14_RESERVED;
-            case id::cp::CP15_R15_IMPL: return R15_IMPL;
+            case id::cp::CP15_R10_MMU_P: return (R10 & 1);
+            case id::cp::CP15_R10_PU: return R10;
+            case id::cp::CP15_R11: return R11;
+            case id::cp::CP15_R12: return R12;
+            case id::cp::CP15_R13: return R13;
+            case id::cp::CP15_R13_PID: return util::bit_fetcher(R13, 25, 31);
+            case id::cp::CP15_R14: return R14;
+            case id::cp::CP15_R15: return R15;
+            default: out::error("TODO");
         }
     }
 
@@ -318,7 +346,7 @@ public:
             case id::cp::CP15_R0_CACHE_ISIZE_ASSOC: util::swap_bits(R0_CACHE, 3, 5, value); return;
             case id::cp::CP15_R0_CACHE_ISIZE_SIZE: util::swap_bits(R0_CACHE, 6, 8, value); return;
 
-            case id::cp::CP15_R1_CONTROL: R1_CONTROL = value; return;
+            case id::cp::CP15_R1: R1 = value; return;
             case id::cp::CP15_R1_M: 
                 // On systems without an MMU or Protection Unit, 
                 // this bit reads as 0 and ignores writes. (B2-13)
@@ -327,11 +355,11 @@ public:
                         // TODO warning: PU must have at least a single protection region setup
                     }
 
-                    util::modify_bit(R1_CONTROL, 0, value); 
+                    util::modify_bit(R1, 0, value); 
                 } else if (settings.is_mmu_enabled) {
-                    util::modify_bit(R1_CONTROL, 0, value); 
+                    util::modify_bit(R1, 0, value); 
                 } else if (forced) {
-                    util::modify_bit(R1_CONTROL, 0, value); 
+                    util::modify_bit(R1, 0, value); 
                 }
                 return;
 
@@ -340,7 +368,7 @@ public:
                 // reads as 1 or 0 according to whether the memory system 
                 // does or does not check the alignment of data memory accesses.
                 if (settings.has_alignment_fault_checking || forced) {
-                    util::modify_bit(R1_CONTROL, 1, value);
+                    util::modify_bit(R1, 1, value);
                 }
                 return;
 
@@ -357,7 +385,7 @@ public:
                 }
 
                 if (settings.has_cache || forced) {
-                    util::modify_bit(R1_CONTROL, 2, value); 
+                    util::modify_bit(R1, 2, value); 
                 }
 
                 return;
@@ -371,7 +399,7 @@ public:
                 }
 
                 if (settings.has_write_buffer || forced) {
-                    util::modify_bit(R1_CONTROL, 3, value);
+                    util::modify_bit(R1, 3, value);
                 }
 
                 return;
@@ -384,7 +412,7 @@ public:
                     return;
                 }
                 
-                util::modify_bit(R1_CONTROL, 4, value);
+                util::modify_bit(R1, 4, value);
                 return;
 
             case id::cp::CP15_R1_D:
@@ -395,7 +423,7 @@ public:
                     return;
                 }
 
-                util::modify_bit(R1_CONTROL, 5, value);
+                util::modify_bit(R1, 5, value);
                 return;
 
             case id::cp::CP15_R1_L: // TODO, idk what the fuck is the old abort model
@@ -404,7 +432,7 @@ public:
                     return;
                 }
 
-                util::modify_bit(R1_CONTROL, 6, value);  
+                util::modify_bit(R1, 6, value);  
                 return;
 
             case id::cp::CP15_R1_B: 
@@ -416,19 +444,19 @@ public:
                     return;
                 }
 
-                util::modify_bit(R1_CONTROL, 7, value);
+                util::modify_bit(R1, 7, value);
                 return;
 
             case id::cp::CP15_R1_S:     
-                util::modify_bit(R1_CONTROL, 8, value);  
+                util::modify_bit(R1, 8, value);  
                 return;
 
             case id::cp::CP15_R1_R:     
-                util::modify_bit(R1_CONTROL, 9, value);
+                util::modify_bit(R1, 9, value);
                 return;
 
             case id::cp::CP15_R1_F: 
-                util::modify_bit(R1_CONTROL, 10, value);
+                util::modify_bit(R1, 10, value);
                 return; 
 
             case id::cp::CP15_R1_Z: 
@@ -440,7 +468,7 @@ public:
                 }
 
                 if (settings.has_branch_prediction || forced) {
-                    util::modify_bit(R1_CONTROL, 11, value); 
+                    util::modify_bit(R1, 11, value); 
                 }
                 
                 return;
@@ -461,7 +489,7 @@ public:
                 }
 
                 if (settings.has_separate_cache || forced) {
-                    util::modify_bit(R1_CONTROL, 12, value); 
+                    util::modify_bit(R1, 12, value); 
                 }
                 
                 return;
@@ -470,7 +498,7 @@ public:
                 // On ARM processors that do not support high vectors, 
                 // this bit reads as 0 and ignores writes.
                 if (settings.has_high_vectors || forced) {
-                    util::modify_bit(R1_CONTROL, 13, value); 
+                    util::modify_bit(R1, 13, value); 
                 }
 
                 return;
@@ -485,7 +513,7 @@ public:
                 }
 
                 if (settings.has_predictable_cache_strategy || forced) {
-                    util::modify_bit(R1_CONTROL, 14, value);
+                    util::modify_bit(R1, 14, value);
                 }
 
                 return;
@@ -500,73 +528,77 @@ public:
                 }
             
                 if (settings.is_L4_bit_enabled_cp15 || forced) {
-                    util::modify_bit(R1_CONTROL, 15, value);
+                    util::modify_bit(R1, 15, value);
                 }
 
                 return;
 
-            case id::cp::CP15_R2_MMU: R2_MMU = value; return;
+            case id::cp::CP15_R2_MMU: R2 = value; return;
             case id::cp::CP15_R2_MMU_TRANSLATION_BASE:  
-                if (R2_MMU == value) {
+                if (R2 == value) {
                     return;
                 }
 
-                util::swap_bits(R2_MMU, 14, 31, value);
+                util::swap_bits(R2, 14, 31, value);
                 // mmu.flush_tlb(); // B3-3 TODO, ENABLED THIS WHEN MMU DEVELOPMENT STARTS
                 return;
-            case id::cp::CP15_R2_PU: R2_PU = value; return;
-            case id::cp::CP15_R2_PU_C0: util::modify_bit(R2_PU, 0, value); return;
-            case id::cp::CP15_R2_PU_C1: util::modify_bit(R2_PU, 1, value); return;
-            case id::cp::CP15_R2_PU_C2: util::modify_bit(R2_PU, 2, value); return;
-            case id::cp::CP15_R2_PU_C3: util::modify_bit(R2_PU, 3, value); return;
-            case id::cp::CP15_R2_PU_C4: util::modify_bit(R2_PU, 4, value); return;
-            case id::cp::CP15_R2_PU_C5: util::modify_bit(R2_PU, 5, value); return;
-            case id::cp::CP15_R2_PU_C6: util::modify_bit(R2_PU, 6, value); return;
-            case id::cp::CP15_R2_PU_C7: util::modify_bit(R2_PU, 7, value); return;
-            case id::cp::CP15_R3_MMU: R3_MMU = value; return;
-            case id::cp::CP15_R3_MMU_D0: util::swap_bits(R3_MMU, 0, 1, value);  return;
-            case id::cp::CP15_R3_MMU_D1: util::swap_bits(R3_MMU, 2, 3, value);  return;
-            case id::cp::CP15_R3_MMU_D2: util::swap_bits(R3_MMU, 4, 5, value);  return;
-            case id::cp::CP15_R3_MMU_D3: util::swap_bits(R3_MMU, 6, 7, value);  return;
-            case id::cp::CP15_R3_MMU_D4: util::swap_bits(R3_MMU, 8, 9, value);  return;
-            case id::cp::CP15_R3_MMU_D5: util::swap_bits(R3_MMU, 10, 11, value); return;
-            case id::cp::CP15_R3_MMU_D6: util::swap_bits(R3_MMU, 12, 13, value); return;
-            case id::cp::CP15_R3_MMU_D7: util::swap_bits(R3_MMU, 14, 15, value); return;
-            case id::cp::CP15_R3_MMU_D8: util::swap_bits(R3_MMU, 16, 17, value); return;
-            case id::cp::CP15_R3_MMU_D9: util::swap_bits(R3_MMU, 18, 19, value); return;
-            case id::cp::CP15_R3_MMU_D10: util::swap_bits(R3_MMU, 20, 21, value); return;
-            case id::cp::CP15_R3_MMU_D11: util::swap_bits(R3_MMU, 22, 23, value); return;
-            case id::cp::CP15_R3_MMU_D12: util::swap_bits(R3_MMU, 24, 25, value); return;
-            case id::cp::CP15_R3_MMU_D13: util::swap_bits(R3_MMU, 26, 27, value); return;
-            case id::cp::CP15_R3_MMU_D14: util::swap_bits(R3_MMU, 28, 29, value); return;
-            case id::cp::CP15_R3_MMU_D15: util::swap_bits(R3_MMU, 30, 31, value); return;
-            case id::cp::CP15_R3_PU: R3_PU = value; return;
-            case id::cp::CP15_R3_PU_B0: util::modify_bit(R3_PU, 0, value); return;
-            case id::cp::CP15_R3_PU_B1: util::modify_bit(R3_PU, 1, value); return;
-            case id::cp::CP15_R3_PU_B2: util::modify_bit(R3_PU, 2, value); return;
-            case id::cp::CP15_R3_PU_B3: util::modify_bit(R3_PU, 3, value); return;
-            case id::cp::CP15_R3_PU_B4: util::modify_bit(R3_PU, 4, value); return;
-            case id::cp::CP15_R3_PU_B5: util::modify_bit(R3_PU, 5, value); return;
-            case id::cp::CP15_R3_PU_B6: util::modify_bit(R3_PU, 6, value); return;
-            case id::cp::CP15_R3_PU_B7: util::modify_bit(R3_PU, 7, value); return;
+            case id::cp::CP15_R2: R2 = value; return;
+            case id::cp::CP15_R2_PU: R2 = value; return;
+            case id::cp::CP15_R2_PU_C0: util::modify_bit(R2, 0, value); return;
+            case id::cp::CP15_R2_PU_C1: util::modify_bit(R2, 1, value); return;
+            case id::cp::CP15_R2_PU_C2: util::modify_bit(R2, 2, value); return;
+            case id::cp::CP15_R2_PU_C3: util::modify_bit(R2, 3, value); return;
+            case id::cp::CP15_R2_PU_C4: util::modify_bit(R2, 4, value); return;
+            case id::cp::CP15_R2_PU_C5: util::modify_bit(R2, 5, value); return;
+            case id::cp::CP15_R2_PU_C6: util::modify_bit(R2, 6, value); return;
+            case id::cp::CP15_R2_PU_C7: util::modify_bit(R2, 7, value); return;
+            case id::cp::CP15_R3: R3 = value; return;
+            case id::cp::CP15_R3_MMU: R3 = value; return;
+            case id::cp::CP15_R3_MMU_D0: util::swap_bits(R3, 0, 1, value);  return;
+            case id::cp::CP15_R3_MMU_D1: util::swap_bits(R3, 2, 3, value);  return;
+            case id::cp::CP15_R3_MMU_D2: util::swap_bits(R3, 4, 5, value);  return;
+            case id::cp::CP15_R3_MMU_D3: util::swap_bits(R3, 6, 7, value);  return;
+            case id::cp::CP15_R3_MMU_D4: util::swap_bits(R3, 8, 9, value);  return;
+            case id::cp::CP15_R3_MMU_D5: util::swap_bits(R3, 10, 11, value); return;
+            case id::cp::CP15_R3_MMU_D6: util::swap_bits(R3, 12, 13, value); return;
+            case id::cp::CP15_R3_MMU_D7: util::swap_bits(R3, 14, 15, value); return;
+            case id::cp::CP15_R3_MMU_D8: util::swap_bits(R3, 16, 17, value); return;
+            case id::cp::CP15_R3_MMU_D9: util::swap_bits(R3, 18, 19, value); return;
+            case id::cp::CP15_R3_MMU_D10: util::swap_bits(R3, 20, 21, value); return;
+            case id::cp::CP15_R3_MMU_D11: util::swap_bits(R3, 22, 23, value); return;
+            case id::cp::CP15_R3_MMU_D12: util::swap_bits(R3, 24, 25, value); return;
+            case id::cp::CP15_R3_MMU_D13: util::swap_bits(R3, 26, 27, value); return;
+            case id::cp::CP15_R3_MMU_D14: util::swap_bits(R3, 28, 29, value); return;
+            case id::cp::CP15_R3_MMU_D15: util::swap_bits(R3, 30, 31, value); return;
+            case id::cp::CP15_R3_PU: R3 = value; return;
+            case id::cp::CP15_R3_PU_B0: util::modify_bit(R3, 0, value); return;
+            case id::cp::CP15_R3_PU_B1: util::modify_bit(R3, 1, value); return;
+            case id::cp::CP15_R3_PU_B2: util::modify_bit(R3, 2, value); return;
+            case id::cp::CP15_R3_PU_B3: util::modify_bit(R3, 3, value); return;
+            case id::cp::CP15_R3_PU_B4: util::modify_bit(R3, 4, value); return;
+            case id::cp::CP15_R3_PU_B5: util::modify_bit(R3, 5, value); return;
+            case id::cp::CP15_R3_PU_B6: util::modify_bit(R3, 6, value); return;
+            case id::cp::CP15_R3_PU_B7: util::modify_bit(R3, 7, value); return;
 
-            case id::cp::CP15_R4_MMU: R4_MMU = value; return;
-            case id::cp::CP15_R4_PU: R4_PU = value; return;
+            case id::cp::CP15_R4: R4 = value; return;
+            case id::cp::CP15_R4_MMU: R4 = value; return;
+            case id::cp::CP15_R4_PU: R4 = value; return;
 
-            case id::cp::CP15_R5_MMU: R5_MMU = value; return;
-            case id::cp::CP15_R5_MMU_DOMAIN: util::swap_bits(R5_MMU, 4, 7, value); return;
-            case id::cp::CP15_R5_MMU_STATUS: util::swap_bits(R0_ID, 0, 3, value); return;
-            case id::cp::CP15_R5_PU: R5_PU = value; return;
-            case id::cp::CP15_R5_PU_AP0: util::swap_bits(R5_PU, 0, 1, value); return;
-            case id::cp::CP15_R5_PU_AP1: util::swap_bits(R5_PU, 2, 3, value); return;
-            case id::cp::CP15_R5_PU_AP2: util::swap_bits(R5_PU, 4, 5, value); return;
-            case id::cp::CP15_R5_PU_AP3: util::swap_bits(R5_PU, 6, 7, value); return;
-            case id::cp::CP15_R5_PU_AP4: util::swap_bits(R5_PU, 8, 9, value); return;
-            case id::cp::CP15_R5_PU_AP5: util::swap_bits(R5_PU, 10, 11, value); return;
-            case id::cp::CP15_R5_PU_AP6: util::swap_bits(R5_PU, 12, 13, value); return;
-            case id::cp::CP15_R5_PU_AP7: util::swap_bits(R5_PU, 14, 15, value); return;
-            case id::cp::CP15_R6_MMU: R6_MMU = value; return;
-            case id::cp::CP15_R6_MMU_FAR: R6_MMU = value; return;
+            case id::cp::CP15_R5: R5 = value; return;
+            case id::cp::CP15_R5_MMU: R5 = value; return;
+            case id::cp::CP15_R5_MMU_DOMAIN: util::swap_bits(R5, 4, 7, value); return;
+            case id::cp::CP15_R5_MMU_STATUS: util::swap_bits(R5, 0, 3, value); return;
+            case id::cp::CP15_R5_PU: R5 = value; return;
+            case id::cp::CP15_R5_PU_AP0: util::swap_bits(R5, 0, 1, value); return;
+            case id::cp::CP15_R5_PU_AP1: util::swap_bits(R5, 2, 3, value); return;
+            case id::cp::CP15_R5_PU_AP2: util::swap_bits(R5, 4, 5, value); return;
+            case id::cp::CP15_R5_PU_AP3: util::swap_bits(R5, 6, 7, value); return;
+            case id::cp::CP15_R5_PU_AP4: util::swap_bits(R5, 8, 9, value); return;
+            case id::cp::CP15_R5_PU_AP5: util::swap_bits(R5, 10, 11, value); return;
+            case id::cp::CP15_R5_PU_AP6: util::swap_bits(R5, 12, 13, value); return;
+            case id::cp::CP15_R5_PU_AP7: util::swap_bits(R5, 14, 15, value); return;
+            case id::cp::CP15_R6_MMU: R6 = value; return;
+            case id::cp::CP15_R6_MMU_FAR: R6 = value; return;
             case id::cp::CP15_R6_PU_0: R6_PU_0 = value; return;
             case id::cp::CP15_R6_PU_0_BASE_ADDRESS: 
                 globals.mpu_address_change = true;
@@ -692,26 +724,28 @@ public:
                 globals.mpu_address_change = true;
                 util::modify_bit(R6_PU_7, 0, value); 
                 return;
-            case id::cp::CP15_R7_CACHE:     R7_CACHE = value; return;
+            case id::cp::CP15_R7:     R7 = value; return;
             case id::cp::CP15_R7_CACHE_INDEX: // TODO
             case id::cp::CP15_R7_CACHE_SET: // TODO
             case id::cp::CP15_R8_MMU:       
                 // see page B3-26 for TLB invalidation function list
                 return;
-            case id::cp::CP15_R8_PU:        R8_PU = value; return;
-            case id::cp::CP15_R9_CACHE:     R9_CACHE = value; return;
+            case id::cp::CP15_R8_PU:        R8 = value; return;
+            case id::cp::CP15_R9:           R9 = value; return;
             case id::cp::CP15_R9_CACHE_INDEX: // TODO
             case id::cp::CP15_R9_CACHE_L: // TODO
-            case id::cp::CP15_R10_MMU:      R10_MMU = value; return;
+            case id::cp::CP15_R10:          R10 = value; return;
+            case id::cp::CP15_R10_MMU:      R10 = value; return;
             case id::cp::CP15_R10_MMU_BASE: // TODO: SEE PAGE B3-27
             case id::cp::CP15_R10_MMU_VICTIM: // TODO: SEE PAGE B3-27
-            case id::cp::CP15_R10_MMU_P:    util::modify_bit(R10_MMU, 0, value); break;
-            case id::cp::CP15_R10_PU:       R10_PU = value; return;
-            case id::cp::CP15_R11_RESERVED: R11_RESERVED = value; return;
-            case id::cp::CP15_R12_RESERVED: R12_RESERVED = value; return;
-            case id::cp::CP15_R13_PID:      R13_PID = value; return;
-            case id::cp::CP15_R14_RESERVED: R14_RESERVED = value; return;
-            case id::cp::CP15_R15_IMPL:     R15_IMPL = value; return;
+            case id::cp::CP15_R10_MMU_P:    util::modify_bit(R10, 0, value); break;
+            case id::cp::CP15_R10_PU:       R10 = value; return;
+            case id::cp::CP15_R11:          R11 = value; return;
+            case id::cp::CP15_R12:          R12 = value; return;
+            case id::cp::CP15_R13:          R13 = value; return;
+            case id::cp::CP15_R13_PID:      util::swap_bits(R13, 25, 31, value); return;
+            case id::cp::CP15_R14:          R14 = value; return;
+            case id::cp::CP15_R15:          R15 = value; return;
         };
     }
 
@@ -810,18 +844,18 @@ private:
             // implementor
             // source: https://developer.arm.com/documentation/ddi0406/b/System-Level-Architecture/Virtual-Memory-System-Architecture--VMSA-/CP15-registers-for-a-VMSA-implementation/c0--Main-ID-Register--MIDR-?lang=en
             switch (settings.implementor) {
-                case id::implementor::ARM:      write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x41); break; // A
-                case id::implementor::BRCM:     write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x42); break; // B
-                case id::implementor::DEC:      write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x44); break; // D
-                case id::implementor::MOTOROLA: write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x4D); break; // M
-                case id::implementor::QUALCOMM: write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x51); break; // Q
-                case id::implementor::MARVELL:  write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x56); break; // V
-                case id::implementor::INTEL:    write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x69); break; // i
+                case id::implementor::ARM:      write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x41 /* A */); break;
+                case id::implementor::BRCM:     write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x42 /* B */); break;
+                case id::implementor::DEC:      write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x44 /* D */); break;
+                case id::implementor::MOTOROLA: write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x4D /* M */); break;
+                case id::implementor::QUALCOMM: write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x51 /* Q */); break;
+                case id::implementor::MARVELL:  write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x56 /* V */); break;
+                case id::implementor::INTEL:    write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x69 /* i */); break;
                 case id::implementor::CHARM:    
                     if (settings.anti_emulation_detection) {
-                        write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x41); break; // if emulation should not be detected, implement ARM instead
+                        write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x41 /* A */); break; // if emulation should not be detected, implement ARM instead
                     } else {
-                        write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x43); break; // C (CHARM, custom)
+                        write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x43 /* C */); break; // CHARM, custom
                     }
             }
 

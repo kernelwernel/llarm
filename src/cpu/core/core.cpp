@@ -9,9 +9,11 @@
 #include "../core/core.hpp"
 #include "../memory/memory.hpp"
 #include "../memory/mmu.hpp"
+#include "../memory/mpu.hpp"
 #include "../memory/ram.hpp"
 #include "../memory/fcse.hpp"
 #include "../coprocessor/coprocessor.hpp"
+#include "../instructions/instructions.hpp"
 //#include "cpu/mpu.hpp"
 
 #include "cycle/fetch.hpp"
@@ -25,21 +27,25 @@ void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
 
     // initialisations
     GLOBALS globals;
-    RAM ram;
     SETTINGS settings;
-    COPROCESSOR coprocessor(settings, globals);
-    ARCH_26_BIT arch_26(coprocessor);
-    MMU mmu(globals, ram, coprocessor);
+    CP15 cp15(settings, globals);
+    COPROCESSOR coprocessor(cp15);
+    RAM ram;
+    ARCH_26_BIT arch_26(coprocessor, settings);
+    MMU mmu(globals, ram, coprocessor, settings);
+    MPU mpu(globals, coprocessor, settings);
     FCSE fcse(coprocessor, settings);
-    //MPU mpu(globals, coprocessor);
-    REGISTERS reg(coprocessor, globals);
+    REGISTERS reg(coprocessor, globals, arch_26, settings);
     //VFP vfp(reg);
     EXCEPTION exception(reg, coprocessor);
-    MEMORY memory(binary, coprocessor, ram, mmu, fcse, settings);
-    INSTRUCTION_SET instruction_set(reg, memory, coprocessor, settings);
-    FETCH fetch(instruction_set, reg, memory);
-    DECODE decode(instruction_set, reg, memory, settings);
-    EXECUTE execute(instruction_set, reg);
+    MEMORY memory(binary, ram, mmu, mpu, fcse, arch_26, exception);
+    OPERATION operation;
+    ADDRESSING_MODE address_mode(reg, operation);
+    INSTRUCTIONS instructions(reg, address_mode, operation, coprocessor, settings, memory);
+    INSTRUCTION_SET instruction_set(instructions);
+    FETCH fetch(reg, memory);
+    DECODE decode(instruction_set, reg, settings);
+    EXECUTE execute(instruction_set);
 
 
     // core setup and boot
@@ -49,21 +55,35 @@ void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
     memory.reset();
 
 
+    std::cout << "hello charm\n";
+
     // instruction cycle 
-    //for (;;) {
+    for (;;) {
         switch (globals.instruction_set) {
             case id::instruction_sets::ARM: {
-                const arm_code_t raw_arm_code = fetch.arm_fetch();
-                const arm_decoded_t code = decode.arm_decode(raw_arm_code);
+                const FETCH::arm_fetch_struct arm_code_access = fetch.arm_fetch();
+
+                if (arm_code_access.has_failed) {
+                    continue;
+                }
+
+                const arm_decoded_t code = decode.arm_decode(arm_code_access.code);
+
                 execute.arm_execute(code);
-                break;
+                continue;
             }
 
             case id::instruction_sets::THUMB: {
-                const thumb_code_t raw_thumb_code = fetch.thumb_fetch();
-                const thumb_decoded_t thumb_code = decode.thumb_decode(raw_thumb_code);
+                const FETCH::thumb_fetch_struct thumb_code_access = fetch.thumb_fetch();
+
+                if (thumb_code_access.has_failed) {
+                    continue;
+                }
+        
+                const thumb_decoded_t thumb_code = decode.thumb_decode(thumb_code_access.code);
+
                 execute.thumb_execute(thumb_code);
-                break;
+                continue;
             }
 
             case id::instruction_sets::JAZELLE: {
@@ -85,6 +105,6 @@ void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
                 break;
             }
         }
-    //}
+    }
 
 }

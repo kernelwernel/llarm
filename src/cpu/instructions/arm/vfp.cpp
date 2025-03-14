@@ -1,175 +1,170 @@
 
-#include "types.hpp"
+#include "../../../types.hpp"
 #include "../instructions.hpp"
 
 
 
-void instructions::arm::VFP::FABSD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FABSD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FABSS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FABSS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FADDD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FADDD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FADDS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FADDS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FCMPD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FCMPD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FCMPED(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FCMPED(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FCMPES(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FCMPES(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FCMPEZD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FCMPEZD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FCMPEZS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FCMPEZS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FCMPS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FCMPS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FCMPZD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FCMPZD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FCMPZS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FCMPZS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FCPYD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FCPYD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FCPYS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FCPYS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FCVTDS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FCVTDS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FCVTSD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FCVTSD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FDIVD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FDIVD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FDIVS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FDIVS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FDIVS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FLDD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FLDD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FLDMD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FLDMD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FLDMS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FLDMS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FLDMX(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FLDMX(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FLDS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FLDS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FMACD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FMACD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FMACS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FMACS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FMDHR(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FMDHR(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FMDLR(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FMDLR(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FMRDH(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FMRDH(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FMRDL(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FMRDL(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FMRS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FMRS(const arm_code_t& code, REGISTERS& reg) {
-
-    reg.arm_increment_PC();
-}
-
-void instructions::arm::VFP::FMRX(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FMRX(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 } 
 
-void instructions::arm::VFP::FMSCD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FMSCD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FMSCS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FMSCS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
@@ -178,152 +173,152 @@ void instructions::arm::VFP::FMSCS(const arm_code_t& code, REGISTERS& reg) {
  * if ConditionPassed(cond) then
  *     Sn = Rd
  */
-void instructions::arm::VFP::FMSR(const arm_code_t& code, REGISTERS& reg) {
-    const id::reg Rn_id = reg.fetch_reg_id(code, 12, 15);
+void INSTRUCTIONS::arm::vfp::FMSR(const arm_code_t& code) {
+    //const id::reg Rn_id = reg.fetch_reg_id(code, 12, 15);
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FMSTAT(const arm_code_t& code, REGISTERS& reg) {
-
-    reg.arm_increment_PC();
-}
-
-void instructions::arm::VFP::FMULD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FMSTAT(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FMULS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FMULD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FMXR(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FMULS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FNEGD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FMXR(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FNEGS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FNEGD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FNMACD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FNEGS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FNMACS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FNMACD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FNMSCD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FNMACS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FNMSCS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FNMSCD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FNMULD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FNMSCS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FNMULS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FNMULD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FSITOD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FNMULS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FSITOS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FSITOD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FSQRTD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FSITOS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FSQRTS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FSQRTD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FSTD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FSQRTS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FSTMD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FSTD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FSTMS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FSTMD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FSTMX(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FSTMS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FSTS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FSTMX(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FSUBD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FSTS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FSUBS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FSUBD(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FTOSID(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FSUBS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FTOSIS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FTOSID(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FTOUID(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FTOSIS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FTOUIS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FTOUID(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FUITOD(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FTOUIS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }
 
-void instructions::arm::VFP::FUITOS(const arm_code_t& code, REGISTERS& reg) {
+void INSTRUCTIONS::arm::vfp::FUITOD(const arm_code_t& code) {
+
+    reg.arm_increment_PC();
+}
+
+void INSTRUCTIONS::arm::vfp::FUITOS(const arm_code_t& code) {
 
     reg.arm_increment_PC();
 }

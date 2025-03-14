@@ -1,12 +1,7 @@
-#include "types.hpp"
-#include "utility.hpp"
-#include "cpu/instructions/instructions.hpp"
-#include "cpu/core/registers.hpp"
-
-            void MOV1(const thumb_code_t&, REGISTERS&);
-            void MOV2(const thumb_code_t&, REGISTERS&);
-            void MOV3(const thumb_code_t&, REGISTERS&);
-            void MVN(const thumb_code_t&, REGISTERS&);
+#include "../../../types.hpp"
+#include "../../../utility.hpp"
+#include "../../instructions/instructions.hpp"
+#include "../../core/registers.hpp"
 
 
 
@@ -17,7 +12,7 @@
  * C Flag = unaffected
  * V Flag = unaffected
  */
-void instructions::thumb::movement::MOV1(const thumb_code_t &code, REGISTERS& reg) {
+void INSTRUCTIONS::thumb::movement::MOV1(const thumb_code_t &code) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
     const u8 immed_8 = util::bit_fetcher<u8>(code, 0, 7);
 
@@ -39,7 +34,7 @@ void instructions::thumb::movement::MOV1(const thumb_code_t &code, REGISTERS& re
  * C Flag = 0
  * V Flag = 0
  */
-void instructions::thumb::movement::MOV2(const thumb_code_t &code, REGISTERS& reg) {
+void INSTRUCTIONS::thumb::movement::MOV2(const thumb_code_t &code) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
     const u32 Rn = reg.read(code, 3, 5);
 
@@ -59,13 +54,14 @@ void instructions::thumb::movement::MOV2(const thumb_code_t &code, REGISTERS& re
 /**
  * Rd = Rm
  */
-void instructions::thumb::movement::MOV3(const thumb_code_t &code, REGISTERS& reg) {
-    u8 Rd_id = reg.fetch_reg_id(code, 0, 2);
+void INSTRUCTIONS::thumb::movement::MOV3(const thumb_code_t &code) {
+    u8 Rd_id_bits = util::bit_fetcher<u8>(code, 0, 2);
     const u32 Rm = reg.read(code, 3, 6);
     const bool H1 = code.test(7);
     // const bool H2 = code.test(6); H2 isn't really needed
 
-    Rd_id += (H1 * 8);
+    Rd_id_bits += (H1 * 8);
+    const id::reg Rd_id = reg.fetch_reg_id(Rd_id_bits);
 
     reg.write(Rd_id, Rm);
 
@@ -80,7 +76,7 @@ void instructions::thumb::movement::MOV3(const thumb_code_t &code, REGISTERS& re
  * C Flag = unaffected
  * V Flag = unaffected
  */
-void instructions::thumb::movement::MVN(const thumb_code_t &code, REGISTERS& reg) {
+void INSTRUCTIONS::thumb::movement::MVN(const thumb_code_t &code) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
     const u32 Rm = reg.read(code, 3, 5);
 

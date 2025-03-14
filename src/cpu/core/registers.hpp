@@ -12,6 +12,7 @@ private:
     COPROCESSOR& coprocessor;
     GLOBALS& globals;
     ARCH_26_BIT& arch_26;
+    SETTINGS& settings;
 
 public:
     // unbanked
@@ -70,31 +71,36 @@ public:
     u32 SPSR_fiq = 0;
 
 public:
-    [[nodiscard]] bool is_priviledged();
-    [[nodiscard]] bool is_exception();
+    bool is_priviledged();
+    bool is_exception();
 
-    [[nodiscard]] u8 read(const id::cpsr);
+    u8 read(const id::cpsr);
 
     void write(const id::cpsr, const u8);
     void write(const id::reg reg_id);
+    void write(const id::reg, const id::reg);
 
-    [[nodiscard]] id::reg fetch_reg_id(const u8) noexcept;
-    [[nodiscard]] id::reg fetch_reg_id(const arm_code_t&, const u8, const u8) noexcept;
-    [[nodiscard]] id::reg fetch_reg_id(const thumb_code_t&, const u8, const u8) noexcept;
 
-    [[nodiscard]] id::cond fetch_cond_id(const u8);
-    [[nodiscard]] id::cond fetch_cond_id(const arm_code_t&);
+    id::reg fetch_reg_id(const u8) noexcept;
+    id::reg fetch_reg_id(const arm_code_t&, const u8, const u8) noexcept;
+    id::reg fetch_reg_id(const thumb_code_t&, const u8, const u8) noexcept;
 
-    [[nodiscard]] u32 read(const id::reg);
-    [[nodiscard]] u32 read(const arm_code_t&, const u8, const u8) noexcept;
-    [[nodiscard]] u32 read(const thumb_code_t&, const u8, const u8) noexcept;
-    [[nodiscard]] u32 read(const u8) noexcept;
+    id::cond fetch_cond_id(const u8);
+    id::cond fetch_cond_id(const arm_code_t&);
+
+    u32 read(const id::reg);
+    u32 read(const arm_code_t&, const u8, const u8) noexcept;
+    u32 read(const thumb_code_t&, const u8, const u8) noexcept;
+    u32 read(const u8) noexcept;
 
     void write(const id::reg, const u32);
 
-    [[nodiscard]] bool check_cond(const id::cond);
-    [[nodiscard]] bool check_cond(const arm_code_t&);
+    bool check_cond(const id::cond);
+    bool check_cond(const arm_code_t&);
 
+    void access_check(const id::reg);
+
+    id::mode fetch_mode_id(const u8);
 
     void switch_mode(const id::mode mode) {
         switch (mode) {
@@ -112,23 +118,7 @@ public:
         }
     }
 
-    id::mode read_mode() {
-        switch (read(id::cpsr::M)) {
-            case constants::mode::USER: return id::mode::USER;
-            case constants::mode::SUPERVISOR: return id::mode::SUPERVISOR;
-            case constants::mode::ABORT: return id::mode::ABORT;
-            case constants::mode::UNDEFINED: return id::mode::UNDEFINED;
-            case constants::mode::FIQ: return id::mode::FIQ;
-            case constants::mode::IRQ: return id::mode::IRQ;
-            case constants::mode::SYSTEM: return id::mode::SYSTEM;
-            case constants::mode::FIQ_26: return id::mode::FIQ_26;
-            case constants::mode::IRQ_26: return id::mode::IRQ_26;
-            case constants::mode::SUPERVISOR_26: return id::mode::SUPERVISOR_26;
-            case constants::mode::USER_26: return id::mode::USER_26;
-            default: out::error("No known enum value for read_mode()");
-        }
-    }
-
+    id::mode read_mode();
 
     u32 read_PC() {
         // [25:2]
@@ -160,10 +150,12 @@ public:
     REGISTERS(
         COPROCESSOR& coprocessor, 
         GLOBALS& globals,
-        ARCH_26_BIT& arch_26
+        ARCH_26_BIT& arch_26,
+        SETTINGS& settings
     ) : coprocessor(coprocessor), 
         globals(globals),
-        arch_26(arch_26)
+        arch_26(arch_26),
+        settings(settings)
     {
 
     }

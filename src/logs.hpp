@@ -3,27 +3,29 @@
 #include "id.hpp"
 
 
-void warning(const id::warning warning) {
+inline void warning([[maybe_unused]] const char* warning) {
 // TODO add switches here
 }
 
 
-[[noreturn]] void error(const id::error error) {
+[[noreturn]] inline void error([[maybe_unused]] const char* error) {
+// TODO add switches here
+    std::exit(1);
+}
+
+
+inline void dev_warning([[maybe_unused]] const char* error) {
 // TODO add switches here
 }
 
 
-void dev_warning(const id::error error) {
+[[noreturn]] inline void dev_error([[maybe_unused]] const char* error) {
 // TODO add switches here
+    std::exit(1);
 }
 
 
-[[noreturn]] void dev_error(const id::error error) {
-// TODO add switches here
-}
-
-
-u32 unpredictable (const id::unpredictable message) {
+inline u32 unpredictable ([[maybe_unused]] const char* message) {
     // add message here
     return 0;
 }
