@@ -1,89 +1,99 @@
-cmake_minimum_required(VERSION 3.22)
-project(charm DESCRIPTION "ARM emulation framework" LANGUAGES CXX)
+# basic info
+cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
+project(
+    charm
+    VERSION 0.1 
+    DESCRIPTION "ARM emulator framework"
+    LANGUAGES CXX
+)
 
-# set standards
+
+# compiler flags
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-# set paths
-set(PROJECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-set(BUILD_DIR "${CMAKE_BINARY_DIR}")
-set(OBJ_DIR "${BUILD_DIR}/objects")
-file(MAKE_DIRECTORY ${OBJ_DIR})
-
-# set up source files
-file(GLOB_RECURSE SRC "${CMAKE_SOURCE_DIR}/src/*.cpp")
-list(REMOVE_DUPLICATES SRC)
-set(MAIN "src/main.cpp")
-
-# remove the main source file from manually compiled sources
-list(REMOVE_ITEM SRC "${CMAKE_SOURCE_DIR}/${MAIN}")
+set(CMAKE_CXX_FLAGS "-w -Wall -Wextra -Werror -Wshadow -Wconversion -Wunused -Wpedantic -Wpedantic -Wpedantic-errors -Weverything -fmodules-ts")
+set(CMAKE_EXE_LINKER_FLAGS "-lstdc++ -lm")
 
 
-# compiler 
-#set(CMAKE_CXX_FLAGS "")
-if (MSVC)
-    add_compile_options(/Wall /W4 /EHsc /std:c++20)
-    if(CMAKE_BUILD_TYPE MATCHES "Debug")
-        MESSAGE(STATUS "Build set to debug mode")
-        add_compile_options(/Od)
-    elseif(CMAKE_BUILD_TYPE MATCHES "Release")
-        MESSAGE(STATUS "Build set to release mode")
-        add_compile_options(/O2)
-    endif()
+## g++/clang++ compiler choice
+find_program(CLANGPP_EXECUTABLE NAMES clang++)
+if(CLANGPP_EXECUTABLE)
+    set(CMAKE_CXX_COMPILER "${CLANGPP_EXECUTABLE}")
 else()
-    add_compile_options(-fconcepts -Wextra -Wall -Wextra -Wconversion -Wdouble-promotion -Wno-unused-parameter -Wno-unused-function -Wno-sign-conversion -std=c++20)
-    if(APPLE)
-        if(CMAKE_BUILD_TYPE MATCHES "Debug")
-            MESSAGE(STATUS "Build set to debug mode")
-            add_compile_options(-g -O0 -fsanitize=address)
-        elseif(CMAKE_BUILD_TYPE MATCHES "Release")
-            MESSAGE(STATUS "Build set to release mode")
-            add_compile_options(-g0 -O2)
-            add_compile_options(-march=native -mtune=native)
-        endif()
-    elseif(LINUX)
-        if(CMAKE_BUILD_TYPE MATCHES "Debug")
-            MESSAGE(STATUS "Build set to debug mode")
-            add_compile_options(-g -fmax-errors=5 -DDEBUG -O0 -fsanitize=address)
-        elseif(CMAKE_BUILD_TYPE MATCHES "Release")
-            MESSAGE(STATUS "Build set to release mode")
-            add_compile_options(-g0 -O2)
-            if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64")
-                add_compile_options(-march=native -mtune=native)
-            elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
-                add_compile_options(-mcpu=native)
-            endif()
-        endif()
+    set(CMAKE_CXX_COMPILER "g++")
+endif()
+get_filename_component(COMPILER_NAME ${CMAKE_CXX_COMPILER} NAME)
+MESSAGE(STATUS "Using ${COMPILER_NAME} compiler")
+
+
+# fetch and set build type
+set(available_build_types Debug Release)
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
+endif()
+if(NOT CMAKE_BUILD_TYPE IN_LIST available_build_types)
+    MESSAGE(FATAL_ERROR "Invalid build type: ${CMAKE_BUILD_TYPE}. Allowed values: ${available_build_types}")
+endif()
+
+
+# Define preprocessor macros based on the build type
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_definitions(__DEBUG__)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_compile_definitions(__RELEASE__)
+endif()
+
+
+# debug/release CXX flag options
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
+    MESSAGE(STATUS "Build set to debug mode")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DDEBUG -O0 -fsanitize=address,undefined,nullability") # -fsanitize=address,undefined,nullability
+#  --analyze --end-no-unused-arguments -fcf-protection=full
+elseif(CMAKE_BUILD_TYPE MATCHES "Release")
+    MESSAGE(STATUS "Build set to release mode")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -g0 -ffunction-sections -fdata-sections -ftree-vectorize -flto -fPIE -ffast-math")
+    set(CMAKE_UNITY_BUILD ON)
+    if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -mtune=native")
+    elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcpu=native")
     endif()
 endif()
-if(CMAKE_C_COMPILER_ID STREQUAL "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
-    add_compile_options(-lstdc++ -lm)
-endif()
+
+
+# general variables
+set(PROJECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+set(BUILD_DIR "${PROJECT_DIR}/build")
+set(OBJ_DIR "${BUILD_DIR}/objects")
+set(TARGET "charm")
 
 
 
-# TODO find a way to 
-
-# compile object files
+# compile all source files
+include_directories(include)
+file(GLOB_RECURSE SRC
+    "${PROJECT_DIR}/src/*.cpp"
+    #"${PROJECT_DIR}/src/main.cpp"
+)
 set(OBJECTS "")
-foreach(file ${SRC})
-file(RELATIVE_PATH rel_path ${CMAKE_SOURCE_DIR} ${file})
+foreach(source ${SRC})
+
+#get_filename_component(filename ${source} NAME_WE)
+#set(object "${OBJ_DIR}/${filename}.o")
+#list(APPEND OBJECTS ${object})
+
+file(RELATIVE_PATH rel_path ${CMAKE_SOURCE_DIR} ${source})
 string(REPLACE "/" "_" obj_name ${rel_path})
 set(object "${CMAKE_BINARY_DIR}/objects/${obj_name}.o")
-list(APPEND OBJECTS ${object})
-    add_custom_command(
-        OUTPUT ${object}
-        COMMAND ${CMAKE_CXX_COMPILER} -std=c++20 -Wall -Wextra -c ${file} -o ${object}
-        DEPENDS ${source}
-        COMMENT "Compiling ${file}"
-    )
+
+add_custom_command(
+    OUTPUT ${object}
+    COMMAND ${CMAKE_CXX_COMPILER} ${CMAKE_CXX_FLAGS} ${CMAKE_INCLUDE_DIRECTORIES} -c ${source} -MMD -o ${object}
+    DEPENDS ${source}
+)
 endforeach()
-add_custom_target(compile_objects ALL DEPENDS ${OBJECTS})
+set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${OBJ_DIR}/*)
 
-# add the main executable
-add_executable(${PROJECT_NAME} ${MAIN} ${OBJECTS})
 
-# clean up objects directory
-set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${CMAKE_BINARY_DIR}/objects/*")
+# generate executable
+add_executable(${TARGET} ${SRC} ${MAIN_SOURCE_FILE})

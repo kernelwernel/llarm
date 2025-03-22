@@ -62,13 +62,23 @@ bool opcodes::arm::PSR(const arm_code_t &raw_code) noexcept {
 }
 
 
-bool opcodes::arm::B_BL(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::B(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 0) &&
         (raw_code.test(25) == 1)
     );
 }
+
+
+bool opcodes::arm::BL(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 0) &&
+        (raw_code.test(25) == 1)
+    );
+}
+
 
 bool opcodes::arm::BIC(const arm_code_t &raw_code) noexcept {
     return (
@@ -135,7 +145,7 @@ bool opcodes::arm::LDC(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::LDM(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::LDM1(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 0) &&
@@ -281,7 +291,7 @@ bool opcodes::arm::MSR_IMM(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::MSR_OPR(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::MSR_REG(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -516,7 +526,7 @@ bool opcodes::arm::TST(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::v4::STRH(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::STRH(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -529,7 +539,7 @@ bool opcodes::arm::v4::STRH(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::v4::LDRH(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::LDRH(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -542,7 +552,7 @@ bool opcodes::arm::v4::LDRH(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::v4::LDRSB(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::LDRSB(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -555,7 +565,7 @@ bool opcodes::arm::v4::LDRSB(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::v4::LDRSH(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::LDRSH(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -568,7 +578,7 @@ bool opcodes::arm::v4::LDRSH(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::v5::BKPT(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::BKPT(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(31) == 1) &&
         (raw_code.test(30) == 1) &&
@@ -589,7 +599,7 @@ bool opcodes::arm::v5::BKPT(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::v5::BLX1(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::BLX1(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(31) == 1) &&
         (raw_code.test(30) == 1) &&
@@ -601,7 +611,7 @@ bool opcodes::arm::v5::BLX1(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::v5::BLX2(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::BLX2(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -618,7 +628,7 @@ bool opcodes::arm::v5::BLX2(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::v5::CLZ(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::CLZ(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -635,7 +645,7 @@ bool opcodes::arm::v5::CLZ(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::v5v4t::BX(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::BX(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -652,7 +662,7 @@ bool opcodes::arm::v5v4t::BX(const arm_code_t &raw_code) noexcept {
     );
 } 
 
-bool opcodes::arm::M::SMLAL(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::SMLAL(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -668,7 +678,7 @@ bool opcodes::arm::M::SMLAL(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::M::SMULL(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::SMULL(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -684,7 +694,7 @@ bool opcodes::arm::M::SMULL(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::M::UMLAL(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::UMLAL(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -700,7 +710,7 @@ bool opcodes::arm::M::UMLAL(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::M::UMULL(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::UMULL(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -719,7 +729,7 @@ bool opcodes::arm::M::UMULL(const arm_code_t &raw_code) noexcept {
 
 
 
-bool opcodes::arm::dsp::LDRD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::LDRD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -732,7 +742,7 @@ bool opcodes::arm::dsp::LDRD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::dsp::MCRR(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::MCRR(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -745,7 +755,7 @@ bool opcodes::arm::dsp::MCRR(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::dsp::MRRC(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::MRRC(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -758,7 +768,7 @@ bool opcodes::arm::dsp::MRRC(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::dsp::PLD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::PLD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(31) == 1) &&
         (raw_code.test(30) == 1) &&
@@ -777,7 +787,7 @@ bool opcodes::arm::dsp::PLD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::dsp::QADD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::QADD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -794,7 +804,7 @@ bool opcodes::arm::dsp::QADD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::dsp::QDADD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::QDADD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -811,7 +821,7 @@ bool opcodes::arm::dsp::QDADD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::dsp::QDSUB(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::QDSUB(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -828,7 +838,7 @@ bool opcodes::arm::dsp::QDSUB(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::dsp::QSUB(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::QSUB(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -845,7 +855,7 @@ bool opcodes::arm::dsp::QSUB(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::dsp::SMLA(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::SMLA(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -860,22 +870,23 @@ bool opcodes::arm::dsp::SMLA(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::dsp::SMLAL(const arm_code_t &raw_code) noexcept {
-    return (
-        (raw_code.test(27) == 0) &&
-        (raw_code.test(26) == 0) &&
-        (raw_code.test(25) == 0) &&
-        (raw_code.test(24) == 1) &&
-        (raw_code.test(23) == 0) &&
-        (raw_code.test(22) == 1) &&
-        (raw_code.test(21) == 0) &&
-        (raw_code.test(20) == 0) &&
-        (raw_code.test(7) == 1) &&
-        (raw_code.test(4) == 0)
-    );
-}
+// what the fuck is this? TODO
+//bool opcodes::arm::(const arm_code_t &raw_code) noexcept {
+//    return (
+//        (raw_code.test(27) == 0) &&
+//        (raw_code.test(26) == 0) &&
+//        (raw_code.test(25) == 0) &&
+//        (raw_code.test(24) == 1) &&
+//        (raw_code.test(23) == 0) &&
+//        (raw_code.test(22) == 1) &&
+//        (raw_code.test(21) == 0) &&
+//        (raw_code.test(20) == 0) &&
+//        (raw_code.test(7) == 1) &&
+//        (raw_code.test(4) == 0)
+//    );
+//}
 
-bool opcodes::arm::dsp::SMLAW(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::SMLAW(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -891,7 +902,7 @@ bool opcodes::arm::dsp::SMLAW(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::dsp::SMUL(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::SMUL(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -906,7 +917,7 @@ bool opcodes::arm::dsp::SMUL(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::dsp::SMULW(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::SMULW(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -922,7 +933,7 @@ bool opcodes::arm::dsp::SMULW(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::dsp::STRD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::STRD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
         (raw_code.test(26) == 0) &&
@@ -953,7 +964,7 @@ bool opcodes::arm::dsp::STRD(const arm_code_t &raw_code) noexcept {
 
 
 
-bool opcodes::arm::vfp::FABSD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FABSD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -979,7 +990,7 @@ bool opcodes::arm::vfp::FABSD(const arm_code_t &raw_code) noexcept {
 }
 
 
-bool opcodes::arm::vfp::FABSS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FABSS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1003,7 +1014,7 @@ bool opcodes::arm::vfp::FABSS(const arm_code_t &raw_code) noexcept {
 }
 
 
-bool opcodes::arm::vfp::FADDD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FADDD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1024,7 +1035,7 @@ bool opcodes::arm::vfp::FADDD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FADDS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FADDS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1045,7 +1056,7 @@ bool opcodes::arm::vfp::FADDS(const arm_code_t &raw_code) noexcept {
 }
 
 
-bool opcodes::arm::vfp::FCMPD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FCMPD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1073,7 +1084,7 @@ bool opcodes::arm::vfp::FCMPD(const arm_code_t &raw_code) noexcept {
 }
 
 
-bool opcodes::arm::vfp::FCMPED(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FCMPED(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1100,7 +1111,7 @@ bool opcodes::arm::vfp::FCMPED(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FCMPES(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FCMPES(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1126,7 +1137,7 @@ bool opcodes::arm::vfp::FCMPES(const arm_code_t &raw_code) noexcept {
 }
 
 
-bool opcodes::arm::vfp::FCMPEZD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FCMPEZD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1154,7 +1165,7 @@ bool opcodes::arm::vfp::FCMPEZD(const arm_code_t &raw_code) noexcept {
 }
 
 
-bool opcodes::arm::vfp::FCMPEZS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FCMPEZS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1181,7 +1192,7 @@ bool opcodes::arm::vfp::FCMPEZS(const arm_code_t &raw_code) noexcept {
 }
 
 
-bool opcodes::arm::vfp::FCMPS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FCMPS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1207,7 +1218,7 @@ bool opcodes::arm::vfp::FCMPS(const arm_code_t &raw_code) noexcept {
 }
 
 
-bool opcodes::arm::vfp::FCMPZD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FCMPZD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1235,7 +1246,7 @@ bool opcodes::arm::vfp::FCMPZD(const arm_code_t &raw_code) noexcept {
 }
 
 
-bool opcodes::arm::vfp::FCMPZS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FCMPZS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1262,7 +1273,7 @@ bool opcodes::arm::vfp::FCMPZS(const arm_code_t &raw_code) noexcept {
 }
 
 
-bool opcodes::arm::vfp::FCPYD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FCPYD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1289,7 +1300,7 @@ bool opcodes::arm::vfp::FCPYD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FCPYS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FCPYS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1314,7 +1325,7 @@ bool opcodes::arm::vfp::FCPYS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FCVTDS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FCVTDS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1340,7 +1351,7 @@ bool opcodes::arm::vfp::FCVTDS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FCVTSD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FCVTSD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1366,7 +1377,7 @@ bool opcodes::arm::vfp::FCVTSD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FDIVD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FDIVD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1388,7 +1399,7 @@ bool opcodes::arm::vfp::FDIVD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FDIVS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FDIVS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1407,7 +1418,7 @@ bool opcodes::arm::vfp::FDIVS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FLDD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FLDD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1424,7 +1435,7 @@ bool opcodes::arm::vfp::FLDD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FLDMD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FLDMD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1439,7 +1450,7 @@ bool opcodes::arm::vfp::FLDMD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FLDMS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FLDMS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1453,7 +1464,7 @@ bool opcodes::arm::vfp::FLDMS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FLDMX(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FLDMX(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1468,7 +1479,7 @@ bool opcodes::arm::vfp::FLDMX(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FLDS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FLDS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1484,7 +1495,7 @@ bool opcodes::arm::vfp::FLDS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FMACD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FMACD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1507,7 +1518,7 @@ bool opcodes::arm::vfp::FMACD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FMACS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FMACS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1527,7 +1538,7 @@ bool opcodes::arm::vfp::FMACS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FMDHR(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FMDHR(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1548,7 +1559,7 @@ bool opcodes::arm::vfp::FMDHR(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FMDLR(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FMDLR(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1568,7 +1579,7 @@ bool opcodes::arm::vfp::FMDLR(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FMRDH(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FMRDH(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1590,7 +1601,7 @@ bool opcodes::arm::vfp::FMRDH(const arm_code_t &raw_code) noexcept {
 }
 
 /*
-bool opcodes::arm::vfp::(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1620,7 +1631,7 @@ bool opcodes::arm::vfp::(const arm_code_t &raw_code) noexcept {
 */
 
 
-bool opcodes::arm::vfp::FMRDL(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FMRDL(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1641,7 +1652,7 @@ bool opcodes::arm::vfp::FMRDL(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FMRS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FMRS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1661,7 +1672,7 @@ bool opcodes::arm::vfp::FMRS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FMRX(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FMRX(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1682,7 +1693,7 @@ bool opcodes::arm::vfp::FMRX(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FMSCD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FMSCD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1705,7 +1716,7 @@ bool opcodes::arm::vfp::FMSCD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FMSCS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FMSCS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1725,7 +1736,7 @@ bool opcodes::arm::vfp::FMSCS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FMSR(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FMSR(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1746,7 +1757,7 @@ bool opcodes::arm::vfp::FMSR(const arm_code_t &raw_code) noexcept {
 }
 
 
-bool opcodes::arm::vfp::FMSTAT(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FMSTAT(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1776,7 +1787,7 @@ bool opcodes::arm::vfp::FMSTAT(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FMULD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FMULD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1799,7 +1810,7 @@ bool opcodes::arm::vfp::FMULD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FMULS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FMULS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1819,7 +1830,7 @@ bool opcodes::arm::vfp::FMULS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FMXR(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FMXR(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1840,7 +1851,7 @@ bool opcodes::arm::vfp::FMXR(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FNEGD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FNEGD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1868,7 +1879,7 @@ bool opcodes::arm::vfp::FNEGD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FNEGS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FNEGS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1894,7 +1905,7 @@ bool opcodes::arm::vfp::FNEGS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FNMACD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FNMACD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1917,7 +1928,7 @@ bool opcodes::arm::vfp::FNMACD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FNMACS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FNMACS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1937,7 +1948,7 @@ bool opcodes::arm::vfp::FNMACS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FNMSCD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FNMSCD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1960,7 +1971,7 @@ bool opcodes::arm::vfp::FNMSCD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FNMSCS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FNMSCS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -1980,7 +1991,7 @@ bool opcodes::arm::vfp::FNMSCS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FNMULD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FNMULD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2003,7 +2014,7 @@ bool opcodes::arm::vfp::FNMULD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FNMULS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FNMULS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2024,7 +2035,7 @@ bool opcodes::arm::vfp::FNMULS(const arm_code_t &raw_code) noexcept {
 }
 
 
-bool opcodes::arm::vfp::FSITOD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FSITOD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2051,7 +2062,7 @@ bool opcodes::arm::vfp::FSITOD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FSITOS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FSITOS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2078,7 +2089,7 @@ bool opcodes::arm::vfp::FSITOS(const arm_code_t &raw_code) noexcept {
 }
 
 
-bool opcodes::arm::vfp::FSQRTD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FSQRTD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2107,7 +2118,7 @@ bool opcodes::arm::vfp::FSQRTD(const arm_code_t &raw_code) noexcept {
 }
 
 
-bool opcodes::arm::vfp::FSQRTS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FSQRTS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2133,7 +2144,7 @@ bool opcodes::arm::vfp::FSQRTS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FSTD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FSTD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2150,7 +2161,7 @@ bool opcodes::arm::vfp::FSTD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FSTMD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FSTMD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2165,7 +2176,7 @@ bool opcodes::arm::vfp::FSTMD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FSTMS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FSTMS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2179,7 +2190,7 @@ bool opcodes::arm::vfp::FSTMS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FSTMX(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FSTMX(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2194,7 +2205,7 @@ bool opcodes::arm::vfp::FSTMX(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FSTS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FSTS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2210,7 +2221,7 @@ bool opcodes::arm::vfp::FSTS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FSUBD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FSUBD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2233,7 +2244,7 @@ bool opcodes::arm::vfp::FSUBD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FSUBS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FSUBS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2253,7 +2264,7 @@ bool opcodes::arm::vfp::FSUBS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FTOSID(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FTOSID(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2279,7 +2290,7 @@ bool opcodes::arm::vfp::FTOSID(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FTOSIS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FTOSIS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2304,7 +2315,7 @@ bool opcodes::arm::vfp::FTOSIS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FTOUID(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FTOUID(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2330,7 +2341,7 @@ bool opcodes::arm::vfp::FTOUID(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FTOUIS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FTOUIS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2355,7 +2366,7 @@ bool opcodes::arm::vfp::FTOUIS(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FUITOD(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FUITOD(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
@@ -2382,7 +2393,7 @@ bool opcodes::arm::vfp::FUITOD(const arm_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::arm::vfp::FUITOS(const arm_code_t &raw_code) noexcept {
+bool opcodes::arm::FUITOS(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&

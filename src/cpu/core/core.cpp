@@ -1,4 +1,5 @@
 #include "../../types.hpp"
+#include "../../types_extra.hpp"
 #include "../../settings.hpp"
 #include "../../id.hpp"
 
@@ -22,15 +23,20 @@
 #include "vfp.hpp"
 
 #include <vector>
+#include <array>
 
 void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
 
+    // essential settings
+    SETTINGS settings;
+
+    settings = settings.default_settings();
+
     // initialisations
     GLOBALS globals;
-    SETTINGS settings;
-    CP15 cp15(settings, globals);
+    CP15 cp15(settings, globals); // SEGFAULT HERE for release version for some reason
     COPROCESSOR coprocessor(cp15);
-    RAM ram;
+    RAM ram(globals);
     ARCH_26_BIT arch_26(coprocessor, settings);
     MMU mmu(globals, ram, coprocessor, settings);
     MPU mpu(globals, coprocessor, settings);
@@ -38,24 +44,28 @@ void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
     REGISTERS reg(coprocessor, globals, arch_26, settings);
     //VFP vfp(reg);
     EXCEPTION exception(reg, coprocessor);
-    MEMORY memory(binary, ram, mmu, mpu, fcse, arch_26, exception);
+    MEMORY memory(ram, mmu, mpu, fcse, arch_26, exception);
     OPERATION operation;
     ADDRESSING_MODE address_mode(reg, operation);
     INSTRUCTIONS instructions(reg, address_mode, operation, coprocessor, settings, memory);
     INSTRUCTION_SET instruction_set(instructions);
-    FETCH fetch(reg, memory);
+    FETCH fetch(reg, memory, globals);
     DECODE decode(instruction_set, reg, settings);
     EXECUTE execute(instruction_set);
 
 
     // core setup and boot
+    coprocessor.write(id::cp::CP15_R1_M, false, FORCED); // disable MMU/MPU
+    coprocessor.write(id::cp::CP15_R1_P, true, FORCED); // set to 32-bit mode (maybe temporary idk)
+    coprocessor.write(id::cp::CP15_R1_D, true, FORCED); // set to 32-bit mode (maybe temporary idk)
     reg.switch_mode(id::mode::SUPERVISOR);
     reg.write(id::cpsr::T, 1); // switch to thumb  // TODO: double check if it actually starts in thumb mode
-    coprocessor.write(id::cp::CP15_R1_M, false); // disable MMU/MPU
     memory.reset();
+    ram.write(binary, 0);
 
+    std::cout << "RAM1: " << (int)ram.read<u8>(0, 1) << "\n";
+    std::cout << "RAM2: " << (int)ram.read<u8>(1, 1) << "\n";
 
-    std::cout << "hello charm\n";
 
     // instruction cycle 
     for (;;) {
@@ -79,7 +89,7 @@ void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
                 if (thumb_code_access.has_failed) {
                     continue;
                 }
-        
+
                 const thumb_decoded_t thumb_code = decode.thumb_decode(thumb_code_access.code);
 
                 execute.thumb_execute(thumb_code);
@@ -102,9 +112,8 @@ void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
                 // execute
 
 
-                break;
+                continue;
             }
         }
     }
-
 }

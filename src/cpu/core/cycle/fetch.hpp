@@ -9,13 +9,9 @@ struct FETCH {
 private:
     REGISTERS& reg;
     MEMORY& memory;
+    GLOBALS& globals;
 
 public:
-    FETCH(
-        REGISTERS& reg,
-        MEMORY& memory
-    );
-
     struct arm_fetch_struct {
         arm_code_t code;
         bool has_failed;
@@ -31,4 +27,11 @@ public:
     thumb_fetch_struct thumb_fetch();
 
     //jazelle_code_t jazelle_fetch() const;
+
+
+    FETCH(
+        REGISTERS& reg,
+        MEMORY& memory,
+        GLOBALS& globals
+    );
 };

@@ -72,7 +72,8 @@ public:
             void MOV(const arm_code_t&); // TODO
             void MVN(const arm_code_t&); // TODO
             void MRS(const arm_code_t&); // TODO
-            void MSR(const arm_code_t&); // TODO
+            void MSR_IMM(const arm_code_t&);
+            void MSR_REG(const arm_code_t&);
         } movement;
 
         struct multiply {

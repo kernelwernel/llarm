@@ -7,43 +7,201 @@
 
 
 
-INSTRUCTION_SET::INSTRUCTION_SET(
-    //REGISTERS& reg, 
-    //MEMORY& memory, 
-    //COPROCESSOR& coprocessor, 
-    //SETTINGS& settings,
-    INSTRUCTIONS& instructions
-) : //reg(reg), 
-    //   memory(memory), 
-    //   coprocessor(coprocessor),
-    //   settings(settings),
-   instructions(instructions)
-{
+INSTRUCTION_SET::INSTRUCTION_SET(INSTRUCTIONS& instructions) : instructions(instructions) {
     arm_table = {
-        //{ id::arm_instruction::NOP, { opcodes::arm::NOP, [&instructions](const arm_code_t& code) { instructions.arm.misc.NOP(code); } } }
-        //{ id::arm_instruction::NOP, { opcodes::arm::NOP, instructions.arm.misc.NOP } }
-        //{ id::arm_instruction::PSR, { opcodes::arm::PSR, INSTRUCTIONS::misc::PSR } },
-        //{ id::arm_instruction::NOP, { opcodes::arm::NOP, [this](const arm_code_t& code) { this->instructions.arm.misc.NOP(code); } } }
-        { id::arm_instruction::B, { opcodes::arm::B_BL, [this](const arm_code_t& code) { this->instructions.arm.branching.B(code); } } }
+        { id::arm_instruction::ADC, { opcodes::arm::ADC, [this](const arm_code_t& code) { this->instructions.arm.math.ADC(code); } } },
+        { id::arm_instruction::ADD, { opcodes::arm::ADD, [this](const arm_code_t& code) { this->instructions.arm.math.ADD(code); } } },
+        { id::arm_instruction::RSB, { opcodes::arm::RSB, [this](const arm_code_t& code) { this->instructions.arm.math.RSB(code); } } },
+        { id::arm_instruction::RSC, { opcodes::arm::RSC, [this](const arm_code_t& code) { this->instructions.arm.math.RSC(code); } } },
+        { id::arm_instruction::SBC, { opcodes::arm::SBC, [this](const arm_code_t& code) { this->instructions.arm.math.SBC(code); } } },
+        { id::arm_instruction::SUB, { opcodes::arm::SUB, [this](const arm_code_t& code) { this->instructions.arm.math.SUB(code); } } },
+
+        { id::arm_instruction::CMN, { opcodes::arm::CMN, [this](const arm_code_t& code) { this->instructions.arm.logic.CMN(code); } } },
+        { id::arm_instruction::AND, { opcodes::arm::AND, [this](const arm_code_t& code) { this->instructions.arm.logic.AND(code); } } },
+        { id::arm_instruction::CMP, { opcodes::arm::CMP, [this](const arm_code_t& code) { this->instructions.arm.logic.CMP(code); } } },
+        { id::arm_instruction::CLZ, { opcodes::arm::CLZ, [this](const arm_code_t& code) { this->instructions.arm.logic.CLZ(code); } } },
+        { id::arm_instruction::EOR, { opcodes::arm::EOR, [this](const arm_code_t& code) { this->instructions.arm.logic.EOR(code); } } },
+        { id::arm_instruction::ORR, { opcodes::arm::ORR, [this](const arm_code_t& code) { this->instructions.arm.logic.ORR(code); } } },
+        { id::arm_instruction::TEQ, { opcodes::arm::TEQ, [this](const arm_code_t& code) { this->instructions.arm.logic.TEQ(code); } } },
+        { id::arm_instruction::TST, { opcodes::arm::TST, [this](const arm_code_t& code) { this->instructions.arm.logic.TST(code); } } },
+
+        { id::arm_instruction::MOV, { opcodes::arm::MOV, [this](const arm_code_t& code) { this->instructions.arm.movement.MOV(code); } } },
+        { id::arm_instruction::MVN, { opcodes::arm::MVN, [this](const arm_code_t& code) { this->instructions.arm.movement.MVN(code); } } },
+        { id::arm_instruction::MRS, { opcodes::arm::MRS, [this](const arm_code_t& code) { this->instructions.arm.movement.MRS(code); } } },
+        { id::arm_instruction::MSR_IMM, { opcodes::arm::MSR_IMM, [this](const arm_code_t& code) { this->instructions.arm.movement.MSR_IMM(code); } } }, 
+        { id::arm_instruction::MSR_REG, { opcodes::arm::MSR_REG, [this](const arm_code_t& code) { this->instructions.arm.movement.MSR_REG(code); } } }, 
+
+        { id::arm_instruction::MLA, { opcodes::arm::MLA, [this](const arm_code_t& code) { this->instructions.arm.multiply.MLA(code); } } },
+        { id::arm_instruction::MUL, { opcodes::arm::MUL, [this](const arm_code_t& code) { this->instructions.arm.multiply.MUL(code); } } },
+        { id::arm_instruction::SMLAL, { opcodes::arm::SMLAL, [this](const arm_code_t& code) { this->instructions.arm.multiply.SMLAL(code); } } },
+        { id::arm_instruction::SMULL, { opcodes::arm::SMULL, [this](const arm_code_t& code) { this->instructions.arm.multiply.SMULL(code); } } },
+        { id::arm_instruction::UMLAL, { opcodes::arm::UMLAL, [this](const arm_code_t& code) { this->instructions.arm.multiply.UMLAL(code); } } },
+        { id::arm_instruction::UMULL, { opcodes::arm::UMULL, [this](const arm_code_t& code) { this->instructions.arm.multiply.UMULL(code); } } },
+
+        { id::arm_instruction::B, { opcodes::arm::B, [this](const arm_code_t& code) { this->instructions.arm.branching.B(code); } } },
+        { id::arm_instruction::BL, { opcodes::arm::BL, [this](const arm_code_t& code) { this->instructions.arm.branching.BL(code); } } },
+        { id::arm_instruction::BX, { opcodes::arm::BX, [this](const arm_code_t& code) { this->instructions.arm.branching.BX(code); } } },
+
+
+        { id::arm_instruction::CDP, { opcodes::arm::CDP, [this](const arm_code_t& code) { this->instructions.arm.coprocessor_inst.CDP(code); } } },
+        { id::arm_instruction::LDC, { opcodes::arm::LDC, [this](const arm_code_t& code) { this->instructions.arm.coprocessor_inst.LDC(code); } } },
+        { id::arm_instruction::MCR, { opcodes::arm::MCR, [this](const arm_code_t& code) { this->instructions.arm.coprocessor_inst.MCR(code); } } },
+        { id::arm_instruction::MRC, { opcodes::arm::MRC, [this](const arm_code_t& code) { this->instructions.arm.coprocessor_inst.MRC(code); } } },
+        { id::arm_instruction::STC, { opcodes::arm::STC, [this](const arm_code_t& code) { this->instructions.arm.coprocessor_inst.STC(code); } } },
+
+
+        { id::arm_instruction::NOP, { opcodes::arm::NOP, [this](const arm_code_t& code) { this->instructions.arm.misc.NOP(code); } } },
+        { id::arm_instruction::PSR, { opcodes::arm::PSR, [this](const arm_code_t& code) { this->instructions.arm.misc.PSR(code); } } },
+        { id::arm_instruction::SWI, { opcodes::arm::SWI, [this](const arm_code_t& code) { this->instructions.arm.misc.SWI(code); } } },
+
+        { id::arm_instruction::LDM1, { opcodes::arm::LDM1, [this](const arm_code_t& code) { this->instructions.arm.load.LDM1(code); } } },
+        { id::arm_instruction::LDM2, { opcodes::arm::LDM2, [this](const arm_code_t& code) { this->instructions.arm.load.LDM2(code); } } },
+        { id::arm_instruction::LDM3, { opcodes::arm::LDM3, [this](const arm_code_t& code) { this->instructions.arm.load.LDM3(code); } } },
+        { id::arm_instruction::LDR, { opcodes::arm::LDR, [this](const arm_code_t& code) { this->instructions.arm.load.LDR(code); } } },
+        { id::arm_instruction::LDRB, { opcodes::arm::LDRB, [this](const arm_code_t& code) { this->instructions.arm.load.LDRB(code); } } },
+        { id::arm_instruction::LDRBT, { opcodes::arm::LDRBT, [this](const arm_code_t& code) { this->instructions.arm.load.LDRBT(code); } } },
+        { id::arm_instruction::LDRH, { opcodes::arm::LDRH, [this](const arm_code_t& code) { this->instructions.arm.load.LDRH(code); } } },
+        { id::arm_instruction::LDRSB, { opcodes::arm::LDRSB, [this](const arm_code_t& code) { this->instructions.arm.load.LDRSB(code); } } },
+        { id::arm_instruction::LDRSH, { opcodes::arm::LDRSH, [this](const arm_code_t& code) { this->instructions.arm.load.LDRSH(code); } } },
+        { id::arm_instruction::LDRT, { opcodes::arm::LDRT, [this](const arm_code_t& code) { this->instructions.arm.load.LDRT(code); } } },
+
+
+        { id::arm_instruction::STM1, { opcodes::arm::STM1, [this](const arm_code_t& code) { this->instructions.arm.store.STM1(code); } } }, 
+        { id::arm_instruction::STM2, { opcodes::arm::STM2, [this](const arm_code_t& code) { this->instructions.arm.store.STM2(code); } } }, 
+        { id::arm_instruction::STR, { opcodes::arm::STR, [this](const arm_code_t& code) { this->instructions.arm.store.STR(code); } } }, 
+        { id::arm_instruction::STRB, { opcodes::arm::STRB, [this](const arm_code_t& code) { this->instructions.arm.store.STRB(code); } } }, 
+        { id::arm_instruction::STRBT, { opcodes::arm::STRBT, [this](const arm_code_t& code) { this->instructions.arm.store.STRBT(code); } } }, 
+        { id::arm_instruction::STRH, { opcodes::arm::STRH, [this](const arm_code_t& code) { this->instructions.arm.store.STRH(code); } } }, 
+        { id::arm_instruction::STRT, { opcodes::arm::STRT, [this](const arm_code_t& code) { this->instructions.arm.store.STRT(code); } } }, 
+        { id::arm_instruction::SWP, { opcodes::arm::SWP, [this](const arm_code_t& code) { this->instructions.arm.store.SWP(code); } } }, 
+        { id::arm_instruction::SWPB, { opcodes::arm::SWPB, [this](const arm_code_t& code) { this->instructions.arm.store.SWPB(code); } } }, 
+        { id::arm_instruction::LDRD, { opcodes::arm::LDRD, [this](const arm_code_t& code) { this->instructions.arm.dsp.LDRD(code); } } }, 
+        { id::arm_instruction::MCRR, { opcodes::arm::MCRR, [this](const arm_code_t& code) { this->instructions.arm.dsp.MCRR(code); } } }, 
+        { id::arm_instruction::MRRC, { opcodes::arm::MRRC, [this](const arm_code_t& code) { this->instructions.arm.dsp.MRRC(code); } } }, 
+        { id::arm_instruction::PLD, { opcodes::arm::PLD, [this](const arm_code_t& code) { this->instructions.arm.dsp.PLD(code); } } }, 
+        { id::arm_instruction::QADD, { opcodes::arm::QADD, [this](const arm_code_t& code) { this->instructions.arm.dsp.QADD(code); } } }, 
+        { id::arm_instruction::QDADD, { opcodes::arm::QDADD, [this](const arm_code_t& code) { this->instructions.arm.dsp.QDADD(code); } } }, 
+        { id::arm_instruction::QDSUB, { opcodes::arm::QDSUB, [this](const arm_code_t& code) { this->instructions.arm.dsp.QDSUB(code); } } }, 
+        { id::arm_instruction::QSUB, { opcodes::arm::QSUB, [this](const arm_code_t& code) { this->instructions.arm.dsp.QSUB(code); } } }, 
+        { id::arm_instruction::SMLA, { opcodes::arm::SMLA, [this](const arm_code_t& code) { this->instructions.arm.dsp.SMLA(code); } } }, 
+        { id::arm_instruction::SMLAL, { opcodes::arm::SMLAL, [this](const arm_code_t& code) { this->instructions.arm.dsp.SMLAL(code); } } }, 
+        { id::arm_instruction::SMLAW, { opcodes::arm::SMLAW, [this](const arm_code_t& code) { this->instructions.arm.dsp.SMLAW(code); } } }, 
+        { id::arm_instruction::SMUL, { opcodes::arm::SMUL, [this](const arm_code_t& code) { this->instructions.arm.dsp.SMUL(code); } } }, 
+        { id::arm_instruction::SMULW, { opcodes::arm::SMULW, [this](const arm_code_t& code) { this->instructions.arm.dsp.SMULW(code); } } }, 
+        { id::arm_instruction::STRD, { opcodes::arm::STRD, [this](const arm_code_t& code) { this->instructions.arm.dsp.STRD(code); } } }, 
+        { id::arm_instruction::FABSD, { opcodes::arm::FABSD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FABSD(code); } } }, 
+        { id::arm_instruction::FABSS, { opcodes::arm::FABSS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FABSS(code); } } }, 
+        { id::arm_instruction::FADDD, { opcodes::arm::FADDD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FADDD(code); } } }, 
+        { id::arm_instruction::FADDS, { opcodes::arm::FADDS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FADDS(code); } } }, 
+        { id::arm_instruction::FCMPD, { opcodes::arm::FCMPD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FCMPD(code); } } }, 
+        { id::arm_instruction::FCMPED, { opcodes::arm::FCMPED, [this](const arm_code_t& code) { this->instructions.arm.vfp.FCMPED(code); } } }, 
+        { id::arm_instruction::FCMPES, { opcodes::arm::FCMPES, [this](const arm_code_t& code) { this->instructions.arm.vfp.FCMPES(code); } } }, 
+        { id::arm_instruction::FCMPEZD, { opcodes::arm::FCMPEZD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FCMPEZD(code); } } }, 
+        { id::arm_instruction::FCMPEZS, { opcodes::arm::FCMPEZS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FCMPEZS(code); } } }, 
+        { id::arm_instruction::FCMPS, { opcodes::arm::FCMPS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FCMPS(code); } } }, 
+        { id::arm_instruction::FCMPZD, { opcodes::arm::FCMPZD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FCMPZD(code); } } }, 
+        { id::arm_instruction::FCMPZS, { opcodes::arm::FCMPZS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FCMPZS(code); } } }, 
+        { id::arm_instruction::FCPYD, { opcodes::arm::FCPYD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FCPYD(code); } } }, 
+        { id::arm_instruction::FCPYS, { opcodes::arm::FCPYS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FCPYS(code); } } }, 
+        { id::arm_instruction::FCVTDS, { opcodes::arm::FCVTDS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FCVTDS(code); } } }, 
+        { id::arm_instruction::FCVTSD, { opcodes::arm::FCVTSD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FCVTSD(code); } } }, 
+        { id::arm_instruction::FDIVD, { opcodes::arm::FDIVD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FDIVD(code); } } }, 
+        { id::arm_instruction::FDIVS, { opcodes::arm::FDIVS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FDIVS(code); } } }, 
+        { id::arm_instruction::FLDD, { opcodes::arm::FLDD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FLDD(code); } } }, 
+        { id::arm_instruction::FLDMD, { opcodes::arm::FLDMD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FLDMD(code); } } }, 
+        { id::arm_instruction::FLDMS, { opcodes::arm::FLDMS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FLDMS(code); } } }, 
+        { id::arm_instruction::FLDMX, { opcodes::arm::FLDMX, [this](const arm_code_t& code) { this->instructions.arm.vfp.FLDMX(code); } } }, 
+        { id::arm_instruction::FLDS, { opcodes::arm::FLDS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FLDS(code); } } }, 
+        { id::arm_instruction::FMACD, { opcodes::arm::FMACD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FMACD(code); } } }, 
+        { id::arm_instruction::FMACS, { opcodes::arm::FMACS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FMACS(code); } } }, 
+        { id::arm_instruction::FMDHR, { opcodes::arm::FMDHR, [this](const arm_code_t& code) { this->instructions.arm.vfp.FMDHR(code); } } }, 
+        { id::arm_instruction::FMDLR, { opcodes::arm::FMDLR, [this](const arm_code_t& code) { this->instructions.arm.vfp.FMDLR(code); } } }, 
+        { id::arm_instruction::FMRDH, { opcodes::arm::FMRDH, [this](const arm_code_t& code) { this->instructions.arm.vfp.FMRDH(code); } } }, 
+        { id::arm_instruction::FMRDL, { opcodes::arm::FMRDL, [this](const arm_code_t& code) { this->instructions.arm.vfp.FMRDL(code); } } }, 
+        { id::arm_instruction::FMRS, { opcodes::arm::FMRS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FMRS(code); } } }, 
+        { id::arm_instruction::FMRX, { opcodes::arm::FMRX, [this](const arm_code_t& code) { this->instructions.arm.vfp.FMRX(code); } } }, 
+        { id::arm_instruction::FMSCD, { opcodes::arm::FMSCD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FMSCD(code); } } }, 
+        { id::arm_instruction::FMSCS, { opcodes::arm::FMSCS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FMSCS(code); } } }, 
+        { id::arm_instruction::FMSR, { opcodes::arm::FMSR, [this](const arm_code_t& code) { this->instructions.arm.vfp.FMSR(code); } } }, 
+        { id::arm_instruction::FMSTAT, { opcodes::arm::FMSTAT, [this](const arm_code_t& code) { this->instructions.arm.vfp.FMSTAT(code); } } }, 
+        { id::arm_instruction::FMULD, { opcodes::arm::FMULD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FMULD(code); } } }, 
+        { id::arm_instruction::FMULS, { opcodes::arm::FMULS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FMULS(code); } } }, 
+        { id::arm_instruction::FMXR, { opcodes::arm::FMXR, [this](const arm_code_t& code) { this->instructions.arm.vfp.FMXR(code); } } }, 
+        { id::arm_instruction::FNEGD, { opcodes::arm::FNEGD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FNEGD(code); } } }, 
+        { id::arm_instruction::FNEGS, { opcodes::arm::FNEGS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FNEGS(code); } } }, 
+        { id::arm_instruction::FNMACD, { opcodes::arm::FNMACD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FNMACD(code); } } }, 
+        { id::arm_instruction::FNMACS, { opcodes::arm::FNMACS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FNMACS(code); } } }, 
+        { id::arm_instruction::FNMSCD, { opcodes::arm::FNMSCD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FNMSCD(code); } } }, 
+        { id::arm_instruction::FNMSCS, { opcodes::arm::FNMSCS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FNMSCS(code); } } }, 
+        { id::arm_instruction::FNMULD, { opcodes::arm::FNMULD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FNMULD(code); } } }, 
+        { id::arm_instruction::FNMULS, { opcodes::arm::FNMULS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FNMULS(code); } } }, 
+        { id::arm_instruction::FSITOD, { opcodes::arm::FSITOD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FSITOD(code); } } }, 
+        { id::arm_instruction::FSITOS, { opcodes::arm::FSITOS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FSITOS(code); } } }, 
+        { id::arm_instruction::FSQRTD, { opcodes::arm::FSQRTD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FSQRTD(code); } } }, 
+        { id::arm_instruction::FSQRTS, { opcodes::arm::FSQRTS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FSQRTS(code); } } }, 
+        { id::arm_instruction::FSTD, { opcodes::arm::FSTD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FSTD(code); } } }, 
+        { id::arm_instruction::FSTMD, { opcodes::arm::FSTMD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FSTMD(code); } } }, 
+        { id::arm_instruction::FSTMS, { opcodes::arm::FSTMS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FSTMS(code); } } }, 
+        { id::arm_instruction::FSTMX, { opcodes::arm::FSTMX, [this](const arm_code_t& code) { this->instructions.arm.vfp.FSTMX(code); } } }, 
+        { id::arm_instruction::FSTS, { opcodes::arm::FSTS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FSTS(code); } } }, 
+        { id::arm_instruction::FSUBD, { opcodes::arm::FSUBD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FSUBD(code); } } }, 
+        { id::arm_instruction::FSUBS, { opcodes::arm::FSUBS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FSUBS(code); } } }, 
+        { id::arm_instruction::FTOSID, { opcodes::arm::FTOSID, [this](const arm_code_t& code) { this->instructions.arm.vfp.FTOSID(code); } } }, 
+        { id::arm_instruction::FTOSIS, { opcodes::arm::FTOSIS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FTOSIS(code); } } }, 
+        { id::arm_instruction::FTOUID, { opcodes::arm::FTOUID, [this](const arm_code_t& code) { this->instructions.arm.vfp.FTOUID(code); } } }, 
+        { id::arm_instruction::FTOUIS, { opcodes::arm::FTOUIS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FTOUIS(code); } } }, 
+        { id::arm_instruction::FUITOD, { opcodes::arm::FUITOD, [this](const arm_code_t& code) { this->instructions.arm.vfp.FUITOD(code); } } }, 
+        { id::arm_instruction::FUITOS, { opcodes::arm::FUITOS, [this](const arm_code_t& code) { this->instructions.arm.vfp.FUITOS(code); } } }, 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     };
     
 
     /*
     if (settings.is_enhanced_DSP_enabled) {
-        arm_table.emplace(id::arm_instruction::LDRD, { opcodes::arm::dsp::LDRD, INSTRUCTIONS::arm::dsp::LDRD });
-        arm_table.emplace(id::arm_instruction::MCRR, { opcodes::arm::dsp::MCRR, INSTRUCTIONS::arm::dsp::MCRR });
-        arm_table.emplace(id::arm_instruction::MRRC, { opcodes::arm::dsp::MRRC, INSTRUCTIONS::arm::dsp::MRRC });
-        arm_table.emplace(id::arm_instruction::PLD, { opcodes::arm::dsp::PLD, INSTRUCTIONS::arm::dsp::PLD });
-        arm_table.emplace(id::arm_instruction::QADD, { opcodes::arm::dsp::QADD, INSTRUCTIONS::arm::dsp::QADD });
-        arm_table.emplace(id::arm_instruction::QDADD, { opcodes::arm::dsp::QDADD, INSTRUCTIONS::arm::dsp::QDADD });
-        arm_table.emplace(id::arm_instruction::QDSUB, { opcodes::arm::dsp::QDSUB, INSTRUCTIONS::arm::dsp::QDSUB });
-        arm_table.emplace(id::arm_instruction::QSUB, { opcodes::arm::dsp::QSUB, INSTRUCTIONS::arm::dsp::QSUB });
-        arm_table.emplace(id::arm_instruction::SMLA, { opcodes::arm::dsp::SMLA, INSTRUCTIONS::arm::dsp::SMLA });
-        arm_table.emplace(id::arm_instruction::SMLAL, { opcodes::arm::dsp::SMLAL, INSTRUCTIONS::arm::dsp::SMLAL });
-        arm_table.emplace(id::arm_instruction::SMLAW, { opcodes::arm::dsp::SMLAW, INSTRUCTIONS::arm::dsp::SMLAW });
-        arm_table.emplace(id::arm_instruction::SMUL, { opcodes::arm::dsp::SMUL, INSTRUCTIONS::arm::dsp::SMUL });
-        arm_table.emplace(id::arm_instruction::SMULW, { opcodes::arm::dsp::SMULW, INSTRUCTIONS::arm::dsp::SMULW });
-        arm_table.emplace(id::arm_instruction::STRD, { opcodes::arm::dsp::STRD, INSTRUCTIONS::arm::dsp::STRD });
+        arm_table.emplace(id::arm_instruction::LDRD, { opcodes::arm::LDRD, INSTRUCTIONS::arm::dsp::LDRD });
+        arm_table.emplace(id::arm_instruction::MCRR, { opcodes::arm::MCRR, INSTRUCTIONS::arm::dsp::MCRR });
+        arm_table.emplace(id::arm_instruction::MRRC, { opcodes::arm::MRRC, INSTRUCTIONS::arm::dsp::MRRC });
+        arm_table.emplace(id::arm_instruction::PLD, { opcodes::arm::PLD, INSTRUCTIONS::arm::dsp::PLD });
+        arm_table.emplace(id::arm_instruction::QADD, { opcodes::arm::QADD, INSTRUCTIONS::arm::dsp::QADD });
+        arm_table.emplace(id::arm_instruction::QDADD, { opcodes::arm::QDADD, INSTRUCTIONS::arm::dsp::QDADD });
+        arm_table.emplace(id::arm_instruction::QDSUB, { opcodes::arm::QDSUB, INSTRUCTIONS::arm::dsp::QDSUB });
+        arm_table.emplace(id::arm_instruction::QSUB, { opcodes::arm::QSUB, INSTRUCTIONS::arm::dsp::QSUB });
+        arm_table.emplace(id::arm_instruction::SMLA, { opcodes::arm::SMLA, INSTRUCTIONS::arm::dsp::SMLA });
+        arm_table.emplace(id::arm_instruction::SMLAL, { opcodes::arm::SMLAL, INSTRUCTIONS::arm::dsp::SMLAL });
+        arm_table.emplace(id::arm_instruction::SMLAW, { opcodes::arm::SMLAW, INSTRUCTIONS::arm::dsp::SMLAW });
+        arm_table.emplace(id::arm_instruction::SMUL, { opcodes::arm::SMUL, INSTRUCTIONS::arm::dsp::SMUL });
+        arm_table.emplace(id::arm_instruction::SMULW, { opcodes::arm::SMULW, INSTRUCTIONS::arm::dsp::SMULW });
+        arm_table.emplace(id::arm_instruction::STRD, { opcodes::arm::STRD, INSTRUCTIONS::arm::dsp::STRD });
     }
 
 

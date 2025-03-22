@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../../../../types.hpp"
 #include "../../../../types_extra.hpp"
 #include "../../../core/registers.hpp"

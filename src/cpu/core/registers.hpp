@@ -71,8 +71,9 @@ public:
     u32 SPSR_fiq = 0;
 
 public:
-    bool is_priviledged();
+    bool is_privileged();
     bool is_exception();
+    bool current_mode_has_SPSR();
 
     u8 read(const id::cpsr);
 
@@ -102,46 +103,13 @@ public:
 
     id::mode fetch_mode_id(const u8);
 
-    void switch_mode(const id::mode mode) {
-        switch (mode) {
-            case id::mode::USER:          write(id::cpsr::M, constants::mode::USER); return;
-            case id::mode::SUPERVISOR:    write(id::cpsr::M, constants::mode::SUPERVISOR); return;
-            case id::mode::ABORT:         write(id::cpsr::M, constants::mode::ABORT); return;
-            case id::mode::UNDEFINED:     write(id::cpsr::M, constants::mode::UNDEFINED); return;
-            case id::mode::FIQ:           write(id::cpsr::M, constants::mode::FIQ); return;
-            case id::mode::IRQ:           write(id::cpsr::M, constants::mode::IRQ); return;
-            case id::mode::SYSTEM:        write(id::cpsr::M, constants::mode::SYSTEM); return;
-            case id::mode::FIQ_26:        write(id::cpsr::M, constants::mode::FIQ_26); return;
-            case id::mode::IRQ_26:        write(id::cpsr::M, constants::mode::IRQ_26); return;
-            case id::mode::SUPERVISOR_26: write(id::cpsr::M, constants::mode::SUPERVISOR_26); return;
-            case id::mode::USER_26:       write(id::cpsr::M, constants::mode::USER_26); return;
-        }
-    }
+    void switch_mode(const id::mode mode);
 
     id::mode read_mode();
 
-    u32 read_PC() {
-        // [25:2]
-        static constinit u32 pc_mask_26 = 0x3FFFFFC;
+    u32 read_PC();
 
-        // [31:2]
-        static constinit u32 pc_mask_32 = 0xFFFFFFFC;
-
-        if (arch_26.is_26_arch_address()) {
-            return ((R15 & pc_mask_26) >> 2); 
-        } else {
-            return ((R15 & pc_mask_32) >> 2);
-        }
-    }
-
-
-    void write_PC(const u32 address) {
-        if (arch_26.is_26_arch_address()) {
-            util::swap_bits(R15, 2, 25, (address & 0x03FFFFFF));
-        } else {
-            R15 = address;
-        }
-    }
+    void write_PC(const u32 address);
 
     void thumb_increment_PC();
 

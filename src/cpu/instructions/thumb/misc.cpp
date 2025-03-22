@@ -4,6 +4,7 @@
 #include "../../core/registers.hpp"
 
 void INSTRUCTIONS::thumb::misc::NOP(const thumb_code_t &code) noexcept {
+    std::exit(0);
     reg.thumb_increment_PC();
     return;
 }

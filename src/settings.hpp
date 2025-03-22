@@ -64,7 +64,7 @@ struct SETTINGS {
     /**/ u8 vfp_version;
     u8 thumb_version; // either 1 or 2, 0 if not supported
     /**/ u8 core_count;
-    /**/ u16 clock_speed_mhz; 
+    /**/ u16 clock_speed_mhz; // 0 will mean no clock speed constraints 
     /**/ u64 memsize;
     id::arch arch;
     /**/ id::specific_arch specific_arch;
@@ -75,6 +75,84 @@ struct SETTINGS {
     u8 variant; // cpu variant, implementation defined
     u16 ppn; // primary part number, implementation defined
     u8 revision; // implementation defined
+
+
+
+    SETTINGS default_settings() {
+        SETTINGS tmp;
+
+        tmp.is_thumb_enabled = true;
+        tmp.is_arm_enabled = true;
+        tmp.is_jazelle_enabled = true;
+        tmp.is_enhanced_DSP_enabled = true;
+        tmp.is_mpu_enabled = false;
+        tmp.is_mmu_enabled = false;
+        tmp.is_fcse_enabled = false;
+        tmp.has_coprocessor = false;
+        tmp.has_cache = false;
+        tmp.cache_cannot_disable = false;
+        tmp.has_unified_cache = false;
+        tmp.has_separate_cache = false;
+        tmp.has_separate_inst_cache = false;
+        tmp.has_separate_data_cache = false;
+        tmp.instruction_cache_cannot_disable = false;
+        tmp.data_cache_cannot_disable = false;
+        tmp.has_alignment_fault_checking = false;
+        tmp.has_write_buffer = false;
+        tmp.write_buffer_cannot_disable = false;
+        tmp.backwards_compat_support_26_bits = false;
+        tmp.only_26_bits = false;
+        tmp.no_26_bits = true;
+        tmp.no_clock_constraint = true;
+        tmp.is_abort_model_early = false;
+        tmp.is_abort_model_late = false;
+        tmp.is_little_endian = true;
+        tmp.is_big_endian = true;
+        tmp.only_little_endian = false;
+        tmp.only_big_endian = false;
+        tmp.has_system_protection_bit = false;
+        tmp.has_rom_protection_bit = false;
+        tmp.has_F_bit_enabled_cp15 = false;
+        tmp.has_branch_prediction = false;
+        tmp.branch_prediction_cannot_disable = false;
+        tmp.has_high_vectors = false;
+        tmp.has_normal_cache_strategy = false;
+        tmp.has_predictable_cache_strategy = false;
+        tmp.is_L4_bit_enabled_cp15 = false;
+        tmp.has_debug_hardware = false;
+        tmp.anti_emulation_detection = false;
+        tmp.is_vfp_enabled = false;
+        tmp.is_vfp_double_precision_enabled = false;
+
+        tmp.unified_cache_size = 0;
+        tmp.data_cache_size = 0; 
+        tmp.instruction_cache_size = 0;
+        tmp.data_cache_line_length_bytes = 0;
+        tmp.instruction_cache_line_length_bytes = 0;
+        tmp.data_cache_assoc_way = 0; 
+        tmp.instruction_cache_assoc_way = 0; 
+        tmp.cache_ctype_field = 0;
+
+        tmp.vfp_version = 0;
+        tmp.thumb_version = 1;
+        tmp.core_count = 1;
+        tmp.clock_speed_mhz = 0;
+        tmp.memsize = util::get_kb(32);
+        tmp.arch = id::arch::ARMv4;
+        tmp.specific_arch = id::specific_arch::ARMv4T;
+        tmp.product_family = id::product_family::ARM7T;
+        tmp.implementor = id::implementor::CHARM;
+        tmp.custom_implementor_char = constants::implementor::CHARM;
+        tmp.processor = id::processor::ARM7TDMI_S;
+        tmp.variant = 0; 
+        tmp.ppn = 0;
+        tmp.revision = 0;
+
+        tmp.sanitize();
+
+        return tmp;
+    }
+
 
     void sanitize() {
         // only jazelle 
@@ -163,7 +241,7 @@ struct SETTINGS {
             // thumb setting must be enabled
         }
 
-        if (util::conv_specific_arch_to_arch(specific_arch) == arch) {
+        if (util::simplify_arch_version(specific_arch) == arch) {
             // the specific arch does not match with the base arch
         }
 

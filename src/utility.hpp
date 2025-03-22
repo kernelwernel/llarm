@@ -101,12 +101,56 @@ namespace util {
     }
 
 
-
+    template <is_integral T>
+    inline T swap_endianness(const T value) {
+        if constexpr (std::is_same_v<T, u16>) {
+            #ifdef _MSC_VER
+                return _byteswap_ushort(value);
+            #elif defined(__GNUC__) || defined(__clang__)
+                return __builtin_bswap16(value);
+            #else
+                return (
+                    ((value & 0x00FF) << 8) |
+                    ((value & 0xFF00) >> 8)
+                );
+            #endif
+        } else if constexpr (std::is_same_v<T, u32>) {
+            #ifdef _MSC_VER
+                return _byteswap_ulong(value);
+            #elif defined(__GNUC__) || defined(__clang__)
+                return __builtin_bswap32(value);
+            #else
+                return (
+                    ((value & 0x000000FF) << 24) |
+                    ((value & 0x0000FF00) << 8)  |
+                    ((value & 0x00FF0000) >> 8)  |
+                    ((value & 0xFF000000) >> 24)
+                );
+            #endif
+        } else if constexpr (std::is_same_v<T, u64>) {
+            #ifdef _MSC_VER
+                return _byteswap_uint64(value);
+            #elif defined(__GNUC__) || defined(__clang__)
+                return __builtin_bswap64(value);
+            #else
+                return ( 
+                    ((value & 0x00000000000000FF) << 56) |
+                    ((value & 0x000000000000FF00) << 40) |
+                    ((value & 0x0000000000FF0000) << 24) |
+                    ((value & 0x00000000FF000000) << 8)  |
+                    ((value & 0x000000FF00000000) >> 8)  |
+                    ((value & 0x0000FF0000000000) >> 24) |
+                    ((value & 0x00FF000000000000) >> 40) |
+                    ((value & 0xFF00000000000000) >> 56)
+                );
+            #endif
+        }
+    }
 
 
 
     // for example, ARMv5TEJ will be simplified to ARMv5
-    inline id::arch conv_specific_arch_to_arch(const id::specific_arch arch) {
+    inline id::arch simplify_arch_version(const id::specific_arch arch) {
         switch (arch) {
             case id::specific_arch::ARMv1: return id::arch::ARMv1;
             case id::specific_arch::ARMv2: 

@@ -21,7 +21,7 @@ void INSTRUCTIONS::arm::coprocessor_inst::LDC(const arm_code_t &code) {
  */
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1
 void INSTRUCTIONS::arm::coprocessor_inst::MCR(const arm_code_t &code) {
-    if (reg.is_priviledged() == false) {
+    if (reg.is_privileged() == false) {
         // TODO: UNDEFINED INSTRUCTION EXCEPTION
     }
 
@@ -97,7 +97,7 @@ void INSTRUCTIONS::arm::coprocessor_inst::MCR(const arm_code_t &code) {
  */
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1
 void INSTRUCTIONS::arm::coprocessor_inst::MRC(const arm_code_t &code) {
-    if (reg.is_priviledged() == false) {
+    if (reg.is_privileged() == false) {
         // TODO: UNDEFINED INSTRUCTION EXCEPTION
     }
 

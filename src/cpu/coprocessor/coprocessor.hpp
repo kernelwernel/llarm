@@ -57,13 +57,13 @@ public:
     //}
 
 
-    void write(const id::cp cp_reg_id, const u64 value) {
+    void write(const id::cp cp_reg_id, const u64 value, const bool is_forced = false) {
         // check if the ID enum argument is in the CP15 range
         if (
             static_cast<u8>(cp_reg_id) > static_cast<u8>(id::cp::CP15_START) &&
             static_cast<u8>(cp_reg_id) < static_cast<u8>(id::cp::CP15_END)
         ) [[likely]] {
-            cp15.write(cp_reg_id, util::bit_fetcher(value, 0, 31)); return;
+            cp15.write(cp_reg_id, util::bit_fetcher(value, 0, 31), is_forced); return;
         } 
 
         // TODO: ERROR (unknown CP reg id)

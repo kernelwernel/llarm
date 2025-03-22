@@ -89,7 +89,7 @@ public:
             data.new_address = address;
         }
 
-        ram.write(value, data.new_address);
+        ram.write<T>(value, data.new_address, access_size);
 
         return data;
     }
@@ -134,14 +134,31 @@ public:
         u8 access_size,
         const id::access_type type = id::access_type::READ
     ) {
+        //memory_struct<T> data = {};
+//
+        //data.has_failed = false;
+        //data.abort_code = id::aborts::NO_ABORT;
+        //data.value = 0;
+        //data.new_address = 0;
+//
+        //return data; // TEMPORARY
+
+
         memory_struct<T> data = {};
 
         data.has_failed = false;
+        data.value = ram.read<T>(address, access_size);
+        data.new_address = address;
         data.abort_code = id::aborts::NO_ABORT;
-        data.value = 0;
-        data.new_address = 0;
 
-        return data; // TEMPORARY
+        return data;
+
+
+
+        // TODO add if conditions for MMU or MPU
+
+
+
 /*
         if (arch_26.is_26_arch_address_unsupported(address)) {
 
@@ -184,7 +201,6 @@ public:
 
 
     MEMORY(
-        const std::vector<u8> &binary, 
         RAM& ram, 
         MMU& mmu,
         MPU& mpu,
@@ -198,8 +214,6 @@ public:
         arch_26(arch_26),
         exception(exception)
     {
-        ram.write(binary, 0); // write the entire machine code into RAM
+        
     }
-
-
 };

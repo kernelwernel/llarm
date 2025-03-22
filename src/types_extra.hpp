@@ -88,3 +88,5 @@ concept is_integral = (
 #else
 #define CHARM_CONSTEVAL constexpr
 #endif
+
+static constexpr bool FORCED = true;

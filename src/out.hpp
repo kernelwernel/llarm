@@ -37,5 +37,4 @@ namespace out {
         std::printf("\n");
         std::exit(1);
     }
-
 }

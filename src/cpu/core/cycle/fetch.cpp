@@ -1,18 +1,24 @@
 #include "../../../types.hpp"
+#include "../globals.hpp"
 #include "fetch.hpp"
 
 FETCH::FETCH(
     REGISTERS& reg,
-    MEMORY& memory
-) : reg(reg), memory(memory) {
+    MEMORY& memory,
+    GLOBALS& globals
+) : reg(reg), memory(memory), globals(globals) {
 
 }
 
 FETCH::arm_fetch_struct FETCH::arm_fetch() {
     arm_fetch_struct tmp = {};
 
-    const memory_struct access = memory.read<u32>(reg.read(id::reg::PC), 4, id::access_type::INSTRUCTION_FETCH);
+    memory_struct access = memory.read<u32>(reg.read(id::reg::PC), 4, id::access_type::INSTRUCTION_FETCH);
     
+    if (globals.is_little_endian) {
+        access.value = util::swap_endianness<u32>(access.value);
+    }
+
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
         tmp.has_failed = true;
@@ -28,8 +34,12 @@ FETCH::arm_fetch_struct FETCH::arm_fetch() {
 FETCH::thumb_fetch_struct FETCH::thumb_fetch() {
     thumb_fetch_struct tmp = {};
 
-    const memory_struct access = memory.read<u16>(reg.read(id::reg::PC), 2, id::access_type::INSTRUCTION_FETCH);
+    memory_struct access = memory.read<u16>(reg.read(id::reg::PC), 2, id::access_type::INSTRUCTION_FETCH);
     
+    if (globals.is_little_endian) {
+        access.value = util::swap_endianness<u16>(access.value);
+    }
+
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
         tmp.has_failed = true;

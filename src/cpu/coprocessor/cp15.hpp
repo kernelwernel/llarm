@@ -844,19 +844,25 @@ private:
             // implementor
             // source: https://developer.arm.com/documentation/ddi0406/b/System-Level-Architecture/Virtual-Memory-System-Architecture--VMSA-/CP15-registers-for-a-VMSA-implementation/c0--Main-ID-Register--MIDR-?lang=en
             switch (settings.implementor) {
-                case id::implementor::ARM:      write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x41 /* A */); break;
-                case id::implementor::BRCM:     write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x42 /* B */); break;
-                case id::implementor::DEC:      write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x44 /* D */); break;
-                case id::implementor::MOTOROLA: write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x4D /* M */); break;
-                case id::implementor::QUALCOMM: write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x51 /* Q */); break;
-                case id::implementor::MARVELL:  write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x56 /* V */); break;
-                case id::implementor::INTEL:    write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x69 /* i */); break;
-                case id::implementor::CHARM:    
+                case id::implementor::ARM:      write(id::cp::CP15_R0_ID_IMPLEMENTOR, constants::implementor::ARM /* A */); break;
+                case id::implementor::BRCM:     write(id::cp::CP15_R0_ID_IMPLEMENTOR, constants::implementor::BRCM /* B */); break;
+                case id::implementor::DEC:      write(id::cp::CP15_R0_ID_IMPLEMENTOR, constants::implementor::DEC /* D */); break;
+                case id::implementor::MOTOROLA: write(id::cp::CP15_R0_ID_IMPLEMENTOR, constants::implementor::MOTOROLA /* M */); break;
+                case id::implementor::QUALCOMM: write(id::cp::CP15_R0_ID_IMPLEMENTOR, constants::implementor::QUALCOMM /* Q */); break;
+                case id::implementor::MARVELL:  write(id::cp::CP15_R0_ID_IMPLEMENTOR, constants::implementor::MARVELL /* V */); break;
+                case id::implementor::INTEL:    write(id::cp::CP15_R0_ID_IMPLEMENTOR, constants::implementor::INTEL /* i */); break;
+                case id::implementor::CHARM:   
+                    u8 implementor_code = 0;
+
+                    // if this is some kind of malware environment sandbox, try to hide that it's an emulator
                     if (settings.anti_emulation_detection) {
-                        write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x41 /* A */); break; // if emulation should not be detected, implement ARM instead
+                        implementor_code = constants::implementor::ARM;
                     } else {
-                        write(id::cp::CP15_R0_ID_IMPLEMENTOR, 0x43 /* C */); break; // CHARM, custom
+                        implementor_code = constants::implementor::CHARM;
                     }
+
+                    write(id::cp::CP15_R0_ID_IMPLEMENTOR, implementor_code);
+                    break;
             }
 
             // primary part number
@@ -1124,13 +1130,17 @@ private:
         // B
         if (settings.only_little_endian) {
             write(id::cp::CP15_R1_B, false, FORCED);
+            globals.is_little_endian = true;
         } else if (settings.only_big_endian) {
             write(id::cp::CP15_R1_B, true, FORCED);
+            globals.is_little_endian = false;
         } else {
             if (settings.is_little_endian) {
                 write(id::cp::CP15_R1_B, false, FORCED);
+                globals.is_little_endian = true;
             } else if (settings.is_big_endian) {
                 write(id::cp::CP15_R1_B, true, FORCED);
+                globals.is_little_endian = false;
             } else {
                 // TODO dev error config
             }

@@ -756,7 +756,7 @@ bool opcodes::thumb::TST(const thumb_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::thumb::v5::BKPT(const thumb_code_t &raw_code) noexcept {
+bool opcodes::thumb::BKPT(const thumb_code_t &raw_code) noexcept {
     return (
         (raw_code.test(15) == 0) &&
         (raw_code.test(14) == 1) &&
@@ -771,7 +771,7 @@ bool opcodes::thumb::v5::BKPT(const thumb_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::thumb::v5::BLX1(const thumb_code_t &raw_code) noexcept {
+bool opcodes::thumb::BLX1(const thumb_code_t &raw_code) noexcept {
     return (
         (raw_code.test(15) == 1) &&
         (raw_code.test(14) == 1) &&
@@ -781,7 +781,7 @@ bool opcodes::thumb::v5::BLX1(const thumb_code_t &raw_code) noexcept {
     );
 }
 
-bool opcodes::thumb::v5::BLX2(const thumb_code_t &raw_code) noexcept {
+bool opcodes::thumb::BLX2(const thumb_code_t &raw_code) noexcept {
     return (
         (raw_code.test(15) == 0) &&
         (raw_code.test(14) == 1) &&

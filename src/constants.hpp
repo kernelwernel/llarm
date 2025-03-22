@@ -18,6 +18,17 @@ namespace constants {
         constexpr u8 SYSTEM = 0b11111;
     }
 
+    namespace implementor {
+        /* A */ constexpr u8 ARM = 0x41;
+        /* B */ constexpr u8 BRCM = 0x42;
+        /* C */ constexpr u8 CHARM = 0x43;
+        /* D */ constexpr u8 DEC = 0x44;
+        /* M */ constexpr u8 MOTOROLA = 0x4D;
+        /* Q */ constexpr u8 QUALCOMM = 0x51;
+        /* V */ constexpr u8 MARVELL = 0x56;
+        /* i */ constexpr u8 INTEL = 0x69;
+    }
+
     enum cond : u8 {
         EQ = 0b0000, // equal
         NE = 0b0001, // not equal

@@ -33,7 +33,7 @@ id::mode REGISTERS::read_mode() {
 }
 
 
-bool REGISTERS::is_priviledged() {
+bool REGISTERS::is_privileged() {
     const id::mode mode = read_mode();
 
     return (!(
@@ -50,6 +50,18 @@ bool REGISTERS::is_exception() {
         (mode == id::mode::USER_26) || 
         (mode == id::mode::SYSTEM)
     ));
+}
+
+bool REGISTERS::current_mode_has_SPSR() {
+    const id::mode mode = read_mode();
+
+    switch (mode) {
+        case id::mode::USER:
+        case id::mode::USER_26:
+        case id::mode::SUPERVISOR:
+        case id::mode::SUPERVISOR_26: return false;
+        default: return true;
+    }
 }
 
 
@@ -725,15 +737,49 @@ bool REGISTERS::check_cond(const id::cond cond) {
     }
 }
 
+void REGISTERS::switch_mode(const id::mode mode) {
+    switch (mode) {
+        case id::mode::USER:          write(id::cpsr::M, constants::mode::USER); return;
+        case id::mode::SUPERVISOR:    write(id::cpsr::M, constants::mode::SUPERVISOR); return;
+        case id::mode::ABORT:         write(id::cpsr::M, constants::mode::ABORT); return;
+        case id::mode::UNDEFINED:     write(id::cpsr::M, constants::mode::UNDEFINED); return;
+        case id::mode::FIQ:           write(id::cpsr::M, constants::mode::FIQ); return;
+        case id::mode::IRQ:           write(id::cpsr::M, constants::mode::IRQ); return;
+        case id::mode::SYSTEM:        write(id::cpsr::M, constants::mode::SYSTEM); return;
+        case id::mode::FIQ_26:        write(id::cpsr::M, constants::mode::FIQ_26); return;
+        case id::mode::IRQ_26:        write(id::cpsr::M, constants::mode::IRQ_26); return;
+        case id::mode::SUPERVISOR_26: write(id::cpsr::M, constants::mode::SUPERVISOR_26); return;
+        case id::mode::USER_26:       write(id::cpsr::M, constants::mode::USER_26); return;
+    }
+}
+
+
 bool REGISTERS::check_cond(const arm_code_t &code) {
     const id::cond cond_id = fetch_cond_id(code);
     return check_cond(cond_id);
 }
 
+void REGISTERS::write_PC(const u32 address) {
+    if (arch_26.is_26_arch_address()) {
+        // util::swap_bits(R15, 2, 25, (address & 0x03FFFFFF)); TODO, this is most likely wrong
+    } else {
+        R15 = (address << 2);
+    }
+}
+
+u32 REGISTERS::read_PC() {
+    if (arch_26.is_26_arch_address()) {
+        return (util::bit_fetcher<u32>(R15, 2, 25)); 
+    } else {
+        return (R15 >> 2); 
+    }
+}
+
+
 void REGISTERS::thumb_increment_PC() {
-    write(id::reg::PC, read(id::reg::PC) + 2);
+    write(id::reg::PC, (read(id::reg::PC) + (2 << 2)));
 }
 
 void REGISTERS::arm_increment_PC() {
-    write(id::reg::PC, read(id::reg::PC) + 4);
+    write(id::reg::PC, (read(id::reg::PC) + (4 << 2)));
 }

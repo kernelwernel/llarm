@@ -28,6 +28,15 @@ void INSTRUCTIONS::arm::branching::B(const arm_code_t &code) {
 
 
 /*
+ * same as B but with L bit as true. This is separate to the B instruction
+ * for the sake of standardised structures without having edgecases
+ */
+void INSTRUCTIONS::arm::branching::BL(const arm_code_t &code) {
+    B(code);
+}
+
+
+/*
  * if ConditionPassed(cond) then
  *   T Flag = Rm[0]
  *   PC = Rm AND 0xFFFFFFFE
