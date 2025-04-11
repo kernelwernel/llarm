@@ -73,8 +73,8 @@ MMU EMULATION TODO:
 - [ ] write the reference page for each instruction 
 
 
-- search "on reset" to see what kind of stuff needs to be set up upon a reset
-
+- search "on reset" to see what kind of stuff needs to be set up upon a reset in the docs
+- add noexcept throughout the code
 
 
 notes:

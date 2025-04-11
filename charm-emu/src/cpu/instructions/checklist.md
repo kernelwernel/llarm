@@ -1,0 +1,3 @@
+- make sure all the instructions have the new shifter operands mechanism
+- double check all instructions
+- remove the unecessary shared objects for various functionalities (reg, operation, etc)
