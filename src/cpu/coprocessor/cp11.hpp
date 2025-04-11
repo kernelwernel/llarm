@@ -1,2 +1,0 @@
-// double precision VFP instructions
-

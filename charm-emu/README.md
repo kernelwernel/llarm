@@ -8,7 +8,7 @@ An ARM emulation framework for C++
 > 
 > That being said, I'm planning on making this into something much bigger than it already is. The intention is to complete a prototype by the end of april (it's march 9 as of writing this). The reason why I'm sharing this project now is because I wanted to publish the progress I've made so far, and maybe get feedback from people to determine what could be better. 
 >
-> But for the moment, this is only the beginning. My objective is to provide the most open ARM emulator out there where everything about it is easily customisable and loggable with little restrictions while having a permissive license. Anyways, have a good day :)
+> But for the moment, this is only the beginning. My objective is to provide the most open ARM emulator out there where everything about it is easily customisable and loggable with little restrictions while having a permissive license.
 
 
 
@@ -50,5 +50,5 @@ Additionally, unicorn uses the GPLv2 license, which means proprietary software c
 
 
 # Legal disclaimer
-> [!CRITICAL]
+> [!CAUTION]
 > While the CHARM project has a permissive MIT license, it is up to you (and solely your responsibility) to obtain the necessary license from Arm Holdings PLC **if you're using the emulator for whatever use case that requires a license agreement**. Additionally, the CHARM project is not affiliated or endorsed in any way, shape or form with Arm Holdings PLC. This is entirely a solo project from my own accord.
