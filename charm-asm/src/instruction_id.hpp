@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../../shared/types.hpp"
+
+#include <charm/internal/shared/types.hpp>
 
 
 namespace internal::id {

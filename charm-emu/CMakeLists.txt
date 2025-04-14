@@ -51,8 +51,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DDEBUG -O0 -fsanitize=address,undefi
 #  --analyze --end-no-unused-arguments -fcf-protection=full
 elseif(CMAKE_BUILD_TYPE MATCHES "Release")
     MESSAGE(STATUS "Build set to release mode")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -g0 -ffunction-sections -fdata-sections -ftree-vectorize -flto -fPIE -ffast-math")
     set(CMAKE_UNITY_BUILD ON)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -g0 -flto")
     if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -mtune=native")
     elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")

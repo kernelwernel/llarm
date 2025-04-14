@@ -6,9 +6,11 @@
 #include <array>
 #include <string>
 
-#include "../../shared/types.hpp"
-#include "../../shared/out.hpp"
-#include "../../shared/tools/metadata.hpp"
+#include <charm/internal/shared/types.hpp>
+#include <charm/internal/shared/out.hpp>
+#include <charm/internal/shared/tools/metadata.hpp>
+
+#include "disassemble/disassemble.hpp"
 
 //#include <charm/charm-asm.hpp>
 
@@ -23,6 +25,8 @@ enum arg_enum : u8 {
     THUMB,
     THUMB2,
     JAZELLE,
+    RAW_ALIAS,
+    LOWERCASE,
     END
 };
 
@@ -41,6 +45,8 @@ Options:
  -t   | --thumb         Thumb mode
  -t2  | --thumb2        Thumb2 mode
  -j   | --jazelle       Jazelle mode
+ -r   | --raw-alias     Show raw register aliases (i.e. PC => R15)
+ -l   | --lowercase     Show the instructions as lowercase
 
 Examples:
  charm-asm --assemble --thumb ""
@@ -57,7 +63,7 @@ Examples:
         "License MIT: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.\n" <<  // TODO
         "This is free software: you are free to change and redistribute it.\n" <<
         "There is NO WARRANTY, to the extent permitted by law.\n" <<
-        "Developed and maintained by kernelwernel, see https://github.com/kernelwernel\n";
+        "Developed and maintained by kernelwernel (https://github.com/kernelwernel)\n";
 
     std::exit(0);
 }
@@ -65,11 +71,8 @@ Examples:
 
 int main(int argc, char* argv[]) {
 
-// TMP
-
-
-
-// TMP
+    std::cout << internal::disassemble::thumb(0b0100000101001000); // ADC R0, R1
+    return 0;
 
 
 
@@ -86,7 +89,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    static constexpr std::array<std::pair<const char*, arg_enum>, 16> table {{
+    static constexpr std::array<std::pair<const char*, arg_enum>, 20> table {{
         { "-h", HELP },
         { "--help", HELP },
         { "-v", VERSION },
@@ -102,7 +105,11 @@ int main(int argc, char* argv[]) {
         { "--thumb2", THUMB2 },
         { "-t2", THUMB2 },
         { "--jazelle", JAZELLE },
-        { "-j", JAZELLE }
+        { "-j", JAZELLE },
+        { "--raw-alias", RAW_ALIAS },
+        { "-r", RAW_ALIAS },
+        { "--lowercase", LOWERCASE },
+        { "-l", LOWERCASE }
     }};
 
     std::string potential_null_arg = "";
@@ -117,7 +124,6 @@ int main(int argc, char* argv[]) {
             //    // this is a string argument, treat it differently
             //}
 
-
             arg_bitset.set(NULL_ARG);
             potential_null_arg = arg_string;
         } else {
@@ -126,7 +132,7 @@ int main(int argc, char* argv[]) {
     }
 
     if (arg_bitset.test(NULL_ARG)) {
-        out::error("charm-asm: unknown argument \"", potential_null_arg, "\"");
+        shared::out::error("charm-asm: unknown argument \"", potential_null_arg, "\"");
     }
 
 

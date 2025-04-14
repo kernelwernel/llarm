@@ -1,12 +1,12 @@
 #include "../instruction_id.hpp"
 #include "identifiers.hpp"
 
-#include "../../../shared/types.hpp"
+#include <charm/internal/shared/types.hpp>
 
 using namespace internal;
 
 
-id::jazelle identifiers::jazelle_identifier(const u8 opcode) {
+id::jazelle identifiers::jazelle(const u8 opcode) {
     switch (opcode) {
         case 0x00: return id::jazelle::NOP; 
         case 0x01: return id::jazelle::ACONST_NULL; 
@@ -213,6 +213,6 @@ id::jazelle identifiers::jazelle_identifier(const u8 opcode) {
         case 0xca: return id::jazelle::BREAKPOINT; 
         case 0xfe: return id::jazelle::IMPDEP1; 
         case 0xff: return id::jazelle::IMPDEP2; 
-        default: out::error("TODO"); // unknown instruction, idk if there's like a specific exception handler for this
+        default: shared::out::error("TODO"); // unknown instruction, idk if there's like a specific exception handler for this
     }
 }

@@ -317,10 +317,13 @@ INSTRUCTION_SET::INSTRUCTION_SET(INSTRUCTIONS& instructions) : instructions(inst
         { charm::assembly::id::thumb::B2,    { [this](const thumb_code_t& code) { this->instructions.thumb.branching.B2(code); } } },
         { charm::assembly::id::thumb::BL,    { [this](const thumb_code_t& code) { this->instructions.thumb.branching.BL(code); } } },
         { charm::assembly::id::thumb::BX,    { [this](const thumb_code_t& code) { this->instructions.thumb.branching.BX(code); } } },
+        { charm::assembly::id::thumb::BLX1,  { [this](const thumb_code_t& code) { this->instructions.thumb.branching.BLX1(code); } } },
+        { charm::assembly::id::thumb::BLX2,  { [this](const thumb_code_t& code) { this->instructions.thumb.branching.BLX2(code); } } },
 
         // misc
         { charm::assembly::id::thumb::NOP,   { [this](const thumb_code_t& code) { this->instructions.thumb.misc.NOP(code); } } },
         { charm::assembly::id::thumb::SWI,   { [this](const thumb_code_t& code) { this->instructions.thumb.misc.SWI(code); } } },
+        { charm::assembly::id::thumb::BKPT,  { [this](const thumb_code_t& code) { this->instructions.thumb.misc.BKPT(code); } } },
 
         // load
         { charm::assembly::id::thumb::LDMIA, { [this](const thumb_code_t& code) { this->instructions.thumb.load.LDMIA(code); } } },
@@ -344,11 +347,7 @@ INSTRUCTION_SET::INSTRUCTION_SET(INSTRUCTIONS& instructions) : instructions(inst
         { charm::assembly::id::thumb::STRB1, { [this](const thumb_code_t& code) { this->instructions.thumb.store.STRB1(code); } } },
         { charm::assembly::id::thumb::STRH1, { [this](const thumb_code_t& code) { this->instructions.thumb.store.STRH1(code); } } },
         { charm::assembly::id::thumb::STRH2, { [this](const thumb_code_t& code) { this->instructions.thumb.store.STRH2(code); } } },
-        { charm::assembly::id::thumb::PUSH,  { [this](const thumb_code_t& code) { this->instructions.thumb.store.PUSH(code); } } },
-
-        { charm::assembly::id::thumb::BKPT,  { [this](const thumb_code_t& code) { this->instructions.thumb.misc.BKPT(code); } } },
-        { charm::assembly::id::thumb::BLX1,  { [this](const thumb_code_t& code) { this->instructions.thumb.branching.BLX1(code); } } },
-        { charm::assembly::id::thumb::BLX2,  { [this](const thumb_code_t& code) { this->instructions.thumb.branching.BLX2(code); } } }
+        { charm::assembly::id::thumb::PUSH,  { [this](const thumb_code_t& code) { this->instructions.thumb.store.PUSH(code); } } }
     };
 
 
