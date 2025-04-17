@@ -209,6 +209,7 @@ namespace internal::id {
         STR2,
         STR3,
         STRB1,
+        STRB2,
         STRH1,
         STRH2
     };

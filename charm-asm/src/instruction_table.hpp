@@ -166,6 +166,7 @@ namespace internal::instructions {
     };
 
     static void thumb_load() {
+        thumb_table.push_back({ id::thumb::SWI, opcodes::thumb::SWI }); // priority
         thumb_table.push_back({ id::thumb::ADC, opcodes::thumb::ADC });
         thumb_table.push_back({ id::thumb::ADD1, opcodes::thumb::ADD1 });
         thumb_table.push_back({ id::thumb::ADD2, opcodes::thumb::ADD2 });
@@ -209,7 +210,6 @@ namespace internal::instructions {
         thumb_table.push_back({ id::thumb::BX, opcodes::thumb::BX });
         thumb_table.push_back({ id::thumb::NOP, opcodes::thumb::NOP });
         thumb_table.push_back({ id::thumb::BKPT, opcodes::thumb::BKPT });
-        thumb_table.push_back({ id::thumb::SWI, opcodes::thumb::SWI });
         thumb_table.push_back({ id::thumb::LDMIA, opcodes::thumb::LDMIA });
         thumb_table.push_back({ id::thumb::LDR1, opcodes::thumb::LDR1 });
         thumb_table.push_back({ id::thumb::LDR2, opcodes::thumb::LDR2 });

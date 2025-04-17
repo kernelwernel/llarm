@@ -1,4 +1,4 @@
-# CHARM
+# charm-emu
 
 An ARM emulation framework for C++
 

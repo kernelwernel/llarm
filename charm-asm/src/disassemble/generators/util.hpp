@@ -57,16 +57,16 @@ namespace internal::util {
                 total_size += std::string_view(arg).size();
             }
         }(args), ...);
-        
+
         result.reserve(total_size);
-        
+
         // append all arguments
         (append_arg(result, std::forward<Args>(args)), ...);
         
         return result;
     }
 
-    // TODO benchmark this
+    std::string reg_list(const u16 list);
 
-
+    std::string fetch_cond(const u8 cond);
 }

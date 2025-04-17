@@ -12,7 +12,9 @@
 
 #include "disassemble/disassemble.hpp"
 
-//#include <charm/charm-asm.hpp>
+//#include "../charm-asm.hpp"
+
+#include <charm/charm-asm.hpp>
 
 
 enum arg_enum : u8 {
@@ -71,7 +73,9 @@ Examples:
 
 int main(int argc, char* argv[]) {
 
-    std::cout << internal::disassemble::thumb(0b0100000101001000); // ADC R0, R1
+    const u16 inst = 0b1110'0000'0000'0001;
+    std::cout << internal::disassemble::thumb(inst, 0x500) << "\n";
+    std::cout << charm::as::thumb_id_to_string(charm::as::identify::thumb(inst)) << "\n";
     return 0;
 
 

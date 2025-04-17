@@ -21,23 +21,23 @@ namespace charm {
 
         namespace identify {
             static id::arm arm(const arm_code_t &raw_code) {
-                return internal::identifiers::arm_identifier(raw_code);
+                return internal::identifiers::arm(raw_code);
             }
 
             static id::arm arm(const u32 &raw_code) {
-                return internal::identifiers::arm_identifier(raw_code);
+                return internal::identifiers::arm(raw_code);
             }
 
             static id::thumb thumb(const thumb_code_t &raw_code) {
-                return internal::identifiers::thumb_identifier(raw_code);
+                return internal::identifiers::thumb(raw_code);
             }
 
             static id::thumb thumb(const u16 &raw_code) {
-                return internal::identifiers::thumb_identifier(raw_code);
+                return internal::identifiers::thumb(raw_code);
             }
 
             static id::jazelle jazelle(const u8 raw_code) {
-                return internal::identifiers::jazelle_identifier(raw_code);
+                return internal::identifiers::jazelle(raw_code);
             }
         }
 
