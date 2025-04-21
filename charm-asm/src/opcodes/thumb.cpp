@@ -1,6 +1,6 @@
 #include "opcodes.hpp"
 
-#include <charm/internal/shared/types.hpp>
+#include "shared/types.hpp"
 
 using namespace internal;
 

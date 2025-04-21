@@ -6,15 +6,15 @@
 #include <array>
 #include <string>
 
-#include <charm/internal/shared/types.hpp>
-#include <charm/internal/shared/out.hpp>
-#include <charm/internal/shared/tools/metadata.hpp>
+#include "shared/types.hpp"
+#include "shared/out.hpp"
+#include "shared/tools/metadata.hpp"
 
 #include "disassemble/disassemble.hpp"
 
 //#include "../charm-asm.hpp"
 
-#include <charm/charm-asm.hpp>
+//#include <charm/charm-asm.hpp>
 
 
 enum arg_enum : u8 {
@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
 
     const u16 inst = 0b1110'0000'0000'0001;
     std::cout << internal::disassemble::thumb(inst, 0x500) << "\n";
-    std::cout << charm::as::thumb_id_to_string(charm::as::identify::thumb(inst)) << "\n";
+    //std::cout << internal::thumb_id_to_string(charm::as::identify::thumb(inst)) << "\n";
     return 0;
 
 

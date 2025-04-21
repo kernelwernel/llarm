@@ -5,8 +5,10 @@
 #include <iostream>
 #include <source_location>
 
+#include "types.hpp"
+
 namespace shared::out {
-    constexpr std::string_view
+    constexpr sv
         black_bg = "\x1B[48;2;0;0;0m",
         bold     = "\033[1m",
         ansiexit = "\x1B[0m",

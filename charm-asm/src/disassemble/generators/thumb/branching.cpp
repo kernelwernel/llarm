@@ -1,8 +1,9 @@
 #include "../generators.hpp"
 #include "../util.hpp"
 
-#include <charm/internal/shared/types.hpp>
-#include <charm/internal/shared/util.hpp>
+#include "shared/types.hpp"
+#include "shared/util.hpp"
+#include "shared/out.hpp"
 
 #include <string>
 #include <sstream>
@@ -78,12 +79,44 @@ std::string generators::thumb::branching::B2(const u16 code, const u32 PC) {
 
 
 
-/** 
- * NOTE: BL is functionally the same as BLX1, so it's referring back to that instruction for this case
- */
-std::string generators::thumb::branching::BL(const u16 code, const u32 PC) {
-    return BLX1(code, PC);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -91,7 +124,8 @@ std::string generators::thumb::branching::BL(const u16 code, const u32 PC) {
 
 // https://stackoverflow.com/questions/70749497/how-arm-thumb-instruction-sets-blx-instruction-support-4mb-range
 
-
+// BL (H == 10 and H == 11 forms) is in all T variants.
+// BLX (H == 01 form) is in T variants of version 5 and above
 
 
 
@@ -100,6 +134,7 @@ std::string generators::thumb::branching::BL(const u16 code, const u32 PC) {
  * BLX  <target_addr>
  * where:
  * <target_addr> Specifies the address to branch to. The branch target address is calculated by:
+ *               
  *               1. Shifting the offset_11 field of the first instruction left twelve bits.
  *               2. Sign-extending the result to 32 bits.
  *               3. Adding this to the contents of the PC (which contains the address of the first instruction plus 4).
@@ -110,20 +145,51 @@ std::string generators::thumb::branching::BL(const u16 code, const u32 PC) {
  * 
  * reference: A7-26
  */
-std::string generators::thumb::branching::BLX1(const u16 code, const u32 PC) {
+std::string generators::thumb::branching::BL_BLX1(const u16 code, const u32 PC) {
     const u16 offset_11 = shared::util::bit_fetcher(code, 0, 10);
 
     const u8 H = shared::util::bit_fetcher(code, 11, 12);
 
-    u32 tmp = offset_11 << 12;
+    const bool BL = (H == 0b10 || H == 0b11);
+    const bool BLX1 = (H == 0b01);
 
-    tmp = tmp + 4 + PC;
+    u32 extend = static_cast<u32>(offset_11); // 2
+    extend <<= 12; // 1
 
-// TODO
+    extend = extend + 4 + PC; // 3
 
+    // 4?
 
-    return "";
+    if (BL) {
+        return util::make_instruction("BL ");
+    } else if (BLX1) {
+        return util::make_instruction("BLX ");
+    } else {
+        shared::out::error("todo");
+    }
 }
+
+
+// "\xf7\xff\xff\xfe" = 
+// 111 10 111 1111 1111
+// 111 11 111 1111 1110
+
+// BL #1   F7FF   FFFE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /** 
@@ -135,10 +201,7 @@ std::string generators::thumb::branching::BLX1(const u16 code, const u32 PC) {
  * reference: A7-32
  */
 std::string generators::thumb::branching::BX(const u16 code) {
-    const util::reg_id Rm_id = util::identify_reg(code, 3, 6); // H2 included
-
-    const std::string Rm = util::reg_to_string(Rm_id, false);
-
+    const std::string Rm = util::reg_string(code, 3, 6); // H2 included
     return util::make_instruction("BX ", Rm);
 }
 
@@ -153,9 +216,6 @@ std::string generators::thumb::branching::BX(const u16 code) {
  * reference: A7-30
  */
 std::string generators::thumb::branching::BLX2(const u16 code) {
-    const util::reg_id Rm_id = util::identify_reg(code, 3, 6); // H2 included
-
-    const std::string Rm = util::reg_to_string(Rm_id, false);
-
+    const std::string Rm = util::reg_string(code, 3, 6); // H2 included
     return util::make_instruction("BLX ", Rm);
 }

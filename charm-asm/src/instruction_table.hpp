@@ -4,7 +4,7 @@
 #include "identifiers/identifiers.hpp"
 #include "instruction_id.hpp"
 
-#include <charm/internal/shared/types.hpp>
+#include "shared/types.hpp"
 
 #include <functional>
 
@@ -20,10 +20,8 @@ namespace internal::instructions {
     };
 
 
-
     static std::vector<arm_opcode> arm_table = {};
     static std::vector<thumb_opcode> thumb_table = {};
-
 
 
     static void arm_load() { // possibly add arguments here for which instructions should be loaded

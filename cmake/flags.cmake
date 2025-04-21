@@ -34,6 +34,7 @@ set(RELEASE_CXX_FLAGS
     -g0
     -march=native
     -mtune=native
+    # -fno-omit-frame-pointer for llvm-bolt
 )
 
 
@@ -41,6 +42,7 @@ set(RELEASE_CXX_FLAGS
 set(EMBEDDED_CXX_FLAGS
     -ffunction-sections
     -fdata-sections
+    -mcpu=native
 )
 
 

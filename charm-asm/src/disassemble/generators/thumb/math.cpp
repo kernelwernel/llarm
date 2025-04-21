@@ -1,8 +1,8 @@
 #include "../generators.hpp"
 #include "../util.hpp"
 
-#include <charm/internal/shared/types.hpp>
-#include <charm/internal/shared/util.hpp>
+#include "shared/types.hpp"
+#include "shared/util.hpp"
 
 #include <string>
 
@@ -17,11 +17,8 @@ using namespace internal;
  * reference: A7-4
  */
 std::string generators::thumb::math::ADC(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rm_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rm = util::reg_string(code, 3, 5);
 
     return util::make_instruction("ADC ", Rd, ", ", Rm);
 }
@@ -37,11 +34,8 @@ std::string generators::thumb::math::ADC(const u16 code) {
  * reference: A7-5
  */
 std::string generators::thumb::math::ADD1(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rn_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rn = util::reg_to_string(Rn_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rn = util::reg_string(code, 3, 5);
 
     const u8 immed_3 = shared::util::bit_fetcher(code, 6, 8);
 
@@ -58,9 +52,7 @@ std::string generators::thumb::math::ADD1(const u16 code) {
  * reference: A7-6
  */
 std::string generators::thumb::math::ADD2(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 8, 10);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
+    const std::string Rd = util::reg_string(code, 8, 10);
 
     const u8 immed_8 = shared::util::bit_fetcher(code, 0, 7);
 
@@ -78,13 +70,9 @@ std::string generators::thumb::math::ADD2(const u16 code) {
  * reference: A7-7
  */
 std::string generators::thumb::math::ADD3(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rn_id = util::identify_reg(code, 3, 5);
-    const util::reg_id Rm_id = util::identify_reg(code, 6, 8);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rn = util::reg_to_string(Rn_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rn = util::reg_string(code, 3, 5);
+    const std::string Rm = util::reg_string(code, 6, 8);
 
     return util::make_instruction("ADD ", Rd, ", ", Rn, ", ", Rm);
 }
@@ -132,9 +120,7 @@ std::string generators::thumb::math::ADD4(const u16 code) {
  * reference: A7-10
  */
 std::string generators::thumb::math::ADD5(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 8, 10);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
+    const std::string Rd = util::reg_string(code, 8, 10);
 
     const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
@@ -152,9 +138,7 @@ std::string generators::thumb::math::ADD5(const u16 code) {
  * reference: A7-11
  */
 std::string generators::thumb::math::ADD6(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 8, 10);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
+    const std::string Rd = util::reg_string(code, 8, 10);
 
     const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
@@ -186,11 +170,8 @@ std::string generators::thumb::math::ADD7(const u16 code) {
  * reference: A7-82
  */
 std::string generators::thumb::math::SBC(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rm_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rm = util::reg_string(code, 3, 5);
 
     return util::make_instruction("SBC ", Rd, ", ", Rm);
 }
@@ -206,11 +187,8 @@ std::string generators::thumb::math::SBC(const u16 code) {
  * reference: A7-98
  */
 std::string generators::thumb::math::SUB1(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rn_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rn = util::reg_to_string(Rn_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rn = util::reg_string(code, 3, 5);
 
     const u8 immed_3 = shared::util::bit_fetcher<u8>(code, 6, 8);
 
@@ -227,9 +205,7 @@ std::string generators::thumb::math::SUB1(const u16 code) {
  * reference: A7-99
  */
 std::string generators::thumb::math::SUB2(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 8, 10);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
+    const std::string Rd = util::reg_string(code, 8, 10);
 
     const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
@@ -247,13 +223,9 @@ std::string generators::thumb::math::SUB2(const u16 code) {
  * reference: A7-100
  */
 std::string generators::thumb::math::SUB3(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rn_id = util::identify_reg(code, 3, 5);
-    const util::reg_id Rm_id = util::identify_reg(code, 6, 8);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rn = util::reg_to_string(Rn_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rn = util::reg_string(code, 3, 5);
+    const std::string Rm = util::reg_string(code, 6, 8);
 
     return util::make_instruction("SUB ", Rd, ", ", Rn, ", ", Rm);
 }
@@ -283,11 +255,8 @@ std::string generators::thumb::math::SUB4(const u16 code) {
  * reference: A7-70 
  */
 std::string generators::thumb::math::MUL(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rm_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rm = util::reg_string(code, 3, 5);
 
     return util::make_instruction("MUL ", Rd, ", ", Rm);
 }

@@ -105,3 +105,7 @@ notes:
 - [ ] C5
 
 - [ ] make the unpredictable notifier once everything is done
+
+
+- try the bolt post-link optimiser, looks super interesting and promising
+- try [[gnu::pure]] and [[gnu::const]] optimisation opportunities

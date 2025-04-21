@@ -1,7 +1,7 @@
 #include "../instruction_id.hpp"
 #include "identifiers.hpp"
 
-#include <charm/internal/shared/types.hpp>
+#include "shared/types.hpp"
 
 using namespace internal;
 

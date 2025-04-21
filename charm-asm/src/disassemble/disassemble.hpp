@@ -1,6 +1,6 @@
 #pragma once
 
-#include <charm/internal/shared/types.hpp>
+#include "shared/types.hpp"
 
 #include <string>
 

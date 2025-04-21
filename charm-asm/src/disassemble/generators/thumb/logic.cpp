@@ -1,8 +1,8 @@
 #include "../generators.hpp"
 #include "../util.hpp"
 
-#include <charm/internal/shared/types.hpp>
-#include <charm/internal/shared/util.hpp>
+#include "shared/types.hpp"
+#include "shared/util.hpp"
 
 #include <string>
 
@@ -18,14 +18,8 @@ using namespace internal;
  * reference: A7-13
  */
 std::string generators::thumb::logic::AND(const u16 code) {
-    const u8 immed_8 = shared::util::bit_fetcher(code, 0, 7);
-
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rm_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
-
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rm = util::reg_string(code, 3, 5);
 
     return util::make_instruction("AND ", Rd, ", ", Rm);
 }
@@ -44,11 +38,8 @@ std::string generators::thumb::logic::AND(const u16 code) {
 std::string generators::thumb::logic::ASR1(const u16 code) {
     const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
 
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rm_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rm = util::reg_string(code, 3, 5);
 
     return util::make_instruction("ASR ", Rd, ", ", Rm, ", #", immed_5);
 }
@@ -63,11 +54,8 @@ std::string generators::thumb::logic::ASR1(const u16 code) {
  * reference: A7-16
  */
 std::string generators::thumb::logic::ASR2(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rs_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rs = util::reg_to_string(Rs_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rs = util::reg_string(code, 3, 5);
 
     return util::make_instruction("ASR ", Rd, ", ", Rs);
 }
@@ -82,11 +70,8 @@ std::string generators::thumb::logic::ASR2(const u16 code) {
  * reference: A7-22
  */
 std::string generators::thumb::logic::BIC(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rm_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rm = util::reg_string(code, 3, 5);
 
     return util::make_instruction("BIC ", Rd, ", ", Rm);
 }
@@ -101,11 +86,8 @@ std::string generators::thumb::logic::BIC(const u16 code) {
  * reference: A7-39
  */
 std::string generators::thumb::logic::EOR(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rm_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rm = util::reg_string(code, 3, 5);
 
     return util::make_instruction("EOR ", Rd, ", ", Rm);
 }
@@ -121,11 +103,8 @@ std::string generators::thumb::logic::EOR(const u16 code) {
  * reference: A7-59
  */
 std::string generators::thumb::logic::LSL1(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rm_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rm = util::reg_string(code, 3, 5);
 
     const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
 
@@ -143,11 +122,8 @@ std::string generators::thumb::logic::LSL1(const u16 code) {
  * reference: A7-60
  */
 std::string generators::thumb::logic::LSL2(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rs_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rs = util::reg_to_string(Rs_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rs = util::reg_string(code, 3, 5);
 
     return util::make_instruction("LSL ", Rd, ", ", Rs);
 }
@@ -164,11 +140,8 @@ std::string generators::thumb::logic::LSL2(const u16 code) {
  * reference: A7-62
  */
 std::string generators::thumb::logic::LSR1(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rm_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rm = util::reg_string(code, 3, 5);
 
     const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
 
@@ -185,11 +158,8 @@ std::string generators::thumb::logic::LSR1(const u16 code) {
  * reference: A7-64
  */
 std::string generators::thumb::logic::LSR2(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rs_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rs = util::reg_to_string(Rs_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rs = util::reg_string(code, 3, 5);
 
     return util::make_instruction("LSR ", Rd, ", ", Rs);
 }
@@ -204,11 +174,8 @@ std::string generators::thumb::logic::LSR2(const u16 code) {
  * reference: A7-73
  */
 std::string generators::thumb::logic::NEG(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rm_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rm = util::reg_string(code, 3, 5);
 
     return util::make_instruction("NEG ", Rd, ", ", Rm);
 }
@@ -224,11 +191,8 @@ std::string generators::thumb::logic::NEG(const u16 code) {
  * reference: A7-74
  */
 std::string generators::thumb::logic::ORR(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rm_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rm = util::reg_string(code, 3, 5);
 
     return util::make_instruction("ORR ", Rd, ", ", Rm);
 }
@@ -244,11 +208,8 @@ std::string generators::thumb::logic::ORR(const u16 code) {
  * reference: A7-80
  */
 std::string generators::thumb::logic::ROR(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rs_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rs = util::reg_to_string(Rs_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rs = util::reg_string(code, 3, 5);
 
     return util::make_instruction("ROR ", Rd, ", ", Rs);
 }
@@ -263,11 +224,8 @@ std::string generators::thumb::logic::ROR(const u16 code) {
  * reference: A7-103
  */
 std::string generators::thumb::logic::TST(const u16 code) {
-    const util::reg_id Rn_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rm_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rn = util::reg_to_string(Rn_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
+    const std::string Rn = util::reg_string(code, 0, 2);
+    const std::string Rm = util::reg_string(code, 3, 5);
 
     return util::make_instruction("ROR ", Rn, ", ", Rm);
 }

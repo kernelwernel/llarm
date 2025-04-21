@@ -1,6 +1,6 @@
 #pragma once
 
-#include <charm/internal/shared/types.hpp>
+#include "shared/types.hpp"
 
 namespace internal::opcodes {
     namespace arm {

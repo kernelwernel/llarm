@@ -2,7 +2,7 @@
 #include "../instruction_id.hpp"
 #include "../instruction_table.hpp"
 
-#include <charm/internal/shared/types.hpp>
+#include "shared/types.hpp"
 
 using namespace internal;
 

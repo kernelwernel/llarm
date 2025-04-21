@@ -23,7 +23,7 @@ set(TARGET_LIB "charm-asm-lib")
 
 
 # Find and build charm-shared FIRST
-#find_package(charm-shared REQUIRED)
+find_package(charm-shared REQUIRED)
 
 
 # general
@@ -59,12 +59,15 @@ install(TARGETS ${TARGET_LIB}
 # executable setup
 add_executable(${TARGET_BIN} "src/main.cpp")
 set_target_properties(${TARGET_BIN} PROPERTIES OUTPUT_NAME "charm-asm")
-target_link_libraries(${TARGET_BIN} PRIVATE ${TARGET_LIB})
+#add_dependencies(${TARGET_BIN} charm-shared ${TARGET_LIB})
+target_link_libraries(${TARGET_BIN} PRIVATE ${TARGET_LIB} charm-shared)
 install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION bin)
 
 
-# to include shared/
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../)
+# charm-shared build
+#find_package(charm-shared REQUIRED)
+#add_dependencies(${TARGET_LIB} charm-shared)
+#add_dependencies(${TARGET_BIN} charm-shared)
 
 
 # select the compiler, preferably clang++ (defined in charm/cmake/compiler.cmake)
@@ -87,5 +90,5 @@ configure_linker_flags(${TARGET_LIB})
 
 
 # link the internally shared utilities
-#target_link_libraries(${TARGET_BIN} PRIVATE charm-shared)
-#target_link_libraries(${TARGET_LIB} PRIVATE charm-shared)
+target_link_libraries(${TARGET_BIN} PRIVATE charm-shared)
+target_link_libraries(${TARGET_LIB} PRIVATE charm-shared)

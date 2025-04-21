@@ -1,8 +1,8 @@
 #include "../generators.hpp"
 #include "../util.hpp"
 
-#include <charm/internal/shared/types.hpp>
-#include <charm/internal/shared/util.hpp>
+#include "shared/types.hpp"
+#include "shared/util.hpp"
 
 #include <string>
 
@@ -10,22 +10,42 @@ using namespace internal;
 
 
 /** 
-
+ * STMIA <Rn>!, <registers>
+ * where:
+ * <Rn>Is the register containing the start address for the instruction.
  * 
- * TODO
+ * !Causes base register writeback, and is not optional.
+ * 
+ * <registers> Is a list of registers to be stored, separated by commas and surrounded by { and }.
+ *             The list is encoded in the register_list field of the instruction, by setting bit[i] to 1 if
+ *             register Ri is included in the list and to 0 otherwise, for each of i=0 to 7.
+ *             
+ *             At least one register must be stored. If bits[7:0] are all zero, the result is
+ *             UNPREDICTABLE.
+ *             
+ *             The registers are stored in sequence, the lowest-numbered register to the lowest
+ *             memory address (start_address), through to the highest-numbered register to
+ *             the highest memory address (end_address).
+ *             
+ *             The start_address is the value of the base register <Rn>. Subsequent
+ *             addresses are formed by incrementing the previous address by four. One address is
+ *             produced for each register that is specified in <registers>.
+ *             
+ *             The end_address value is four less than the sum of the value of the base register
+ *             and four times the number of registers specified in <registers>.
+ *            
+ *             Finally, the base register <Rn> is incremented by 4 times the numbers of registers
+ *             in <registers>.
+ * 
+ * reference: A7-84
  */
 std::string generators::thumb::store::STMIA(const u16 code) {
-    //const (code, 0, 7);
-//
-    //const util::reg_id Rn_id = util::identify_reg(code, 8, 10);
-//
-    //const std::string Rn = util::reg_to_string(Rn_id, false);
-//
-    //return util::make_instruction("LDMIA ", Rn, "!, ", util::reg_list(list));
-    return "todo";
+    const std::string Rn = util::reg_string(code, 8, 10);
+
+    const u8 list = shared::util::bit_fetcher(code, 0, 7);
+
+    return util::make_instruction("STMIA ", Rn, "!, ", util::reg_list(list));
 }
-
-
 
 
 /** 
@@ -38,11 +58,8 @@ std::string generators::thumb::store::STMIA(const u16 code) {
  * reference: A7-86
  */
 std::string generators::thumb::store::STR1(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rn_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rn = util::reg_to_string(Rn_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rn = util::reg_string(code, 3, 5);
 
     const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
 
@@ -60,13 +77,9 @@ std::string generators::thumb::store::STR1(const u16 code) {
  * reference: A7-88
  */
 std::string generators::thumb::store::STR2(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rn_id = util::identify_reg(code, 3, 5);
-    const util::reg_id Rm_id = util::identify_reg(code, 6, 8);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rn = util::reg_to_string(Rn_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rn = util::reg_string(code, 3, 5);
+    const std::string Rm = util::reg_string(code, 6, 8);
 
     return util::make_instruction("STR ", Rd, ", [", Rn, ", ", Rm, "]");
 }
@@ -82,9 +95,7 @@ std::string generators::thumb::store::STR2(const u16 code) {
  * reference: A7-90
  */
 std::string generators::thumb::store::STR3(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 8, 10);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
+    const std::string Rd = util::reg_string(code, 8, 10);
 
     const u8 immed_8 = shared::util::bit_fetcher(code, 0, 7);
 
@@ -102,11 +113,8 @@ std::string generators::thumb::store::STR3(const u16 code) {
  * reference: A7-92
  */
 std::string generators::thumb::store::STRB1(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rn_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rn = util::reg_to_string(Rn_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rn = util::reg_string(code, 3, 5);
 
     const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
 
@@ -124,13 +132,9 @@ std::string generators::thumb::store::STRB1(const u16 code) {
  * reference: A7-93
  */
 std::string generators::thumb::store::STRB2(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rn_id = util::identify_reg(code, 3, 5);
-    const util::reg_id Rm_id = util::identify_reg(code, 6, 8);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rn = util::reg_to_string(Rn_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rn = util::reg_string(code, 3, 5);
+    const std::string Rm = util::reg_string(code, 6, 8);
 
     return util::make_instruction("STRB ", Rd, ", [", Rn, ", ", Rm, "]");
 }
@@ -146,11 +150,8 @@ std::string generators::thumb::store::STRB2(const u16 code) {
  * reference: A7-94
  */
 std::string generators::thumb::store::STRH1(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rn_id = util::identify_reg(code, 3, 5);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rn = util::reg_to_string(Rn_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rn = util::reg_string(code, 3, 5);
 
     const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
 
@@ -168,25 +169,48 @@ std::string generators::thumb::store::STRH1(const u16 code) {
  * reference: A7-95
  */
 std::string generators::thumb::store::STRH2(const u16 code) {
-    const util::reg_id Rd_id = util::identify_reg(code, 0, 2);
-    const util::reg_id Rn_id = util::identify_reg(code, 3, 5);
-    const util::reg_id Rm_id = util::identify_reg(code, 6, 8);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rn = util::reg_to_string(Rn_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
+    const std::string Rd = util::reg_string(code, 0, 2);
+    const std::string Rn = util::reg_string(code, 3, 5);
+    const std::string Rm = util::reg_string(code, 6, 8);
 
     return util::make_instruction("STRH ", Rd, ", [", Rn, ", ", Rm, "]");
 }
 
 
 /** 
- * TODO
+ * PUSH <registers>
+ * where:
+ * <registers> Is the list of registers to be stored, separated by commas and surrounded by { and }.
+ *             The list is encoded in the register_list field of the instruction, by setting bit[i] to 1 if
+ *             register Ri is included in the list and to 0 otherwise, for each of i=0 to 7. The R bit
+ *             (bit[8]) is set to 1 if the LR is in the list and to 0 otherwise.
+ * 
+ *             At least one register must be stored. If bits[8:0] are all zero, the result is UNPREDICTABLE.
+ *             
+ *             The registers are stored in sequence, the lowest-numbered register to the lowest
+ *             memory address (start_address), through to the highest-numbered register to
+ *             the highest memory address (end_address)
+ *             
+ *             The start_address is the value of the SP minus 4 times the number of registers
+ *             to be stored.
+ *             
+ *             Subsequent addresses are formed by incrementing the previous address by four.
+ *             One address is produced for each register that is specified in <registers>.
+ *             
+ *             The end_address value is four less than the original value of SP.
+ *             
+ *             The SP register is decremented by four times the numbers of registers in <registers>.
  * 
  * reference: A7-78
  */
 std::string generators::thumb::store::PUSH(const u16 code) {
-    return "todo";
+    const u8 list = shared::util::bit_fetcher(code, 0, 7);
+
+    const bool R = (code & (1 << 8));
+
+    if (R) {
+        return util::make_instruction("PUSH ", util::reg_list(list, "LR"));
+    } else {
+        return util::make_instruction("PUSH ", util::reg_list(list));
+    }
 }
-
-

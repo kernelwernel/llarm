@@ -1,8 +1,8 @@
 #include "../generators.hpp"
 #include "../util.hpp"
 
-#include <charm/internal/shared/types.hpp>
-#include <charm/internal/shared/util.hpp>
+#include "shared/types.hpp"
+#include "shared/util.hpp"
 
 #include <string>
 

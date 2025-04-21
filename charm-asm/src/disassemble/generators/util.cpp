@@ -1,43 +1,104 @@
 #include "util.hpp"
 
-#include <charm/internal/shared/types.hpp>
-#include <charm/internal/shared/out.hpp>
-#include <charm/internal/shared/util.hpp>
+#include "shared/types.hpp"
+#include "shared/out.hpp"
+#include "shared/util.hpp"
 
 #include <vector>
 
 using namespace internal;
 
-util::reg_id util::identify_reg(const u8 reg_bits) {
-    switch (reg_bits) {
-        case 0: return reg_id::R0;
-        case 1: return reg_id::R1;
-        case 2: return reg_id::R2;
-        case 3: return reg_id::R3;
-        case 4: return reg_id::R4;
-        case 5: return reg_id::R5;
-        case 6: return reg_id::R6;
-        case 7: return reg_id::R7;
-        case 8: return reg_id::R8;
-        case 9: return reg_id::R9;
-        case 10: return reg_id::R10;
-        case 11: return reg_id::R11;
-        case 12: return reg_id::R12;
-        case 13: return reg_id::R13;
-        case 14: return reg_id::R14;
-        case 15: return reg_id::R15;
-        default: shared::out::error("charm-asm: No known binary code given for register identification");
+util::reg_id util::identify_reg(const u8 reg_bits, const prefix prefix) {
+    switch (prefix) {
+        case prefix::R:
+            switch (reg_bits) {
+                case 0: return reg_id::R0;
+                case 1: return reg_id::R1;
+                case 2: return reg_id::R2;
+                case 3: return reg_id::R3;
+                case 4: return reg_id::R4;
+                case 5: return reg_id::R5;
+                case 6: return reg_id::R6;
+                case 7: return reg_id::R7;
+                case 8: return reg_id::R8;
+                case 9: return reg_id::R9;
+                case 10: return reg_id::R10;
+                case 11: return reg_id::R11;
+                case 12: return reg_id::R12;
+                case 13: return reg_id::R13;
+                case 14: return reg_id::R14;
+                case 15: return reg_id::R15;
+                default: shared::out::error("charm-asm: No known binary code given for R register identification");
+            }
+    
+        case prefix::S:
+            switch (reg_bits) {
+                case 0: return reg_id::S0;
+                case 1: return reg_id::S1;
+                case 2: return reg_id::S2;
+                case 3: return reg_id::S3;
+                case 4: return reg_id::S4;
+                case 5: return reg_id::S5;
+                case 6: return reg_id::S6;
+                case 7: return reg_id::S7;
+                case 8: return reg_id::S8;
+                case 9: return reg_id::S9;
+                case 10: return reg_id::S10;
+                case 11: return reg_id::S11;
+                case 12: return reg_id::S12;
+                case 13: return reg_id::S13;
+                case 14: return reg_id::S14;
+                case 15: return reg_id::S15;
+                case 16: return reg_id::S16;
+                case 17: return reg_id::S17;
+                case 18: return reg_id::S18;
+                case 19: return reg_id::S19;
+                case 20: return reg_id::S20;
+                case 21: return reg_id::S21;
+                case 22: return reg_id::S22;
+                case 23: return reg_id::S23;
+                case 24: return reg_id::S24;
+                case 25: return reg_id::S25;
+                case 26: return reg_id::S26;
+                case 27: return reg_id::S27;
+                case 28: return reg_id::S28;
+                case 29: return reg_id::S29;
+                case 30: return reg_id::S30;
+                case 31: return reg_id::S31;
+                default: shared::out::error("charm-asm: No known binary code given for S register identification");
+            }
+        
+        case prefix::D:
+            switch (reg_bits) {
+                case 0: return reg_id::D0;
+                case 1: return reg_id::D1;
+                case 2: return reg_id::D2;
+                case 3: return reg_id::D3;
+                case 4: return reg_id::D4;
+                case 5: return reg_id::D5;
+                case 6: return reg_id::D6;
+                case 7: return reg_id::D7;
+                case 8: return reg_id::D8;
+                case 9: return reg_id::D9;
+                case 10: return reg_id::D10;
+                case 11: return reg_id::D11;
+                case 12: return reg_id::D12;
+                case 13: return reg_id::D13;
+                case 14: return reg_id::D14;
+                case 15: return reg_id::D15;
+                default: shared::out::error("charm-asm: No known binary code given for D register identification");
+            }
     }
 }
 
 
-util::reg_id util::identify_reg(const u16 code, const u8 start, const u8 end) {
+util::reg_id util::identify_reg(const u16 code, const u8 start, const u8 end, const prefix prefix) {
     const u8 reg_bits = shared::util::bit_fetcher(code, start, end);
-    return identify_reg(reg_bits);
+    return identify_reg(reg_bits, prefix);
 }
 
 
-std::string util::reg_to_string(const util::reg_id id, const bool alias) {
+std::string util::reg_id_to_string(const util::reg_id id, const bool alias) {
     switch (id) {
         case reg_id::R0: return "R0";
         case reg_id::R1: return "R1";
@@ -55,11 +116,67 @@ std::string util::reg_to_string(const util::reg_id id, const bool alias) {
         case reg_id::R13: return (alias ? "SP" : "R13");
         case reg_id::R14: return (alias ? "LR" : "R14");
         case reg_id::R15: return (alias ? "PC" : "R15");
+        case reg_id::S0: return "S0";
+        case reg_id::S1: return "S1";
+        case reg_id::S2: return "S2";
+        case reg_id::S3: return "S3";
+        case reg_id::S4: return "S4";
+        case reg_id::S5: return "S5";
+        case reg_id::S6: return "S6";
+        case reg_id::S7: return "S7";
+        case reg_id::S8: return "S8";
+        case reg_id::S9: return "S9";
+        case reg_id::S10: return "S10";
+        case reg_id::S11: return "S11";
+        case reg_id::S12: return "S12";
+        case reg_id::S13: return "S13";
+        case reg_id::S14: return "S14";
+        case reg_id::S15: return "S15";
+        case reg_id::S16: return "S16";
+        case reg_id::S17: return "S17";
+        case reg_id::S18: return "S18";
+        case reg_id::S19: return "S19";
+        case reg_id::S20: return "S20";
+        case reg_id::S21: return "S21";
+        case reg_id::S22: return "S22";
+        case reg_id::S23: return "S23";
+        case reg_id::S24: return "S24";
+        case reg_id::S25: return "S25";
+        case reg_id::S26: return "S26";
+        case reg_id::S27: return "S27";
+        case reg_id::S28: return "S28";
+        case reg_id::S29: return "S29";
+        case reg_id::S30: return "S30";
+        case reg_id::S31: return "S31";
+        case reg_id::D0: return "D0";
+        case reg_id::D1: return "D1";
+        case reg_id::D2: return "D2";
+        case reg_id::D3: return "D3";
+        case reg_id::D4: return "D4";
+        case reg_id::D5: return "D5";
+        case reg_id::D6: return "D6";
+        case reg_id::D7: return "D7";
+        case reg_id::D8: return "D8";
+        case reg_id::D9: return "D9";
+        case reg_id::D10: return "D10";
+        case reg_id::D11: return "D11";
+        case reg_id::D12: return "D12";
+        case reg_id::D13: return "D13";
+        case reg_id::D14: return "D14";
+        case reg_id::D15: return "D15";
         default: shared::out::error("charm-asm: No known binary code given for register identification");
     }
 }
 
-std::string util::reg_list(const u8 list) {
+
+std::string util::reg_string(const u32 code, const u8 start, const u8 end, const prefix prefix, const bool alias) {
+    const util::reg_id reg_id = util::identify_reg(code, start, end, prefix);
+    const std::string reg = util::reg_id_to_string(reg_id, alias);
+    return reg;
+}
+
+
+std::string util::reg_list(const u8 list, const sv extra) {
     const u8 count = std::popcount(list);
 
     std::string tmp = "";
@@ -71,10 +188,14 @@ std::string util::reg_list(const u8 list) {
 
     std::vector<std::string> registers = {};
 
-    for (const u8 i = 0; i < (sizeof(list) * 8); i++) {
+    for (u8 i = 0; i < (sizeof(list) * 8); i++) {
         if (list & (1 << i)) {
             registers.push_back("R" + std::to_string(i));
         }
+    }
+
+    if (registers.empty()) {
+        // unpredictable TODO
     }
 
     tmp += "{ ";
@@ -85,6 +206,11 @@ std::string util::reg_list(const u8 list) {
         }
 
         tmp += registers.at(i);
+    }
+
+    if (extra != "") {
+        tmp += ", ";
+        tmp += extra;
     }
 
     tmp += " }";
@@ -110,7 +236,35 @@ std::string util::fetch_cond(const u8 cond) {
         case 0b1100: return "GT";
         case 0b1101: return "LE";
         case 0b1110: return "AL";
-        case 0b1111: return "(NV)";
+        case 0b1111: return "";
         default: shared::out::error("TODO");
     }
+}
+
+
+// https://quick-bench.com/q/oqvSMt5BCEiN0odMXX68IdPTrBI
+
+std::string util::vfp_reg_string_bits(const u32 code, const u8 start, const u8 end, const bool bottom_bit) {
+    u8 reg_bits = shared::util::bit_fetcher<u8>(code, start, end);
+
+    reg_bits = ((reg_bits << 1) | bottom_bit);
+
+    const reg_id id = identify_reg(reg_bits, prefix::S);
+
+    return reg_id_to_string(id, false);
+}
+
+
+std::string util::reg_string_bits(const u32 code, const u8 start, const u8 end, const bool top_bit) {
+    u8 reg_bits = shared::util::bit_fetcher<u8>(code, start, end);
+
+    if ((end - start) != 2) { // 3-bit wide register check (mostly for thumb)
+        shared::out::error("TODO");   
+    }
+
+    reg_bits = (reg_bits | (top_bit << 3));
+
+    const reg_id id = identify_reg(reg_bits, prefix::R);
+
+    return reg_id_to_string(id, false);
 }

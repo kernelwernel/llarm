@@ -98,6 +98,7 @@ void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
 
                 execute.thumb_execute(instruction);
                 continue;
+                // TODO benchmark by having the object allocations before the for (;;) loop
             }
 
             case id::instruction_sets::JAZELLE: {

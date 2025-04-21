@@ -3,7 +3,7 @@
 #include "../instruction_id.hpp"
 #include "generators/generators.hpp"
 
-#include <charm/internal/shared/types.hpp>
+#include "shared/types.hpp"
 
 #include <string>
 
@@ -67,9 +67,9 @@ std::string disassemble::thumb(const u16 code, const u32 PC) {
         case id::thumb::LDRH2: return generators::thumb::load::LDRH2(code);
         case id::thumb::LDRSB: return generators::thumb::load::LDRSB(code);
         case id::thumb::LDRSH: return generators::thumb::load::LDRSH(code);
-        case id::thumb::POP:
-        case id::thumb::PUSH:
-        case id::thumb::STMIA:
+        case id::thumb::POP: return generators::thumb::load::POP(code);
+        case id::thumb::PUSH: return generators::thumb::store::PUSH(code);
+        case id::thumb::STMIA: return generators::thumb::store::STMIA(code);
         case id::thumb::STR1: return generators::thumb::store::STR1(code);
         case id::thumb::STR2: return generators::thumb::store::STR2(code);
         case id::thumb::STR3: return generators::thumb::store::STR3(code);

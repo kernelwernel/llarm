@@ -1,6 +1,6 @@
 #pragma once
 
-#include <charm/internal/shared/types.hpp>
+#include "shared/types.hpp"
 
 struct SETTINGS {
 
@@ -15,22 +15,22 @@ struct SETTINGS {
     SETTINGS default_settings() {
         SETTINGS tmp;
 
-        tmp.is_thumb_enabled = true;
-        tmp.is_arm_enabled = true;
-        tmp.is_jazelle_enabled = true;
-        tmp.is_enhanced_DSP_enabled = true;
-        tmp.no_26_bits = true;
-        tmp.no_clock_constraint = true;
-        tmp.is_little_endian = true;
-        tmp.is_big_endian = true;
-        tmp.only_big_endian = false;
-        tmp.thumb_version = 1;
-        tmp.core_count = 1;
-        tmp.memsize = util::get_kb(32);
-        tmp.arch = id::arch::ARMv4;
-        tmp.specific_arch = id::specific_arch::ARMv4T;
-        tmp.product_family = id::product_family::ARM7T;
-        tmp.processor = id::processor::ARM7TDMI_S;
+        //tmp.is_thumb_enabled = true;
+        //tmp.is_arm_enabled = true;
+        //tmp.is_jazelle_enabled = true;
+        //tmp.is_enhanced_DSP_enabled = true;
+        //tmp.no_26_bits = true;
+        //tmp.no_clock_constraint = true;
+        //tmp.is_little_endian = true;
+        //tmp.is_big_endian = true;
+        //tmp.only_big_endian = false;
+        //tmp.thumb_version = 1;
+        //tmp.core_count = 1;
+        //tmp.memsize = util::get_kb(32);
+        //tmp.arch = id::arch::ARMv4;
+        //tmp.specific_arch = id::specific_arch::ARMv4T;
+        //tmp.product_family = id::product_family::ARM7T;
+        //tmp.processor = id::processor::ARM7TDMI_S;
 
         tmp.sanitize();
 
