@@ -25,12 +25,12 @@ void INSTRUCTIONS::arm::coprocessor_inst::MCR(const arm_code_t &code) {
         // TODO: UNDEFINED INSTRUCTION EXCEPTION
     }
 
-    [[maybe_unused]] /* TODO, REMOVE */ const u8 CRm = util::bit_fetcher<u8>(code, 0, 3);
-    [[maybe_unused]] /* TODO, REMOVE */ const u8 opcode_2 = util::bit_fetcher<u8>(code, 5, 7);
-    [[maybe_unused]] /* TODO, REMOVE */ const u8 cp_num = util::bit_fetcher<u8>(code, 8, 11);
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 CRm = shared::util::bit_fetcher<u8>(code, 0, 3);
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 opcode_2 = shared::util::bit_fetcher<u8>(code, 5, 7);
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 cp_num = shared::util::bit_fetcher<u8>(code, 8, 11);
     [[maybe_unused]] /* TODO, REMOVE */ const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
-    [[maybe_unused]] /* TODO, REMOVE */ const u8 CRn = util::bit_fetcher<u8>(code, 16, 19);
-    [[maybe_unused]] /* TODO, REMOVE */ const u8 opcode_1 = util::bit_fetcher<u8>(code, 21, 23);
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 CRn = shared::util::bit_fetcher<u8>(code, 16, 19);
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 opcode_1 = shared::util::bit_fetcher<u8>(code, 21, 23);
 
 
     // write-only special case for R8_MMU register in CP15 (B3-26)
@@ -56,7 +56,7 @@ void INSTRUCTIONS::arm::coprocessor_inst::MCR(const arm_code_t &code) {
             // Invalidate data single entry
             case 0b0010110: 
 
-            default: out::error("TODO, idk maybe there's just an undefined exception here, research more");
+            default: shared::out::error("TODO, idk maybe there's just an undefined exception here, research more");
         }
 
     }
@@ -101,12 +101,12 @@ void INSTRUCTIONS::arm::coprocessor_inst::MRC(const arm_code_t &code) {
         // TODO: UNDEFINED INSTRUCTION EXCEPTION
     }
 
-    [[maybe_unused]] /* TODO, REMOVE */ const u8 CRm = util::bit_fetcher<u8>(code, 0, 3); // cp register type
-    [[maybe_unused]] /* TODO, REMOVE */ const u8 opcode_2 = util::bit_fetcher<u8>(code, 5, 7); // extra
-    [[maybe_unused]] /* TODO, REMOVE */ const u8 cp_num = util::bit_fetcher<u8>(code, 8, 11); // cp id
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 CRm = shared::util::bit_fetcher<u8>(code, 0, 3); // cp register type
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 opcode_2 = shared::util::bit_fetcher<u8>(code, 5, 7); // extra
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 cp_num = shared::util::bit_fetcher<u8>(code, 8, 11); // cp id
     [[maybe_unused]] /* TODO, REMOVE */ const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15); // transfer arm register
-    [[maybe_unused]] /* TODO, REMOVE */ const u8 CRn = util::bit_fetcher<u8>(code, 16, 19); // cp register
-    [[maybe_unused]] /* TODO, REMOVE */ const u8 opcode_1 = util::bit_fetcher<u8>(code, 21, 23); // cp opcode (?)
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 CRn = shared::util::bit_fetcher<u8>(code, 16, 19); // cp register
+    [[maybe_unused]] /* TODO, REMOVE */ const u8 opcode_1 = shared::util::bit_fetcher<u8>(code, 21, 23); // cp opcode (?)
 
     [[maybe_unused]] /* TODO, REMOVE */ const id::coprocessor cp_id = coprocessor.fetch_cp_id(cp_num);
 

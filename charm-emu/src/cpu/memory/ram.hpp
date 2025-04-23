@@ -62,7 +62,7 @@ public:
                 ram.at(address + 7) = (value & 0xFF00000000000000);
                 return;
 
-            default: out::error("TODO");
+            default: shared::out::error("TODO");
         }
     } 
 
@@ -91,16 +91,16 @@ public:
 
             case 8: return (
                 (static_cast<u64>(ram.at(address)) << 56) | 
-                (ram.at(address + 1) << 48) |
-                (ram.at(address + 2) << 40) |
-                (ram.at(address + 3) << 32) |
-                (ram.at(address + 4) << 24) |
-                (ram.at(address + 5) << 16) |
-                (ram.at(address + 6) << 8) |
-                (ram.at(address + 7))
+                (static_cast<u64>(ram.at(address + 1)) << 48) |
+                (static_cast<u64>(ram.at(address + 2)) << 40) |
+                (static_cast<u64>(ram.at(address + 3)) << 32) |
+                (static_cast<u64>(ram.at(address + 4)) << 24) |
+                (static_cast<u64>(ram.at(address + 5)) << 16) |
+                (static_cast<u64>(ram.at(address + 6)) << 8) |
+                (static_cast<u64>(ram.at(address + 7)))
             );
 
-            default: out::error("TODO");
+            default: shared::out::error("TODO");
         }
     }
 

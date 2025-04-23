@@ -20,7 +20,7 @@ std::string generators::thumb::math::ADC(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rm = util::reg_string(code, 3, 5);
 
-    return util::make_instruction("ADC ", Rd, ", ", Rm);
+    return util::make_string("ADC ", Rd, ", ", Rm);
 }
 
 
@@ -39,7 +39,7 @@ std::string generators::thumb::math::ADD1(const u16 code) {
 
     const u8 immed_3 = shared::util::bit_fetcher(code, 6, 8);
 
-    return util::make_instruction("ADD ", Rd, ", ", Rn, ", #", immed_3);
+    return util::make_string("ADD ", Rd, ", ", Rn, ", #", immed_3);
 }
 
 
@@ -56,7 +56,7 @@ std::string generators::thumb::math::ADD2(const u16 code) {
 
     const u8 immed_8 = shared::util::bit_fetcher(code, 0, 7);
 
-    return util::make_instruction("ADD ", Rd, ", #", immed_8);
+    return util::make_string("ADD ", Rd, ", #", immed_8);
 }
 
 
@@ -74,7 +74,7 @@ std::string generators::thumb::math::ADD3(const u16 code) {
     const std::string Rn = util::reg_string(code, 3, 5);
     const std::string Rm = util::reg_string(code, 6, 8);
 
-    return util::make_instruction("ADD ", Rd, ", ", Rn, ", ", Rm);
+    return util::make_string("ADD ", Rd, ", ", Rn, ", ", Rm);
 }
 
 
@@ -90,26 +90,16 @@ std::string generators::thumb::math::ADD3(const u16 code) {
  * reference: A7-8
  */
 std::string generators::thumb::math::ADD4(const u16 code) {
-    u8 Rd_bits = shared::util::bit_fetcher<u8>(code, 0, 2);
-    u8 Rm_bits = shared::util::bit_fetcher<u8>(code, 3, 5);
-
     const bool H1 = (code & (1 << 7));
     const bool H2 = (code & (1 << 6));
 
-    // branchless version of "if H1/H2 is true, add 8" 
-    Rd_bits += (8 * H1);
-    Rm_bits += (8 * H2);
+    const std::string Rd = util::reg_string_bits(code, 0, 2, H1);
+    const std::string Rm = util::reg_string_bits(code, 3, 5, H2);
 
-    const util::reg_id Rd_id = util::identify_reg(Rd_bits);
-    const util::reg_id Rm_id = util::identify_reg(Rm_bits);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
-
-    return util::make_instruction("ADD ", Rd, ", ", Rm);
+    return util::make_string("ADD ", Rd, ", ", Rm);
 }
          
-            
+
 /**
  * ADD  <Rd>, PC, #<immed_8> * 4
  * where:
@@ -124,7 +114,7 @@ std::string generators::thumb::math::ADD5(const u16 code) {
 
     const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
-    return util::make_instruction("ADD ", Rd, ", PC, #", immed_8, " * 4");
+    return util::make_string("ADD ", Rd, ", PC, #", immed_8, " * 4");
 }
 
 
@@ -142,7 +132,7 @@ std::string generators::thumb::math::ADD6(const u16 code) {
 
     const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
-    return util::make_instruction("ADD ", Rd, ", SP, #", immed_8, " * 4");
+    return util::make_string("ADD ", Rd, ", SP, #", immed_8, " * 4");
 }
 
 
@@ -157,7 +147,7 @@ std::string generators::thumb::math::ADD6(const u16 code) {
 std::string generators::thumb::math::ADD7(const u16 code) {
     const u8 immed_7 = shared::util::bit_fetcher<u8>(code, 0, 6);
 
-    return util::make_instruction("ADD SP, #", immed_7, " * 4");
+    return util::make_string("ADD SP, #", immed_7, " * 4");
 }
 
 
@@ -173,7 +163,7 @@ std::string generators::thumb::math::SBC(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rm = util::reg_string(code, 3, 5);
 
-    return util::make_instruction("SBC ", Rd, ", ", Rm);
+    return util::make_string("SBC ", Rd, ", ", Rm);
 }
 
 
@@ -192,7 +182,7 @@ std::string generators::thumb::math::SUB1(const u16 code) {
 
     const u8 immed_3 = shared::util::bit_fetcher<u8>(code, 6, 8);
 
-    return util::make_instruction("SUB ", Rd, ", ", Rn, ", #", immed_3);
+    return util::make_string("SUB ", Rd, ", ", Rn, ", #", immed_3);
 }
 
 
@@ -209,7 +199,7 @@ std::string generators::thumb::math::SUB2(const u16 code) {
 
     const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
-    return util::make_instruction("SUB ", Rd, ", #", immed_8);
+    return util::make_string("SUB ", Rd, ", #", immed_8);
 }
 
 
@@ -227,7 +217,7 @@ std::string generators::thumb::math::SUB3(const u16 code) {
     const std::string Rn = util::reg_string(code, 3, 5);
     const std::string Rm = util::reg_string(code, 6, 8);
 
-    return util::make_instruction("SUB ", Rd, ", ", Rn, ", ", Rm);
+    return util::make_string("SUB ", Rd, ", ", Rn, ", ", Rm);
 }
 
 
@@ -242,7 +232,7 @@ std::string generators::thumb::math::SUB3(const u16 code) {
 std::string generators::thumb::math::SUB4(const u16 code) {
     const u8 immed_7 = shared::util::bit_fetcher<u8>(code, 0, 6);
 
-    return util::make_instruction("SUB SP, #", immed_7, " * 4");
+    return util::make_string("SUB SP, #", immed_7, " * 4");
 }
 
 
@@ -258,5 +248,5 @@ std::string generators::thumb::math::MUL(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rm = util::reg_string(code, 3, 5);
 
-    return util::make_instruction("MUL ", Rd, ", ", Rm);
+    return util::make_string("MUL ", Rd, ", ", Rm);
 }

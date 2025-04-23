@@ -18,8 +18,8 @@
 ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_immediate_mode(const arm_code_t &code) {
     data_struct data = {};
 
-    const u8 rotate_imm = util::bit_fetcher<u8>(code, 8, 11);
-    const u8 immed_8 = util::bit_fetcher<u8>(code, 0, 7);
+    const u8 rotate_imm = shared::util::bit_fetcher<u8>(code, 8, 11);
+    const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
     data.value = std::rotr(immed_8, (rotate_imm * 2));
 
@@ -68,7 +68,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_register(const arm_co
 ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_left_immediate(const arm_code_t &code) {
     data_struct data = {};
 
-    const u8 shift_imm = util::bit_fetcher<u8>(code, 7, 11);
+    const u8 shift_imm = shared::util::bit_fetcher<u8>(code, 7, 11);
     const u32 Rm = reg.read(code, 0, 3);
 
     if (shift_imm == 0) {
@@ -98,7 +98,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_left_im
 ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_right_immediate(const arm_code_t &code) {
     data_struct data = {};
 
-    const u8 shift_imm = util::bit_fetcher<u8>(code, 7, 11);
+    const u8 shift_imm = shared::util::bit_fetcher<u8>(code, 7, 11);
     const u32 Rm = reg.read(code, 0, 3);
 
     if (shift_imm == 0) {
@@ -132,7 +132,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_right_i
 ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_arithmetic_shift_right_immediate(const arm_code_t &code) {
     data_struct data = {};
 
-    const u8 shift_imm = util::bit_fetcher<u8>(code, 7, 11);
+    const u8 shift_imm = shared::util::bit_fetcher<u8>(code, 7, 11);
     const u32 Rm = reg.read(code, 0, 3);
 
     if (shift_imm == 0) {
@@ -166,7 +166,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_arithmetic_shift_righ
 ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_rotate_right_immediate(const arm_code_t &code) {
     data_struct data = {};
 
-    const u8 shift_imm = util::bit_fetcher<u8>(code, 7, 11);
+    const u8 shift_imm = shared::util::bit_fetcher<u8>(code, 7, 11);
     const u32 Rm = reg.read(code, 0, 3);
 
     if (shift_imm == 0) {
@@ -203,7 +203,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_left_re
 
     const u32 Rs = reg.read(code, 8, 11);
     const u32 Rm = reg.read(code, 0, 3);
-    const u32 Rs_bits = util::bit_fetcher(Rs, 0, 7);
+    const u32 Rs_bits = shared::util::bit_fetcher(Rs, 0, 7);
 
     if (Rs_bits == 0) {
         data.value = Rm;
@@ -244,7 +244,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_right_r
 
     const u32 Rs = reg.read(code, 8, 11);
     const u32 Rm = reg.read(code, 0, 3);
-    const u32 Rs_bits = util::bit_fetcher(Rs, 0, 7);
+    const u32 Rs_bits = shared::util::bit_fetcher(Rs, 0, 7);
 
     if (Rs_bits == 0) {
         data.value = Rm;
@@ -291,7 +291,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_arithmetic_shift_righ
 
     const u32 Rs = reg.read(code, 8, 11);
     const u32 Rm = reg.read(code, 0, 3);
-    const u32 Rs_bits = util::bit_fetcher(Rs, 0, 7);
+    const u32 Rs_bits = shared::util::bit_fetcher(Rs, 0, 7);
     
     if (Rs_bits == 0) {
         data.value = Rm;
@@ -333,8 +333,8 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_rotate_right_register
     
     const u32 Rs = reg.read(code, 8, 11);
     const u32 Rm = reg.read(code, 0, 3);
-    const u32 Rs_bits = util::bit_fetcher(Rs, 0, 7);
-    const u32 Rs_bits_4 = util::bit_fetcher(Rs, 0, 4);
+    const u32 Rs_bits = shared::util::bit_fetcher(Rs, 0, 7);
+    const u32 Rs_bits_4 = shared::util::bit_fetcher(Rs, 0, 4);
 
     if (Rs_bits == 0) {
         data.value = Rm;
@@ -418,7 +418,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_processing(const arm_code_t &
             case 0b11: return data_process_rotate_right_immediate(code);
         }
 
-        out::error("TODO");
+        shared::out::error("TODO");
     }
 
     // register mode
@@ -436,12 +436,12 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_processing(const arm_code_t &
         }
 
         // TODO ERROR
-        out::error("TODO");
+        shared::out::error("TODO");
     }
 
 
 
     // TODO: ERROR
-    out::error("TODO");
+    shared::out::error("TODO");
 }
 

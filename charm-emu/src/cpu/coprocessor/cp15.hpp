@@ -15,6 +15,7 @@
 //#include "mmu.hpp"
 
 #include "shared/types.hpp"
+#include "shared/util.hpp"
 
 #include <bit>
 
@@ -120,36 +121,36 @@ public:
             case id::cp::CP15_START: return 0; // TODO WARNING
             case id::cp::CP15_END: return 0; // TODO WARNING
             case id::cp::CP15_R0_ID: return R0_ID;
-            case id::cp::CP15_R0_ID_REVISION: return util::bit_fetcher(R0_ID, 0, 3);
-            case id::cp::CP15_R0_ID_IMPLEMENTOR: return util::bit_fetcher(R0_ID, 24, 31);
-            case id::cp::CP15_R0_ID_PPN: return util::bit_fetcher(R0_ID, 4, 15);
-            case id::cp::CP15_R0_ID_PRE7_ID: return util::bit_fetcher(R0_ID, 4, 31);
-            case id::cp::CP15_R0_ID_PRE7_REVISION: return util::bit_fetcher(R0_ID, 0, 3);
-            case id::cp::CP15_R0_ID_7_REVISION: return util::bit_fetcher(R0_ID, 0, 3);
-            case id::cp::CP15_R0_ID_7_PPN: return util::bit_fetcher(R0_ID, 4, 15);
-            case id::cp::CP15_R0_ID_7_PPN_TOP: return util::bit_fetcher(R0_ID, 12, 15);
-            case id::cp::CP15_R0_ID_7_VARIANT: return util::bit_fetcher(R0_ID, 16, 22);
+            case id::cp::CP15_R0_ID_REVISION: return shared::util::bit_fetcher(R0_ID, 0, 3);
+            case id::cp::CP15_R0_ID_IMPLEMENTOR: return shared::util::bit_fetcher(R0_ID, 24, 31);
+            case id::cp::CP15_R0_ID_PPN: return shared::util::bit_fetcher(R0_ID, 4, 15);
+            case id::cp::CP15_R0_ID_PRE7_ID: return shared::util::bit_fetcher(R0_ID, 4, 31);
+            case id::cp::CP15_R0_ID_PRE7_REVISION: return shared::util::bit_fetcher(R0_ID, 0, 3);
+            case id::cp::CP15_R0_ID_7_REVISION: return shared::util::bit_fetcher(R0_ID, 0, 3);
+            case id::cp::CP15_R0_ID_7_PPN: return shared::util::bit_fetcher(R0_ID, 4, 15);
+            case id::cp::CP15_R0_ID_7_PPN_TOP: return shared::util::bit_fetcher(R0_ID, 12, 15);
+            case id::cp::CP15_R0_ID_7_VARIANT: return shared::util::bit_fetcher(R0_ID, 16, 22);
             case id::cp::CP15_R0_ID_7_A: return (R0_ID & (1 << 23));
-            case id::cp::CP15_R0_ID_7_IMPLEMENTOR: return util::bit_fetcher(R0_ID, 24, 31);
-            case id::cp::CP15_R0_ID_POST7_IMPLEMENTOR: return util::bit_fetcher(R0_ID, 24, 31);
-            case id::cp::CP15_R0_ID_POST7_VARIANT: return util::bit_fetcher(R0_ID, 20, 23);
-            case id::cp::CP15_R0_ID_POST7_ARCHITECTURE: return util::bit_fetcher(R0_ID, 16, 19);
-            case id::cp::CP15_R0_ID_POST7_PPN: return util::bit_fetcher(R0_ID, 4, 15);
-            case id::cp::CP15_R0_ID_POST7_PPN_TOP: return util::bit_fetcher(R0_ID, 12, 15);
-            case id::cp::CP15_R0_ID_POST7_REVISION: return util::bit_fetcher(R0_ID, 0, 3);
+            case id::cp::CP15_R0_ID_7_IMPLEMENTOR: return shared::util::bit_fetcher(R0_ID, 24, 31);
+            case id::cp::CP15_R0_ID_POST7_IMPLEMENTOR: return shared::util::bit_fetcher(R0_ID, 24, 31);
+            case id::cp::CP15_R0_ID_POST7_VARIANT: return shared::util::bit_fetcher(R0_ID, 20, 23);
+            case id::cp::CP15_R0_ID_POST7_ARCHITECTURE: return shared::util::bit_fetcher(R0_ID, 16, 19);
+            case id::cp::CP15_R0_ID_POST7_PPN: return shared::util::bit_fetcher(R0_ID, 4, 15);
+            case id::cp::CP15_R0_ID_POST7_PPN_TOP: return shared::util::bit_fetcher(R0_ID, 12, 15);
+            case id::cp::CP15_R0_ID_POST7_REVISION: return shared::util::bit_fetcher(R0_ID, 0, 3);
             case id::cp::CP15_R0_CACHE: return R0_CACHE;
-            case id::cp::CP15_R0_CACHE_CTYPE: return util::bit_fetcher(R0_CACHE, 25, 28);
+            case id::cp::CP15_R0_CACHE_CTYPE: return shared::util::bit_fetcher(R0_CACHE, 25, 28);
             case id::cp::CP15_R0_CACHE_S: return (R0_CACHE & (1 << 24));
-            case id::cp::CP15_R0_CACHE_DSIZE: return util::bit_fetcher(R0_CACHE, 12, 23);
-            case id::cp::CP15_R0_CACHE_DSIZE_LEN: return util::bit_fetcher(R0_CACHE, 12, 13);
+            case id::cp::CP15_R0_CACHE_DSIZE: return shared::util::bit_fetcher(R0_CACHE, 12, 23);
+            case id::cp::CP15_R0_CACHE_DSIZE_LEN: return shared::util::bit_fetcher(R0_CACHE, 12, 13);
             case id::cp::CP15_R0_CACHE_DSIZE_M: return (R0_CACHE & (1 << 14));
-            case id::cp::CP15_R0_CACHE_DSIZE_ASSOC: return util::bit_fetcher(R0_CACHE, 15, 17);
-            case id::cp::CP15_R0_CACHE_DSIZE_SIZE: return util::bit_fetcher(R0_CACHE, 18, 20);
-            case id::cp::CP15_R0_CACHE_ISIZE: return util::bit_fetcher(R0_CACHE, 0, 11);
-            case id::cp::CP15_R0_CACHE_ISIZE_LEN: return util::bit_fetcher(R0_CACHE, 0, 1);
+            case id::cp::CP15_R0_CACHE_DSIZE_ASSOC: return shared::util::bit_fetcher(R0_CACHE, 15, 17);
+            case id::cp::CP15_R0_CACHE_DSIZE_SIZE: return shared::util::bit_fetcher(R0_CACHE, 18, 20);
+            case id::cp::CP15_R0_CACHE_ISIZE: return shared::util::bit_fetcher(R0_CACHE, 0, 11);
+            case id::cp::CP15_R0_CACHE_ISIZE_LEN: return shared::util::bit_fetcher(R0_CACHE, 0, 1);
             case id::cp::CP15_R0_CACHE_ISIZE_M: return (R0_CACHE & (1 << 2));
-            case id::cp::CP15_R0_CACHE_ISIZE_ASSOC: return util::bit_fetcher(R0_CACHE, 3, 5);
-            case id::cp::CP15_R0_CACHE_ISIZE_SIZE: return util::bit_fetcher(R0_CACHE, 6, 8);
+            case id::cp::CP15_R0_CACHE_ISIZE_ASSOC: return shared::util::bit_fetcher(R0_CACHE, 3, 5);
+            case id::cp::CP15_R0_CACHE_ISIZE_SIZE: return shared::util::bit_fetcher(R0_CACHE, 6, 8);
             case id::cp::CP15_R1: return R1;
             case id::cp::CP15_R1_M: return (R1 & 1);
             case id::cp::CP15_R1_A: return (R1 & (1 << 1));
@@ -169,7 +170,7 @@ public:
             case id::cp::CP15_R1_L4: return (R1 & (1 << 15));
             case id::cp::CP15_R2: return R2;
             case id::cp::CP15_R2_MMU: return R2;
-            case id::cp::CP15_R2_MMU_TRANSLATION_BASE: return util::bit_fetcher(R2, 14, 31);
+            case id::cp::CP15_R2_MMU_TRANSLATION_BASE: return shared::util::bit_fetcher(R2, 14, 31);
             case id::cp::CP15_R2_PU: return R2;
             case id::cp::CP15_R2_PU_C0: return (R2 & 1);
             case id::cp::CP15_R2_PU_C1: return (R2 & (1 << 1));
@@ -181,22 +182,22 @@ public:
             case id::cp::CP15_R2_PU_C7: return (R2 & (1 << 7));
             case id::cp::CP15_R3: return R3;
             case id::cp::CP15_R3_MMU: return R3;
-            case id::cp::CP15_R3_MMU_D0: return util::bit_fetcher(R3, 0, 1);
-            case id::cp::CP15_R3_MMU_D1: return util::bit_fetcher(R3, 2, 3);
-            case id::cp::CP15_R3_MMU_D2: return util::bit_fetcher(R3, 4, 5);
-            case id::cp::CP15_R3_MMU_D3: return util::bit_fetcher(R3, 6, 7);
-            case id::cp::CP15_R3_MMU_D4: return util::bit_fetcher(R3, 8, 9);
-            case id::cp::CP15_R3_MMU_D5: return util::bit_fetcher(R3, 10, 11);
-            case id::cp::CP15_R3_MMU_D6: return util::bit_fetcher(R3, 12, 13);
-            case id::cp::CP15_R3_MMU_D7: return util::bit_fetcher(R3, 14, 15);
-            case id::cp::CP15_R3_MMU_D8: return util::bit_fetcher(R3, 16, 17);
-            case id::cp::CP15_R3_MMU_D9: return util::bit_fetcher(R3, 18, 19);
-            case id::cp::CP15_R3_MMU_D10: return util::bit_fetcher(R3, 20, 21);
-            case id::cp::CP15_R3_MMU_D11: return util::bit_fetcher(R3, 22, 23);
-            case id::cp::CP15_R3_MMU_D12: return util::bit_fetcher(R3, 24, 25);
-            case id::cp::CP15_R3_MMU_D13: return util::bit_fetcher(R3, 26, 27);
-            case id::cp::CP15_R3_MMU_D14: return util::bit_fetcher(R3, 28, 29);
-            case id::cp::CP15_R3_MMU_D15: return util::bit_fetcher(R3, 30, 31);
+            case id::cp::CP15_R3_MMU_D0: return shared::util::bit_fetcher(R3, 0, 1);
+            case id::cp::CP15_R3_MMU_D1: return shared::util::bit_fetcher(R3, 2, 3);
+            case id::cp::CP15_R3_MMU_D2: return shared::util::bit_fetcher(R3, 4, 5);
+            case id::cp::CP15_R3_MMU_D3: return shared::util::bit_fetcher(R3, 6, 7);
+            case id::cp::CP15_R3_MMU_D4: return shared::util::bit_fetcher(R3, 8, 9);
+            case id::cp::CP15_R3_MMU_D5: return shared::util::bit_fetcher(R3, 10, 11);
+            case id::cp::CP15_R3_MMU_D6: return shared::util::bit_fetcher(R3, 12, 13);
+            case id::cp::CP15_R3_MMU_D7: return shared::util::bit_fetcher(R3, 14, 15);
+            case id::cp::CP15_R3_MMU_D8: return shared::util::bit_fetcher(R3, 16, 17);
+            case id::cp::CP15_R3_MMU_D9: return shared::util::bit_fetcher(R3, 18, 19);
+            case id::cp::CP15_R3_MMU_D10: return shared::util::bit_fetcher(R3, 20, 21);
+            case id::cp::CP15_R3_MMU_D11: return shared::util::bit_fetcher(R3, 22, 23);
+            case id::cp::CP15_R3_MMU_D12: return shared::util::bit_fetcher(R3, 24, 25);
+            case id::cp::CP15_R3_MMU_D13: return shared::util::bit_fetcher(R3, 26, 27);
+            case id::cp::CP15_R3_MMU_D14: return shared::util::bit_fetcher(R3, 28, 29);
+            case id::cp::CP15_R3_MMU_D15: return shared::util::bit_fetcher(R3, 30, 31);
             case id::cp::CP15_R3_PU: return R3;
             case id::cp::CP15_R3_PU_B0: return (R3 & 1);
             case id::cp::CP15_R3_PU_B1: return (R3 & (1 << 1));
@@ -211,50 +212,50 @@ public:
             case id::cp::CP15_R4_PU: return R4;
             case id::cp::CP15_R5: return R5;
             case id::cp::CP15_R5_MMU: return R5;
-            case id::cp::CP15_R5_MMU_DOMAIN: return util::bit_fetcher(R5, 4, 7);
-            case id::cp::CP15_R5_MMU_STATUS: return util::bit_fetcher(R5, 0, 3);
+            case id::cp::CP15_R5_MMU_DOMAIN: return shared::util::bit_fetcher(R5, 4, 7);
+            case id::cp::CP15_R5_MMU_STATUS: return shared::util::bit_fetcher(R5, 0, 3);
             case id::cp::CP15_R5_PU: return R5;
-            case id::cp::CP15_R5_PU_AP0: return util::bit_fetcher(R5, 0, 1);
-            case id::cp::CP15_R5_PU_AP1: return util::bit_fetcher(R5, 2, 3);
-            case id::cp::CP15_R5_PU_AP2: return util::bit_fetcher(R5, 4, 5);
-            case id::cp::CP15_R5_PU_AP3: return util::bit_fetcher(R5, 6, 7);
-            case id::cp::CP15_R5_PU_AP4: return util::bit_fetcher(R5, 8, 9);
-            case id::cp::CP15_R5_PU_AP5: return util::bit_fetcher(R5, 10, 11);
-            case id::cp::CP15_R5_PU_AP6: return util::bit_fetcher(R5, 12, 13);
-            case id::cp::CP15_R5_PU_AP7: return util::bit_fetcher(R5, 14, 15);
+            case id::cp::CP15_R5_PU_AP0: return shared::util::bit_fetcher(R5, 0, 1);
+            case id::cp::CP15_R5_PU_AP1: return shared::util::bit_fetcher(R5, 2, 3);
+            case id::cp::CP15_R5_PU_AP2: return shared::util::bit_fetcher(R5, 4, 5);
+            case id::cp::CP15_R5_PU_AP3: return shared::util::bit_fetcher(R5, 6, 7);
+            case id::cp::CP15_R5_PU_AP4: return shared::util::bit_fetcher(R5, 8, 9);
+            case id::cp::CP15_R5_PU_AP5: return shared::util::bit_fetcher(R5, 10, 11);
+            case id::cp::CP15_R5_PU_AP6: return shared::util::bit_fetcher(R5, 12, 13);
+            case id::cp::CP15_R5_PU_AP7: return shared::util::bit_fetcher(R5, 14, 15);
             case id::cp::CP15_R6_MMU: return R6;
             case id::cp::CP15_R6_MMU_FAR: return R6; // same as above, this is added for the sake of completeness 
             case id::cp::CP15_R6_PU_0: return R6_PU_0;
-            case id::cp::CP15_R6_PU_0_BASE_ADDRESS: return util::bit_fetcher(R6_PU_0, 12, 31);
-            case id::cp::CP15_R6_PU_0_SIZE: return util::bit_fetcher(R6_PU_0, 1, 5);
+            case id::cp::CP15_R6_PU_0_BASE_ADDRESS: return shared::util::bit_fetcher(R6_PU_0, 12, 31);
+            case id::cp::CP15_R6_PU_0_SIZE: return shared::util::bit_fetcher(R6_PU_0, 1, 5);
             case id::cp::CP15_R6_PU_0_E: return (R6_PU_0 & 1);
             case id::cp::CP15_R6_PU_1: return R6_PU_1;
-            case id::cp::CP15_R6_PU_1_BASE_ADDRESS: return util::bit_fetcher(R6_PU_1, 12, 31);
-            case id::cp::CP15_R6_PU_1_SIZE: return util::bit_fetcher(R6_PU_1, 1, 5);
+            case id::cp::CP15_R6_PU_1_BASE_ADDRESS: return shared::util::bit_fetcher(R6_PU_1, 12, 31);
+            case id::cp::CP15_R6_PU_1_SIZE: return shared::util::bit_fetcher(R6_PU_1, 1, 5);
             case id::cp::CP15_R6_PU_1_E: return (R6_PU_1 & 1);
             case id::cp::CP15_R6_PU_2: return R6_PU_2;
-            case id::cp::CP15_R6_PU_2_BASE_ADDRESS: return util::bit_fetcher(R6_PU_2, 12, 31);
-            case id::cp::CP15_R6_PU_2_SIZE: return util::bit_fetcher(R6_PU_2, 1, 5);
+            case id::cp::CP15_R6_PU_2_BASE_ADDRESS: return shared::util::bit_fetcher(R6_PU_2, 12, 31);
+            case id::cp::CP15_R6_PU_2_SIZE: return shared::util::bit_fetcher(R6_PU_2, 1, 5);
             case id::cp::CP15_R6_PU_2_E: return (R6_PU_2 & 1);
             case id::cp::CP15_R6_PU_3: return R6_PU_3;
-            case id::cp::CP15_R6_PU_3_BASE_ADDRESS: return util::bit_fetcher(R6_PU_3, 12, 31);
-            case id::cp::CP15_R6_PU_3_SIZE: return util::bit_fetcher(R6_PU_3, 1, 5);
+            case id::cp::CP15_R6_PU_3_BASE_ADDRESS: return shared::util::bit_fetcher(R6_PU_3, 12, 31);
+            case id::cp::CP15_R6_PU_3_SIZE: return shared::util::bit_fetcher(R6_PU_3, 1, 5);
             case id::cp::CP15_R6_PU_3_E: return (R6_PU_3 & 1);
             case id::cp::CP15_R6_PU_4: return R6_PU_4;
-            case id::cp::CP15_R6_PU_4_BASE_ADDRESS: return util::bit_fetcher(R6_PU_4, 12, 31);
-            case id::cp::CP15_R6_PU_4_SIZE: return util::bit_fetcher(R6_PU_4, 1, 5);
+            case id::cp::CP15_R6_PU_4_BASE_ADDRESS: return shared::util::bit_fetcher(R6_PU_4, 12, 31);
+            case id::cp::CP15_R6_PU_4_SIZE: return shared::util::bit_fetcher(R6_PU_4, 1, 5);
             case id::cp::CP15_R6_PU_4_E: return (R6_PU_4 & 1);
             case id::cp::CP15_R6_PU_5: return R6_PU_5;
-            case id::cp::CP15_R6_PU_5_BASE_ADDRESS: return util::bit_fetcher(R6_PU_5, 12, 31);
-            case id::cp::CP15_R6_PU_5_SIZE: return util::bit_fetcher(R6_PU_5, 1, 5);
+            case id::cp::CP15_R6_PU_5_BASE_ADDRESS: return shared::util::bit_fetcher(R6_PU_5, 12, 31);
+            case id::cp::CP15_R6_PU_5_SIZE: return shared::util::bit_fetcher(R6_PU_5, 1, 5);
             case id::cp::CP15_R6_PU_5_E: return (R6_PU_5 & 1);
             case id::cp::CP15_R6_PU_6: return R6_PU_6;
-            case id::cp::CP15_R6_PU_6_BASE_ADDRESS: return util::bit_fetcher(R6_PU_6, 12, 31);
-            case id::cp::CP15_R6_PU_6_SIZE: return util::bit_fetcher(R6_PU_6, 1, 5);
+            case id::cp::CP15_R6_PU_6_BASE_ADDRESS: return shared::util::bit_fetcher(R6_PU_6, 12, 31);
+            case id::cp::CP15_R6_PU_6_SIZE: return shared::util::bit_fetcher(R6_PU_6, 1, 5);
             case id::cp::CP15_R6_PU_6_E: return (R6_PU_6 & 1);
             case id::cp::CP15_R6_PU_7: return R6_PU_7;
-            case id::cp::CP15_R6_PU_7_BASE_ADDRESS: return util::bit_fetcher(R6_PU_7, 12, 31);
-            case id::cp::CP15_R6_PU_7_SIZE: return util::bit_fetcher(R6_PU_7, 1, 5);
+            case id::cp::CP15_R6_PU_7_BASE_ADDRESS: return shared::util::bit_fetcher(R6_PU_7, 12, 31);
+            case id::cp::CP15_R6_PU_7_SIZE: return shared::util::bit_fetcher(R6_PU_7, 1, 5);
             case id::cp::CP15_R6_PU_7_E: return (R6_PU_7 & 1);
             case id::cp::CP15_R7: return R7;
             case id::cp::CP15_R7_CACHE_INDEX: // TODO
@@ -273,10 +274,10 @@ public:
             case id::cp::CP15_R11: return R11;
             case id::cp::CP15_R12: return R12;
             case id::cp::CP15_R13: return R13;
-            case id::cp::CP15_R13_PID: return util::bit_fetcher(R13, 25, 31);
+            case id::cp::CP15_R13_PID: return shared::util::bit_fetcher(R13, 25, 31);
             case id::cp::CP15_R14: return R14;
             case id::cp::CP15_R15: return R15;
-            default: out::error("TODO");
+            default: shared::out::error("TODO");
         }
     }
 

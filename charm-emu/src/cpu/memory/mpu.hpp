@@ -58,7 +58,7 @@ public:
             }
         }
 
-        out::error("something went horribly wrong here..."); // TODO
+        shared::out::error("something went horribly wrong here..."); // TODO
     }
 
     bool is_mpu_enabled() {

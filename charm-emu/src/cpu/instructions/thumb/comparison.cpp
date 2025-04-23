@@ -33,7 +33,7 @@ void INSTRUCTIONS::thumb::compare::CMN(const thumb_code_t &code) {
  */
 void INSTRUCTIONS::thumb::compare::CMP1(const thumb_code_t &code) {
     const u32 Rn = reg.read(code, 8, 10);
-    const u8 immed_8 = util::bit_fetcher<u8>(code, 0, 7);
+    const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
     const i32 alu_out = Rn - immed_8;
 
@@ -76,8 +76,8 @@ void INSTRUCTIONS::thumb::compare::CMP2(const thumb_code_t &code) {
  * V Flag = OverflowFrom(Rn - Rm)
  */
 void INSTRUCTIONS::thumb::compare::CMP3(const thumb_code_t &code) {
-    u8 Rn_bits = util::bit_fetcher<u8>(code, 0, 2);
-    u8 Rm_bits = util::bit_fetcher<u8>(code, 3, 5);
+    u8 Rn_bits = shared::util::bit_fetcher<u8>(code, 0, 2);
+    u8 Rm_bits = shared::util::bit_fetcher<u8>(code, 3, 5);
 
     const bool H2 = code.test(6);
     const bool H1 = code.test(7);

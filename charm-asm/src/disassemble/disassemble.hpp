@@ -7,5 +7,7 @@
 namespace internal::disassemble {
     std::string thumb(const u16 code, const u32 PC = 0);
 
+    std::string arm(const u32 code, const u32 PC = 0);
+
     //std::string arm(const u32 code);
 }

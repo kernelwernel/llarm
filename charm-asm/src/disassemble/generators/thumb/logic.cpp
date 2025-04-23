@@ -21,7 +21,7 @@ std::string generators::thumb::logic::AND(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rm = util::reg_string(code, 3, 5);
 
-    return util::make_instruction("AND ", Rd, ", ", Rm);
+    return util::make_string("AND ", Rd, ", ", Rm);
 }
 
 
@@ -41,7 +41,7 @@ std::string generators::thumb::logic::ASR1(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rm = util::reg_string(code, 3, 5);
 
-    return util::make_instruction("ASR ", Rd, ", ", Rm, ", #", immed_5);
+    return util::make_string("ASR ", Rd, ", ", Rm, ", #", immed_5);
 }
 
 
@@ -57,7 +57,7 @@ std::string generators::thumb::logic::ASR2(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rs = util::reg_string(code, 3, 5);
 
-    return util::make_instruction("ASR ", Rd, ", ", Rs);
+    return util::make_string("ASR ", Rd, ", ", Rs);
 }
 
 
@@ -73,7 +73,7 @@ std::string generators::thumb::logic::BIC(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rm = util::reg_string(code, 3, 5);
 
-    return util::make_instruction("BIC ", Rd, ", ", Rm);
+    return util::make_string("BIC ", Rd, ", ", Rm);
 }
 
 
@@ -89,7 +89,7 @@ std::string generators::thumb::logic::EOR(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rm = util::reg_string(code, 3, 5);
 
-    return util::make_instruction("EOR ", Rd, ", ", Rm);
+    return util::make_string("EOR ", Rd, ", ", Rm);
 }
 
 
@@ -108,7 +108,7 @@ std::string generators::thumb::logic::LSL1(const u16 code) {
 
     const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
 
-    return util::make_instruction("LSL ", Rd, ", ", Rm, ", #", immed_5);
+    return util::make_string("LSL ", Rd, ", ", Rm, ", #", immed_5);
 }
  
  
@@ -125,7 +125,7 @@ std::string generators::thumb::logic::LSL2(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rs = util::reg_string(code, 3, 5);
 
-    return util::make_instruction("LSL ", Rd, ", ", Rs);
+    return util::make_string("LSL ", Rd, ", ", Rs);
 }
  
 
@@ -145,7 +145,7 @@ std::string generators::thumb::logic::LSR1(const u16 code) {
 
     const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
 
-    return util::make_instruction("LSR ", Rd, ", ", Rm, ", #", immed_5);
+    return util::make_string("LSR ", Rd, ", ", Rm, ", #", immed_5);
 } 
  
  
@@ -161,7 +161,7 @@ std::string generators::thumb::logic::LSR2(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rs = util::reg_string(code, 3, 5);
 
-    return util::make_instruction("LSR ", Rd, ", ", Rs);
+    return util::make_string("LSR ", Rd, ", ", Rs);
 }
  
 
@@ -177,7 +177,7 @@ std::string generators::thumb::logic::NEG(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rm = util::reg_string(code, 3, 5);
 
-    return util::make_instruction("NEG ", Rd, ", ", Rm);
+    return util::make_string("NEG ", Rd, ", ", Rm);
 }
 
 
@@ -194,7 +194,7 @@ std::string generators::thumb::logic::ORR(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rm = util::reg_string(code, 3, 5);
 
-    return util::make_instruction("ORR ", Rd, ", ", Rm);
+    return util::make_string("ORR ", Rd, ", ", Rm);
 }
 
 
@@ -211,7 +211,7 @@ std::string generators::thumb::logic::ROR(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rs = util::reg_string(code, 3, 5);
 
-    return util::make_instruction("ROR ", Rd, ", ", Rs);
+    return util::make_string("ROR ", Rd, ", ", Rs);
 }
 
 
@@ -227,5 +227,5 @@ std::string generators::thumb::logic::TST(const u16 code) {
     const std::string Rn = util::reg_string(code, 0, 2);
     const std::string Rm = util::reg_string(code, 3, 5);
 
-    return util::make_instruction("ROR ", Rn, ", ", Rm);
+    return util::make_string("ROR ", Rn, ", ", Rm);
 }

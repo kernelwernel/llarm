@@ -15,7 +15,7 @@
  * Rn = Rn + (Number_Of_Set_Bits_In(register_list) * 4)
  */
 void INSTRUCTIONS::thumb::load::LDMIA(const thumb_code_t &code) {
-    const u8 register_list = util::bit_fetcher<u8>(code, 0, 7);
+    const u8 register_list = shared::util::bit_fetcher<u8>(code, 0, 7);
     const u32 Rn = reg.read(code, 8, 10);
     const id::reg Rn_id = reg.fetch_reg_id(code, 8, 10);
 
@@ -58,7 +58,7 @@ void INSTRUCTIONS::thumb::load::LDMIA(const thumb_code_t &code) {
  * Rd = data
  */
 void INSTRUCTIONS::thumb::load::LDR1(const thumb_code_t &code) {
-    const u8 immed_5 = util::bit_fetcher<u8>(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
     const u32 Rn = reg.read(code, 3, 5);
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
@@ -126,11 +126,11 @@ void INSTRUCTIONS::thumb::load::LDR2(const thumb_code_t &code) {
  * Rd = Memory[address, 4]
  */
 void INSTRUCTIONS::thumb::load::LDR3(const thumb_code_t &code) {
-    const u8 immed_8 = util::bit_fetcher<u8>(code, 0, 7);
+    const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
     const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
 
     // lord have mercy
-    const u32 address = (util::bit_fetcher(reg.read(id::reg::PC), 2, 31) << 2) + (immed_8 * 4);
+    const u32 address = (shared::util::bit_fetcher(reg.read(id::reg::PC), 2, 31) << 2) + (immed_8 * 4);
 
     const memory_struct access = memory.read<u32>(address, 4);
 
@@ -154,7 +154,7 @@ void INSTRUCTIONS::thumb::load::LDR3(const thumb_code_t &code) {
  * Rd = data
  */
 void INSTRUCTIONS::thumb::load::LDR4(const thumb_code_t &code) {
-    const u8 immed_8 = util::bit_fetcher<u8>(code, 0, 7);
+    const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
     const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
 
     const u32 address = reg.read(id::reg::SP) + (immed_8 * 4);
@@ -187,7 +187,7 @@ void INSTRUCTIONS::thumb::load::LDR4(const thumb_code_t &code) {
 void INSTRUCTIONS::thumb::load::LDRB1(const thumb_code_t &code) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
     const u32 Rn = reg.read(code, 3, 5);
-    const u8 immed_5 = util::bit_fetcher<u8>(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
 
     const u32 address = Rn + immed_5;
 
@@ -239,7 +239,7 @@ void INSTRUCTIONS::thumb::load::LDRB2(const thumb_code_t &code) {
 void INSTRUCTIONS::thumb::load::LDRH1(const thumb_code_t &code) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
     const u32 Rn = reg.read(code, 3, 5);
-    const u8 immed_5 = util::bit_fetcher<u8>(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
 
     const u32 address = (Rn + (immed_5 * 2));
 
@@ -381,7 +381,7 @@ void INSTRUCTIONS::thumb::load::LDRSH(const thumb_code_t &code) {
  * SP = end_address
  */
 void INSTRUCTIONS::thumb::load::POP(const thumb_code_t &code) {
-    const u8 register_list = util::bit_fetcher<u8>(code, 0, 7);
+    const u8 register_list = shared::util::bit_fetcher<u8>(code, 0, 7);
     const bool R = code.test(8);
 
     const u32 SP = reg.read(id::reg::SP);

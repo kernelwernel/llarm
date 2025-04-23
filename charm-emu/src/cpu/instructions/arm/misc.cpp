@@ -27,7 +27,7 @@ void INSTRUCTIONS::arm::misc::NOP(const arm_code_t &code) noexcept {
  *        R15[1:0] = <alu_out>[1:0] // ... update M[1:0]
  */
 void INSTRUCTIONS::arm::misc::PSR(const arm_code_t &code) noexcept {
-    const u8 opc = util::bit_fetcher<u8>(code, 21, 22);
+    const u8 opc = shared::util::bit_fetcher<u8>(code, 21, 22);
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
 
     const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);

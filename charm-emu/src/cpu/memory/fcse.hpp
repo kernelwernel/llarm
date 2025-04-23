@@ -17,7 +17,7 @@ public:
     }
 
     u32 modify_address(const u32 address) {
-        if (util::bit_fetcher(address, 31, 25) != 0) {
+        if (shared::util::bit_fetcher(address, 31, 25) != 0) {
             return address;
         }
 

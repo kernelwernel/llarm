@@ -16,7 +16,7 @@
  * Rn = Rn + (Number_Of_Set_Bits_In(register_list) * 4)
  */
 void INSTRUCTIONS::thumb::store::STMIA(const thumb_code_t& code) {
-    const u8 register_list = util::bit_fetcher<u8>(code, 0, 7);
+    const u8 register_list = shared::util::bit_fetcher<u8>(code, 0, 7);
     const u32 Rn = reg.read(code, 8, 10);
     const id::reg Rn_id = reg.fetch_reg_id(code, 8, 10);
 
@@ -56,7 +56,7 @@ void INSTRUCTIONS::thumb::store::STMIA(const thumb_code_t& code) {
  *   Memory[address,4] = UNPREDICTABLE
  */
 void INSTRUCTIONS::thumb::store::STR1(const thumb_code_t& code) {
-    const u8 immed_5 = util::bit_fetcher<u8>(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
     const u32 Rn = reg.read(code, 3, 5);
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
@@ -122,7 +122,7 @@ void INSTRUCTIONS::thumb::store::STR2(const thumb_code_t& code) {
  *    Memory[address,4] = UNPREDICTABLE
  */
 void INSTRUCTIONS::thumb::store::STR3(const thumb_code_t& code) {
-    const u8 immed_8 = util::bit_fetcher<u8>(code, 0, 7);
+    const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
     const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
 
     const u32 address = (reg.read(id::reg::SP) + (immed_8 * 4));
@@ -153,11 +153,11 @@ void INSTRUCTIONS::thumb::store::STR3(const thumb_code_t& code) {
 void INSTRUCTIONS::thumb::store::STRB1(const thumb_code_t& code) {
     const u32 Rd = reg.read(code, 0, 2);
     const u32 Rn = reg.read(code, 3, 5);
-    const u8 immed_5 = util::bit_fetcher<u8>(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
 
     const u32 address = (Rn + immed_5);
 
-    const memory_struct access = memory.write(util::bit_fetcher<u8>(Rd, 0, 7), address , 1);
+    const memory_struct access = memory.write(shared::util::bit_fetcher<u8>(Rd, 0, 7), address , 1);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -179,7 +179,7 @@ void INSTRUCTIONS::thumb::store::STRB2(const thumb_code_t& code) {
 
     const u32 address = (Rn + Rm);
 
-    const memory_struct access = memory.write(util::bit_fetcher(Rd, 0, 7), address, 1);
+    const memory_struct access = memory.write(shared::util::bit_fetcher(Rd, 0, 7), address, 1);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -200,14 +200,14 @@ void INSTRUCTIONS::thumb::store::STRB2(const thumb_code_t& code) {
 void INSTRUCTIONS::thumb::store::STRH1(const thumb_code_t& code) { // TODO
     const u32 Rd = reg.read(code, 0, 2);
     const u32 Rn = reg.read(code, 3, 5);
-    const u8 immed_5 = util::bit_fetcher<u8>(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
 
     const u32 address = (Rn + (immed_5 * 2));
 
     u16 value = 0;
 
     if ((address & 0b11) == 0) {
-        value = util::bit_fetcher(Rd, 0, 15);
+        value = shared::util::bit_fetcher(Rd, 0, 15);
     } else {
         // UNPREDICTABLE, TODO
     }
@@ -241,7 +241,7 @@ void INSTRUCTIONS::thumb::store::STRH2(const thumb_code_t& code) { // TODO
     u16 value = 0;
 
     if ((address & 0b11) == 0) {
-        value = util::bit_fetcher(Rd, 0, 15);
+        value = shared::util::bit_fetcher(Rd, 0, 15);
     } else {
         // UNPREDICTABLE, TODO
     }
@@ -272,7 +272,7 @@ void INSTRUCTIONS::thumb::store::STRH2(const thumb_code_t& code) { // TODO
  * SP = SP - 4*(R + Number_Of_Set_Bits_In(register_list))
  */
 void INSTRUCTIONS::thumb::store::PUSH(const thumb_code_t& code) {
-    const u8 register_list = util::bit_fetcher<u8>(code, 0, 7);
+    const u8 register_list = shared::util::bit_fetcher<u8>(code, 0, 7);
     const bool R = code.test(8);
 
     const u32 SP = reg.read(id::reg::SP);

@@ -9,9 +9,9 @@
  *   PC = PC + (SignExtend(signed_immed_8) << 1)
  */
 void INSTRUCTIONS::thumb::branching::B1(const thumb_code_t &code) {
-    const i8 signed_immed_8 = util::bit_fetcher<i8>(code, 0, 7);
+    const i8 signed_immed_8 = shared::util::bit_fetcher<i8>(code, 0, 7);
 
-    const id::cond cond = reg.fetch_cond_id(util::bit_fetcher<u8>(code, 8, 11));
+    const id::cond cond = reg.fetch_cond_id(shared::util::bit_fetcher<u8>(code, 8, 11));
 
     std::cout << "B1 PC before: 0x" << std::hex << reg.read(id::reg::PC) << std::dec << "\n";
 
@@ -30,7 +30,7 @@ void INSTRUCTIONS::thumb::branching::B1(const thumb_code_t &code) {
  * PC = PC + (SignExtend(signed_immed_11) << 1)
  */
 void INSTRUCTIONS::thumb::branching::B2(const thumb_code_t &code) {
-    const i16 signed_immed_10 = util::bit_fetcher<i16>(code, 0, 10);
+    const i16 signed_immed_10 = shared::util::bit_fetcher<i16>(code, 0, 10);
 
     std::cout << "before: " << reg.read(id::reg::PC) << "\n";
 
@@ -56,8 +56,8 @@ void INSTRUCTIONS::thumb::branching::B2(const thumb_code_t &code) {
 void INSTRUCTIONS::thumb::branching::BL(const thumb_code_t &code) {
     std::cout << "\n\n\n\nbefore: " << reg.read(id::reg::PC) << "\n\n\n";
 
-    const u16 offset_11 = util::bit_fetcher<u16>(code, 0, 10);
-    const u8 H = util::bit_fetcher<u8>(code, 11, 12);
+    const u16 offset_11 = shared::util::bit_fetcher<u16>(code, 0, 10);
+    const u8 H = shared::util::bit_fetcher<u8>(code, 11, 12);
 
     const u32 next_instruction_address = reg.read(id::reg::PC) + 2;
 
@@ -88,8 +88,8 @@ void INSTRUCTIONS::thumb::branching::BL(const thumb_code_t &code) {
  *   T Flag = 0
  */
 void INSTRUCTIONS::thumb::branching::BLX1(const thumb_code_t &code) {
-    const u16 offset_11 = util::bit_fetcher<u16>(code, 0, 10);
-    const u8 H = util::bit_fetcher<u8>(code, 11, 12);
+    const u16 offset_11 = shared::util::bit_fetcher<u16>(code, 0, 10);
+    const u8 H = shared::util::bit_fetcher<u8>(code, 11, 12);
 
     const u32 next_instruction_address = reg.read(id::reg::PC) + 2;
 
@@ -120,7 +120,7 @@ void INSTRUCTIONS::thumb::branching::BLX2(const thumb_code_t &code) {
 
     reg.write(id::reg::LR, (next_instruction_address | 1));
     reg.write(id::cpsr::T, (Rm & 1));
-    reg.write(id::reg::PC, (util::bit_fetcher(Rm, 1, 31) << 1));
+    reg.write(id::reg::PC, (shared::util::bit_fetcher(Rm, 1, 31) << 1));
 
     reg.thumb_increment_PC();
 }
@@ -134,7 +134,7 @@ void INSTRUCTIONS::thumb::branching::BX(const thumb_code_t &code) {
     const u32 Rm = reg.read(code, 3, 6);
 
     reg.write(id::cpsr::T, (Rm & 1));
-    reg.write(id::reg::PC, (util::bit_fetcher(Rm, 1, 31) << 1));
+    reg.write(id::reg::PC, (shared::util::bit_fetcher(Rm, 1, 31) << 1));
 
     reg.thumb_increment_PC();
 }

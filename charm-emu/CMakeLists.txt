@@ -1,9 +1,9 @@
 # basic info
 cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 project(
-    charm-asm
+    charm-emu
     VERSION 0.1 
-    DESCRIPTION "ARM assembler and disassembler framework"
+    DESCRIPTION "ARM emulation framework"
     LANGUAGES CXX
 )
 
@@ -18,43 +18,42 @@ include("../cmake/linker_flags.cmake") # linker config
 
 
 # targets
-set(TARGET_BIN "charm-asm-bin")
-set(TARGET_LIB "charm-asm-lib")
+set(TARGET_BIN "charm-emu-bin")
+set(TARGET_LIB "charm-emu-lib")
 
 
 # general
 file(GLOB_RECURSE ALL_SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 set(LIB_SOURCES ${ALL_SOURCES})
-set(EXCLUDE_PATTERNS
-    ".*/main\\.cpp"
-)
-foreach(source IN LISTS ALL_SOURCES)
-    foreach(pattern IN LISTS EXCLUDE_PATTERNS)
-        if(source MATCHES "${pattern}")
-            list(REMOVE_ITEM LIB_SOURCES "${source}")
-            break()
-        endif()
-    endforeach()
-endforeach()
+#set(EXCLUDE_PATTERNS
+#    ".*/main\\.cpp"
+#)
+#foreach(source IN LISTS ALL_SOURCES)
+#    foreach(pattern IN LISTS EXCLUDE_PATTERNS)
+#        if(source MATCHES "${pattern}")
+#            list(REMOVE_ITEM LIB_SOURCES "${source}")
+#            break()
+#        endif()
+#    endforeach()
+#endforeach()
 
 
 # library setup
 add_library(${TARGET_LIB} STATIC ${LIB_SOURCES})
 set_target_properties(${TARGET_LIB} PROPERTIES 
-    OUTPUT_NAME "charm-asm"
+    OUTPUT_NAME "charm-emu"
 )
-#add_dependencies(${TARGET_LIB} charm-shared)
-install(FILES charm-asm.hpp DESTINATION include/charm)
-install(DIRECTORY src/ DESTINATION include/charm/internal/charm-asm/src)
-install(TARGETS ${TARGET_LIB}
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-)
+#install(FILES charm-asm.hpp DESTINATION include/charm)
+#install(DIRECTORY src/ DESTINATION include/charm/internal/charm-asm/src)
+#install(TARGETS ${TARGET_LIB}
+#    ARCHIVE DESTINATION lib
+#    LIBRARY DESTINATION lib
+#)
 
 
 # executable setup
 add_executable(${TARGET_BIN} "src/main.cpp")
-set_target_properties(${TARGET_BIN} PROPERTIES OUTPUT_NAME "charm-asm")
+set_target_properties(${TARGET_BIN} PROPERTIES OUTPUT_NAME "charm-emu")
 target_link_libraries(${TARGET_BIN} PRIVATE ${TARGET_LIB})
 install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION bin)
 
@@ -69,14 +68,14 @@ configure_compiler()
 
 # define compiler macros and the release/debug build type (defined in charm/cmake/build_type.cmake)
 config_build_type(${TARGET_BIN})
-config_build_type(${TARGET_LIB})
+#config_build_type(${TARGET_LIB})
 
 
 # configure the target flags (defined in charm/cmake/target_flags.cmake)
 configure_target_flags(${TARGET_BIN})
-configure_target_flags(${TARGET_LIB})
+#configure_target_flags(${TARGET_LIB})
 
 
 # linker flags (defined in charm/cmake/linker_flags.cmake)
 configure_linker_flags(${TARGET_BIN})
-configure_linker_flags(${TARGET_LIB})
+#configure_linker_flags(${TARGET_LIB})

@@ -40,9 +40,9 @@ std::string generators::thumb::branching::B1(const u16 code, const u32 PC) {
         std::stringstream ss;
         ss << std::hex << target_address;
         const std::string hex_address = ss.str();
-        return util::make_instruction("B", cond_string, " #0x", hex_address);
+        return util::make_string("B", cond_string, " #0x", hex_address);
     } else {
-        return util::make_instruction("B", cond_string, " #", target_address);
+        return util::make_string("B", cond_string, " #", target_address);
     }
 }
 
@@ -67,13 +67,13 @@ std::string generators::thumb::branching::B2(const u16 code, const u32 PC) {
     const u32 sign_extend = (signed_immed_11 << 1);
     const u32 target_address = (sign_extend + 4 + PC);
 
-    if (target_address > 8) {
+    if (target_address > 9) {
         std::stringstream ss;
         ss << std::hex << target_address;
         const std::string hex_address = ss.str();
-        return util::make_instruction("B #0x", hex_address);
+        return util::make_string("B #0x", hex_address);
     } else {
-        return util::make_instruction("B #", target_address);
+        return util::make_string("B #", target_address);
     }
 }
 
@@ -161,9 +161,9 @@ std::string generators::thumb::branching::BL_BLX1(const u16 code, const u32 PC) 
     // 4?
 
     if (BL) {
-        return util::make_instruction("BL ");
+        return util::make_string("BL ");
     } else if (BLX1) {
-        return util::make_instruction("BLX ");
+        return util::make_string("BLX ");
     } else {
         shared::out::error("todo");
     }
@@ -202,7 +202,7 @@ std::string generators::thumb::branching::BL_BLX1(const u16 code, const u32 PC) 
  */
 std::string generators::thumb::branching::BX(const u16 code) {
     const std::string Rm = util::reg_string(code, 3, 6); // H2 included
-    return util::make_instruction("BX ", Rm);
+    return util::make_string("BX ", Rm);
 }
 
 
@@ -217,5 +217,5 @@ std::string generators::thumb::branching::BX(const u16 code) {
  */
 std::string generators::thumb::branching::BLX2(const u16 code) {
     const std::string Rm = util::reg_string(code, 3, 6); // H2 included
-    return util::make_instruction("BLX ", Rm);
+    return util::make_string("BLX ", Rm);
 }

@@ -38,7 +38,7 @@ private:
                 }
                 break;
 
-            default: out::error(); // TODO
+            default: shared::out::error(); // TODO
         }
     }
 };

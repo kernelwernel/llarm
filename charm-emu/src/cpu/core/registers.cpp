@@ -15,7 +15,7 @@ id::mode REGISTERS::read_mode() {
             case constants::mode::IRQ_26: return id::mode::IRQ_26;
             case constants::mode::SUPERVISOR_26: return id::mode::SUPERVISOR_26;
             default: 
-                out::error("No known enum value for read_mode()");
+                shared::out::error("No known enum value for read_mode()");
         }
     } else { // 32-bit mode arch
         switch (read(id::cpsr::M)) {
@@ -27,7 +27,7 @@ id::mode REGISTERS::read_mode() {
             case constants::mode::IRQ: return id::mode::IRQ;
             case constants::mode::SYSTEM: return id::mode::SYSTEM;
             default: 
-                out::error("No known enum value for read_mode()");
+                shared::out::error("No known enum value for read_mode()");
         }
     }
 }
@@ -85,7 +85,7 @@ void REGISTERS::write(const id::cpsr cpsr_macro, const u8 value) {
                     case constants::mode::UNDEFINED:
                     case constants::mode::FIQ:
                     case constants::mode::IRQ:
-                    case constants::mode::SYSTEM: out::warning("No 32-bit mode switch from 26-bit architecture is valid, the mode bits will be treated in 26-bit mode which may be unpredictable");   
+                    case constants::mode::SYSTEM: shared::out::warning("No 32-bit mode switch from 26-bit architecture is valid, the mode bits will be treated in 26-bit mode which may be unpredictable");   
                     default: break;
                 }
 
@@ -96,7 +96,7 @@ void REGISTERS::write(const id::cpsr cpsr_macro, const u8 value) {
             case id::cpsr::V: util::modify_bit(R15_copy, 28, value); break;
             case id::cpsr::I: util::modify_bit(R15_copy, 27, value); break;
             case id::cpsr::F: util::modify_bit(R15_copy, 26, value); break;
-            default: out::error("No known enum value for write() (26-bit)");
+            default: shared::out::error("No known enum value for write() (26-bit)");
         }
 
         write(id::reg::R15, R15_copy);
@@ -135,7 +135,7 @@ void REGISTERS::write(const id::cpsr cpsr_macro, const u8 value) {
             case id::cpsr::Z: CPSR |= (value << 30); return;
             case id::cpsr::N: CPSR |= (value << 31); return;
             default:
-                out::error("No known enum value for write()");
+                shared::out::error("No known enum value for write()");
         }
     }
 }
@@ -158,7 +158,7 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
         [[likely]] case id::reg::PC: write_PC(value); return;
         case id::reg::CPSR: 
             if (arch_26.is_only_26_arch()) {
-                out::error("CPSR does not exist in pure 26-bit architecture");
+                shared::out::error("CPSR does not exist in pure 26-bit architecture");
             }
             CPSR = value;
             return;
@@ -177,14 +177,14 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
             case id::mode::SUPERVISOR_26: SPSR_svc = value; return;
             case id::mode::ABORT: SPSR_abt = value; return;
             case id::mode::UNDEFINED: SPSR_und = value; return;
-            default: out::error("TODO"); // TODO add error or warning idk
+            default: shared::out::error("TODO"); // TODO add error or warning idk
         }
     }
 
     switch (mode) {
         case id::mode::SYSTEM:
             if (static_cast<u8>(settings.arch) < 4) {
-                out::error("TODO"); // maybe add a warning/error, idk
+                shared::out::error("TODO"); // maybe add a warning/error, idk
             }
         case id::mode::USER:
         case id::mode::USER_26:
@@ -273,7 +273,7 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
             }
             break;
 
-        default: out::error("unknown idk TODO");
+        default: shared::out::error("unknown idk TODO");
     }
 }
 
@@ -313,7 +313,7 @@ u8 REGISTERS::read(const id::cpsr cpsr_macro) {
             case id::cpsr::I: return (CPSR & (1 << 27));
             case id::cpsr::F: return (CPSR & (1 << 26));
             default:
-                out::error("No known enum value for read() (26-bit)");
+                shared::out::error("No known enum value for read() (26-bit)");
         }
     } else {
         switch (cpsr_macro) {
@@ -333,7 +333,7 @@ u8 REGISTERS::read(const id::cpsr cpsr_macro) {
             case id::cpsr::Z: return (CPSR & (1 << 30));
             case id::cpsr::N: return (CPSR & (1 << 31));
             default:
-                out::error("No known enum value for read()");
+                shared::out::error("No known enum value for read()");
         }
     }
 }
@@ -355,7 +355,7 @@ u32 REGISTERS::read(const id::reg register_id) {
         case id::reg::PC: return read_PC(); // R15 and PC are the same, except for 26-bit arch 
         case id::reg::CPSR: 
             if (arch_26.is_only_26_arch()) {
-                out::error("CPSR does not exist in pure 26-bit architecture");
+                shared::out::error("CPSR does not exist in pure 26-bit architecture");
             }
             return CPSR;
         default: break;
@@ -373,14 +373,14 @@ u32 REGISTERS::read(const id::reg register_id) {
             case id::mode::SUPERVISOR_26: return SPSR_svc; 
             case id::mode::ABORT: return SPSR_abt; 
             case id::mode::UNDEFINED: return SPSR_und; 
-            default: out::error("TODO"); // TODO add error or warning idk
+            default: shared::out::error("TODO"); // TODO add error or warning idk
         }
     }
 
     switch (mode) {
         case id::mode::SYSTEM:
             if (static_cast<u8>(settings.arch) < 4) {
-                out::error("TODO"); // maybe add a warning/error, idk
+                shared::out::error("TODO"); // maybe add a warning/error, idk
             }
         case id::mode::USER:
         case id::mode::USER_26:
@@ -470,7 +470,7 @@ u32 REGISTERS::read(const id::reg register_id) {
             break;
     }
 
-    out::error("Couldn't read register in read() = ", (int)register_id);
+    shared::out::error("Couldn't read register in read() = ", (int)register_id);
 };
 
 
@@ -492,13 +492,13 @@ void REGISTERS::access_check(const id::reg register_id) {
 
     if (arch_26.is_only_26_arch()) {
         switch (register_id) {
-            case id::reg::CPSR: out::error("CPSR does not exist in pure 26-bit architecture");
-            case id::reg::SPSR: out::error("SPSR does not exist in pure 26-bit architecture");
-            case id::reg::SPSR_svc: out::error("SPSR_svc does not exist in pure 26-bit architecture");
-            case id::reg::SPSR_abt: out::error("SPSR_abt does not exist in pure 26-bit architecture");
-            case id::reg::SPSR_und: out::error("SPSR_und does not exist in pure 26-bit architecture");
-            case id::reg::SPSR_irq: out::error("SPSR_irq does not exist in pure 26-bit architecture");
-            case id::reg::SPSR_fiq: out::error("SPSR_fiq does not exist in pure 26-bit architecture");
+            case id::reg::CPSR: shared::out::error("CPSR does not exist in pure 26-bit architecture");
+            case id::reg::SPSR: shared::out::error("SPSR does not exist in pure 26-bit architecture");
+            case id::reg::SPSR_svc: shared::out::error("SPSR_svc does not exist in pure 26-bit architecture");
+            case id::reg::SPSR_abt: shared::out::error("SPSR_abt does not exist in pure 26-bit architecture");
+            case id::reg::SPSR_und: shared::out::error("SPSR_und does not exist in pure 26-bit architecture");
+            case id::reg::SPSR_irq: shared::out::error("SPSR_irq does not exist in pure 26-bit architecture");
+            case id::reg::SPSR_fiq: shared::out::error("SPSR_fiq does not exist in pure 26-bit architecture");
             default: break;
         }
     }
@@ -507,10 +507,10 @@ void REGISTERS::access_check(const id::reg register_id) {
         switch (register_id) {
             case id::reg::R13_abt:
             case id::reg::R14_abt:
-            case id::reg::SPSR_abt: out::error("SPSR_abt register does not exist in 26-bit architecure mode (read)"); break;
+            case id::reg::SPSR_abt: shared::out::error("SPSR_abt register does not exist in 26-bit architecure mode (read)"); break;
             case id::reg::R13_und:
             case id::reg::R14_und:
-            case id::reg::SPSR_und: out::error("SPSR_und register does not exist in 26-bit architecure mode (read)"); break;
+            case id::reg::SPSR_und: shared::out::error("SPSR_und register does not exist in 26-bit architecure mode (read)"); break;
             default: break;
         }
     }
@@ -593,11 +593,11 @@ id::reg REGISTERS::fetch_reg_id(const u8 value) noexcept {
         default: break;
     }
 
-    out::error("Couldn't find suitable match for register identification in identifier()");
+    shared::out::error("Couldn't find suitable match for register identification in identifier()");
 }
 
 id::reg REGISTERS::fetch_reg_id(const arm_code_t &code, const u8 start, const u8 end) noexcept {
-    const u8 Rd_bits = util::bit_fetcher<u8, u32>(code.to_ulong(), start, end);
+    const u8 Rd_bits = shared::util::bit_fetcher<u8, u32>(code.to_ulong(), start, end);
     
     id::reg reg_id = fetch_reg_id(Rd_bits);
 
@@ -618,7 +618,7 @@ id::reg REGISTERS::fetch_reg_id(const arm_code_t &code, const u8 start, const u8
 }
 
 id::reg REGISTERS::fetch_reg_id(const thumb_code_t &code, const u8 start, const u8 end) noexcept {
-    const u8 Rd_bits = util::bit_fetcher<u8, u32>(code.to_ulong(), start, end);
+    const u8 Rd_bits = shared::util::bit_fetcher<u8, u32>(code.to_ulong(), start, end);
     return fetch_reg_id(Rd_bits);
 }
 
@@ -657,12 +657,12 @@ id::cond REGISTERS::fetch_cond_id(const u8 cond) {
         case constants::cond::NV: return id::cond::NV;
     }
 
-    out::error("No match found with conditon constant in fetch_cond_id()");
+    shared::out::error("No match found with conditon constant in fetch_cond_id()");
 }
 
 
 id::cond REGISTERS::fetch_cond_id(const arm_code_t &code) {
-    return fetch_cond_id(util::bit_fetcher<u8>(code, 28, 31));
+    return fetch_cond_id(shared::util::bit_fetcher<u8>(code, 28, 31));
 }
 
 
@@ -679,7 +679,7 @@ id::mode REGISTERS::fetch_mode_id(const u8 mode) {
         case constants::mode::FIQ_26: return id::mode::FIQ_26;
         case constants::mode::IRQ_26: return id::mode::IRQ_26;
         case constants::mode::SUPERVISOR_26: return id::mode::SUPERVISOR_26;
-        default: out::error("TODO");
+        default: shared::out::error("TODO");
     };
 }
 
@@ -733,7 +733,7 @@ bool REGISTERS::check_cond(const id::cond cond) {
             );
         case id::cond::AL: return true;
         case id::cond::NV: return true;
-        default: out::error("TODO");
+        default: shared::out::error("TODO");
     }
 }
 
@@ -769,7 +769,7 @@ void REGISTERS::write_PC(const u32 address) {
 
 u32 REGISTERS::read_PC() {
     if (arch_26.is_26_arch_address()) {
-        return (util::bit_fetcher<u32>(R15, 2, 25)); 
+        return (shared::util::bit_fetcher<u32>(R15, 2, 25)); 
     } else {
         return R15; 
     }

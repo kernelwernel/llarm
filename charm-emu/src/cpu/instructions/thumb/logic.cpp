@@ -46,7 +46,7 @@ void INSTRUCTIONS::thumb::logic::ASR1(const thumb_code_t &code) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
-    const u8 immed_5 = util::bit_fetcher<u8>(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
 
     if (immed_5 == 0) {
         const bool carry_bit = (Rm & (1 << 31));
@@ -92,7 +92,7 @@ void INSTRUCTIONS::thumb::logic::ASR2(const thumb_code_t &code) {
     const u32 Rd = reg.read(Rd_id);
     const u32 Rs = reg.read(Rs_id);
 
-    const u8 Rs_0_7 = util::bit_fetcher<u8, u32>(Rs, 0, 7);
+    const u8 Rs_0_7 = shared::util::bit_fetcher<u8, u32>(Rs, 0, 7);
 
     if (Rs_0_7 == 0) {
 
@@ -171,7 +171,7 @@ void INSTRUCTIONS::thumb::logic::EOR(const thumb_code_t &code) {
  * V Flag = unaffected
  */
 void INSTRUCTIONS::thumb::logic::LSL1(const thumb_code_t &code) {
-    const u8 immed_5 = util::bit_fetcher<u8>(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
@@ -250,7 +250,7 @@ void INSTRUCTIONS::thumb::logic::LSL2(const thumb_code_t &code) {
 void INSTRUCTIONS::thumb::logic::LSR1(const thumb_code_t &code) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
 
-    const u8 immed_5 = util::bit_fetcher<u8>(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
     const u32 Rm = reg.read(code, 3, 5);
 
     if (immed_5 == 0) {

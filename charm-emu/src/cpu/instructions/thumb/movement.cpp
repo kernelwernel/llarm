@@ -14,7 +14,7 @@
  */
 void INSTRUCTIONS::thumb::movement::MOV1(const thumb_code_t &code) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
-    const u8 immed_8 = util::bit_fetcher<u8>(code, 0, 7);
+    const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
     reg.write(Rd_id, immed_8);
 
@@ -55,7 +55,7 @@ void INSTRUCTIONS::thumb::movement::MOV2(const thumb_code_t &code) {
  * Rd = Rm
  */
 void INSTRUCTIONS::thumb::movement::MOV3(const thumb_code_t &code) {
-    u8 Rd_id_bits = util::bit_fetcher<u8>(code, 0, 2);
+    u8 Rd_id_bits = shared::util::bit_fetcher<u8>(code, 0, 2);
     const u32 Rm = reg.read(code, 3, 6);
     const bool H1 = code.test(7);
     // const bool H2 = code.test(6); H2 isn't really needed

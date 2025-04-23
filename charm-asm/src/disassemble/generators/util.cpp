@@ -5,6 +5,8 @@
 #include "shared/util.hpp"
 
 #include <vector>
+#include <array>
+#include <charconv>
 
 using namespace internal;
 
@@ -267,4 +269,23 @@ std::string util::reg_string_bits(const u32 code, const u8 start, const u8 end, 
     const reg_id id = identify_reg(reg_bits, prefix::R);
 
     return reg_id_to_string(id, false);
+}
+
+// notes:
+// - this is only a POTENTIAL hex conversion
+// - i could use std::stringstream with std::hex but it is super slow
+// - code from https://stackoverflow.com/a/33447587
+// - sstream and this implementation have been benchmarked:
+//   https://quick-bench.com/q/1hf173hus7o-E-5lAB_trCghrdk
+std::string util::hex(const u32 integer) {
+    if (integer > 9) {
+        const size_t hex_len = sizeof(u32)<<1;
+        static const char* digits = "0123456789ABCDEF";
+        std::string rc(hex_len,'0');
+        for (size_t i=0, j=(hex_len-1)*4 ; i<hex_len; ++i,j-=4)
+            rc[i] = digits[(integer>>j) & 0x0f];
+        return rc;
+    }
+
+    return std::to_string(integer);
 }

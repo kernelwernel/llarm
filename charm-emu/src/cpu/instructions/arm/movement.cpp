@@ -110,8 +110,8 @@ void INSTRUCTIONS::arm::movement::MSR_IMM(const arm_code_t &code) {
 
     u32 operand = 0;
 
-    const u8 imm_8 = util::bit_fetcher<u8>(code, 0, 7);
-    const u8 rotate_imm = util::bit_fetcher<u8>(code, 8, 11);
+    const u8 imm_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
+    const u8 rotate_imm = shared::util::bit_fetcher<u8>(code, 8, 11);
     operand = std::rotr(imm_8, (rotate_imm * 2)); 
 
     if (R == false) {
@@ -120,19 +120,19 @@ void INSTRUCTIONS::arm::movement::MSR_IMM(const arm_code_t &code) {
         u32 new_CPSR = reg.read(id::reg::CPSR);
 
         if (field_mask_c && is_privileged) {
-            util::swap_bits(new_CPSR, 0, 7, util::bit_fetcher<u8>(operand, 0, 7));
+            util::swap_bits(new_CPSR, 0, 7, shared::util::bit_fetcher<u8>(operand, 0, 7));
         }
 
         if (field_mask_x && is_privileged) {
-            util::swap_bits(new_CPSR, 8, 15, util::bit_fetcher<u8>(operand, 8, 15));
+            util::swap_bits(new_CPSR, 8, 15, shared::util::bit_fetcher<u8>(operand, 8, 15));
         }
 
         if (field_mask_s && is_privileged) {
-            util::swap_bits(new_CPSR, 16, 23, util::bit_fetcher<u8>(operand, 16, 23));
+            util::swap_bits(new_CPSR, 16, 23, shared::util::bit_fetcher<u8>(operand, 16, 23));
         }
 
         if (field_mask_f) {
-            util::swap_bits(new_CPSR, 24, 31, util::bit_fetcher<u8>(operand, 24, 31));
+            util::swap_bits(new_CPSR, 24, 31, shared::util::bit_fetcher<u8>(operand, 24, 31));
         }
 
         reg.write(id::reg::CPSR, new_CPSR);
@@ -143,19 +143,19 @@ void INSTRUCTIONS::arm::movement::MSR_IMM(const arm_code_t &code) {
             u32 new_SPSR = reg.read(id::reg::SPSR);
             
             if (field_mask_c) {
-                util::swap_bits(new_SPSR, 0, 7, util::bit_fetcher<u8>(operand, 0, 7));
+                util::swap_bits(new_SPSR, 0, 7, shared::util::bit_fetcher<u8>(operand, 0, 7));
             }
 
             if (field_mask_x) {
-                util::swap_bits(new_SPSR, 8, 15, util::bit_fetcher<u8>(operand, 8, 15));
+                util::swap_bits(new_SPSR, 8, 15, shared::util::bit_fetcher<u8>(operand, 8, 15));
             }
 
             if (field_mask_s) {
-                util::swap_bits(new_SPSR, 16, 23, util::bit_fetcher<u8>(operand, 16, 23));
+                util::swap_bits(new_SPSR, 16, 23, shared::util::bit_fetcher<u8>(operand, 16, 23));
             }
 
             if (field_mask_f) {
-                util::swap_bits(new_SPSR, 24, 31, util::bit_fetcher<u8>(operand, 24, 31));
+                util::swap_bits(new_SPSR, 24, 31, shared::util::bit_fetcher<u8>(operand, 24, 31));
             }
 
             reg.write(id::reg::SPSR, new_SPSR);
@@ -208,19 +208,19 @@ void INSTRUCTIONS::arm::movement::MSR_REG(const arm_code_t &code) {
         u32 new_CPSR = reg.read(id::reg::CPSR);
 
         if (field_mask_c && is_privileged) {
-            util::swap_bits(new_CPSR, 0, 7, util::bit_fetcher<u8>(operand, 0, 7));
+            util::swap_bits(new_CPSR, 0, 7, shared::util::bit_fetcher<u8>(operand, 0, 7));
         }
 
         if (field_mask_x && is_privileged) {
-            util::swap_bits(new_CPSR, 8, 15, util::bit_fetcher<u8>(operand, 8, 15));
+            util::swap_bits(new_CPSR, 8, 15, shared::util::bit_fetcher<u8>(operand, 8, 15));
         }
 
         if (field_mask_s && is_privileged) {
-            util::swap_bits(new_CPSR, 16, 23, util::bit_fetcher<u8>(operand, 16, 23));
+            util::swap_bits(new_CPSR, 16, 23, shared::util::bit_fetcher<u8>(operand, 16, 23));
         }
 
         if (field_mask_f) {
-            util::swap_bits(new_CPSR, 24, 31, util::bit_fetcher<u8>(operand, 24, 31));
+            util::swap_bits(new_CPSR, 24, 31, shared::util::bit_fetcher<u8>(operand, 24, 31));
         }
 
         reg.write(id::reg::CPSR, new_CPSR);
@@ -231,19 +231,19 @@ void INSTRUCTIONS::arm::movement::MSR_REG(const arm_code_t &code) {
             u32 new_SPSR = reg.read(id::reg::SPSR);
             
             if (field_mask_c) {
-                util::swap_bits(new_SPSR, 0, 7, util::bit_fetcher<u8>(operand, 0, 7));
+                util::swap_bits(new_SPSR, 0, 7, shared::util::bit_fetcher<u8>(operand, 0, 7));
             }
 
             if (field_mask_x) {
-                util::swap_bits(new_SPSR, 8, 15, util::bit_fetcher<u8>(operand, 8, 15));
+                util::swap_bits(new_SPSR, 8, 15, shared::util::bit_fetcher<u8>(operand, 8, 15));
             }
 
             if (field_mask_s) {
-                util::swap_bits(new_SPSR, 16, 23, util::bit_fetcher<u8>(operand, 16, 23));
+                util::swap_bits(new_SPSR, 16, 23, shared::util::bit_fetcher<u8>(operand, 16, 23));
             }
 
             if (field_mask_f) {
-                util::swap_bits(new_SPSR, 24, 31, util::bit_fetcher<u8>(operand, 24, 31));
+                util::swap_bits(new_SPSR, 24, 31, shared::util::bit_fetcher<u8>(operand, 24, 31));
             }
 
             reg.write(id::reg::SPSR, new_SPSR);

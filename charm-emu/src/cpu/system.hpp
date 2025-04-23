@@ -35,7 +35,7 @@ public:
             case constants::mode::IRQ: return id::mode::IRQ;
             case constants::mode::SYSTEM: return id::mode::SYSTEM;
             default:
-                out::error("No known enum value for read_mode()");
+                shared::out::error("No known enum value for read_mode()");
         }
     }
 */

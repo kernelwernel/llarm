@@ -122,7 +122,7 @@ void INSTRUCTIONS::arm::math::RSC(const arm_code_t &code) {
  *     V Flag = OverflowFrom(Rn - shifter_operand - NOT(C Flag)
  */ 
 void INSTRUCTIONS::arm::math::SBC(const arm_code_t &code) {
-    const u16 shifter_operand = util::bit_fetcher<u16>(code, 0, 11);
+    const u16 shifter_operand = shared::util::bit_fetcher<u16>(code, 0, 11);
     
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
@@ -157,7 +157,7 @@ void INSTRUCTIONS::arm::math::SBC(const arm_code_t &code) {
  *     V Flag = OverflowFrom(shifter_operand - Rn)
  */ 
 void INSTRUCTIONS::arm::math::RSB(const arm_code_t &code) {
-    const u16 shifter_operand = util::bit_fetcher<u16>(code, 0, 11);
+    const u16 shifter_operand = shared::util::bit_fetcher<u16>(code, 0, 11);
     
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);

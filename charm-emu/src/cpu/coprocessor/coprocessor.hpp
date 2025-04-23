@@ -41,7 +41,7 @@ public:
             case 0b1101: return id::coprocessor::CP13;
             case 0b1110: return id::coprocessor::CP14;
             case 0b1111: return id::coprocessor::CP15;
-            default: out::error("TODO");
+            default: shared::out::error("TODO");
         };
     }
 
@@ -64,7 +64,7 @@ public:
             static_cast<u8>(cp_reg_id) > static_cast<u8>(id::cp::CP15_START) &&
             static_cast<u8>(cp_reg_id) < static_cast<u8>(id::cp::CP15_END)
         ) [[likely]] {
-            cp15.write(cp_reg_id, util::bit_fetcher(value, 0, 31), is_forced); return;
+            cp15.write(cp_reg_id, shared::util::bit_fetcher(value, 0, 31), is_forced); return;
         } 
 
         // TODO: ERROR (unknown CP reg id)

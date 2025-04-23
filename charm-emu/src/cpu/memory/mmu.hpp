@@ -111,7 +111,7 @@ private:
                     case AP10_PRIV: AP_id = id::access_perm::READ_WRITE; break; // AP = 10, priv
                     case AP11_USER: AP_id = id::access_perm::READ_WRITE; break; // AP = 11, user
                     case AP11_PRIV: AP_id = id::access_perm::READ_WRITE; break; // AP = 11, priv
-                    default: out::error("something went horribly wrong here...");
+                    default: shared::out::error("something went horribly wrong here...");
                 }
         }
 
@@ -246,7 +246,7 @@ private:
         
         const u32 section_base_address = 0;
 
-        const u32 section_index = util::bit_fetcher(address, 0, 12); 
+        const u32 section_index = shared::util::bit_fetcher(address, 0, 12); 
         const u32 physical_address = (section_base_address << 20) | section_index;
 
         return physical_address;
@@ -255,9 +255,9 @@ private:
 
     // B3-9
     u32 first_coarse(const u32 entry, const u32 address) {
-        const u32 page_table_base_address = util::bit_fetcher(entry, 10, 31);
+        const u32 page_table_base_address = shared::util::bit_fetcher(entry, 10, 31);
 
-        const u8 second_level_table_index = util::bit_fetcher(address, 12, 19);
+        const u8 second_level_table_index = shared::util::bit_fetcher(address, 12, 19);
         
         const u32 second_level_descriptor_address = (
             (page_table_base_address << 10) |
@@ -270,9 +270,9 @@ private:
 
     // B3-10
     u32 first_fine(const u32 entry, const u32 address) {
-        const u32 page_table_base_address = util::bit_fetcher(entry, 12, 31);
+        const u32 page_table_base_address = shared::util::bit_fetcher(entry, 12, 31);
 
-        const u8 second_level_table_index = util::bit_fetcher(address, 10, 19);
+        const u8 second_level_table_index = shared::util::bit_fetcher(address, 10, 19);
         
         const u32 second_level_descriptor_address = (
             (page_table_base_address << 12) |
@@ -321,13 +321,13 @@ private:
         // const bool C = (entry & (1 << 3)); // TODO: DO SOMETHING WITH THESE
         // const bool B = (entry & (1 << 2)); // TODO: DO SOMETHING WITH THESE
 // 
-        // const u8 AP0 = util::bit_fetcher(entry, 4, 5); // TODO: DO SOMETHING WITH THESE
-        // const u8 AP1 = util::bit_fetcher(entry, 6, 7); // TODO: DO SOMETHING WITH THESE
-        // const u8 AP2 = util::bit_fetcher(entry, 8, 9); // TODO: DO SOMETHING WITH THESE
-        // const u8 AP3 = util::bit_fetcher(entry, 10, 11); // TODO: DO SOMETHING WITH THESE
+        // const u8 AP0 = shared::util::bit_fetcher(entry, 4, 5); // TODO: DO SOMETHING WITH THESE
+        // const u8 AP1 = shared::util::bit_fetcher(entry, 6, 7); // TODO: DO SOMETHING WITH THESE
+        // const u8 AP2 = shared::util::bit_fetcher(entry, 8, 9); // TODO: DO SOMETHING WITH THESE
+        // const u8 AP3 = shared::util::bit_fetcher(entry, 10, 11); // TODO: DO SOMETHING WITH THESE
 
-        const u32 small_page_base_address = util::bit_fetcher(entry, 12, 31);
-        const u16 page_index = util::bit_fetcher(address, 0, 11);
+        const u32 small_page_base_address = shared::util::bit_fetcher(entry, 12, 31);
+        const u16 page_index = shared::util::bit_fetcher(address, 0, 11);
 
         const u32 physical_address = ((small_page_base_address << 12) | page_index);
 
@@ -336,7 +336,7 @@ private:
 
 
     u32 second_tiny(const u32 entry, const u32 address, const id::access_type access, const u8 raw_domain_bits) {
-        const u8 AP = util::bit_fetcher(entry, 4, 5);
+        const u8 AP = shared::util::bit_fetcher(entry, 4, 5);
 
         if (is_access_permission_invalid(AP, access)) {
             // TODO: permission fault
@@ -345,8 +345,8 @@ private:
         // const bool C = (entry & (1 << 3)); // TODO: DO SOMETHING WITH THESE
         // const bool B = (entry & (1 << 2)); // TODO: DO SOMETHING WITH THESE
 
-        const u32 tiny_page_base_address = util::bit_fetcher(entry, 10, 31);
-        const u16 page_index = util::bit_fetcher(address, 0, 9);
+        const u32 tiny_page_base_address = shared::util::bit_fetcher(entry, 10, 31);
+        const u16 page_index = shared::util::bit_fetcher(address, 0, 9);
 
         const u32 physical_address = ((tiny_page_base_address << 10) | page_index);
 
@@ -402,12 +402,12 @@ public:
                     }
                     break;
 
-                default: out::error(); // TODO
+                default: shared::out::error(); // TODO
             }
         }
 
         const u32 translation_base = coprocessor.read(id::cp::CP15_R2_MMU_TRANSLATION_BASE); // TODO: optimise this with direct register access
-        const u32 table_index = util::bit_fetcher(address, 20, 31);
+        const u32 table_index = shared::util::bit_fetcher(address, 20, 31);
 
         const u32 first_level_descriptor_address = ((translation_base << 14) | (table_index << 2));
 
@@ -434,7 +434,7 @@ public:
         u8 raw_domain_bits = 0;
 
         if (entry_id != id::second_level::FAULT) {
-            raw_domain_bits = util::bit_fetcher(first_level_entry, 5, 8);
+            raw_domain_bits = shared::util::bit_fetcher(first_level_entry, 5, 8);
         }
 
         switch (entry_id) {

@@ -32,7 +32,7 @@ public:
         } else if constexpr (std::is_same_v<T, u32>) {
             return static_cast<i32>(static_cast<i32>(value));
         } else {
-            out::error("TODO (not valid type)");
+            shared::out::error("TODO (not valid type)");
         }
     }
 

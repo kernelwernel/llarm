@@ -12,7 +12,7 @@
  *   PC = PC + (SignExtend(signed_immed_24) << 2)
  */
 void INSTRUCTIONS::arm::branching::B(const arm_code_t &code) {
-    const i32 signed_immed_24 = util::bit_fetcher<i32>(code, 3, 5);
+    const i32 signed_immed_24 = shared::util::bit_fetcher<i32>(code, 3, 5);
     const bool L = code.test(24);
 
     if (L == 1) {

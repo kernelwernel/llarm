@@ -22,7 +22,7 @@ std::string generators::thumb::movement::MOV1(const u16 code) {
 
     const u8 immed_8 = shared::util::bit_fetcher(code, 0, 7);
 
-    return util::make_instruction("MOV ", Rd, ", #", immed_8);
+    return util::make_string("MOV ", Rd, ", #", immed_8);
 }
 
 
@@ -38,7 +38,7 @@ std::string generators::thumb::movement::MOV2(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rn = util::reg_string(code, 3, 5);
 
-    return util::make_instruction("MOV ", Rd, ", ", Rn);
+    return util::make_string("MOV ", Rd, ", ", Rn);
 }
 
 
@@ -53,23 +53,13 @@ std::string generators::thumb::movement::MOV2(const u16 code) {
  * reference: A7-68
  */
 std::string generators::thumb::movement::MOV3(const u16 code) {
-    u8 Rd_bits = shared::util::bit_fetcher<u8>(code, 0, 2);
-    u8 Rm_bits = shared::util::bit_fetcher<u8>(code, 3, 5);
-
     const bool H1 = (code & (1 << 7));
     const bool H2 = (code & (1 << 6));
 
-    // branchless version of "if H1/H2 is true, add 8" 
-    Rd_bits += (8 * H1);
-    Rm_bits += (8 * H2);
+    const std::string Rd = util::reg_string_bits(code, 0, 2, H1);
+    const std::string Rm = util::reg_string_bits(code, 3, 5, H2);
 
-    const util::reg_id Rd_id = util::identify_reg(Rd_bits);
-    const util::reg_id Rm_id = util::identify_reg(Rm_bits);
-
-    const std::string Rd = util::reg_to_string(Rd_id, false);
-    const std::string Rm = util::reg_to_string(Rm_id, false);
-
-    return util::make_instruction("MOV ", Rd, ", ", Rm);
+    return util::make_string("MOV ", Rd, ", ", Rm);
 }
 
 
@@ -85,5 +75,5 @@ std::string generators::thumb::movement::MVN(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rm = util::reg_string(code, 3, 5);
 
-    return util::make_instruction("MVN ", Rd, ", ", Rm);
+    return util::make_string("MVN ", Rd, ", ", Rm);
 }

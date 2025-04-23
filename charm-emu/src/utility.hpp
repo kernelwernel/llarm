@@ -142,7 +142,7 @@ namespace util {
             case id::specific_arch::ARMv8_6_A: return id::arch::ARMv8;
             case id::specific_arch::ARMv9_A: 
             case id::specific_arch::ARMv9_2_A: return id::arch::ARMv9;
-            default: out::error("TODO");
+            default: shared::out::error("TODO");
         }
     }
 

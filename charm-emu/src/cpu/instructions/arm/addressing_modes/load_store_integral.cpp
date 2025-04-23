@@ -22,7 +22,7 @@ u32 ADDRESSING_MODE::load_store(const arm_code_t &code) {
 
     // immediate offset
     if (code.test(25) == false) {
-        const u16 offset_12 = util::bit_fetcher<u16>(code, 0, 11);
+        const u16 offset_12 = shared::util::bit_fetcher<u16>(code, 0, 11);
 
         /**
          * ===== immediate offset =====
@@ -208,8 +208,8 @@ u32 ADDRESSING_MODE::load_store(const arm_code_t &code) {
 
         // scaled register offset
         if (code.test(4) == false) {
-            const u8 shift_imm = util::bit_fetcher<u8>(code, 7, 11);
-            const u8 shift = util::bit_fetcher<u8>(code, 5, 6);
+            const u8 shift_imm = shared::util::bit_fetcher<u8>(code, 7, 11);
+            const u8 shift = shared::util::bit_fetcher<u8>(code, 5, 6);
 
             /**
              * ===== scaled register offset =====
@@ -469,11 +469,11 @@ u32 ADDRESSING_MODE::load_store(const arm_code_t &code) {
                 return address;
             }
 
-            out::error("TODO");
+            shared::out::error("TODO");
         }
 
     }
 
     // TODO: ERROR
-    out::error("TODO");
+    shared::out::error("TODO");
 }

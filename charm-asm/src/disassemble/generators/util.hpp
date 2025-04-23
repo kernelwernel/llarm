@@ -76,9 +76,9 @@ namespace internal::util {
         D  // for 64-bit VFP registers
     };
 
-    reg_id identify_reg(const u8 reg_bits, const prefix prefix);
+    reg_id identify_reg(const u8 reg_bits, const prefix prefix = prefix::R);
 
-    reg_id identify_reg(const u16 code, const u8 start, const u8 end, const prefix prefix);
+    reg_id identify_reg(const u16 code, const u8 start, const u8 end, const prefix prefix = prefix::R);
 
     std::string reg_list(const u8 list, const sv extra = "");
 
@@ -86,12 +86,13 @@ namespace internal::util {
 
     std::string reg_id_to_string(const reg_id id, const bool alias = false);
 
-    std::string reg_string(const u32 code, const u8 start, const u8 end, const prefix prefix, const bool alias = false);
+    std::string reg_string(const u32 code, const u8 start, const u8 end, const prefix prefix = prefix::R, const bool alias = false);
 
     std::string vfp_reg_string_bits(const u32 code, const u8 start, const u8 end, const bool bottom_bit);
 
     std::string reg_string_bits(const u32 code, const u8 start, const u8 end, const bool top_bit);
 
+    std::string hex(const u32 integer);
 
     // i'm sorry to whoever is reading both of these functions.
 
@@ -108,7 +109,7 @@ namespace internal::util {
 
     // https://quick-bench.com/q/No_nYrHbcGwK5JTFl-qJtJ0ncc0
     template<typename... Args>
-    std::string make_instruction(Args&&... args) {
+    std::string make_string(Args&&... args) {
         std::string result;
         
         size_t total_size = 0;
