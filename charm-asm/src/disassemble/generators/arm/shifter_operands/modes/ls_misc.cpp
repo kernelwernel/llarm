@@ -11,9 +11,9 @@ using namespace internal;
 
 std::string shifters::ls_misc_imm(const u32 code) {
     const std::string Rn = util::reg_string(code, 16, 19);
-    const u8 immedH = shared::util::bit_fetcher(code, 8, 11);
-    const u8 immedL = shared::util::bit_fetcher(code, 0, 3);
-    const u8 offset_8 = ((immedH << 4) | immedL);
+    const u8 immedH = shared::util::bit_fetcher<u8>(code, 8, 11);
+    const u8 immedL = shared::util::bit_fetcher<u8>(code, 0, 3);
+    const u8 offset_8 = static_cast<u8>((immedH << 4) | immedL);
 
     const char* op = (((code & (1 << 23)) == 0) ? "-" : "");
 
@@ -28,9 +28,9 @@ std::string shifters::ls_misc_imm_pre(const u32 code) {
 
 std::string shifters::ls_misc_imm_post(const u32 code) {
     const std::string Rn = util::reg_string(code, 16, 19);
-    const u8 immedH = shared::util::bit_fetcher(code, 8, 11);
-    const u8 immedL = shared::util::bit_fetcher(code, 0, 3);
-    const u8 offset_8 = ((immedH << 4) | immedL);
+    const u8 immedH = shared::util::bit_fetcher<u8>(code, 8, 11);
+    const u8 immedL = shared::util::bit_fetcher<u8>(code, 0, 3);
+    const u8 offset_8 = static_cast<u8>((immedH << 4) | immedL);
 
     const char* op = (((code & (1 << 23)) == 0) ? "-" : "");
 

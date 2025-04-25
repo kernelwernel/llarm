@@ -10,12 +10,46 @@
 
 using namespace internal;
 
-            std::string STM1(const u32);
-            std::string STM2(const u32);
-            std::string STR(const u32);
-            std::string STRB(const u32);
-            std::string STRBT(const u32);
-            std::string STRH(const u32);
-            std::string STRT(const u32);
-            std::string SWP(const u32);
-            std::string SWPB(const u32);
+std::string generators::arm::store::STM1(const u32 code) {
+    
+}
+
+
+std::string generators::arm::store::STM2(const u32 code) {
+    
+}
+
+
+std::string generators::arm::store::STR(const u32 code) {
+    
+}
+
+
+std::string generators::arm::store::STRB(const u32 code) {
+    
+}
+
+
+std::string generators::arm::store::STRBT(const u32 code) {
+    
+}
+
+
+std::string generators::arm::store::STRH(const u32 code) {
+    
+}
+
+
+std::string generators::arm::store::STRT(const u32 code) {
+    
+}
+
+
+std::string generators::arm::store::SWP(const u32 code) {
+    
+}
+
+
+std::string generators::arm::store::SWPB(const u32 code) {
+    
+}

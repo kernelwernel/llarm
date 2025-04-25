@@ -24,3 +24,6 @@ id::thumb identifiers::thumb(const thumb_code_t &raw_code) {
 id::thumb identifiers::thumb(const u16 raw_code) {
     return thumb(thumb_code_t(raw_code));
 }
+
+
+//id::thumb thumb(const std::string string_code) {}

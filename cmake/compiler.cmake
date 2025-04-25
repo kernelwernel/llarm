@@ -12,6 +12,8 @@ function(configure_compiler)
         get_filename_component(COMPILER_NAME ${GPP_EXECUTABLE} NAME)
     endif()
 
+    set(USING_COMPILER "${COMPILER_NAME}" PARENT_SCOPE)
+    
     message(STATUS "Compiler: ${COMPILER_NAME}")
     message(STATUS "Compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
 endfunction()

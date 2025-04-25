@@ -10,8 +10,27 @@
 
 using namespace internal;
 
-            std::string MOV(const u32);
-            std::string MVN(const u32);
-            std::string MRS(const u32);
-            std::string MSR_IMM(const u32);
-            std::string MSR_REG(const u32);
+std::string generators::arm::movement::MOV(const u32 code) {
+
+}
+
+
+std::string generators::arm::movement::MVN(const u32 code) {
+
+}
+
+
+std::string generators::arm::movement::MRS(const u32 code) {
+
+}
+
+
+std::string generators::arm::movement::MSR_IMM(const u32 code) {
+
+}
+
+
+std::string generators::arm::movement::MSR_REG(const u32 code) {
+
+}
+

@@ -11,8 +11,27 @@
 using namespace internal;
 
 
-            std::string CDP(const u32);
-            std::string LDC(const u32);
-            std::string MCR(const u32);
-            std::string MRC(const u32);
-            std::string STC(const u32);
+std::string generators::arm::coprocessor::CDP(const u32 code) {
+
+}
+
+
+std::string generators::arm::coprocessor::LDC(const u32 code) {
+
+}
+
+
+std::string generators::arm::coprocessor::MCR(const u32 code) {
+
+}
+
+
+std::string generators::arm::coprocessor::MRC(const u32 code) {
+
+}
+
+
+std::string generators::arm::coprocessor::STC(const u32 code) {
+
+}
+

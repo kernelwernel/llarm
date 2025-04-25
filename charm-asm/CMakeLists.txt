@@ -15,6 +15,7 @@ include("../cmake/target_flags.cmake") # flag configurator
 include("../cmake/build_type.cmake") # build definitions
 include("../cmake/compiler.cmake") # compiler choice
 include("../cmake/linker_flags.cmake") # linker config
+include("../cmake/clang_tidy.cmake") # clang-tidy
 
 
 # targets
@@ -36,6 +37,9 @@ foreach(source IN LISTS ALL_SOURCES)
         endif()
     endforeach()
 endforeach()
+        
+
+
 
 
 # library setup
@@ -63,13 +67,15 @@ install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION bin)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../)
 
 
+
+
 # select the compiler, preferably clang++ (defined in charm/cmake/compiler.cmake)
 configure_compiler()
 
 
 # define compiler macros and the release/debug build type (defined in charm/cmake/build_type.cmake)
-config_build_type(${TARGET_BIN})
-config_build_type(${TARGET_LIB})
+configure_build_type(${TARGET_BIN})
+configure_build_type(${TARGET_LIB})
 
 
 # configure the target flags (defined in charm/cmake/target_flags.cmake)

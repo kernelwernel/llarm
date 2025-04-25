@@ -94,8 +94,8 @@ util::reg_id util::identify_reg(const u8 reg_bits, const prefix prefix) {
 }
 
 
-util::reg_id util::identify_reg(const u16 code, const u8 start, const u8 end, const prefix prefix) {
-    const u8 reg_bits = shared::util::bit_fetcher(code, start, end);
+util::reg_id util::identify_reg(const u32 code, const u8 start, const u8 end, const prefix prefix) {
+    const u8 reg_bits = shared::util::bit_fetcher<u8>(code, start, end);
     return identify_reg(reg_bits, prefix);
 }
 
@@ -173,15 +173,15 @@ std::string util::reg_id_to_string(const util::reg_id id, const bool alias) {
 
 std::string util::reg_string(const u32 code, const u8 start, const u8 end, const prefix prefix, const bool alias) {
     const util::reg_id reg_id = util::identify_reg(code, start, end, prefix);
-    const std::string reg = util::reg_id_to_string(reg_id, alias);
+    std::string reg = util::reg_id_to_string(reg_id, alias);
     return reg;
 }
 
 
-std::string util::reg_list(const u8 list, const sv extra) {
-    const u8 count = std::popcount(list);
+std::string util::reg_list(const u16 list, const sv extra) {
+    const u8 count = static_cast<u8>(std::popcount(list));
 
-    std::string tmp = "";
+    std::string tmp;
 
     tmp.reserve(
         4 + // for the "{  }"
@@ -210,7 +210,7 @@ std::string util::reg_list(const u8 list, const sv extra) {
         tmp += registers.at(i);
     }
 
-    if (extra != "") {
+    if (!extra.empty()) {
         tmp += ", ";
         tmp += extra;
     }
@@ -249,7 +249,7 @@ std::string util::fetch_cond(const u8 cond) {
 std::string util::vfp_reg_string_bits(const u32 code, const u8 start, const u8 end, const bool bottom_bit) {
     u8 reg_bits = shared::util::bit_fetcher<u8>(code, start, end);
 
-    reg_bits = ((reg_bits << 1) | bottom_bit);
+    reg_bits = static_cast<u8>((reg_bits << 1) | bottom_bit);
 
     const reg_id id = identify_reg(reg_bits, prefix::S);
 
@@ -264,28 +264,191 @@ std::string util::reg_string_bits(const u32 code, const u8 start, const u8 end, 
         shared::out::error("TODO");   
     }
 
-    reg_bits = (reg_bits | (top_bit << 3));
+    reg_bits = static_cast<u8>(reg_bits | (top_bit << 3));
 
     const reg_id id = identify_reg(reg_bits, prefix::R);
 
     return reg_id_to_string(id, false);
 }
 
-// notes:
-// - this is only a POTENTIAL hex conversion
-// - i could use std::stringstream with std::hex but it is super slow
-// - code from https://stackoverflow.com/a/33447587
-// - sstream and this implementation have been benchmarked:
-//   https://quick-bench.com/q/1hf173hus7o-E-5lAB_trCghrdk
+
+std::string util::vfp_Dd_Dm_pattern(const u32 code, const sv instruction) {
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
+
+    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
+    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
+
+    return util::make_string(instruction, util::fetch_cond(cond), " ", Dd, ", ", Dm); 
+}
+
+
+std::string util::vfp_Dd_Dn_Dm_pattern(const u32 code, const sv instruction) {
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
+
+    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
+    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
+    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
+
+    return util::make_string(instruction, util::fetch_cond(cond), " ", Dd, ", ", Dn, ", ", Dm); 
+}
+
+
+std::string util::vfp_Sd_Sm_pattern(const u32 code, const sv instruction) {
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
+
+    const bool D = (code & (1 << 22));
+    const bool M = (code & (1 << 5));
+
+    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
+    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M);
+
+    return util::make_string(instruction, util::fetch_cond(cond), " ", Sd, ", ", Sm); 
+}
+
+
+std::string util::vfp_Sd_Sm_Z_pattern(const u32 code, const sv semi_instruction) {
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
+
+    const bool D = (code & (1 << 22));
+    const bool M = (code & (1 << 5));
+
+    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
+    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M);
+
+    const char* Z = ((code & (1 << 7)) ? "ZS" : "S");
+
+    return util::make_string(semi_instruction, Z, util::fetch_cond(cond), " ", Sd, ", ", Sm);
+}
+
+
+std::string util::vfp_Sd_Dm_Z_pattern(const u32 code, const sv semi_instruction) {
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
+
+    const bool D = (code & (1 << 22));
+   
+    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
+    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
+
+    const char* Z = ((code & (1 << 7)) ? "ZD" : "D");
+
+    return util::make_string(semi_instruction, Z, util::fetch_cond(cond), " ", Sd, ", ", Dm);
+}
+
+
+std::string util::vfp_Sd_Sn_Sm_pattern(const u32 code, const sv instruction) {
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
+
+    const bool D = (code & (1 << 22));
+    const bool N = (code & (1 << 7));
+    const bool M = (code & (1 << 5));
+   
+    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D); 
+    const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N); 
+    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M); 
+
+    return util::make_string(instruction, util::fetch_cond(cond), " ", Sd, ", ", Sn, ", ", Sm);
+}
+
+
+std::string util::vfp_Dd_Sm_pattern(const u32 code, const sv instruction) {
+   const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
+
+    const bool M = (code & (1 << 5));
+   
+    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M); 
+    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
+
+    return util::make_string(instruction, util::fetch_cond(cond), " ", Dd, ", ", Sm);
+}
+
+
+std::string util::vfp_Rd_Dn_pattern(const u32 code, const sv instruction) {
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
+
+    const std::string Rd = util::reg_string(code, 12, 15, util::prefix::R);
+    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
+
+    return util::make_string(instruction, util::fetch_cond(cond), " ", Rd, ", ", Dn);
+}
+
+
+std::string util::vfp_Dn_Rd_pattern(const u32 code, const sv instruction) {
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
+
+    const std::string Rd = util::reg_string(code, 12, 15, util::prefix::R);
+    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
+
+    return util::make_string("FMDLR", util::fetch_cond(cond), " ", Dn, ", ", Rd);
+}
+
+
+std::string util::vfp_Sd_pattern(const u32 code, const sv instruction) {
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
+
+    const bool D = (code & (1 << 22));
+
+    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
+
+    return util::make_string(instruction, util::fetch_cond(cond), " ", Sd); 
+}
+
+
+std::string util::vfp_Dd_pattern(const u32 code, const sv instruction) {
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
+
+    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
+
+    return util::make_string("FCMPZD", util::fetch_cond(cond), " ", Dd); 
+}
+
+
+// idea from https://johnnylee-sde.github.io/Fast-unsigned-integer-to-hex-string/
 std::string util::hex(const u32 integer) {
+    std::string ret;
+
     if (integer > 9) {
-        const size_t hex_len = sizeof(u32)<<1;
-        static const char* digits = "0123456789ABCDEF";
-        std::string rc(hex_len,'0');
-        for (size_t i=0, j=(hex_len-1)*4 ; i<hex_len; ++i,j-=4)
-            rc[i] = digits[(integer>>j) & 0x0f];
-        return rc;
+        static constexpr std::array<char, 513> digits = {
+            "000102030405060708090A0B0C0D0E0F"
+            "101112131415161718191A1B1C1D1E1F"
+            "202122232425262728292A2B2C2D2E2F"
+            "303132333435363738393A3B3C3D3E3F"
+            "404142434445464748494A4B4C4D4E4F"
+            "505152535455565758595A5B5C5D5E5F"
+            "606162636465666768696A6B6C6D6E6F"
+            "707172737475767778797A7B7C7D7E7F"
+            "808182838485868788898A8B8C8D8E8F"
+            "909192939495969798999A9B9C9D9E9F"
+            "A0A1A2A3A4A5A6A7A8A9AAABACADAEAF"
+            "B0B1B2B3B4B5B6B7B8B9BABBBCBDBEBF"
+            "C0C1C2C3C4C5C6C7C8C9CACBCCCDCECF"
+            "D0D1D2D3D4D5D6D7D8D9DADBDCDDDEDF"
+            "E0E1E2E3E4E5E6E7E8E9EAEBECEDEEEF"
+            "F0F1F2F3F4F5F6F7F8F9FAFBFCFDFEFF"
+        };
+
+        u32 x = integer;
+        int i = 3;
+        const char* lut = digits.data();
+        std::string s(8, '\0');
+
+        for (std::size_t byte = 0; byte < 4; ++byte) {
+            const u32 b = (x >> ((3 - byte) * 8)) & 0xFF;
+            const std::size_t pos = static_cast<std::size_t>(b) * 2;
+
+            s[byte * 2]     = lut[pos];
+            s[byte * 2 + 1] = lut[pos + 1];
+        }
+
+        auto first_nonzero = s.find_first_not_of('0');
+
+        if (first_nonzero == std::string::npos) {
+            ret = "0x0";
+        } else {
+            ret = ("0x" + s.substr(first_nonzero));
+        }
+    } else {
+        ret = std::to_string(integer);
     }
 
-    return std::to_string(integer);
+    return ret;
 }

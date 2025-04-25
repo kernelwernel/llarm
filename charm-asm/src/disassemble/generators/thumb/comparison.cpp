@@ -35,7 +35,7 @@ std::string generators::thumb::comparison::CMN(const u16 code) {
 std::string generators::thumb::comparison::CMP1(const u16 code) {
     const std::string Rn = util::reg_string(code, 8, 10);
 
-    const u8 immed_8 = shared::util::bit_fetcher(code, 0, 7);
+    const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
     return util::make_string("CMP ", Rn, ", #", immed_8);
 }

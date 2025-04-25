@@ -1,5 +1,3 @@
-#pragma once
-
 #include "opcodes/opcodes.hpp"
 #include "identifiers/identifiers.hpp"
 #include "instruction_id.hpp"
@@ -77,6 +75,7 @@ std::string utility::thumb_id_to_string(const id::thumb id) {
         case id::thumb::STR2: return "STR2";
         case id::thumb::STR3: return "STR3";
         case id::thumb::STRB1: return "STRB1";
+        case id::thumb::STRB2: return "STRB2";
         case id::thumb::STRH1: return "STRH1";
         case id::thumb::STRH2: return "STRH2";
     }

@@ -19,7 +19,7 @@ using namespace internal;
  * reference: A7-24
  */
 std::string generators::thumb::misc::BKPT(const u16 code) {
-    const u8 immed_8 = shared::util::bit_fetcher(code, 0, 7);
+    const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
     return util::make_string("BKPT ", immed_8);
 }
@@ -35,7 +35,7 @@ std::string generators::thumb::misc::BKPT(const u16 code) {
  * reference: A7-102
  */
 std::string generators::thumb::misc::SWI(const u16 code) {
-    const u8 immed_8 = shared::util::bit_fetcher(code, 0, 7);
+    const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
     return util::make_string("SWI ", immed_8);
 }

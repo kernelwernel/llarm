@@ -8,6 +8,19 @@ project(
 )
 
 
+include(ExternalProject)
+ExternalProject_Add(
+    charm-asm
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../charm-asm"
+    BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/charm-asm-build"  # Better practice
+    CMAKE_ARGS
+        -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}  # Optional: Consistent install dir
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}         # Inherit build type
+    # BUILD_ALWAYS OFF  # Uncomment to prevent unnecessary rebuilds
+    # INSTALL_COMMAND ""  # Uncomment to skip installation
+)
+
+
 # includes
 include("../cmake/flags.cmake") # collection of all the necessary flags
 include("../cmake/variables.cmake") # general variables, usually file paths

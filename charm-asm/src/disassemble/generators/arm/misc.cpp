@@ -28,7 +28,7 @@ std::string generators::arm::misc::PSR(const u32 code) {
  * reference: A4-100
  */
 std::string generators::arm::misc::SWI(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
     const u32 immed_24 = shared::util::bit_fetcher(code, 0, 23);
 
     return util::make_string("SWI", util::fetch_cond(cond), " ", immed_24);

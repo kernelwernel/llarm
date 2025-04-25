@@ -10,8 +10,8 @@ using namespace internal;
 
 shifters::mode shifters::identify_data_shifter(const u32 code) {
     if (
-        (code & (1 << 27) != 0) ||
-        (code & (1 << 26) != 0) 
+        ((code & (1 << 27)) != 0) ||
+        ((code & (1 << 26)) != 0) 
     ) {
         shared::out::error("No known data addressing shifter has been found");
     }
@@ -52,8 +52,8 @@ shifters::mode shifters::identify_data_shifter(const u32 code) {
 
     // register shifts
     if (
-        (code & (1 << 7) == 0) &&
-        (code & (1 << 4) == 1)
+        ((code & (1 << 7)) == 0) &&
+        ((code & (1 << 4)) == 1)
     ) {
         const u8 mode_bits = shared::util::bit_fetcher<u8>(code, 4, 7);
 
@@ -83,15 +83,15 @@ shifters::mode shifters::identify_ls_shifter(const u32 code) {
 
     // immediate offset/index
     if ((code & (1 << 25)) == 0) {
-        if (bit_24 == true && bit_21 == false) {
+        if (bit_24 && !bit_21) {
             return shifters::mode::LS_IMM;
         }
 
-        if (bit_24 == true && bit_21 == true) {
+        if (bit_24 && bit_21) {
             return shifters::mode::LS_IMM_PRE;
         }
 
-        if (bit_24 == false && bit_21 == false) {
+        if (!bit_24 && !bit_21) {
             return shifters::mode::LS_IMM_POST;
         }
 
@@ -101,15 +101,15 @@ shifters::mode shifters::identify_ls_shifter(const u32 code) {
 
     // register offset/index
     if (shared::util::bit_fetcher(code, 4, 11) == 0) {
-        if (bit_24 == true && bit_21 == false) {
+        if (bit_24 && !bit_21) {
             return shifters::mode::LS_REG;
         }
 
-        if (bit_24 == true && bit_21 == true) {
+        if (bit_24 && bit_21) {
             return shifters::mode::LS_REG_PRE;
         }
 
-        if (bit_24 == false && bit_21 == false) {
+        if (!bit_24 && !bit_21) {
             return shifters::mode::LS_REG_POST;
         }
 
@@ -117,7 +117,7 @@ shifters::mode shifters::identify_ls_shifter(const u32 code) {
     }
 
 
-    u8 mode_bits = shared::util::bit_fetcher(code, 4, 6);
+    u8 mode_bits = shared::util::bit_fetcher<u8>(code, 4, 6);
     mode_bits |= (bit_21 << 3);
     mode_bits |= (bit_24 << 4);
 
@@ -170,7 +170,7 @@ shifters::mode shifters::identify_ls_misc_shifter(const u32 code) {
     const bool bit_22 = (code & (1 << 22));
     const bool bit_21 = (code & (1 << 21));
 
-    const u8 mode_bits = ((bit_24 << 2) | (bit_22 << 1) | bit_21); 
+    const u8 mode_bits = static_cast<u8>((bit_24 << 2) | (bit_22 << 1) | bit_21); 
 
     switch (mode_bits) {
         // immediate offset/index
@@ -199,7 +199,7 @@ shifters::mode shifters::identify_ls_mul_shifter(const u32 code) {
     const bool bit_24 = (code & (1 << 24));
     const bool bit_23 = (code & (1 << 23));
 
-    const u8 mode_bits = ((bit_24 << 1) | bit_23);
+    const u8 mode_bits = static_cast<u8>((bit_24 << 1) | bit_23);
 
     switch (mode_bits) {
         case 0b01: return shifters::mode::LS_MUL_INC_AFTER;
@@ -223,7 +223,7 @@ shifters::mode shifters::identify_ls_coproc_shifter(const u32 code) {
     const bool bit_24 = (code & (1 << 24));
     const bool bit_21 = (code & (1 << 21));
 
-    const u8 mode_bits = ((bit_24 << 1) | bit_21);
+    const u8 mode_bits = static_cast<u8>((bit_24 << 1) | bit_21);
 
     switch (mode_bits) {
         case 0b10: return shifters::mode::LS_COPROC_IMM;

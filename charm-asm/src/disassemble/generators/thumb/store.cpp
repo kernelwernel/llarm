@@ -42,7 +42,7 @@ using namespace internal;
 std::string generators::thumb::store::STMIA(const u16 code) {
     const std::string Rn = util::reg_string(code, 8, 10);
 
-    const u8 list = shared::util::bit_fetcher(code, 0, 7);
+    const u8 list = shared::util::bit_fetcher<u8>(code, 0, 7);
 
     return util::make_string("STMIA ", Rn, "!, ", util::reg_list(list));
 }
@@ -61,7 +61,7 @@ std::string generators::thumb::store::STR1(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rn = util::reg_string(code, 3, 5);
 
-    const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
 
     return util::make_string("STR ", Rd, ", [", Rn, ", #", immed_5, " * 4]");
 }
@@ -97,7 +97,7 @@ std::string generators::thumb::store::STR2(const u16 code) {
 std::string generators::thumb::store::STR3(const u16 code) {
     const std::string Rd = util::reg_string(code, 8, 10);
 
-    const u8 immed_8 = shared::util::bit_fetcher(code, 0, 7);
+    const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
     return util::make_string("STR ", Rd, ", [SP, #", immed_8, " * 4]");
 }
@@ -116,7 +116,7 @@ std::string generators::thumb::store::STRB1(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rn = util::reg_string(code, 3, 5);
 
-    const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
 
     return util::make_string("STRB ", Rd, ", [", Rn, ", #", immed_5, "]");
 }
@@ -153,7 +153,7 @@ std::string generators::thumb::store::STRH1(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rn = util::reg_string(code, 3, 5);
 
-    const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
 
     return util::make_string("STRH ", Rd, ", [", Rn, ", #", immed_5, " * 2]");
 }
@@ -172,6 +172,8 @@ std::string generators::thumb::store::STRH2(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rn = util::reg_string(code, 3, 5);
     const std::string Rm = util::reg_string(code, 6, 8);
+
+    const u8 lol = 0;
 
     return util::make_string("STRH ", Rd, ", [", Rn, ", ", Rm, "]");
 }
@@ -204,13 +206,13 @@ std::string generators::thumb::store::STRH2(const u16 code) {
  * reference: A7-78
  */
 std::string generators::thumb::store::PUSH(const u16 code) {
-    const u8 list = shared::util::bit_fetcher(code, 0, 7);
+    const u8 list = shared::util::bit_fetcher<u8>(code, 0, 7);
 
     const bool R = (code & (1 << 8));
 
     if (R) {
         return util::make_string("PUSH ", util::reg_list(list, "LR"));
-    } else {
-        return util::make_string("PUSH ", util::reg_list(list));
     }
+
+    return util::make_string("PUSH ", util::reg_list(list));
 }

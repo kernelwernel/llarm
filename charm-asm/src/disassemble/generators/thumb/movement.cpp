@@ -20,7 +20,7 @@ using namespace internal;
 std::string generators::thumb::movement::MOV1(const u16 code) {
     const std::string Rd = util::reg_string(code, 8, 10);
 
-    const u8 immed_8 = shared::util::bit_fetcher(code, 0, 7);
+    const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
     return util::make_string("MOV ", Rd, ", #", immed_8);
 }

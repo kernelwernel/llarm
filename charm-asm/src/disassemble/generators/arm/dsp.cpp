@@ -11,17 +11,72 @@
 using namespace internal;
 
 
-            std::string LDRD(const u32);
-            std::string MCRR(const u32);
-            std::string MRRC(const u32);
-            std::string PLD(const u32);
-            std::string QADD(const u32);
-            std::string QDADD(const u32);
-            std::string QDSUB(const u32);
-            std::string QSUB(const u32);
-            std::string SMLA(const u32);
-            std::string SMLAL(const u32);
-            std::string SMLAW(const u32);
-            std::string SMUL(const u32);
-            std::string SMULW(const u32);
-            std::string STRD(const u32);
+std::string generators::arm::dsp::LDRD(const u32 code) {
+
+}
+
+
+std::string generators::arm::dsp::MCRR(const u32 code) {
+
+}
+
+
+std::string generators::arm::dsp::MRRC(const u32 code) {
+
+}
+
+
+std::string generators::arm::dsp::PLD(const u32 code) {
+
+}
+
+
+std::string generators::arm::dsp::QADD(const u32 code) {
+
+}
+
+
+std::string generators::arm::dsp::QDADD(const u32 code) {
+
+}
+
+
+std::string generators::arm::dsp::QDSUB(const u32 code) {
+
+}
+
+
+std::string generators::arm::dsp::QSUB(const u32 code) {
+
+}
+
+
+std::string generators::arm::dsp::SMLA(const u32 code) {
+
+}
+
+
+std::string generators::arm::dsp::SMLAL(const u32 code) {
+
+}
+
+
+std::string generators::arm::dsp::SMLAW(const u32 code) {
+
+}
+
+
+std::string generators::arm::dsp::SMUL(const u32 code) {
+
+}
+
+
+std::string generators::arm::dsp::SMULW(const u32 code) {
+
+}
+
+
+std::string generators::arm::dsp::STRD(const u32 code) {
+
+}
+

@@ -10,9 +10,32 @@
 
 using namespace internal;
 
-            std::string MLA(const u32);
-            std::string MUL(const u32);
-            std::string SMLAL(const u32);
-            std::string SMULL(const u32);
-            std::string UMLAL(const u32);
-            std::string UMULL(const u32);
+std::string generators::arm::multiply::MLA(const u32 code) {
+
+}
+
+
+std::string generators::arm::multiply::MUL(const u32 code) {
+
+}
+
+
+std::string generators::arm::multiply::SMLAL(const u32 code) {
+
+}
+
+
+std::string generators::arm::multiply::SMULL(const u32 code) {
+
+}
+
+
+std::string generators::arm::multiply::UMLAL(const u32 code) {
+
+}
+
+
+std::string generators::arm::multiply::UMULL(const u32 code) {
+
+}
+

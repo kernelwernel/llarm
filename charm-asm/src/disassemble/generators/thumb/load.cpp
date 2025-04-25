@@ -38,7 +38,7 @@ using namespace internal;
 std::string generators::thumb::load::LDMIA(const u16 code) {
     const std::string Rn = util::reg_string(code, 8, 10);
 
-    const u8 list = shared::util::bit_fetcher(code, 0, 7);
+    const u8 list = shared::util::bit_fetcher<u8>(code, 0, 7);
 
     return util::make_string("LDMIA ", Rn, "!, ", util::reg_list(list));
 }
@@ -63,7 +63,7 @@ std::string generators::thumb::load::LDR1(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rn = util::reg_string(code, 3, 5);
 
-    const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
 
     return util::make_string("LDR ", Rd, ", [", Rn, ", #", immed_5, " * 4]");
 }
@@ -101,7 +101,7 @@ std::string generators::thumb::load::LDR2(const u16 code) {
 std::string generators::thumb::load::LDR3(const u16 code) {
     const std::string Rd = util::reg_string(code, 8, 10);
 
-    const u8 immed_8 = shared::util::bit_fetcher(code, 0, 7);
+    const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
     return util::make_string("LDR ", Rd, ", [PC, #", immed_8, " * 4]");
 }
@@ -119,7 +119,7 @@ std::string generators::thumb::load::LDR3(const u16 code) {
 std::string generators::thumb::load::LDR4(const u16 code) {
     const std::string Rd = util::reg_string(code, 8, 10);
 
-    const u8 immed_8 = shared::util::bit_fetcher(code, 0, 7);
+    const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
     return util::make_string("LDR ", Rd, ", [SP, #", immed_8, " * 4]");
 }
@@ -138,7 +138,7 @@ std::string generators::thumb::load::LDRB1(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rn = util::reg_string(code, 3, 5);
 
-    const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
 
     return util::make_string("LDRB ", Rd, ", [", Rn, ", #", immed_5, "]");
 }
@@ -175,7 +175,7 @@ std::string generators::thumb::load::LDRH1(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rn = util::reg_string(code, 3, 5);
 
-    const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
 
     return util::make_string("LDRH ", Rd, ", [", Rn, ", #", immed_5, " * 2]");
 }
@@ -266,13 +266,13 @@ std::string generators::thumb::load::LDRSH(const u16 code) {
  * reference: A7-75
  */
 std::string generators::thumb::load::POP(const u16 code) {
-    const u8 list = shared::util::bit_fetcher(code, 0, 7);
+    const u8 list = shared::util::bit_fetcher<u8>(code, 0, 7);
 
     const bool R = (code & (1 << 8));
 
     if (R) {
         return util::make_string("POP ", util::reg_list(list, "PC"));
-    } else {
-        return util::make_string("POP ", util::reg_list(list));
     }
+    
+    return util::make_string("POP ", util::reg_list(list));
 }

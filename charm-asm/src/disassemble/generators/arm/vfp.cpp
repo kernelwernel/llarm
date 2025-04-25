@@ -22,12 +22,7 @@ using namespace internal;
  * reference: C4-2
  */
 std::string generators::arm::vfp::FABSD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    return util::make_string("FABSD", util::fetch_cond(cond), " ", Dd, ", ", Dm); 
+    return util::vfp_Dd_Dm_pattern(code, "FABSD");
 }
 
 
@@ -42,15 +37,7 @@ std::string generators::arm::vfp::FABSD(const u32 code) {
  * reference: C4-4
  */
 std::string generators::arm::vfp::FABSS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool M = (code & (1 << 5));
-    const bool D = (code & (1 << 22));
-
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M);
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-
-    return util::make_string("FABSS", util::fetch_cond(cond), " ", Sd, ", ", Sm); 
+    return util::vfp_Sd_Sm_pattern(code, "FABSS");
 }
 
 
@@ -66,13 +53,7 @@ std::string generators::arm::vfp::FABSS(const u32 code) {
  * reference: C4-6
  */
 std::string generators::arm::vfp::FADDD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    return util::make_string("FADDD", util::fetch_cond(cond), " ", Dd, ", ", Dn, ", ", Dm); 
+    return util::vfp_Dd_Dn_Dm_pattern(code, "FADDD");
 }
 
 
@@ -90,17 +71,7 @@ std::string generators::arm::vfp::FADDD(const u32 code) {
  * reference: C4-8
  */
 std::string generators::arm::vfp::FADDS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool N = (code & (1 << 7));
-    const bool M = (code & (1 << 5));
-
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N);
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M);
-
-    return util::make_string("FADDS", util::fetch_cond(cond), " ", Sd, ", ", Sn, ", ", Sm); 
+    return util::vfp_Sd_Sn_Sm_pattern(code, "FADDS");
 }
 
 
@@ -115,12 +86,7 @@ std::string generators::arm::vfp::FADDS(const u32 code) {
  * reference: C4-10
  */
 std::string generators::arm::vfp::FCMPD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    return util::make_string("FCMPD", util::fetch_cond(cond), " ", Dd, ", ", Dm); 
+    return util::vfp_Dd_Dm_pattern(code, "FCMPD");
 }
 
 
@@ -135,12 +101,7 @@ std::string generators::arm::vfp::FCMPD(const u32 code) {
  * reference: C4-12
  */
 std::string generators::arm::vfp::FCMPED(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    return util::make_string("FCMPED", util::fetch_cond(cond), " ", Dd, ", ", Dm); 
+    return util::vfp_Dd_Dm_pattern(code, "FCMPED");
 }
 
 
@@ -157,17 +118,7 @@ std::string generators::arm::vfp::FCMPED(const u32 code) {
  * reference: C4-14
  */
 std::string generators::arm::vfp::FCMPES(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool M = (code & (1 << 5));
-
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M);
-
-    return util::make_string("FCMPES", util::fetch_cond(cond), " ", Sd, ", ", Sm); 
-
-
+    return util::vfp_Sd_Sm_pattern(code, "FCMPES");
 }
 
 
@@ -181,11 +132,7 @@ std::string generators::arm::vfp::FCMPES(const u32 code) {
  * reference: C4-16
  */
 std::string generators::arm::vfp::FCMPEZD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-
-    return util::make_string("FCMPEZD", util::fetch_cond(cond), " ", Dd); 
+    return util::vfp_Dd_pattern(code, "FCMPEZD");
 }
 
 
@@ -200,13 +147,7 @@ std::string generators::arm::vfp::FCMPEZD(const u32 code) {
  * reference: C4-18
  */
 std::string generators::arm::vfp::FCMPEZS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-
-    return util::make_string("FCMPEZS", util::fetch_cond(cond), " ", Sd); 
+    return util::vfp_Sd_pattern(code, "FCMPEZS"); 
 }
 
 
@@ -223,15 +164,7 @@ std::string generators::arm::vfp::FCMPEZS(const u32 code) {
  * reference: C4-20
  */
 std::string generators::arm::vfp::FCMPS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool M = (code & (1 << 5));
-
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M);
-
-    return util::make_string("FCMPS", util::fetch_cond(cond), " ", Sd, ", ", Sm); 
+    return util::vfp_Sd_Sm_pattern(code, "FCMPS");
 }
 
 
@@ -245,11 +178,7 @@ std::string generators::arm::vfp::FCMPS(const u32 code) {
  * reference: C4-22
  */
 std::string generators::arm::vfp::FCMPZD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-
-    return util::make_string("FCMPZD", util::fetch_cond(cond), " ", Dd); 
+    return util::vfp_Dd_pattern(code, "FCMPZD");
 }
 
 
@@ -264,13 +193,7 @@ std::string generators::arm::vfp::FCMPZD(const u32 code) {
  * reference: C4-24
  */
 std::string generators::arm::vfp::FCMPZS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-
-    return util::make_string("FCMPZS", util::fetch_cond(cond), " ", Sd); 
+    return util::vfp_Sd_pattern(code, "FCMPZS");
 }
 
 
@@ -285,12 +208,7 @@ std::string generators::arm::vfp::FCMPZS(const u32 code) {
  * reference: C4-26
  */
 std::string generators::arm::vfp::FCPYD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    return util::make_string("FCPYD", util::fetch_cond(cond), " ", Dd, ", ", Dm); 
+    return util::vfp_Dd_Dm_pattern(code, "FCPYD");
 }
 
 
@@ -300,20 +218,12 @@ std::string generators::arm::vfp::FCPYD(const u32 code) {
  * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
  *        condition field on page A3-5. If <cond> is omitted, the AL (always) condition is used.
  * <Sd>   Specifies the destination register. The register number is encoded as Fd (top 4 bits) and D (bottom bit).
- * <Sm> Specifies the source register. The register number is encoded as Fm (top 4 bits) and M (bottom bit).
+ * <Sm>   Specifies the source register. The register number is encoded as Fm (top 4 bits) and M (bottom bit).
  * 
  * reference: C4-28
  */
 std::string generators::arm::vfp::FCPYS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool M = (code & (1 << 5));
-
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M);
-
-    return util::make_string("FCPYS", util::fetch_cond(cond), " ", Sd, ", ", Sm); 
+    return util::vfp_Sd_Sm_pattern(code, "FCPYS");
 }
 
 
@@ -322,20 +232,13 @@ std::string generators::arm::vfp::FCPYS(const u32 code) {
  * where:
  * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
  *        condition field on page A3-5. If <cond> is omitted, the AL (always) condition is used.
- * <Dd> Specifies the destination register.
- * <Sm> Specifies the source register. The register number is encoded as Fm (top 4 bits) and M (bottom bit).
+ * <Dd>   Specifies the destination register.
+ * <Sm>   Specifies the source register. The register number is encoded as Fm (top 4 bits) and M (bottom bit).
  * 
  * reference: C4-30
  */
 std::string generators::arm::vfp::FCVTDS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool M = (code & (1 << 5));
-
-    const std::string Sm = util::vfp_reg_string_bits(code, 12, 15, M);
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-
-    return util::make_string("FCVTDS", util::fetch_cond(cond), " ", Dd, ", ", Sm);
+    return util::vfp_Dd_Sm_pattern(code, "FCVTDS");
 }
 
 
@@ -350,7 +253,7 @@ std::string generators::arm::vfp::FCVTDS(const u32 code) {
  * reference: C4-31
  */
 std::string generators::arm::vfp::FCVTSD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
 
     const bool D = (code & (1 << 22));
 
@@ -373,13 +276,7 @@ std::string generators::arm::vfp::FCVTSD(const u32 code) {
  * reference: C4-32
  */
 std::string generators::arm::vfp::FDIVD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    return util::make_string("FDIVD", util::fetch_cond(cond), " ", Dd, ", ", Dn, ", ", Dm);
+    return util::vfp_Dd_Dn_Dm_pattern(code, "FDIVD");
 }
 
 
@@ -397,17 +294,7 @@ std::string generators::arm::vfp::FDIVD(const u32 code) {
  * reference: C4-34
  */
 std::string generators::arm::vfp::FDIVS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool N = (code & (1 << 7));
-    const bool M = (code & (1 << 5));
-
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N);
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M);
-
-    return util::make_string("FDIVS", util::fetch_cond(cond), " ", Sd, ", ", Sn, ", ", Sm);
+    return util::vfp_Sd_Sn_Sm_pattern(code, "FDIVS");
 }
 
 
@@ -477,13 +364,7 @@ std::string generators::arm::vfp::FLDS(const u32 code) {
  * reference: C4-46
  */
 std::string generators::arm::vfp::FMACD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    return util::make_string("FMACD", util::fetch_cond(cond), " ", Dd, ", ", Dn, ", ", Dm);
+    return util::vfp_Dd_Dn_Dm_pattern(code, "FMACD");
 }
 
 
@@ -502,17 +383,7 @@ std::string generators::arm::vfp::FMACD(const u32 code) {
  * reference: C4-48
  */
 std::string generators::arm::vfp::FMACS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool N = (code & (1 << 7));
-    const bool M = (code & (1 << 5));
-
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N);
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M);
-
-    return util::make_string("FMACS", util::fetch_cond(cond), " ", Sd, ", ", Sn, ", ", Sm);
+    return util::vfp_Sd_Sn_Sm_pattern(code, "FMACS");
 }
 
 
@@ -527,12 +398,7 @@ std::string generators::arm::vfp::FMACS(const u32 code) {
  * reference: C4-50
  */
 std::string generators::arm::vfp::FMDHR(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Rd = util::reg_string(code, 12, 15, util::prefix::R);
-    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
-
-    return util::make_string("FMDHR", util::fetch_cond(cond), " ", Dn, ", ", Rd);
+    return util::vfp_Dn_Rd_pattern(code, "FMDHR");
 }
 
 //1111 11100010 0001 0010 101100010000
@@ -548,12 +414,7 @@ std::string generators::arm::vfp::FMDHR(const u32 code) {
  * reference: C4-52
  */
 std::string generators::arm::vfp::FMDLR(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Rd = util::reg_string(code, 12, 15, util::prefix::R);
-    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
-
-    return util::make_string("FMDLR", util::fetch_cond(cond), " ", Dn, ", ", Rd);
+    return util::vfp_Dn_Rd_pattern(code, "FMDLR");
 }
 
 
@@ -568,12 +429,7 @@ std::string generators::arm::vfp::FMDLR(const u32 code) {
  * reference: C4-54
  */
 std::string generators::arm::vfp::FMRDH(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Rd = util::reg_string(code, 12, 15, util::prefix::R);
-    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
-
-    return util::make_string("FMRDH", util::fetch_cond(cond), " ", Rd, ", ", Dn);
+    return util::vfp_Rd_Dn_pattern(code, "FMRDH");
 }
 
 
@@ -588,12 +444,7 @@ std::string generators::arm::vfp::FMRDH(const u32 code) {
  * reference: C4-55
  */
 std::string generators::arm::vfp::FMRDL(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Rd = util::reg_string(code, 12, 15, util::prefix::R);
-    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
-
-    return util::make_string("FMRDL", util::fetch_cond(cond), " ", Rd, ", ", Dn);
+    return util::vfp_Rd_Dn_pattern(code, "FMRDL");
 }
 
 
@@ -608,7 +459,7 @@ std::string generators::arm::vfp::FMRDL(const u32 code) {
  * reference: C4-56
  */
 std::string generators::arm::vfp::FMRS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
 
     const bool N = (code & (1 << 7));
 
@@ -640,14 +491,14 @@ std::string generators::arm::vfp::FMRS(const u32 code) {
  * reference: C4-58
  */
 std::string generators::arm::vfp::FMRX(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
 
     const std::string Rd = util::reg_string(code, 12, 15, util::prefix::R);
 
-    std::string vfp_sys_reg = "";
+    std::string vfp_sys_reg;
     vfp_sys_reg.reserve(5); // all system registers are only 5 characters long
 
-    const u8 reg_bits = shared::util::bit_fetcher(code, 16, 19);
+    const u8 reg_bits = shared::util::bit_fetcher<u8>(code, 16, 19);
 
     switch (reg_bits) {
         case 0b0000: vfp_sys_reg = "FPSID"; break;
@@ -672,13 +523,7 @@ std::string generators::arm::vfp::FMRX(const u32 code) {
  * reference: C4-60
  */
 std::string generators::arm::vfp::FMSCD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    return util::make_string("FMSCD", util::fetch_cond(cond), " ", Dd, ", ", Dn, ", ", Dm);
+    return util::vfp_Dd_Dn_Dm_pattern(code, "FMSCD");
 }
 
 
@@ -697,17 +542,7 @@ std::string generators::arm::vfp::FMSCD(const u32 code) {
  * reference: C4-62
  */
 std::string generators::arm::vfp::FMSCS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool N = (code & (1 << 7));
-    const bool M = (code & (1 << 5));
-   
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D); 
-    const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N); 
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M); 
-
-    return util::make_string("FMSCS", util::fetch_cond(cond), " ", Sd, ", ", Sn, ", ", Sm);
+    return util::vfp_Sd_Sn_Sm_pattern(code, "FMSCS");
 }
 
 
@@ -722,7 +557,7 @@ std::string generators::arm::vfp::FMSCS(const u32 code) {
  * reference: C4-64
  */
 std::string generators::arm::vfp::FMSR(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
 
     const bool N = (code & (1 << 7));
 
@@ -742,7 +577,7 @@ std::string generators::arm::vfp::FMSR(const u32 code) {
  * reference: C4-66
  */
 std::string generators::arm::vfp::FMSTAT(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
     return util::make_string("FMSTAT", util::fetch_cond(cond));
 }
 
@@ -759,13 +594,7 @@ std::string generators::arm::vfp::FMSTAT(const u32 code) {
  * reference: C4-67
  */
 std::string generators::arm::vfp::FMULD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    return util::make_string("FMULD", util::fetch_cond(cond), " ", Dd, ", ", Dn, ", ", Dm);
+    return util::vfp_Dd_Dn_Dm_pattern(code, "FMULD");
 }
 
 
@@ -783,17 +612,7 @@ std::string generators::arm::vfp::FMULD(const u32 code) {
  * reference: C4-68
  */
 std::string generators::arm::vfp::FMULS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool N = (code & (1 << 7));
-    const bool M = (code & (1 << 5));
-   
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D); 
-    const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N); 
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M); 
-
-    return util::make_string("FMULS", util::fetch_cond(cond), " ", Sd, ", ", Sn, ", ", Sm);
+    return util::vfp_Sd_Sn_Sm_pattern(code, "FMULS");
 }
 
 
@@ -820,14 +639,14 @@ std::string generators::arm::vfp::FMULS(const u32 code) {
  * reference: C4-70
  */
 std::string generators::arm::vfp::FMXR(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
+    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
 
     const std::string Rd = util::reg_string(code, 12, 15);
 
-    std::string vfp_sys_reg = "";
+    std::string vfp_sys_reg;
     vfp_sys_reg.reserve(5); // all system registers are only 5 characters long
 
-    const u8 reg_bits = shared::util::bit_fetcher(code, 16, 19);
+    const u8 reg_bits = shared::util::bit_fetcher<u8>(code, 16, 19);
 
     switch (reg_bits) {
         case 0b0000: vfp_sys_reg = "FPSID"; break;
@@ -851,12 +670,7 @@ std::string generators::arm::vfp::FMXR(const u32 code) {
  * reference: C4-72
  */
 std::string generators::arm::vfp::FNEGD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    return util::make_string("FNEGD", util::fetch_cond(cond), " ", Dd, ", ", Dm);
+    return util::vfp_Dd_Dm_pattern(code, "FNEGD");
 }
 
 
@@ -871,15 +685,7 @@ std::string generators::arm::vfp::FNEGD(const u32 code) {
  * reference: C4-74
  */
 std::string generators::arm::vfp::FNEGS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool M = (code & (1 << 5));
-   
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D); 
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M); 
-
-    return util::make_string("FNEGS", util::fetch_cond(cond), " ", Sd, ", ", Sm);
+    return util::vfp_Sd_Sm_pattern(code, "FNEGS");
 }
 
 
@@ -895,13 +701,7 @@ std::string generators::arm::vfp::FNEGS(const u32 code) {
  * reference: C4-76
  */
 std::string generators::arm::vfp::FNMACD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    return util::make_string("FNMACD", util::fetch_cond(cond), " ", Dd, ", ", Dn, ", ", Dm);
+    return util::vfp_Dd_Dn_Dm_pattern(code, "FNMACD");
 }
 
 
@@ -920,17 +720,7 @@ std::string generators::arm::vfp::FNMACD(const u32 code) {
  * reference: C4-78
  */
 std::string generators::arm::vfp::FNMACS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool N = (code & (1 << 7));
-    const bool M = (code & (1 << 5));
-   
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D); 
-    const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N); 
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M); 
-
-    return util::make_string("FNMACS", util::fetch_cond(cond), " ", Sd, ", ", Sn, ", ", Sm);
+    return util::vfp_Sd_Sn_Sm_pattern(code, "FNMACS");
 }
 
 
@@ -946,13 +736,7 @@ std::string generators::arm::vfp::FNMACS(const u32 code) {
  * reference: C4-80
  */
 std::string generators::arm::vfp::FNMSCD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    return util::make_string("FNMSCD", util::fetch_cond(cond), " ", Dd, ", ", Dn, ", ", Dm);
+    return util::vfp_Dd_Dn_Dm_pattern(code, "FNMSCD");
 }
 
 
@@ -971,17 +755,7 @@ std::string generators::arm::vfp::FNMSCD(const u32 code) {
  * reference: C4-82
  */
 std::string generators::arm::vfp::FNMSCS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool N = (code & (1 << 7));
-    const bool M = (code & (1 << 5));
-   
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D); 
-    const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N); 
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M); 
-
-    return util::make_string("FNMSCS", util::fetch_cond(cond), " ", Sd, ", ", Sn, ", ", Sm);
+    return util::vfp_Sd_Sn_Sm_pattern(code, "FNMSCS");
 }
 
 
@@ -997,13 +771,7 @@ std::string generators::arm::vfp::FNMSCS(const u32 code) {
  * reference: C4-84
  */
 std::string generators::arm::vfp::FNMULD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    return util::make_string("FNMULD", util::fetch_cond(cond), " ", Dd, ", ", Dn, ", ", Dm);
+    return util::vfp_Dd_Dn_Dm_pattern(code, "FNMULD");
 }
 
 
@@ -1021,17 +789,7 @@ std::string generators::arm::vfp::FNMULD(const u32 code) {
  * reference: C4-86
  */
 std::string generators::arm::vfp::FNMULS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool N = (code & (1 << 7));
-    const bool M = (code & (1 << 5));
-   
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D); 
-    const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N); 
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M); 
-
-    return util::make_string("FNMULS", util::fetch_cond(cond), " ", Sd, ", ", Sn, ", ", Sm);
+    return util::vfp_Sd_Sn_Sm_pattern(code, "FNMULS");
 }
 
 
@@ -1046,14 +804,7 @@ std::string generators::arm::vfp::FNMULS(const u32 code) {
  * reference: C4-88
  */
 std::string generators::arm::vfp::FSITOD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool M = (code & (1 << 5));
-   
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M); 
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-
-    return util::make_string("FSITOD", util::fetch_cond(cond), " ", Dd, ", ", Sm);
+    return util::vfp_Dd_Sm_pattern(code, "FSITOD");
 }
 
 
@@ -1068,15 +819,7 @@ std::string generators::arm::vfp::FSITOD(const u32 code) {
  * reference: C4-89
  */
 std::string generators::arm::vfp::FSITOS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool M = (code & (1 << 5));
-   
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M); 
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D); 
-
-    return util::make_string("FSITOS", util::fetch_cond(cond), " ", Sd, ", ", Sm);   
+    return util::vfp_Sd_Sm_pattern(code, "FSITOS");
 }
 
 
@@ -1091,12 +834,7 @@ std::string generators::arm::vfp::FSITOS(const u32 code) {
  * reference: C4-90
  */
 std::string generators::arm::vfp::FSQRTD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    return util::make_string("FSQRTD", util::fetch_cond(cond), " ", Dd, ", ", Dm);
+    return util::vfp_Dd_Dm_pattern(code, "FSQRTD");
 }
 
 
@@ -1111,15 +849,7 @@ std::string generators::arm::vfp::FSQRTD(const u32 code) {
  * reference: C4-92
  */
 std::string generators::arm::vfp::FSQRTS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool M = (code & (1 << 5));
-   
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M); 
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D); 
-
-    return util::make_string("FSQRTS", util::fetch_cond(cond), " ", Sd, ", ", Sm);   
+    return util::vfp_Sd_Sm_pattern(code, "FSQRTS"); 
 }
 
 
@@ -1180,13 +910,7 @@ std::string generators::arm::vfp::FSTS(const u32 code) {
  * reference: C4-104
  */
 std::string generators::arm::vfp::FSUBD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    return util::make_string("FSUBD", util::fetch_cond(cond), " ", Dd, ", ", Dn, ", ", Dm);
+    return util::vfp_Dd_Dn_Dm_pattern(code, "FSUBD");
 }
 
 
@@ -1204,17 +928,7 @@ std::string generators::arm::vfp::FSUBD(const u32 code) {
  * reference: C4-106
  */
 std::string generators::arm::vfp::FSUBS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool N = (code & (1 << 7));
-    const bool M = (code & (1 << 5));
-   
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D); 
-    const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N); 
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M); 
-
-    return util::make_string("FSUBS", util::fetch_cond(cond), " ", Sd, ", ", Sn, ", ", Sm);
+    return util::vfp_Sd_Sn_Sm_pattern(code, "FSUBS");
 }
 
 
@@ -1232,16 +946,7 @@ std::string generators::arm::vfp::FSUBS(const u32 code) {
  * reference: C4-108
  */
 std::string generators::arm::vfp::FTOSID(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-   
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    const char* Z = ((code & (1 << 7)) ? "ZD" : "D");
-
-    return util::make_string("FTOSI", Z, util::fetch_cond(cond), " ", Sd, ", ", Dm);
+    return util::vfp_Sd_Dm_Z_pattern(code, "FTOSI"); // D is appended at the end
 }
 
 
@@ -1259,17 +964,7 @@ std::string generators::arm::vfp::FTOSID(const u32 code) {
  * reference: C4-110
  */
 std::string generators::arm::vfp::FTOSIS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool M = (code & (1 << 5));
-   
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M);
-
-    const char* Z = ((code & (1 << 7)) ? "ZS" : "S");
-
-    return util::make_string("FTOSI", Z, util::fetch_cond(cond), " ", Sd, ", ", Sm);
+    return util::vfp_Sd_Sm_Z_pattern(code, "FTOSI"); // S is appended at the end
 }
 
 
@@ -1287,16 +982,7 @@ std::string generators::arm::vfp::FTOSIS(const u32 code) {
  * reference: C4-112
  */
 std::string generators::arm::vfp::FTOUID(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-   
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    const char* Z = ((code & (1 << 7)) ? "ZD" : "D");
-
-    return util::make_string("FTOUI", Z, util::fetch_cond(cond), " ", Sd, ", ", Dm);
+    return util::vfp_Sd_Dm_Z_pattern(code, "FTOUI"); // D is appended
 }
 
 
@@ -1314,17 +1000,7 @@ std::string generators::arm::vfp::FTOUID(const u32 code) {
  * reference: C4-114
  */
 std::string generators::arm::vfp::FTOUIS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool M = (code & (1 << 5));
-   
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M);
-
-    const char* Z = ((code & (1 << 7)) ? "ZS" : "S");
-
-    return util::make_string("FTOUI", Z, util::fetch_cond(cond), " ", Sd, ", ", Sm);
+    return util::vfp_Sd_Sm_Z_pattern(code, "FTOUI"); // S is appended at the end
 }
 
 
@@ -1339,14 +1015,7 @@ std::string generators::arm::vfp::FTOUIS(const u32 code) {
  * reference: C4-116
  */
 std::string generators::arm::vfp::FUITOD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool M = (code & (1 << 5));
-   
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M);
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-
-    return util::make_string("FUITOD", util::fetch_cond(cond), " ", Dd, ", ", Sm);
+    return util::vfp_Dd_Sm_pattern(code, "FUITOD");
 }
 
 
@@ -1361,13 +1030,5 @@ std::string generators::arm::vfp::FUITOD(const u32 code) {
  * reference: C4-117
  */
 std::string generators::arm::vfp::FUITOS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool M = (code & (1 << 5));
-   
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M);
-
-    return util::make_string("FUITOS", util::fetch_cond(cond), " ", Sd, ", ", Sm);
+    return util::vfp_Sd_Sm_pattern(code, "FUITOS"); 
 }

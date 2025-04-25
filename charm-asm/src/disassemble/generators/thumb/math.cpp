@@ -37,7 +37,7 @@ std::string generators::thumb::math::ADD1(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rn = util::reg_string(code, 3, 5);
 
-    const u8 immed_3 = shared::util::bit_fetcher(code, 6, 8);
+    const u8 immed_3 = shared::util::bit_fetcher<u8>(code, 6, 8);
 
     return util::make_string("ADD ", Rd, ", ", Rn, ", #", immed_3);
 }
@@ -54,7 +54,7 @@ std::string generators::thumb::math::ADD1(const u16 code) {
 std::string generators::thumb::math::ADD2(const u16 code) {
     const std::string Rd = util::reg_string(code, 8, 10);
 
-    const u8 immed_8 = shared::util::bit_fetcher(code, 0, 7);
+    const u8 immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
     return util::make_string("ADD ", Rd, ", #", immed_8);
 }

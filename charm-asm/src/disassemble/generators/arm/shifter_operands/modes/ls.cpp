@@ -11,7 +11,7 @@ using namespace internal;
 
 std::string shifters::ls_imm(const u32 code) {
     const std::string Rn = util::reg_string(code, 16, 19);
-    const u16 offset_12 = shared::util::bit_fetcher(code, 0, 11);
+    const u16 offset_12 = shared::util::bit_fetcher<u16>(code, 0, 11);
 
     const char* op = (((code & (1 << 23)) == 0) ? "-" : "");
 
@@ -28,7 +28,7 @@ std::string shifters::ls_imm_pre(const u32 code) {
 
 std::string shifters::ls_imm_post(const u32 code) {
     const std::string Rn = util::reg_string(code, 16, 19);
-    const u16 offset_12 = shared::util::bit_fetcher(code, 0, 11);
+    const u16 offset_12 = shared::util::bit_fetcher<u16>(code, 0, 11);
 
     const char* op = (((code & (1 << 23)) == 0) ? "-" : "");
 
@@ -67,7 +67,7 @@ std::string shifters::ls_reg_scaled(const u32 code, const sv mode) {
     const std::string Rn = util::reg_string(code, 16, 19);
     const std::string Rm = util::reg_string(code, 0, 3);
 
-    const u8 shift_imm = shared::util::bit_fetcher(code, 7, 11);
+    const u8 shift_imm = shared::util::bit_fetcher<u8>(code, 7, 11);
 
     const char* op = (((code & (1 << 23)) == 0) ? "-" : "");
 
@@ -84,7 +84,7 @@ std::string shifters::ls_reg_scaled_post(const u32 code, const sv mode) {
     const std::string Rn = util::reg_string(code, 16, 19);
     const std::string Rm = util::reg_string(code, 0, 3);
 
-    const u8 shift_imm = shared::util::bit_fetcher(code, 7, 11);
+    const u8 shift_imm = shared::util::bit_fetcher<u8>(code, 7, 11);
 
     const char* op = (((code & (1 << 23)) == 0) ? "-" : "");
 
@@ -95,8 +95,6 @@ std::string shifters::ls_reg_scaled_post(const u32 code, const sv mode) {
 std::string shifters::ls_reg_scaled_rrx(const u32 code) {
     const std::string Rn = util::reg_string(code, 16, 19);
     const std::string Rm = util::reg_string(code, 0, 3);
-
-    const u8 shift_imm = shared::util::bit_fetcher(code, 7, 11);
 
     const char* op = (((code & (1 << 23)) == 0) ? "-" : "");
 
@@ -112,8 +110,6 @@ std::string shifters::ls_reg_scaled_pre_rrx(const u32 code) {
 std::string shifters::ls_reg_scaled_post_rrx(const u32 code) {
         const std::string Rn = util::reg_string(code, 16, 19);
     const std::string Rm = util::reg_string(code, 0, 3);
-
-    const u8 shift_imm = shared::util::bit_fetcher(code, 7, 11);
 
     const char* op = (((code & (1 << 23)) == 0) ? "-" : "");
 

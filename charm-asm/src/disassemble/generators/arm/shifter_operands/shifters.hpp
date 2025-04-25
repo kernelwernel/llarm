@@ -102,6 +102,7 @@ namespace internal::shifters {
     std::string ls_misc_reg_pre(const u32 code);
     std::string ls_misc_reg_post(const u32 code);
 
+    // defined in modes/ls_coproc.cpp
     std::string ls_coproc_imm(const u32 code);
     std::string ls_coproc_imm_pre(const u32 code);
     std::string ls_coproc_imm_post(const u32 code);

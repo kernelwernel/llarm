@@ -9,7 +9,7 @@
 
 using namespace internal;
 
-std::string disassemble::arm(const u32 code, const u32 PC) {
+std::string disassemble::arm(const u32 code/*, const u32 PC*/) {
     const id::arm id = identifiers::arm(code);
 
     switch (id) {

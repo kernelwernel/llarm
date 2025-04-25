@@ -11,6 +11,17 @@
 using namespace internal;
 
 
-            std::string B(const u32);
-            std::string BL(const u32);
-            std::string BX(const u32);
+std::string generators::arm::branching::B(const u32 code) {
+
+}
+
+
+std::string generators::arm::branching::BL(const u32 code) {
+
+}
+
+
+std::string generators::arm::branching::BX(const u32 code) {
+
+}
+

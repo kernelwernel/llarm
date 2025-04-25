@@ -1,25 +1,35 @@
 include(${CMAKE_CURRENT_LIST_DIR}/flags.cmake)
 
 function(configure_target_flags TARGET)
-    if(CMAKE_BUILD_TYPE MATCHES "Debug")
-        target_compile_options(${TARGET} PRIVATE 
-            ${COMMON_CXX_FLAGS}
-            ${DEBUG_CXX_FLAGS}
-        )
-    elseif(CMAKE_BUILD_TYPE MATCHES "Release")
-        set(CMAKE_UNITY_BUILD ON)
-        
-        if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
-            target_compile_options(${TARGET} PRIVATE
-                ${COMMON_CXX_FLAGS}
-                ${RELEASE_CXX_FLAGS}
-                ${EMBEDDED_CXX_FLAGS}
-            )
+    set(CXX_FLAGS)
+
+    if(MSVC)
+        list(APPEND CXX_FLAGS ${MSVC_CXX_FLAGS})
+
+        if(CMAKE_BUILD_TYPE MATCHES "Debug")
+            list(APPEND CXX_FLAGS ${MSVC_DEBUG_CXX_FLAGS})
+        endif(CMAKE_BUILD_TYPE MATCHES "Release")
+    elseif(LINUX OR APPLE)
+        if(USING_COMPILER MATCHES "clang\\+\\+")
+            list(APPEND CXX_FLAGS ${CLANG_CXX_FLAGS})
+        elseif(USING_COMPILER MATCHES "g\\+\\+")
+            list(APPEND CXX_FLAGS ${GCC_CXX_FLAGS})
         else()
-            target_compile_options(${TARGET} PRIVATE
-                ${COMMON_CXX_FLAGS}
-                ${RELEASE_CXX_FLAGS}
-            )
+            message(WARNING "Unknown compiler: ${CMAKE_CXX_COMPILER_ID}")
         endif()
+
+        if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
+            list(APPEND CXX_FLAGS ${LINUX_EMBEDDED_CXX_FLAGS})
+        endif()
+
+        if(CMAKE_BUILD_TYPE MATCHES "Release")
+            list(APPEND CXX_FLAGS ${LINUX_RELEASE_CXX_FLAGS})
+        elseif(CMAKE_BUILD_TYPE MATCHES "Debug")
+            list(APPEND CXX_FLAGS ${LINUX_DEBUG_CXX_FLAGS})
+        endif()
+
+        #list(APPEND CXX_FLAGS ${LINUX_COMMON_LINKER_FLAGS})
     endif()
+
+    target_compile_options(${TARGET} PRIVATE ${CXX_FLAGS})
 endfunction()

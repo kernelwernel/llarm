@@ -111,13 +111,14 @@ function(configure_linker_flags TARGET)
             OUTPUT_VARIABLE LINKER_INFO
             ERROR_VARIABLE LINKER_ERROR
         )
-        
-        if(LINKER_INFO MATCHES "mold")
-            message(STATUS "Successfully using mold linker")
-        else()
-            message(STATUS "Failed to activate mold linker - using default")
-        endif()
     else()
         target_link_options(${TARGET} PRIVATE ${COMMON_LINKER_FLAGS})
     endif()
 endfunction()
+
+
+if(LINKER_INFO MATCHES "mold")
+    message(STATUS "Successfully using mold linker")
+else()
+    message(STATUS "Failed to activate mold linker - using default")
+endif()

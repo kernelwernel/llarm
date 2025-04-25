@@ -36,7 +36,7 @@ std::string generators::thumb::logic::AND(const u16 code) {
  * reference: A7-14
  */
 std::string generators::thumb::logic::ASR1(const u16 code) {
-    const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
 
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rm = util::reg_string(code, 3, 5);
@@ -106,7 +106,7 @@ std::string generators::thumb::logic::LSL1(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rm = util::reg_string(code, 3, 5);
 
-    const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
 
     return util::make_string("LSL ", Rd, ", ", Rm, ", #", immed_5);
 }
@@ -143,7 +143,7 @@ std::string generators::thumb::logic::LSR1(const u16 code) {
     const std::string Rd = util::reg_string(code, 0, 2);
     const std::string Rm = util::reg_string(code, 3, 5);
 
-    const u8 immed_5 = shared::util::bit_fetcher(code, 6, 10);
+    const u8 immed_5 = shared::util::bit_fetcher<u8>(code, 6, 10);
 
     return util::make_string("LSR ", Rd, ", ", Rm, ", #", immed_5);
 } 

@@ -78,9 +78,9 @@ namespace internal::util {
 
     reg_id identify_reg(const u8 reg_bits, const prefix prefix = prefix::R);
 
-    reg_id identify_reg(const u16 code, const u8 start, const u8 end, const prefix prefix = prefix::R);
+    reg_id identify_reg(const u32 code, const u8 start, const u8 end, const prefix prefix = prefix::R);
 
-    std::string reg_list(const u8 list, const sv extra = "");
+    std::string reg_list(const u16 list, const sv extra = "");
 
     std::string fetch_cond(const u8 cond);
 
@@ -94,8 +94,30 @@ namespace internal::util {
 
     std::string hex(const u32 integer);
 
-    // i'm sorry to whoever is reading both of these functions.
+    std::string vfp_Dd_Dm_pattern(const u32 code, const sv instruction);
 
+    std::string vfp_Dd_Dn_Dm_pattern(const u32 code, const sv instruction);
+
+    std::string vfp_Sd_Sm_pattern(const u32 code, const sv instruction);
+
+    std::string vfp_Sd_Sm_Z_pattern(const u32 code, const sv semi_instruction);
+
+    std::string vfp_Sd_Dm_Z_pattern(const u32 code, const sv semi_instruction);
+
+    std::string vfp_Sd_Sn_Sm_pattern(const u32 code, const sv instruction);
+
+    std::string vfp_Dd_Sm_pattern(const u32 code, const sv instruction);
+
+    std::string vfp_Rd_Dn_pattern(const u32 code, const sv instruction);
+
+    std::string vfp_Dn_Rd_pattern(const u32 code, const sv instruction);
+
+    std::string vfp_Sd_pattern(const u32 code, const sv instruction);
+
+    std::string vfp_Dd_pattern(const u32 code, const sv instruction);
+
+
+    // i'm sorry to whoever is reading these functions.
     template<typename T>
     void append_arg(std::string& result, T&& arg) {
         if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {

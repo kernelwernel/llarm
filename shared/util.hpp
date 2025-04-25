@@ -30,7 +30,7 @@ namespace shared::util {
             // TODO: think of an error
         }
 
-        const M mask = ((1U << (end - start + 1)) - 1);
+        const M mask = static_cast<M>((1U << (end - start + 1)) - 1);
         return static_cast<T>((input >> start) & mask);
     }
 

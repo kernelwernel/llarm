@@ -10,9 +10,32 @@
 
 using namespace internal;
 
-            std::string ADC(const u32);
-            std::string ADD(const u32);
-            std::string RSB(const u32);
-            std::string RSC(const u32);
-            std::string SBC(const u32);
-            std::string SUB(const u32);
+std::string generators::arm::math::ADC(const u32 code) {
+
+}
+
+
+std::string generators::arm::math::ADD(const u32 code) {
+
+}
+
+
+std::string generators::arm::math::RSB(const u32 code) {
+
+}
+
+
+std::string generators::arm::math::RSC(const u32 code) {
+
+}
+
+
+std::string generators::arm::math::SBC(const u32 code) {
+
+}
+
+
+std::string generators::arm::math::SUB(const u32 code) {
+
+}
+

@@ -24,3 +24,5 @@ id::arm identifiers::arm(const arm_code_t &raw_code) {
 id::arm identifiers::arm(const u32 raw_code) {
     return arm(arm_code_t(raw_code));
 }
+
+//id::arm arm(const std::string string_code) {}
