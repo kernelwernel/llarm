@@ -1,12 +1,13 @@
 #include "../generators.hpp"
 #include "../util.hpp"
+#include "../patterns/patterns.hpp"
+#include "shifter_operands/shifters.hpp"
 
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 #include "shared/out.hpp"
 
 #include <string>
-#include <sstream>
 
 using namespace internal;
 
@@ -22,7 +23,7 @@ using namespace internal;
  * reference: C4-2
  */
 std::string generators::arm::vfp::FABSD(const u32 code) {
-    return util::vfp_Dd_Dm_pattern(code, "FABSD");
+    return patterns::vfp_Dd_Dm(code, "FABSD");
 }
 
 
@@ -37,7 +38,7 @@ std::string generators::arm::vfp::FABSD(const u32 code) {
  * reference: C4-4
  */
 std::string generators::arm::vfp::FABSS(const u32 code) {
-    return util::vfp_Sd_Sm_pattern(code, "FABSS");
+    return patterns::vfp_Sd_Sm(code, "FABSS");
 }
 
 
@@ -53,7 +54,7 @@ std::string generators::arm::vfp::FABSS(const u32 code) {
  * reference: C4-6
  */
 std::string generators::arm::vfp::FADDD(const u32 code) {
-    return util::vfp_Dd_Dn_Dm_pattern(code, "FADDD");
+    return patterns::vfp_Dd_Dn_Dm(code, "FADDD");
 }
 
 
@@ -71,7 +72,7 @@ std::string generators::arm::vfp::FADDD(const u32 code) {
  * reference: C4-8
  */
 std::string generators::arm::vfp::FADDS(const u32 code) {
-    return util::vfp_Sd_Sn_Sm_pattern(code, "FADDS");
+    return patterns::vfp_Sd_Sn_Sm(code, "FADDS");
 }
 
 
@@ -86,7 +87,7 @@ std::string generators::arm::vfp::FADDS(const u32 code) {
  * reference: C4-10
  */
 std::string generators::arm::vfp::FCMPD(const u32 code) {
-    return util::vfp_Dd_Dm_pattern(code, "FCMPD");
+    return patterns::vfp_Dd_Dm(code, "FCMPD");
 }
 
 
@@ -101,7 +102,7 @@ std::string generators::arm::vfp::FCMPD(const u32 code) {
  * reference: C4-12
  */
 std::string generators::arm::vfp::FCMPED(const u32 code) {
-    return util::vfp_Dd_Dm_pattern(code, "FCMPED");
+    return patterns::vfp_Dd_Dm(code, "FCMPED");
 }
 
 
@@ -118,7 +119,7 @@ std::string generators::arm::vfp::FCMPED(const u32 code) {
  * reference: C4-14
  */
 std::string generators::arm::vfp::FCMPES(const u32 code) {
-    return util::vfp_Sd_Sm_pattern(code, "FCMPES");
+    return patterns::vfp_Sd_Sm(code, "FCMPES");
 }
 
 
@@ -132,7 +133,7 @@ std::string generators::arm::vfp::FCMPES(const u32 code) {
  * reference: C4-16
  */
 std::string generators::arm::vfp::FCMPEZD(const u32 code) {
-    return util::vfp_Dd_pattern(code, "FCMPEZD");
+    return patterns::vfp_Dd(code, "FCMPEZD");
 }
 
 
@@ -147,7 +148,7 @@ std::string generators::arm::vfp::FCMPEZD(const u32 code) {
  * reference: C4-18
  */
 std::string generators::arm::vfp::FCMPEZS(const u32 code) {
-    return util::vfp_Sd_pattern(code, "FCMPEZS"); 
+    return patterns::vfp_Sd(code, "FCMPEZS"); 
 }
 
 
@@ -164,7 +165,7 @@ std::string generators::arm::vfp::FCMPEZS(const u32 code) {
  * reference: C4-20
  */
 std::string generators::arm::vfp::FCMPS(const u32 code) {
-    return util::vfp_Sd_Sm_pattern(code, "FCMPS");
+    return patterns::vfp_Sd_Sm(code, "FCMPS");
 }
 
 
@@ -178,7 +179,7 @@ std::string generators::arm::vfp::FCMPS(const u32 code) {
  * reference: C4-22
  */
 std::string generators::arm::vfp::FCMPZD(const u32 code) {
-    return util::vfp_Dd_pattern(code, "FCMPZD");
+    return patterns::vfp_Dd(code, "FCMPZD");
 }
 
 
@@ -193,7 +194,7 @@ std::string generators::arm::vfp::FCMPZD(const u32 code) {
  * reference: C4-24
  */
 std::string generators::arm::vfp::FCMPZS(const u32 code) {
-    return util::vfp_Sd_pattern(code, "FCMPZS");
+    return patterns::vfp_Sd(code, "FCMPZS");
 }
 
 
@@ -208,7 +209,7 @@ std::string generators::arm::vfp::FCMPZS(const u32 code) {
  * reference: C4-26
  */
 std::string generators::arm::vfp::FCPYD(const u32 code) {
-    return util::vfp_Dd_Dm_pattern(code, "FCPYD");
+    return patterns::vfp_Dd_Dm(code, "FCPYD");
 }
 
 
@@ -223,7 +224,7 @@ std::string generators::arm::vfp::FCPYD(const u32 code) {
  * reference: C4-28
  */
 std::string generators::arm::vfp::FCPYS(const u32 code) {
-    return util::vfp_Sd_Sm_pattern(code, "FCPYS");
+    return patterns::vfp_Sd_Sm(code, "FCPYS");
 }
 
 
@@ -238,7 +239,7 @@ std::string generators::arm::vfp::FCPYS(const u32 code) {
  * reference: C4-30
  */
 std::string generators::arm::vfp::FCVTDS(const u32 code) {
-    return util::vfp_Dd_Sm_pattern(code, "FCVTDS");
+    return patterns::vfp_Dd_Sm(code, "FCVTDS");
 }
 
 
@@ -253,14 +254,12 @@ std::string generators::arm::vfp::FCVTDS(const u32 code) {
  * reference: C4-31
  */
 std::string generators::arm::vfp::FCVTSD(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
-
     const bool D = (code & (1 << 22));
 
     const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
     const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
 
-    return util::make_string("FCVTSD", util::fetch_cond(cond), " ", Sd, ", ", Dm);
+    return util::make_string("FCVTSD", util::cond(code), " ", Sd, ", ", Dm);
 }
 
 
@@ -276,7 +275,7 @@ std::string generators::arm::vfp::FCVTSD(const u32 code) {
  * reference: C4-32
  */
 std::string generators::arm::vfp::FDIVD(const u32 code) {
-    return util::vfp_Dd_Dn_Dm_pattern(code, "FDIVD");
+    return patterns::vfp_Dd_Dn_Dm(code, "FDIVD");
 }
 
 
@@ -294,7 +293,7 @@ std::string generators::arm::vfp::FDIVD(const u32 code) {
  * reference: C4-34
  */
 std::string generators::arm::vfp::FDIVS(const u32 code) {
-    return util::vfp_Sd_Sn_Sm_pattern(code, "FDIVS");
+    return patterns::vfp_Sd_Sn_Sm(code, "FDIVS");
 }
 
 
@@ -312,43 +311,172 @@ std::string generators::arm::vfp::FDIVS(const u32 code) {
  * reference: C4-36
  */
 std::string generators::arm::vfp::FLDD(const u32 code) {
-    // TODO
+    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
+    const std::string Rn = util::reg_string(code, 16, 19);
+
+    const u16 offset = shared::util::bit_fetcher<u16>(code, 0, 7) * 4;
+
+    const char* op = ((code & (1 << 23)) ? "" : "-");
+
+    return util::make_string("FLDD", util::cond(code), " ", Dd, ", [", Rn, ", #", op, util::hex(offset), "]");
 }
 
 
 /**
- * 
- * reference: C4-
+ * FLDM<addressing_mode>D{<cond>} <Rn>{!}, <registers>
+ * where:
+ * <addressing_mode>
+ *             Specifies the addressing mode, which determines the values of start_address and
+ *             end_address used by the instruction. See Addressing Mode 5 - VFP load/store
+ *             multiple on page C5-24.
+ * <cond>      Is the condition under which the instruction is executed. The conditions are defined
+ *             in The condition field on page A3-5. If <cond> is omitted, the AL (always)
+ *             condition is used.
+ * <Rn>        Specifies the base register used by <addressing_mode>.
+ * !           Sets the W bit of the instruction to 1, specifying that the base register <Rn> is to be
+ *             updated by the instruction. If it is omitted, the W bit of the instruction is set to 0 and
+ *             the base register <Rn> is left unchanged. Some combinations of
+ *             <addressing_mode> and the presence or absence of ! are not allowed. For
+ *             details, see Addressing Mode 5 - VFP load/store multiple on page C5-24.
+ * <registers> Specifies which registers are to be loaded, as a list of consecutively numbered
+ *             double-precision registers, separated by commas and surrounded by brackets. It is
+ *             encoded in the instruction by setting Dd to the number of the first register in the list,
+ *             and offset to twice the number of registers in the list. At least one register must
+ *             be specified in the list.
+ *             For example, if <registers> is {D2,D3,D4}, the Dd field of the instruction is
+ *             2 and the offset field is 6.
+ *
+ * reference: C4-38
  */
 std::string generators::arm::vfp::FLDMD(const u32 code) {
-    // TODO
+    const std::string addressing_mode = shifters::vfp_ls_mul(code);
+
+    const std::string Rn = util::reg_string(code, 16, 19);
+
+    const char* W = ((code & (1 << 21)) ? "!" : "");
+
+    const u8 Dd = shared::util::bit_fetcher<u8>(code, 12, 15);
+    const u8 offset = shared::util::bit_fetcher<u8>(code, 0, 7);
+
+    const std::string registers = util::vfp_register_list(Dd, offset, util::prefix::D);
+
+    return util::make_string("FLDM", addressing_mode, 'D', util::cond(code), " ", Rn, W, ", ", registers);
 }
 
 
 /**
+ * FLDM<addressing_mode>S{<cond>} <Rn>{!}, <registers>
+ * where:
+ * <addressing_mode>
+ *             Specifies the addressing mode, which determines the values of start_address and
+ *             end_address used by the instruction. See Addressing Mode 5 - VFP load/store
+ *             multiple on page C5-24 for details.
+ * <cond>      Is the condition under which the instruction is executed. The conditions are defined
+ *             in The condition field on page A3-5. If <cond> is omitted, the AL (always)
+ *             condition is used.
+ * <Rn>        Specifies the base register used by <addressing_mode>.
+ * !           Sets the W bit of the instruction to 1, specifying that the base register <Rn> is to be
+ *             updated by the instruction. If it is omitted, the W bit of the instruction is set to 0 and
+ *             the base register <Rn> is left unchanged. Some combinations of
+ *             <addressing_mode> and the presence or absence of ! are not allowed. For
+ *             details, see Addressing Mode 5 - VFP load/store multiple on page C5-24.
+ * <registers> Specifies which registers are to be loaded, as a list of consecutively numbered
+ *             single-precision registers, separated by commas and surrounded by brackets. If d is
+ *             the number of the first register in the list, the list is encoded in the instruction by
+ *             setting Fd and D to the top 4 bits and the bottom bit respectively of d, and offset
+ *             to the number of registers in the list. At least one register must be specified in the
+ *             list.
+ *             For example, if <registers> is {S5,S6,S7}, the Fd field of the instruction is
+ *             0b0010, the D bit is 1 and the offset field is 3.
  * 
- * reference: C4-
+ * reference: C4-40
  */
 std::string generators::arm::vfp::FLDMS(const u32 code) {
-    // TODO
+    const std::string addressing_mode = shifters::vfp_ls_mul(code);
+
+    const std::string Rn = util::reg_string(code, 16, 19);
+
+    const char* W = ((code & (1 << 21)) ? "!" : "");
+
+    const bool D = (code & (1 << 22));
+    const u8 Fd = shared::util::bit_fetcher<u8>(code, 12, 15);
+    const u8 offset = shared::util::bit_fetcher<u8>(code, 0, 7);
+
+    const u8 Fd_bits = static_cast<u8>((Fd << 1) | D);
+
+    const std::string registers = util::vfp_register_list(Fd_bits, offset, util::prefix::S);
+
+    return util::make_string("FLDM", addressing_mode, 'S', util::cond(code), " ", Rn, W, ", ", registers);
 }
 
 
 /**
+ * FLDM<addressing_mode>X{<cond>} <Rn>{!}, <registers>
+ * where:
+ * <addressing_mode>
+ *             Specifies the addressing mode, which determines the values of start_address and
+ *             end_address used by the instruction. See Addressing Mode 5 - VFP load/store
+ *             multiple on page C5-24 for details.
+ * <cond>      Is the condition under which the instruction is executed. The conditions are defined
+ *             in The condition field on page A3-5. If <cond> is omitted, the AL (always)
+ *             condition is used.
+ * <Rn>        Specifies the base register used by <addressing_mode>.
+ * !           Sets the W bit of the instruction to 1, specifying that the base register <Rn> is to be
+ *             updated by the instruction. If it is omitted, the W bit of the instruction is set to 0 and
+ *             the base register <Rn> is left unchanged. Some combinations of
+ *             <addressing_mode> and the presence or absence of ! are not allowed. For
+ *             details, see Addressing Mode 5 - VFP load/store multiple on page C5-24.
+ * <registers> Specifies which registers are to be loaded, as a list of consecutively numbered
+ *             double-precision registers, separated by commas and surrounded by brackets. It is
+ *             encoded in the instruction by setting Dd to the number of the first register in the list,
+ *             and offset to twice the number of registers in the list, plus 1. At least one register
+ *             must be specified in the list.
+ *             For example, if <registers> is {D2,D3,D4}, the Dd field of the instruction is
+ *             2 and the offset field is 7.
  * 
- * reference: C4-
+ * reference: C4-42
  */
 std::string generators::arm::vfp::FLDMX(const u32 code) {
-    // TODO
+    const std::string addressing_mode = shifters::vfp_ls_mul(code);
+
+    const std::string Rn = util::reg_string(code, 16, 19);
+
+    const char* W = ((code & (1 << 21)) ? "!" : "");
+
+    const u8 Dd = shared::util::bit_fetcher<u8>(code, 12, 15);
+    const u8 offset = shared::util::bit_fetcher<u8>(code, 0, 7) - 1;
+
+    const std::string registers = util::vfp_register_list(Dd, offset, util::prefix::D);
+
+    return util::make_string("FLDM", addressing_mode, 'X', util::cond(code), " ", Rn, W, ", ", registers);
 }
 
 
 /**
+ * FLDS{<cond>} <Sd>, [<Rn>{, #+/-(<offset>*4)}]
+ * where:
+ * <cond>   Is the condition under which the instruction is executed. The conditions are defined in The
+ *          condition field on page A3-5. If <cond> is omitted, the AL (always) condition is used.
+ * <Sd>     Specifies the destination register. Its number is encoded as Fd (top 4 bits) and D (bottom
+ *          bit).
+ * <Rn>     Specifies the register holding the base address for the transfer.
+ * <offset> Specifies an offset to be multiplied by 4, then added to the base address (if U == 1) or
+ *          subtracted from it (if U == 0) in order to form the actual address of the transfer. If this offset
+ *          is omitted, it defaults to +0.
  * 
- * reference: C4-
+ * reference: C4-44
  */
 std::string generators::arm::vfp::FLDS(const u32 code) {
-    // TODO
+    const bool D = (code & (1 << 22));
+    
+    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
+    const std::string Rn = util::reg_string(code, 16, 19);
+
+    const u16 offset = shared::util::bit_fetcher<u16>(code, 0, 7) * 4;
+
+    const char* op = ((code & (1 << 23)) ? "" : "-");
+
+    return util::make_string("FLDS", util::cond(code), " ", Sd, ", [", Rn, ", #", op, util::hex(offset), "]");
 }
 
 
@@ -364,7 +492,7 @@ std::string generators::arm::vfp::FLDS(const u32 code) {
  * reference: C4-46
  */
 std::string generators::arm::vfp::FMACD(const u32 code) {
-    return util::vfp_Dd_Dn_Dm_pattern(code, "FMACD");
+    return patterns::vfp_Dd_Dn_Dm(code, "FMACD");
 }
 
 
@@ -383,7 +511,7 @@ std::string generators::arm::vfp::FMACD(const u32 code) {
  * reference: C4-48
  */
 std::string generators::arm::vfp::FMACS(const u32 code) {
-    return util::vfp_Sd_Sn_Sm_pattern(code, "FMACS");
+    return patterns::vfp_Sd_Sn_Sm(code, "FMACS");
 }
 
 
@@ -398,7 +526,7 @@ std::string generators::arm::vfp::FMACS(const u32 code) {
  * reference: C4-50
  */
 std::string generators::arm::vfp::FMDHR(const u32 code) {
-    return util::vfp_Dn_Rd_pattern(code, "FMDHR");
+    return patterns::vfp_Dn_Rd(code, "FMDHR");
 }
 
 //1111 11100010 0001 0010 101100010000
@@ -414,7 +542,7 @@ std::string generators::arm::vfp::FMDHR(const u32 code) {
  * reference: C4-52
  */
 std::string generators::arm::vfp::FMDLR(const u32 code) {
-    return util::vfp_Dn_Rd_pattern(code, "FMDLR");
+    return patterns::vfp_Dn_Rd(code, "FMDLR");
 }
 
 
@@ -429,7 +557,7 @@ std::string generators::arm::vfp::FMDLR(const u32 code) {
  * reference: C4-54
  */
 std::string generators::arm::vfp::FMRDH(const u32 code) {
-    return util::vfp_Rd_Dn_pattern(code, "FMRDH");
+    return patterns::vfp_Rd_Dn(code, "FMRDH");
 }
 
 
@@ -444,7 +572,7 @@ std::string generators::arm::vfp::FMRDH(const u32 code) {
  * reference: C4-55
  */
 std::string generators::arm::vfp::FMRDL(const u32 code) {
-    return util::vfp_Rd_Dn_pattern(code, "FMRDL");
+    return patterns::vfp_Rd_Dn(code, "FMRDL");
 }
 
 
@@ -459,14 +587,12 @@ std::string generators::arm::vfp::FMRDL(const u32 code) {
  * reference: C4-56
  */
 std::string generators::arm::vfp::FMRS(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
-
     const bool N = (code & (1 << 7));
 
     const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N);
     const std::string Rd = util::reg_string(code, 12, 15, util::prefix::R);
 
-    return util::make_string("FMRS", util::fetch_cond(cond), " ", Rd, ", ", Sn);
+    return util::make_string("FMRS", util::cond(code), " ", Rd, ", ", Sn);
 }
 
 
@@ -491,8 +617,6 @@ std::string generators::arm::vfp::FMRS(const u32 code) {
  * reference: C4-58
  */
 std::string generators::arm::vfp::FMRX(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
-
     const std::string Rd = util::reg_string(code, 12, 15, util::prefix::R);
 
     std::string vfp_sys_reg;
@@ -507,7 +631,7 @@ std::string generators::arm::vfp::FMRX(const u32 code) {
         default: shared::out::error("Unrecognised VFP system register for FMRX"); // unpredictable todo
     }
 
-    return util::make_string("FMRX", util::fetch_cond(cond), " ", Rd, ", ", vfp_sys_reg);
+    return util::make_string("FMRX", util::cond(code), " ", Rd, ", ", vfp_sys_reg);
 }
 
 
@@ -523,7 +647,7 @@ std::string generators::arm::vfp::FMRX(const u32 code) {
  * reference: C4-60
  */
 std::string generators::arm::vfp::FMSCD(const u32 code) {
-    return util::vfp_Dd_Dn_Dm_pattern(code, "FMSCD");
+    return patterns::vfp_Dd_Dn_Dm(code, "FMSCD");
 }
 
 
@@ -542,7 +666,7 @@ std::string generators::arm::vfp::FMSCD(const u32 code) {
  * reference: C4-62
  */
 std::string generators::arm::vfp::FMSCS(const u32 code) {
-    return util::vfp_Sd_Sn_Sm_pattern(code, "FMSCS");
+    return patterns::vfp_Sd_Sn_Sm(code, "FMSCS");
 }
 
 
@@ -557,14 +681,12 @@ std::string generators::arm::vfp::FMSCS(const u32 code) {
  * reference: C4-64
  */
 std::string generators::arm::vfp::FMSR(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
-
     const bool N = (code & (1 << 7));
 
     const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N);
     const std::string Rd = util::reg_string(code, 12, 15);
 
-    return util::make_string("FMSR", util::fetch_cond(cond), " ", Sn, ", ", Rd);
+    return util::make_string("FMSR", util::cond(code), " ", Sn, ", ", Rd);
 }
 
 
@@ -577,8 +699,7 @@ std::string generators::arm::vfp::FMSR(const u32 code) {
  * reference: C4-66
  */
 std::string generators::arm::vfp::FMSTAT(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
-    return util::make_string("FMSTAT", util::fetch_cond(cond));
+    return util::make_string("FMSTAT", util::cond(code));
 }
 
 
@@ -594,7 +715,7 @@ std::string generators::arm::vfp::FMSTAT(const u32 code) {
  * reference: C4-67
  */
 std::string generators::arm::vfp::FMULD(const u32 code) {
-    return util::vfp_Dd_Dn_Dm_pattern(code, "FMULD");
+    return patterns::vfp_Dd_Dn_Dm(code, "FMULD");
 }
 
 
@@ -612,7 +733,7 @@ std::string generators::arm::vfp::FMULD(const u32 code) {
  * reference: C4-68
  */
 std::string generators::arm::vfp::FMULS(const u32 code) {
-    return util::vfp_Sd_Sn_Sm_pattern(code, "FMULS");
+    return patterns::vfp_Sd_Sn_Sm(code, "FMULS");
 }
 
 
@@ -639,8 +760,6 @@ std::string generators::arm::vfp::FMULS(const u32 code) {
  * reference: C4-70
  */
 std::string generators::arm::vfp::FMXR(const u32 code) {
-    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
-
     const std::string Rd = util::reg_string(code, 12, 15);
 
     std::string vfp_sys_reg;
@@ -655,7 +774,7 @@ std::string generators::arm::vfp::FMXR(const u32 code) {
         default: shared::out::error("Unrecognised VFP system register for FMXR"); // unpredictable todo
     }
 
-    return util::make_string("FMXR", util::fetch_cond(cond), " ", vfp_sys_reg, ", ", Rd);
+    return util::make_string("FMXR", util::cond(code), " ", vfp_sys_reg, ", ", Rd);
 }
 
 
@@ -670,7 +789,7 @@ std::string generators::arm::vfp::FMXR(const u32 code) {
  * reference: C4-72
  */
 std::string generators::arm::vfp::FNEGD(const u32 code) {
-    return util::vfp_Dd_Dm_pattern(code, "FNEGD");
+    return patterns::vfp_Dd_Dm(code, "FNEGD");
 }
 
 
@@ -685,7 +804,7 @@ std::string generators::arm::vfp::FNEGD(const u32 code) {
  * reference: C4-74
  */
 std::string generators::arm::vfp::FNEGS(const u32 code) {
-    return util::vfp_Sd_Sm_pattern(code, "FNEGS");
+    return patterns::vfp_Sd_Sm(code, "FNEGS");
 }
 
 
@@ -701,7 +820,7 @@ std::string generators::arm::vfp::FNEGS(const u32 code) {
  * reference: C4-76
  */
 std::string generators::arm::vfp::FNMACD(const u32 code) {
-    return util::vfp_Dd_Dn_Dm_pattern(code, "FNMACD");
+    return patterns::vfp_Dd_Dn_Dm(code, "FNMACD");
 }
 
 
@@ -720,7 +839,7 @@ std::string generators::arm::vfp::FNMACD(const u32 code) {
  * reference: C4-78
  */
 std::string generators::arm::vfp::FNMACS(const u32 code) {
-    return util::vfp_Sd_Sn_Sm_pattern(code, "FNMACS");
+    return patterns::vfp_Sd_Sn_Sm(code, "FNMACS");
 }
 
 
@@ -736,7 +855,7 @@ std::string generators::arm::vfp::FNMACS(const u32 code) {
  * reference: C4-80
  */
 std::string generators::arm::vfp::FNMSCD(const u32 code) {
-    return util::vfp_Dd_Dn_Dm_pattern(code, "FNMSCD");
+    return patterns::vfp_Dd_Dn_Dm(code, "FNMSCD");
 }
 
 
@@ -755,7 +874,7 @@ std::string generators::arm::vfp::FNMSCD(const u32 code) {
  * reference: C4-82
  */
 std::string generators::arm::vfp::FNMSCS(const u32 code) {
-    return util::vfp_Sd_Sn_Sm_pattern(code, "FNMSCS");
+    return patterns::vfp_Sd_Sn_Sm(code, "FNMSCS");
 }
 
 
@@ -771,7 +890,7 @@ std::string generators::arm::vfp::FNMSCS(const u32 code) {
  * reference: C4-84
  */
 std::string generators::arm::vfp::FNMULD(const u32 code) {
-    return util::vfp_Dd_Dn_Dm_pattern(code, "FNMULD");
+    return patterns::vfp_Dd_Dn_Dm(code, "FNMULD");
 }
 
 
@@ -789,7 +908,7 @@ std::string generators::arm::vfp::FNMULD(const u32 code) {
  * reference: C4-86
  */
 std::string generators::arm::vfp::FNMULS(const u32 code) {
-    return util::vfp_Sd_Sn_Sm_pattern(code, "FNMULS");
+    return patterns::vfp_Sd_Sn_Sm(code, "FNMULS");
 }
 
 
@@ -804,7 +923,7 @@ std::string generators::arm::vfp::FNMULS(const u32 code) {
  * reference: C4-88
  */
 std::string generators::arm::vfp::FSITOD(const u32 code) {
-    return util::vfp_Dd_Sm_pattern(code, "FSITOD");
+    return patterns::vfp_Dd_Sm(code, "FSITOD");
 }
 
 
@@ -819,7 +938,7 @@ std::string generators::arm::vfp::FSITOD(const u32 code) {
  * reference: C4-89
  */
 std::string generators::arm::vfp::FSITOS(const u32 code) {
-    return util::vfp_Sd_Sm_pattern(code, "FSITOS");
+    return patterns::vfp_Sd_Sm(code, "FSITOS");
 }
 
 
@@ -834,7 +953,7 @@ std::string generators::arm::vfp::FSITOS(const u32 code) {
  * reference: C4-90
  */
 std::string generators::arm::vfp::FSQRTD(const u32 code) {
-    return util::vfp_Dd_Dm_pattern(code, "FSQRTD");
+    return patterns::vfp_Dd_Dm(code, "FSQRTD");
 }
 
 
@@ -849,43 +968,156 @@ std::string generators::arm::vfp::FSQRTD(const u32 code) {
  * reference: C4-92
  */
 std::string generators::arm::vfp::FSQRTS(const u32 code) {
-    return util::vfp_Sd_Sm_pattern(code, "FSQRTS"); 
+    return patterns::vfp_Sd_Sm(code, "FSQRTS"); 
 }
 
 
 /**
+ * FSTD{<cond>} <Dd>, [<Rn>{, #+/-(<offset>*4)}]
+ * where:
+ * <cond>   Is the condition under which the instruction is executed. The conditions are defined in The
+ *          condition field on page A3-5. If <cond> is omitted, the AL (always) condition is used.
+ * <Dd>     Specifies the source register.
+ * <Rn>     Specifies the register holding the base address for the transfer.
+ * <offset> Specifies an offset to be multiplied by 4, then added to the base address (if U == 1) or
+ *          subtracted from it (if U == 0) to form the actual address of the transfer. If offset is
+ *          omitted, it defaults to +0.
  * 
- * reference: C4-
+ * reference: C4-94
  */
 std::string generators::arm::vfp::FSTD(const u32 code) {
-    // TODO
+    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
+    const std::string Rn = util::reg_string(code, 16, 19);
+
+    const u16 offset = (shared::util::bit_fetcher<u16>(code, 0, 7) * 4);
+
+    const char* op = ((code & (1 << 23)) ? "" : "-");
+
+    return util::make_string("FSTD", util::cond(code), " ", Dd, ", [", Rn, ", #", op, util::hex(offset), "]");
 }
 
 
 /**
+ * FSTM<addressing_mode>D{<cond>} <Rn>{!}, <registers>
+ * where:
+ * <cond>      Is the condition under which the instruction is executed. The conditions are defined in The
+ *             condition field on page A3-5. If <cond> is omitted, the AL (always) condition is used.
+ * <addressing_mode>
+ *             Specifies the addressing mode, which determines the values of start_address and
+ *             end_address used by the instruction. See Addressing Mode 5 - VFP load/store multiple
+ *             on page C5-24 for details.
+ * <Rn>        Specifies the base register used by <addressing_mode>.
+ * !           Sets the W bit of the instruction to 1, specifying that the base register <Rn> is to be updated
+ *             by the instruction. If it is omitted, the W bit of the instruction is set to 0 and the base register
+ *             <Rn> is left unchanged. Some combinations of <addressing_mode> and the presence
+ *             or absence of ! are not allowed. For details, see Addressing Mode 5 - VFP load/store
+ *             multiple on page C5-24.
+ * <registers> Specifies which registers are to be stored, as a list of consecutively numbered
+ *             double-precision registers, separated by commas and surrounded by brackets. It is encoded
+ *             in the instruction by setting Dd to the number of the first register in the list, and offset to
+ *             twice the number of registers in the list. At least one register must be specified in the list.
+ *             For example, if <registers> is {D2,D3,D4}, the Dd field of the instruction is 2 and
+ *             the offset field is 6.
  * 
- * reference: C4-
+ * reference: C4-96
  */
 std::string generators::arm::vfp::FSTMD(const u32 code) {
-    // TODO
+    const std::string addressing_mode = shifters::vfp_ls_mul(code);
+
+    const std::string Rn = util::reg_string(code, 16, 19);
+
+    const char* W = ((code & (1 << 21)) ? "!" : "");
+
+    const u8 Dd = shared::util::bit_fetcher<u8>(code, 12, 15);
+    const u8 offset = shared::util::bit_fetcher<u8>(code, 0, 7);
+
+    const std::string registers = util::vfp_register_list(Dd, offset, util::prefix::D);
+
+    return util::make_string("FSTM", addressing_mode, 'D', util::cond(code), " ", Rn, W, ", ", registers);
 }
 
 
 /**
+ * FSTM<addressing_mode>S{<cond>} <Rn>{!}, <registers>
+ * where:
+ * <cond>      Is the condition under which the instruction is executed. The conditions are defined in The
+ *             condition field on page A3-5. If <cond> is omitted, the AL (always) condition is used.
+ * <addressing_mode>
+ *             Specifies the addressing mode, which determines the values of start_address and
+ *             end_address used by the instruction. See Addressing Mode 5 - VFP load/store multiple
+ *             on page C5-24.
+ * <Rn>        Specifies the base register used by <addressing_mode>.
+ * !           Sets the W bit of the instruction to 1, specifying that the base register <Rn> is to be updated
+ *             by the instruction. If it is omitted, the W bit of the instruction is set to 0 and the base register
+ *             <Rn> is left unchanged. Some combinations of <addressing_mode> and the presence
+ *             or absence of ! are not allowed. For details, see Addressing Mode 5 - VFP load/store
+ *             multiple on page C5-24.
+ * <registers> Specifies which registers are to be stored, as a list of consecutively numbered
+ *             single-precision registers, separated by commas and surrounded by brackets. If d is the
+ *             number of the first register in the list, the list is encoded in the instruction by setting Fd and
+ *             D to the top 4 bits and the bottom bit respectively of d, and offset to the number of
+ *             registers in the list. At least one register must be specified in the list.
+ *             For example, if <registers> is {S5,S6,S7}, the Fd field of the instruction is 0b0010,
+ *             the D bit will be 1 and the offset field is 3.
  * 
- * reference: C4-
+ * reference: C4-98
  */
 std::string generators::arm::vfp::FSTMS(const u32 code) {
-    // TODO
+    const std::string addressing_mode = shifters::vfp_ls_mul(code);
+
+    const std::string Rn = util::reg_string(code, 16, 19);
+
+    const char* W = ((code & (1 << 21)) ? "!" : "");
+
+    const bool D = (code & (1 << 22));
+    const u8 Fd = shared::util::bit_fetcher<u8>(code, 12, 15);
+    const u8 offset = shared::util::bit_fetcher<u8>(code, 0, 7);
+
+    const u8 Fd_bits = static_cast<u8>((Fd << 1) | D);
+
+    const std::string registers = util::vfp_register_list(Fd_bits, offset, util::prefix::S);
+
+    return util::make_string("FSTM", addressing_mode, 'S', util::cond(code), " ", Rn, W, ", ", registers);
 }
 
 
 /**
+ * FSTM<addressing_mode>X{<cond>} <Rn>{!}, <registers>
+ * where:
+ * <cond>      Is the condition under which the instruction is executed. The conditions are defined in The
+ *             condition field on page A3-5. If <cond> is omitted, the AL (always) condition is used.
+ * <addressing_mode>
+ *             Specifies the addressing mode, which determines the values of start_address and
+ *             end_address used by the instruction. See Addressing Mode 5 - VFP load/store multiple
+ *             on page C5-24 for details.
+ * <Rn>        Specifies the base register used by <addressing_mode>.
+ * !           Sets the W bit of the instruction to 1, specifying that the base register <Rn> is to be updated
+ *             by the instruction. If it is omitted, the W bit of the instruction is set to 0 and the base register
+ *             <Rn> is left unchanged. Some combinations of <addressing_mode> and the presence
+ *             or absence of ! are not allowed. For details, see Addressing Mode 5 - VFP load/store
+ *             multiple on page C5-24.
+ * <registers> Specifies which registers are to be stored, as a list of consecutively numbered
+ *             double-precision registers, separated by commas and surrounded by brackets. It is encoded
+ *             in the instruction by setting Dd to the number of the first register in the list, and offset to
+ *             twice the number of registers in the list plus 1. At least one register must be named in the list.
+ *             For example, if <registers> is {D2,D3,D4}, the Dd field of the instruction is 2 and
+ *             the offset field is 7.
  * 
- * reference: C4-
+ * reference: C4-100
  */
 std::string generators::arm::vfp::FSTMX(const u32 code) {
-    // TODO
+    const std::string addressing_mode = shifters::vfp_ls_mul(code);
+
+    const std::string Rn = util::reg_string(code, 16, 19);
+
+    const char* W = ((code & (1 << 21)) ? "!" : "");
+
+    const u8 Dd = shared::util::bit_fetcher<u8>(code, 12, 15);
+    const u8 offset = shared::util::bit_fetcher<u8>(code, 0, 7) - 1;
+
+    const std::string registers = util::vfp_register_list(Dd, offset, util::prefix::D);
+
+    return util::make_string("FSTM", addressing_mode, 'X', util::cond(code), " ", Rn, W, ", ", registers);
 }
 
 
@@ -894,7 +1126,16 @@ std::string generators::arm::vfp::FSTMX(const u32 code) {
  * reference: C4-
  */
 std::string generators::arm::vfp::FSTS(const u32 code) {
-    // TODO
+    const bool D = (code & (1 << 22));
+    
+    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
+    const std::string Rn = util::reg_string(code, 16, 19);
+
+    const u16 offset = shared::util::bit_fetcher<u16>(code, 0, 7) * 4;
+
+    const char* op = ((code & (1 << 23)) ? "" : "-");
+
+    return util::make_string("FSTS", util::cond(code), " ", Sd, ", [", Rn, ", #", op, util::hex(offset), "]");
 }
 
 
@@ -910,7 +1151,7 @@ std::string generators::arm::vfp::FSTS(const u32 code) {
  * reference: C4-104
  */
 std::string generators::arm::vfp::FSUBD(const u32 code) {
-    return util::vfp_Dd_Dn_Dm_pattern(code, "FSUBD");
+    return patterns::vfp_Dd_Dn_Dm(code, "FSUBD");
 }
 
 
@@ -928,7 +1169,7 @@ std::string generators::arm::vfp::FSUBD(const u32 code) {
  * reference: C4-106
  */
 std::string generators::arm::vfp::FSUBS(const u32 code) {
-    return util::vfp_Sd_Sn_Sm_pattern(code, "FSUBS");
+    return patterns::vfp_Sd_Sn_Sm(code, "FSUBS");
 }
 
 
@@ -946,7 +1187,7 @@ std::string generators::arm::vfp::FSUBS(const u32 code) {
  * reference: C4-108
  */
 std::string generators::arm::vfp::FTOSID(const u32 code) {
-    return util::vfp_Sd_Dm_Z_pattern(code, "FTOSI"); // D is appended at the end
+    return patterns::vfp_Sd_Dm_Z(code, "FTOSI"); // D is appended at the end
 }
 
 
@@ -964,7 +1205,7 @@ std::string generators::arm::vfp::FTOSID(const u32 code) {
  * reference: C4-110
  */
 std::string generators::arm::vfp::FTOSIS(const u32 code) {
-    return util::vfp_Sd_Sm_Z_pattern(code, "FTOSI"); // S is appended at the end
+    return patterns::vfp_Sd_Sm_Z(code, "FTOSI"); // S is appended at the end
 }
 
 
@@ -982,7 +1223,7 @@ std::string generators::arm::vfp::FTOSIS(const u32 code) {
  * reference: C4-112
  */
 std::string generators::arm::vfp::FTOUID(const u32 code) {
-    return util::vfp_Sd_Dm_Z_pattern(code, "FTOUI"); // D is appended
+    return patterns::vfp_Sd_Dm_Z(code, "FTOUI"); // D is appended
 }
 
 
@@ -1000,7 +1241,7 @@ std::string generators::arm::vfp::FTOUID(const u32 code) {
  * reference: C4-114
  */
 std::string generators::arm::vfp::FTOUIS(const u32 code) {
-    return util::vfp_Sd_Sm_Z_pattern(code, "FTOUI"); // S is appended at the end
+    return patterns::vfp_Sd_Sm_Z(code, "FTOUI"); // S is appended at the end
 }
 
 
@@ -1015,7 +1256,7 @@ std::string generators::arm::vfp::FTOUIS(const u32 code) {
  * reference: C4-116
  */
 std::string generators::arm::vfp::FUITOD(const u32 code) {
-    return util::vfp_Dd_Sm_pattern(code, "FUITOD");
+    return patterns::vfp_Dd_Sm(code, "FUITOD");
 }
 
 
@@ -1030,5 +1271,5 @@ std::string generators::arm::vfp::FUITOD(const u32 code) {
  * reference: C4-117
  */
 std::string generators::arm::vfp::FUITOS(const u32 code) {
-    return util::vfp_Sd_Sm_pattern(code, "FUITOS"); 
+    return patterns::vfp_Sd_Sm(code, "FUITOS"); 
 }

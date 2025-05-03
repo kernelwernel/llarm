@@ -1,9 +1,8 @@
 #pragma once
 
-#include <cstdint>
 #include <string_view>
 #include <iostream>
-#include <source_location>
+//#include <source_location>
 
 #include "types.hpp"
 
@@ -19,19 +18,28 @@ namespace shared::out {
         misc     = "\x1B[48;2;255;255;255m";
 
 
-    static void info(const auto ...message) noexcept {
+    //static void info(const auto ...message) noexcept {
+    //    std::cout << black_bg << bold << "[" << blue << "INFO" << ansiexit << bold << black_bg << "]" << ansiexit << " ";
+    //    ((std::cout << message),...);
+    //    std::printf("\n");
+    //}
+
+    template <typename... Args>
+    static void info(const Args&... message) noexcept {
         std::cout << black_bg << bold << "[" << blue << "INFO" << ansiexit << bold << black_bg << "]" << ansiexit << " ";
-        ((std::cout << message),...);
+        ((std::cout << message), ...);
         std::printf("\n");
     }
 
-    static void warning(const auto ...message) noexcept {
+    template <typename... Args>
+    static void warning(const Args&... message) noexcept {
         std::cout << black_bg << bold << "[" << orange << "WARNING" << ansiexit << bold << black_bg << "]" << ansiexit << " ";
-        ((std::cout << message),...);
+        ((std::cout << message), ...);
         std::printf("\n");
     }
 
-    [[noreturn]] static void error(const auto ...message) noexcept {
+    template <typename... Args>
+    [[noreturn]] static void error(const Args&... message) noexcept {
         std::cout << black_bg << bold << "[" << red << "ERROR" << ansiexit << bold << black_bg << "]" << ansiexit << " ";
         ((std::cout << message),...);
         std::printf("\n");

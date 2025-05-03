@@ -8,6 +8,43 @@
 
 using namespace internal;
 
+
+std::string shifters::data_shifter(const u32 code) {
+    const mode id = identify_data_shifter(code);
+    return shifter_to_string(id, code);
+}
+
+
+std::string shifters::ls_shifter(const u32 code) {
+    const mode id = identify_ls_shifter(code);
+    return shifter_to_string(id, code);
+}
+
+
+std::string shifters::ls_misc_shifter(const u32 code) {
+    const mode id = identify_ls_misc_shifter(code);
+    return shifter_to_string(id, code);
+}
+
+
+std::string shifters::ls_mul_shifter(const u32 code) {
+    const mode id = identify_ls_mul_shifter(code);
+    return shifter_to_string(id, code);
+}
+
+
+std::string shifters::ls_coproc_shifter(const u32 code) {
+    const mode id = identify_ls_coproc_shifter(code);
+    return shifter_to_string(id, code);
+}
+
+
+std::string shifters::vfp_ls_mul_shifter(const u32 code) {
+    const mode id = identify_ls_mul_shifter(code);
+    return shifter_to_string(id, code);
+}
+
+
 shifters::mode shifters::identify_data_shifter(const u32 code) {
     if (
         ((code & (1 << 27)) != 0) ||
@@ -235,6 +272,29 @@ shifters::mode shifters::identify_ls_coproc_shifter(const u32 code) {
 }
 
 
+shifters::mode shifters::identify_vfp_ls_mul_shifter(const u32 code) {
+    if (
+        ((code & (1 << 27)) != 1) ||
+        ((code & (1 << 26)) != 1) ||
+        ((code & (1 << 25)) != 0)
+    ) {
+        shared::out::error("No known VFP load store multiple addressing shifter has been found");
+    }
+
+    const bool bit_24 = (code & (1 << 24));
+    const bool bit_23 = (code & (1 << 23));
+    const bool bit_21 = (code & (1 << 21));
+
+    const u8 id = static_cast<u8>((bit_24 << 2) | (bit_23 << 1) | bit_21);
+
+    switch (id) {
+        case 0b010: return shifters::mode::VFP_LS_MUL_UNINDEXED;
+        case 0b011: return shifters::mode::VFP_LS_MUL_INC;
+        case 0b101: return shifters::mode::VFP_LS_MUL_DEC;
+        default: shared::out::error("No known VFP load store multiple addressing shifter has been found");
+    }
+}
+
 
 std::string shifters::shifter_to_string(const mode mode, const u32 code) {
     switch (mode) {
@@ -284,5 +344,8 @@ std::string shifters::shifter_to_string(const mode mode, const u32 code) {
         case shifters::mode::LS_COPROC_IMM_PRE: return ls_coproc_imm_pre(code);
         case shifters::mode::LS_COPROC_IMM_POST: return ls_coproc_imm_post(code);
         case shifters::mode::LS_COPROC_UNINDEXED: return ls_coproc_unindexed(code);
+        case shifters::mode::VFP_LS_MUL_UNINDEXED: return "IA";
+        case shifters::mode::VFP_LS_MUL_INC: return "IA";
+        case shifters::mode::VFP_LS_MUL_DEC: return "DB";
     }
 }

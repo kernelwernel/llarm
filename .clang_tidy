@@ -1,11 +1,25 @@
 ---
 Checks: >
     -*,
+    readability-*,
+    -readability-magic-numbers,
+    -readability-identifier-length,
+    -readability-function-cognitive-complexity,
+    -readability-implicit-bool-conversion,
+    -readability-qualified-auto,
     clang-analyzer-*,
     bugprone-*,
+    -bugprone-easily-swappable-parameters,
+    -bugprone-too-small-loop-variable,
     performance-*,
-    readability-*,
-    portability-*
+    portability-*,
+    modernize-*,
+    -modernize-use-trailing-return-type,
+    cppcoreguidelines-*,
+    -cppcoreguidelines-avoid-magic-numbers,
+    -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+    misc-*,
+    -misc-unused-alias-decls
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 AnalyzeTemporaryDtors: true

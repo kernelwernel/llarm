@@ -13,14 +13,10 @@ void INSTRUCTIONS::thumb::branching::B1(const thumb_code_t &code) {
 
     const id::cond cond = reg.fetch_cond_id(shared::util::bit_fetcher<u8>(code, 8, 11));
 
-    std::cout << "B1 PC before: 0x" << std::hex << reg.read(id::reg::PC) << std::dec << "\n";
-
     if (reg.check_cond(cond)) {
         //reg.write(id::reg::PC, (reg.read(id::reg::PC) + (operation.sign_extend<u8>(signed_immed_8) << 1)));
         reg.write(id::reg::PC, (reg.read(id::reg::PC) + (signed_immed_8 << 1) + 4));
     }
-
-    std::cout << "B1 PC after: 0x" << std::hex << reg.read(id::reg::PC) << std::dec << "\n";
 
     reg.thumb_increment_PC();
 }
@@ -32,13 +28,9 @@ void INSTRUCTIONS::thumb::branching::B1(const thumb_code_t &code) {
 void INSTRUCTIONS::thumb::branching::B2(const thumb_code_t &code) {
     const i16 signed_immed_10 = shared::util::bit_fetcher<i16>(code, 0, 10);
 
-    std::cout << "before: " << reg.read(id::reg::PC) << "\n";
-
     reg.write(id::reg::PC, (reg.read(id::reg::PC) + ((static_cast<i32>(signed_immed_10)) << 1)));
 
     reg.thumb_increment_PC();
-
-    std::cout << "after: " << reg.read(id::reg::PC) << "\n";
 }
 
 
@@ -54,8 +46,6 @@ void INSTRUCTIONS::thumb::branching::B2(const thumb_code_t &code) {
  *   T Flag = 0
  */
 void INSTRUCTIONS::thumb::branching::BL(const thumb_code_t &code) {
-    std::cout << "\n\n\n\nbefore: " << reg.read(id::reg::PC) << "\n\n\n";
-
     const u16 offset_11 = shared::util::bit_fetcher<u16>(code, 0, 10);
     const u8 H = shared::util::bit_fetcher<u8>(code, 11, 12);
 

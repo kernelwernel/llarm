@@ -4,8 +4,8 @@
 #include "../../utility.hpp"
 #include "../core/globals.hpp"
 
-#include <bitset>
 #include <vector>
+#include <array>
 
 struct RAM {
 private:
@@ -14,7 +14,7 @@ private:
 private:
     static constexpr u32 default_size = util::get_kb(32); // 32KB
 
-    std::array<u8, default_size> ram;
+    std::array<u8, default_size> ram{};
 
 public:
     void write(const std::vector<u8> &data, const u32 address) {

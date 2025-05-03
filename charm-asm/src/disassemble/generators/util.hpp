@@ -67,13 +67,53 @@ namespace internal::util {
         D12,
         D13,
         D14,
-        D15
+        D15,
+        C0,
+        C1,
+        C2,
+        C3,
+        C4,
+        C5,
+        C6,
+        C7,
+        C8,
+        C9,
+        C10,
+        C11,
+        C12,
+        C13,
+        C14,
+        C15,
+        P0,
+        P1,
+        P2,
+        P3,
+        P4,
+        P5,
+        P6,
+        P7,
+        P8,
+        P9,
+        P10,
+        P11,
+        P12,
+        P13,
+        P14,
+        P15,
     };
 
     enum class prefix : u8 {
         R, // for regular ARM registers
         S, // for 32-bit VFP registers
-        D  // for 64-bit VFP registers
+        D, // for 64-bit VFP registers
+        C, // for coprocessor registers 
+        P  // for coprocessor processor number, 
+           // the reason why this is encorporated
+           // with the registers is because it
+           // has the same effective syntax and
+           // utility as the above registers,
+           // so while the usage and context is
+           // different, the overall syntax isn't.
     };
 
     reg_id identify_reg(const u8 reg_bits, const prefix prefix = prefix::R);
@@ -82,7 +122,9 @@ namespace internal::util {
 
     std::string reg_list(const u16 list, const sv extra = "");
 
-    std::string fetch_cond(const u8 cond);
+    std::string raw_cond(const u8 cond);
+
+    std::string cond(const u32 code);
 
     std::string reg_id_to_string(const reg_id id, const bool alias = false);
 
@@ -92,32 +134,14 @@ namespace internal::util {
 
     std::string reg_string_bits(const u32 code, const u8 start, const u8 end, const bool top_bit);
 
+    std::string vfp_register_list(const u8 first_reg, const u8 offset, const prefix prefix);
+
     std::string hex(const u32 integer);
 
-    std::string vfp_Dd_Dm_pattern(const u32 code, const sv instruction);
-
-    std::string vfp_Dd_Dn_Dm_pattern(const u32 code, const sv instruction);
-
-    std::string vfp_Sd_Sm_pattern(const u32 code, const sv instruction);
-
-    std::string vfp_Sd_Sm_Z_pattern(const u32 code, const sv semi_instruction);
-
-    std::string vfp_Sd_Dm_Z_pattern(const u32 code, const sv semi_instruction);
-
-    std::string vfp_Sd_Sn_Sm_pattern(const u32 code, const sv instruction);
-
-    std::string vfp_Dd_Sm_pattern(const u32 code, const sv instruction);
-
-    std::string vfp_Rd_Dn_pattern(const u32 code, const sv instruction);
-
-    std::string vfp_Dn_Rd_pattern(const u32 code, const sv instruction);
-
-    std::string vfp_Sd_pattern(const u32 code, const sv instruction);
-
-    std::string vfp_Dd_pattern(const u32 code, const sv instruction);
+    u8 popcount(const u32 integer);
 
 
-    // i'm sorry to whoever is reading these functions.
+    // i'm deeply sorry to whoever is reading this absolute mess.
     template<typename T>
     void append_arg(std::string& result, T&& arg) {
         if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
@@ -133,7 +157,7 @@ namespace internal::util {
     template<typename... Args>
     std::string make_string(Args&&... args) {
         std::string result;
-        
+
         size_t total_size = 0;
         ([&](auto&& arg) {
             if constexpr (std::is_arithmetic_v<std::decay_t<decltype(arg)>>) {

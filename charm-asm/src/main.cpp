@@ -1,10 +1,10 @@
 #include <bitset>
-#include <vector>
 #include <cstring>
 #include <iostream>
-#include <algorithm>
 #include <array>
 #include <string>
+#include <span>
+#include <algorithm>
 
 #include "shared/types.hpp"
 #include "shared/out.hpp"
@@ -66,9 +66,7 @@ int main(int argc, char* argv[]) {
     return 0;
 
 
-
-
-    const std::vector<std::string> args(argv + 1, argv + argc); // easier to handle args this way
+    const std::span<char*> args(argv, static_cast<std::size_t>(argc));
     const u32 arg_count = static_cast<u32>(argc - 1);
 
 

@@ -1,12 +1,8 @@
 #pragma once
 
-#include "../../instruction_id.hpp"
-
 #include "shared/types.hpp"
 
-#include <functional>
 #include <string>
-#include <map>
 
 // the generation mechanism was benchmarked here:
 // https://quick-bench.com/q/No_nYrHbcGwK5JTFl-qJtJ0ncc0
@@ -25,6 +21,7 @@ namespace internal::generators {
         namespace logic {
             std::string CMN(u32);
             std::string AND(u32);
+            std::string BIC(u32);
             std::string CMP(u32);
             std::string CLZ(u32);
             std::string EOR(u32);
@@ -51,9 +48,11 @@ namespace internal::generators {
         }
 
         namespace branching {
-            std::string B(u32);
-            std::string BL(u32);
+            std::string B(u32, u32 PC);
+            std::string BL(u32, u32 PC);
             std::string BX(u32);
+            std::string BLX1(u32, u32 PC);
+            std::string BLX2(u32);
         }
 
         namespace coprocessor {
@@ -68,6 +67,7 @@ namespace internal::generators {
             std::string NOP(u32);
             std::string PSR(u32);
             std::string SWI(u32);
+            std::string BKPT(u32);
         }
 
         namespace load {

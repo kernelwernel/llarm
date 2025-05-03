@@ -12,7 +12,7 @@ include(ExternalProject)
 ExternalProject_Add(
     charm-asm
     SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../charm-asm"
-    BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/charm-asm-build"  # Better practice
+    BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/charm-asm-build"
     CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}  # Optional: Consistent install dir
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}         # Inherit build type
@@ -32,23 +32,11 @@ include("../cmake/linker_flags.cmake") # linker config
 
 # targets
 set(TARGET_BIN "charm-emu-bin")
-set(TARGET_LIB "charm-emu-lib")
 
 
 # general
 file(GLOB_RECURSE ALL_SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 set(LIB_SOURCES ${ALL_SOURCES})
-#set(EXCLUDE_PATTERNS
-#    ".*/main\\.cpp"
-#)
-#foreach(source IN LISTS ALL_SOURCES)
-#    foreach(pattern IN LISTS EXCLUDE_PATTERNS)
-#        if(source MATCHES "${pattern}")
-#            list(REMOVE_ITEM LIB_SOURCES "${source}")
-#            break()
-#        endif()
-#    endforeach()
-#endforeach()
 
 
 # library setup
@@ -56,18 +44,12 @@ add_library(${TARGET_LIB} STATIC ${LIB_SOURCES})
 set_target_properties(${TARGET_LIB} PROPERTIES 
     OUTPUT_NAME "charm-emu"
 )
-#install(FILES charm-asm.hpp DESTINATION include/charm)
-#install(DIRECTORY src/ DESTINATION include/charm/internal/charm-asm/src)
-#install(TARGETS ${TARGET_LIB}
-#    ARCHIVE DESTINATION lib
-#    LIBRARY DESTINATION lib
-#)
 
 
 # executable setup
 add_executable(${TARGET_BIN} "src/main.cpp")
+target_link_libraries(charm-emu-bin PRIVATE STATIC libcharm-asm.a)
 set_target_properties(${TARGET_BIN} PROPERTIES OUTPUT_NAME "charm-emu")
-target_link_libraries(${TARGET_BIN} PRIVATE ${TARGET_LIB})
 install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION bin)
 
 
@@ -80,15 +62,12 @@ configure_compiler()
 
 
 # define compiler macros and the release/debug build type (defined in charm/cmake/build_type.cmake)
-config_build_type(${TARGET_BIN})
-#config_build_type(${TARGET_LIB})
+configure_build_type(${TARGET_BIN})
 
 
 # configure the target flags (defined in charm/cmake/target_flags.cmake)
 configure_target_flags(${TARGET_BIN})
-#configure_target_flags(${TARGET_LIB})
 
 
 # linker flags (defined in charm/cmake/linker_flags.cmake)
 configure_linker_flags(${TARGET_BIN})
-#configure_linker_flags(${TARGET_LIB})

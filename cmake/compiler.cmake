@@ -15,5 +15,5 @@ function(configure_compiler)
     set(USING_COMPILER "${COMPILER_NAME}" PARENT_SCOPE)
     
     message(STATUS "Compiler: ${COMPILER_NAME}")
-    message(STATUS "Compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
+    #message(STATUS "Compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
 endfunction()

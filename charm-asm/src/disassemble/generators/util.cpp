@@ -6,7 +6,6 @@
 
 #include <vector>
 #include <array>
-#include <charconv>
 
 using namespace internal;
 
@@ -90,6 +89,49 @@ util::reg_id util::identify_reg(const u8 reg_bits, const prefix prefix) {
                 case 15: return reg_id::D15;
                 default: shared::out::error("charm-asm: No known binary code given for D register identification");
             }
+
+        case prefix::C:
+            switch (reg_bits) {
+                case 0: return reg_id::C0;
+                case 1: return reg_id::C1;
+                case 2: return reg_id::C2;
+                case 3: return reg_id::C3;
+                case 4: return reg_id::C4;
+                case 5: return reg_id::C5;
+                case 6: return reg_id::C6;
+                case 7: return reg_id::C7;
+                case 8: return reg_id::C8;
+                case 9: return reg_id::C9;
+                case 10: return reg_id::C10;
+                case 11: return reg_id::C11;
+                case 12: return reg_id::C12;
+                case 13: return reg_id::C13;
+                case 14: return reg_id::C14;
+                case 15: return reg_id::C15;
+                default: shared::out::error("charm-asm: No known binary code given for C register identification");
+            }
+
+        
+        case prefix::P:
+            switch (reg_bits) {
+                case 0: return reg_id::P0;
+                case 1: return reg_id::P1;
+                case 2: return reg_id::P2;
+                case 3: return reg_id::P3;
+                case 4: return reg_id::P4;
+                case 5: return reg_id::P5;
+                case 6: return reg_id::P6;
+                case 7: return reg_id::P7;
+                case 8: return reg_id::P8;
+                case 9: return reg_id::P9;
+                case 10: return reg_id::P10;
+                case 11: return reg_id::P11;
+                case 12: return reg_id::P12;
+                case 13: return reg_id::P13;
+                case 14: return reg_id::P14;
+                case 15: return reg_id::P15;
+                default: shared::out::error("charm-asm: No known binary code given for C register identification");
+            }
     }
 }
 
@@ -113,8 +155,8 @@ std::string util::reg_id_to_string(const util::reg_id id, const bool alias) {
         case reg_id::R8: return "R8";
         case reg_id::R9: return "R9";
         case reg_id::R10: return "R10";
-        case reg_id::R11: return "R11";
-        case reg_id::R12: return "R12";
+        case reg_id::R11: return (alias ? "FP" : "R11");
+        case reg_id::R12: return (alias ? "IP" : "R12");
         case reg_id::R13: return (alias ? "SP" : "R13");
         case reg_id::R14: return (alias ? "LR" : "R14");
         case reg_id::R15: return (alias ? "PC" : "R15");
@@ -166,20 +208,52 @@ std::string util::reg_id_to_string(const util::reg_id id, const bool alias) {
         case reg_id::D13: return "D13";
         case reg_id::D14: return "D14";
         case reg_id::D15: return "D15";
+        case reg_id::C0: return "c0";
+        case reg_id::C1: return "c1";
+        case reg_id::C2: return "c2";
+        case reg_id::C3: return "c3";
+        case reg_id::C4: return "c4";
+        case reg_id::C5: return "c5";
+        case reg_id::C6: return "c6";
+        case reg_id::C7: return "c7";
+        case reg_id::C8: return "c8";
+        case reg_id::C9: return "c9";
+        case reg_id::C10: return "c10";
+        case reg_id::C11: return "c11";
+        case reg_id::C12: return "c12";
+        case reg_id::C13: return "c13";
+        case reg_id::C14: return "c14";
+        case reg_id::C15: return "c15";
+        case reg_id::P0: return "p0";
+        case reg_id::P1: return "p1";
+        case reg_id::P2: return "p2";
+        case reg_id::P3: return "p3";
+        case reg_id::P4: return "p4";
+        case reg_id::P5: return "p5";
+        case reg_id::P6: return "p6";
+        case reg_id::P7: return "p7";
+        case reg_id::P8: return "p8";
+        case reg_id::P9: return "p9";
+        case reg_id::P10: return "p10";
+        case reg_id::P11: return "p11";
+        case reg_id::P12: return "p12";
+        case reg_id::P13: return "p13";
+        case reg_id::P14: return "p14";
+        case reg_id::P15: return "p15";
         default: shared::out::error("charm-asm: No known binary code given for register identification");
     }
 }
 
 
 std::string util::reg_string(const u32 code, const u8 start, const u8 end, const prefix prefix, const bool alias) {
-    const util::reg_id reg_id = util::identify_reg(code, start, end, prefix);
-    std::string reg = util::reg_id_to_string(reg_id, alias);
+    const util::reg_id reg_id = identify_reg(code, start, end, prefix);
+    std::string reg = reg_id_to_string(reg_id, alias);
     return reg;
 }
 
 
 std::string util::reg_list(const u16 list, const sv extra) {
-    const u8 count = static_cast<u8>(std::popcount(list));
+    const u8 count = util::popcount(list);
 
     std::string tmp;
 
@@ -221,7 +295,8 @@ std::string util::reg_list(const u16 list, const sv extra) {
 }
 
 
-std::string util::fetch_cond(const u8 cond) {
+// https://quick-bench.com/q/oqvSMt5BCEiN0odMXX68IdPTrBI
+std::string util::raw_cond(const u8 cond) {
     switch (cond) {
         case 0b0000: return "EQ";
         case 0b0001: return "NE";
@@ -244,7 +319,11 @@ std::string util::fetch_cond(const u8 cond) {
 }
 
 
-// https://quick-bench.com/q/oqvSMt5BCEiN0odMXX68IdPTrBI
+std::string util::cond(const u32 code) {
+    const u8 condition_code = shared::util::bit_fetcher<u8>(code, 28, 31);
+    return raw_cond(condition_code);
+}
+
 
 std::string util::vfp_reg_string_bits(const u32 code, const u8 start, const u8 end, const bool bottom_bit) {
     u8 reg_bits = shared::util::bit_fetcher<u8>(code, start, end);
@@ -272,133 +351,36 @@ std::string util::reg_string_bits(const u32 code, const u8 start, const u8 end, 
 }
 
 
-std::string util::vfp_Dd_Dm_pattern(const u32 code, const sv instruction) {
-    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
+std::string util::vfp_register_list(const u8 first_reg, const u8 offset, util::prefix prefix) {
+    if (offset & 1) {
+        shared::out::error("VFP register offset list should not be an odd number");
+    }
 
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
+    const u8 reg_count = (offset >> (prefix == util::prefix::S ? 0 : 1));
+    
+    std::vector<u8> reg_nums;
+    reg_nums.reserve(reg_count);
+    
+    for (u8 i = first_reg; i < offset; i++) {
+        reg_nums.push_back(i);
+    }
 
-    return util::make_string(instruction, util::fetch_cond(cond), " ", Dd, ", ", Dm); 
-}
+    std::string tmp(((reg_count) * 5) + 4, '\0'); // just an approximation, not exact but it should do the job 
+    
+    tmp += "{ ";
+    
+    for (u8 i = first_reg; i < offset; i++) {
+        if (i != first_reg) {
+            tmp += ", ";
+        }
 
+        const reg_id id = identify_reg(i, prefix);
+        tmp += (reg_id_to_string(id));
+    }
 
-std::string util::vfp_Dd_Dn_Dm_pattern(const u32 code, const sv instruction) {
-    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
+    tmp += " }";
 
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    return util::make_string(instruction, util::fetch_cond(cond), " ", Dd, ", ", Dn, ", ", Dm); 
-}
-
-
-std::string util::vfp_Sd_Sm_pattern(const u32 code, const sv instruction) {
-    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool M = (code & (1 << 5));
-
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M);
-
-    return util::make_string(instruction, util::fetch_cond(cond), " ", Sd, ", ", Sm); 
-}
-
-
-std::string util::vfp_Sd_Sm_Z_pattern(const u32 code, const sv semi_instruction) {
-    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool M = (code & (1 << 5));
-
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M);
-
-    const char* Z = ((code & (1 << 7)) ? "ZS" : "S");
-
-    return util::make_string(semi_instruction, Z, util::fetch_cond(cond), " ", Sd, ", ", Sm);
-}
-
-
-std::string util::vfp_Sd_Dm_Z_pattern(const u32 code, const sv semi_instruction) {
-    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-   
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
-
-    const char* Z = ((code & (1 << 7)) ? "ZD" : "D");
-
-    return util::make_string(semi_instruction, Z, util::fetch_cond(cond), " ", Sd, ", ", Dm);
-}
-
-
-std::string util::vfp_Sd_Sn_Sm_pattern(const u32 code, const sv instruction) {
-    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-    const bool N = (code & (1 << 7));
-    const bool M = (code & (1 << 5));
-   
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D); 
-    const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N); 
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M); 
-
-    return util::make_string(instruction, util::fetch_cond(cond), " ", Sd, ", ", Sn, ", ", Sm);
-}
-
-
-std::string util::vfp_Dd_Sm_pattern(const u32 code, const sv instruction) {
-   const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
-
-    const bool M = (code & (1 << 5));
-   
-    const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M); 
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-
-    return util::make_string(instruction, util::fetch_cond(cond), " ", Dd, ", ", Sm);
-}
-
-
-std::string util::vfp_Rd_Dn_pattern(const u32 code, const sv instruction) {
-    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
-
-    const std::string Rd = util::reg_string(code, 12, 15, util::prefix::R);
-    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
-
-    return util::make_string(instruction, util::fetch_cond(cond), " ", Rd, ", ", Dn);
-}
-
-
-std::string util::vfp_Dn_Rd_pattern(const u32 code, const sv instruction) {
-    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
-
-    const std::string Rd = util::reg_string(code, 12, 15, util::prefix::R);
-    const std::string Dn = util::reg_string(code, 16, 19, util::prefix::D);
-
-    return util::make_string("FMDLR", util::fetch_cond(cond), " ", Dn, ", ", Rd);
-}
-
-
-std::string util::vfp_Sd_pattern(const u32 code, const sv instruction) {
-    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
-
-    const bool D = (code & (1 << 22));
-
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-
-    return util::make_string(instruction, util::fetch_cond(cond), " ", Sd); 
-}
-
-
-std::string util::vfp_Dd_pattern(const u32 code, const sv instruction) {
-    const u8 cond = shared::util::bit_fetcher<u8>(code, 28, 31);
-
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-
-    return util::make_string("FCMPZD", util::fetch_cond(cond), " ", Dd); 
+    return tmp;
 }
 
 
@@ -451,4 +433,16 @@ std::string util::hex(const u32 integer) {
     }
 
     return ret;
+}
+
+
+// std::popcount only works for C++20, while
+// built-in functions are compiler-specific,
+// so to simplify all of this compatibility 
+// mess, i'm just going to use the std::bitset
+// version of it. The compiler should be able
+// to optimise this away with at least -O1:
+// https://godbolt.org/z/qEjaEz9zq
+u8 util::popcount(const u32 integer) {
+    return static_cast<u8>(std::bitset<32>(integer).count());
 }

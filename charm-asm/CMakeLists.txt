@@ -37,9 +37,6 @@ foreach(source IN LISTS ALL_SOURCES)
         endif()
     endforeach()
 endforeach()
-        
-
-
 
 
 # library setup
@@ -65,8 +62,6 @@ install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION bin)
 
 # to include shared/
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../)
-
-
 
 
 # select the compiler, preferably clang++ (defined in charm/cmake/compiler.cmake)

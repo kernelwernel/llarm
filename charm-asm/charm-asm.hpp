@@ -6,9 +6,7 @@
 //#include <charm/internal/charm-asm/src/instruction_table.hpp>
 
 #include "src/identifiers/identifiers.hpp"
-#include "src/opcodes/opcodes.hpp"
 #include "src/instruction_id.hpp"
-#include "src/instruction_table.hpp"
 
 
 namespace charm {
@@ -26,28 +24,28 @@ namespace charm {
 
 
         namespace identify {
-            id::arm arm(const arm_code_t &raw_code) {
+            inline id::arm arm(const arm_code_t &raw_code) {
                 return internal::identifiers::arm(raw_code);
             }
 
-            id::arm arm(const u32 &raw_code) {
+            inline id::arm arm(const u32 &raw_code) {
                 return internal::identifiers::arm(raw_code);
             }
 
-            id::thumb thumb(const thumb_code_t &raw_code) {
+            inline id::thumb thumb(const thumb_code_t &raw_code) {
                 return internal::identifiers::thumb(raw_code);
             }
 
-            id::thumb thumb(const u16 &raw_code) {
+            inline id::thumb thumb(const u16 &raw_code) {
                 return internal::identifiers::thumb(raw_code);
             }
 
-            id::jazelle jazelle(const u8 raw_code) {
+            inline id::jazelle jazelle(const u8 raw_code) {
                 return internal::identifiers::jazelle(raw_code);
             }
         }
     }
 
     // shortened alias, can't use charm::asm because "asm" is already a C/C++ keyword
-    namespace as = assembly;
+    namespace as = assembly; // NOLINT(misc-unused-alias-decls)
 }

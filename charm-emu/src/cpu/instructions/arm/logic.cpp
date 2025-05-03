@@ -59,9 +59,6 @@ void INSTRUCTIONS::arm::logic::CLZ(const arm_code_t &code) {
 }
 
 
-
-
-
 /*
  * if ConditionPassed(cond) then
  *   Rd = Rn EOR shifter_operand

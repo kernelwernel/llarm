@@ -28,7 +28,7 @@ function(configure_target_flags TARGET)
             list(APPEND CXX_FLAGS ${LINUX_DEBUG_CXX_FLAGS})
         endif()
 
-        #list(APPEND CXX_FLAGS ${LINUX_COMMON_LINKER_FLAGS})
+        list(APPEND CXX_FLAGS ${LINUX_EXTRA_CXX_FLAGS})
     endif()
 
     target_compile_options(${TARGET} PRIVATE ${CXX_FLAGS})

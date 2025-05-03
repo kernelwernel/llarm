@@ -7,7 +7,6 @@
 
 #include <vector>
 #include <fstream>
-#include <array>
 
 std::vector<u8> fetch_binary(const std::string& filePath) {
     std::ifstream file(filePath, std::ios::binary | std::ios::ate);
@@ -16,12 +15,12 @@ std::vector<u8> fetch_binary(const std::string& filePath) {
         shared::out::error("Failed to open file");
     }
 
-    std::size_t file_size = file.tellg();
+    std::size_t file_size = static_cast<std::size_t>(file.tellg());
     file.seekg(0);
 
     std::vector<u8> buffer(file_size);
 
-    if (!file.read(reinterpret_cast<char*>(buffer.data()), file_size)) {
+    if (!file.read(reinterpret_cast<char*>(buffer.data()), static_cast<std::streamsize>(file_size))) {
         shared::out::error("Failed to read file");
     }
 

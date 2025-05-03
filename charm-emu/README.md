@@ -3,19 +3,6 @@
 An ARM emulation framework for C++
 
 
-> [!IMPORTANT]
-> This is only a testing version of the project, it's not even in an alpha stage yet. I've written approximately 15k lines of C++ so far and have been working on this project for over half a year. Although it can't emulate basic programs yet, my goal at the moment is to be able to run a simplistic version of the Linux kernel, but it's not even close to that point for now. 
-> 
-> That being said, I'm planning on making this into something much bigger than it already is. The intention is to complete a prototype by the end of april (it's march 9 as of writing this). The reason why I'm sharing this project now is because I wanted to publish the progress I've made so far, and maybe get feedback from people to determine what could be better. 
->
-> But for the moment, this is only the beginning. My objective is to provide the most open ARM emulator out there where everything about it is easily customisable and loggable with little restrictions while having a permissive license.
-
-
-
-
-
-
-
 # Technical features
 CHARM has the goal of emulating pretty much everything about the ARM architecture up to v(something):
 - deprecated 26-bit architecture compatibility

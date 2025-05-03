@@ -14,6 +14,8 @@ FETCH::FETCH(
 arm_fetch_struct FETCH::arm_fetch() {
     arm_fetch_struct tmp = {};
 
+    std::cout << ">>>>> PC: 0x" << std::hex << reg.read(id::reg::PC) << std::dec << "\n\n";
+
     memory_struct access = memory.read<u32>(reg.read(id::reg::PC), 4, id::access_type::INSTRUCTION_FETCH);
     
     if (globals.is_little_endian) {
@@ -35,8 +37,6 @@ arm_fetch_struct FETCH::arm_fetch() {
 
 thumb_fetch_struct FETCH::thumb_fetch() {
     thumb_fetch_struct tmp = {};
-
-    std::cout << ">>>>> PC: 0x" << std::hex << reg.read(id::reg::PC) << std::dec << "\n\n";
 
     memory_struct access = memory.read<u16>(reg.read(id::reg::PC), 2, id::access_type::INSTRUCTION_FETCH);
 

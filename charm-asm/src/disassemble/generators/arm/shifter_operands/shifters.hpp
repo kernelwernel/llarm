@@ -1,8 +1,6 @@
 #pragma once
 
 #include "shared/types.hpp"
-#include "shared/util.hpp"
-#include "shared/out.hpp"
 
 // reference: A5-1
 
@@ -62,16 +60,28 @@ namespace internal::shifters {
         LS_COPROC_IMM,
         LS_COPROC_IMM_PRE,
         LS_COPROC_IMM_POST,
-        LS_COPROC_UNINDEXED
+        LS_COPROC_UNINDEXED,
+
+        VFP_LS_MUL_UNINDEXED,
+        VFP_LS_MUL_INC,
+        VFP_LS_MUL_DEC
     };
+
+    std::string data_shifter(const u32 code);
+    std::string ls_shifter(const u32 code);
+    std::string ls_misc_shifter(const u32 code);
+    std::string ls_mul_shifter(const u32 code);
+    std::string ls_coproc_shifter(const u32 code);
+    std::string vfp_ls_mul_shifter(const u32 code);
 
     mode identify_data_shifter(const u32 code);
     mode identify_ls_shifter(const u32 code);
     mode identify_ls_misc_shifter(const u32 code);
     mode identify_ls_mul_shifter(const u32 code);
     mode identify_ls_coproc_shifter(const u32 code);
+    mode identify_vfp_ls_mul_shifter(const u32 code);
 
-    std::string shifter_to_string(const mode mode, const u32 code);
+    std::string shifter_to_string(const mode mode_id, const u32 code);
 
     // defined in modes/data.cpp
     std::string data_reg_pattern(const u32 code, const sv mode);
@@ -107,4 +117,7 @@ namespace internal::shifters {
     std::string ls_coproc_imm_pre(const u32 code);
     std::string ls_coproc_imm_post(const u32 code);
     std::string ls_coproc_unindexed(const u32 code);
+
+    // defined in modes/vfp.cpp
+    std::string vfp_ls_mul(const u32 code); 
 }

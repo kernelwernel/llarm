@@ -24,7 +24,6 @@
 #include "shared/types.hpp"
 
 #include <vector>
-#include <array>
 
 void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
     // essential settings
@@ -61,7 +60,7 @@ void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
     coprocessor.write(id::cp::CP15_R1_D, true, FORCED); // set to 32-bit mode (maybe temporary idk)
     // reg.switch_mode(id::mode::SUPERVISOR); only enable for system mode
     reg.switch_mode(id::mode::USER); // only for user programs, temporary
-    reg.write(id::cpsr::T, 1); // switch to thumb  // TODO: double check if it actually starts in thumb mode
+    //reg.write(id::cpsr::T, 1); // switch to thumb  // TODO: double check if it actually starts in thumb mode
     memory.reset();
     ram.write(binary, 0);
     
@@ -80,6 +79,8 @@ void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
                     continue;
                 }
 
+                util::dev::pause();
+
                 const arm_decode_struct instruction = decode.arm_decode(arm_code_access.code);
 
                 execute.arm_execute(instruction);
@@ -93,7 +94,6 @@ void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
                     continue;
                 }
 
-                util::dev::pause();
                 const thumb_decode_struct instruction = decode.thumb_decode(thumb_code_access.code);
 
                 execute.thumb_execute(instruction);

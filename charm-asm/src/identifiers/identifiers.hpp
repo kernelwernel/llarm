@@ -3,9 +3,6 @@
 #include "../instruction_id.hpp"
 
 #include "shared/types.hpp"
-#include "shared/out.hpp"
-
-#include <bitset>
 
 namespace internal::identifiers {
     id::arm arm(const arm_code_t &raw_code);

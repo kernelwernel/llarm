@@ -1,13 +1,10 @@
 #pragma once
 
-#include "core/registers.hpp"
-#include "memory/memory.hpp"
 #include "instructions/instructions.hpp"
 
 #include <charm-asm/charm-asm.hpp>
 
-#include <map>
-#include <variant>
+#include <functional>
 
 struct INSTRUCTION_SET {
 private:

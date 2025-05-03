@@ -31,7 +31,7 @@ std::string generators::thumb::branching::B1(const u16 code, const u32 PC) {
 
     const u8 signed_immed_8 = shared::util::bit_fetcher<u8>(code, 0, 7);
 
-    const std::string cond_string = util::fetch_cond(cond);
+    const std::string cond_string = util::raw_cond(cond);
 
     const u32 sign_extend = static_cast<u32>(signed_immed_8 << 1);
     const u32 target_address = (sign_extend + 4 + PC);

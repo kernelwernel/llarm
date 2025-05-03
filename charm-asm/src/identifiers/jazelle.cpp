@@ -2,6 +2,7 @@
 #include "identifiers.hpp"
 
 #include "shared/types.hpp"
+#include "shared/out.hpp"
 
 using namespace internal;
 

@@ -51,3 +51,11 @@ void INSTRUCTIONS::arm::branching::BX(const arm_code_t &code) {
 
     reg.write(id::reg::PC, address);
 }
+
+void INSTRUCTIONS::arm::branching::BLX1(const arm_code_t &code) {
+    // TODO
+}
+
+void INSTRUCTIONS::arm::branching::BLX2(const arm_code_t &code) {
+    // TODO
+}

@@ -47,3 +47,5 @@ namespace shared::util {
         return copy;
     }
 }
+
+// https://quick-bench.com/q/JqnAzdyhgQ9yuc4WflaEe_3tciE

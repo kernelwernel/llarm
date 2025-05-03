@@ -45,6 +45,11 @@ set(CLANG_CXX_FLAGS
 )
 
 
+set(LINUX_EXTRA_CXX_FLAGS
+    -fcolor-diagnostics
+)
+
+
 set(GCC_CXX_FLAGS
     ${CLANG_CXX_FLAGS}
     -Wmisleading-indentation

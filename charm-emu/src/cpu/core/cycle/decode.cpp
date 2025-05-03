@@ -6,9 +6,6 @@
 
 #include <charm-asm/charm-asm.hpp>
 
-#include <bitset>
-#include <tuple>
-
 
 bool DECODE::condition_match(const id::cond cond) const {
     return (reg.check_cond(cond));

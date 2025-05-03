@@ -99,6 +99,8 @@ public:
             void B(const arm_code_t&); // TODO
             void BL(const arm_code_t&); // TODO
             void BX(const arm_code_t&); // TODO
+            void BLX1(const arm_code_t&); // TODO
+            void BLX2(const arm_code_t&); // TODO
         } branching;
 
         struct coprocessor_inst {
