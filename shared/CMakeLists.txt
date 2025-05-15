@@ -1,9 +1,9 @@
 # basic info
 cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 project(
-    charm-shared
+    llarm-shared
     VERSION 0.1
-    DESCRIPTION "Internally shared utilities for CHARM subprojects"
+    DESCRIPTION "Internally shared utilities for LLARM subprojects"
     LANGUAGES CXX
 )
 
@@ -18,25 +18,25 @@ include("../cmake/linker_flags.cmake") # linker config
 
 
 # general
-set(TARGET "charm-shared-lib")
+set(TARGET "llarm-shared-lib")
 file(GLOB_RECURSE SOURCES
     "${PROJECT_DIR}/*.cpp"
 )
 add_library(${TARGET} STATIC ${SOURCES})
 set_target_properties(${TARGET} PROPERTIES 
-    OUTPUT_NAME "charm-shared"
+    OUTPUT_NAME "llarm-shared"
 )
 
 
-# select the compiler, preferably clang++ (defined in charm/cmake/compiler.cmake)
+# select the compiler, preferably clang++ (defined in llarm/cmake/compiler.cmake)
 configure_compiler()
 
 
-# define compiler macros and the release/debug build type (defined in charm/cmake/build_type.cmake)
+# define compiler macros and the release/debug build type (defined in llarm/cmake/build_type.cmake)
 config_build_type(${TARGET})
 
 
-# configure the target flags (defined in charm/cmake/config_flags.cmake)
+# configure the target flags (defined in llarm/cmake/config_flags.cmake)
 configure_target_flags(${TARGET})
 
 
@@ -46,7 +46,7 @@ configure_linker_flags(${TARGET})
 
 # Install and export the target
 install(TARGETS ${TARGET}
-    EXPORT charm-shared-targets
+    EXPORT llarm-shared-targets
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
@@ -54,27 +54,27 @@ install(TARGETS ${TARGET}
 
 
 # generate the package
-install(EXPORT charm-shared-targets
-    FILE charm-shared-config.cmake
-    NAMESPACE charm::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/charm-shared
+install(EXPORT llarm-shared-targets
+    FILE llarm-shared-config.cmake
+    NAMESPACE llarm::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/llarm-shared
 )
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
-    ${CMAKE_CURRENT_BINARY_DIR}/charm-shared-config-version.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/llarm-shared-config-version.cmake
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion
 )
 install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/charm-shared-config-version.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/charm-shared
+    ${CMAKE_CURRENT_BINARY_DIR}/llarm-shared-config-version.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/llarm-shared
 )
 
 
 
 
-install(DIRECTORY tools/ DESTINATION include/charm/internal/shared/tools)
-install(FILES out.hpp types.hpp util.hpp DESTINATION include/charm/internal/shared)
+install(DIRECTORY tools/ DESTINATION include/llarm/internal/shared/tools)
+install(FILES out.hpp types.hpp util.hpp DESTINATION include/llarm/internal/shared)
 install(TARGETS ${TARGET}
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
