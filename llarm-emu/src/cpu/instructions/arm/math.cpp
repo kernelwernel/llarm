@@ -30,7 +30,7 @@ void INSTRUCTIONS::arm::math::ADC(const arm_code_t &code) {
     if ((S == 1) && (Rd == reg.read(id::reg::R15))) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
     } else if (S == 1) {
-        reg.write(id::cpsr::N, (Rd & (1 << 31)));
+        reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
         reg.write(id::cpsr::C, operation.carry_add(Rn, shifter_operand.value, reg.read(id::cpsr::C)));
         reg.write(id::cpsr::V, operation.overflow_add(Rn, shifter_operand.value, reg.read(id::cpsr::C)));
@@ -65,7 +65,7 @@ void INSTRUCTIONS::arm::math::ADD(const arm_code_t &code) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
     } else if (S == 1) {
         const u32 Rd = reg.read(Rd_id);
-        reg.write(id::cpsr::N, (Rd & (1 << 31)));
+        reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
         reg.write(id::cpsr::C, operation.carry_add(Rn, shifter_operand.value));
         reg.write(id::cpsr::V, operation.overflow_add(Rn, shifter_operand.value));
@@ -100,7 +100,7 @@ void INSTRUCTIONS::arm::math::RSC(const arm_code_t &code) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
     } else if (S == 1) {
         const u32 Rd = reg.read(Rd_id);
-        reg.write(id::cpsr::N, (Rd & (1 << 31)));
+        reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
         reg.write(id::cpsr::C, !operation.borrow_sub(shifter_operand.value, Rn, !(reg.read(id::cpsr::C))));
         reg.write(id::cpsr::V, operation.overflow_sub(shifter_operand.value, Rn, !(reg.read(id::cpsr::C))));
@@ -135,7 +135,7 @@ void INSTRUCTIONS::arm::math::SBC(const arm_code_t &code) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
     } else if (S == 1) {
         const u32 Rd = reg.read(Rd_id);
-        reg.write(id::cpsr::N, (Rd & (1 << 31)));
+        reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
         reg.write(id::cpsr::C, !operation.borrow_sub(Rn, shifter_operand, !(reg.read(id::cpsr::C))));
         reg.write(id::cpsr::V, operation.overflow_sub(Rn, shifter_operand, !(reg.read(id::cpsr::C))));
@@ -170,7 +170,7 @@ void INSTRUCTIONS::arm::math::RSB(const arm_code_t &code) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
     } else if (S == 1) {
         const u32 Rd = reg.read(Rd_id);
-        reg.write(id::cpsr::N, (Rd & (1 << 31)));
+        reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
         reg.write(id::cpsr::C, !operation.borrow_sub(shifter_operand, Rn));
         reg.write(id::cpsr::V, operation.overflow_sub(shifter_operand, Rn));
@@ -205,7 +205,7 @@ void INSTRUCTIONS::arm::math::SUB(const arm_code_t &code) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
     } else if (S == 1) {
         const u32 Rd = reg.read(Rd_id);
-        reg.write(id::cpsr::N, (Rd & (1 << 31)));
+        reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
         reg.write(id::cpsr::C, !operation.borrow_sub(Rn, shifter_operand.value));
         reg.write(id::cpsr::V, operation.overflow_sub(Rn, shifter_operand.value));

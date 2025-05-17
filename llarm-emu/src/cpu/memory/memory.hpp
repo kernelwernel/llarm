@@ -19,7 +19,7 @@ private:
     MMU& mmu;
     MPU& mpu;
     FCSE& fcse;
-    ARCH_26_BIT& arch_26;
+    ARCH_26& arch_26;
     EXCEPTION& exception;
 
 public:
@@ -208,7 +208,7 @@ public:
         MMU& mmu,
         MPU& mpu,
         FCSE& fcse,
-        ARCH_26_BIT& arch_26,
+        ARCH_26& arch_26,
         EXCEPTION& exception
     ) : ram(ram), 
         mmu(mmu), 

@@ -114,10 +114,10 @@ void INSTRUCTIONS::arm::coprocessor_inst::MRC(const arm_code_t &code) {
     //const u32 data = coprocessor.read();
 //
     //if (Rd_id == id::reg::R15) {
-    //    reg.write(id::cpsr::N, (data & (1 << 31)));
-    //    reg.write(id::cpsr::Z, (data & (1 << 30)));
-    //    reg.write(id::cpsr::C, (data & (1 << 29)));
-    //    reg.write(id::cpsr::V, (data & (1 << 28)));
+    //    reg.write(id::cpsr::N, shared::util::bit_fetch(data, 31));
+    //    reg.write(id::cpsr::Z, shared::util::bit_fetch(data, 30));
+    //    reg.write(id::cpsr::C, shared::util::bit_fetch(data, 29));
+    //    reg.write(id::cpsr::V, shared::util::bit_fetch(data, 28));
     //} else {
     //    reg.write(Rd_id, data);
     //}

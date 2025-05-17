@@ -1,4 +1,6 @@
 #include "shared/types.hpp"
+#include "shared/util.hpp"
+
 #include "../../../id.hpp"
 #include "../../core/registers.hpp"
 #include "../instructions.hpp"
@@ -24,39 +26,23 @@
  *   assert end_address = address - 4
  */
 void INSTRUCTIONS::arm::load::LDM1(const arm_code_t &code) {
-    
- //       const u8 register_list = shared::util::bit_range<u8>(code, 0, 7);
- //       const u32 Rn = reg.read(code, 8, 10);
- //       const id::reg Rn_id = reg.fetch_reg_id(code, 8, 10);
- //   
- //       const u32 start_address = Rn;
- //       const u32 end_address = (Rn + (std::popcount(register_list) * 4) - 4);
- //   
- //       u32 address = start_address;
- //   
- //       std::vector<id::reg> reg_vec = operation.register_list(register_list);
- //   
- //       for (const id::reg reg_id : reg_vec) {
- //           const memory_struct access = memory.write(reg.read(reg_id), address, 4);
- //   
- //           if (access.has_failed) {
- //               memory.manage_abort(access.abort_code);
- //               return;
- //           }
- //   
- //           address += 4;
- //       }
- //   
- //       if (end_address != (address - 4)) {
- //           // TODO idk, do an assertation handler
- //       }
- //   
- //       reg.write(Rn_id, (Rn + (std::popcount(register_list) * 4)));
- //   
- //       reg.thumb_increment_PC();
+
+    const u16 list = shared::util::bit_range<u16>(code, 0, 15);
+    const u32 Rn = reg.read(code, 16, 19);
+
+
+
+    operation.register_list()
+
+
+
+
+
+
+
+
+    reg.arm_increment_PC();
 }
-
-
 
 
 

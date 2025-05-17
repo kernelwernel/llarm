@@ -53,7 +53,7 @@ void INSTRUCTIONS::arm::misc::PSR(const arm_code_t &code) noexcept {
             break;
     }
 
-    reg.write(id::cpsr::N, (alu_out & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
     reg.write(id::cpsr::C, C);
     reg.write(id::cpsr::V, V);

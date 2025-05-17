@@ -27,7 +27,7 @@ void INSTRUCTIONS::arm::movement::MOV(const arm_code_t &code) {
     if ((S == 1) && (Rd_id == id::reg::R15)) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
     } else {
-        reg.write(id::cpsr::N, (Rd & (1 << 31)));
+        reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
         reg.write(id::cpsr::C, (shifter_operand.carry));
     }
@@ -61,7 +61,7 @@ void INSTRUCTIONS::arm::movement::MVN(const arm_code_t &code) {
     if ((S == 1) && (Rd_id == id::reg::R15)) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
     } else {
-        reg.write(id::cpsr::N, (Rd & (1 << 31)));
+        reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
         reg.write(id::cpsr::C, (shifter_operand.carry));
     }

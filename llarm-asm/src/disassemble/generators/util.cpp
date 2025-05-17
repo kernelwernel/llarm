@@ -253,11 +253,11 @@ std::string util::reg_string(const u32 code, const u8 start, const u8 end, const
 
 
 std::string util::reg_list(const u16 list, const sv extra) {
-    const u8 count = util::popcount(list);
+    const u8 count = shared::util::popcount(list);
 
     std::string tmp;
 
-    tmp.reserve(
+    tmp.resize(
         4 + // for the "{  }"
         (count * 4) - 1 // for the "Ri, " which is 4 characters, and - 1 for the trailing comma that shouldn't be there
     );
@@ -359,7 +359,7 @@ std::string util::vfp_register_list(const u8 first_reg, const u8 offset, util::p
     const u8 reg_count = (offset >> (prefix == util::prefix::S ? 0 : 1));
     
     std::vector<u8> reg_nums;
-    reg_nums.reserve(reg_count);
+    reg_nums.resize(reg_count);
     
     for (u8 i = first_reg; i < offset; i++) {
         reg_nums.push_back(i);
@@ -433,16 +433,4 @@ std::string util::hex(const u32 integer) {
     }
 
     return ret;
-}
-
-
-// std::popcount only works for C++20, while
-// built-in functions are compiler-specific,
-// so to simplify all of this compatibility 
-// mess, i'm just going to use the std::bitset
-// version of it. The compiler should be able
-// to optimise this away with at least -O1:
-// https://godbolt.org/z/qEjaEz9zq
-u8 util::popcount(const u32 integer) {
-    return static_cast<u8>(std::bitset<32>(integer).count());
 }

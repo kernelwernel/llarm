@@ -4,6 +4,7 @@
 #include "shifter_operands/shifters.hpp"
 
 #include "shared/types.hpp"
+#include "shared/util.hpp"
 
 #include <string>
 

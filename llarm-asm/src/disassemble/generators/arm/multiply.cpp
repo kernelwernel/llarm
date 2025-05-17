@@ -3,6 +3,7 @@
 #include "../patterns/patterns.hpp"
 
 #include "shared/types.hpp"
+#include "shared/util.hpp"
 
 #include <string>
 

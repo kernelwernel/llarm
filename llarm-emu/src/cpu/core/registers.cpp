@@ -1,11 +1,10 @@
-#include <iostream>
-
 #include "../../constants.hpp"
 #include "../../id.hpp"
-#include "../../utility.hpp"
+#include "shared/util.hpp"
 #include "registers.hpp"
 
 #include "shared/out.hpp"
+#include "shared/util.hpp"
 
 id::mode REGISTERS::read_mode() {
     if (arch_26.is_26_arch_program()) { // 26-bit mode arch
@@ -140,6 +139,11 @@ void REGISTERS::write(const id::cpsr cpsr_macro, const u8 value) {
     }
 }
 
+
+void REGISTERS::write(const arm_code_t& code, const u8 start, const u8 end, const u32 value) {
+    const id::reg id = fetch_reg_id(shared::util::bit_range<u32>(code, start, end));
+    write(id, value);
+}
 
 
 void REGISTERS::write(const id::reg register_id, const u32 value) {
@@ -306,32 +310,32 @@ u8 REGISTERS::read(const id::cpsr cpsr_macro) {
     if (arch_26.is_26_arch_program()) { // 26-bit
         switch (cpsr_macro) {
             case id::cpsr::M: return (CPSR & 0b11);
-            case id::cpsr::N: return (CPSR & (1 << 31));
-            case id::cpsr::Z: return (CPSR & (1 << 30));
-            case id::cpsr::C: return (CPSR & (1 << 29));
-            case id::cpsr::V: return (CPSR & (1 << 28));
-            case id::cpsr::I: return (CPSR & (1 << 27));
-            case id::cpsr::F: return (CPSR & (1 << 26));
+            case id::cpsr::N: return shared::util::bit_fetch(CPSR, 31);
+            case id::cpsr::Z: return shared::util::bit_fetch(CPSR, 30);
+            case id::cpsr::C: return shared::util::bit_fetch(CPSR, 29);
+            case id::cpsr::V: return shared::util::bit_fetch(CPSR, 28);
+            case id::cpsr::I: return shared::util::bit_fetch(CPSR, 27);
+            case id::cpsr::F: return shared::util::bit_fetch(CPSR, 26);
             default:
                 shared::out::error("No known enum value for read() (26-bit)");
         }
     } else {
         switch (cpsr_macro) {
             case id::cpsr::M: return (CPSR & 0b11111);
-            case id::cpsr::T: return (CPSR & (1 << 5));
-            case id::cpsr::F: return (CPSR & (1 << 6));
-            case id::cpsr::I: return (CPSR & (1 << 7));
-            case id::cpsr::A: return (CPSR & (1 << 8));
-            case id::cpsr::E: return (CPSR & (1 << 9));
+            case id::cpsr::T: return shared::util::bit_fetch(CPSR, 5);
+            case id::cpsr::F: return shared::util::bit_fetch(CPSR, 6);
+            case id::cpsr::I: return shared::util::bit_fetch(CPSR, 7);
+            case id::cpsr::A: return shared::util::bit_fetch(CPSR, 8);
+            case id::cpsr::E: return shared::util::bit_fetch(CPSR, 9);
             //case id::cpsr::IT: return 0; TODO: think of a good exception here 
             case id::cpsr::GE: return ((CPSR >> 16) & 0b1111);
             case id::cpsr::DNM: return ((CPSR >> 20) & 0b1111);
-            case id::cpsr::J: return (CPSR & (1 << 24));
-            case id::cpsr::Q: return (CPSR & (1 << 27));
-            case id::cpsr::V: return (CPSR & (1 << 28));
-            case id::cpsr::C: return (CPSR & (1 << 29));
-            case id::cpsr::Z: return (CPSR & (1 << 30));
-            case id::cpsr::N: return (CPSR & (1 << 31));
+            case id::cpsr::J: return shared::util::bit_fetch(CPSR, 24);
+            case id::cpsr::Q: return shared::util::bit_fetch(CPSR, 27);
+            case id::cpsr::V: return shared::util::bit_fetch(CPSR, 28);
+            case id::cpsr::C: return shared::util::bit_fetch(CPSR, 29);
+            case id::cpsr::Z: return shared::util::bit_fetch(CPSR, 30);
+            case id::cpsr::N: return shared::util::bit_fetch(CPSR, 31);
             default:
                 shared::out::error("No known enum value for read()");
         }

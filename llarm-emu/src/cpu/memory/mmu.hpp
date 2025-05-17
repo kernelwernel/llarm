@@ -241,8 +241,8 @@ private:
                 }
         }
     
-        // const bool B = (entry & (1 << 2)); // TODO DO SOMETHING WITH THESE
-        // const bool C = (entry & (1 << 3)); // TODO DO SOMETHING WITH THESE
+        // const bool B = shared::util::bit_fetch(entry, 2); // TODO DO SOMETHING WITH THESE
+        // const bool C = shared::util::bit_fetch(entry, 3); // TODO DO SOMETHING WITH THESE
         
         const u32 section_base_address = 0;
 
@@ -318,8 +318,8 @@ private:
         //    // TODO: permission fault
         //}
     
-        // const bool C = (entry & (1 << 3)); // TODO: DO SOMETHING WITH THESE
-        // const bool B = (entry & (1 << 2)); // TODO: DO SOMETHING WITH THESE
+        // const bool C = shared::util::bit_fetch(entry, 3); // TODO: DO SOMETHING WITH THESE
+        // const bool B = shared::util::bit_fetch(entry, 2); // TODO: DO SOMETHING WITH THESE
 // 
         // const u8 AP0 = shared::util::bit_range(entry, 4, 5); // TODO: DO SOMETHING WITH THESE
         // const u8 AP1 = shared::util::bit_range(entry, 6, 7); // TODO: DO SOMETHING WITH THESE
@@ -342,8 +342,8 @@ private:
             // TODO: permission fault
         }
 
-        // const bool C = (entry & (1 << 3)); // TODO: DO SOMETHING WITH THESE
-        // const bool B = (entry & (1 << 2)); // TODO: DO SOMETHING WITH THESE
+        // const bool C = shared::util::bit_fetch(entry, 3); // TODO: DO SOMETHING WITH THESE
+        // const bool B = shared::util::bit_fetch(entry, 2); // TODO: DO SOMETHING WITH THESE
 
         const u32 tiny_page_base_address = shared::util::bit_range(entry, 10, 31);
         const u16 page_index = shared::util::bit_range(address, 0, 9);

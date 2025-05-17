@@ -20,7 +20,7 @@ void INSTRUCTIONS::thumb::movement::MOV1(const thumb_code_t &code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 
     reg.thumb_increment_PC();
@@ -42,7 +42,7 @@ void INSTRUCTIONS::thumb::movement::MOV2(const thumb_code_t &code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, false);
     reg.write(id::cpsr::V, false);
@@ -84,7 +84,7 @@ void INSTRUCTIONS::thumb::movement::MVN(const thumb_code_t &code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 
     reg.thumb_increment_PC();

@@ -101,11 +101,11 @@ bool OPERATION::arithmetic_shift_right(u32 num, const u8 shift) {
 }
 
 
-std::vector<id::reg> OPERATION::register_list(const u8 reg_list) {
+std::vector<id::reg> OPERATION::register_list(const u16 reg_list) {
     std::vector<id::reg> tmp = {};
 
     for (u8 i = 0; i < (sizeof(reg_list) * 8); i++) {
-        if (reg_list & (1 << i)) {
+        if (shared::util::bit_fetch(reg_list, i)) {
             switch (i) {
                 case 0: tmp.push_back(id::reg::R0); continue;
                 case 1: tmp.push_back(id::reg::R1); continue;
@@ -115,6 +115,14 @@ std::vector<id::reg> OPERATION::register_list(const u8 reg_list) {
                 case 5: tmp.push_back(id::reg::R5); continue;
                 case 6: tmp.push_back(id::reg::R6); continue;
                 case 7: tmp.push_back(id::reg::R7); continue;
+                case 8: tmp.push_back(id::reg::R8); continue;
+                case 9: tmp.push_back(id::reg::R9); continue;
+                case 10: tmp.push_back(id::reg::R10); continue;
+                case 11: tmp.push_back(id::reg::R11); continue;
+                case 12: tmp.push_back(id::reg::R12); continue;
+                case 13: tmp.push_back(id::reg::R13); continue;
+                case 14: tmp.push_back(id::reg::R14); continue;
+                case 15: tmp.push_back(id::reg::R15); continue;
             }
         }
     }

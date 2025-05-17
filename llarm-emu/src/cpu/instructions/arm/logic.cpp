@@ -29,7 +29,7 @@ void INSTRUCTIONS::arm::logic::AND(const arm_code_t &code) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
     } else if (S == 1) {
         const u32 Rd = reg.read(Rd_id);
-        reg.write(id::cpsr::N, (Rd & (1 << 31)));
+        reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
         reg.write(id::cpsr::C, (shifter_operand.carry));
     }
@@ -84,7 +84,7 @@ void INSTRUCTIONS::arm::logic::EOR(const arm_code_t &code) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
     } else if (S == 1) {
         const u32 Rd = reg.read(Rd_id);
-        reg.write(id::cpsr::N, (Rd & (1 << 31)));
+        reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
         reg.write(id::cpsr::C, shifter_operand.carry);
     }
@@ -108,7 +108,7 @@ void INSTRUCTIONS::arm::logic::CMP(const arm_code_t &code) {
 
     const u32 alu_out = (Rn - shifter_operand.value);
 
-    reg.write(id::cpsr::N, (alu_out & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
     reg.write(id::cpsr::C, !operation.borrow_sub(Rn, shifter_operand.value));
     reg.write(id::cpsr::V, operation.overflow_sub(Rn, shifter_operand.value));
@@ -132,7 +132,7 @@ void INSTRUCTIONS::arm::logic::CMN(const arm_code_t &code) {
 
     const u32 alu_out = (Rn + shifter_operand.value);
 
-    reg.write(id::cpsr::N, (alu_out & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
     reg.write(id::cpsr::C, operation.carry_add(Rn, shifter_operand.value));
     reg.write(id::cpsr::V, operation.overflow_add(Rn, shifter_operand.value));
@@ -166,7 +166,7 @@ void INSTRUCTIONS::arm::logic::ORR(const arm_code_t &code) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
     } else if (S == 1) {
         const u32 Rd = reg.read(Rd_id);
-        reg.write(id::cpsr::N, (Rd & (1 << 31)));
+        reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
         reg.write(id::cpsr::C, shifter_operand.carry);
     }
@@ -190,7 +190,7 @@ void INSTRUCTIONS::arm::logic::TEQ(const arm_code_t &code) {
 
     const u32 alu_out = (Rn ^ shifter_operand.value);
 
-    reg.write(id::cpsr::N, (alu_out & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
     reg.write(id::cpsr::C, shifter_operand.carry);
 
@@ -213,7 +213,7 @@ void INSTRUCTIONS::arm::logic::TST(const arm_code_t &code) {
 
     const u32 alu_out = (Rn & shifter_operand.value);
 
-    reg.write(id::cpsr::N, (alu_out & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
     reg.write(id::cpsr::C, shifter_operand.carry);
 

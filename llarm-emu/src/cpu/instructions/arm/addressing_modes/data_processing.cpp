@@ -26,7 +26,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_immediate_mode(const 
     if (rotate_imm == 0) {
         data.carry = reg.read(id::cpsr::C);
     } else {
-        data.carry = (data.value & (1 << 31));
+        data.carry = shared::util::bit_fetch(data.value, 31);
     }
 
     return data;
@@ -76,7 +76,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_left_im
         data.carry = reg.read(id::cpsr::C);
     } else {
         data.value = (Rm << shift_imm);
-        data.carry = (Rm & (1 << (32 - shift_imm)));
+        data.carry = (shared::util::bit_fetch(Rm, (32 - shift_imm)));
     }
 
     return data;
@@ -103,10 +103,10 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_right_i
 
     if (shift_imm == 0) {
         data.value = 0;
-        data.carry = (Rm & (1 << 31));
+        data.carry = (shared::util::bit_fetch(Rm, 31));
     } else {
         data.value = (Rm >> shift_imm);
-        data.carry = (Rm & (1 << (shift_imm - 1)));
+        data.carry = (shared::util::bit_fetch(Rm, (shift_imm - 1)));
     }
 
     return data;
@@ -136,16 +136,16 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_arithmetic_shift_righ
     const u32 Rm = reg.read(code, 0, 3);
 
     if (shift_imm == 0) {
-        if ((Rm & (1 << 31)) == 0) {
+        if ((shared::util::bit_fetch(Rm, 31)) == 0) {
             data.value = 0;
-            data.carry = (Rm & (1 << 31));
+            data.carry = (shared::util::bit_fetch(Rm, 31));
         } else {
             data.value = 0xFFFFFFFF;
-            data.carry = (Rm & (1 << 31));
+            data.carry = (shared::util::bit_fetch(Rm, 31));
         }
     } else {
         data.value = operation.arithmetic_shift_right(Rm, shift_imm);
-        data.carry = (Rm & (1 << (shift_imm - 1))); 
+        data.carry = (shared::util::bit_fetch(Rm, (shift_imm - 1))); 
     }
 
     return data;
@@ -173,7 +173,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_rotate_right_immediat
         // TODO
     } else {
         data.value = std::rotr(Rm, shift_imm);
-        data.carry = (Rm & (1 << (shift_imm - 1)));
+        data.carry = (shared::util::bit_fetch(Rm, (shift_imm - 1)));
     }
 
     return data;
@@ -210,7 +210,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_left_re
         data.carry = reg.read(id::cpsr::C);
     } else if (Rs_bits < 32) {
         data.value = (Rm << Rs_bits);
-        data.carry = (Rm & (1 << (32 - Rs_bits))); // what the fuck?
+        data.carry = (shared::util::bit_fetch(Rm, (32 - Rs_bits))); // what the fuck?
     } else if (Rs_bits == 32) {
         data.value = 0;
         data.carry = (Rm & 1);
@@ -251,10 +251,10 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_right_r
         data.carry = reg.read(id::cpsr::C);
     } else if (Rs_bits < 32) {
         data.value = (Rm >> Rs_bits);
-        data.carry = (Rm & (1 << (Rs_bits - 1)));
+        data.carry = (shared::util::bit_fetch(Rm, (Rs_bits - 1)));
     } else if (Rs_bits == 32) {
         data.value = 0;
-        data.carry = (Rm & (1 << 31));
+        data.carry = (shared::util::bit_fetch(Rm, 31));
     } else {
         data.value = 0;
         data.carry = false;
@@ -298,14 +298,14 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_arithmetic_shift_righ
         data.carry = reg.read(id::cpsr::C);
     } else if (Rs_bits < 32) {
         data.value = operation.arithmetic_shift_right(Rm, Rs_bits);
-        data.carry = (Rm & (1 << (Rs_bits - 1)));
+        data.carry = (shared::util::bit_fetch(Rm, (Rs_bits - 1)));
     } else {
-        if ((Rm & (1 << 31)) == 0) {
+        if ((shared::util::bit_fetch(Rm, 31)) == 0) {
             data.value = 0;
-            data.carry = (Rm & (1 << (31)));
+            data.carry = (shared::util::bit_fetch(Rm, (31)));
         } else {
             data.value = 0xFFFFFFFF;
-            data.carry = (Rm & (1 << (31)));
+            data.carry = (shared::util::bit_fetch(Rm, (31)));
         }
     }
 
@@ -341,10 +341,10 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_rotate_right_register
         data.carry = reg.read(id::cpsr::C);
     } else if (Rs_bits_4 == 0) {
         data.value = Rm;
-        data.carry = (Rm & (1 << 31));
+        data.carry = (shared::util::bit_fetch(Rm, 31));
     } else {
         data.value = std::rotr(Rm, Rs_bits_4);
-        data.carry = (Rm & (1 << (Rs_bits_4 - 1)));
+        data.carry = (shared::util::bit_fetch(Rm, (Rs_bits_4 - 1)));
     }
 
     return data;
@@ -444,4 +444,3 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_processing(const arm_code_t &
     // TODO: ERROR
     shared::out::error("TODO");
 }
-

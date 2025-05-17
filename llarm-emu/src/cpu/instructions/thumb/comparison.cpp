@@ -15,7 +15,7 @@ void INSTRUCTIONS::thumb::compare::CMN(const thumb_code_t &code) {
     const u32 Rm = reg.read(code, 3, 5);
     const i32 alu_out = Rn + Rm;
 
-    reg.write(id::cpsr::N, (alu_out & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
     reg.write(id::cpsr::C, !operation.borrow_add(Rn, Rm));
     reg.write(id::cpsr::V, operation.overflow_add(Rn, Rm));
@@ -37,7 +37,7 @@ void INSTRUCTIONS::thumb::compare::CMP1(const thumb_code_t &code) {
 
     const i32 alu_out = Rn - immed_8;
 
-    reg.write(id::cpsr::N, (alu_out & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
     reg.write(id::cpsr::C, !operation.borrow_sub(Rn, immed_8));
     reg.write(id::cpsr::V, operation.overflow_sub(Rn, immed_8));
@@ -59,7 +59,7 @@ void INSTRUCTIONS::thumb::compare::CMP2(const thumb_code_t &code) {
 
     const i32 alu_out = Rn - Rm;
 
-    reg.write(id::cpsr::N, (alu_out & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
     reg.write(id::cpsr::C, !operation.borrow_sub(Rn, Rm));
     reg.write(id::cpsr::V, operation.overflow_sub(Rn, Rm));
@@ -93,7 +93,7 @@ void INSTRUCTIONS::thumb::compare::CMP3(const thumb_code_t &code) {
 
     const i32 alu_out = Rn - Rm;
 
-    reg.write(id::cpsr::N, (alu_out & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
     reg.write(id::cpsr::C, !operation.borrow_sub(Rn, Rm));
     reg.write(id::cpsr::V, operation.overflow_sub(Rn, Rm));

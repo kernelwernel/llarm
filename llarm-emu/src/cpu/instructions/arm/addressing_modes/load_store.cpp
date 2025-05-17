@@ -1,0 +1,470 @@
+#include "../../../../id.hpp"
+#include "addressing_modes.hpp"
+
+#include "shared/types.hpp"
+#include "shared/util.hpp"
+
+u32 ADDRESSING_MODE::load_store(const arm_code_t &code) {
+    if (
+        (code.test(27) != false) || 
+        (code.test(26) != true)
+    ) {
+        shared::out::error("TODO");
+    }
+
+    const u8 shift_type = (
+        (code.test(25) << 2) | 
+        (code.test(24) << 1) | 
+        (code.test(21))
+    );
+
+    switch (shift_type) {
+        case 0b010: return ls_imm(code);
+        case 0b011: return ls_imm_pre(code);
+        case 0b000: return ls_imm_post(code);
+        case 0b110: 
+            if (shared::util::bit_range(code, 4, 11) == 0) {
+                return ls_reg(code); 
+            } else if (code.test(4) == 0) {
+                return ls_scaled_reg(code);
+            }
+
+            break;
+    
+        case 0b111: 
+            if (shared::util::bit_range(code, 4, 11) == 0) {
+                return ls_reg_pre(code); 
+            } else if (code.test(4) == 0) {
+                return ls_scaled_reg_pre(code);
+            }
+
+            break;
+
+        case 0b100: 
+            if (shared::util::bit_range(code, 4, 11) == 0) {
+                return ls_reg_post(code); 
+            } else if (code.test(4) == 0) {
+                return ls_scaled_reg_post(code);
+            }
+            
+            break;
+    }
+
+    shared::out::error("TODO");
+}
+
+
+/**
+ * if U == 1 then
+ *     address = Rn + offset_12
+ * else // U == 0
+ *     address = Rn - offset_12
+ */
+u32 ADDRESSING_MODE::ls_imm(const arm_code_t &code) {
+    const u32 Rn = reg.read(code, 16, 19);
+    const u16 offset_12 = shared::util::bit_range(code, 0, 11);
+    
+    if (code.test(23)) {
+        return (Rn + offset_12);
+    } else {
+        return (Rn - offset_12);
+    }
+}
+
+
+/**
+ * if U == 1 then
+ *     address = Rn + Rm
+ * else // U == 0
+ *     address = Rn - Rm
+ */
+u32 ADDRESSING_MODE::ls_reg(const arm_code_t &code) {
+    const u32 Rn = reg.read(code, 16, 19);
+    const u32 Rm = reg.read(code, 0, 3);
+
+    if (code.test(23)) {
+        return (Rn + Rm);
+    } else {
+        return (Rn - Rm);
+    }
+}
+
+
+/**
+ * case shift of
+ *   0b00 // LSL
+ *     index = Rm Logical_Shift_Left shift_imm
+ *   0b01 // LSR
+ *     if shift_imm == 0 then // LSR #32
+ *       index = 0
+ *     else
+ *       index = Rm Logical_Shift_Right shift_imm
+ *   0b10 // ASR
+ *     if shift_imm == 0 then // ASR #32
+ *       if Rm[31] == 1 then
+ *         index = 0xFFFFFFFF
+ *       else
+ *         index = 0
+ *     else
+ *       index = Rm Arithmetic_Shift_Right shift_imm
+ *   0b11 // ROR or RRX
+ *     if shift_imm == 0 then // RRX
+ *       index = (C Flag Logical_Shift_Left 31) OR 
+ *               (Rm Logical_Shift_Right 1)
+ *     else // ROR
+ *       index = Rm Rotate_Right shift_imm
+ * endcase
+ * 
+ * if U == 1 then
+ *   address = Rn + index
+ * else // U == 0
+ *   address = Rn - index
+ */
+u32 ADDRESSING_MODE::ls_scaled_reg(const arm_code_t &code) {
+    const u8 shift = shared::util::bit_range(code, 5, 6);
+    const u8 shift_imm = shared::util::bit_range(code, 7, 11);
+    const u32 Rm = reg.read(code, 0, 3);
+    const u32 Rn = reg.read(code, 16, 19);
+
+    u32 index = 0;
+    u32 address = 0;
+
+    switch (shift) {
+        case 0b00: // LSL
+            index = (Rm << shift_imm);
+            break;
+
+        case 0b01: // LSR
+            if (shift_imm == 0) {
+                index = 0;
+            } else {
+                index = (Rm >> shift_imm);
+            }
+            break;
+
+        case 0b10: // ASR
+            if (shift_imm == 0) {
+                if (shared::util::bit_fetch(Rm, 31) == 1) {
+                    index = 0xFFFFFFFF;
+                } else {
+                    index = 0;
+                }
+            } else {
+                index = operation.arithmetic_shift_right(Rm, shift_imm);
+            }
+            break;
+
+        case 0b11: // ROR or RRX
+            if (shift_imm == 0) { // RRX
+                index = ((reg.read(id::cpsr::C) << 31) | (Rm >> 1));
+            } else { // ROR
+                index = std::rotr(Rm, shift_imm);
+            }
+            break;
+    }
+
+    if (code.test(23)) {
+        address = (Rn + index);
+    } else {
+        address = (Rn - index);
+    }
+
+    return address;
+}
+
+
+/**
+ * if U == 1 then
+ *   address = Rn + offset_12
+ * else // if U == 0
+ *   address = Rn - offset_12
+ * if ConditionPassed(cond) then
+ *   Rn = address
+ */
+u32 ADDRESSING_MODE::ls_imm_pre(const arm_code_t &code) {
+    const u16 offset_12 = shared::util::bit_range(code, 0, 11);
+
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 Rn = reg.read(Rn_id);
+
+    u32 address = 0;
+
+    if (code.test(23)) {
+        address = (Rn + offset_12);
+    } else {
+        address = (Rn - offset_12);
+    }
+
+    if (reg.check_cond(code)) {
+        reg.write(Rn_id, address);
+    }
+
+    return address;
+}
+
+
+/**
+ * ===== register pre-indexed =====
+ * 
+ * if U == 1 then
+ *   address = Rn + Rm
+ * else // U == 0
+ *   address = Rn - Rm
+ * if ConditionPassed(cond) then
+ *   Rn = address
+ */
+u32 ADDRESSING_MODE::ls_reg_pre(const arm_code_t &code) {
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 Rn = reg.read(Rn_id);
+    const u32 Rm = reg.read(code, 0, 3);
+    
+    u32 address = 0;
+
+    if (code.test(23)) {
+        address = (Rn + Rm);
+    } else {
+        address = (Rn - Rm);
+    }
+
+    if (reg.check_cond(code)) {
+        reg.write(Rn_id, address);
+    }
+
+    return address;
+}
+
+
+/**
+ * ===== scaled register pre-indexed =====
+ * 
+ * case shift of
+ *   0b00 // LSL
+ *     index = Rm Logical_Shift_Left shift_imm
+ *   0b01 // LSR
+ *     if shift_imm == 0 then // LSR #32
+ *       index = 0
+ *     else
+ *       index = Rm Logical_Shift_Right shift_imm
+ *   0b10 // ASR
+ *     if shift_imm == 0 then // ASR #32 
+ *       if Rm[31] == 1 then
+ *         index = 0xFFFFFFFF
+ *       else
+ *         index = 0
+ *     else
+ *       index = Rm Arithmetic_Shift_Right shift_imm
+ *   0b11 // ROR or RRX
+ *     if shift_imm == 0 then // RRX
+ *       index = (C Flag Logical_Shift_Left 31) OR
+ *               (Rm Logical_Shift_Right 1)
+ *     else // ROR
+ *       index = Rm Rotate_Right shift_imm
+ * endcase
+ * 
+ * if U == 1 then
+ *   address = Rn + index
+ * else // U == 0
+ *   address = Rn - index
+ * if ConditionPassed(cond) then
+ *   Rn = address
+ */
+u32 ADDRESSING_MODE::ls_scaled_reg_pre(const arm_code_t &code) {
+    const u8 shift = shared::util::bit_range(code, 5, 6);
+    const u8 shift_imm = shared::util::bit_range(code, 7, 11);
+    const u32 Rm = reg.read(code, 0, 3);
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 Rn = reg.read(Rn_id);
+    
+    u32 index = 0;
+    u32 address = 0;
+
+    switch (shift) {
+        case 0b00: // LSL
+            index = (Rm << shift_imm);
+            break;
+
+        case 0b01: // LSR
+            if (shift_imm == 0) {
+                index = 0;
+            } else {
+                index = (Rm >> shift_imm);
+            }
+            break;
+
+        case 0b10: // ASR
+            if (shift_imm == 0) {
+                if (shared::util::bit_fetch(Rm, 31) == 1) {
+                    index = 0xFFFFFFFF;
+                } else {
+                    index = 0;
+                }
+            } else {
+                index = operation.arithmetic_shift_right(Rm, shift_imm);
+            }
+            break;
+
+        case 0b11: // ROR or RRX
+            if (shift_imm == 0) { // RRX
+                index = ((reg.read(id::cpsr::C) << 31) | (Rm >> 1));
+            } else { // ROR
+                index = std::rotr(Rm, shift_imm);
+            }
+            break;
+    }
+
+    if (code.test(23)) {
+        address = (Rn + index);
+    } else {
+        address = (Rn - index);
+    }
+
+    if (reg.check_cond(code)) {
+        reg.write(Rn_id, address);
+    }
+
+    return address;
+}
+
+
+/**
+ * address = Rn
+ * if ConditionPassed(cond) then
+ *   if U == 1 then
+ *     Rn = Rn + offset_12
+ *   else // U == 0
+ *     Rn = Rn - offset_12
+ */
+u32 ADDRESSING_MODE::ls_imm_post(const arm_code_t &code) {
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u16 offset_12 = shared::util::bit_range(code, 0, 11);
+    const u32 Rn = reg.read(Rn_id);
+
+    const u32 address = Rn;
+
+    if (reg.check_cond(code)) {
+        if (code.test(23)) {
+            reg.write(Rn_id, (Rn + offset_12));
+        } else {
+            reg.write(Rn_id, (Rn - offset_12));
+        }
+    }
+
+    return address;
+}
+
+
+/**
+ * address = Rn
+ * if ConditionPassed(cond) then
+ *   if U == 1 then
+ *     Rn = Rn + Rm
+ *   else // U == 0
+ *     Rn = Rn - Rm
+ */
+u32 ADDRESSING_MODE::ls_reg_post(const arm_code_t &code) {
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 Rn = reg.read(Rn_id);
+    const u32 Rm = reg.read(code, 0, 3);
+
+    const u32 address = Rn;
+
+    if (reg.check_cond(code)) {
+        if (code.test(23)) {
+            reg.write(Rn_id, (Rn + Rm));
+        } else {
+            reg.write(Rn_id, (Rn - Rm));
+        }
+    }
+
+    return address;
+}
+
+
+/**
+ * ===== scaled register post-indexed =====
+ * 
+ * address = Rn
+ * case shift of
+ *   0b00 // LSL
+ *     index = Rm Logical_Shift_Left shift_imm
+ *   0b01 // LSR
+ *     if shift_imm == 0 then // LSR #32
+ *       index = 0
+ *     else
+ *       index = Rm Logical_Shift_Right shift_imm
+ *   0b10 // ASR
+ *     if shift_imm == 0 then // ASR #32 
+ *       if Rm[31] == 1 then
+ *         index = 0xFFFFFFFF
+ *       else
+ *         index = 0
+ *     else
+ *       index = Rm Arithmetic_Shift_Right shift_imm
+ *   0b11 // ROR or RRX
+ *     if shift_imm == 0 then // RRX
+ *       index = (C Flag Logical_Shift_Left 31) OR
+ *               (Rm Logical_Shift_Right 1)
+ *     else // ROR
+ *       index = Rm Rotate_Right shift_imm
+ * endcase
+ * 
+ * if ConditionPassed(cond) then
+ *   if U == 1 then
+ *     Rn = Rn + index
+ *   else // U == 0
+ *     Rn = Rn - index
+ */
+u32 ADDRESSING_MODE::ls_scaled_reg_post(const arm_code_t &code) {
+    const u8 shift = shared::util::bit_range(code, 5, 6);
+    const u8 shift_imm = shared::util::bit_range(code, 7, 11);
+    const u32 Rm = reg.read(code, 0, 3);
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 Rn = reg.read(Rn_id);
+
+    u32 index = 0;
+    u32 address = Rn;
+
+    switch (shift) {
+        case 0b00: // LSL
+            index = (Rm << shift_imm);
+            break;
+
+        case 0b01: // LSR
+            if (shift_imm == 0) {
+                index = 0;
+            } else {
+                index = (Rm >> shift_imm);
+            }
+            break;
+
+        case 0b10: // ASR
+            if (shift_imm == 0) {
+                if (shared::util::bit_fetch(Rm, 31) == 1) {
+                    index = 0xFFFFFFFF;
+                } else {
+                    index = 0;
+                }
+            } else {
+                index = operation.arithmetic_shift_right(Rm, shift_imm);
+            }
+            break;
+
+        case 0b11: // ROR or RRX
+            if (shift_imm == 0) { // RRX
+                index = ((reg.read(id::cpsr::C) << 31) | (Rm >> 1));
+            } else { // ROR
+                index = std::rotr(Rm, shift_imm);
+            }
+            break;
+    }
+
+    if (reg.check_cond(code)) {
+        if (code.test(23)) {
+            reg.write(Rn_id, Rn + index);
+        } else {
+            reg.write(Rn_id, Rn - index);
+        }
+    }
+
+    return address;
+}

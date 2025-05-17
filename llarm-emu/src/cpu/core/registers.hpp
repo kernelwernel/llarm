@@ -12,7 +12,7 @@ struct REGISTERS {
 private:
     COPROCESSOR& coprocessor;
     GLOBALS& globals;
-    ARCH_26_BIT& arch_26;
+    ARCH_26& arch_26;
     SETTINGS& settings;
 
 public:
@@ -75,28 +75,28 @@ public:
     bool is_privileged();
     bool is_exception();
     bool current_mode_has_SPSR();
+    
+    id::reg fetch_reg_id(const u8) noexcept;
+    id::reg fetch_reg_id(const arm_code_t&, const u8, const u8) noexcept;
+    id::reg fetch_reg_id(const thumb_code_t&, const u8, const u8) noexcept;
+    
+    id::cond fetch_cond_id(const u8);
+    id::cond fetch_cond_id(const arm_code_t&);
+
+    bool check_cond(const id::cond);
+    bool check_cond(const arm_code_t&);
 
     void write(const id::cpsr, const u8);
     void write(const id::reg reg_id);
     void write(const id::reg, const id::reg);
-
-    id::reg fetch_reg_id(const u8) noexcept;
-    id::reg fetch_reg_id(const arm_code_t&, const u8, const u8) noexcept;
-    id::reg fetch_reg_id(const thumb_code_t&, const u8, const u8) noexcept;
-
-    id::cond fetch_cond_id(const u8);
-    id::cond fetch_cond_id(const arm_code_t&);
+    void write(const id::reg, const u32);
+    void write(const arm_code_t& code, const u8 start, const u8 end, const u32 value);
 
     u8 read(const id::cpsr);
     u32 read(const id::reg);
     u32 read(const arm_code_t&, const u8, const u8) noexcept;
     u32 read(const thumb_code_t&, const u8, const u8) noexcept;
     u32 read(const u8) noexcept;
-
-    void write(const id::reg, const u32);
-
-    bool check_cond(const id::cond);
-    bool check_cond(const arm_code_t&);
 
     void access_check(const id::reg);
 
@@ -119,7 +119,7 @@ public:
     REGISTERS(
         COPROCESSOR& coprocessor, 
         GLOBALS& globals,
-        ARCH_26_BIT& arch_26,
+        ARCH_26& arch_26,
         SETTINGS& settings
     ) : coprocessor(coprocessor), 
         globals(globals),

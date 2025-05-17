@@ -38,7 +38,7 @@ public:
 
     bool arithmetic_shift_right(u32 num, const u8 shift); // why is this not a reference? research more...
 
-    std::vector<id::reg> register_list(const u8 reg_list);
+    std::vector<id::reg> register_list(const u16 reg_list);
 };
 
 /*

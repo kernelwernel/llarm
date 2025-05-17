@@ -47,8 +47,23 @@ namespace shared::util {
         return copy;
     }
 
+    inline u32 bit_range(const arm_code_t &input, const u8 start, const u8 end) {
+        return bit_range(input.to_ulong(), start, end);
+    }
+
     inline bool bit_fetch(const u32 input, const u8 index) {
         return ((input >> index) & 1);
+    }
+
+    // std::popcount only works for C++20, while
+    // built-in functions are compiler-specific,
+    // so to simplify all of this compatibility 
+    // mess, i'm just going to use the std::bitset
+    // version of it. The compiler should be able
+    // to optimise this away with at least -O1:
+    // https://godbolt.org/z/qEjaEz9zq
+    inline u8 popcount(const u32 integer) {
+        return static_cast<u8>(std::bitset<32>(integer).count());
     }
 }
 

@@ -620,7 +620,7 @@ std::string generators::arm::vfp::FMRX(const u32 code) {
     const std::string Rd = util::reg_string(code, 12, 15, util::prefix::R);
 
     std::string vfp_sys_reg;
-    vfp_sys_reg.reserve(5); // all system registers are only 5 characters long
+    vfp_sys_reg.resize(5); // all system registers are only 5 characters long
 
     const u8 reg_bits = shared::util::bit_range<u8>(code, 16, 19);
 
@@ -763,7 +763,7 @@ std::string generators::arm::vfp::FMXR(const u32 code) {
     const std::string Rd = util::reg_string(code, 12, 15);
 
     std::string vfp_sys_reg;
-    vfp_sys_reg.reserve(5); // all system registers are only 5 characters long
+    vfp_sys_reg.resize(5); // all system registers are only 5 characters long
 
     const u8 reg_bits = shared::util::bit_range<u8>(code, 16, 19);
 

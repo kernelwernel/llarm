@@ -2,7 +2,7 @@
 
 
 #include "shared/types.hpp"
-#include "../coprocessors/coprocessor.hpp"
+#include "../coprocessor/coprocessor.hpp"
 
 struct CACHE {
 private:
@@ -82,4 +82,4 @@ public:
     CACHE(COPROCESSOR& coprocessor) : coprocessor(coprocessor) {
         set_parameters();
     }
-}
+};

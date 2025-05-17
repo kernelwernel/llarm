@@ -138,8 +138,6 @@ namespace internal::util {
 
     std::string hex(const u32 integer);
 
-    u8 popcount(const u32 integer);
-
 
     // i'm deeply sorry to whoever is reading this absolute mess.
     template<typename T>
@@ -167,7 +165,7 @@ namespace internal::util {
             }
         }(args), ...);
 
-        result.reserve(total_size);
+        result.resize(total_size);
 
         // append all arguments
         (append_arg(result, std::forward<Args>(args)), ...);

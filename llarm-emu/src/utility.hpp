@@ -2,14 +2,10 @@
 
 #include "types_extra.hpp"
 #include "id.hpp"
-#include "constants.hpp"
-
-#include <llarm-asm/llarm-asm.hpp>
 
 #include "shared/types.hpp"
 #include "shared/out.hpp"
 
-#include <bitset>
 #include <iostream>
 
 namespace util {
@@ -158,7 +154,7 @@ namespace util {
             case 128: return (1 << 17); // 128KB
             case 256: return (1 << 18); // 256KB
             case 512: return (1 << 19); // 512KB
-            // TODO: figure out a assert check if it's not valid
+            // TODO: figure out an assert check if it's not valid
             default: return 0;
         }
     }
@@ -175,7 +171,7 @@ namespace util {
             case 128: return (1 << 27); // 128MB
             case 256: return (1 << 28); // 256MB
             case 512: return (1 << 29); // 512MB
-            // TODO: figure out a assert check if it's not valid
+            // TODO: figure out an assert check if it's not valid
             default: return 0;
         }
     }
@@ -192,7 +188,7 @@ namespace util {
             case 128: return (1ULL << 37); // 128GB
             case 256: return (1ULL << 38); // 256GB
             case 512: return (1ULL << 39); // 512GB
-            // TODO: figure out am assert check if it's not valid
+            // TODO: figure out an assert check if it's not valid
             default: return 0;
         }
     }

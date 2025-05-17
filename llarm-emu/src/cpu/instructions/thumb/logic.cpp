@@ -1,7 +1,8 @@
 #include "shared/types.hpp"
-#include "../../../utility.hpp"
-#include "../../instructions/instructions.hpp"
+#include "shared/util.hpp"
+#include "../instructions.hpp"
 #include "../../core/registers.hpp"
+#include "shared/util.hpp"
 
 #include <bit>
 
@@ -21,7 +22,7 @@ void INSTRUCTIONS::thumb::logic::AND(const thumb_code_t &code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 
     reg.thumb_increment_PC();
@@ -49,19 +50,19 @@ void INSTRUCTIONS::thumb::logic::ASR1(const thumb_code_t &code) {
     const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
 
     if (immed_5 == 0) {
-        const bool carry_bit = (Rm & (1 << 31));
+        const bool carry_bit = (shared::util::bit_fetch(Rm, 31));
         reg.write(id::cpsr::C, carry_bit);
 
         reg.write(Rd_id, 0xFFFFFFFF * carry_bit);
     } else {
         //C Flag = Rm[immed_5 - 1]
-        reg.write(id::cpsr::C, (Rm & (1 << (immed_5 - 1))));
+        reg.write(id::cpsr::C, (shared::util::bit_fetch(Rm, (immed_5 - 1))));
         reg.write(Rd_id, operation.arithmetic_shift_right(Rm, immed_5));
     }
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 
     reg.thumb_increment_PC();
@@ -97,17 +98,17 @@ void INSTRUCTIONS::thumb::logic::ASR2(const thumb_code_t &code) {
     if (Rs_0_7 == 0) {
 
     } else if (Rs_0_7 < 32) {
-        reg.write(id::cpsr::C, (Rd & (1 << (Rs_0_7 - 1))));
+        reg.write(id::cpsr::C, shared::util::bit_fetch(Rd, (Rs_0_7 - 1)));
         reg.write(Rd_id, operation.arithmetic_shift_right(Rd, Rs_0_7));
     } else {
-        reg.write(id::cpsr::C, (Rd & (1 << 31)));
+        reg.write(id::cpsr::C, (shared::util::bit_fetch(Rd, 31)));
 
-        const bool carry_bit = (Rd & (1 << 31));
+        const bool carry_bit = shared::util::bit_fetch(Rd, 31);
 
         reg.write(Rd_id, 0xFFFFFFFF * carry_bit);
     }
 
-    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 
     reg.thumb_increment_PC();
@@ -129,7 +130,7 @@ void INSTRUCTIONS::thumb::logic::BIC(const thumb_code_t &code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 
     reg.thumb_increment_PC();
@@ -152,7 +153,7 @@ void INSTRUCTIONS::thumb::logic::EOR(const thumb_code_t &code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 
     reg.thumb_increment_PC();
@@ -179,13 +180,13 @@ void INSTRUCTIONS::thumb::logic::LSL1(const thumb_code_t &code) {
     if (immed_5 == 0) {
         reg.write(Rd_id, Rm);
     } else {
-        reg.write(id::cpsr::C, (Rm & (1 << (32 - immed_5))));
+        reg.write(id::cpsr::C, (shared::util::bit_fetch(Rm, (32 - immed_5))));
         reg.write(Rd_id, (Rm << immed_5));
     }
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 
     reg.thumb_increment_PC();
@@ -217,7 +218,7 @@ void INSTRUCTIONS::thumb::logic::LSL2(const thumb_code_t &code) {
     if ((Rs & 0xFF) == 0) {
 
     } else if ((Rs & 0xFF) < 32) {
-        reg.write(id::cpsr::C, (reg.read(Rd_id) & (1 << (32 - (Rs & 0xFF)))));
+        reg.write(id::cpsr::C, shared::util::bit_fetch(reg.read(Rd_id), (32 - (Rs & 0xFF))));
         reg.write(Rd_id, (reg.read(Rd_id) << (Rs & 0xFF)));
     } else if ((Rs & 0xFF) == 32) {
         reg.write(id::cpsr::C, (reg.read(Rd_id) & 1));
@@ -229,7 +230,7 @@ void INSTRUCTIONS::thumb::logic::LSL2(const thumb_code_t &code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 
     reg.thumb_increment_PC();
@@ -254,16 +255,16 @@ void INSTRUCTIONS::thumb::logic::LSR1(const thumb_code_t &code) {
     const u32 Rm = reg.read(code, 3, 5);
 
     if (immed_5 == 0) {
-        reg.write(id::cpsr::C, (reg.read(Rd_id) & (1 << 31)));
+        reg.write(id::cpsr::C, shared::util::bit_fetch(reg.read(Rd_id), 31));
         reg.write(Rd_id, 0);
     } else {
-        reg.write(id::cpsr::C, (reg.read(Rd_id) & (1 << (immed_5 - 1))));
+        reg.write(id::cpsr::C, shared::util::bit_fetch(reg.read(Rd_id), (immed_5 - 1)));
         reg.write(Rd_id, (Rm >> immed_5));
     }
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 
     reg.thumb_increment_PC();
@@ -295,10 +296,10 @@ void INSTRUCTIONS::thumb::logic::LSR2(const thumb_code_t &code) {
     if ((Rs & 0xFF) == 0) {
 
     } else if ((Rs & 0xFF) < 32) {
-        reg.write(id::cpsr::C, (reg.read(Rd_id) & (1 << ((Rs & 0xFF) - 1))));
+        reg.write(id::cpsr::C, shared::util::bit_fetch(reg.read(Rd_id), ((Rs & 0xFF) - 1)));
         reg.write(Rd_id, (reg.read(Rd_id) >> (Rs & 0xFF)));
     } else if ((Rs & 0xFF) == 32) {
-        reg.write(id::cpsr::C, (reg.read(Rd_id) & (1 << 31)));
+        reg.write(id::cpsr::C, shared::util::bit_fetch(reg.read(Rd_id), 31));
         reg.write(Rd_id, 0);
     } else {
         reg.write(id::cpsr::C, 0);
@@ -307,7 +308,7 @@ void INSTRUCTIONS::thumb::logic::LSR2(const thumb_code_t &code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 
     reg.thumb_increment_PC();
@@ -330,7 +331,7 @@ void INSTRUCTIONS::thumb::logic::NEG(const thumb_code_t &code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, !operation.borrow_sub(0, Rm));
     reg.write(id::cpsr::V, operation.overflow_sub(0, Rm));
@@ -355,7 +356,7 @@ void INSTRUCTIONS::thumb::logic::ORR(const thumb_code_t &code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 
     reg.thumb_increment_PC();
@@ -386,15 +387,15 @@ void INSTRUCTIONS::thumb::logic::ROR(const thumb_code_t &code) {
     if ((Rs & 0xFF) == 0) {
 
     } else if (Rs_4_0 == 0) {
-        reg.write(id::cpsr::C, (reg.read(Rd_id) & (1 << 31)));
+        reg.write(id::cpsr::C, shared::util::bit_fetch(reg.read(Rd_id), 31));
     } else {
-        reg.write(id::cpsr::C, (reg.read(Rd_id) & (1 << (Rs_4_0 - 1))));
+        reg.write(id::cpsr::C, shared::util::bit_fetch(reg.read(Rd_id), (Rs_4_0 - 1)));
         reg.write(Rd_id, std::rotr(reg.read(Rd_id), Rs_4_0));
     }
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (Rd & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 
     reg.thumb_increment_PC();
@@ -414,7 +415,7 @@ void INSTRUCTIONS::thumb::logic::TST(const thumb_code_t &code) {
 
     const u32 alu_out = Rn & Rm;
 
-    reg.write(id::cpsr::N, (alu_out & (1 << 31)));
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
 
     reg.thumb_increment_PC();
