@@ -39,16 +39,16 @@ using namespace internal;
  * 
  * reference: A4-30
  */
-std::string generators::arm::load::LDM1(const u32 code) {
+std::string generators::arm::load::LDM1(const u32 code, const settings settings) {
     const u16 register_list = shared::util::bit_range<u16>(code, 0, 15);
 
-    const std::string Rn = util::reg_string(code, 16, 19); 
+    const std::string Rn = util::reg_string(code, 16, 19, settings); 
 
-    const std::string addressing_mode = shifters::ls_mul_shifter(code);
+    const std::string addressing_mode = shifters::ls_mul(code, settings);
 
     const std::string W = (shared::util::bit_fetch(code, 21) ? "!" : "");
 
-    const std::string registers = util::reg_list(register_list);
+    const std::string registers = util::reg_list(register_list, settings);
 
     return util::make_string("LDM", util::cond(code), addressing_mode, " ", Rn, W, ", ", registers);
 }
@@ -82,14 +82,14 @@ std::string generators::arm::load::LDM1(const u32 code) {
  * 
  * reference: A4-32
  */
-std::string generators::arm::load::LDM2(const u32 code) {
+std::string generators::arm::load::LDM2(const u32 code, const settings settings) {
     const u16 register_list = shared::util::bit_range<u16>(code, 0, 14);
     
-    const std::string Rn = util::reg_string(code, 16, 19);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
 
-    const std::string addressing_mode = shifters::ls_mul_shifter(code);
+    const std::string addressing_mode = shifters::ls_mul(code, settings);
 
-    const std::string registers_without_pc = util::reg_list(register_list);
+    const std::string registers_without_pc = util::reg_list(register_list, settings);
 
     return util::make_string("LDM", util::cond(code), addressing_mode, " ", Rn, ", ", registers_without_pc, "^");
 }
@@ -127,16 +127,16 @@ std::string generators::arm::load::LDM2(const u32 code) {
  * 
  * reference: A4-34
  */
-std::string generators::arm::load::LDM3(const u32 code) {
+std::string generators::arm::load::LDM3(const u32 code, const settings settings) {
     const u16 register_list = shared::util::bit_range<u16>(code, 0, 14);
 
-    const std::string Rn = util::reg_string(code, 16, 19);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
 
-    const std::string addressing_mode = shifters::ls_mul_shifter(code);
+    const std::string addressing_mode = shifters::ls_mul(code, settings);
 
     const std::string W = (shared::util::bit_fetch(code, 21) ? "!" : "");
 
-    const std::string registers_and_pc = util::reg_list(register_list, "PC");
+    const std::string registers_and_pc = util::reg_list(register_list, settings, util::reg_id::R15);
 
     return util::make_string("LDM", util::cond(code), addressing_mode, " ", Rn, W, ", ", registers_and_pc, "^");
 }
@@ -157,10 +157,10 @@ std::string generators::arm::load::LDM3(const u32 code) {
  * 
  * reference: A4-37
  */
-std::string generators::arm::load::LDR(const u32 code) {
-    const std::string addressing_mode = shifters::ls_shifter(code);
+std::string generators::arm::load::LDR(const u32 code, const settings settings) {
+    const std::string addressing_mode = shifters::ls(code, settings);
 
-    const std::string Rd = util::reg_string(code, 12, 15);
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
 
     return util::make_string("LDR", util::cond(code), " ", Rd, ", ", addressing_mode);
 }
@@ -182,10 +182,10 @@ std::string generators::arm::load::LDR(const u32 code) {
  *
  * reference: A4-40
  */
-std::string generators::arm::load::LDRB(const u32 code) {
-    const std::string addressing_mode = shifters::ls_shifter(code);
+std::string generators::arm::load::LDRB(const u32 code, const settings settings) {
+    const std::string addressing_mode = shifters::ls(code, settings);
 
-    const std::string Rd = util::reg_string(code, 12, 15);
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
 
     return util::make_string("LDR", util::cond(code), "B ", Rd, ", ", addressing_mode);
 }
@@ -211,7 +211,7 @@ std::string generators::arm::load::LDRB(const u32 code) {
  * 
  * reference: A4-42
  */
-std::string generators::arm::load::LDRBT(const u32 code) {
+std::string generators::arm::load::LDRBT(const u32 code, const settings settings) {
     const shifters::mode mode_id = shifters::identify_ls_shifter(code);
     
     switch (mode_id) {
@@ -225,9 +225,9 @@ std::string generators::arm::load::LDRBT(const u32 code) {
         default: shared::out::error("Only post-indexed addressing modes are allowed for LDRBT");
     }
 
-    const std::string Rd = util::reg_string(code, 12, 15);
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
 
-    const std::string post_indexed_addressing_mode = shifters::shifter_to_string(mode_id, code);
+    const std::string post_indexed_addressing_mode = shifters::shifter_to_string(mode_id, code, settings);
 
     return util::make_string("LDR", util::cond(code), "BT ", Rd, ", ", post_indexed_addressing_mode);
 }
@@ -249,10 +249,10 @@ std::string generators::arm::load::LDRBT(const u32 code) {
  * 
  * reference: A4-44
  */
-std::string generators::arm::load::LDRH(const u32 code) {
-    const std::string Rd = util::reg_string(code, 12, 15);
+std::string generators::arm::load::LDRH(const u32 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
 
-    const std::string addressing_mode = shifters::ls_misc_shifter(code);
+    const std::string addressing_mode = shifters::ls_misc(code, settings);
 
     return util::make_string("LDR", util::cond(code), "H ", Rd, ", ", addressing_mode);
 }
@@ -274,10 +274,10 @@ std::string generators::arm::load::LDRH(const u32 code) {
  *
  * reference: A4-46
  */
-std::string generators::arm::load::LDRSB(const u32 code) {
-    const std::string Rd = util::reg_string(code, 12, 15);
+std::string generators::arm::load::LDRSB(const u32 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
 
-    const std::string addressing_mode = shifters::ls_misc_shifter(code);
+    const std::string addressing_mode = shifters::ls_misc(code, settings);
 
     return util::make_string("LDR", util::cond(code), "SB ", Rd, ", ", addressing_mode);
 }
@@ -299,10 +299,10 @@ std::string generators::arm::load::LDRSB(const u32 code) {
  * 
  * reference: A4-48
  */
-std::string generators::arm::load::LDRSH(const u32 code) {
-    const std::string Rd = util::reg_string(code, 12, 15);
+std::string generators::arm::load::LDRSH(const u32 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
 
-    const std::string addressing_mode = shifters::ls_misc_shifter(code);
+    const std::string addressing_mode = shifters::ls_misc(code, settings);
 
     return util::make_string("LDR", util::cond(code), "SH ", Rd, ", ", addressing_mode);
 }
@@ -328,8 +328,8 @@ std::string generators::arm::load::LDRSH(const u32 code) {
  * 
  * reference: A4-50
  */
-std::string generators::arm::load::LDRT(const u32 code) {
-    const std::string Rd = util::reg_string(code, 12, 15);
+std::string generators::arm::load::LDRT(const u32 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
 
     const shifters::mode mode_id = shifters::identify_ls_shifter(code);
     
@@ -344,7 +344,7 @@ std::string generators::arm::load::LDRT(const u32 code) {
         default: shared::out::error("Only post-indexed addressing modes are allowed for LDRBT");
     }
 
-    const std::string post_indexed_addressing_mode = shifters::shifter_to_string(mode_id, code);
+    const std::string post_indexed_addressing_mode = shifters::shifter_to_string(mode_id, code, settings);
 
     return util::make_string("LDR", util::cond(code), "T ", Rd, ", ", post_indexed_addressing_mode);
 }

@@ -1,9 +1,13 @@
 #pragma once
 
+#include "../../settings.hpp"
+#include "../../instruction_id.hpp"
+
 #include "shared/types.hpp"
 
 namespace internal::util {
     enum class reg_id : u8 {
+        NULL_REG,
         R0,
         R1,
         R2,
@@ -99,7 +103,7 @@ namespace internal::util {
         P12,
         P13,
         P14,
-        P15,
+        P15
     };
 
     enum class prefix : u8 {
@@ -120,24 +124,27 @@ namespace internal::util {
 
     reg_id identify_reg(const u32 code, const u8 start, const u8 end, const prefix prefix = prefix::R);
 
-    std::string reg_list(const u16 list, const sv extra = "");
+    std::string reg_list(const u16 list, const settings settings, const reg_id extra = reg_id::NULL_REG);
 
     std::string raw_cond(const u8 cond);
 
     std::string cond(const u32 code);
 
-    std::string reg_id_to_string(const reg_id id, const bool alias = false);
+    std::string reg_id_to_string(const reg_id id, const settings settings);
 
-    std::string reg_string(const u32 code, const u8 start, const u8 end, const prefix prefix = prefix::R, const bool alias = false);
+    std::string vfp_reg_id_to_string(const reg_id id);
 
-    std::string vfp_reg_string_bits(const u32 code, const u8 start, const u8 end, const bool bottom_bit);
+    std::string reg_string(const u32 code, const u8 start, const u8 end, const settings settings, const prefix prefix = prefix::R);
 
-    std::string reg_string_bits(const u32 code, const u8 start, const u8 end, const bool top_bit);
+    std::string vfp_reg_string_bits(const u32 code, const u8 start, const u8 end, const bool bottom_bit, const settings settings);
 
-    std::string vfp_register_list(const u8 first_reg, const u8 offset, const prefix prefix);
+    std::string reg_string_bits(const u32 code, const u8 start, const u8 end, const bool top_bit, const settings settings);
 
-    std::string hex(const u32 integer);
+    std::string vfp_register_list(const u8 first_reg, const u8 offset, const settings settings, const prefix prefix);
 
+    std::string hex(const u32 integer, const settings settings);
+
+    void to_lower(std::string &str);
 
     // i'm deeply sorry to whoever is reading this absolute mess.
     template<typename T>

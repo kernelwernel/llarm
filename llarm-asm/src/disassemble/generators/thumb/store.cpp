@@ -39,12 +39,14 @@ using namespace internal;
  * 
  * reference: A7-84
  */
-std::string generators::thumb::store::STMIA(const u16 code) {
-    const std::string Rn = util::reg_string(code, 8, 10);
+std::string generators::thumb::store::STMIA(const u16 code, const settings settings) {
+    const std::string Rn = util::reg_string(code, 8, 10, settings);
 
     const u8 list = shared::util::bit_range<u8>(code, 0, 7);
 
-    return util::make_string("STMIA ", Rn, "!, ", util::reg_list(list));
+    return util::make_string(
+        "STMIA ", Rn, "!, ", util::reg_list(list, settings)
+    );
 }
 
 
@@ -57,13 +59,15 @@ std::string generators::thumb::store::STMIA(const u16 code) {
  * 
  * reference: A7-86
  */
-std::string generators::thumb::store::STR1(const u16 code) {
-    const std::string Rd = util::reg_string(code, 0, 2);
-    const std::string Rn = util::reg_string(code, 3, 5);
+std::string generators::thumb::store::STR1(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 0, 2, settings);
+    const std::string Rn = util::reg_string(code, 3, 5, settings);
 
     const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
 
-    return util::make_string("STR ", Rd, ", [", Rn, ", #", immed_5, " * 4]");
+    return util::make_string(
+        "STR ", Rd, ", [", Rn, ", #", util::hex(immed_5, settings), " * 4]"
+    );
 }
 
 
@@ -76,12 +80,14 @@ std::string generators::thumb::store::STR1(const u16 code) {
  * 
  * reference: A7-88
  */
-std::string generators::thumb::store::STR2(const u16 code) {
-    const std::string Rd = util::reg_string(code, 0, 2);
-    const std::string Rn = util::reg_string(code, 3, 5);
-    const std::string Rm = util::reg_string(code, 6, 8);
+std::string generators::thumb::store::STR2(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 0, 2, settings);
+    const std::string Rn = util::reg_string(code, 3, 5, settings);
+    const std::string Rm = util::reg_string(code, 6, 8, settings);
 
-    return util::make_string("STR ", Rd, ", [", Rn, ", ", Rm, "]");
+    return util::make_string(
+        "STR ", Rd, ", [", Rn, ", ", Rm, "]"
+    );
 }
 
 
@@ -94,12 +100,14 @@ std::string generators::thumb::store::STR2(const u16 code) {
  * 
  * reference: A7-90
  */
-std::string generators::thumb::store::STR3(const u16 code) {
-    const std::string Rd = util::reg_string(code, 8, 10);
+std::string generators::thumb::store::STR3(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 8, 10, settings);
 
     const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
 
-    return util::make_string("STR ", Rd, ", [SP, #", immed_8, " * 4]");
+    return util::make_string(
+        "STR ", Rd, ", [SP, #", util::hex(immed_8, settings), " * 4]"
+    );
 }
 
 
@@ -112,13 +120,15 @@ std::string generators::thumb::store::STR3(const u16 code) {
  * 
  * reference: A7-92
  */
-std::string generators::thumb::store::STRB1(const u16 code) {
-    const std::string Rd = util::reg_string(code, 0, 2);
-    const std::string Rn = util::reg_string(code, 3, 5);
+std::string generators::thumb::store::STRB1(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 0, 2, settings);
+    const std::string Rn = util::reg_string(code, 3, 5, settings);
 
     const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
 
-    return util::make_string("STRB ", Rd, ", [", Rn, ", #", immed_5, "]");
+    return util::make_string(
+        "STRB ", Rd, ", [", Rn, ", #", util::hex(immed_5, settings), "]"
+    );
 }
 
 
@@ -131,12 +141,14 @@ std::string generators::thumb::store::STRB1(const u16 code) {
  * 
  * reference: A7-93
  */
-std::string generators::thumb::store::STRB2(const u16 code) {
-    const std::string Rd = util::reg_string(code, 0, 2);
-    const std::string Rn = util::reg_string(code, 3, 5);
-    const std::string Rm = util::reg_string(code, 6, 8);
+std::string generators::thumb::store::STRB2(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 0, 2, settings);
+    const std::string Rn = util::reg_string(code, 3, 5, settings);
+    const std::string Rm = util::reg_string(code, 6, 8, settings);
 
-    return util::make_string("STRB ", Rd, ", [", Rn, ", ", Rm, "]");
+    return util::make_string(
+        "STRB ", Rd, ", [", Rn, ", ", Rm, "]"
+    );
 }
 
 
@@ -149,13 +161,15 @@ std::string generators::thumb::store::STRB2(const u16 code) {
  * 
  * reference: A7-94
  */
-std::string generators::thumb::store::STRH1(const u16 code) {
-    const std::string Rd = util::reg_string(code, 0, 2);
-    const std::string Rn = util::reg_string(code, 3, 5);
+std::string generators::thumb::store::STRH1(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 0, 2, settings);
+    const std::string Rn = util::reg_string(code, 3, 5, settings);
 
     const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
 
-    return util::make_string("STRH ", Rd, ", [", Rn, ", #", immed_5, " * 2]");
+    return util::make_string(
+        "STRH ", Rd, ", [", Rn, ", #", util::hex(immed_5, settings), " * 2]"
+    );
 }
 
 
@@ -168,14 +182,16 @@ std::string generators::thumb::store::STRH1(const u16 code) {
  * 
  * reference: A7-95
  */
-std::string generators::thumb::store::STRH2(const u16 code) {
-    const std::string Rd = util::reg_string(code, 0, 2);
-    const std::string Rn = util::reg_string(code, 3, 5);
-    const std::string Rm = util::reg_string(code, 6, 8);
+std::string generators::thumb::store::STRH2(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 0, 2, settings);
+    const std::string Rn = util::reg_string(code, 3, 5, settings);
+    const std::string Rm = util::reg_string(code, 6, 8, settings);
 
     const u8 lol = 0;
 
-    return util::make_string("STRH ", Rd, ", [", Rn, ", ", Rm, "]");
+    return util::make_string(
+        "STRH ", Rd, ", [", Rn, ", ", Rm, "]"
+    );
 }
 
 
@@ -205,14 +221,14 @@ std::string generators::thumb::store::STRH2(const u16 code) {
  * 
  * reference: A7-78
  */
-std::string generators::thumb::store::PUSH(const u16 code) {
+std::string generators::thumb::store::PUSH(const u16 code, const settings settings) {
     const u8 list = shared::util::bit_range<u8>(code, 0, 7);
 
     const bool R = (shared::util::bit_fetch(code, 8));
 
-    if (R) {
-        return util::make_string("PUSH ", util::reg_list(list, "LR"));
-    }
+    const util::reg_id extra_reg = (R ? util::reg_id::R14 : util::reg_id::NULL_REG);
 
-    return util::make_string("PUSH ", util::reg_list(list));
+    return util::make_string(
+        "PUSH ", util::reg_list(list, settings, extra_reg)
+    );
 }

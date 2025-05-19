@@ -143,8 +143,21 @@ public:
             REGISTERS& reg;
             OPERATION& operation;
             MEMORY& memory;
+            ADDRESSING_MODE& address_mode;
+            SETTINGS& settings;
 
-            load(REGISTERS& reg, OPERATION& operation, MEMORY& memory) : reg(reg), operation(operation), memory(memory) {}
+            load(
+                REGISTERS& reg, 
+                OPERATION& operation, 
+                MEMORY& memory,
+                ADDRESSING_MODE& address_mode,
+                SETTINGS& settings
+            ) : reg(reg), 
+                operation(operation), 
+                memory(memory), 
+                address_mode(address_mode), 
+                settings(settings) 
+            {}
     
             void LDM1(const arm_code_t&); // TODO, ADD CHECK FOR L4 BIT
             void LDM2(const arm_code_t&); // TODO
@@ -162,9 +175,19 @@ public:
             REGISTERS& reg;
             OPERATION& operation;
             MEMORY& memory;
+            ADDRESSING_MODE& address_mode;
 
-            store(REGISTERS& reg, OPERATION& operation, MEMORY& memory) : reg(reg), operation(operation), memory(memory) {}
-    
+            store(
+                REGISTERS& reg, 
+                OPERATION& operation, 
+                MEMORY& memory, 
+                ADDRESSING_MODE& address_mode
+            ) : reg(reg), 
+                operation(operation), 
+                memory(memory), 
+                address_mode(address_mode)
+            {}
+
             void STM1(const arm_code_t&); // TODO
             void STM2(const arm_code_t&); // TODO
             void STR(const arm_code_t&); // TODO
@@ -274,7 +297,8 @@ public:
             OPERATION& operation,
             ADDRESSING_MODE& address_mode,
             COPROCESSOR& coprocessor,
-            MEMORY& memory
+            MEMORY& memory,
+            SETTINGS& settings
         ) : math(reg, operation, address_mode),
             logic(reg, operation, address_mode),
             movement(reg, operation, address_mode),
@@ -282,8 +306,8 @@ public:
             branching(reg, operation),
             coprocessor_inst(reg, operation, coprocessor),
             misc(reg, operation, address_mode, coprocessor),
-            load(reg, operation, memory),
-            store(reg, operation, memory),
+            load(reg, operation, memory, address_mode, settings),
+            store(reg, operation, memory, address_mode),
             dsp(reg, operation),
             vfp(reg, operation)
         {
@@ -489,7 +513,7 @@ public:
         coprocessor(coprocessor),
         settings(settings),
         memory(memory),
-        arm(reg, operation, address_mode, coprocessor, memory),
+        arm(reg, operation, address_mode, coprocessor, memory, settings),
         thumb(reg, operation, settings, memory)
     {
 

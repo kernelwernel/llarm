@@ -45,7 +45,7 @@ void INSTRUCTIONS::thumb::load::LDMIA(const thumb_code_t &code) {
 
     reg.write(Rn_id, (Rn + (std::popcount(register_list) * 4)));
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -81,7 +81,7 @@ void INSTRUCTIONS::thumb::load::LDR1(const thumb_code_t &code) {
 
     reg.write(Rd_id, value);
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -117,7 +117,7 @@ void INSTRUCTIONS::thumb::load::LDR2(const thumb_code_t &code) {
     
     reg.write(Rd_id, value);
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -141,7 +141,7 @@ void INSTRUCTIONS::thumb::load::LDR3(const thumb_code_t &code) {
 
     reg.write(Rd_id, access.value);
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -176,7 +176,7 @@ void INSTRUCTIONS::thumb::load::LDR4(const thumb_code_t &code) {
 
     reg.write(Rd_id, value);
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -200,7 +200,7 @@ void INSTRUCTIONS::thumb::load::LDRB1(const thumb_code_t &code) {
 
     reg.write(Rd_id, access.value);
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -224,7 +224,7 @@ void INSTRUCTIONS::thumb::load::LDRB2(const thumb_code_t &code) {
 
     reg.write(Rd_id, access.value);
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -260,7 +260,7 @@ void INSTRUCTIONS::thumb::load::LDRH1(const thumb_code_t &code) {
 
     reg.write(Rd_id, value);
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -296,7 +296,7 @@ void INSTRUCTIONS::thumb::load::LDRH2(const thumb_code_t &code) {
     
     reg.write(Rd_id, value);
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -320,7 +320,7 @@ void INSTRUCTIONS::thumb::load::LDRSB(const thumb_code_t &code) {
 
     reg.write(Rd_id, operation.sign_extend(access.value));
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -356,7 +356,7 @@ void INSTRUCTIONS::thumb::load::LDRSH(const thumb_code_t &code) {
 
     reg.write(Rd_id, operation.sign_extend(value));
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -431,5 +431,5 @@ void INSTRUCTIONS::thumb::load::POP(const thumb_code_t &code) {
 
     reg.write(id::reg::SP, end_address);
 
-    reg.thumb_increment_PC();
+    ;
 }

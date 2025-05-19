@@ -6,12 +6,11 @@
 #include "shared/out.hpp"
 
 #include <string>
-#include <sstream>
 
 using namespace internal;
 
 /** 
- * B <cond> <target_address>
+ * B<cond> <target_address>
  * where:
  * <cond> Is the condition under which the instruction is executed. The conditions are defined in The 
  *        condition field on page A3-5.
@@ -26,17 +25,17 @@ using namespace internal;
  * 
  * reference: A7-18
  */
-std::string generators::thumb::branching::B1(const u16 code, const u32 PC) {
+std::string generators::thumb::branching::B1(const u16 code, const u32 PC, const settings settings) {
     const u8 cond = shared::util::bit_range<u8>(code, 8, 11);
 
     const u8 signed_immed_8 = shared::util::bit_range<u8>(code, 0, 7);
 
-    const std::string cond_string = util::raw_cond(cond);
-
     const u32 sign_extend = static_cast<u32>(signed_immed_8 << 1);
     const u32 target_address = (sign_extend + 4 + PC);
 
-    return util::make_string("B", cond_string, " #", util::hex(target_address));
+    return util::make_string(
+        "B", util::raw_cond(cond), " #", util::hex(target_address, settings)
+    );
 }
 
 
@@ -54,13 +53,15 @@ std::string generators::thumb::branching::B1(const u16 code, const u32 PC) {
  * 
  * reference: A7-20
  */
-std::string generators::thumb::branching::B2(const u16 code, const u32 PC) {
+std::string generators::thumb::branching::B2(const u16 code, const u32 PC, const settings settings) {
     const u16 signed_immed_11 = shared::util::bit_range<u16>(code, 0, 10);
 
     const u32 sign_extend = static_cast<u32>(signed_immed_11 << 1);
     const u32 target_address = (sign_extend + 4 + PC);
 
-    return util::make_string("B #", util::hex(target_address));
+    return util::make_string(
+        "B2 #", util::hex(target_address, settings)
+    );
 }
 
 
@@ -131,7 +132,7 @@ std::string generators::thumb::branching::B2(const u16 code, const u32 PC) {
  * 
  * reference: A7-26
  */
-std::string generators::thumb::branching::BL_BLX1(const u16 code, const u32 PC) {
+std::string generators::thumb::branching::BL_BLX1(const u16 code, const u32 PC, const settings settings) {
 //    const u16 offset_11 = shared::util::bit_range<u16>(code, 0, 10);
 
     const u8 H = shared::util::bit_range<u8>(code, 11, 12);
@@ -148,13 +149,13 @@ std::string generators::thumb::branching::BL_BLX1(const u16 code, const u32 PC) 
 
 // TODO
 
-    if (BL) {
-        return util::make_string("BL ");
-    } 
-    
-    if (BLX1) {
-        return util::make_string("BLX ");
-    }
+   // if (BL) {
+   //     return util::make_string("BL ");
+   // } 
+   // 
+   // if (BLX1) {
+   //     return util::make_string("BLX ");
+   // }
     
     shared::out::error("todo");
 }
@@ -190,9 +191,12 @@ std::string generators::thumb::branching::BL_BLX1(const u16 code, const u32 PC) 
  * 
  * reference: A7-32
  */
-std::string generators::thumb::branching::BX(const u16 code) {
-    const std::string Rm = util::reg_string(code, 3, 6); // H2 included
-    return util::make_string("BX ", Rm);
+std::string generators::thumb::branching::BX(const u16 code, const settings settings) {
+    const std::string Rm = util::reg_string(code, 3, 6, settings); // H2 included
+
+    return util::make_string(
+        "BX ", Rm
+    );
 }
 
 
@@ -205,7 +209,10 @@ std::string generators::thumb::branching::BX(const u16 code) {
  * 
  * reference: A7-30
  */
-std::string generators::thumb::branching::BLX2(const u16 code) {
-    const std::string Rm = util::reg_string(code, 3, 6); // H2 included
-    return util::make_string("BLX ", Rm);
+std::string generators::thumb::branching::BLX2(const u16 code, const settings settings) {
+    const std::string Rm = util::reg_string(code, 3, 6, settings); // H2 included
+
+    return util::make_string(
+        "BLX2 ", Rm
+    );
 }

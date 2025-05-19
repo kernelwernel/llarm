@@ -6,22 +6,24 @@
 
 #include "shared/types.hpp"
 
+struct data_struct {
+    u32 value;
+    bool carry;
+};
+
+
+struct address_struct {
+    u32 start;
+    u32 end;
+};
+
+
 struct ADDRESSING_MODE {
 private:
     REGISTERS& reg;
     OPERATION& operation;
 
 public:
-    struct data_struct {
-        u32 value;
-        bool carry;
-    };
-
-    
-    struct address_struct {
-        u32 start_address;
-        u32 end_address;
-    };
 
 private:
     data_struct data_process_immediate_mode(const arm_code_t&);

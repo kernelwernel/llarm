@@ -25,8 +25,8 @@ using namespace internal;
  *
  * reference: A4-23
  */
-std::string generators::arm::logic::CMN(const u32 code) {
-    return patterns::Rn_data(code, "CMN");
+std::string generators::arm::logic::CMN(const u32 code, const settings settings) {
+    return patterns::Rn_data(code, "CMN", settings);
 }
 
 
@@ -63,8 +63,8 @@ std::string generators::arm::logic::CMN(const u32 code) {
  *
  * reference: A4-8
  */
-std::string generators::arm::logic::AND(const u32 code) {
-    return patterns::S_Rd_Rn_data(code, "AND");
+std::string generators::arm::logic::AND(const u32 code, const settings settings) {
+    return patterns::S_Rd_Rn_data(code, "AND", settings);
 }
 
 
@@ -95,8 +95,8 @@ std::string generators::arm::logic::AND(const u32 code) {
  * 
  * reference: A4-12
  */
-std::string generators::arm::logic::BIC(const u32 code) {
-    return patterns::S_Rd_Rn_data(code, "BIC");
+std::string generators::arm::logic::BIC(const u32 code, const settings settings) {
+    return patterns::S_Rd_Rn_data(code, "BIC", settings);
 }
 
 
@@ -117,8 +117,8 @@ std::string generators::arm::logic::BIC(const u32 code) {
  *
  * reference: A4-25
  */
-std::string generators::arm::logic::CMP(const u32 code) {
-    return patterns::Rn_data(code, "CMP");
+std::string generators::arm::logic::CMP(const u32 code, const settings settings) {
+    return patterns::Rn_data(code, "CMP", settings);
 }
 
 
@@ -134,9 +134,9 @@ std::string generators::arm::logic::CMP(const u32 code) {
  * 
  * reference: A4-22
  */ 
-std::string generators::arm::logic::CLZ(const u32 code) {
-    const std::string Rd = util::reg_string(code, 12, 15);
-    const std::string Rm = util::reg_string(code, 0, 3);
+std::string generators::arm::logic::CLZ(const u32 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
 
     return util::make_string("CLZ", util::cond(code), " ", Rd, ", ", Rm);
 }
@@ -175,8 +175,8 @@ std::string generators::arm::logic::CLZ(const u32 code) {
  *
  * reference: A4-26
  */
-std::string generators::arm::logic::EOR(const u32 code) {
-    return patterns::S_Rd_Rn_data(code, "EOR");
+std::string generators::arm::logic::EOR(const u32 code, const settings settings) {
+    return patterns::S_Rd_Rn_data(code, "EOR", settings);
 }
 
 
@@ -213,8 +213,8 @@ std::string generators::arm::logic::EOR(const u32 code) {
  *
  * reference: A4-70
  */
-std::string generators::arm::logic::ORR(const u32 code) {
-    return patterns::S_Rd_Rn_data(code, "ORR");
+std::string generators::arm::logic::ORR(const u32 code, const settings settings) {
+    return patterns::S_Rd_Rn_data(code, "ORR", settings);
 }
 
 
@@ -233,8 +233,8 @@ std::string generators::arm::logic::ORR(const u32 code) {
  * 
  * reference: A4-106
  */
-std::string generators::arm::logic::TEQ(const u32 code) {
-    return patterns::Rn_data(code, "TEQ");
+std::string generators::arm::logic::TEQ(const u32 code, const settings settings) {
+    return patterns::Rn_data(code, "TEQ", settings);
 }
 
 
@@ -255,6 +255,6 @@ std::string generators::arm::logic::TEQ(const u32 code) {
  *
  * reference: A4-107
  */
-std::string generators::arm::logic::TST(const u32 code) {
-    return patterns::Rn_data(code, "TST");
+std::string generators::arm::logic::TST(const u32 code, const settings settings) {
+    return patterns::Rn_data(code, "TST", settings);
 }

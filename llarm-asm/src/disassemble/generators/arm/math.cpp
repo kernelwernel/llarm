@@ -36,8 +36,8 @@ using namespace internal;
  *
  * reference: A4-4
  */
-std::string generators::arm::math::ADC(const u32 code) {
-    return patterns::S_Rd_Rn_data(code, "ADC");
+std::string generators::arm::math::ADC(const u32 code, const settings settings) {
+    return patterns::S_Rd_Rn_data(code, "ADC", settings);
 }
 
 
@@ -69,8 +69,8 @@ std::string generators::arm::math::ADC(const u32 code) {
  *
  * reference: A4-6
  */
-std::string generators::arm::math::ADD(const u32 code) {
-    return patterns::S_Rd_Rn_data(code, "ADD");
+std::string generators::arm::math::ADD(const u32 code, const settings settings) {
+    return patterns::S_Rd_Rn_data(code, "ADD", settings);
 }
 
 
@@ -101,8 +101,8 @@ std::string generators::arm::math::ADD(const u32 code) {
  * 
  * reference: A4-72
  */
-std::string generators::arm::math::RSB(const u32 code) {
-    return patterns::S_Rd_Rn_data(code, "RSB");
+std::string generators::arm::math::RSB(const u32 code, const settings settings) {
+    return patterns::S_Rd_Rn_data(code, "RSB", settings);
 }
 
 
@@ -133,8 +133,8 @@ std::string generators::arm::math::RSB(const u32 code) {
  * 
  * reference: A4-74
  */
-std::string generators::arm::math::RSC(const u32 code) {
-    return patterns::S_Rd_Rn_data(code, "RSC");
+std::string generators::arm::math::RSC(const u32 code, const settings settings) {
+    return patterns::S_Rd_Rn_data(code, "RSC", settings);
 }
 
 
@@ -167,8 +167,8 @@ std::string generators::arm::math::RSC(const u32 code) {
  *
  * reference: A4-76
  */
-std::string generators::arm::math::SBC(const u32 code) {
-    return patterns::S_Rd_Rn_data(code, "SBC");
+std::string generators::arm::math::SBC(const u32 code, const settings settings) {
+    return patterns::S_Rd_Rn_data(code, "SBC", settings);
 }
 
 
@@ -202,7 +202,7 @@ std::string generators::arm::math::SBC(const u32 code) {
  *
  * reference: A4-98
  */
-std::string generators::arm::math::SUB(const u32 code) {
-    return patterns::S_Rd_Rn_data(code, "SUB");
+std::string generators::arm::math::SUB(const u32 code, const settings settings) {
+    return patterns::S_Rd_Rn_data(code, "SUB", settings);
 }
 

@@ -15,7 +15,7 @@
  * 
  * (A5-6)
  */
-ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_immediate_mode(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_immediate_mode(const arm_code_t &code) {
     data_struct data = {};
 
     const u8 rotate_imm = shared::util::bit_range<u8>(code, 8, 11);
@@ -41,7 +41,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_immediate_mode(const 
  * 
  * (A5-8)
  */
-ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_register(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_register(const arm_code_t &code) {
     data_struct data = {};
 
     const u32 Rm = reg.read(code, 0, 3);
@@ -65,7 +65,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_register(const arm_co
  * 
  * (A5-9)
  */
-ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_left_immediate(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_logical_shift_left_immediate(const arm_code_t &code) {
     data_struct data = {};
 
     const u8 shift_imm = shared::util::bit_range<u8>(code, 7, 11);
@@ -95,7 +95,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_left_im
  * 
  * (A5-11)
  */
-ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_right_immediate(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_logical_shift_right_immediate(const arm_code_t &code) {
     data_struct data = {};
 
     const u8 shift_imm = shared::util::bit_range<u8>(code, 7, 11);
@@ -129,7 +129,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_right_i
  * 
  * (A5-13)
  */
-ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_arithmetic_shift_right_immediate(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_arithmetic_shift_right_immediate(const arm_code_t &code) {
     data_struct data = {};
 
     const u8 shift_imm = shared::util::bit_range<u8>(code, 7, 11);
@@ -163,7 +163,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_arithmetic_shift_righ
  * 
  * (A5-15)
  */
-ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_rotate_right_immediate(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_rotate_right_immediate(const arm_code_t &code) {
     data_struct data = {};
 
     const u8 shift_imm = shared::util::bit_range<u8>(code, 7, 11);
@@ -198,7 +198,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_rotate_right_immediat
  * 
  * (A5-10)
  */
-ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_left_register(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_logical_shift_left_register(const arm_code_t &code) {
     data_struct data = {};
 
     const u32 Rs = reg.read(code, 8, 11);
@@ -239,7 +239,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_left_re
  *   shifter_operand = 0
  *   shifter_carry_out = 0
  */
-ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_right_register(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_logical_shift_right_register(const arm_code_t &code) {
     data_struct data = {};
 
     const u32 Rs = reg.read(code, 8, 11);
@@ -286,7 +286,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_logical_shift_right_r
  * 
  * (A5-14)
  */
-ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_arithmetic_shift_right_register(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_arithmetic_shift_right_register(const arm_code_t &code) {
     data_struct data = {};
 
     const u32 Rs = reg.read(code, 8, 11);
@@ -328,7 +328,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_arithmetic_shift_righ
  * 
  * (A5-16)
  */
-ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_rotate_right_register(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_rotate_right_register(const arm_code_t &code) {
     data_struct data = {};
     
     const u32 Rs = reg.read(code, 8, 11);
@@ -359,7 +359,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_rotate_right_register
  * 
  * (A5-17)
  */
-ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_rotate_right_extend(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_rotate_right_extend(const arm_code_t &code) {
     data_struct data = {};
 
     const u32 Rm = reg.read(code, 0, 3);
@@ -371,7 +371,7 @@ ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_process_rotate_right_extend(c
 }
 
 
-ADDRESSING_MODE::data_struct ADDRESSING_MODE::data_processing(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_processing(const arm_code_t &code) {
     if ((code.test(27) != false) || (code.test(26) != false)) {
         // TODO, error
     }

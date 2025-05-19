@@ -1,4 +1,5 @@
 #include "util.hpp"
+#include "../../settings.hpp"
 
 #include "shared/types.hpp"
 #include "shared/out.hpp"
@@ -142,7 +143,7 @@ util::reg_id util::identify_reg(const u32 code, const u8 start, const u8 end, co
 }
 
 
-std::string util::reg_id_to_string(const util::reg_id id, const bool alias) {
+std::string util::reg_id_to_string(const util::reg_id id, const settings settings) {
     switch (id) {
         case reg_id::R0: return "R0";
         case reg_id::R1: return "R1";
@@ -155,11 +156,11 @@ std::string util::reg_id_to_string(const util::reg_id id, const bool alias) {
         case reg_id::R8: return "R8";
         case reg_id::R9: return "R9";
         case reg_id::R10: return "R10";
-        case reg_id::R11: return (alias ? "FP" : "R11");
-        case reg_id::R12: return (alias ? "IP" : "R12");
-        case reg_id::R13: return (alias ? "SP" : "R13");
-        case reg_id::R14: return (alias ? "LR" : "R14");
-        case reg_id::R15: return (alias ? "PC" : "R15");
+        case reg_id::R11: return (settings.register_alias ? "FP" : "R11");
+        case reg_id::R12: return (settings.register_alias ? "IP" : "R12");
+        case reg_id::R13: return (settings.register_alias ? "SP" : "R13");
+        case reg_id::R14: return (settings.register_alias ? "LR" : "R14");
+        case reg_id::R15: return (settings.register_alias ? "PC" : "R15");
         case reg_id::S0: return "S0";
         case reg_id::S1: return "S1";
         case reg_id::S2: return "S2";
@@ -208,66 +209,73 @@ std::string util::reg_id_to_string(const util::reg_id id, const bool alias) {
         case reg_id::D13: return "D13";
         case reg_id::D14: return "D14";
         case reg_id::D15: return "D15";
-        case reg_id::C0: return "c0";
-        case reg_id::C1: return "c1";
-        case reg_id::C2: return "c2";
-        case reg_id::C3: return "c3";
-        case reg_id::C4: return "c4";
-        case reg_id::C5: return "c5";
-        case reg_id::C6: return "c6";
-        case reg_id::C7: return "c7";
-        case reg_id::C8: return "c8";
-        case reg_id::C9: return "c9";
-        case reg_id::C10: return "c10";
-        case reg_id::C11: return "c11";
-        case reg_id::C12: return "c12";
-        case reg_id::C13: return "c13";
-        case reg_id::C14: return "c14";
-        case reg_id::C15: return "c15";
-        case reg_id::P0: return "p0";
-        case reg_id::P1: return "p1";
-        case reg_id::P2: return "p2";
-        case reg_id::P3: return "p3";
-        case reg_id::P4: return "p4";
-        case reg_id::P5: return "p5";
-        case reg_id::P6: return "p6";
-        case reg_id::P7: return "p7";
-        case reg_id::P8: return "p8";
-        case reg_id::P9: return "p9";
-        case reg_id::P10: return "p10";
-        case reg_id::P11: return "p11";
-        case reg_id::P12: return "p12";
-        case reg_id::P13: return "p13";
-        case reg_id::P14: return "p14";
-        case reg_id::P15: return "p15";
+        case reg_id::C0: return "C0";
+        case reg_id::C1: return "C1";
+        case reg_id::C2: return "C2";
+        case reg_id::C3: return "C3";
+        case reg_id::C4: return "C4";
+        case reg_id::C5: return "C5";
+        case reg_id::C6: return "C6";
+        case reg_id::C7: return "C7";
+        case reg_id::C8: return "C8";
+        case reg_id::C9: return "C9";
+        case reg_id::C10: return "C10";
+        case reg_id::C11: return "C11";
+        case reg_id::C12: return "C12";
+        case reg_id::C13: return "C13";
+        case reg_id::C14: return "C14";
+        case reg_id::C15: return "C15";
+        case reg_id::P0: return "P0";
+        case reg_id::P1: return "P1";
+        case reg_id::P2: return "P2";
+        case reg_id::P3: return "P3";
+        case reg_id::P4: return "P4";
+        case reg_id::P5: return "P5";
+        case reg_id::P6: return "P6";
+        case reg_id::P7: return "P7";
+        case reg_id::P8: return "P8";
+        case reg_id::P9: return "P9";
+        case reg_id::P10: return "P10";
+        case reg_id::P11: return "P11";
+        case reg_id::P12: return "P12";
+        case reg_id::P13: return "P13";
+        case reg_id::P14: return "P14";
+        case reg_id::P15: return "P15";
         default: shared::out::error("llarm-asm: No known binary code given for register identification");
     }
 }
 
 
-std::string util::reg_string(const u32 code, const u8 start, const u8 end, const prefix prefix, const bool alias) {
+std::string util::reg_string(const u32 code, const u8 start, const u8 end, const settings settings, const prefix prefix) {
     const util::reg_id reg_id = identify_reg(code, start, end, prefix);
-    std::string reg = reg_id_to_string(reg_id, alias);
+    std::string reg = reg_id_to_string(reg_id, settings);
     return reg;
 }
 
 
-std::string util::reg_list(const u16 list, const sv extra) {
+std::string util::reg_list(const u16 list, const settings settings, const reg_id extra) {
     const u8 count = shared::util::popcount(list);
 
-    std::string tmp;
-
-    tmp.resize(
+    std::string tmp(
         4 + // for the "{  }"
-        (count * 4) - 1 // for the "Ri, " which is 4 characters, and - 1 for the trailing comma that shouldn't be there
+        (count * 4) - 1, // for the "Ri, " which is 4 characters, and - 1 for the trailing comma that shouldn't be there
+        '\0'
     );
 
-    std::vector<std::string> registers = {};
+    std::vector<reg_id> reg_id_list = {};
+    reg_id_list.resize(16);
 
     for (u8 i = 0; i < (sizeof(list) * 8); i++) {
         if (shared::util::bit_fetch(list, i) == 1) {
-            registers.push_back("R" + std::to_string(i));
+            reg_id_list.push_back(identify_reg(i));
         }
+    }
+
+    std::vector<std::string> registers = {};
+    registers.resize(16);
+
+    for (const auto id : reg_id_list) {
+        registers.push_back(reg_id_to_string(id, settings));
     }
 
     if (registers.empty()) {
@@ -284,9 +292,9 @@ std::string util::reg_list(const u16 list, const sv extra) {
         tmp += registers.at(i);
     }
 
-    if (!extra.empty()) {
+    if (extra != reg_id::NULL_REG) {
         tmp += ", ";
-        tmp += extra;
+        tmp += reg_id_to_string(extra, settings);
     }
 
     tmp += " }";
@@ -300,8 +308,8 @@ std::string util::raw_cond(const u8 cond) {
     switch (cond) {
         case 0b0000: return "EQ";
         case 0b0001: return "NE";
-        case 0b0010: return "CS/HS";
-        case 0b0011: return "CC/LO";
+        case 0b0010: return "CS"; // CS/HS
+        case 0b0011: return "CC"; // CC/LO
         case 0b0100: return "MI";
         case 0b0101: return "PL";
         case 0b0110: return "VS";
@@ -314,8 +322,9 @@ std::string util::raw_cond(const u8 cond) {
         case 0b1101: return "LE";
         case 0b1110: return "AL";
         case 0b1111: return "";
-        default: shared::out::error("TODO");
     }
+
+    shared::out::error("TODO");
 }
 
 
@@ -325,18 +334,18 @@ std::string util::cond(const u32 code) {
 }
 
 
-std::string util::vfp_reg_string_bits(const u32 code, const u8 start, const u8 end, const bool bottom_bit) {
+std::string util::vfp_reg_string_bits(const u32 code, const u8 start, const u8 end, const bool bottom_bit, const settings settings) {
     u8 reg_bits = shared::util::bit_range<u8>(code, start, end);
 
     reg_bits = static_cast<u8>((reg_bits << 1) | bottom_bit);
 
     const reg_id id = identify_reg(reg_bits, prefix::S);
 
-    return reg_id_to_string(id, false);
+    return reg_id_to_string(id, settings);
 }
 
 
-std::string util::reg_string_bits(const u32 code, const u8 start, const u8 end, const bool top_bit) {
+std::string util::reg_string_bits(const u32 code, const u8 start, const u8 end, const bool top_bit, const settings settings) {
     u8 reg_bits = shared::util::bit_range<u8>(code, start, end);
 
     if ((end - start) != 2) { // 3-bit wide register check (mostly for thumb)
@@ -347,11 +356,11 @@ std::string util::reg_string_bits(const u32 code, const u8 start, const u8 end, 
 
     const reg_id id = identify_reg(reg_bits, prefix::R);
 
-    return reg_id_to_string(id, false);
+    return reg_id_to_string(id, settings);
 }
 
 
-std::string util::vfp_register_list(const u8 first_reg, const u8 offset, util::prefix prefix) {
+std::string util::vfp_register_list(const u8 first_reg, const u8 offset, const settings settings, util::prefix prefix) {
     if (offset & 1) {
         shared::out::error("VFP register offset list should not be an odd number");
     }
@@ -375,7 +384,7 @@ std::string util::vfp_register_list(const u8 first_reg, const u8 offset, util::p
         }
 
         const reg_id id = identify_reg(i, prefix);
-        tmp += (reg_id_to_string(id));
+        tmp += (reg_id_to_string(id, settings));
     }
 
     tmp += " }";
@@ -385,10 +394,10 @@ std::string util::vfp_register_list(const u8 first_reg, const u8 offset, util::p
 
 
 // idea from https://johnnylee-sde.github.io/Fast-unsigned-integer-to-hex-string/
-std::string util::hex(const u32 integer) {
+std::string util::hex(const u32 integer, const settings settings) {
     std::string ret;
 
-    if (integer > 9) {
+    if (integer > 9 && settings.hex) {
         static constexpr std::array<char, 513> digits = {
             "000102030405060708090A0B0C0D0E0F"
             "101112131415161718191A1B1C1D1E1F"
@@ -433,4 +442,10 @@ std::string util::hex(const u32 integer) {
     }
 
     return ret;
+}
+
+void util::to_lower(std::string& str) {
+    for (char& c : str) {
+        c = (c >= 'A' && c <= 'Z') ? (c | 0x20) : c;
+    }
 }

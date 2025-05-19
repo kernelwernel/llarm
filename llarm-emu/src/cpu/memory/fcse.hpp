@@ -11,7 +11,7 @@ private:
     SETTINGS& settings;
 
 public:
-    inline bool is_fcse_enabled();
+    bool is_fcse_enabled();
 
     u32 modify_address(const u32 address);
 

@@ -18,7 +18,7 @@ void INSTRUCTIONS::thumb::branching::B1(const thumb_code_t &code) {
         reg.write(id::reg::PC, (reg.read(id::reg::PC) + (signed_immed_8 << 1) + 4));
     }
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -30,7 +30,7 @@ void INSTRUCTIONS::thumb::branching::B2(const thumb_code_t &code) {
 
     reg.write(id::reg::PC, (reg.read(id::reg::PC) + ((static_cast<i32>(signed_immed_10)) << 1)));
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -62,7 +62,7 @@ void INSTRUCTIONS::thumb::branching::BL(const thumb_code_t &code) {
         reg.write(id::cpsr::T, false);
     }
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -94,7 +94,7 @@ void INSTRUCTIONS::thumb::branching::BLX1(const thumb_code_t &code) {
         reg.write(id::cpsr::T, false);
     }
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -112,7 +112,7 @@ void INSTRUCTIONS::thumb::branching::BLX2(const thumb_code_t &code) {
     reg.write(id::cpsr::T, (Rm & 1));
     reg.write(id::reg::PC, (shared::util::bit_range(Rm, 1, 31) << 1));
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -126,5 +126,5 @@ void INSTRUCTIONS::thumb::branching::BX(const thumb_code_t &code) {
     reg.write(id::cpsr::T, (Rm & 1));
     reg.write(id::reg::PC, (shared::util::bit_range(Rm, 1, 31) << 1));
 
-    reg.thumb_increment_PC();
+    ;
 }

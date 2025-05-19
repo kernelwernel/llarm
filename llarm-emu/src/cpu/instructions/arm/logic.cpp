@@ -17,7 +17,7 @@
 void INSTRUCTIONS::arm::logic::AND(const arm_code_t &code) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
 
-    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
+    const data_struct shifter_operand = address_mode.data_processing(code);
 
     const u32 Rn = reg.read(code, 16, 19);
 
@@ -34,7 +34,7 @@ void INSTRUCTIONS::arm::logic::AND(const arm_code_t &code) {
         reg.write(id::cpsr::C, (shifter_operand.carry));
     }
 
-    reg.arm_increment_PC();
+    ;
 }
 
 
@@ -55,7 +55,7 @@ void INSTRUCTIONS::arm::logic::CLZ(const arm_code_t &code) {
         reg.write(Rd_id, 31 - (std::bit_width(Rm) - 1));
     }
 
-    reg.arm_increment_PC();
+    ;
 }
 
 
@@ -71,7 +71,7 @@ void INSTRUCTIONS::arm::logic::CLZ(const arm_code_t &code) {
  *     V Flag = unaffected
  */
 void INSTRUCTIONS::arm::logic::EOR(const arm_code_t &code) {
-    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
+    const data_struct shifter_operand = address_mode.data_processing(code);
 
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
@@ -89,7 +89,7 @@ void INSTRUCTIONS::arm::logic::EOR(const arm_code_t &code) {
         reg.write(id::cpsr::C, shifter_operand.carry);
     }
 
-    reg.arm_increment_PC();
+    ;
 }
 
 
@@ -102,7 +102,7 @@ void INSTRUCTIONS::arm::logic::EOR(const arm_code_t &code) {
  *   V Flag = OverflowFrom(Rn - shifter_operand)
  */
 void INSTRUCTIONS::arm::logic::CMP(const arm_code_t &code) {
-    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
+    const data_struct shifter_operand = address_mode.data_processing(code);
     
     const u32 Rn = reg.read(code, 16, 19);
 
@@ -113,7 +113,7 @@ void INSTRUCTIONS::arm::logic::CMP(const arm_code_t &code) {
     reg.write(id::cpsr::C, !operation.borrow_sub(Rn, shifter_operand.value));
     reg.write(id::cpsr::V, operation.overflow_sub(Rn, shifter_operand.value));
 
-    reg.arm_increment_PC();
+    ;
 }
 
 
@@ -126,7 +126,7 @@ void INSTRUCTIONS::arm::logic::CMP(const arm_code_t &code) {
  *   V Flag = OverflowFrom(Rn + shifter_operand)
  */
 void INSTRUCTIONS::arm::logic::CMN(const arm_code_t &code) {
-    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
+    const data_struct shifter_operand = address_mode.data_processing(code);
     
     const u32 Rn = reg.read(code, 16, 19);
 
@@ -137,7 +137,7 @@ void INSTRUCTIONS::arm::logic::CMN(const arm_code_t &code) {
     reg.write(id::cpsr::C, operation.carry_add(Rn, shifter_operand.value));
     reg.write(id::cpsr::V, operation.overflow_add(Rn, shifter_operand.value));
 
-    reg.arm_increment_PC();
+    ;
 }
 
 
@@ -153,7 +153,7 @@ void INSTRUCTIONS::arm::logic::CMN(const arm_code_t &code) {
  *     V Flag = unaffected
  */
 void INSTRUCTIONS::arm::logic::ORR(const arm_code_t &code) {
-    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
+    const data_struct shifter_operand = address_mode.data_processing(code);
         
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
@@ -171,7 +171,7 @@ void INSTRUCTIONS::arm::logic::ORR(const arm_code_t &code) {
         reg.write(id::cpsr::C, shifter_operand.carry);
     }
 
-    reg.arm_increment_PC();
+    ;
 }
 
 
@@ -184,7 +184,7 @@ void INSTRUCTIONS::arm::logic::ORR(const arm_code_t &code) {
  *   V Flag = unaffected
  */
 void INSTRUCTIONS::arm::logic::TEQ(const arm_code_t &code) {
-    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
+    const data_struct shifter_operand = address_mode.data_processing(code);
         
     const u32 Rn = reg.read(code, 16, 19);
 
@@ -194,7 +194,7 @@ void INSTRUCTIONS::arm::logic::TEQ(const arm_code_t &code) {
     reg.write(id::cpsr::Z, (alu_out == 0));
     reg.write(id::cpsr::C, shifter_operand.carry);
 
-    reg.arm_increment_PC();
+    ;
 }
 
 
@@ -207,7 +207,7 @@ void INSTRUCTIONS::arm::logic::TEQ(const arm_code_t &code) {
  *   V Flag = unaffected
  */
 void INSTRUCTIONS::arm::logic::TST(const arm_code_t &code) {
-    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
+    const data_struct shifter_operand = address_mode.data_processing(code);
     
     const u32 Rn = reg.read(code, 16, 19);
 
@@ -217,5 +217,5 @@ void INSTRUCTIONS::arm::logic::TST(const arm_code_t &code) {
     reg.write(id::cpsr::Z, (alu_out == 0));
     reg.write(id::cpsr::C, shifter_operand.carry);
 
-    reg.arm_increment_PC();
+    ;
 }

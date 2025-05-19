@@ -50,7 +50,7 @@ set_target_properties(${TARGET_LIB} PROPERTIES
 add_executable(${TARGET_BIN} "src/main.cpp")
 target_link_libraries(llarm-emu-bin PRIVATE STATIC libllarm-asm.a)
 set_target_properties(${TARGET_BIN} PROPERTIES OUTPUT_NAME "llarm-emu")
-install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION bin)
+install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION /usr/bin)
 
 
 # to include shared/

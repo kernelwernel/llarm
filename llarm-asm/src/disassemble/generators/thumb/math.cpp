@@ -16,11 +16,13 @@ using namespace internal;
  * 
  * reference: A7-4
  */
-std::string generators::thumb::math::ADC(const u16 code) {
-    const std::string Rd = util::reg_string(code, 0, 2);
-    const std::string Rm = util::reg_string(code, 3, 5);
+std::string generators::thumb::math::ADC(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 0, 2, settings);
+    const std::string Rm = util::reg_string(code, 3, 5, settings);
 
-    return util::make_string("ADC ", Rd, ", ", Rm);
+    return util::make_string(
+        "ADC ", Rd, ", ", Rm
+    );
 }
 
 
@@ -33,13 +35,15 @@ std::string generators::thumb::math::ADC(const u16 code) {
  * 
  * reference: A7-5
  */
-std::string generators::thumb::math::ADD1(const u16 code) {
-    const std::string Rd = util::reg_string(code, 0, 2);
-    const std::string Rn = util::reg_string(code, 3, 5);
+std::string generators::thumb::math::ADD1(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 0, 2, settings);
+    const std::string Rn = util::reg_string(code, 3, 5, settings);
 
     const u8 immed_3 = shared::util::bit_range<u8>(code, 6, 8);
 
-    return util::make_string("ADD ", Rd, ", ", Rn, ", #", immed_3);
+    return util::make_string(
+        "ADD ", Rd, ", ", Rn, ", #", util::hex(immed_3, settings)
+    );
 }
 
 
@@ -51,12 +55,14 @@ std::string generators::thumb::math::ADD1(const u16 code) {
  *
  * reference: A7-6
  */
-std::string generators::thumb::math::ADD2(const u16 code) {
-    const std::string Rd = util::reg_string(code, 8, 10);
+std::string generators::thumb::math::ADD2(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 8, 10, settings);
 
     const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
 
-    return util::make_string("ADD ", Rd, ", #", immed_8);
+    return util::make_string(
+        "ADD ", Rd, ", #", util::hex(immed_8, settings)
+    );
 }
 
 
@@ -69,12 +75,14 @@ std::string generators::thumb::math::ADD2(const u16 code) {
  *
  * reference: A7-7
  */
-std::string generators::thumb::math::ADD3(const u16 code) {
-    const std::string Rd = util::reg_string(code, 0, 2);
-    const std::string Rn = util::reg_string(code, 3, 5);
-    const std::string Rm = util::reg_string(code, 6, 8);
+std::string generators::thumb::math::ADD3(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 0, 2, settings);
+    const std::string Rn = util::reg_string(code, 3, 5, settings);
+    const std::string Rm = util::reg_string(code, 6, 8, settings);
 
-    return util::make_string("ADD ", Rd, ", ", Rn, ", ", Rm);
+    return util::make_string(
+        "ADD ", Rd, ", ", Rn, ", ", Rm
+    );
 }
 
 
@@ -89,14 +97,16 @@ std::string generators::thumb::math::ADD3(const u16 code) {
  *
  * reference: A7-8
  */
-std::string generators::thumb::math::ADD4(const u16 code) {
+std::string generators::thumb::math::ADD4(const u16 code, const settings settings) {
     const bool H1 = (shared::util::bit_fetch(code, 7));
     const bool H2 = (shared::util::bit_fetch(code, 6));
 
-    const std::string Rd = util::reg_string_bits(code, 0, 2, H1);
-    const std::string Rm = util::reg_string_bits(code, 3, 5, H2);
+    const std::string Rd = util::reg_string_bits(code, 0, 2, H1, settings);
+    const std::string Rm = util::reg_string_bits(code, 3, 5, H2, settings);
 
-    return util::make_string("ADD ", Rd, ", ", Rm);
+    return util::make_string(
+        "ADD4 ", Rd, ", ", Rm
+    );
 }
          
 
@@ -109,12 +119,14 @@ std::string generators::thumb::math::ADD4(const u16 code) {
  * 
  * reference: A7-10
  */
-std::string generators::thumb::math::ADD5(const u16 code) {
-    const std::string Rd = util::reg_string(code, 8, 10);
+std::string generators::thumb::math::ADD5(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 8, 10, settings);
 
     const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
 
-    return util::make_string("ADD ", Rd, ", PC, #", immed_8, " * 4");
+    return util::make_string(
+        "ADD ", Rd, ", PC, #", util::hex(immed_8, settings), " * 4"
+    );
 }
 
 
@@ -127,27 +139,31 @@ std::string generators::thumb::math::ADD5(const u16 code) {
  *
  * reference: A7-11
  */
-std::string generators::thumb::math::ADD6(const u16 code) {
-    const std::string Rd = util::reg_string(code, 8, 10);
+std::string generators::thumb::math::ADD6(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 8, 10, settings);
 
     const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
 
-    return util::make_string("ADD ", Rd, ", SP, #", immed_8, " * 4");
+    return util::make_string(
+        "ADD ", Rd, ", SP, #", util::hex(immed_8, settings), " * 4"
+    );
 }
 
 
 /**
- * ADD  SP, #<immed_7> * 4
+ * ADD SP, #<immed_7> * 4
  * where:
  * SP Contains the first operand for the addition. SP is also the destination register for the operation.
  * <immed_7> Specifies the immediate value that is quadrupled and added to the value of the SP.
  *
  * reference: A7-12
  */
-std::string generators::thumb::math::ADD7(const u16 code) {
+std::string generators::thumb::math::ADD7(const u16 code, const settings settings) {
     const u8 immed_7 = shared::util::bit_range<u8>(code, 0, 6);
 
-    return util::make_string("ADD SP, #", immed_7, " * 4");
+    return util::make_string(
+        "ADD SP, #", util::hex(immed_7, settings), " * 4"
+    );
 }
 
 
@@ -159,11 +175,13 @@ std::string generators::thumb::math::ADD7(const u16 code) {
  *
  * reference: A7-82
  */
-std::string generators::thumb::math::SBC(const u16 code) {
-    const std::string Rd = util::reg_string(code, 0, 2);
-    const std::string Rm = util::reg_string(code, 3, 5);
+std::string generators::thumb::math::SBC(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 0, 2, settings);
+    const std::string Rm = util::reg_string(code, 3, 5, settings);
 
-    return util::make_string("SBC ", Rd, ", ", Rm);
+    return util::make_string(
+        "SBC ", Rd, ", ", Rm
+    );
 }
 
 
@@ -176,13 +194,15 @@ std::string generators::thumb::math::SBC(const u16 code) {
  * 
  * reference: A7-98
  */
-std::string generators::thumb::math::SUB1(const u16 code) {
-    const std::string Rd = util::reg_string(code, 0, 2);
-    const std::string Rn = util::reg_string(code, 3, 5);
+std::string generators::thumb::math::SUB1(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 0, 2, settings);
+    const std::string Rn = util::reg_string(code, 3, 5, settings);
 
     const u8 immed_3 = shared::util::bit_range<u8>(code, 6, 8);
 
-    return util::make_string("SUB ", Rd, ", ", Rn, ", #", immed_3);
+    return util::make_string(
+        "SUB ", Rd, ", ", Rn, ", #", util::hex(immed_3, settings)
+    );
 }
 
 
@@ -194,12 +214,14 @@ std::string generators::thumb::math::SUB1(const u16 code) {
  * 
  * reference: A7-99
  */
-std::string generators::thumb::math::SUB2(const u16 code) {
-    const std::string Rd = util::reg_string(code, 8, 10);
+std::string generators::thumb::math::SUB2(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 8, 10, settings);
 
     const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
 
-    return util::make_string("SUB ", Rd, ", #", immed_8);
+    return util::make_string(
+        "SUB ", Rd, ", #", util::hex(immed_8, settings)
+    );
 }
 
 
@@ -212,12 +234,14 @@ std::string generators::thumb::math::SUB2(const u16 code) {
  * 
  * reference: A7-100
  */
-std::string generators::thumb::math::SUB3(const u16 code) {
-    const std::string Rd = util::reg_string(code, 0, 2);
-    const std::string Rn = util::reg_string(code, 3, 5);
-    const std::string Rm = util::reg_string(code, 6, 8);
+std::string generators::thumb::math::SUB3(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 0, 2, settings);
+    const std::string Rn = util::reg_string(code, 3, 5, settings);
+    const std::string Rm = util::reg_string(code, 6, 8, settings);
 
-    return util::make_string("SUB ", Rd, ", ", Rn, ", ", Rm);
+    return util::make_string(
+        "SUB ", Rd, ", ", Rn, ", ", Rm
+    );
 }
 
 
@@ -229,10 +253,12 @@ std::string generators::thumb::math::SUB3(const u16 code) {
  * 
  * reference: A7-101
  */
-std::string generators::thumb::math::SUB4(const u16 code) {
+std::string generators::thumb::math::SUB4(const u16 code, const settings settings) {
     const u8 immed_7 = shared::util::bit_range<u8>(code, 0, 6);
 
-    return util::make_string("SUB SP, #", immed_7, " * 4");
+    return util::make_string(
+        "SUB SP, #", util::hex(immed_7, settings), " * 4"
+    );
 }
 
 
@@ -244,9 +270,11 @@ std::string generators::thumb::math::SUB4(const u16 code) {
  *
  * reference: A7-70 
  */
-std::string generators::thumb::math::MUL(const u16 code) {
-    const std::string Rd = util::reg_string(code, 0, 2);
-    const std::string Rm = util::reg_string(code, 3, 5);
+std::string generators::thumb::math::MUL(const u16 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 0, 2, settings);
+    const std::string Rm = util::reg_string(code, 3, 5, settings);
 
-    return util::make_string("MUL ", Rd, ", ", Rm);
+    return util::make_string(
+        "MUL ", Rd, ", ", Rm
+    );
 }

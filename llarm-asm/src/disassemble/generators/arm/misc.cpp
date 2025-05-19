@@ -10,10 +10,10 @@
 
 using namespace internal;
 
-std::string generators::arm::misc::PSR(const u32 code) {
+std::string generators::arm::misc::PSR(const u32 code, const settings settings) {
     const u8 opc  = shared::util::bit_range<u8>(code, 21, 22);
 
-    const std::string Rn = util::reg_string(code, 16, 19);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
 
     std::string instruction;
 
@@ -25,7 +25,7 @@ std::string generators::arm::misc::PSR(const u32 code) {
         default: shared::out::error("Unknown opcode for PSR instruction");
     }
 
-    const std::string addressing_mode = shifters::data_shifter(code);
+    const std::string addressing_mode = shifters::data(code, settings);
 
     return util::make_string(instruction, util::cond(code), "P ", Rn, ", ", addressing_mode);
 }
@@ -43,9 +43,9 @@ std::string generators::arm::misc::PSR(const u32 code) {
  * 
  * reference: A4-100
  */
-std::string generators::arm::misc::SWI(const u32 code) {
+std::string generators::arm::misc::SWI(const u32 code, const settings settings) {
     const u32 immed_24 = shared::util::bit_range(code, 0, 23);
-    return util::make_string("SWI", util::cond(code), " ", util::hex(immed_24));
+    return util::make_string("SWI", util::cond(code), " ", util::hex(immed_24, settings));
 }
 
 
@@ -60,13 +60,13 @@ std::string generators::arm::misc::SWI(const u32 code) {
  * 
  * reference: A4-14
  */
- std::string generators::arm::misc::BKPT(const u32 code) {
+ std::string generators::arm::misc::BKPT(const u32 code, const settings settings) {
     const u16 immed_top = shared::util::bit_range<u16>(code, 8, 19);
     const u16 immed_bottom = shared::util::bit_range<u16>(code, 0, 3);
 
     const u16 immediate = static_cast<u16>((immed_top << 4) | immed_bottom);
 
-    return util::make_string("BKPT ", util::hex(immediate));
+    return util::make_string("BKPT ", util::hex(immediate, settings));
 }
 
 

@@ -38,16 +38,16 @@ using namespace internal;
  *
  * reference: A4-84
  */
-std::string generators::arm::store::STM1(const u32 code) {
+std::string generators::arm::store::STM1(const u32 code, const settings settings) {
     const u16 register_list = shared::util::bit_range<u16>(code, 0, 15);
 
-    const std::string Rn = util::reg_string(code, 16, 19);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
     
-    const std::string addressing_mode = shifters::ls_mul_shifter(code);
+    const std::string addressing_mode = shifters::ls_mul(code, settings);
 
     const char* W = (shared::util::bit_fetch(code, 21) ? "!" : "");
 
-    return util::make_string("STM", util::cond(code), addressing_mode, " ", Rn, W, ", ", util::reg_list(register_list));
+    return util::make_string("STM", util::cond(code), addressing_mode, " ", Rn, W, ", ", util::reg_list(register_list, settings));
 }
 
 
@@ -74,8 +74,8 @@ std::string generators::arm::store::STM1(const u32 code) {
  *             DEFINED. For more details, see Reading the program counter on page A2-7.
  * ^           For an STM instruction, indicates that User mode registers are to be stored.
  */
-std::string generators::arm::store::STM2(const u32 code) {
-    return STM1(code) + "^";
+std::string generators::arm::store::STM2(const u32 code, const settings settings) {
+    return STM1(code, settings) + "^";
 }
 
 
@@ -96,12 +96,12 @@ std::string generators::arm::store::STM2(const u32 code) {
  * 
  * reference: A4-88
  */
-std::string generators::arm::store::STR(const u32 code) {
+std::string generators::arm::store::STR(const u32 code, const settings settings) {
     const u16 register_list = shared::util::bit_range<u16>(code, 0, 15);
 
-    const std::string Rd = util::reg_string(code, 12, 15);
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
 
-    const std::string addressing_mode = shifters::ls_shifter(code);
+    const std::string addressing_mode = shifters::ls(code, settings);
 
     return util::make_string("STR", util::cond(code), " ", Rd, ", ", addressing_mode);
 }
@@ -123,10 +123,10 @@ std::string generators::arm::store::STR(const u32 code) {
  *
  * reference: A4-90
  */
-std::string generators::arm::store::STRB(const u32 code) {
-    const std::string Rd = util::reg_string(code, 12, 15);
+std::string generators::arm::store::STRB(const u32 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
 
-    const std::string addressing_mode = shifters::ls_shifter(code);
+    const std::string addressing_mode = shifters::ls(code, settings);
 
     return util::make_string("STR", util::cond(code), "B ", Rd, ", ", addressing_mode);
 }
@@ -151,7 +151,7 @@ std::string generators::arm::store::STRB(const u32 code) {
  *
  * reference: A4-92
 */
-std::string generators::arm::store::STRBT(const u32 code) {
+std::string generators::arm::store::STRBT(const u32 code, const settings settings) {
     const shifters::mode mode_id = shifters::identify_ls_shifter(code);
     
     switch (mode_id) {
@@ -165,9 +165,9 @@ std::string generators::arm::store::STRBT(const u32 code) {
         default: shared::out::error("Only post-indexed addressing modes are allowed for STRBT");
     }
 
-    const std::string Rd = util::reg_string(code, 12, 15);
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
 
-    const std::string post_indexed_addressing_mode = shifters::shifter_to_string(mode_id, code);
+    const std::string post_indexed_addressing_mode = shifters::shifter_to_string(mode_id, code, settings);
 
     return util::make_string("STR", util::cond(code), "BT ", Rd, post_indexed_addressing_mode);
 }
@@ -189,10 +189,10 @@ std::string generators::arm::store::STRBT(const u32 code) {
  * 
  * reference: A4-94
  */
-std::string generators::arm::store::STRH(const u32 code) {
-    const std::string addressing_mode = shifters::ls_misc_shifter(code);
+std::string generators::arm::store::STRH(const u32 code, const settings settings) {
+    const std::string addressing_mode = shifters::ls_misc(code, settings);
 
-    const std::string Rd = util::reg_string(code, 12, 15);
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
 
     return util::make_string("STR", util::cond(code), "H ", Rd, ", ", addressing_mode);
 }
@@ -218,7 +218,7 @@ std::string generators::arm::store::STRH(const u32 code) {
  *
  * reference: A4-96
  */
-std::string generators::arm::store::STRT(const u32 code) {
+std::string generators::arm::store::STRT(const u32 code, const settings settings) {
     const shifters::mode mode_id = shifters::identify_ls_shifter(code);
 
     switch (mode_id) {
@@ -232,9 +232,9 @@ std::string generators::arm::store::STRT(const u32 code) {
         default: shared::out::error("Only post-indexed addressing modes are allowed for STRBT");
     }
 
-    const std::string Rd = util::reg_string(code, 12, 15);
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
 
-    const std::string post_indexed_addressing_mode = shifters::shifter_to_string(mode_id, code);
+    const std::string post_indexed_addressing_mode = shifters::shifter_to_string(mode_id, code, settings);
 
     return util::make_string("STR", util::cond(code), "T ", Rd, ", ", post_indexed_addressing_mode);
 }
@@ -251,10 +251,10 @@ std::string generators::arm::store::STRT(const u32 code) {
  * 
  * reference: A4-102
  */
-std::string generators::arm::store::SWP(const u32 code) {
-    const std::string Rd = util::reg_string(code, 12, 15);
-    const std::string Rm = util::reg_string(code, 0, 3);
-    const std::string Rn = util::reg_string(code, 16, 19);
+std::string generators::arm::store::SWP(const u32 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
 
     return util::make_string("SWP", util::cond(code), " ", Rd, ", ", Rm, ", [", Rn, "]");
 }
@@ -271,10 +271,10 @@ std::string generators::arm::store::SWP(const u32 code) {
  *
  * reference: A4-104
  */
-std::string generators::arm::store::SWPB(const u32 code) {
-    const std::string Rd = util::reg_string(code, 12, 15);
-    const std::string Rm = util::reg_string(code, 0, 3);
-    const std::string Rn = util::reg_string(code, 16, 19);
+std::string generators::arm::store::SWPB(const u32 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
 
     return util::make_string("SWP", util::cond(code), "B ", Rd, ", ", Rm, ", [", Rn, "]");
 }

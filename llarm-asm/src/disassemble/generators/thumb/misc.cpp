@@ -18,10 +18,12 @@ using namespace internal;
  * 
  * reference: A7-24
  */
-std::string generators::thumb::misc::BKPT(const u16 code) {
+std::string generators::thumb::misc::BKPT(const u16 code, const settings settings) {
     const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
 
-    return util::make_string("BKPT ", immed_8);
+    return util::make_string(
+        "BKPT ", util::hex(immed_8, settings)
+    );
 }
 
 
@@ -34,8 +36,10 @@ std::string generators::thumb::misc::BKPT(const u16 code) {
  * 
  * reference: A7-102
  */
-std::string generators::thumb::misc::SWI(const u16 code) {
+std::string generators::thumb::misc::SWI(const u16 code, const settings settings) {
     const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
 
-    return util::make_string("SWI ", immed_8);
+    return util::make_string(
+        "SWI ", util::hex(immed_8, settings)
+    );
 }

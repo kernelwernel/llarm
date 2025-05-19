@@ -22,8 +22,8 @@ using namespace internal;
  * 
  * reference: C4-2
  */
-std::string generators::arm::vfp::FABSD(const u32 code) {
-    return patterns::vfp_Dd_Dm(code, "FABSD");
+std::string generators::arm::vfp::FABSD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Dm(code, "FABSD", settings);
 }
 
 
@@ -37,8 +37,8 @@ std::string generators::arm::vfp::FABSD(const u32 code) {
 
  * reference: C4-4
  */
-std::string generators::arm::vfp::FABSS(const u32 code) {
-    return patterns::vfp_Sd_Sm(code, "FABSS");
+std::string generators::arm::vfp::FABSS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sm(code, "FABSS", settings);
 }
 
 
@@ -53,8 +53,8 @@ std::string generators::arm::vfp::FABSS(const u32 code) {
  * 
  * reference: C4-6
  */
-std::string generators::arm::vfp::FADDD(const u32 code) {
-    return patterns::vfp_Dd_Dn_Dm(code, "FADDD");
+std::string generators::arm::vfp::FADDD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Dn_Dm(code, "FADDD", settings);
 }
 
 
@@ -71,8 +71,8 @@ std::string generators::arm::vfp::FADDD(const u32 code) {
  * 
  * reference: C4-8
  */
-std::string generators::arm::vfp::FADDS(const u32 code) {
-    return patterns::vfp_Sd_Sn_Sm(code, "FADDS");
+std::string generators::arm::vfp::FADDS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sn_Sm(code, "FADDS", settings);
 }
 
 
@@ -86,8 +86,8 @@ std::string generators::arm::vfp::FADDS(const u32 code) {
  *
  * reference: C4-10
  */
-std::string generators::arm::vfp::FCMPD(const u32 code) {
-    return patterns::vfp_Dd_Dm(code, "FCMPD");
+std::string generators::arm::vfp::FCMPD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Dm(code, "FCMPD", settings);
 }
 
 
@@ -101,8 +101,8 @@ std::string generators::arm::vfp::FCMPD(const u32 code) {
  *
  * reference: C4-12
  */
-std::string generators::arm::vfp::FCMPED(const u32 code) {
-    return patterns::vfp_Dd_Dm(code, "FCMPED");
+std::string generators::arm::vfp::FCMPED(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Dm(code, "FCMPED", settings);
 }
 
 
@@ -118,8 +118,8 @@ std::string generators::arm::vfp::FCMPED(const u32 code) {
 
  * reference: C4-14
  */
-std::string generators::arm::vfp::FCMPES(const u32 code) {
-    return patterns::vfp_Sd_Sm(code, "FCMPES");
+std::string generators::arm::vfp::FCMPES(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sm(code, "FCMPES", settings);
 }
 
 
@@ -132,8 +132,8 @@ std::string generators::arm::vfp::FCMPES(const u32 code) {
  *
  * reference: C4-16
  */
-std::string generators::arm::vfp::FCMPEZD(const u32 code) {
-    return patterns::vfp_Dd(code, "FCMPEZD");
+std::string generators::arm::vfp::FCMPEZD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd(code, "FCMPEZD", settings);
 }
 
 
@@ -147,8 +147,8 @@ std::string generators::arm::vfp::FCMPEZD(const u32 code) {
  * 
  * reference: C4-18
  */
-std::string generators::arm::vfp::FCMPEZS(const u32 code) {
-    return patterns::vfp_Sd(code, "FCMPEZS"); 
+std::string generators::arm::vfp::FCMPEZS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd(code, "FCMPEZS", settings); 
 }
 
 
@@ -164,8 +164,8 @@ std::string generators::arm::vfp::FCMPEZS(const u32 code) {
  * 
  * reference: C4-20
  */
-std::string generators::arm::vfp::FCMPS(const u32 code) {
-    return patterns::vfp_Sd_Sm(code, "FCMPS");
+std::string generators::arm::vfp::FCMPS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sm(code, "FCMPS", settings);
 }
 
 
@@ -178,8 +178,8 @@ std::string generators::arm::vfp::FCMPS(const u32 code) {
  *
  * reference: C4-22
  */
-std::string generators::arm::vfp::FCMPZD(const u32 code) {
-    return patterns::vfp_Dd(code, "FCMPZD");
+std::string generators::arm::vfp::FCMPZD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd(code, "FCMPZD", settings);
 }
 
 
@@ -193,8 +193,8 @@ std::string generators::arm::vfp::FCMPZD(const u32 code) {
  * 
  * reference: C4-24
  */
-std::string generators::arm::vfp::FCMPZS(const u32 code) {
-    return patterns::vfp_Sd(code, "FCMPZS");
+std::string generators::arm::vfp::FCMPZS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd(code, "FCMPZS", settings);
 }
 
 
@@ -208,8 +208,8 @@ std::string generators::arm::vfp::FCMPZS(const u32 code) {
  * 
  * reference: C4-26
  */
-std::string generators::arm::vfp::FCPYD(const u32 code) {
-    return patterns::vfp_Dd_Dm(code, "FCPYD");
+std::string generators::arm::vfp::FCPYD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Dm(code, "FCPYD", settings);
 }
 
 
@@ -223,8 +223,8 @@ std::string generators::arm::vfp::FCPYD(const u32 code) {
  * 
  * reference: C4-28
  */
-std::string generators::arm::vfp::FCPYS(const u32 code) {
-    return patterns::vfp_Sd_Sm(code, "FCPYS");
+std::string generators::arm::vfp::FCPYS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sm(code, "FCPYS", settings);
 }
 
 
@@ -238,8 +238,8 @@ std::string generators::arm::vfp::FCPYS(const u32 code) {
  * 
  * reference: C4-30
  */
-std::string generators::arm::vfp::FCVTDS(const u32 code) {
-    return patterns::vfp_Dd_Sm(code, "FCVTDS");
+std::string generators::arm::vfp::FCVTDS(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Sm(code, "FCVTDS", settings);
 }
 
 
@@ -253,13 +253,15 @@ std::string generators::arm::vfp::FCVTDS(const u32 code) {
  * 
  * reference: C4-31
  */
-std::string generators::arm::vfp::FCVTSD(const u32 code) {
+std::string generators::arm::vfp::FCVTSD(const u32 code, const settings settings) {
     const bool D = (shared::util::bit_fetch(code, 22));
 
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Dm = util::reg_string(code, 0, 3, util::prefix::D);
+    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D, settings);
+    const std::string Dm = util::reg_string(code, 0, 3, settings, util::prefix::D);
 
-    return util::make_string("FCVTSD", util::cond(code), " ", Sd, ", ", Dm);
+    return util::make_string(
+        "FCVTSD ", util::cond(code), " ", Sd, ", ", Dm
+    );
 }
 
 
@@ -274,8 +276,8 @@ std::string generators::arm::vfp::FCVTSD(const u32 code) {
  * 
  * reference: C4-32
  */
-std::string generators::arm::vfp::FDIVD(const u32 code) {
-    return patterns::vfp_Dd_Dn_Dm(code, "FDIVD");
+std::string generators::arm::vfp::FDIVD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Dn_Dm(code, "FDIVD", settings);
 }
 
 
@@ -292,8 +294,8 @@ std::string generators::arm::vfp::FDIVD(const u32 code) {
  *
  * reference: C4-34
  */
-std::string generators::arm::vfp::FDIVS(const u32 code) {
-    return patterns::vfp_Sd_Sn_Sm(code, "FDIVS");
+std::string generators::arm::vfp::FDIVS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sn_Sm(code, "FDIVS", settings);
 }
 
 
@@ -310,15 +312,18 @@ std::string generators::arm::vfp::FDIVS(const u32 code) {
  * 
  * reference: C4-36
  */
-std::string generators::arm::vfp::FLDD(const u32 code) {
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Rn = util::reg_string(code, 16, 19);
+std::string generators::arm::vfp::FLDD(const u32 code, const settings settings) {
+    const std::string Dd = util::reg_string(code, 12, 15, settings, util::prefix::D);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
 
     const u16 offset = shared::util::bit_range<u16>(code, 0, 7) * 4;
 
     const char* op = (shared::util::bit_fetch(code, 23) ? "" : "-");
 
-    return util::make_string("FLDD", util::cond(code), " ", Dd, ", [", Rn, ", #", op, util::hex(offset), "]");
+    // the organisation is awful, i know. 
+    return util::make_string(
+        "FLDD", util::cond(code), " ", Dd, ", [", Rn, ", #", op, util::hex(offset, settings), "]"
+    );
 }
 
 
@@ -348,19 +353,27 @@ std::string generators::arm::vfp::FLDD(const u32 code) {
  *
  * reference: C4-38
  */
-std::string generators::arm::vfp::FLDMD(const u32 code) {
-    const std::string addressing_mode = shifters::vfp_ls_mul(code);
+std::string generators::arm::vfp::FLDMD(const u32 code, const settings settings) {
+    const std::string addressing_mode = shifters::vfp_ls_mul(code, settings);
 
-    const std::string Rn = util::reg_string(code, 16, 19);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
 
     const char* W = (shared::util::bit_fetch(code, 21) ? "!" : "");
 
     const u8 Dd = shared::util::bit_range<u8>(code, 12, 15);
     const u8 offset = shared::util::bit_range<u8>(code, 0, 7);
 
-    const std::string registers = util::vfp_register_list(Dd, offset, util::prefix::D);
+    const std::string registers = util::vfp_register_list(Dd, offset, settings, util::prefix::D);
 
-    return util::make_string("FLDM", addressing_mode, 'D', util::cond(code), " ", Rn, W, ", ", registers);
+    std::string tmp = util::make_string(
+        "FLDM", addressing_mode, 'D', util::cond(code), " ", Rn, W, ", ", registers
+    );
+
+    if (settings.capitals == false) {
+        util::to_lower(tmp);
+    }
+
+    return tmp;
 }
 
 
@@ -391,10 +404,10 @@ std::string generators::arm::vfp::FLDMD(const u32 code) {
  * 
  * reference: C4-40
  */
-std::string generators::arm::vfp::FLDMS(const u32 code) {
-    const std::string addressing_mode = shifters::vfp_ls_mul(code);
+std::string generators::arm::vfp::FLDMS(const u32 code, const settings settings) {
+    const std::string addressing_mode = shifters::vfp_ls_mul(code, settings);
 
-    const std::string Rn = util::reg_string(code, 16, 19);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
 
     const char* W = (shared::util::bit_fetch(code, 21) ? "!" : "");
 
@@ -404,9 +417,17 @@ std::string generators::arm::vfp::FLDMS(const u32 code) {
 
     const u8 Fd_bits = static_cast<u8>((Fd << 1) | D);
 
-    const std::string registers = util::vfp_register_list(Fd_bits, offset, util::prefix::S);
+    const std::string registers = util::vfp_register_list(Fd_bits, offset, settings, util::prefix::S);
 
-    return util::make_string("FLDM", addressing_mode, 'S', util::cond(code), " ", Rn, W, ", ", registers);
+    std::string tmp = util::make_string(
+        "FLDM", addressing_mode, 'S', util::cond(code), " ", Rn, W, ", ", registers
+    );
+
+    if (settings.capitals == false) {
+        util::to_lower(tmp);
+    }
+
+    return tmp;
 }
 
 
@@ -436,19 +457,27 @@ std::string generators::arm::vfp::FLDMS(const u32 code) {
  * 
  * reference: C4-42
  */
-std::string generators::arm::vfp::FLDMX(const u32 code) {
-    const std::string addressing_mode = shifters::vfp_ls_mul(code);
+std::string generators::arm::vfp::FLDMX(const u32 code, const settings settings) {
+    const std::string addressing_mode = shifters::vfp_ls_mul(code, settings);
 
-    const std::string Rn = util::reg_string(code, 16, 19);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
 
     const char* W = (shared::util::bit_fetch(code, 21) ? "!" : "");
 
     const u8 Dd = shared::util::bit_range<u8>(code, 12, 15);
     const u8 offset = shared::util::bit_range<u8>(code, 0, 7) - 1;
 
-    const std::string registers = util::vfp_register_list(Dd, offset, util::prefix::D);
+    const std::string registers = util::vfp_register_list(Dd, offset, settings, util::prefix::D);
 
-    return util::make_string("FLDM", addressing_mode, 'X', util::cond(code), " ", Rn, W, ", ", registers);
+    std::string tmp = util::make_string(
+        "FLDM", addressing_mode, 'X', util::cond(code), " ", Rn, W, ", ", registers
+    );
+
+    if (settings.capitals == false) {
+        util::to_lower(tmp);
+    }
+
+    return tmp;
 }
 
 
@@ -466,17 +495,19 @@ std::string generators::arm::vfp::FLDMX(const u32 code) {
  * 
  * reference: C4-44
  */
-std::string generators::arm::vfp::FLDS(const u32 code) {
+std::string generators::arm::vfp::FLDS(const u32 code, const settings settings) {
     const bool D = (shared::util::bit_fetch(code, 22));
     
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Rn = util::reg_string(code, 16, 19);
+    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D, settings);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
 
     const u16 offset = shared::util::bit_range<u16>(code, 0, 7) * 4;
 
     const char* op = (shared::util::bit_fetch(code, 23) ? "" : "-");
 
-    return util::make_string("FLDS", util::cond(code), " ", Sd, ", [", Rn, ", #", op, util::hex(offset), "]");
+    return util::make_string(
+        "FLDS", util::cond(code), " ", Sd, ", [", Rn, ", #", op, util::hex(offset, settings), "]"
+    );
 }
 
 
@@ -491,8 +522,8 @@ std::string generators::arm::vfp::FLDS(const u32 code) {
  * 
  * reference: C4-46
  */
-std::string generators::arm::vfp::FMACD(const u32 code) {
-    return patterns::vfp_Dd_Dn_Dm(code, "FMACD");
+std::string generators::arm::vfp::FMACD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Dn_Dm(code, "FMACD", settings);
 }
 
 
@@ -510,8 +541,8 @@ std::string generators::arm::vfp::FMACD(const u32 code) {
  * 
  * reference: C4-48
  */
-std::string generators::arm::vfp::FMACS(const u32 code) {
-    return patterns::vfp_Sd_Sn_Sm(code, "FMACS");
+std::string generators::arm::vfp::FMACS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sn_Sm(code, "FMACS", settings);
 }
 
 
@@ -525,8 +556,8 @@ std::string generators::arm::vfp::FMACS(const u32 code) {
  * 
  * reference: C4-50
  */
-std::string generators::arm::vfp::FMDHR(const u32 code) {
-    return patterns::vfp_Dn_Rd(code, "FMDHR");
+std::string generators::arm::vfp::FMDHR(const u32 code, const settings settings) {
+    return patterns::vfp_Dn_Rd(code, "FMDHR", settings);
 }
 
 //1111 11100010 0001 0010 101100010000
@@ -541,8 +572,8 @@ std::string generators::arm::vfp::FMDHR(const u32 code) {
  * 
  * reference: C4-52
  */
-std::string generators::arm::vfp::FMDLR(const u32 code) {
-    return patterns::vfp_Dn_Rd(code, "FMDLR");
+std::string generators::arm::vfp::FMDLR(const u32 code, const settings settings) {
+    return patterns::vfp_Dn_Rd(code, "FMDLR", settings);
 }
 
 
@@ -556,8 +587,8 @@ std::string generators::arm::vfp::FMDLR(const u32 code) {
  * 
  * reference: C4-54
  */
-std::string generators::arm::vfp::FMRDH(const u32 code) {
-    return patterns::vfp_Rd_Dn(code, "FMRDH");
+std::string generators::arm::vfp::FMRDH(const u32 code, const settings settings) {
+    return patterns::vfp_Rd_Dn(code, "FMRDH", settings);
 }
 
 
@@ -571,8 +602,8 @@ std::string generators::arm::vfp::FMRDH(const u32 code) {
  * 
  * reference: C4-55
  */
-std::string generators::arm::vfp::FMRDL(const u32 code) {
-    return patterns::vfp_Rd_Dn(code, "FMRDL");
+std::string generators::arm::vfp::FMRDL(const u32 code, const settings settings) {
+    return patterns::vfp_Rd_Dn(code, "FMRDL", settings);
 }
 
 
@@ -586,13 +617,15 @@ std::string generators::arm::vfp::FMRDL(const u32 code) {
  * 
  * reference: C4-56
  */
-std::string generators::arm::vfp::FMRS(const u32 code) {
+std::string generators::arm::vfp::FMRS(const u32 code, const settings settings) {
     const bool N = (shared::util::bit_fetch(code, 7));
 
-    const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N);
-    const std::string Rd = util::reg_string(code, 12, 15, util::prefix::R);
+    const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N, settings);
+    const std::string Rd = util::reg_string(code, 12, 15, settings, util::prefix::R);
 
-    return util::make_string("FMRS", util::cond(code), " ", Rd, ", ", Sn);
+    return util::make_string(
+        "FMRS", util::cond(code), " ", Rd, ", ", Sn
+    );
 }
 
 
@@ -616,8 +649,8 @@ std::string generators::arm::vfp::FMRS(const u32 code) {
  * 
  * reference: C4-58
  */
-std::string generators::arm::vfp::FMRX(const u32 code) {
-    const std::string Rd = util::reg_string(code, 12, 15, util::prefix::R);
+std::string generators::arm::vfp::FMRX(const u32 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 12, 15, settings, util::prefix::R);
 
     std::string vfp_sys_reg;
     vfp_sys_reg.resize(5); // all system registers are only 5 characters long
@@ -625,9 +658,9 @@ std::string generators::arm::vfp::FMRX(const u32 code) {
     const u8 reg_bits = shared::util::bit_range<u8>(code, 16, 19);
 
     switch (reg_bits) {
-        case 0b0000: vfp_sys_reg = "FPSID"; break;
-        case 0b0001: vfp_sys_reg = "FPSCR"; break;
-        case 0b1000: vfp_sys_reg = "FPEXC"; break;
+        case 0b0000: vfp_sys_reg = (settings.capitals ? "FPSID" : "fpsid"); break;
+        case 0b0001: vfp_sys_reg = (settings.capitals ? "FPSCR" : "fpscr"); break;
+        case 0b1000: vfp_sys_reg = (settings.capitals ? "FPEXC" : "fpexc"); break;
         default: shared::out::error("Unrecognised VFP system register for FMRX"); // unpredictable todo
     }
 
@@ -646,8 +679,8 @@ std::string generators::arm::vfp::FMRX(const u32 code) {
  * 
  * reference: C4-60
  */
-std::string generators::arm::vfp::FMSCD(const u32 code) {
-    return patterns::vfp_Dd_Dn_Dm(code, "FMSCD");
+std::string generators::arm::vfp::FMSCD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Dn_Dm(code, "FMSCD", settings);
 }
 
 
@@ -665,8 +698,8 @@ std::string generators::arm::vfp::FMSCD(const u32 code) {
  * 
  * reference: C4-62
  */
-std::string generators::arm::vfp::FMSCS(const u32 code) {
-    return patterns::vfp_Sd_Sn_Sm(code, "FMSCS");
+std::string generators::arm::vfp::FMSCS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sn_Sm(code, "FMSCS", settings);
 }
 
 
@@ -680,11 +713,11 @@ std::string generators::arm::vfp::FMSCS(const u32 code) {
  * 
  * reference: C4-64
  */
-std::string generators::arm::vfp::FMSR(const u32 code) {
+std::string generators::arm::vfp::FMSR(const u32 code, const settings settings) {
     const bool N = (shared::util::bit_fetch(code, 7));
 
-    const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N);
-    const std::string Rd = util::reg_string(code, 12, 15);
+    const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N, settings);
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
 
     return util::make_string("FMSR", util::cond(code), " ", Sn, ", ", Rd);
 }
@@ -698,7 +731,7 @@ std::string generators::arm::vfp::FMSR(const u32 code) {
  * 
  * reference: C4-66
  */
-std::string generators::arm::vfp::FMSTAT(const u32 code) {
+std::string generators::arm::vfp::FMSTAT(const u32 code, const settings settings) {
     return util::make_string("FMSTAT", util::cond(code));
 }
 
@@ -714,8 +747,8 @@ std::string generators::arm::vfp::FMSTAT(const u32 code) {
  * 
  * reference: C4-67
  */
-std::string generators::arm::vfp::FMULD(const u32 code) {
-    return patterns::vfp_Dd_Dn_Dm(code, "FMULD");
+std::string generators::arm::vfp::FMULD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Dn_Dm(code, "FMULD", settings);
 }
 
 
@@ -732,8 +765,8 @@ std::string generators::arm::vfp::FMULD(const u32 code) {
  * 
  * reference: C4-68
  */
-std::string generators::arm::vfp::FMULS(const u32 code) {
-    return patterns::vfp_Sd_Sn_Sm(code, "FMULS");
+std::string generators::arm::vfp::FMULS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sn_Sm(code, "FMULS", settings);
 }
 
 
@@ -759,8 +792,8 @@ std::string generators::arm::vfp::FMULS(const u32 code) {
  * 
  * reference: C4-70
  */
-std::string generators::arm::vfp::FMXR(const u32 code) {
-    const std::string Rd = util::reg_string(code, 12, 15);
+std::string generators::arm::vfp::FMXR(const u32 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
 
     std::string vfp_sys_reg;
     vfp_sys_reg.resize(5); // all system registers are only 5 characters long
@@ -788,8 +821,8 @@ std::string generators::arm::vfp::FMXR(const u32 code) {
  * 
  * reference: C4-72
  */
-std::string generators::arm::vfp::FNEGD(const u32 code) {
-    return patterns::vfp_Dd_Dm(code, "FNEGD");
+std::string generators::arm::vfp::FNEGD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Dm(code, "FNEGD", settings);
 }
 
 
@@ -803,8 +836,8 @@ std::string generators::arm::vfp::FNEGD(const u32 code) {
  * 
  * reference: C4-74
  */
-std::string generators::arm::vfp::FNEGS(const u32 code) {
-    return patterns::vfp_Sd_Sm(code, "FNEGS");
+std::string generators::arm::vfp::FNEGS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sm(code, "FNEGS", settings);
 }
 
 
@@ -819,8 +852,8 @@ std::string generators::arm::vfp::FNEGS(const u32 code) {
  * 
  * reference: C4-76
  */
-std::string generators::arm::vfp::FNMACD(const u32 code) {
-    return patterns::vfp_Dd_Dn_Dm(code, "FNMACD");
+std::string generators::arm::vfp::FNMACD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Dn_Dm(code, "FNMACD", settings);
 }
 
 
@@ -838,8 +871,8 @@ std::string generators::arm::vfp::FNMACD(const u32 code) {
  * 
  * reference: C4-78
  */
-std::string generators::arm::vfp::FNMACS(const u32 code) {
-    return patterns::vfp_Sd_Sn_Sm(code, "FNMACS");
+std::string generators::arm::vfp::FNMACS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sn_Sm(code, "FNMACS", settings);
 }
 
 
@@ -854,8 +887,8 @@ std::string generators::arm::vfp::FNMACS(const u32 code) {
  * 
  * reference: C4-80
  */
-std::string generators::arm::vfp::FNMSCD(const u32 code) {
-    return patterns::vfp_Dd_Dn_Dm(code, "FNMSCD");
+std::string generators::arm::vfp::FNMSCD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Dn_Dm(code, "FNMSCD", settings);
 }
 
 
@@ -873,8 +906,8 @@ std::string generators::arm::vfp::FNMSCD(const u32 code) {
  * 
  * reference: C4-82
  */
-std::string generators::arm::vfp::FNMSCS(const u32 code) {
-    return patterns::vfp_Sd_Sn_Sm(code, "FNMSCS");
+std::string generators::arm::vfp::FNMSCS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sn_Sm(code, "FNMSCS", settings);
 }
 
 
@@ -889,8 +922,8 @@ std::string generators::arm::vfp::FNMSCS(const u32 code) {
  * 
  * reference: C4-84
  */
-std::string generators::arm::vfp::FNMULD(const u32 code) {
-    return patterns::vfp_Dd_Dn_Dm(code, "FNMULD");
+std::string generators::arm::vfp::FNMULD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Dn_Dm(code, "FNMULD", settings);
 }
 
 
@@ -907,8 +940,8 @@ std::string generators::arm::vfp::FNMULD(const u32 code) {
  * 
  * reference: C4-86
  */
-std::string generators::arm::vfp::FNMULS(const u32 code) {
-    return patterns::vfp_Sd_Sn_Sm(code, "FNMULS");
+std::string generators::arm::vfp::FNMULS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sn_Sm(code, "FNMULS", settings);
 }
 
 
@@ -922,8 +955,8 @@ std::string generators::arm::vfp::FNMULS(const u32 code) {
  * 
  * reference: C4-88
  */
-std::string generators::arm::vfp::FSITOD(const u32 code) {
-    return patterns::vfp_Dd_Sm(code, "FSITOD");
+std::string generators::arm::vfp::FSITOD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Sm(code, "FSITOD", settings);
 }
 
 
@@ -937,8 +970,8 @@ std::string generators::arm::vfp::FSITOD(const u32 code) {
  * 
  * reference: C4-89
  */
-std::string generators::arm::vfp::FSITOS(const u32 code) {
-    return patterns::vfp_Sd_Sm(code, "FSITOS");
+std::string generators::arm::vfp::FSITOS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sm(code, "FSITOS", settings);
 }
 
 
@@ -952,8 +985,8 @@ std::string generators::arm::vfp::FSITOS(const u32 code) {
  * 
  * reference: C4-90
  */
-std::string generators::arm::vfp::FSQRTD(const u32 code) {
-    return patterns::vfp_Dd_Dm(code, "FSQRTD");
+std::string generators::arm::vfp::FSQRTD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Dm(code, "FSQRTD", settings);
 }
 
 
@@ -967,8 +1000,8 @@ std::string generators::arm::vfp::FSQRTD(const u32 code) {
  * 
  * reference: C4-92
  */
-std::string generators::arm::vfp::FSQRTS(const u32 code) {
-    return patterns::vfp_Sd_Sm(code, "FSQRTS"); 
+std::string generators::arm::vfp::FSQRTS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sm(code, "FSQRTS", settings); 
 }
 
 
@@ -985,15 +1018,15 @@ std::string generators::arm::vfp::FSQRTS(const u32 code) {
  * 
  * reference: C4-94
  */
-std::string generators::arm::vfp::FSTD(const u32 code) {
-    const std::string Dd = util::reg_string(code, 12, 15, util::prefix::D);
-    const std::string Rn = util::reg_string(code, 16, 19);
+std::string generators::arm::vfp::FSTD(const u32 code, const settings settings) {
+    const std::string Dd = util::reg_string(code, 12, 15, settings, util::prefix::D);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
 
     const u16 offset = (shared::util::bit_range<u16>(code, 0, 7) * 4);
 
     const char* op = (shared::util::bit_fetch(code, 23) ? "" : "-");
 
-    return util::make_string("FSTD", util::cond(code), " ", Dd, ", [", Rn, ", #", op, util::hex(offset), "]");
+    return util::make_string("FSTD", util::cond(code), " ", Dd, ", [", Rn, ", #", op, util::hex(offset, settings), "]");
 }
 
 
@@ -1021,17 +1054,17 @@ std::string generators::arm::vfp::FSTD(const u32 code) {
  * 
  * reference: C4-96
  */
-std::string generators::arm::vfp::FSTMD(const u32 code) {
-    const std::string addressing_mode = shifters::vfp_ls_mul(code);
+std::string generators::arm::vfp::FSTMD(const u32 code, const settings settings) {
+    const std::string addressing_mode = shifters::vfp_ls_mul(code, settings);
 
-    const std::string Rn = util::reg_string(code, 16, 19);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
 
     const char* W = (shared::util::bit_fetch(code, 21) ? "!" : "");
 
     const u8 Dd = shared::util::bit_range<u8>(code, 12, 15);
     const u8 offset = shared::util::bit_range<u8>(code, 0, 7);
 
-    const std::string registers = util::vfp_register_list(Dd, offset, util::prefix::D);
+    const std::string registers = util::vfp_register_list(Dd, offset, settings, util::prefix::D);
 
     return util::make_string("FSTM", addressing_mode, 'D', util::cond(code), " ", Rn, W, ", ", registers);
 }
@@ -1062,10 +1095,10 @@ std::string generators::arm::vfp::FSTMD(const u32 code) {
  * 
  * reference: C4-98
  */
-std::string generators::arm::vfp::FSTMS(const u32 code) {
-    const std::string addressing_mode = shifters::vfp_ls_mul(code);
+std::string generators::arm::vfp::FSTMS(const u32 code, const settings settings) {
+    const std::string addressing_mode = shifters::vfp_ls_mul(code, settings);
 
-    const std::string Rn = util::reg_string(code, 16, 19);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
 
     const char* W = (shared::util::bit_fetch(code, 21) ? "!" : "");
 
@@ -1075,7 +1108,7 @@ std::string generators::arm::vfp::FSTMS(const u32 code) {
 
     const u8 Fd_bits = static_cast<u8>((Fd << 1) | D);
 
-    const std::string registers = util::vfp_register_list(Fd_bits, offset, util::prefix::S);
+    const std::string registers = util::vfp_register_list(Fd_bits, offset, settings, util::prefix::S);
 
     return util::make_string("FSTM", addressing_mode, 'S', util::cond(code), " ", Rn, W, ", ", registers);
 }
@@ -1105,17 +1138,17 @@ std::string generators::arm::vfp::FSTMS(const u32 code) {
  * 
  * reference: C4-100
  */
-std::string generators::arm::vfp::FSTMX(const u32 code) {
-    const std::string addressing_mode = shifters::vfp_ls_mul(code);
+std::string generators::arm::vfp::FSTMX(const u32 code, const settings settings) {
+    const std::string addressing_mode = shifters::vfp_ls_mul(code, settings);
 
-    const std::string Rn = util::reg_string(code, 16, 19);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
 
     const char* W = (shared::util::bit_fetch(code, 21) ? "!" : "");
 
     const u8 Dd = shared::util::bit_range<u8>(code, 12, 15);
     const u8 offset = shared::util::bit_range<u8>(code, 0, 7) - 1;
 
-    const std::string registers = util::vfp_register_list(Dd, offset, util::prefix::D);
+    const std::string registers = util::vfp_register_list(Dd, offset, settings, util::prefix::D);
 
     return util::make_string("FSTM", addressing_mode, 'X', util::cond(code), " ", Rn, W, ", ", registers);
 }
@@ -1125,17 +1158,17 @@ std::string generators::arm::vfp::FSTMX(const u32 code) {
  * 
  * reference: C4-
  */
-std::string generators::arm::vfp::FSTS(const u32 code) {
+std::string generators::arm::vfp::FSTS(const u32 code, const settings settings) {
     const bool D = (shared::util::bit_fetch(code, 22));
     
-    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D);
-    const std::string Rn = util::reg_string(code, 16, 19);
+    const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D, settings);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
 
     const u16 offset = shared::util::bit_range<u16>(code, 0, 7) * 4;
 
     const char* op = (shared::util::bit_fetch(code, 23) ? "" : "-");
 
-    return util::make_string("FSTS", util::cond(code), " ", Sd, ", [", Rn, ", #", op, util::hex(offset), "]");
+    return util::make_string("FSTS", util::cond(code), " ", Sd, ", [", Rn, ", #", op, util::hex(offset, settings), "]");
 }
 
 
@@ -1150,8 +1183,8 @@ std::string generators::arm::vfp::FSTS(const u32 code) {
  * 
  * reference: C4-104
  */
-std::string generators::arm::vfp::FSUBD(const u32 code) {
-    return patterns::vfp_Dd_Dn_Dm(code, "FSUBD");
+std::string generators::arm::vfp::FSUBD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Dn_Dm(code, "FSUBD", settings);
 }
 
 
@@ -1168,8 +1201,8 @@ std::string generators::arm::vfp::FSUBD(const u32 code) {
  * 
  * reference: C4-106
  */
-std::string generators::arm::vfp::FSUBS(const u32 code) {
-    return patterns::vfp_Sd_Sn_Sm(code, "FSUBS");
+std::string generators::arm::vfp::FSUBS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sn_Sm(code, "FSUBS", settings);
 }
 
 
@@ -1186,8 +1219,8 @@ std::string generators::arm::vfp::FSUBS(const u32 code) {
  * 
  * reference: C4-108
  */
-std::string generators::arm::vfp::FTOSID(const u32 code) {
-    return patterns::vfp_Sd_Dm_Z(code, "FTOSI"); // D is appended at the end
+std::string generators::arm::vfp::FTOSID(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Dm_Z(code, "FTOSI", settings); // D is appended at the end
 }
 
 
@@ -1204,8 +1237,8 @@ std::string generators::arm::vfp::FTOSID(const u32 code) {
  * 
  * reference: C4-110
  */
-std::string generators::arm::vfp::FTOSIS(const u32 code) {
-    return patterns::vfp_Sd_Sm_Z(code, "FTOSI"); // S is appended at the end
+std::string generators::arm::vfp::FTOSIS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sm_Z(code, "FTOSI", settings); // S is appended at the end
 }
 
 
@@ -1222,8 +1255,8 @@ std::string generators::arm::vfp::FTOSIS(const u32 code) {
  * 
  * reference: C4-112
  */
-std::string generators::arm::vfp::FTOUID(const u32 code) {
-    return patterns::vfp_Sd_Dm_Z(code, "FTOUI"); // D is appended
+std::string generators::arm::vfp::FTOUID(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Dm_Z(code, "FTOUI", settings); // D is appended
 }
 
 
@@ -1240,8 +1273,8 @@ std::string generators::arm::vfp::FTOUID(const u32 code) {
  * 
  * reference: C4-114
  */
-std::string generators::arm::vfp::FTOUIS(const u32 code) {
-    return patterns::vfp_Sd_Sm_Z(code, "FTOUI"); // S is appended at the end
+std::string generators::arm::vfp::FTOUIS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sm_Z(code, "FTOUI", settings); // S is appended at the end
 }
 
 
@@ -1255,8 +1288,8 @@ std::string generators::arm::vfp::FTOUIS(const u32 code) {
  * 
  * reference: C4-116
  */
-std::string generators::arm::vfp::FUITOD(const u32 code) {
-    return patterns::vfp_Dd_Sm(code, "FUITOD");
+std::string generators::arm::vfp::FUITOD(const u32 code, const settings settings) {
+    return patterns::vfp_Dd_Sm(code, "FUITOD", settings);
 }
 
 
@@ -1270,6 +1303,6 @@ std::string generators::arm::vfp::FUITOD(const u32 code) {
  * 
  * reference: C4-117
  */
-std::string generators::arm::vfp::FUITOS(const u32 code) {
-    return patterns::vfp_Sd_Sm(code, "FUITOS"); 
+std::string generators::arm::vfp::FUITOS(const u32 code, const settings settings) {
+    return patterns::vfp_Sd_Sm(code, "FUITOS", settings); 
 }

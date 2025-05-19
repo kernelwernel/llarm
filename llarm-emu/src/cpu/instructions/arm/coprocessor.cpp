@@ -80,7 +80,7 @@ void INSTRUCTIONS::arm::coprocessor_inst::MCR(const arm_code_t &code) {
     */
 
 
-    reg.arm_increment_PC();
+    ;
 }
 
 
@@ -122,7 +122,7 @@ void INSTRUCTIONS::arm::coprocessor_inst::MRC(const arm_code_t &code) {
     //    reg.write(Rd_id, data);
     //}
 
-    reg.arm_increment_PC();
+    ;
 }
 
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1

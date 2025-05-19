@@ -1,5 +1,3 @@
-#pragma once
-
 #include "../../settings.hpp"
 #include "shared/types.hpp"
 #include "../../id.hpp"

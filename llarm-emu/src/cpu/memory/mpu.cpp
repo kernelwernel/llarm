@@ -1,5 +1,3 @@
-#pragma once
-
 #include "shared/types.hpp"
 #include "../../utility.hpp"
 #include "../core/globals.hpp"

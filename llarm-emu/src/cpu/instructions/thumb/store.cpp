@@ -44,7 +44,7 @@ void INSTRUCTIONS::thumb::store::STMIA(const thumb_code_t& code) {
 
     reg.write(Rn_id, (Rn + (std::popcount(register_list) * 4)));
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -77,7 +77,7 @@ void INSTRUCTIONS::thumb::store::STR1(const thumb_code_t& code) {
         return;
     }
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -110,7 +110,7 @@ void INSTRUCTIONS::thumb::store::STR2(const thumb_code_t& code) {
         return;
     }
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -142,7 +142,7 @@ void INSTRUCTIONS::thumb::store::STR3(const thumb_code_t& code) {
         return;
     }
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -164,7 +164,7 @@ void INSTRUCTIONS::thumb::store::STRB1(const thumb_code_t& code) {
         return;
     }
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -186,7 +186,7 @@ void INSTRUCTIONS::thumb::store::STRB2(const thumb_code_t& code) {
         return;
     }
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -220,7 +220,7 @@ void INSTRUCTIONS::thumb::store::STRH1(const thumb_code_t& code) { // TODO
     }
 
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -253,7 +253,7 @@ void INSTRUCTIONS::thumb::store::STRH2(const thumb_code_t& code) { // TODO
         return;
     }
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -312,7 +312,7 @@ void INSTRUCTIONS::thumb::store::PUSH(const thumb_code_t& code) {
 
     reg.write(id::reg::SP, (SP - (4 * (R + std::popcount(register_list)))));
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 

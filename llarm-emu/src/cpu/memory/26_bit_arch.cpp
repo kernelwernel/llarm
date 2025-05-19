@@ -1,5 +1,3 @@
-#pragma once
-
 #include "../coprocessor/coprocessor.hpp"
 #include "../../settings.hpp"
 #include "../../id.hpp"

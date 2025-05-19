@@ -14,7 +14,7 @@
  *     V Flag = unaffected
  */
 void INSTRUCTIONS::arm::movement::MOV(const arm_code_t &code) {
-    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
+    const data_struct shifter_operand = address_mode.data_processing(code);
     
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
 
@@ -32,7 +32,7 @@ void INSTRUCTIONS::arm::movement::MOV(const arm_code_t &code) {
         reg.write(id::cpsr::C, (shifter_operand.carry));
     }
 
-    reg.arm_increment_PC();
+    ;
 } 
 
 
@@ -48,8 +48,8 @@ void INSTRUCTIONS::arm::movement::MOV(const arm_code_t &code) {
  *     V Flag = unaffected
  */
 void INSTRUCTIONS::arm::movement::MVN(const arm_code_t &code) {
-    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
-    
+    const data_struct shifter_operand = address_mode.data_processing(code);
+
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
 
     const bool S = code.test(20);
@@ -66,7 +66,7 @@ void INSTRUCTIONS::arm::movement::MVN(const arm_code_t &code) {
         reg.write(id::cpsr::C, (shifter_operand.carry));
     }
 
-    reg.arm_increment_PC();
+    ;
 }
 
 

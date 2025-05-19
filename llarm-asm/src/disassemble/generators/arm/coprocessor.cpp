@@ -37,18 +37,18 @@ using namespace internal;
  * 
  * reference: A4-20
  */
-std::string generators::arm::coprocessor::CDP(const u32 code) {
+std::string generators::arm::coprocessor::CDP(const u32 code, const settings settings) {
     const u8 cond = shared::util::bit_range<u8>(code, 28, 31);
     const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond));
 
-    const std::string coproc = util::reg_string(code, 8, 11, util::prefix::P);
+    const std::string coproc = util::reg_string(code, 8, 11, settings, util::prefix::P);
 
     const u8 opcode_1 = shared::util::bit_range<u8>(code, 20, 23);
     const u8 opcode_2 = shared::util::bit_range<u8>(code, 5, 7);
 
-    const std::string CRd = util::reg_string(code, 12, 15, util::prefix::C);
-    const std::string CRn = util::reg_string(code, 16, 19, util::prefix::C);
-    const std::string CRm = util::reg_string(code, 0, 3, util::prefix::C);
+    const std::string CRd = util::reg_string(code, 12, 15, settings, util::prefix::C);
+    const std::string CRn = util::reg_string(code, 16, 19, settings, util::prefix::C);
+    const std::string CRm = util::reg_string(code, 0, 3, settings, util::prefix::C);
 
     return util::make_string("CDP", suffix, " ", coproc, ", #", opcode_1, ", ", CRd, ", ", CRn, ", ", CRm, ", #", opcode_2);
 }
@@ -79,17 +79,17 @@ std::string generators::arm::coprocessor::CDP(const u32 code) {
  * 
  * reference: A4-28
  */
-std::string generators::arm::coprocessor::LDC(const u32 code) {
+std::string generators::arm::coprocessor::LDC(const u32 code, const settings settings) {
     const u8 cond = shared::util::bit_range<u8>(code, 28, 31);
     const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond));
 
     const char* L = (shared::util::bit_fetch(code, 22) ? "L" : "");
 
-    const std::string coproc = util::reg_string(code, 8, 11, util::prefix::P);
+    const std::string coproc = util::reg_string(code, 8, 11, settings, util::prefix::P);
 
-    const std::string CRd = util::reg_string(code, 12, 15, util::prefix::C);
+    const std::string CRd = util::reg_string(code, 12, 15, settings, util::prefix::C);
 
-    const std::string addressing_mode = shifters::ls_coproc_shifter(code);
+    const std::string addressing_mode = shifters::ls_coproc(code, settings);
 
     return util::make_string("LDC", suffix, L, " ", coproc, ", ", CRd, ", ", addressing_mode);
 }
@@ -116,18 +116,18 @@ std::string generators::arm::coprocessor::LDC(const u32 code) {
  * 
  * reference: A4-52
  */
-std::string generators::arm::coprocessor::MCR(const u32 code) {
+std::string generators::arm::coprocessor::MCR(const u32 code, const settings settings) {
     const u8 cond = shared::util::bit_range<u8>(code, 28, 31);
     const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond));
 
-    const std::string coproc = util::reg_string(code, 8, 11, util::prefix::P);
+    const std::string coproc = util::reg_string(code, 8, 11, settings, util::prefix::P);
 
     const u8 opcode_1 = shared::util::bit_range<u8>(code, 21, 23);
     const u8 opcode_2 = shared::util::bit_range<u8>(code, 5, 7);
 
-    const std::string Rd = util::reg_string(code, 12, 15);
-    const std::string CRn = util::reg_string(code, 16, 19, util::prefix::C);
-    const std::string CRm = util::reg_string(code, 0, 3, util::prefix::C);
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
+    const std::string CRn = util::reg_string(code, 16, 19, settings, util::prefix::C);
+    const std::string CRm = util::reg_string(code, 0, 3, settings, util::prefix::C);
 
     return util::make_string("MCR", suffix, " ", coproc, ", #", opcode_1, ", ", Rd, ", ", CRn, ", ", CRm, ", #", opcode_2);
 }
@@ -155,18 +155,18 @@ std::string generators::arm::coprocessor::MCR(const u32 code) {
  * 
  * reference: A4-58
  */
-std::string generators::arm::coprocessor::MRC(const u32 code) {
+std::string generators::arm::coprocessor::MRC(const u32 code, const settings settings) {
     const u8 cond = shared::util::bit_range<u8>(code, 28, 31);
     const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond));
 
-    const std::string coproc = util::reg_string(code, 8, 11, util::prefix::P);
+    const std::string coproc = util::reg_string(code, 8, 11, settings, util::prefix::P);
 
     const u8 opcode_1 = shared::util::bit_range<u8>(code, 21, 23);
     const u8 opcode_2 = shared::util::bit_range<u8>(code, 5, 7);
 
-    const std::string Rd = util::reg_string(code, 12, 15);
-    const std::string CRn = util::reg_string(code, 16, 19, util::prefix::C);
-    const std::string CRm = util::reg_string(code, 0, 3, util::prefix::C);
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
+    const std::string CRn = util::reg_string(code, 16, 19, settings, util::prefix::C);
+    const std::string CRm = util::reg_string(code, 0, 3, settings, util::prefix::C);
 
     return util::make_string("MRC", suffix, " ", coproc, ", #", opcode_1, ", ", Rd, ", ", CRn, ", ", CRm, ", #", opcode_2);
 }
@@ -197,17 +197,17 @@ std::string generators::arm::coprocessor::MRC(const u32 code) {
  * 
  * reference: A4-82
  */
-std::string generators::arm::coprocessor::STC(const u32 code) {
+std::string generators::arm::coprocessor::STC(const u32 code, const settings settings) {
     const u8 cond = shared::util::bit_range<u8>(code, 28, 31);
     const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond));
 
     const char* L = (shared::util::bit_fetch(code, 22) ? "L" : "");
 
-    const std::string coproc = util::reg_string(code, 8, 11, util::prefix::P);
+    const std::string coproc = util::reg_string(code, 8, 11, settings, util::prefix::P);
 
-    const std::string CRd = util::reg_string(code, 12, 15, util::prefix::C);
+    const std::string CRd = util::reg_string(code, 12, 15, settings, util::prefix::C);
 
-    const std::string addressing_mode = shifters::ls_coproc_shifter(code);
+    const std::string addressing_mode = shifters::ls_coproc(code, settings);
 
     return util::make_string("STC", suffix, L, " ", coproc, ", ", CRd, ", ", addressing_mode);
 }

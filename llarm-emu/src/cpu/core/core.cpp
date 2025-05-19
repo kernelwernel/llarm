@@ -37,7 +37,7 @@ void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
     CP15 cp15(settings, globals); // SEGFAULT HERE in release version for some reason
     COPROCESSOR coprocessor(cp15);
     RAM ram(globals);
-    ARCH_26_BIT arch_26(coprocessor, settings);
+    ARCH_26 arch_26(coprocessor, settings);
     MMU mmu(globals, ram, coprocessor, settings);
     MPU mpu(globals, coprocessor, settings);
     FCSE fcse(coprocessor, settings);
@@ -92,6 +92,8 @@ void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
                 
                 execute.arm_execute(instruction);
 
+                reg.arm_increment_PC();
+
                 util::dev::pause();
                 continue;
             }
@@ -106,6 +108,8 @@ void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
                 const thumb_decode_struct instruction = decode.thumb_decode(thumb_code_access.code);
 
                 execute.thumb_execute(instruction);
+
+                reg.thumb_increment_PC();
                 continue;
                 // TODO benchmark by having the object allocations before the for (;;) loop
             }

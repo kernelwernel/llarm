@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
 project(
     llarm-asm
     VERSION 0.1 
-    DESCRIPTION "ARM assembler and disassembler framework"
+    DESCRIPTION "ARM assembly and disassembly framework"
     LANGUAGES CXX
 )
 
@@ -45,11 +45,11 @@ set_target_properties(${TARGET_LIB} PROPERTIES
     OUTPUT_NAME "llarm-asm"
 )
 #add_dependencies(${TARGET_LIB} llarm-shared)
-install(FILES llarm-asm.hpp DESTINATION include/llarm)
-install(DIRECTORY src/ DESTINATION include/llarm/internal/llarm-asm/src)
+install(FILES llarm-asm.hpp DESTINATION /usr/include/llarm)
+#install(DIRECTORY src/ DESTINATION /usr/src/llarm/internal/llarm-asm/src)
 install(TARGETS ${TARGET_LIB}
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION /usr/lib
+    LIBRARY DESTINATION /usr/lib
 )
 
 
@@ -57,7 +57,7 @@ install(TARGETS ${TARGET_LIB}
 add_executable(${TARGET_BIN} "src/main.cpp")
 set_target_properties(${TARGET_BIN} PROPERTIES OUTPUT_NAME "llarm-asm")
 target_link_libraries(${TARGET_BIN} PRIVATE ${TARGET_LIB})
-install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION bin)
+install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION /usr/bin)
 
 
 # to include shared/

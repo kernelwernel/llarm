@@ -3,7 +3,7 @@
 #include "../instructions.hpp"
 
 void INSTRUCTIONS::arm::misc::NOP(const arm_code_t &code) noexcept {
-    reg.arm_increment_PC();
+    ;
     return;
 }
 
@@ -30,7 +30,7 @@ void INSTRUCTIONS::arm::misc::PSR(const arm_code_t &code) noexcept {
     const u8 opc = shared::util::bit_range<u8>(code, 21, 22);
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
 
-    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
+    const data_struct shifter_operand = address_mode.data_processing(code);
     
     u32 alu_out = 0;
 
@@ -67,7 +67,7 @@ void INSTRUCTIONS::arm::misc::PSR(const arm_code_t &code) noexcept {
         reg.write(id::cpsr::M, (0));// TODO
     }
 
-    reg.arm_increment_PC();
+    ;
 }
 
 

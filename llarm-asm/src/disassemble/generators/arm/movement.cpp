@@ -39,8 +39,8 @@ using namespace internal;
  * 
  * reference: A4-56
  */ 
-std::string generators::arm::movement::MOV(const u32 code) {
-    return patterns::S_Rd_data(code, "MOV");
+std::string generators::arm::movement::MOV(const u32 code, const settings settings) {
+    return patterns::S_Rd_data(code, "MOV", settings);
 }
 
 
@@ -71,8 +71,8 @@ std::string generators::arm::movement::MOV(const u32 code) {
  * 
  * reference: A4-68
  */
-std::string generators::arm::movement::MVN(const u32 code) {
-    return patterns::S_Rd_data(code, "MVN");
+std::string generators::arm::movement::MVN(const u32 code, const settings settings) {
+    return patterns::S_Rd_data(code, "MVN", settings);
 }
 
 
@@ -87,8 +87,8 @@ std::string generators::arm::movement::MVN(const u32 code) {
  * 
  * reference: A4-60
  */ 
-std::string generators::arm::movement::MRS(const u32 code) {
-    const std::string Rd = util::reg_string(code, 12, 15);
+std::string generators::arm::movement::MRS(const u32 code, const settings settings) {
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
     const bool R = (shared::util::bit_fetch(code, 22));
 
     const char* PSR = (R ? "SPSR" : "CPSR");
@@ -119,12 +119,15 @@ std::string generators::arm::movement::MRS(const u32 code) {
  * 
  * reference: A4-62
  */
-std::string generators::arm::movement::MSR_IMM(const u32 code) {
-    const std::string immediate = shifters::shifter_to_string(shifters::mode::DATA_IMM, code); 
+std::string generators::arm::movement::MSR_IMM(const u32 code, const settings settings) {
+    const std::string immediate_str = shifters::shifter_to_string(shifters::mode::DATA_IMM, code, settings);
 
     const std::string fields = patterns::psr_fields(code);
 
-    return util::make_string("MSR", util::cond(code), fields, ", ", immediate);
+    size_t pos = 0;
+    const u32 immediate = static_cast<u32>(std::stoul(immediate_str, &pos, 10));
+
+    return util::make_string("MSR", util::cond(code), fields, ", #", util::hex(immediate, settings));
 }
 
 
@@ -146,8 +149,8 @@ std::string generators::arm::movement::MSR_IMM(const u32 code) {
  * 
  * reference: A4-62
  */
-std::string generators::arm::movement::MSR_REG(const u32 code) {
-    const std::string Rm = util::reg_string(code, 0, 3);
+std::string generators::arm::movement::MSR_REG(const u32 code, const settings settings) {
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
 
     const std::string fields = patterns::psr_fields(code);
 

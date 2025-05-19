@@ -48,7 +48,7 @@ namespace shared::util {
     }
 
     inline u32 bit_range(const arm_code_t &input, const u8 start, const u8 end) {
-        return bit_range(input.to_ulong(), start, end);
+        return bit_range(static_cast<u32>(input.to_ulong()), start, end);
     }
 
     inline bool bit_fetch(const u32 input, const u8 index) {

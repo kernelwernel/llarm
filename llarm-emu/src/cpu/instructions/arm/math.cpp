@@ -16,7 +16,7 @@
  *     V Flag = OverflowFrom(Rn + shifter_operand + C Flag)
  */
 void INSTRUCTIONS::arm::math::ADC(const arm_code_t &code) {
-    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
+    const data_struct shifter_operand = address_mode.data_processing(code);
 
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
@@ -36,7 +36,7 @@ void INSTRUCTIONS::arm::math::ADC(const arm_code_t &code) {
         reg.write(id::cpsr::V, operation.overflow_add(Rn, shifter_operand.value, reg.read(id::cpsr::C)));
     }
 
-    reg.arm_increment_PC();
+    ;
 }
 
 
@@ -52,7 +52,7 @@ void INSTRUCTIONS::arm::math::ADC(const arm_code_t &code) {
  *     V Flag = OverflowFrom(Rn + shifter_operand)
  */
 void INSTRUCTIONS::arm::math::ADD(const arm_code_t &code) {
-    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
+    const data_struct shifter_operand = address_mode.data_processing(code);
 
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
@@ -71,7 +71,7 @@ void INSTRUCTIONS::arm::math::ADD(const arm_code_t &code) {
         reg.write(id::cpsr::V, operation.overflow_add(Rn, shifter_operand.value));
     }
 
-    reg.arm_increment_PC();
+    ;
 }
 
 
@@ -87,7 +87,7 @@ void INSTRUCTIONS::arm::math::ADD(const arm_code_t &code) {
  *     V Flag = OverflowFrom(shifter_operand - Rn - NOT(C Flag))
  */
 void INSTRUCTIONS::arm::math::RSC(const arm_code_t &code) {
-    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
+    const data_struct shifter_operand = address_mode.data_processing(code);
     
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
@@ -106,7 +106,7 @@ void INSTRUCTIONS::arm::math::RSC(const arm_code_t &code) {
         reg.write(id::cpsr::V, operation.overflow_sub(shifter_operand.value, Rn, !(reg.read(id::cpsr::C))));
     }
 
-    reg.arm_increment_PC();
+    ;
 }
 
 
@@ -141,7 +141,7 @@ void INSTRUCTIONS::arm::math::SBC(const arm_code_t &code) {
         reg.write(id::cpsr::V, operation.overflow_sub(Rn, shifter_operand, !(reg.read(id::cpsr::C))));
     }
 
-    reg.arm_increment_PC();
+    ;
 }
 
 
@@ -176,7 +176,7 @@ void INSTRUCTIONS::arm::math::RSB(const arm_code_t &code) {
         reg.write(id::cpsr::V, operation.overflow_sub(shifter_operand, Rn));
     }
 
-    reg.arm_increment_PC();
+    ;
 }
 
 
@@ -192,7 +192,7 @@ void INSTRUCTIONS::arm::math::RSB(const arm_code_t &code) {
  *     V Flag = OverflowFrom(Rn - shifter_operand)
  */
 void INSTRUCTIONS::arm::math::SUB(const arm_code_t &code) {
-    const ADDRESSING_MODE::data_struct shifter_operand = address_mode.data_processing(code);
+    const data_struct shifter_operand = address_mode.data_processing(code);
 
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
@@ -211,5 +211,5 @@ void INSTRUCTIONS::arm::math::SUB(const arm_code_t &code) {
         reg.write(id::cpsr::V, operation.overflow_sub(Rn, shifter_operand.value));
     }
 
-    reg.arm_increment_PC();
+    ;
 }

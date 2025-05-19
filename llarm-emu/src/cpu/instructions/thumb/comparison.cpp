@@ -20,7 +20,7 @@ void INSTRUCTIONS::thumb::compare::CMN(const thumb_code_t &code) {
     reg.write(id::cpsr::C, !operation.borrow_add(Rn, Rm));
     reg.write(id::cpsr::V, operation.overflow_add(Rn, Rm));
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -42,7 +42,7 @@ void INSTRUCTIONS::thumb::compare::CMP1(const thumb_code_t &code) {
     reg.write(id::cpsr::C, !operation.borrow_sub(Rn, immed_8));
     reg.write(id::cpsr::V, operation.overflow_sub(Rn, immed_8));
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -64,7 +64,7 @@ void INSTRUCTIONS::thumb::compare::CMP2(const thumb_code_t &code) {
     reg.write(id::cpsr::C, !operation.borrow_sub(Rn, Rm));
     reg.write(id::cpsr::V, operation.overflow_sub(Rn, Rm));
 
-    reg.thumb_increment_PC();
+    ;
 }
 
 
@@ -98,5 +98,5 @@ void INSTRUCTIONS::thumb::compare::CMP3(const thumb_code_t &code) {
     reg.write(id::cpsr::C, !operation.borrow_sub(Rn, Rm));
     reg.write(id::cpsr::V, operation.overflow_sub(Rn, Rm));
 
-    reg.thumb_increment_PC();
+    ;
 }
