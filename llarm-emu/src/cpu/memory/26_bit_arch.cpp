@@ -1,6 +1,7 @@
-#include "../coprocessor/coprocessor.hpp"
 #include "../../settings.hpp"
 #include "../../id.hpp"
+#include "../coprocessor/coprocessor.hpp"
+
 #include "26_bit_arch.hpp"
 
 

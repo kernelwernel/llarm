@@ -1,18 +1,13 @@
 #pragma once
 
-#include "shared/types.hpp"
 #include "../../../id.hpp"
-#include "../../../constants.hpp"
 #include "../../../settings.hpp"
 #include "../../instruction_set.hpp"
 #include "../registers.hpp"
 
+#include "shared/types.hpp"
+
 #include <llarm-asm/llarm-asm.hpp>
-
-#include <bitset>
-#include <tuple>
-#include <functional>
-
 
 struct arm_decode_struct {
     llarm::as::id::arm id;

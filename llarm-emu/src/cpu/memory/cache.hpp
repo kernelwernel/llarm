@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../coprocessor/coprocessor.hpp"
 
 #include "shared/types.hpp"
-#include "../coprocessor/coprocessor.hpp"
 
 struct CACHE {
 private:

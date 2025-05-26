@@ -1,5 +1,6 @@
-#include "shared/types.hpp"
 #include "../instructions.hpp"
+
+#include "shared/types.hpp"
 #include "shared/util.hpp"
 
 

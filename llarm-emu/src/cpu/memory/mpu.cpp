@@ -2,6 +2,7 @@
 #include "../globals.hpp"
 #include "../coprocessor/coprocessor.hpp"
 #include "structure.hpp"
+
 #include "mpu.hpp"
 
 #include "shared/types.hpp"

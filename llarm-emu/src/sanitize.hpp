@@ -1,10 +1,10 @@
 #pragma once
 
-#include "shared/types.hpp"
 #include "id.hpp"
 
-
 #include <tuple>
+
+#include "shared/types.hpp"
 
 
 namespace sanitize {

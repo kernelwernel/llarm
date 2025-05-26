@@ -3,10 +3,11 @@
 #include "types_extra.hpp"
 #include "id.hpp"
 
+#include <iostream>
+
 #include "shared/types.hpp"
 #include "shared/out.hpp"
 
-#include <iostream>
 
 namespace util {
     // TODO: maybe replace this with the 0-shifter strategy

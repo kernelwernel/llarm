@@ -1,9 +1,10 @@
 #include "../../settings.hpp"
-#include "shared/types.hpp"
 #include "../../id.hpp"
 #include "../coprocessor/coprocessor.hpp"
+
 #include "fcse.hpp"
 
+#include "shared/types.hpp"
 
 bool FCSE::is_fcse_enabled() {
     return (settings.is_fcse_enabled);

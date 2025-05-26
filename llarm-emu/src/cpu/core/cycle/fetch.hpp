@@ -1,9 +1,8 @@
 #pragma once
 
-#include "shared/types.hpp"
-
-#include "../../instruction_set.hpp"
 #include "../../memory/memory.hpp"
+
+#include "shared/types.hpp"
 
 struct arm_fetch_struct {
     arm_code_t code;
@@ -14,7 +13,6 @@ struct thumb_fetch_struct {
     thumb_code_t code;
     bool has_failed;
 };
-
 
 
 struct FETCH {

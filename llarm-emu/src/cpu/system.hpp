@@ -67,12 +67,12 @@ public:
         coprocessor.write(id::cp::CP15_R1_M, false);  
     }
 
-    bool switch_to_26_bit_arch() {
+    void switch_to_26_bit_arch() {
         coprocessor.write(id::cp::CP15_R1_P, false);
         coprocessor.write(id::cp::CP15_R1_D, false);
     }
 
-    bool switch_to_32_bit_arch() {
+    void switch_to_32_bit_arch() {
         coprocessor.write(id::cp::CP15_R1_P, true);
         coprocessor.write(id::cp::CP15_R1_D, true);
     }

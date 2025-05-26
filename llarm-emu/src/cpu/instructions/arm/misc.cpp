@@ -1,6 +1,7 @@
-#include "shared/types.hpp"
 #include "../../core/registers.hpp"
 #include "../instructions.hpp"
+
+#include "shared/types.hpp"
 
 void INSTRUCTIONS::arm::misc::NOP(const arm_code_t &code) noexcept {
     return;

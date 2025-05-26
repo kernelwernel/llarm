@@ -1,9 +1,7 @@
-#include "shared/types.hpp"
-#include "../constants.hpp"
 #include "../id.hpp"
 #include "exception.hpp"
 
-#include <map>
+#include "shared/types.hpp"
 
 // TODO If an exception occurs when the processor is in a 26-bit mode, only the PC bits from R15[25:2] are
 // copied to the link register. The remaining bits in the link register are zeroed. The PSR bits from

@@ -1,10 +1,11 @@
-#include "shared/types.hpp"
-#include "shared/util.hpp"
-#include "../instructions.hpp"
 #include "../../core/registers.hpp"
-#include "shared/util.hpp"
+#include "../instructions.hpp"
 
 #include <bit>
+
+#include "shared/types.hpp"
+#include "shared/util.hpp"
+
 
 /*
  * Rd = Rd AND Rm

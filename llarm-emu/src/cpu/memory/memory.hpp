@@ -1,13 +1,13 @@
 #pragma once
 
-#include "shared/types.hpp"
-#include "../../utility.hpp"
 #include "../exception.hpp"
 #include "mmu.hpp"
 #include "mpu.hpp"
 #include "ram.hpp"
 #include "fcse.hpp"
 #include "26_bit_arch.hpp"
+
+#include "shared/types.hpp"
 
 struct MEMORY {
 private:

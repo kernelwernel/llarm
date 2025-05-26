@@ -1,8 +1,10 @@
 #pragma once
 
 #include "../../id.hpp"
-#include "shared/types.hpp"
+
 #include <vector>
+
+#include "shared/types.hpp"
 
 struct OPERATION {
 public:

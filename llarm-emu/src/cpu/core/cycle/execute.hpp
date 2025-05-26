@@ -1,9 +1,10 @@
 #pragma once
 
-#include "shared/types.hpp"
 #include "../../instruction_set.hpp"
 #include "../registers.hpp"
 #include "decode.hpp"
+
+#include "shared/types.hpp"
 
 #include <llarm-asm/llarm-asm.hpp>
 

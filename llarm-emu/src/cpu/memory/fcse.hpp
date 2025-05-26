@@ -1,8 +1,9 @@
 #pragma once
 
 #include "../../settings.hpp"
-#include "shared/types.hpp"
 #include "../coprocessor/coprocessor.hpp"
+
+#include "shared/types.hpp"
 
 
 struct FCSE {

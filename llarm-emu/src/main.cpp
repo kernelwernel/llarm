@@ -1,11 +1,11 @@
 #include "cpu/core/core.hpp"
 
+#include <vector>
+#include <fstream>
+
 #include "shared/types.hpp"
 #include "shared/out.hpp"
 
-
-#include <vector>
-#include <fstream>
 
 std::vector<u8> fetch_binary(const std::string& filePath) {
     std::ifstream file(filePath, std::ios::binary | std::ios::ate);

@@ -1,8 +1,9 @@
-#include "shared/types.hpp"
 #include "../../../id.hpp"
-#include "../../../constants.hpp"
 #include "../../instruction_set.hpp"
+
 #include "decode.hpp"
+
+#include "shared/types.hpp"
 
 #include <llarm-asm/llarm-asm.hpp>
 

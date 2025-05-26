@@ -1,4 +1,5 @@
 #include "addressing_modes.hpp"
+
 #include "shared/util.hpp"
 
 u32 ADDRESSING_MODE::load_store_misc(const arm_code_t &code) {

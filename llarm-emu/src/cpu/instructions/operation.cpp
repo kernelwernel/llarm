@@ -1,9 +1,9 @@
-#include "shared/types.hpp"
-#include "shared/util.hpp"
 #include "../../id.hpp"
 
 #include "operation.hpp"
 
+#include "shared/types.hpp"
+#include "shared/util.hpp"
 
 
 bool OPERATION::carry_add(const u64 &sum) {

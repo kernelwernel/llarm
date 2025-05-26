@@ -2,9 +2,10 @@
 
 #include "instructions/instructions.hpp"
 
+#include <functional>
+
 #include <llarm-asm/llarm-asm.hpp>
 
-#include <functional>
 
 struct INSTRUCTION_SET {
 private:

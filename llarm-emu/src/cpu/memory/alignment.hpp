@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../id.hpp"
-#include "../coprocessor/coprocessor.hpp"
 #include "../../settings.hpp"
+#include "../coprocessor/coprocessor.hpp"
 
 
 struct ALIGNMENT {

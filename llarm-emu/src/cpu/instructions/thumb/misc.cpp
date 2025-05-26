@@ -1,6 +1,7 @@
-#include "shared/types.hpp"
 #include "../../instructions/instructions.hpp"
 #include "../../core/registers.hpp"
+
+#include "shared/types.hpp"
 
 void INSTRUCTIONS::thumb::misc::NOP(const thumb_code_t &code) noexcept {
     std::exit(0);

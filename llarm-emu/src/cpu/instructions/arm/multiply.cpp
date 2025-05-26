@@ -1,7 +1,8 @@
-#include "shared/types.hpp"
 #include "../../core/registers.hpp"
 #include "../instructions.hpp"
+
 #include "shared/util.hpp"
+#include "shared/types.hpp"
 
 
 /**

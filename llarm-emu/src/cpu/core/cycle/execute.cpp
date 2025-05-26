@@ -1,7 +1,7 @@
-#include "shared/types.hpp"
 #include "../../instruction_set.hpp"
-#include "execute.hpp"
 #include "decode.hpp"
+
+#include "execute.hpp"
 
 void EXECUTE::loader() {
     for (const auto &inst : inst_set.arm_table) {

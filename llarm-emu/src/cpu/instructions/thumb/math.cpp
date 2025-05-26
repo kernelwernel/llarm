@@ -1,6 +1,7 @@
-#include "shared/types.hpp"
 #include "../../instructions/instructions.hpp"
 #include "../../core/registers.hpp"
+
+#include "shared/types.hpp"
 
 /*
  * Rd = Rd + Rm + C Flag

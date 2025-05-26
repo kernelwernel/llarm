@@ -1,11 +1,12 @@
 #pragma once
 
-#include "shared/types.hpp"
 #include "../core/registers.hpp"
-#include "arm/addressing_modes/addressing_modes.hpp"
-#include "operation.hpp"
 #include "../coprocessor/coprocessor.hpp"
 #include "../memory/memory.hpp"
+#include "arm/addressing_modes/addressing_modes.hpp"
+#include "operation.hpp"
+
+#include "shared/types.hpp"
 
 struct INSTRUCTIONS {
 private:

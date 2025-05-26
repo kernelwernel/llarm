@@ -1,10 +1,10 @@
 #pragma once
 
+#include "../../utility.hpp"
+#include "../coprocessor/coprocessor.hpp"
+#include "../globals.hpp"
 #include "ram.hpp"
 #include "structure.hpp"
-#include "../globals.hpp"
-#include "../coprocessor/coprocessor.hpp"
-#include "../../utility.hpp"
 
 #include "shared/types.hpp"
 

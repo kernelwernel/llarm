@@ -1,7 +1,6 @@
-
-#include "shared/types.hpp"
 #include "../instructions.hpp"
 
+#include "shared/types.hpp"
 
 
 void INSTRUCTIONS::arm::vfp::FABSD(const arm_code_t& code) {

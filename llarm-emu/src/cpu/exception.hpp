@@ -9,13 +9,13 @@
  * 4. return a 0 as a NULL, then analyse after the function has returned
  */
 
-#include "shared/types.hpp"
-#include "../constants.hpp"
 #include "../id.hpp"
 #include "core/registers.hpp"
 #include "coprocessor/coprocessor.hpp"
 
 #include <map>
+
+#include "shared/types.hpp"
 
 struct EXCEPTION {
 private:

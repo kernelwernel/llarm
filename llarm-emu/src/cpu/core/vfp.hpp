@@ -1,9 +1,11 @@
 #pragma once
 
-#include "shared/types.hpp"
 #include "../../id.hpp"
 #include "../../utility.hpp"
-#include "registers.hpp"
+
+#include "shared/types.hpp"
+#include "shared/util.hpp"
+
 
 struct VFP {
 private:

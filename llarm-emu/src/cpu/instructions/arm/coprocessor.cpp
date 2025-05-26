@@ -1,6 +1,7 @@
-#include "shared/types.hpp"
 #include "../../core/registers.hpp"
 #include "../instructions.hpp"
+
+#include "shared/types.hpp"
 
 // NOTE: MSR is still available in backwards compatible 26-bit mode
 

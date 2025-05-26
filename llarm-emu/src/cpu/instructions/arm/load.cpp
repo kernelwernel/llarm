@@ -1,10 +1,12 @@
-#include "llarm-emu/src/cpu/instructions/arm/addressing_modes/addressing_modes.hpp"
-#include "shared/types.hpp"
-#include "shared/util.hpp"
+#include "addressing_modes/addressing_modes.hpp"
 
 #include "../../../id.hpp"
 #include "../../core/registers.hpp"
 #include "../instructions.hpp"
+
+#include "shared/types.hpp"
+#include "shared/util.hpp"
+
 
 // TODO, ADD CHECK FOR L4 BIT
 /**

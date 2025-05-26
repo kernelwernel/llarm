@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../coprocessor/coprocessor.hpp"
 #include "../../settings.hpp"
+#include "../coprocessor/coprocessor.hpp"
 
 struct ARCH_26 {
 private:

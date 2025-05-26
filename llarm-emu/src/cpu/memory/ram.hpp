@@ -1,11 +1,12 @@
 #pragma once
 
-#include "shared/types.hpp"
 #include "../../utility.hpp"
 #include "../globals.hpp"
 
 #include <vector>
 #include <array>
+
+#include "shared/types.hpp"
 
 struct RAM {
 private:

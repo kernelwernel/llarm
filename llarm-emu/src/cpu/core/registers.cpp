@@ -1,6 +1,5 @@
 #include "../../constants.hpp"
 #include "../../id.hpp"
-#include "shared/util.hpp"
 #include "registers.hpp"
 
 #include "shared/out.hpp"

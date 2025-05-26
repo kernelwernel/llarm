@@ -1,4 +1,5 @@
 #include "addressing_modes.hpp"
+
 #include "shared/util.hpp"
 
 address_struct ADDRESSING_MODE::load_store_multiple(const arm_code_t &code) {

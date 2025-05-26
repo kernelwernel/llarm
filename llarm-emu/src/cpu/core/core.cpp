@@ -1,10 +1,6 @@
 #include "../../types_extra.hpp"
 #include "../../settings.hpp"
 #include "../../id.hpp"
-
-#include "core.hpp"
-#include "llarm-asm/llarm-asm.hpp"
-#include "registers.hpp"
 #include "../globals.hpp"
 #include "../instruction_set.hpp"
 #include "../exception.hpp"
@@ -16,15 +12,19 @@
 #include "../memory/fcse.hpp"
 #include "../coprocessor/coprocessor.hpp"
 #include "../instructions/instructions.hpp"
-//#include "cpu/mpu.hpp"
-
 #include "cycle/fetch.hpp"
 #include "cycle/decode.hpp"
 #include "cycle/execute.hpp"
+#include "registers.hpp"
+
+#include <vector>
+
+#include "core.hpp"
 
 #include "shared/types.hpp"
 
-#include <vector>
+#include <llarm-asm/llarm-asm.hpp>
+
 
 void core::initialise(const std::vector<u8> &binary) {
     // essential settings
