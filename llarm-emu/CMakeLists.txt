@@ -20,6 +20,7 @@ include("../cmake/target_flags.cmake") # flag configurator
 include("../cmake/build_type.cmake") # build definitions
 include("../cmake/compiler.cmake") # compiler choice
 include("../cmake/linker_flags.cmake") # linker config
+include("../cmake/clang_format.cmake") # clang-format
 
 
 # targets
@@ -28,9 +29,12 @@ set(TARGET_LIB "llarm-emu-lib")
 
 
 # general
-file(GLOB_RECURSE ALL_SOURCES CONFIGURE_DEPENDS "src/*.cpp")
+file(GLOB_RECURSE ALL_SOURCES CONFIGURE_DEPENDS "src/*.cpp" "src/*.hpp")
 set(LIB_SOURCES ${ALL_SOURCES})
 
+
+# clang-format
+clang_format(${ALL_SOURCES})
 
 # library setup
 add_library(${TARGET_LIB} STATIC ${LIB_SOURCES})
