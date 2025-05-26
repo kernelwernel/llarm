@@ -1,6 +1,7 @@
-#include "shared/types.hpp"
-#include "../globals.hpp"
+#include "../../globals.hpp"
 #include "fetch.hpp"
+
+#include "shared/types.hpp"
 
 FETCH::FETCH(
     REGISTERS& reg,

@@ -27,7 +27,7 @@ std::string generators::arm::misc::PSR(const u32 code, const settings settings) 
 
     const std::string addressing_mode = shifters::data(code, settings);
 
-    return util::make_string(instruction, util::cond(code), "P ", Rn, ", ", addressing_mode);
+    return util::make_string(instruction, util::cond(code, settings), "P ", Rn, ", ", addressing_mode);
 }
 
 
@@ -45,7 +45,7 @@ std::string generators::arm::misc::PSR(const u32 code, const settings settings) 
  */
 std::string generators::arm::misc::SWI(const u32 code, const settings settings) {
     const u32 immed_24 = shared::util::bit_range(code, 0, 23);
-    return util::make_string("SWI", util::cond(code), " ", util::hex(immed_24, settings));
+    return util::make_string("SWI", util::cond(code, settings), " ", util::hex(immed_24, settings));
 }
 
 

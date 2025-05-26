@@ -1,4 +1,3 @@
-
 int main() {
     long long int n = 10;
 

@@ -1,10 +1,9 @@
 #include "shared/types.hpp"
+#include "shared/util.hpp"
 #include "../../id.hpp"
-#include "../../constants.hpp"
 
 #include "operation.hpp"
 
-#include <bitset>
 
 
 bool OPERATION::carry_add(const u64 &sum) {
@@ -98,6 +97,18 @@ bool OPERATION::arithmetic_shift_right(u32 num, const u8 shift) {
     num >>= shift;
     num |= sign;
     return num;
+}
+
+
+i32 OPERATION::sign_extend(const u32 value, const u8 sign_index) {
+    const u32 mask = (1 << sign_index);
+
+    if (value & mask) {
+        u32 extension = ~((mask << 1) - 1);
+        return static_cast<i32>(value | extension);
+    }
+
+    return static_cast<i32>(value);
 }
 
 

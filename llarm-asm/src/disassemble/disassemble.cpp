@@ -11,7 +11,7 @@
 
 using namespace internal;
 
-std::string thumb_generate(const u16 code, const u32 PC, const settings settings) {
+std::string disassemble::thumb_generate(const u16 code, const u32 PC, const settings settings) {
     const id::thumb id = identifiers::thumb(code);
 
     switch (id) {
@@ -84,7 +84,7 @@ std::string thumb_generate(const u16 code, const u32 PC, const settings settings
 }
 
 
-std::string arm_generate(const u32 code, const u32 PC, const settings settings) {
+std::string disassemble::arm_generate(const u32 code, const u32 PC, const settings settings) {
     const id::arm id = identifiers::arm(code);
 
     switch (id) {

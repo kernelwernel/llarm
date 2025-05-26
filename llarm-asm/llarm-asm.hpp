@@ -5,13 +5,21 @@
 //#include <llarm/internal/llarm-asm/src/instruction_id.hpp>
 //#include <llarm/internal/llarm-asm/src/instruction_table.hpp>
 
+#include "llarm-asm/src/settings.hpp"
 #include "src/identifiers/identifiers.hpp"
 #include "src/instruction_id.hpp"
 #include "src/disassemble/disassemble.hpp"
+#include "src/settings.hpp"
 
 
 namespace llarm {
     namespace assembly {
+        // setting aliases
+        using settings = internal::settings;
+        using default_func = settings(*)();
+        inline default_func default_settings = &internal::default_settings;
+
+
         namespace id {
             // alternatives in case it's under C++17
             using arm = internal::id::arm;
@@ -47,20 +55,36 @@ namespace llarm {
         }
 
         namespace disassemble {
-            inline std::string arm(const u32 raw_code, const u32 PC = 0) {
-                return internal::disassemble::arm(raw_code, PC);
+            inline std::string arm(
+                const u32 raw_code, 
+                const u32 PC = 0, 
+                const settings settings = default_settings()
+            ) {
+                return internal::disassemble::arm(raw_code, PC, settings);
             }
 
-            inline std::string arm(const arm_code_t raw_code, const u32 PC = 0) {
-                return arm(raw_code.to_ulong(), PC);
+            inline std::string arm(
+                const arm_code_t raw_code,
+                const u32 PC = 0,
+                const settings settings = default_settings()
+            ) {
+                return internal::disassemble::arm(raw_code.to_ulong(), PC, settings);
             }
 
-            inline std::string thumb(const u16 raw_code, const u32 PC = 0) {
-                return internal::disassemble::thumb(raw_code, PC);
+            inline std::string thumb(
+                const u16 raw_code,
+                const u32 PC = 0,
+                const settings settings = default_settings()
+            ) {
+                return internal::disassemble::thumb(raw_code, PC, settings);
             }
 
-            inline std::string thumb(const thumb_code_t raw_code, const u32 PC = 0) {
-                return thumb(raw_code.to_ulong(), PC);
+            inline std::string thumb(
+                const thumb_code_t raw_code,
+                const u32 PC = 0,
+                const settings settings = default_settings()
+            ) {
+                return internal::disassemble::thumb(raw_code.to_ulong(), PC, settings);
             }
 
             //inline id::jazelle jazelle(const u8 raw_code) {

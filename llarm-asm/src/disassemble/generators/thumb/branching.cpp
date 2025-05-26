@@ -34,7 +34,7 @@ std::string generators::thumb::branching::B1(const u16 code, const u32 PC, const
     const u32 target_address = (sign_extend + 4 + PC);
 
     return util::make_string(
-        "B", util::raw_cond(cond), " #", util::hex(target_address, settings)
+        "B", util::raw_cond(cond, settings), " #", util::hex(target_address, settings)
     );
 }
 

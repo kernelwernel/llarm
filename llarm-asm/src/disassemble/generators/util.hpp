@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../settings.hpp"
-#include "../../instruction_id.hpp"
 
 #include "shared/types.hpp"
 
@@ -126,9 +125,9 @@ namespace internal::util {
 
     std::string reg_list(const u16 list, const settings settings, const reg_id extra = reg_id::NULL_REG);
 
-    std::string raw_cond(const u8 cond);
+    std::string raw_cond(const u8 cond, const settings settings);
 
-    std::string cond(const u32 code);
+    std::string cond(const u32 code, const settings settings);
 
     std::string reg_id_to_string(const reg_id id, const settings settings);
 
@@ -144,7 +143,12 @@ namespace internal::util {
 
     std::string hex(const u32 integer, const settings settings);
 
+    //std::string hex_signed(const i32 integer, const settings settings);
+
     void to_lower(std::string &str);
+
+    u32 thumb_sign_extend(u32 value, const u8 sign_index, const u32 PC);
+
 
     // i'm deeply sorry to whoever is reading this absolute mess.
     template<typename T>
@@ -158,7 +162,13 @@ namespace internal::util {
         }
     }
 
-    // https://quick-bench.com/q/No_nYrHbcGwK5JTFl-qJtJ0ncc0
+    /**
+     *  comparisons of string concatenation methods:
+     *     https://quick-bench.com/q/No_nYrHbcGwK5JTFl-qJtJ0ncc0
+     *  
+     *  comparisons of string variation inputs for the string concatenator:
+     *     https://quick-bench.com/q/a8aNl-AclWkONwP0JPcRSwb3Y6U
+     */
     template<typename... Args>
     std::string make_string(Args&&... args) {
         std::string result;

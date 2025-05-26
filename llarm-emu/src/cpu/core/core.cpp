@@ -2,9 +2,10 @@
 #include "../../settings.hpp"
 #include "../../id.hpp"
 
+#include "core.hpp"
 #include "llarm-asm/llarm-asm.hpp"
 #include "registers.hpp"
-#include "globals.hpp"
+#include "../globals.hpp"
 #include "../instruction_set.hpp"
 #include "../exception.hpp"
 #include "../core/core.hpp"
@@ -20,13 +21,12 @@
 #include "cycle/fetch.hpp"
 #include "cycle/decode.hpp"
 #include "cycle/execute.hpp"
-#include "vfp.hpp"
 
 #include "shared/types.hpp"
 
 #include <vector>
 
-void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
+void core::initialise(const std::vector<u8> &binary) {
     // essential settings
     SETTINGS settings;
 
@@ -65,11 +65,12 @@ void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
     reg.write(id::cpsr::T, 0); // start in ARM mode, temporary
     memory.reset();
     ram.write(binary, 0);
-    
+
     if (!settings.fresh_system) {
         reg.write(id::reg::SP, util::get_kb(16));
     }
 
+    const llarm::as::settings tmp = { false, true, false, true, true };
 
     // instruction cycle 
     for (;;) {
@@ -86,10 +87,10 @@ void core::initialise(const std::vector<u8> &binary/*, input_args &args*/) {
                 std::cout << "0x" << std::hex << arm_code_access.code.to_ulong() << std::dec << "\n";
                 
                 const arm_decode_struct instruction = decode.arm_decode(arm_code_access.code);
-                
+
                 std::cout << llarm::as::arm_id_to_string(instruction.id) << "\n";
-                std::cout << llarm::as::disassemble::arm(instruction.code, reg.read_PC()) << "\n";
-                
+                std::cout << llarm::as::disassemble::arm(instruction.code, reg.read_PC(), tmp) << "\n";
+
                 execute.arm_execute(instruction);
 
                 reg.arm_increment_PC();

@@ -2,7 +2,7 @@
 
 #include "shared/types.hpp"
 #include "../../utility.hpp"
-#include "../core/globals.hpp"
+#include "../globals.hpp"
 
 #include <vector>
 #include <array>
@@ -26,9 +26,9 @@ public:
     }
 
     template <std::size_t N>
-    void write(const std::array<uint8_t, N> &data, const u32 address) {
+    void write(const std::array<u8, N> &data, const u32 address) {
         if (address + N > ram.size()) {
-            throw std::out_of_range("Data exceeds RAM capacity");
+            throw std::out_of_range("Data exceeds RAM capacity"); // TODO same
         }
 
         std::move(data.cbegin(), data.cend(), ram.begin() + address);

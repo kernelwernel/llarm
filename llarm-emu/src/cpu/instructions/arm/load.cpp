@@ -213,7 +213,7 @@ void INSTRUCTIONS::arm::load::LDRSB(const arm_code_t &code) {
         return;
     }
 
-    reg.write(code, 12, 15, (operation.sign_extend(access.value)));
+    reg.write(code, 12, 15, (operation.sign_extend(access.value, 7)));
 }
 
 
@@ -243,7 +243,7 @@ void INSTRUCTIONS::arm::load::LDRSH(const arm_code_t &code) {
         // TODO unpredictable
     }
 
-    reg.write(code, 12, 15, (operation.sign_extend(data)));
+    reg.write(code, 12, 15, (operation.sign_extend(data, 15)));
 }
 
 

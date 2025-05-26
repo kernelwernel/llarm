@@ -11,13 +11,11 @@
 
 #include "../../settings.hpp"
 #include "../../id.hpp"
-#include "../core/globals.hpp"
+#include "../globals.hpp"
 //#include "mmu.hpp"
 
 #include "shared/types.hpp"
 #include "shared/util.hpp"
-
-#include <bit>
 
 /**
  * NOTE: 
@@ -428,7 +426,7 @@ public:
                 util::modify_bit(R1, 5, value);
                 return;
 
-            case id::cp::CP15_R1_L: // TODO, idk what the fuck is the old abort model
+            case id::cp::CP15_R1_L: // TODO, idk what the fuck is the "old abort model"
                 // On later processors, this bit reads as 1 and ignores writes.
                 if ((static_cast<u8>(settings.arch) > 3) && !forced) {
                     return;
@@ -1031,13 +1029,13 @@ private:
 
         // M bit (data cache)
         if (
-            (std::popcount(settings.data_cache_size) == 2) &&
-            (std::popcount(settings.data_cache_assoc_way) == 2)
+            (shared::util::popcount(settings.data_cache_size) == 2) &&
+            (shared::util::popcount(settings.data_cache_assoc_way) == 2)
         ) {
             write(id::cp::CP15_R0_CACHE_DSIZE_M, true);
         } else if (
-            (std::popcount(settings.data_cache_size) == 1) &&
-            (std::popcount(settings.data_cache_assoc_way) == 1)
+            (shared::util::popcount(settings.data_cache_size) == 1) &&
+            (shared::util::popcount(settings.data_cache_assoc_way) == 1)
         ) {
             write(id::cp::CP15_R0_CACHE_DSIZE_M, false);
         } else {
@@ -1047,13 +1045,13 @@ private:
 
         // M bit (instruction cache)
         if (
-            (std::popcount(settings.instruction_cache_size) == 2) &&
-            (std::popcount(settings.instruction_cache_assoc_way) == 2)
+            (shared::util::popcount(settings.instruction_cache_size) == 2) &&
+            (shared::util::popcount(settings.instruction_cache_assoc_way) == 2)
         ) {
             write(id::cp::CP15_R0_CACHE_ISIZE_M, true);
         } else if (
-            (std::popcount(settings.instruction_cache_size) == 1) &&
-            (std::popcount(settings.instruction_cache_assoc_way) == 1)
+            (shared::util::popcount(settings.instruction_cache_size) == 1) &&
+            (shared::util::popcount(settings.instruction_cache_assoc_way) == 1)
         ) {
             write(id::cp::CP15_R0_CACHE_ISIZE_M, false);
         } else {

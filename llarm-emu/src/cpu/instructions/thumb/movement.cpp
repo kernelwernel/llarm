@@ -1,5 +1,4 @@
 #include "shared/types.hpp"
-#include "../../../utility.hpp"
 #include "../../instructions/instructions.hpp"
 #include "../../core/registers.hpp"
 
@@ -22,8 +21,6 @@ void INSTRUCTIONS::thumb::movement::MOV1(const thumb_code_t &code) {
 
     reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
-
-    ;
 }
 
 
@@ -46,8 +43,6 @@ void INSTRUCTIONS::thumb::movement::MOV2(const thumb_code_t &code) {
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, false);
     reg.write(id::cpsr::V, false);
-
-    ;
 }
 
 
@@ -64,8 +59,6 @@ void INSTRUCTIONS::thumb::movement::MOV3(const thumb_code_t &code) {
     const id::reg Rd_id = reg.fetch_reg_id(Rd_id_bits);
 
     reg.write(Rd_id, Rm);
-
-    ;
 }
 
 
@@ -86,6 +79,4 @@ void INSTRUCTIONS::thumb::movement::MVN(const thumb_code_t &code) {
 
     reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
-
-    ;
 }

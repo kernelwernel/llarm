@@ -6,6 +6,10 @@ using namespace internal;
 
 
 std::string shifters::vfp_ls_mul_unindexed(const settings settings) {
+    if (settings.simplify) {
+        return "";
+    }
+
     if (settings.capitals) {
         return "IA";
     } else {
@@ -15,6 +19,10 @@ std::string shifters::vfp_ls_mul_unindexed(const settings settings) {
 
 
 std::string shifters::vfp_ls_mul_inc(const settings settings) {
+    if (settings.simplify) {
+        return "";
+    }
+
     if (settings.capitals) {
         return "IA";
     } else {
@@ -23,6 +31,10 @@ std::string shifters::vfp_ls_mul_inc(const settings settings) {
 }
 
 std::string shifters::vfp_ls_mul_dec(const settings settings) {
+    if (settings.simplify) {
+        return "";
+    }
+
     if (settings.capitals) {
         return "DB";
     } else {

@@ -24,8 +24,6 @@ void INSTRUCTIONS::thumb::logic::AND(const thumb_code_t &code) {
 
     reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
-
-    ;
 }
 
 
@@ -64,8 +62,6 @@ void INSTRUCTIONS::thumb::logic::ASR1(const thumb_code_t &code) {
 
     reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
-
-    ;
 }
 
 
@@ -110,8 +106,6 @@ void INSTRUCTIONS::thumb::logic::ASR2(const thumb_code_t &code) {
 
     reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
-
-    ;
 }
 
 
@@ -132,8 +126,6 @@ void INSTRUCTIONS::thumb::logic::BIC(const thumb_code_t &code) {
 
     reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
-
-    ;
 }
 
 
@@ -155,8 +147,6 @@ void INSTRUCTIONS::thumb::logic::EOR(const thumb_code_t &code) {
 
     reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
-
-    ;
 }
 
 
@@ -188,8 +178,6 @@ void INSTRUCTIONS::thumb::logic::LSL1(const thumb_code_t &code) {
 
     reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
-
-    ;
 }
 
 
@@ -232,8 +220,6 @@ void INSTRUCTIONS::thumb::logic::LSL2(const thumb_code_t &code) {
 
     reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
-
-    ;
 }
 
 
@@ -266,8 +252,6 @@ void INSTRUCTIONS::thumb::logic::LSR1(const thumb_code_t &code) {
 
     reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
-
-    ;
 }
 
 
@@ -310,8 +294,6 @@ void INSTRUCTIONS::thumb::logic::LSR2(const thumb_code_t &code) {
 
     reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
-
-    ;
 }
 
 
@@ -335,8 +317,6 @@ void INSTRUCTIONS::thumb::logic::NEG(const thumb_code_t &code) {
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, !operation.borrow_sub(0, Rm));
     reg.write(id::cpsr::V, operation.overflow_sub(0, Rm));
-
-    ;
 }
 
 
@@ -358,8 +338,6 @@ void INSTRUCTIONS::thumb::logic::ORR(const thumb_code_t &code) {
 
     reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
-
-    ;
 }
 
 
@@ -397,8 +375,6 @@ void INSTRUCTIONS::thumb::logic::ROR(const thumb_code_t &code) {
 
     reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
-
-    ;
 }
 
 
@@ -417,6 +393,4 @@ void INSTRUCTIONS::thumb::logic::TST(const thumb_code_t &code) {
 
     reg.write(id::cpsr::N, (shared::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
-
-    ;
 }

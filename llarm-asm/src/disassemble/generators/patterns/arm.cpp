@@ -20,7 +20,7 @@ std::string patterns::S_Rd_Rn_data(const u32 code, const std::string &instructio
     const char* S = (shared::util::bit_fetch(code, 20) ? "S" : "");
 
     return util::make_string(
-        instruction, util::cond(code), S, " ", Rd, ", ", Rn, ", ", shifter_operand
+        instruction, util::cond(code, settings), S, " ", Rd, ", ", Rn, ", ", shifter_operand
     );
 }
 
@@ -31,7 +31,7 @@ std::string patterns::Rn_data(const u32 code, const std::string &instruction, co
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
     return util::make_string(
-        instruction,  util::cond(code), " ", Rn, ", ", shifter_operand
+        instruction,  util::cond(code, settings), " ", Rn, ", ", shifter_operand
     );
 }
 
@@ -44,7 +44,7 @@ std::string patterns::S_Rd_data(const u32 code, const std::string &instruction, 
     const char* S = (shared::util::bit_fetch(code, 20) ? "S" : "");
 
     return util::make_string(
-        instruction, util::cond(code), S, " ", Rd, ", ", shifter_operand
+        instruction, util::cond(code, settings), S, " ", Rd, ", ", shifter_operand
     );
 }
 
@@ -81,7 +81,7 @@ std::string patterns::mul_Hi_Lo(const u32 code, const std::string &instruction, 
     const char* S = (shared::util::bit_fetch(code, 20) ? "S" : "");
 
     return util::make_string(
-        instruction, util::cond(code), S, " ", RdLo, ", ", RdHi, ", ", Rm, ", ", Rs
+        instruction, util::cond(code, settings), S, " ", RdLo, ", ", RdHi, ", ", Rm, ", ", Rs
     );
 }
 
@@ -94,7 +94,7 @@ std::string patterns::dsp_Rd_Rm_Rn(const u32 code, const std::string &instructio
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
     return util::make_string(
-        instruction, util::cond(code), " ", Rd, ", ", Rm, ", ", Rn
+        instruction, util::cond(code, settings), " ", Rd, ", ", Rm, ", ", Rn
     );
 }
 
@@ -103,7 +103,7 @@ std::string patterns::vfp_Dd_Dm(const u32 code, const std::string &instruction, 
     const std::string Dm = util::reg_string(code, 0, 3, settings, util::prefix::D);
 
     return util::make_string(
-        instruction, util::cond(code), " ", Dd, ", ", Dm
+        instruction, util::cond(code, settings), " ", Dd, ", ", Dm
     ); 
 }
 
@@ -114,7 +114,7 @@ std::string patterns::vfp_Dd_Dn_Dm(const u32 code, const std::string &instructio
     const std::string Dm = util::reg_string(code, 0, 3, settings, util::prefix::D);
 
     return util::make_string(
-        instruction, util::cond(code), " ", Dd, ", ", Dn, ", ", Dm
+        instruction, util::cond(code, settings), " ", Dd, ", ", Dn, ", ", Dm
     );
 }
 
@@ -127,7 +127,7 @@ std::string patterns::vfp_Sd_Sm(const u32 code, const std::string &instruction, 
     const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M, settings);
 
     return util::make_string(
-        instruction, util::cond(code),  " ", Sd, ", ", Sm
+        instruction, util::cond(code, settings),  " ", Sd, ", ", Sm
     ); 
 }
 
@@ -141,7 +141,7 @@ std::string patterns::vfp_Sd_Sm_Z(const u32 code, const std::string &semi_instru
 
     const char* Z = (shared::util::bit_fetch(code, 7) ? "ZS" : "S");
 
-    std::string tmp = util::make_string(semi_instruction, Z, util::cond(code), " ", Sd, ", ", Sm);
+    std::string tmp = util::make_string(semi_instruction, Z, util::cond(code, settings), " ", Sd, ", ", Sm);
 
     if (settings.capitals == false) {
         util::to_lower(tmp);
@@ -159,7 +159,7 @@ std::string patterns::vfp_Sd_Dm_Z(const u32 code, const std::string &semi_instru
 
     const char* Z = (shared::util::bit_fetch(code, 7) ? "ZD" : "D");
 
-    std::string tmp = util::make_string(semi_instruction, Z, util::cond(code), " ", Sd, ", ", Dm);
+    std::string tmp = util::make_string(semi_instruction, Z, util::cond(code, settings), " ", Sd, ", ", Dm);
 
     if (settings.capitals == false) {
         util::to_lower(tmp);
@@ -179,7 +179,7 @@ std::string patterns::vfp_Sd_Sn_Sm(const u32 code, const std::string &instructio
     const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M, settings);
 
     return util::make_string(
-        instruction, util::cond(code),  " ", Sd, ", ", Sn, ", ", Sm
+        instruction, util::cond(code, settings),  " ", Sd, ", ", Sn, ", ", Sm
     );
 }
 
@@ -191,7 +191,7 @@ std::string patterns::vfp_Dd_Sm(const u32 code, const std::string &instruction, 
     const std::string Dd = util::reg_string(code, 12, 15, settings, util::prefix::D);
 
     return util::make_string(
-        instruction, util::cond(code),  " ", Dd, ", ", Sm
+        instruction, util::cond(code, settings),  " ", Dd, ", ", Sm
     );
 }
 
@@ -201,7 +201,7 @@ std::string patterns::vfp_Rd_Dn(const u32 code, const std::string &instruction, 
     const std::string Dn = util::reg_string(code, 16, 19, settings, util::prefix::D);
 
     return util::make_string(
-        instruction, util::cond(code),  " ", Rd, ", ", Dn
+        instruction, util::cond(code, settings),  " ", Rd, ", ", Dn
     );
 }
 
@@ -211,7 +211,7 @@ std::string patterns::vfp_Dn_Rd(const u32 code, const std::string &instruction, 
     const std::string Dn = util::reg_string(code, 16, 19, settings, util::prefix::D);
 
     return util::make_string(
-        instruction, util::cond(code), " ", Dn, ", ", Rd
+        instruction, util::cond(code, settings), " ", Dn, ", ", Rd
     );
 }
 
@@ -222,7 +222,7 @@ std::string patterns::vfp_Sd(const u32 code, const std::string &instruction, con
     const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D, settings);
 
     return util::make_string(
-        instruction, util::cond(code), " ", Sd
+        instruction, util::cond(code, settings), " ", Sd
     ); 
 }
 
@@ -231,6 +231,6 @@ std::string patterns::vfp_Dd(const u32 code, const std::string &instruction, con
     const std::string Dd = util::reg_string(code, 12, 15, settings, util::prefix::D);
 
     return util::make_string(
-        instruction, util::cond(code), " ", Dd
+        instruction, util::cond(code, settings), " ", Dd
     ); 
 }

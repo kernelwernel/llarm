@@ -260,7 +260,7 @@ std::string generators::arm::vfp::FCVTSD(const u32 code, const settings settings
     const std::string Dm = util::reg_string(code, 0, 3, settings, util::prefix::D);
 
     return util::make_string(
-        "FCVTSD ", util::cond(code), " ", Sd, ", ", Dm
+        "FCVTSD ", util::cond(code, settings), " ", Sd, ", ", Dm
     );
 }
 
@@ -322,7 +322,7 @@ std::string generators::arm::vfp::FLDD(const u32 code, const settings settings) 
 
     // the organisation is awful, i know. 
     return util::make_string(
-        "FLDD", util::cond(code), " ", Dd, ", [", Rn, ", #", op, util::hex(offset, settings), "]"
+        "FLDD", util::cond(code, settings), " ", Dd, ", [", Rn, ", #", op, util::hex(offset, settings), "]"
     );
 }
 
@@ -366,7 +366,7 @@ std::string generators::arm::vfp::FLDMD(const u32 code, const settings settings)
     const std::string registers = util::vfp_register_list(Dd, offset, settings, util::prefix::D);
 
     std::string tmp = util::make_string(
-        "FLDM", addressing_mode, 'D', util::cond(code), " ", Rn, W, ", ", registers
+        "FLDM", addressing_mode, 'D', util::cond(code, settings), " ", Rn, W, ", ", registers
     );
 
     if (settings.capitals == false) {
@@ -420,7 +420,7 @@ std::string generators::arm::vfp::FLDMS(const u32 code, const settings settings)
     const std::string registers = util::vfp_register_list(Fd_bits, offset, settings, util::prefix::S);
 
     std::string tmp = util::make_string(
-        "FLDM", addressing_mode, 'S', util::cond(code), " ", Rn, W, ", ", registers
+        "FLDM", addressing_mode, 'S', util::cond(code, settings), " ", Rn, W, ", ", registers
     );
 
     if (settings.capitals == false) {
@@ -470,7 +470,7 @@ std::string generators::arm::vfp::FLDMX(const u32 code, const settings settings)
     const std::string registers = util::vfp_register_list(Dd, offset, settings, util::prefix::D);
 
     std::string tmp = util::make_string(
-        "FLDM", addressing_mode, 'X', util::cond(code), " ", Rn, W, ", ", registers
+        "FLDM", addressing_mode, 'X', util::cond(code, settings), " ", Rn, W, ", ", registers
     );
 
     if (settings.capitals == false) {
@@ -506,7 +506,7 @@ std::string generators::arm::vfp::FLDS(const u32 code, const settings settings) 
     const char* op = (shared::util::bit_fetch(code, 23) ? "" : "-");
 
     return util::make_string(
-        "FLDS", util::cond(code), " ", Sd, ", [", Rn, ", #", op, util::hex(offset, settings), "]"
+        "FLDS", util::cond(code, settings), " ", Sd, ", [", Rn, ", #", op, util::hex(offset, settings), "]"
     );
 }
 
@@ -624,7 +624,7 @@ std::string generators::arm::vfp::FMRS(const u32 code, const settings settings) 
     const std::string Rd = util::reg_string(code, 12, 15, settings, util::prefix::R);
 
     return util::make_string(
-        "FMRS", util::cond(code), " ", Rd, ", ", Sn
+        "FMRS", util::cond(code, settings), " ", Rd, ", ", Sn
     );
 }
 
@@ -664,7 +664,7 @@ std::string generators::arm::vfp::FMRX(const u32 code, const settings settings) 
         default: shared::out::error("Unrecognised VFP system register for FMRX"); // unpredictable todo
     }
 
-    return util::make_string("FMRX", util::cond(code), " ", Rd, ", ", vfp_sys_reg);
+    return util::make_string("FMRX", util::cond(code, settings), " ", Rd, ", ", vfp_sys_reg);
 }
 
 
@@ -719,7 +719,7 @@ std::string generators::arm::vfp::FMSR(const u32 code, const settings settings) 
     const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N, settings);
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
-    return util::make_string("FMSR", util::cond(code), " ", Sn, ", ", Rd);
+    return util::make_string("FMSR", util::cond(code, settings), " ", Sn, ", ", Rd);
 }
 
 
@@ -732,7 +732,7 @@ std::string generators::arm::vfp::FMSR(const u32 code, const settings settings) 
  * reference: C4-66
  */
 std::string generators::arm::vfp::FMSTAT(const u32 code, const settings settings) {
-    return util::make_string("FMSTAT", util::cond(code));
+    return util::make_string("FMSTAT", util::cond(code, settings));
 }
 
 
@@ -807,7 +807,7 @@ std::string generators::arm::vfp::FMXR(const u32 code, const settings settings) 
         default: shared::out::error("Unrecognised VFP system register for FMXR"); // unpredictable todo
     }
 
-    return util::make_string("FMXR", util::cond(code), " ", vfp_sys_reg, ", ", Rd);
+    return util::make_string("FMXR", util::cond(code, settings), " ", vfp_sys_reg, ", ", Rd);
 }
 
 
@@ -1026,7 +1026,7 @@ std::string generators::arm::vfp::FSTD(const u32 code, const settings settings) 
 
     const char* op = (shared::util::bit_fetch(code, 23) ? "" : "-");
 
-    return util::make_string("FSTD", util::cond(code), " ", Dd, ", [", Rn, ", #", op, util::hex(offset, settings), "]");
+    return util::make_string("FSTD", util::cond(code, settings), " ", Dd, ", [", Rn, ", #", op, util::hex(offset, settings), "]");
 }
 
 
@@ -1066,7 +1066,7 @@ std::string generators::arm::vfp::FSTMD(const u32 code, const settings settings)
 
     const std::string registers = util::vfp_register_list(Dd, offset, settings, util::prefix::D);
 
-    return util::make_string("FSTM", addressing_mode, 'D', util::cond(code), " ", Rn, W, ", ", registers);
+    return util::make_string("FSTM", addressing_mode, 'D', util::cond(code, settings), " ", Rn, W, ", ", registers);
 }
 
 
@@ -1110,7 +1110,7 @@ std::string generators::arm::vfp::FSTMS(const u32 code, const settings settings)
 
     const std::string registers = util::vfp_register_list(Fd_bits, offset, settings, util::prefix::S);
 
-    return util::make_string("FSTM", addressing_mode, 'S', util::cond(code), " ", Rn, W, ", ", registers);
+    return util::make_string("FSTM", addressing_mode, 'S', util::cond(code, settings), " ", Rn, W, ", ", registers);
 }
 
 
@@ -1150,7 +1150,7 @@ std::string generators::arm::vfp::FSTMX(const u32 code, const settings settings)
 
     const std::string registers = util::vfp_register_list(Dd, offset, settings, util::prefix::D);
 
-    return util::make_string("FSTM", addressing_mode, 'X', util::cond(code), " ", Rn, W, ", ", registers);
+    return util::make_string("FSTM", addressing_mode, 'X', util::cond(code, settings), " ", Rn, W, ", ", registers);
 }
 
 
@@ -1168,7 +1168,7 @@ std::string generators::arm::vfp::FSTS(const u32 code, const settings settings) 
 
     const char* op = (shared::util::bit_fetch(code, 23) ? "" : "-");
 
-    return util::make_string("FSTS", util::cond(code), " ", Sd, ", [", Rn, ", #", op, util::hex(offset, settings), "]");
+    return util::make_string("FSTS", util::cond(code, settings), " ", Sd, ", [", Rn, ", #", op, util::hex(offset, settings), "]");
 }
 
 

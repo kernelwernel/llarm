@@ -5,6 +5,7 @@
 #include "shared/out.hpp"
 #include "shared/util.hpp"
 
+#include <cstring>
 #include <vector>
 #include <array>
 
@@ -263,7 +264,7 @@ std::string util::reg_list(const u16 list, const settings settings, const reg_id
     );
 
     std::vector<reg_id> reg_id_list = {};
-    reg_id_list.resize(16);
+    reg_id_list.reserve(16);
 
     for (u8 i = 0; i < (sizeof(list) * 8); i++) {
         if (shared::util::bit_fetch(list, i) == 1) {
@@ -272,10 +273,11 @@ std::string util::reg_list(const u16 list, const settings settings, const reg_id
     }
 
     std::vector<std::string> registers = {};
-    registers.resize(16);
+    registers.reserve(16);
 
+    
     for (const auto id : reg_id_list) {
-        registers.push_back(reg_id_to_string(id, settings));
+        registers.push_back(reg_id_to_string(id, settings)); // bug is here
     }
 
     if (registers.empty()) {
@@ -304,7 +306,11 @@ std::string util::reg_list(const u16 list, const settings settings, const reg_id
 
 
 // https://quick-bench.com/q/oqvSMt5BCEiN0odMXX68IdPTrBI
-std::string util::raw_cond(const u8 cond) {
+std::string util::raw_cond(const u8 cond, const settings settings) {
+    if (settings.simplify) {
+        return "";
+    }
+
     switch (cond) {
         case 0b0000: return "EQ";
         case 0b0001: return "NE";
@@ -328,9 +334,9 @@ std::string util::raw_cond(const u8 cond) {
 }
 
 
-std::string util::cond(const u32 code) {
+std::string util::cond(const u32 code, const settings settings) {
     const u8 condition_code = shared::util::bit_range<u8>(code, 28, 31);
-    return raw_cond(condition_code);
+    return raw_cond(condition_code, settings);
 }
 
 
@@ -444,8 +450,34 @@ std::string util::hex(const u32 integer, const settings settings) {
     return ret;
 }
 
+
+//std::string util::hex_signed(const i32 integer, const settings settings) {
+//    u32 unsigned_val;
+//    std::memcpy(&unsigned_val, &integer, sizeof(integer));
+//    return hex(unsigned_val, settings);
+//}
+
+
 void util::to_lower(std::string& str) {
     for (char& c : str) {
         c = (c >= 'A' && c <= 'Z') ? (c | 0x20) : c;
     }
 }
+
+
+u32 util::thumb_sign_extend(u32 value, const u8 sign_index, const u32 PC) {
+    const u32 sign_mask = (1 << sign_index);
+    const u32 bit_mask = (1 << (sign_index + 1)) - 1;
+
+    value &= bit_mask;
+
+    if (value & sign_mask) {
+        value |= ~bit_mask;
+    }
+
+    return ((value << 2) + PC + 8);
+}
+
+
+
+//const u32 address = (reg.read(id::reg::PC) + (operation.sign_extend(signed_immed_24, 23) << 2) + 4);

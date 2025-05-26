@@ -1,8 +1,7 @@
-#include "shared/types.hpp"
-#include "../../../utility.hpp"
 #include "../../instructions/instructions.hpp"
 #include "../../core/registers.hpp"
 
+#include "shared/types.hpp"
 
 /**
  * start_address = Rn
@@ -21,7 +20,7 @@ void INSTRUCTIONS::thumb::store::STMIA(const thumb_code_t& code) {
     const id::reg Rn_id = reg.fetch_reg_id(code, 8, 10);
 
     const u32 start_address = Rn;
-    const u32 end_address = (Rn + (std::popcount(register_list) * 4) - 4);
+    const u32 end_address = (Rn + (shared::util::popcount(register_list) * 4) - 4);
 
     u32 address = start_address;
 
@@ -42,9 +41,7 @@ void INSTRUCTIONS::thumb::store::STMIA(const thumb_code_t& code) {
         // TODO idk, do an assertation handler
     }
 
-    reg.write(Rn_id, (Rn + (std::popcount(register_list) * 4)));
-
-    ;
+    reg.write(Rn_id, (Rn + (shared::util::popcount(register_list) * 4)));
 }
 
 
@@ -76,8 +73,6 @@ void INSTRUCTIONS::thumb::store::STR1(const thumb_code_t& code) {
         memory.manage_abort(access.abort_code);
         return;
     }
-
-    ;
 }
 
 
@@ -109,8 +104,6 @@ void INSTRUCTIONS::thumb::store::STR2(const thumb_code_t& code) {
         memory.manage_abort(access.abort_code);
         return;
     }
-
-    ;
 }
 
 
@@ -141,8 +134,6 @@ void INSTRUCTIONS::thumb::store::STR3(const thumb_code_t& code) {
         memory.manage_abort(access.abort_code);
         return;
     }
-
-    ;
 }
 
 
@@ -163,8 +154,6 @@ void INSTRUCTIONS::thumb::store::STRB1(const thumb_code_t& code) {
         memory.manage_abort(access.abort_code);
         return;
     }
-
-    ;
 }
 
 
@@ -185,8 +174,6 @@ void INSTRUCTIONS::thumb::store::STRB2(const thumb_code_t& code) {
         memory.manage_abort(access.abort_code);
         return;
     }
-
-    ;
 }
 
 
@@ -218,9 +205,6 @@ void INSTRUCTIONS::thumb::store::STRH1(const thumb_code_t& code) { // TODO
         memory.manage_abort(access.abort_code);
         return;
     }
-
-
-    ;
 }
 
 
@@ -252,8 +236,6 @@ void INSTRUCTIONS::thumb::store::STRH2(const thumb_code_t& code) { // TODO
         memory.manage_abort(access.abort_code);
         return;
     }
-
-    ;
 }
 
 
@@ -277,7 +259,7 @@ void INSTRUCTIONS::thumb::store::PUSH(const thumb_code_t& code) {
 
     const u32 SP = reg.read(id::reg::SP);
 
-    const u32 start_address = (SP - (4 * (R + std::popcount(register_list))));
+    const u32 start_address = (SP - (4 * (R + shared::util::popcount(register_list))));
     const u32 end_address = (SP - 4);
 
     u32 address = start_address;
@@ -310,9 +292,5 @@ void INSTRUCTIONS::thumb::store::PUSH(const thumb_code_t& code) {
         // TODO idk, do an assertation handler
     }
 
-    reg.write(id::reg::SP, (SP - (4 * (R + std::popcount(register_list)))));
-
-    ;
+    reg.write(id::reg::SP, (SP - (4 * (R + shared::util::popcount(register_list)))));
 }
-
-

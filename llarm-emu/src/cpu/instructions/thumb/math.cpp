@@ -1,5 +1,4 @@
 #include "shared/types.hpp"
-#include "../../../utility.hpp"
 #include "../../instructions/instructions.hpp"
 #include "../../core/registers.hpp"
 
@@ -25,8 +24,6 @@ void INSTRUCTIONS::thumb::math::ADC(const thumb_code_t &code) {
     reg.write(id::cpsr::Z, (reg.read(Rd_id) == 0));
     reg.write(id::cpsr::C, operation.carry_add(result));
     reg.write(id::cpsr::V, operation.overflow_add(Rd, Rm, c_flag));
-
-    ;
 }
 
 
@@ -51,8 +48,6 @@ void INSTRUCTIONS::thumb::math::ADD1(const thumb_code_t &code) {
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, operation.carry_add(Rn, immed_3));
     reg.write(id::cpsr::V, operation.overflow_add(Rn, immed_3));
-
-    ;
 }
 
 
@@ -75,8 +70,6 @@ void INSTRUCTIONS::thumb::math::ADD2(const thumb_code_t &code) {
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, operation.carry_add(Rd, immed_8));
     reg.write(id::cpsr::V, operation.overflow_add(Rd, immed_8));
-
-    ;
 }
 
 
@@ -101,8 +94,6 @@ void INSTRUCTIONS::thumb::math::ADD3(const thumb_code_t &code) {
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, operation.carry_add(Rn, Rm));
     reg.write(id::cpsr::V, operation.overflow_add(Rn, Rm));
-
-    ;
 }
 
 
@@ -126,8 +117,6 @@ void INSTRUCTIONS::thumb::math::ADD4(const thumb_code_t &code) {
     const u32 Rm = reg.read(Rm_id);
 
     reg.write(Rd_id, Rd + Rm);
-
-    ;
 }
 
 
@@ -140,8 +129,6 @@ void INSTRUCTIONS::thumb::math::ADD5(const thumb_code_t &code) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
 
     reg.write(Rd_id, (reg.read(id::reg::PC) & 0xFFFFFFFC) + (immed_8 << 2));
-
-    ;
 }
 
 
@@ -153,8 +140,6 @@ void INSTRUCTIONS::thumb::math::ADD6(const thumb_code_t &code) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
 
     reg.write(Rd_id, (reg.read(id::reg::SP) + (immed_8 << 2)));
-
-    ;
 }
 
 
@@ -165,8 +150,6 @@ void INSTRUCTIONS::thumb::math::ADD7(const thumb_code_t &code) {
     const u8 immed_7 = shared::util::bit_range<u8>(code, 0, 6);
 
     reg.write(id::reg::SP, (reg.read(id::reg::SP) + (immed_7 << 2)));
-
-    ;
 }
 
 
@@ -190,8 +173,6 @@ void INSTRUCTIONS::thumb::math::SBC(const thumb_code_t &code) {
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, !operation.borrow_sub(Rd, Rm, !reg.read(id::cpsr::C)));
     reg.write(id::cpsr::V, operation.overflow_sub(Rd, Rm, !reg.read(id::cpsr::C)));
-
-    ;
 }
 
 
@@ -217,8 +198,6 @@ void INSTRUCTIONS::thumb::math::SUB1(const thumb_code_t &code) {
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, !operation.borrow_sub(Rn, immed_3));
     reg.write(id::cpsr::V, operation.overflow_sub(Rn, immed_3));
-
-    ;
 }
 
 
@@ -241,8 +220,6 @@ void INSTRUCTIONS::thumb::math::SUB2(const thumb_code_t &code) {
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, !operation.borrow_sub(Rd, immed_8));
     reg.write(id::cpsr::V, operation.overflow_sub(Rd, immed_8));
-
-    ;
 }
 
 
@@ -268,8 +245,6 @@ void INSTRUCTIONS::thumb::math::SUB3(const thumb_code_t &code) {
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, !operation.borrow_sub(Rn, Rm));
     reg.write(id::cpsr::V, operation.overflow_sub(Rn, Rm));
-
-    ;
 }
 
 /**
@@ -279,8 +254,6 @@ void INSTRUCTIONS::thumb::math::SUB4(const thumb_code_t &code) {
     const u8 immed_7 = shared::util::bit_range<u8>(code, 0, 6);
 
     reg.write(id::reg::SP, (reg.read(id::reg::SP) - (immed_7 << 2)));
-
-    ;
 }
 
 
@@ -302,6 +275,4 @@ void INSTRUCTIONS::thumb::math::MUL(const thumb_code_t &code) {
 
     reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
-
-    ;
 }

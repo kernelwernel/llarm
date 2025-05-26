@@ -34,7 +34,7 @@ std::string generators::arm::multiply::MLA(const u32 code, const settings settin
 
     const char* S = (shared::util::bit_fetch(code, 20) ? "S" : "");
 
-    return util::make_string("MLA", util::cond(code), S, " ", Rd, ", ", Rm, ", ", Rs, ", ", Rn);
+    return util::make_string("MLA", util::cond(code, settings), S, " ", Rd, ", ", Rm, ", ", Rs, ", ", Rn);
 }
 
 
@@ -60,7 +60,7 @@ std::string generators::arm::multiply::MUL(const u32 code, const settings settin
 
     const char* S = (shared::util::bit_fetch(code, 20) ? "S" : "");
 
-    return util::make_string("MUL", util::cond(code), S, " ", Rd, ", ", Rm, ", ", Rs);
+    return util::make_string("MUL", util::cond(code, settings), S, " ", Rd, ", ", Rm, ", ", Rs);
 }
 
 

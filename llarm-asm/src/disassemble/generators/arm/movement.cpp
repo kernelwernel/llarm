@@ -93,7 +93,7 @@ std::string generators::arm::movement::MRS(const u32 code, const settings settin
 
     const char* PSR = (R ? "SPSR" : "CPSR");
 
-    return util::make_string("MRS", util::cond(code), " ", Rd, ", ", PSR);
+    return util::make_string("MRS", util::cond(code, settings), " ", Rd, ", ", PSR);
 }
 
 
@@ -127,7 +127,7 @@ std::string generators::arm::movement::MSR_IMM(const u32 code, const settings se
     size_t pos = 0;
     const u32 immediate = static_cast<u32>(std::stoul(immediate_str, &pos, 10));
 
-    return util::make_string("MSR", util::cond(code), fields, ", #", util::hex(immediate, settings));
+    return util::make_string("MSR", util::cond(code, settings), fields, ", #", util::hex(immediate, settings));
 }
 
 
@@ -154,5 +154,5 @@ std::string generators::arm::movement::MSR_REG(const u32 code, const settings se
 
     const std::string fields = patterns::psr_fields(code);
 
-    return util::make_string("MSR", util::cond(code), fields, ", ", Rm);
+    return util::make_string("MSR", util::cond(code, settings), fields, ", ", Rm);
 }

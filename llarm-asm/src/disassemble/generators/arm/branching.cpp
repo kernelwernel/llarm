@@ -28,13 +28,13 @@ using namespace internal;
  *        The instruction can therefore specify a branch of approximately ±32MB.
  *
  * reference: A4-10
- */ 
+ */
 std::string generators::arm::branching::B(const u32 code, const u32 PC, const settings settings) {
     const u32 signed_immed_24 = shared::util::bit_range(code, 0, 23);
 
-    const u32 target_address = ((signed_immed_24 << 2) + PC + 8);
+    const u32 target_address = util::thumb_sign_extend(signed_immed_24, 23, PC);
 
-    return util::make_string("B", util::cond(code), " #", util::hex(target_address, settings));
+    return util::make_string("B", util::cond(code, settings), " #", util::hex(target_address, settings));
 }
 
 
@@ -42,9 +42,9 @@ std::string generators::arm::branching::B(const u32 code, const u32 PC, const se
 std::string generators::arm::branching::BL(const u32 code, const u32 PC, const settings settings) {
     const u32 signed_immed_24 = shared::util::bit_range(code, 0, 23);
 
-    const u32 target_address = ((signed_immed_24 << 2) + PC + 8);
+    const u32 target_address = util::thumb_sign_extend(signed_immed_24, 23, PC);
 
-    return util::make_string("BL", util::cond(code), " ", util::hex(target_address, settings));
+    return util::make_string("BL", util::cond(code, settings), " ", util::hex(target_address, settings));
 }
 
 
@@ -61,7 +61,7 @@ std::string generators::arm::branching::BL(const u32 code, const u32 PC, const s
 std::string generators::arm::branching::BX(const u32 code, const settings settings) {
     const std::string Rm = util::reg_string(code, 0, 3, settings);
 
-    return util::make_string("BX", util::cond(code), " ", Rm);
+    return util::make_string("BX", util::cond(code, settings), " ", Rm);
 }
 
 
@@ -83,7 +83,8 @@ std::string generators::arm::branching::BX(const u32 code, const settings settin
  */
 std::string generators::arm::branching::BLX1(const u32 code, const u32 PC, const settings settings) {
     const u32 signed_immed_24 = shared::util::bit_range(code, 0, 23);
-    const u32 target_address = ((signed_immed_24 << 2) + PC + 8);
+
+    const u32 target_address = util::thumb_sign_extend(signed_immed_24, 23, PC);
 
     return util::make_string("BLX ", util::hex(target_address, settings));
 }
@@ -102,5 +103,5 @@ std::string generators::arm::branching::BLX1(const u32 code, const u32 PC, const
  */
 std::string generators::arm::branching::BLX2(const u32 code, const settings settings) {
     const std::string Rm = util::reg_string(code, 0, 3, settings);
-    return util::make_string("BLX", util::cond(code), " ", Rm);
+    return util::make_string("BLX", util::cond(code, settings), " ", Rm);
 }

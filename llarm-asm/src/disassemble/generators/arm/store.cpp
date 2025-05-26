@@ -40,14 +40,14 @@ using namespace internal;
  */
 std::string generators::arm::store::STM1(const u32 code, const settings settings) {
     const u16 register_list = shared::util::bit_range<u16>(code, 0, 15);
-
+    
     const std::string Rn = util::reg_string(code, 16, 19, settings);
     
     const std::string addressing_mode = shifters::ls_mul(code, settings);
 
     const char* W = (shared::util::bit_fetch(code, 21) ? "!" : "");
 
-    return util::make_string("STM", util::cond(code), addressing_mode, " ", Rn, W, ", ", util::reg_list(register_list, settings));
+    return util::make_string("STM", util::cond(code, settings), addressing_mode, " ", Rn, W, ", ", util::reg_list(register_list, settings));
 }
 
 
@@ -103,7 +103,7 @@ std::string generators::arm::store::STR(const u32 code, const settings settings)
 
     const std::string addressing_mode = shifters::ls(code, settings);
 
-    return util::make_string("STR", util::cond(code), " ", Rd, ", ", addressing_mode);
+    return util::make_string("STR", util::cond(code, settings), " ", Rd, ", ", addressing_mode);
 }
 
 
@@ -128,7 +128,7 @@ std::string generators::arm::store::STRB(const u32 code, const settings settings
 
     const std::string addressing_mode = shifters::ls(code, settings);
 
-    return util::make_string("STR", util::cond(code), "B ", Rd, ", ", addressing_mode);
+    return util::make_string("STR", util::cond(code, settings), "B ", Rd, ", ", addressing_mode);
 }
 
 
@@ -169,7 +169,7 @@ std::string generators::arm::store::STRBT(const u32 code, const settings setting
 
     const std::string post_indexed_addressing_mode = shifters::shifter_to_string(mode_id, code, settings);
 
-    return util::make_string("STR", util::cond(code), "BT ", Rd, post_indexed_addressing_mode);
+    return util::make_string("STR", util::cond(code, settings), "BT ", Rd, post_indexed_addressing_mode);
 }
 
 
@@ -194,7 +194,7 @@ std::string generators::arm::store::STRH(const u32 code, const settings settings
 
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
-    return util::make_string("STR", util::cond(code), "H ", Rd, ", ", addressing_mode);
+    return util::make_string("STR", util::cond(code, settings), "H ", Rd, ", ", addressing_mode);
 }
 
 
@@ -236,7 +236,7 @@ std::string generators::arm::store::STRT(const u32 code, const settings settings
 
     const std::string post_indexed_addressing_mode = shifters::shifter_to_string(mode_id, code, settings);
 
-    return util::make_string("STR", util::cond(code), "T ", Rd, ", ", post_indexed_addressing_mode);
+    return util::make_string("STR", util::cond(code, settings), "T ", Rd, ", ", post_indexed_addressing_mode);
 }
 
 
@@ -256,7 +256,7 @@ std::string generators::arm::store::SWP(const u32 code, const settings settings)
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
-    return util::make_string("SWP", util::cond(code), " ", Rd, ", ", Rm, ", [", Rn, "]");
+    return util::make_string("SWP", util::cond(code, settings), " ", Rd, ", ", Rm, ", [", Rn, "]");
 }
 
 
@@ -276,5 +276,5 @@ std::string generators::arm::store::SWPB(const u32 code, const settings settings
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
-    return util::make_string("SWP", util::cond(code), "B ", Rd, ", ", Rm, ", [", Rn, "]");
+    return util::make_string("SWP", util::cond(code, settings), "B ", Rd, ", ", Rm, ", [", Rn, "]");
 }

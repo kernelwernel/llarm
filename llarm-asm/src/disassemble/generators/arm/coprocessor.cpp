@@ -39,7 +39,7 @@ using namespace internal;
  */
 std::string generators::arm::coprocessor::CDP(const u32 code, const settings settings) {
     const u8 cond = shared::util::bit_range<u8>(code, 28, 31);
-    const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond));
+    const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond, settings));
 
     const std::string coproc = util::reg_string(code, 8, 11, settings, util::prefix::P);
 
@@ -81,7 +81,7 @@ std::string generators::arm::coprocessor::CDP(const u32 code, const settings set
  */
 std::string generators::arm::coprocessor::LDC(const u32 code, const settings settings) {
     const u8 cond = shared::util::bit_range<u8>(code, 28, 31);
-    const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond));
+    const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond, settings));
 
     const char* L = (shared::util::bit_fetch(code, 22) ? "L" : "");
 
@@ -118,7 +118,7 @@ std::string generators::arm::coprocessor::LDC(const u32 code, const settings set
  */
 std::string generators::arm::coprocessor::MCR(const u32 code, const settings settings) {
     const u8 cond = shared::util::bit_range<u8>(code, 28, 31);
-    const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond));
+    const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond, settings));
 
     const std::string coproc = util::reg_string(code, 8, 11, settings, util::prefix::P);
 
@@ -157,7 +157,7 @@ std::string generators::arm::coprocessor::MCR(const u32 code, const settings set
  */
 std::string generators::arm::coprocessor::MRC(const u32 code, const settings settings) {
     const u8 cond = shared::util::bit_range<u8>(code, 28, 31);
-    const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond));
+    const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond, settings));
 
     const std::string coproc = util::reg_string(code, 8, 11, settings, util::prefix::P);
 
@@ -199,7 +199,7 @@ std::string generators::arm::coprocessor::MRC(const u32 code, const settings set
  */
 std::string generators::arm::coprocessor::STC(const u32 code, const settings settings) {
     const u8 cond = shared::util::bit_range<u8>(code, 28, 31);
-    const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond));
+    const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond, settings));
 
     const char* L = (shared::util::bit_fetch(code, 22) ? "L" : "");
 

@@ -1,7 +1,7 @@
-#include "shared/types.hpp"
-#include "../../../utility.hpp"
 #include "../../instructions/instructions.hpp"
 #include "../../core/registers.hpp"
+
+#include "shared/types.hpp"
 
 /**
  * start_address = Rn
@@ -20,7 +20,7 @@ void INSTRUCTIONS::thumb::load::LDMIA(const thumb_code_t &code) {
     const id::reg Rn_id = reg.fetch_reg_id(code, 8, 10);
 
     const u32 start_address = Rn;
-    const u32 end_address = (Rn + (std::popcount(register_list) * 4) - 4);
+    const u32 end_address = (Rn + (shared::util::popcount(register_list) * 4) - 4);
 
     u32 address = start_address;
 
@@ -43,9 +43,9 @@ void INSTRUCTIONS::thumb::load::LDMIA(const thumb_code_t &code) {
         // TODO idk, do an assertation handler
     }
 
-    reg.write(Rn_id, (Rn + (std::popcount(register_list) * 4)));
+    reg.write(Rn_id, (Rn + (shared::util::popcount(register_list) * 4)));
 
-    ;
+
 }
 
 
@@ -81,7 +81,7 @@ void INSTRUCTIONS::thumb::load::LDR1(const thumb_code_t &code) {
 
     reg.write(Rd_id, value);
 
-    ;
+
 }
 
 
@@ -117,7 +117,7 @@ void INSTRUCTIONS::thumb::load::LDR2(const thumb_code_t &code) {
     
     reg.write(Rd_id, value);
 
-    ;
+
 }
 
 
@@ -141,7 +141,7 @@ void INSTRUCTIONS::thumb::load::LDR3(const thumb_code_t &code) {
 
     reg.write(Rd_id, access.value);
 
-    ;
+
 }
 
 
@@ -176,7 +176,7 @@ void INSTRUCTIONS::thumb::load::LDR4(const thumb_code_t &code) {
 
     reg.write(Rd_id, value);
 
-    ;
+
 }
 
 
@@ -200,7 +200,7 @@ void INSTRUCTIONS::thumb::load::LDRB1(const thumb_code_t &code) {
 
     reg.write(Rd_id, access.value);
 
-    ;
+
 }
 
 
@@ -224,7 +224,7 @@ void INSTRUCTIONS::thumb::load::LDRB2(const thumb_code_t &code) {
 
     reg.write(Rd_id, access.value);
 
-    ;
+
 }
 
 
@@ -260,7 +260,7 @@ void INSTRUCTIONS::thumb::load::LDRH1(const thumb_code_t &code) {
 
     reg.write(Rd_id, value);
 
-    ;
+
 }
 
 
@@ -296,7 +296,7 @@ void INSTRUCTIONS::thumb::load::LDRH2(const thumb_code_t &code) {
     
     reg.write(Rd_id, value);
 
-    ;
+
 }
 
 
@@ -320,7 +320,7 @@ void INSTRUCTIONS::thumb::load::LDRSB(const thumb_code_t &code) {
 
     reg.write(Rd_id, operation.sign_extend(access.value));
 
-    ;
+
 }
 
 
@@ -355,8 +355,6 @@ void INSTRUCTIONS::thumb::load::LDRSH(const thumb_code_t &code) {
     }
 
     reg.write(Rd_id, operation.sign_extend(value));
-
-    ;
 }
 
 
@@ -387,7 +385,7 @@ void INSTRUCTIONS::thumb::load::POP(const thumb_code_t &code) {
     const u32 SP = reg.read(id::reg::SP);
 
     const u32 start_address = SP;
-    const u32 end_address = SP + (4 * (R + std::popcount(register_list)));
+    const u32 end_address = SP + (4 * (R + shared::util::popcount(register_list)));
 
     u32 address = start_address;
 
@@ -430,6 +428,4 @@ void INSTRUCTIONS::thumb::load::POP(const thumb_code_t &code) {
     }
 
     reg.write(id::reg::SP, end_address);
-
-    ;
 }

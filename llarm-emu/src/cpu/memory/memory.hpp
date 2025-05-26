@@ -9,10 +9,6 @@
 #include "fcse.hpp"
 #include "26_bit_arch.hpp"
 
-#include <bitset>
-#include <vector>
-#include <map>
-
 struct MEMORY {
 private:
     RAM& ram;

@@ -1,8 +1,7 @@
 #pragma once
 
 #include "shared/types.hpp"
-#include "../../utility.hpp"
-#include "../core/globals.hpp"
+#include "../globals.hpp"
 #include "../coprocessor/coprocessor.hpp"
 #include "structure.hpp"
 

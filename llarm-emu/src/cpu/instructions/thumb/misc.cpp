@@ -1,11 +1,10 @@
 #include "shared/types.hpp"
-#include "../../../utility.hpp"
 #include "../../instructions/instructions.hpp"
 #include "../../core/registers.hpp"
 
 void INSTRUCTIONS::thumb::misc::NOP(const thumb_code_t &code) noexcept {
     std::exit(0);
-    ;
+
     return;
 }
 
@@ -25,7 +24,7 @@ void INSTRUCTIONS::thumb::misc::NOP(const thumb_code_t &code) noexcept {
 void INSTRUCTIONS::thumb::misc::BKPT(const thumb_code_t &code) {
     if (settings.has_debug_hardware) {
         // TODO: switch to the debug hardware functionality (idk how)
-        ;
+    
         return;
     }
 

@@ -35,8 +35,6 @@ void INSTRUCTIONS::arm::math::ADC(const arm_code_t &code) {
         reg.write(id::cpsr::C, operation.carry_add(Rn, shifter_operand.value, reg.read(id::cpsr::C)));
         reg.write(id::cpsr::V, operation.overflow_add(Rn, shifter_operand.value, reg.read(id::cpsr::C)));
     }
-
-    ;
 }
 
 
@@ -70,8 +68,6 @@ void INSTRUCTIONS::arm::math::ADD(const arm_code_t &code) {
         reg.write(id::cpsr::C, operation.carry_add(Rn, shifter_operand.value));
         reg.write(id::cpsr::V, operation.overflow_add(Rn, shifter_operand.value));
     }
-
-    ;
 }
 
 
@@ -105,8 +101,6 @@ void INSTRUCTIONS::arm::math::RSC(const arm_code_t &code) {
         reg.write(id::cpsr::C, !operation.borrow_sub(shifter_operand.value, Rn, !(reg.read(id::cpsr::C))));
         reg.write(id::cpsr::V, operation.overflow_sub(shifter_operand.value, Rn, !(reg.read(id::cpsr::C))));
     }
-
-    ;
 }
 
 
@@ -140,8 +134,6 @@ void INSTRUCTIONS::arm::math::SBC(const arm_code_t &code) {
         reg.write(id::cpsr::C, !operation.borrow_sub(Rn, shifter_operand, !(reg.read(id::cpsr::C))));
         reg.write(id::cpsr::V, operation.overflow_sub(Rn, shifter_operand, !(reg.read(id::cpsr::C))));
     }
-
-    ;
 }
 
 
@@ -175,8 +167,6 @@ void INSTRUCTIONS::arm::math::RSB(const arm_code_t &code) {
         reg.write(id::cpsr::C, !operation.borrow_sub(shifter_operand, Rn));
         reg.write(id::cpsr::V, operation.overflow_sub(shifter_operand, Rn));
     }
-
-    ;
 }
 
 
@@ -210,6 +200,4 @@ void INSTRUCTIONS::arm::math::SUB(const arm_code_t &code) {
         reg.write(id::cpsr::C, !operation.borrow_sub(Rn, shifter_operand.value));
         reg.write(id::cpsr::V, operation.overflow_sub(Rn, shifter_operand.value));
     }
-
-    ;
 }

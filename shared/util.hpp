@@ -55,7 +55,7 @@ namespace shared::util {
         return ((input >> index) & 1);
     }
 
-    // std::popcount only works for C++20, while
+    // util::popcount only works for C++20, while
     // built-in functions are compiler-specific,
     // so to simplify all of this compatibility 
     // mess, i'm just going to use the std::bitset

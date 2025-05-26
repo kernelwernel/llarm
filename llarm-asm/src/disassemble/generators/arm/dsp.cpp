@@ -16,7 +16,7 @@ std::string generators::arm::dsp::LDRD(const u32 code, const settings settings) 
 
     const std::string addressing_mode = shifters::ls_misc(code, settings);
 
-    return util::make_string("LDR", util::cond(code), "D ", Rd, ", ", addressing_mode);
+    return util::make_string("LDR", util::cond(code, settings), "D ", Rd, ", ", addressing_mode);
 }
 
 
@@ -29,7 +29,7 @@ std::string generators::arm::dsp::MCRR(const u32 code, const settings settings) 
 
     const u8 opcode = shared::util::bit_range<u8>(code, 4, 7);
 
-    return util::make_string("MCRR", util::cond(code), " ", coproc, ", #", opcode, ", ", Rd, ", ", Rn, ", ", CRm);
+    return util::make_string("MCRR", util::cond(code, settings), " ", coproc, ", #", opcode, ", ", Rd, ", ", Rn, ", ", CRm);
 }
 
 
@@ -42,7 +42,7 @@ std::string generators::arm::dsp::MRRC(const u32 code, const settings settings) 
 
     const u8 opcode = shared::util::bit_range<u8>(code, 4, 7);
 
-    return util::make_string("MRRC", util::cond(code), " ", coproc, ", #", opcode, ", ", Rd, ", ", Rn, ", ", CRm);
+    return util::make_string("MRRC", util::cond(code, settings), " ", coproc, ", #", opcode, ", ", Rd, ", ", Rn, ", ", CRm);
 }
 
 
@@ -81,7 +81,7 @@ std::string generators::arm::dsp::SMLA(const u32 code, const settings settings) 
     const std::string Rs = util::reg_string(code, 8, 11, settings);
     const std::string Rn = util::reg_string(code, 12, 15, settings);
 
-    return util::make_string("SMLA", x, y, util::cond(code), " ", Rd, ", ", Rm, ", ", Rs, ", ", Rn);
+    return util::make_string("SMLA", x, y, util::cond(code, settings), " ", Rd, ", ", Rm, ", ", Rs, ", ", Rn);
 }
 
 
@@ -94,7 +94,7 @@ std::string generators::arm::dsp::SMLAL(const u32 code, const settings settings)
     const std::string RdHi = util::reg_string(code, 16, 19, settings);
     const std::string RdLo = util::reg_string(code, 12, 15, settings);
 
-    return util::make_string("SMLAL", x, y, util::cond(code), " ", RdLo, ", ", RdHi, ", ", Rm, ", ", Rs);
+    return util::make_string("SMLAL", x, y, util::cond(code, settings), " ", RdLo, ", ", RdHi, ", ", Rm, ", ", Rs);
 }
 
 
@@ -106,7 +106,7 @@ std::string generators::arm::dsp::SMLAW(const u32 code, const settings settings)
     const std::string Rs = util::reg_string(code, 8, 11, settings);
     const std::string Rn = util::reg_string(code, 12, 15, settings);
 
-    return util::make_string("SMLAW", y, util::cond(code), " ", Rd, ", ", Rm, ", ", Rs, ", ", Rn);
+    return util::make_string("SMLAW", y, util::cond(code, settings), " ", Rd, ", ", Rm, ", ", Rs, ", ", Rn);
 }
 
 
@@ -118,7 +118,7 @@ std::string generators::arm::dsp::SMUL(const u32 code, const settings settings) 
     const std::string Rs = util::reg_string(code, 8, 11, settings);
     const std::string Rd = util::reg_string(code, 16, 19, settings);
 
-    return util::make_string("SMUL", x, y, util::cond(code), " ", Rd, ", ", Rm, ", ", Rs);
+    return util::make_string("SMUL", x, y, util::cond(code, settings), " ", Rd, ", ", Rm, ", ", Rs);
 }
 
 
@@ -129,7 +129,7 @@ std::string generators::arm::dsp::SMULW(const u32 code, const settings settings)
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     const std::string Rs = util::reg_string(code, 8, 11, settings);
 
-    return util::make_string("SMULW", y, util::cond(code), " ", Rd, ", ", Rm, ", ", Rs);
+    return util::make_string("SMULW", y, util::cond(code, settings), " ", Rd, ", ", Rm, ", ", Rs);
 }
 
 
@@ -139,5 +139,5 @@ std::string generators::arm::dsp::STRD(const u32 code, const settings settings) 
 
     const std::string addressing_mode = shifters::ls_misc(code, settings);
 
-    return util::make_string("STR", util::cond(code), "D ", Rd, ", ", addressing_mode);
+    return util::make_string("STR", util::cond(code, settings), "D ", Rd, ", ", addressing_mode);
 }

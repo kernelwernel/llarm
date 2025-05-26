@@ -1,5 +1,4 @@
 #include "shared/types.hpp"
-#include "../../../utility.hpp"
 #include "../../core/registers.hpp"
 #include "../instructions.hpp"
 
@@ -80,7 +79,7 @@ void INSTRUCTIONS::arm::coprocessor_inst::MCR(const arm_code_t &code) {
     */
 
 
-    ;
+
 }
 
 
@@ -122,7 +121,7 @@ void INSTRUCTIONS::arm::coprocessor_inst::MRC(const arm_code_t &code) {
     //    reg.write(Rd_id, data);
     //}
 
-    ;
+
 }
 
 // TODO: THIS SHOULD BE DISABLED BEFORE V2, COPROCESSORS DIDN'T EXIST IN V1

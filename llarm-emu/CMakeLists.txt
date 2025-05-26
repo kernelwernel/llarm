@@ -8,17 +8,9 @@ project(
 )
 
 
-include(ExternalProject)
-ExternalProject_Add(
-    llarm-asm
-    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../llarm-asm"
-    BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/llarm-asm-build"
-    CMAKE_ARGS
-        -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}  # Optional: Consistent install dir
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}         # Inherit build type
-    # BUILD_ALWAYS OFF  # Uncomment to prevent unnecessary rebuilds
-    # INSTALL_COMMAND ""  # Uncomment to skip installation
-)
+
+find_package(llarm-asm CONFIG REQUIRED)
+
 
 
 # includes
@@ -32,6 +24,7 @@ include("../cmake/linker_flags.cmake") # linker config
 
 # targets
 set(TARGET_BIN "llarm-emu-bin")
+set(TARGET_LIB "llarm-emu-lib")
 
 
 # general
@@ -48,7 +41,7 @@ set_target_properties(${TARGET_LIB} PROPERTIES
 
 # executable setup
 add_executable(${TARGET_BIN} "src/main.cpp")
-target_link_libraries(llarm-emu-bin PRIVATE STATIC libllarm-asm.a)
+target_link_libraries(${TARGET_BIN} PRIVATE ${TARGET_LIB} llarm-asm)
 set_target_properties(${TARGET_BIN} PROPERTIES OUTPUT_NAME "llarm-emu")
 install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION /usr/bin)
 

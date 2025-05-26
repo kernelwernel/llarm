@@ -2,14 +2,11 @@
 
 #include "ram.hpp"
 #include "structure.hpp"
-#include "../core/globals.hpp"
+#include "../globals.hpp"
 #include "../coprocessor/coprocessor.hpp"
-#include "shared/types.hpp"
 #include "../../utility.hpp"
 
-#include "shared/out.hpp"
-
-#include <map>
+#include "shared/types.hpp"
 
 /**
  * SMALL LEXICON FOR ANYBODY READING THIS:

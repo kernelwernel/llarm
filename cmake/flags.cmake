@@ -59,6 +59,7 @@ set(GCC_CXX_FLAGS
     -Wlogical-op
     -Wuseless-cast
     -Wsuggest-override
+    -Wnrvo
 )
 
 

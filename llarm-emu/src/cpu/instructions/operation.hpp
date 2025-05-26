@@ -1,9 +1,8 @@
 #pragma once
 
+#include "../../id.hpp"
 #include "shared/types.hpp"
-#include "../core/registers.hpp"
 #include <vector>
-#include <bit>
 
 struct OPERATION {
 public:
@@ -23,18 +22,7 @@ public:
     bool signed_overflow_sub(const u32, const u32);
     bool signed_overflow_add(const u32, const u32);
 
-    template <is_integral T>
-    i32 sign_extend(const T value) {
-        if constexpr (std::is_same_v<T, u8>) {
-            return static_cast<i32>(static_cast<i8>(value));
-        } else if constexpr (std::is_same_v<T, u16>) {
-            return static_cast<i32>(static_cast<i16>(value));
-        } else if constexpr (std::is_same_v<T, u32>) {
-            return static_cast<i32>(static_cast<i32>(value));
-        } else {
-            shared::out::error("TODO (not valid type)");
-        }
-    }
+    i32 sign_extend(const u32 value, const u8 sign_index = 31);
 
     bool arithmetic_shift_right(u32 num, const u8 shift); // why is this not a reference? research more...
 

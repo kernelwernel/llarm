@@ -31,8 +31,6 @@ void INSTRUCTIONS::arm::movement::MOV(const arm_code_t &code) {
         reg.write(id::cpsr::Z, (Rd == 0));
         reg.write(id::cpsr::C, (shifter_operand.carry));
     }
-
-    ;
 } 
 
 
@@ -65,8 +63,6 @@ void INSTRUCTIONS::arm::movement::MVN(const arm_code_t &code) {
         reg.write(id::cpsr::Z, (Rd == 0));
         reg.write(id::cpsr::C, (shifter_operand.carry));
     }
-
-    ;
 }
 
 

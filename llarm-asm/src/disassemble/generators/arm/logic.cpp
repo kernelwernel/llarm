@@ -138,7 +138,7 @@ std::string generators::arm::logic::CLZ(const u32 code, const settings settings)
     const std::string Rd = util::reg_string(code, 12, 15, settings);
     const std::string Rm = util::reg_string(code, 0, 3, settings);
 
-    return util::make_string("CLZ", util::cond(code), " ", Rd, ", ", Rm);
+    return util::make_string("CLZ", util::cond(code, settings), " ", Rd, ", ", Rm);
 }
 
 

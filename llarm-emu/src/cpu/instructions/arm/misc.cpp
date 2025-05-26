@@ -3,7 +3,6 @@
 #include "../instructions.hpp"
 
 void INSTRUCTIONS::arm::misc::NOP(const arm_code_t &code) noexcept {
-    ;
     return;
 }
 
@@ -66,8 +65,6 @@ void INSTRUCTIONS::arm::misc::PSR(const arm_code_t &code) noexcept {
         reg.write(id::cpsr::F, (0));// TODO
         reg.write(id::cpsr::M, (0));// TODO
     }
-
-    ;
 }
 
 

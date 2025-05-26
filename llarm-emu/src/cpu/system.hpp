@@ -1,15 +1,17 @@
 #pragma once
 
-#include "id.hpp"
+#include "../id.hpp"
 #include "core/registers.hpp"
 #include "instruction_set.hpp"
-#include "coprocessor.hpp"
+#include "coprocessor/coprocessor.hpp"
+#include "globals.hpp"
 
 struct SYSTEM {
 private:
     REGISTERS& reg;
     INSTRUCTION_SET& instruction_set;
     COPROCESSOR& coprocessor;
+    GLOBALS& globals;
 
 public:
 /*
@@ -58,31 +60,32 @@ public:
     }
 
     void enable_mmu() {
-        coprocessor.write_control(id::cp::CP15_R1_M, true);
+        coprocessor.write(id::cp::CP15_R1_M, true);
     }
 
     void disable_mmu() {
-        coprocessor.write_control(id::cp::CP15_R1_M, false);  
+        coprocessor.write(id::cp::CP15_R1_M, false);  
     }
 
     bool switch_to_26_bit_arch() {
-        coprocessor.write_cp15(id::cp::CP15_R1_P, false);
-        coprocessor.write_cp15(id::cp::CP15_R1_D, false);
+        coprocessor.write(id::cp::CP15_R1_P, false);
+        coprocessor.write(id::cp::CP15_R1_D, false);
     }
 
     bool switch_to_32_bit_arch() {
-        coprocessor.write_cp15(id::cp::CP15_R1_P, true);
-        coprocessor.write_cp15(id::cp::CP15_R1_D, true);
+        coprocessor.write(id::cp::CP15_R1_P, true);
+        coprocessor.write(id::cp::CP15_R1_D, true);
     }
 
     SYSTEM(
         REGISTERS& reg, 
         INSTRUCTION_SET& instruction_set, 
-        COPROCESSOR& coprocessor
-    ) : reg(reg), instruction_set(instruction_set), coprocessor(coprocessor) {
+        COPROCESSOR& coprocessor,
+        GLOBALS& globals
+    ) : reg(reg), instruction_set(instruction_set), coprocessor(coprocessor), globals(globals) {
 
     }
-}
+};
 
 
 // TODO remove this fucking garbage

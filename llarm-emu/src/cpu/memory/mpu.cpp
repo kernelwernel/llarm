@@ -1,9 +1,10 @@
-#include "shared/types.hpp"
 #include "../../utility.hpp"
-#include "../core/globals.hpp"
+#include "../globals.hpp"
 #include "../coprocessor/coprocessor.hpp"
 #include "structure.hpp"
 #include "mpu.hpp"
+
+#include "shared/types.hpp"
 
 u64 MPU::get_size(const u8 raw_size_bits) {
     switch (raw_size_bits) {

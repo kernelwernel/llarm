@@ -1,5 +1,4 @@
 #include "cpu/core/core.hpp"
-#include "sanitize.hpp"
 
 #include "shared/types.hpp"
 #include "shared/out.hpp"
@@ -33,7 +32,7 @@ int main(int argc, char* argv[]) {
     
     //std::array<u8, 2> machine_code = { 0b00100001, 0b11111110 }; // MOV R1, #0xFF  (thumb)
 
-    std::vector<u8> machine_code = fetch_binary("../tests/fibonacci/fib.bin");
+    std::vector<u8> machine_code = fetch_binary("../tests/gcd/gcd.bin");
 
     
     //std::array<u8, 2> machine_code = { 0b00000010, 0b00000001 };

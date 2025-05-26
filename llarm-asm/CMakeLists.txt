@@ -39,17 +39,14 @@ foreach(source IN LISTS ALL_SOURCES)
 endforeach()
 
 
+# to include shared/
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../)
+
+
 # library setup
 add_library(${TARGET_LIB} STATIC ${LIB_SOURCES})
 set_target_properties(${TARGET_LIB} PROPERTIES 
     OUTPUT_NAME "llarm-asm"
-)
-#add_dependencies(${TARGET_LIB} llarm-shared)
-install(FILES llarm-asm.hpp DESTINATION /usr/include/llarm)
-#install(DIRECTORY src/ DESTINATION /usr/src/llarm/internal/llarm-asm/src)
-install(TARGETS ${TARGET_LIB}
-    ARCHIVE DESTINATION /usr/lib
-    LIBRARY DESTINATION /usr/lib
 )
 
 
@@ -57,11 +54,40 @@ install(TARGETS ${TARGET_LIB}
 add_executable(${TARGET_BIN} "src/main.cpp")
 set_target_properties(${TARGET_BIN} PROPERTIES OUTPUT_NAME "llarm-asm")
 target_link_libraries(${TARGET_BIN} PRIVATE ${TARGET_LIB})
+
+
+# executable installation
 install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION /usr/bin)
 
 
-# to include shared/
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../)
+# library installation
+install(FILES llarm-asm.hpp DESTINATION /usr/include/llarm)
+install(TARGETS ${TARGET_LIB}
+    EXPORT llarm-asm-lib-targets
+    ARCHIVE DESTINATION /usr/lib
+    LIBRARY DESTINATION /usr/lib
+)
+
+
+# library export
+install(EXPORT llarm-asm-lib-targets
+    FILE llarm-asm-config.cmake
+    NAMESPACE llarm::
+    DESTINATION /usr/lib/cmake/llarm-asm
+)
+
+
+
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    llarm-asm-config-version.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/llarm-asm-config-version.cmake
+    DESTINATION /usr/lib/cmake/llarm-asm
+)
 
 
 # select the compiler, preferably clang++ (defined in llarm/cmake/compiler.cmake)

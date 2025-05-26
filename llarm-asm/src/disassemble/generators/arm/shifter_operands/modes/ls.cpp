@@ -13,6 +13,10 @@ std::string shifters::ls_imm(const u32 code, const settings settings) {
     const std::string Rn = util::reg_string(code, 16, 19, settings);
     const u16 offset_12 = shared::util::bit_range<u16>(code, 0, 11);
 
+    if ((offset_12 == 0) && settings.remove_nulls) {
+        return util::make_string("[", Rn, "]");   
+    }
+
     const char* op = ((shared::util::bit_fetch(code, 23) == 0) ? "-" : "");
 
     return util::make_string("[", Rn, ", #", op, util::hex(offset_12, settings), "]");
@@ -27,6 +31,10 @@ std::string shifters::ls_imm_pre(const u32 code, const settings settings) {
 std::string shifters::ls_imm_post(const u32 code, const settings settings) {
     const std::string Rn = util::reg_string(code, 16, 19, settings);
     const u16 offset_12 = shared::util::bit_range<u16>(code, 0, 11);
+    
+    if ((offset_12 == 0) && settings.remove_nulls) {
+        return util::make_string("[", Rn, "]");
+    }
 
     const char* op = ((shared::util::bit_fetch(code, 23) == 0) ? "-" : "");
 
@@ -69,6 +77,10 @@ std::string shifters::ls_reg_scaled(const u32 code, const std::string &mode, con
 
     const char* op = ((shared::util::bit_fetch(code, 23) == 0) ? "-" : "");
 
+    if ((shift_imm == 0) && settings.remove_nulls) {
+        return util::make_string("[", Rn, ", ", op, Rm, "]");
+    }
+
     return util::make_string("[", Rn, ", ", op, Rm, ", ", mode, " #", util::hex(shift_imm, settings), "]");
 }
 
@@ -85,6 +97,10 @@ std::string shifters::ls_reg_scaled_post(const u32 code, const std::string &mode
     const u8 shift_imm = shared::util::bit_range<u8>(code, 7, 11);
 
     const char* op = ((shared::util::bit_fetch(code, 23) == 0) ? "-" : "");
+
+    if ((shift_imm == 0) && settings.remove_nulls) {
+        return util::make_string("[", Rn, "], ", op, Rm);
+    }
 
     return util::make_string("[", Rn, "], ", op, Rm, ", ", mode, " #", util::hex(shift_imm, settings));
 }

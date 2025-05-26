@@ -9,14 +9,13 @@
 
 #pragma once
 
-#include "../../settings.hpp"
 #include "../../id.hpp"
-#include "../../utility.hpp"
+
+#include "cp15.hpp"
 
 #include "shared/types.hpp"
 #include "shared/out.hpp"
 
-#include "cp15.hpp"
 
 struct COPROCESSOR {
 private:
