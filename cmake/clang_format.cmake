@@ -3,6 +3,8 @@
 # (See accompanying file LICENSE_1_0.txt or copy at
 # http://www.boost.org/LICENSE_1_0.txt)
 
+include(${CMAKE_CURRENT_LIST_DIR}/variables.cmake)
+
 function(prefix_clangformat_setup prefix)
   if(NOT CLANGFORMAT_EXECUTABLE)
     set(CLANGFORMAT_EXECUTABLE clang-format)
@@ -26,7 +28,7 @@ function(prefix_clangformat_setup prefix)
   add_custom_target(${prefix}_clangformat
     COMMAND
       ${CLANGFORMAT_EXECUTABLE}
-      -style=file
+      -style=file:"${LLARM_PROJECT_DIR}/.clang-format"
       -i
       ${clangformat_sources}
     WORKING_DIRECTORY
