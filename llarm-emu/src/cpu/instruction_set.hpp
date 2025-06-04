@@ -15,17 +15,6 @@ private:
     //SETTINGS& settings;
     INSTRUCTIONS& instructions;
 
-
-public:
-//    struct arm_struct {
-//        std::function<bool(const arm_code_t&)> opcode;
-//        std::function<void(const arm_code_t&)> function;
-//    };
-//
-//    struct thumb_struct {
-//        std::function<void(const thumb_code_t&)> function;
-//    };
-
 private:
     using arm_table_t     = std::map<llarm::as::id::arm,     std::function<void(const arm_code_t&)>>;
     using thumb_table_t   = std::map<llarm::as::id::thumb,   std::function<void(const thumb_code_t&)>>;

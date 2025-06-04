@@ -8,9 +8,7 @@ project(
 )
 
 
-
 find_package(llarm-asm CONFIG REQUIRED)
-
 
 
 # includes
@@ -35,6 +33,7 @@ set(LIB_SOURCES ${ALL_SOURCES})
 
 # clang-format
 clangformat_setup(${ALL_SOURCES})
+
 
 # library setup
 add_library(${TARGET_LIB} STATIC ${LIB_SOURCES})

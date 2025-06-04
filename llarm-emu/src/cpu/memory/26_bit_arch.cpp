@@ -23,7 +23,7 @@ bool ARCH_26::is_26_arch_program() {
         return true;
     }
 
-    return (coprocessor.read(id::cp::CP15_R1_P) == false);
+    return (coprocessor.read(id::cp15::R1_P) == false);
 }
 
 bool ARCH_26::is_26_arch_address() {
@@ -33,7 +33,7 @@ bool ARCH_26::is_26_arch_address() {
         return true;
     }
 
-    return (coprocessor.read(id::cp::CP15_R1_D) == false);
+    return (coprocessor.read(id::cp15::R1_D) == false);
 }
 
 bool ARCH_26::is_fully_26_arch() {

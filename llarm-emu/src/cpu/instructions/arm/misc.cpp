@@ -88,7 +88,7 @@ void INSTRUCTIONS::arm::misc::SWI(const arm_code_t &code) {
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
 
-    if (coprocessor.read(id::cp::CP15_R1_V)) {
+    if (coprocessor.read(id::cp15::R1_V)) {
         reg.write(id::reg::PC, 0xFFFF0008);
     } else {
         reg.write(id::reg::PC, 0x00000008);

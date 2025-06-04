@@ -3,6 +3,7 @@
 #include "../globals.hpp"
 #include "../coprocessor/coprocessor.hpp"
 #include "structure.hpp"
+#include "ram.hpp"
 
 #include "shared/types.hpp"
 
@@ -12,6 +13,7 @@ private:
     GLOBALS& globals;
     COPROCESSOR& coprocessor;
     SETTINGS& settings;
+    RAM& ram;
     
 private:
     u32 region_0_start = 0;
@@ -39,6 +41,56 @@ private:
     bool region_6_enabled = false;
     bool region_7_enabled = false;
 
+    u32 region_inst_0_start = 0;
+    u32 region_inst_1_start = 0;
+    u32 region_inst_2_start = 0;
+    u32 region_inst_3_start = 0;
+    u32 region_inst_4_start = 0;
+    u32 region_inst_5_start = 0;
+    u32 region_inst_6_start = 0;
+    u32 region_inst_7_start = 0;
+    u32 region_inst_0_end = 0;
+    u32 region_inst_1_end = 0;
+    u32 region_inst_2_end = 0;
+    u32 region_inst_3_end = 0;
+    u32 region_inst_4_end = 0;
+    u32 region_inst_5_end = 0;
+    u32 region_inst_6_end = 0;
+    u32 region_inst_7_end = 0;
+    bool region_inst_0_enabled = false;
+    bool region_inst_1_enabled = false;
+    bool region_inst_2_enabled = false;
+    bool region_inst_3_enabled = false;
+    bool region_inst_4_enabled = false;
+    bool region_inst_5_enabled = false;
+    bool region_inst_6_enabled = false;
+    bool region_inst_7_enabled = false;
+
+    u32 region_data_0_start = 0;
+    u32 region_data_1_start = 0;
+    u32 region_data_2_start = 0;
+    u32 region_data_3_start = 0;
+    u32 region_data_4_start = 0;
+    u32 region_data_5_start = 0;
+    u32 region_data_6_start = 0;
+    u32 region_data_7_start = 0;
+    u32 region_data_0_end = 0;
+    u32 region_data_1_end = 0;
+    u32 region_data_2_end = 0;
+    u32 region_data_3_end = 0;
+    u32 region_data_4_end = 0;
+    u32 region_data_5_end = 0;
+    u32 region_data_6_end = 0;
+    u32 region_data_7_end = 0;
+    bool region_data_0_enabled = false;
+    bool region_data_1_enabled = false;
+    bool region_data_2_enabled = false;
+    bool region_data_3_enabled = false;
+    bool region_data_4_enabled = false;
+    bool region_data_5_enabled = false;
+    bool region_data_6_enabled = false;
+    bool region_data_7_enabled = false;
+
 public:
     u64 get_size(const u8 raw_size_bits);
 
@@ -46,9 +98,11 @@ public:
 
     bool is_mpu_enabled();
     
-    memory_struct<> is_access_valid(const u32 address, const id::access_type access_type);
+    id::aborts is_access_valid(const u32 address, const u8 access_size, const id::access_type access_type);
 
-    memory_struct<> write_manager(const u32 address, const u8 access_size);
+    mem_write_struct write(const u32 address, const u32 value, const u8 access_size);
+
+    mem_read_struct read(const u32 address, const u8 access_size);
 
     // try to scan from most priority to least, rather than upwards
     
@@ -65,10 +119,12 @@ public:
     MPU(
         GLOBALS& globals, 
         COPROCESSOR& coprocessor,
-        SETTINGS& settings
+        SETTINGS& settings,
+        RAM& ram
     ) : globals(globals), 
         coprocessor(coprocessor),
-        settings(settings)
+        settings(settings),
+        ram(ram)
     {
         
     }

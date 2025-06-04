@@ -60,21 +60,21 @@ public:
     }
 
     void enable_mmu() {
-        coprocessor.write(id::cp::CP15_R1_M, true);
+        coprocessor.write(id::cp15::R1_M, true);
     }
 
     void disable_mmu() {
-        coprocessor.write(id::cp::CP15_R1_M, false);  
+        coprocessor.write(id::cp15::R1_M, false);  
     }
 
     void switch_to_26_bit_arch() {
-        coprocessor.write(id::cp::CP15_R1_P, false);
-        coprocessor.write(id::cp::CP15_R1_D, false);
+        coprocessor.write(id::cp15::R1_P, false);
+        coprocessor.write(id::cp15::R1_D, false);
     }
 
     void switch_to_32_bit_arch() {
-        coprocessor.write(id::cp::CP15_R1_P, true);
-        coprocessor.write(id::cp::CP15_R1_D, true);
+        coprocessor.write(id::cp15::R1_P, true);
+        coprocessor.write(id::cp15::R1_D, true);
     }
 
     SYSTEM(

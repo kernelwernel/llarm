@@ -227,7 +227,7 @@ INSTRUCTION_SET::INSTRUCTION_SET(INSTRUCTIONS& instructions) : instructions(inst
         arm_table.emplace(llarm::assembly::id::arm::FTOSIS, { opcodes::arm::FTOSIS, instruction::arm::vfp::FTOSIS });
         arm_table.emplace(llarm::assembly::id::arm::FTOUIS, { opcodes::arm::FTOUIS, instruction::arm::vfp::FTOUIS });
         arm_table.emplace(llarm::assembly::id::arm::FUITOS, { opcodes::arm::FUITOS, instruction::arm::vfp::FUITOS });
-        
+
         if (settings.is_vfp_double_precision_enabled) {
             arm_table.emplace(llarm::assembly::id::arm::FADDD, { opcodes::arm::FADDD, instruction::arm::vfp::FADDD });
             arm_table.emplace(llarm::assembly::id::arm::FABSD, { opcodes::arm::FABSD, instruction::arm::vfp::FABSD });

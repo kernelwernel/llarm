@@ -5,6 +5,7 @@
 #include "fcse.hpp"
 
 #include "shared/types.hpp"
+#include "shared/util.hpp"
 
 bool FCSE::is_fcse_enabled() {
     return (settings.is_fcse_enabled);
@@ -15,6 +16,6 @@ u32 FCSE::modify_address(const u32 address) {
         return address;
     }
 
-    const u8 PID = coprocessor.read(id::cp::CP15_R13_PID);
+    const u8 PID = coprocessor.read(id::cp15::R13_PID);
     return (address | PID << 25);
 }

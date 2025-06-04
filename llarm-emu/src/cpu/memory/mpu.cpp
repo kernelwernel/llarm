@@ -1,6 +1,7 @@
 #include "../../utility.hpp"
 #include "../globals.hpp"
 #include "../coprocessor/coprocessor.hpp"
+#include "llarm-emu/src/id.hpp"
 #include "structure.hpp"
 
 #include "mpu.hpp"
@@ -56,69 +57,140 @@ id::access_perm MPU::get_access_perm(const u8 AP) {
 
 bool MPU::is_mpu_enabled() {
     return (
-        (coprocessor.read(id::cp::CP15_R1_M) == true) &&
+        (coprocessor.read(id::cp15::R1_M) == true) &&
         (settings.is_mpu_enabled)
     );
 }
 
 
-memory_struct<> MPU::is_access_valid(const u32 address, const id::access_type access_type) {
-    memory_struct<> data = {};
-
-    // these are irrelevant
-    data.value = 0;
-    data.new_address = address;
-
+id::aborts MPU::is_access_valid(const u32 address, const u8 access_size, const id::access_type access_type) {
     if (globals.mpu_address_change) {
-        region_0_start = coprocessor.read(id::cp::CP15_R6_PU_0_BASE_ADDRESS);
-        region_1_start = coprocessor.read(id::cp::CP15_R6_PU_1_BASE_ADDRESS);
-        region_2_start = coprocessor.read(id::cp::CP15_R6_PU_2_BASE_ADDRESS);
-        region_3_start = coprocessor.read(id::cp::CP15_R6_PU_3_BASE_ADDRESS);
-        region_4_start = coprocessor.read(id::cp::CP15_R6_PU_4_BASE_ADDRESS);
-        region_5_start = coprocessor.read(id::cp::CP15_R6_PU_5_BASE_ADDRESS);
-        region_6_start = coprocessor.read(id::cp::CP15_R6_PU_6_BASE_ADDRESS);
-        region_7_start = coprocessor.read(id::cp::CP15_R6_PU_7_BASE_ADDRESS);
-        region_0_end = region_0_start + get_size(coprocessor.read(id::cp::CP15_R6_PU_0_SIZE));
-        region_1_end = region_1_start + get_size(coprocessor.read(id::cp::CP15_R6_PU_1_SIZE));
-        region_2_end = region_2_start + get_size(coprocessor.read(id::cp::CP15_R6_PU_2_SIZE));
-        region_3_end = region_3_start + get_size(coprocessor.read(id::cp::CP15_R6_PU_3_SIZE));
-        region_4_end = region_4_start + get_size(coprocessor.read(id::cp::CP15_R6_PU_4_SIZE));
-        region_5_end = region_5_start + get_size(coprocessor.read(id::cp::CP15_R6_PU_5_SIZE));
-        region_6_end = region_6_start + get_size(coprocessor.read(id::cp::CP15_R6_PU_6_SIZE));
-        region_7_end = region_7_start + get_size(coprocessor.read(id::cp::CP15_R6_PU_7_SIZE));
-        region_0_enabled = coprocessor.read(id::cp::CP15_R6_PU_0_E);
-        region_1_enabled = coprocessor.read(id::cp::CP15_R6_PU_1_E);
-        region_2_enabled = coprocessor.read(id::cp::CP15_R6_PU_2_E);
-        region_3_enabled = coprocessor.read(id::cp::CP15_R6_PU_3_E);
-        region_4_enabled = coprocessor.read(id::cp::CP15_R6_PU_4_E);
-        region_5_enabled = coprocessor.read(id::cp::CP15_R6_PU_5_E);
-        region_6_enabled = coprocessor.read(id::cp::CP15_R6_PU_6_E);
-        region_7_enabled = coprocessor.read(id::cp::CP15_R6_PU_7_E);
+        if (settings.is_mpu_separate) {
+            if (globals.mpu_inst_address_change) {
+                region_inst_0_start = coprocessor.read(id::cp15::R6_PU_INST_0_BASE_ADDRESS);
+                region_inst_1_start = coprocessor.read(id::cp15::R6_PU_INST_1_BASE_ADDRESS);
+                region_inst_2_start = coprocessor.read(id::cp15::R6_PU_INST_2_BASE_ADDRESS);
+                region_inst_3_start = coprocessor.read(id::cp15::R6_PU_INST_3_BASE_ADDRESS);
+                region_inst_4_start = coprocessor.read(id::cp15::R6_PU_INST_4_BASE_ADDRESS);
+                region_inst_5_start = coprocessor.read(id::cp15::R6_PU_INST_5_BASE_ADDRESS);
+                region_inst_6_start = coprocessor.read(id::cp15::R6_PU_INST_6_BASE_ADDRESS);
+                region_inst_7_start = coprocessor.read(id::cp15::R6_PU_INST_7_BASE_ADDRESS);
+                region_inst_0_end = region_inst_0_start + get_size(coprocessor.read(id::cp15::R6_PU_INST_0_SIZE));
+                region_inst_1_end = region_inst_1_start + get_size(coprocessor.read(id::cp15::R6_PU_INST_1_SIZE));
+                region_inst_2_end = region_inst_2_start + get_size(coprocessor.read(id::cp15::R6_PU_INST_2_SIZE));
+                region_inst_3_end = region_inst_3_start + get_size(coprocessor.read(id::cp15::R6_PU_INST_3_SIZE));
+                region_inst_4_end = region_inst_4_start + get_size(coprocessor.read(id::cp15::R6_PU_INST_4_SIZE));
+                region_inst_5_end = region_inst_5_start + get_size(coprocessor.read(id::cp15::R6_PU_INST_5_SIZE));
+                region_inst_6_end = region_inst_6_start + get_size(coprocessor.read(id::cp15::R6_PU_INST_6_SIZE));
+                region_inst_7_end = region_inst_7_start + get_size(coprocessor.read(id::cp15::R6_PU_INST_7_SIZE));
+                region_inst_0_enabled = coprocessor.read(id::cp15::R6_PU_INST_0_E);
+                region_inst_1_enabled = coprocessor.read(id::cp15::R6_PU_INST_1_E);
+                region_inst_2_enabled = coprocessor.read(id::cp15::R6_PU_INST_2_E);
+                region_inst_3_enabled = coprocessor.read(id::cp15::R6_PU_INST_3_E);
+                region_inst_4_enabled = coprocessor.read(id::cp15::R6_PU_INST_4_E);
+                region_inst_5_enabled = coprocessor.read(id::cp15::R6_PU_INST_5_E);
+                region_inst_6_enabled = coprocessor.read(id::cp15::R6_PU_INST_6_E);
+                region_inst_7_enabled = coprocessor.read(id::cp15::R6_PU_INST_7_E);
+            } else {
+                region_data_0_start = coprocessor.read(id::cp15::R6_PU_DATA_0_BASE_ADDRESS);
+                region_data_1_start = coprocessor.read(id::cp15::R6_PU_DATA_1_BASE_ADDRESS);
+                region_data_2_start = coprocessor.read(id::cp15::R6_PU_DATA_2_BASE_ADDRESS);
+                region_data_3_start = coprocessor.read(id::cp15::R6_PU_DATA_3_BASE_ADDRESS);
+                region_data_4_start = coprocessor.read(id::cp15::R6_PU_DATA_4_BASE_ADDRESS);
+                region_data_5_start = coprocessor.read(id::cp15::R6_PU_DATA_5_BASE_ADDRESS);
+                region_data_6_start = coprocessor.read(id::cp15::R6_PU_DATA_6_BASE_ADDRESS);
+                region_data_7_start = coprocessor.read(id::cp15::R6_PU_DATA_7_BASE_ADDRESS);
+                region_data_0_end = region_data_0_start + get_size(coprocessor.read(id::cp15::R6_PU_DATA_0_SIZE));
+                region_data_1_end = region_data_1_start + get_size(coprocessor.read(id::cp15::R6_PU_DATA_1_SIZE));
+                region_data_2_end = region_data_2_start + get_size(coprocessor.read(id::cp15::R6_PU_DATA_2_SIZE));
+                region_data_3_end = region_data_3_start + get_size(coprocessor.read(id::cp15::R6_PU_DATA_3_SIZE));
+                region_data_4_end = region_data_4_start + get_size(coprocessor.read(id::cp15::R6_PU_DATA_4_SIZE));
+                region_data_5_end = region_data_5_start + get_size(coprocessor.read(id::cp15::R6_PU_DATA_5_SIZE));
+                region_data_6_end = region_data_6_start + get_size(coprocessor.read(id::cp15::R6_PU_DATA_6_SIZE));
+                region_data_7_end = region_data_7_start + get_size(coprocessor.read(id::cp15::R6_PU_DATA_7_SIZE));
+                region_data_0_enabled = coprocessor.read(id::cp15::R6_PU_DATA_0_E);
+                region_data_1_enabled = coprocessor.read(id::cp15::R6_PU_DATA_1_E);
+                region_data_2_enabled = coprocessor.read(id::cp15::R6_PU_DATA_2_E);
+                region_data_3_enabled = coprocessor.read(id::cp15::R6_PU_DATA_3_E);
+                region_data_4_enabled = coprocessor.read(id::cp15::R6_PU_DATA_4_E);
+                region_data_5_enabled = coprocessor.read(id::cp15::R6_PU_DATA_5_E);
+                region_data_6_enabled = coprocessor.read(id::cp15::R6_PU_DATA_6_E);
+                region_data_7_enabled = coprocessor.read(id::cp15::R6_PU_DATA_7_E);
+            }
+        } else {
+            region_0_start = coprocessor.read(id::cp15::R6_PU_0_BASE_ADDRESS);
+            region_1_start = coprocessor.read(id::cp15::R6_PU_1_BASE_ADDRESS);
+            region_2_start = coprocessor.read(id::cp15::R6_PU_2_BASE_ADDRESS);
+            region_3_start = coprocessor.read(id::cp15::R6_PU_3_BASE_ADDRESS);
+            region_4_start = coprocessor.read(id::cp15::R6_PU_4_BASE_ADDRESS);
+            region_5_start = coprocessor.read(id::cp15::R6_PU_5_BASE_ADDRESS);
+            region_6_start = coprocessor.read(id::cp15::R6_PU_6_BASE_ADDRESS);
+            region_7_start = coprocessor.read(id::cp15::R6_PU_7_BASE_ADDRESS);
+            region_0_end = region_0_start + get_size(coprocessor.read(id::cp15::R6_PU_0_SIZE));
+            region_1_end = region_1_start + get_size(coprocessor.read(id::cp15::R6_PU_1_SIZE));
+            region_2_end = region_2_start + get_size(coprocessor.read(id::cp15::R6_PU_2_SIZE));
+            region_3_end = region_3_start + get_size(coprocessor.read(id::cp15::R6_PU_3_SIZE));
+            region_4_end = region_4_start + get_size(coprocessor.read(id::cp15::R6_PU_4_SIZE));
+            region_5_end = region_5_start + get_size(coprocessor.read(id::cp15::R6_PU_5_SIZE));
+            region_6_end = region_6_start + get_size(coprocessor.read(id::cp15::R6_PU_6_SIZE));
+            region_7_end = region_7_start + get_size(coprocessor.read(id::cp15::R6_PU_7_SIZE));
+            region_0_enabled = coprocessor.read(id::cp15::R6_PU_0_E);
+            region_1_enabled = coprocessor.read(id::cp15::R6_PU_1_E);
+            region_2_enabled = coprocessor.read(id::cp15::R6_PU_2_E);
+            region_3_enabled = coprocessor.read(id::cp15::R6_PU_3_E);
+            region_4_enabled = coprocessor.read(id::cp15::R6_PU_4_E);
+            region_5_enabled = coprocessor.read(id::cp15::R6_PU_5_E);
+            region_6_enabled = coprocessor.read(id::cp15::R6_PU_6_E);
+            region_7_enabled = coprocessor.read(id::cp15::R6_PU_7_E);
+        }
 
         globals.mpu_address_change = false;
     }
 
-    id::cp AP_region_id;
+    id::cp15 AP_region_id;
+    const u32 address_start = address;
+    const u32 address_end = address + access_size; 
 
-    if      (address >= region_7_start && address <= region_7_end && region_7_enabled) { AP_region_id = id::cp::CP15_R5_PU_AP7; } 
-    else if (address >= region_6_start && address <= region_6_end && region_6_enabled) { AP_region_id = id::cp::CP15_R5_PU_AP6; }
-    else if (address >= region_5_start && address <= region_5_end && region_5_enabled) { AP_region_id = id::cp::CP15_R5_PU_AP5; }
-    else if (address >= region_4_start && address <= region_4_end && region_4_enabled) { AP_region_id = id::cp::CP15_R5_PU_AP4; }
-    else if (address >= region_3_start && address <= region_3_end && region_3_enabled) { AP_region_id = id::cp::CP15_R5_PU_AP3; }
-    else if (address >= region_2_start && address <= region_2_end && region_2_enabled) { AP_region_id = id::cp::CP15_R5_PU_AP2; }
-    else if (address >= region_1_start && address <= region_1_end && region_1_enabled) { AP_region_id = id::cp::CP15_R5_PU_AP1; }
-    else if (address >= region_0_start && address <= region_0_end && region_0_enabled) { AP_region_id = id::cp::CP15_R5_PU_AP0; }
-    else {
-        // at this point, an abort is performed 
-        data.has_failed = true;
-
+    if (settings.is_mpu_separate) {
+        // TODO IMPLEMENT FOR BOTH INST AND DATA
         if (access_type == id::access_type::INSTRUCTION_FETCH) {
-            data.abort_code = id::aborts::PREFETCH_ABORT;
+            if      ((address_start >= region_inst_7_start && address_end <= region_inst_7_end) && region_inst_7_enabled) { AP_region_id = id::cp15::R5_PU_INST_AP7; } 
+            else if ((address_start >= region_inst_6_start && address_end <= region_inst_6_end) && region_inst_6_enabled) { AP_region_id = id::cp15::R5_PU_INST_AP6; }
+            else if ((address_start >= region_inst_5_start && address_end <= region_inst_5_end) && region_inst_5_enabled) { AP_region_id = id::cp15::R5_PU_INST_AP5; }
+            else if ((address_start >= region_inst_4_start && address_end <= region_inst_4_end) && region_inst_4_enabled) { AP_region_id = id::cp15::R5_PU_INST_AP4; }
+            else if ((address_start >= region_inst_3_start && address_end <= region_inst_3_end) && region_inst_3_enabled) { AP_region_id = id::cp15::R5_PU_INST_AP3; }
+            else if ((address_start >= region_inst_2_start && address_end <= region_inst_2_end) && region_inst_2_enabled) { AP_region_id = id::cp15::R5_PU_INST_AP2; }
+            else if ((address_start >= region_inst_1_start && address_end <= region_inst_1_end) && region_inst_1_enabled) { AP_region_id = id::cp15::R5_PU_INST_AP1; }
+            else if ((address_start >= region_inst_0_start && address_end <= region_inst_0_end) && region_inst_0_enabled) { AP_region_id = id::cp15::R5_PU_INST_AP0; }
+            else { return id::aborts::PREFETCH_ABORT; }
         } else {
-            data.abort_code = id::aborts::ABORT;
+            if      ((address_start >= region_data_7_start && address_end <= region_data_7_end) && region_data_7_enabled) { AP_region_id = id::cp15::R5_PU_DATA_AP7; } 
+            else if ((address_start >= region_data_6_start && address_end <= region_data_6_end) && region_data_6_enabled) { AP_region_id = id::cp15::R5_PU_DATA_AP6; }
+            else if ((address_start >= region_data_5_start && address_end <= region_data_5_end) && region_data_5_enabled) { AP_region_id = id::cp15::R5_PU_DATA_AP5; }
+            else if ((address_start >= region_data_4_start && address_end <= region_data_4_end) && region_data_4_enabled) { AP_region_id = id::cp15::R5_PU_DATA_AP4; }
+            else if ((address_start >= region_data_3_start && address_end <= region_data_3_end) && region_data_3_enabled) { AP_region_id = id::cp15::R5_PU_DATA_AP3; }
+            else if ((address_start >= region_data_2_start && address_end <= region_data_2_end) && region_data_2_enabled) { AP_region_id = id::cp15::R5_PU_DATA_AP2; }
+            else if ((address_start >= region_data_1_start && address_end <= region_data_1_end) && region_data_1_enabled) { AP_region_id = id::cp15::R5_PU_DATA_AP1; }
+            else if ((address_start >= region_data_0_start && address_end <= region_data_0_end) && region_data_0_enabled) { AP_region_id = id::cp15::R5_PU_DATA_AP0; }
+            else { return id::aborts::ABORT; }
         }
-
-        return data;
+    } else {
+        if      ((address_start >= region_7_start && address_end <= region_7_end) && region_7_enabled) { AP_region_id = id::cp15::R5_PU_AP7; } 
+        else if ((address_start >= region_6_start && address_end <= region_6_end) && region_6_enabled) { AP_region_id = id::cp15::R5_PU_AP6; }
+        else if ((address_start >= region_5_start && address_end <= region_5_end) && region_5_enabled) { AP_region_id = id::cp15::R5_PU_AP5; }
+        else if ((address_start >= region_4_start && address_end <= region_4_end) && region_4_enabled) { AP_region_id = id::cp15::R5_PU_AP4; }
+        else if ((address_start >= region_3_start && address_end <= region_3_end) && region_3_enabled) { AP_region_id = id::cp15::R5_PU_AP3; }
+        else if ((address_start >= region_2_start && address_end <= region_2_end) && region_2_enabled) { AP_region_id = id::cp15::R5_PU_AP2; }
+        else if ((address_start >= region_1_start && address_end <= region_1_end) && region_1_enabled) { AP_region_id = id::cp15::R5_PU_AP1; }
+        else if ((address_start >= region_0_start && address_end <= region_0_end) && region_0_enabled) { AP_region_id = id::cp15::R5_PU_AP0; }
+        else {
+            // at this point, an abort is performed 
+            if (access_type == id::access_type::INSTRUCTION_FETCH) {
+                return id::aborts::PREFETCH_ABORT;
+            }
+            
+            return id::aborts::ABORT;
+        }
     }
 
     const u8 AP_bits = coprocessor.read(AP_region_id);
@@ -126,57 +198,58 @@ memory_struct<> MPU::is_access_valid(const u32 address, const id::access_type ac
 
     switch (AP_id) {
         case id::access_perm::READ_WRITE: 
-            data.has_failed = (!(
-                (access_type == id::access_type::INSTRUCTION_FETCH) ||
-                (access_type == id::access_type::READ_WRITE) ||
-                (access_type == id::access_type::READ) ||
-                (access_type == id::access_type::WRITE)
-            ));
+            if (
+                (access_type != id::access_type::INSTRUCTION_FETCH) &&
+                (access_type != id::access_type::READ_WRITE) &&
+                (access_type != id::access_type::READ) &&
+                (access_type != id::access_type::WRITE)
+            ) {
+                return id::aborts::ABORT;
+            }
             break;
 
         case id::access_perm::READ_ONLY:
-            data.has_failed = (!(
-                (access_type == id::access_type::INSTRUCTION_FETCH) ||
-                (access_type == id::access_type::READ_WRITE) || // this overlaps with the read permission, so this is valid
-                (access_type == id::access_type::READ)
-            ));
+            if (
+                (access_type != id::access_type::INSTRUCTION_FETCH) &&
+                (access_type != id::access_type::READ_WRITE) && // this overlaps with the read permission, so this is valid
+                (access_type != id::access_type::READ)
+            ) {
+                return id::aborts::ABORT;
+            }
             break;
 
         case id::access_perm::UNPREDICTABLE: // TODO add an unpredictable log here
         case id::access_perm::NO_ACCESS: 
-            data.has_failed = true;
             if (access_type == id::access_type::INSTRUCTION_FETCH) {
-                data.abort_code = id::aborts::PREFETCH_ABORT;
-            } else {
-                data.abort_code = id::aborts::ABORT;
+                return id::aborts::PREFETCH_ABORT;
             }
-            return data;
+
+            return id::aborts::ABORT;
     }
 
-    data.abort_code = id::aborts::NO_ABORT;
-
-    return data;
+    // if the checks above passed, this is assumed to be a valid access
+    return id::aborts::NO_ABORT;
 }
 
 
-memory_struct<> MPU::write_manager(const u32 address, const u8 access_size) {
-    memory_struct<> data = {};
+mem_write_struct MPU::write(const u32 address, const u32 value, const u8 access_size) {
+    const id::aborts abort_code = is_access_valid(address, access_size, id::access_type::WRITE);
 
-    const memory_struct<> mpu_access = is_access_valid(address, id::access_type::WRITE);
+    const bool access_has_failed = (abort_code != id::aborts::NO_ABORT);
 
-    if (mpu_access.has_failed) {
-        data.has_failed = true;
-        data.abort_code = id::aborts::ABORT;
-        data.value = 0;
-        data.new_address = address;
-    } else {
-        data.has_failed = false;
-        data.abort_code = id::aborts::NO_ABORT;
-        data.value = 0;
-        data.new_address = address;
+    if (access_has_failed) {
+        return mem_write_struct {
+            /* has_failed  */ true,
+            /* abort_code  */ abort_code
+        };
     }
 
-    return data;
+    ram.write(value, address, access_size);
+
+    return mem_write_struct {
+        /* has_failed  */ false,
+        /* abort_code  */ id::aborts::NO_ABORT
+    };
 }
 
 
@@ -209,6 +282,7 @@ void MPU::setup_R6_PU() {
     // if the address doesn't lie in any protection region, a memory access abort is made 
 }
 
+
 void MPU::reset() {
     region_0_start = 0;
     region_1_start = 0;
@@ -235,12 +309,81 @@ void MPU::reset() {
     region_6_enabled = false;
     region_7_enabled = false;
 
-    coprocessor.write(id::cp::CP15_R6_PU_0, 0);
-    coprocessor.write(id::cp::CP15_R6_PU_1, 0);
-    coprocessor.write(id::cp::CP15_R6_PU_2, 0);
-    coprocessor.write(id::cp::CP15_R6_PU_3, 0);
-    coprocessor.write(id::cp::CP15_R6_PU_4, 0);
-    coprocessor.write(id::cp::CP15_R6_PU_5, 0);
-    coprocessor.write(id::cp::CP15_R6_PU_6, 0);
-    coprocessor.write(id::cp::CP15_R6_PU_7, 0);
+    region_inst_0_start = 0;
+    region_inst_1_start = 0;
+    region_inst_2_start = 0;
+    region_inst_3_start = 0;
+    region_inst_4_start = 0;
+    region_inst_5_start = 0;
+    region_inst_6_start = 0;
+    region_inst_7_start = 0;
+    region_inst_0_end = 0;
+    region_inst_1_end = 0;
+    region_inst_2_end = 0;
+    region_inst_3_end = 0;
+    region_inst_4_end = 0;
+    region_inst_5_end = 0;
+    region_inst_6_end = 0;
+    region_inst_7_end = 0;
+    region_inst_0_enabled = false;
+    region_inst_1_enabled = false;
+    region_inst_2_enabled = false;
+    region_inst_3_enabled = false;
+    region_inst_4_enabled = false;
+    region_inst_5_enabled = false;
+    region_inst_6_enabled = false;
+    region_inst_7_enabled = false;
+
+
+    region_data_0_start = 0;
+    region_data_1_start = 0;
+    region_data_2_start = 0;
+    region_data_3_start = 0;
+    region_data_4_start = 0;
+    region_data_5_start = 0;
+    region_data_6_start = 0;
+    region_data_7_start = 0;
+    region_data_0_end = 0;
+    region_data_1_end = 0;
+    region_data_2_end = 0;
+    region_data_3_end = 0;
+    region_data_4_end = 0;
+    region_data_5_end = 0;
+    region_data_6_end = 0;
+    region_data_7_end = 0;
+    region_data_0_enabled = false;
+    region_data_1_enabled = false;
+    region_data_2_enabled = false;
+    region_data_3_enabled = false;
+    region_data_4_enabled = false;
+    region_data_5_enabled = false;
+    region_data_6_enabled = false;
+    region_data_7_enabled = false;
+
+    coprocessor.write(id::cp15::R6_PU_0, 0);
+    coprocessor.write(id::cp15::R6_PU_1, 0);
+    coprocessor.write(id::cp15::R6_PU_2, 0);
+    coprocessor.write(id::cp15::R6_PU_3, 0);
+    coprocessor.write(id::cp15::R6_PU_4, 0);
+    coprocessor.write(id::cp15::R6_PU_5, 0);
+    coprocessor.write(id::cp15::R6_PU_6, 0);
+    coprocessor.write(id::cp15::R6_PU_7, 0);
+
+    coprocessor.write(id::cp15::R6_PU_INST_0, 0);
+    coprocessor.write(id::cp15::R6_PU_INST_1, 0);
+    coprocessor.write(id::cp15::R6_PU_INST_2, 0);
+    coprocessor.write(id::cp15::R6_PU_INST_3, 0);
+    coprocessor.write(id::cp15::R6_PU_INST_4, 0);
+    coprocessor.write(id::cp15::R6_PU_INST_5, 0);
+    coprocessor.write(id::cp15::R6_PU_INST_6, 0);
+    coprocessor.write(id::cp15::R6_PU_INST_7, 0);
+
+    coprocessor.write(id::cp15::R6_PU_DATA_0, 0);
+    coprocessor.write(id::cp15::R6_PU_DATA_1, 0);
+    coprocessor.write(id::cp15::R6_PU_DATA_2, 0);
+    coprocessor.write(id::cp15::R6_PU_DATA_3, 0);
+    coprocessor.write(id::cp15::R6_PU_DATA_4, 0);
+    coprocessor.write(id::cp15::R6_PU_DATA_5, 0);
+    coprocessor.write(id::cp15::R6_PU_DATA_6, 0);
+    coprocessor.write(id::cp15::R6_PU_DATA_7, 0);
 }

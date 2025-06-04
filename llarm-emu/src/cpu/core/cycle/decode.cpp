@@ -14,29 +14,27 @@ bool DECODE::condition_match(const id::cond cond) const {
 
 
 arm_decode_struct DECODE::arm_decode(const arm_code_t &raw_code) const {
-    arm_decode_struct tmp = {};
-
     id::cond cond = reg.fetch_cond_id(raw_code);
 
-    if (!condition_match(cond)) {
-        tmp.id = llarm::as::id::arm::NOP;
-        tmp.code = arm_code_t(0);
-    } else {
-        tmp.id = llarm::as::identify::arm(raw_code);
-        tmp.code = raw_code;
+    if (condition_match(cond)) {
+        return arm_decode_struct {
+            llarm::as::identify::arm(raw_code), // id
+            raw_code // code
+        };
     }
 
-    return tmp;
+    return arm_decode_struct {
+        llarm::as::id::arm::NOP, // id
+        arm_code_t(0) // code
+    };
 }
 
 
 thumb_decode_struct DECODE::thumb_decode(const thumb_code_t &raw_code) const {
-    thumb_decode_struct tmp = {};
-
-    tmp.id = llarm::as::identify::thumb(raw_code);
-    tmp.code = raw_code;
-
-    return tmp;
+    return thumb_decode_struct {
+        llarm::as::identify::thumb(raw_code), // id
+        raw_code // code
+    };
 }
 
 

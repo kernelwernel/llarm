@@ -13,13 +13,13 @@ private:
     bool is_alignment_enabled() {
         return (
             (settings.has_alignment_fault_checking) &&
-            (coprocessor.read(id::cp::CP15_R1_A))
+            (coprocessor.read(id::cp15::R1_A))
         );
     }
 
 
     //if (
-    //    (coprocessor.read(id::cp::CP15_R1_A)) && // check if allignment fault is enabled
+    //    (coprocessor.read(id::cp15::R1_A)) && // check if alignment fault is enabled
     //    (access_type != id::access_type::INSTRUCTION_FETCH)
     //) {
     //    switch (access_byte_size) {

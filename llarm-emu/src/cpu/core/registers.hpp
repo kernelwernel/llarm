@@ -97,21 +97,18 @@ public:
     u32 read(const thumb_code_t&, const u8, const u8) noexcept;
     u32 read(const u8) noexcept;
 
+    void switch_mode(const id::mode mode);
+    id::mode read_mode();
+    
+    u32 read_PC();
+    void write_PC(const u32 address);
+    
+    void thumb_increment_PC();
+    void arm_increment_PC();
+
     void access_check(const id::reg);
 
     id::mode fetch_mode_id(const u8);
-
-    void switch_mode(const id::mode mode);
-
-    id::mode read_mode();
-
-    u32 read_PC();
-
-    void write_PC(const u32 address);
-
-    void thumb_increment_PC();
-
-    void arm_increment_PC();
 
     void reset();
 

@@ -14,147 +14,48 @@
 #include "cp15.hpp"
 
 #include "shared/types.hpp"
-#include "shared/out.hpp"
 
 
 struct COPROCESSOR {
 private:
+    SETTINGS& settings;
+    GLOBALS& globals;
     CP15& cp15;
 
+
 public:
-    id::coprocessor fetch_cp_id(const u8 raw_cp_num) {
-        switch (raw_cp_num) {
-            case 0b0000: return id::coprocessor::CP0;
-            case 0b0001: return id::coprocessor::CP1;
-            case 0b0010: return id::coprocessor::CP2;
-            case 0b0011: return id::coprocessor::CP3;
-            case 0b0100: return id::coprocessor::CP4;
-            case 0b0101: return id::coprocessor::CP5;
-            case 0b0110: return id::coprocessor::CP6;
-            case 0b0111: return id::coprocessor::CP7;
-            case 0b1000: return id::coprocessor::CP8;
-            case 0b1001: return id::coprocessor::CP9;
-            case 0b1010: return id::coprocessor::CP10;
-            case 0b1011: return id::coprocessor::CP11;
-            case 0b1100: return id::coprocessor::CP12;
-            case 0b1101: return id::coprocessor::CP13;
-            case 0b1110: return id::coprocessor::CP14;
-            case 0b1111: return id::coprocessor::CP15;
-            default: shared::out::error("TODO");
-        };
-    }
-
-
-    COPROCESSOR(CP15& cp15) : cp15(cp15) {
-
-    }
-
+    id::cp fetch_cp_id(const u8 raw_cp_num);
 
 
 public:
-    //id::cp cp_reg_identifier() {
-//
-    //}
+    void write(
+        const id::cp15 cp15_id, 
+        const u32 value,
+        const bool is_forced = false
+    );
+
+    u32 read(const id::cp15 cp15_id);
 
 
-    void write(const id::cp cp_reg_id, const u64 value, const bool is_forced = false) {
-        // check if the ID enum argument is in the CP15 range
-        if (
-            static_cast<u8>(cp_reg_id) > static_cast<u8>(id::cp::CP15_START) &&
-            static_cast<u8>(cp_reg_id) < static_cast<u8>(id::cp::CP15_END)
-        ) [[likely]] {
-            cp15.write(cp_reg_id, shared::util::bit_range(value, 0, 31), is_forced); return;
-        } 
-
-        // TODO: ERROR (unknown CP reg id)
-        return;
-    }
-
-
-    u32 read(const id::cp cp_reg_id) {
-        // check if the ID enum argument is in the CP15 range
-        if (
-            static_cast<u8>(cp_reg_id) > static_cast<u8>(id::cp::CP15_START) &&
-            static_cast<u8>(cp_reg_id) < static_cast<u8>(id::cp::CP15_END)
-        ) {
-            return cp15.read(cp_reg_id);
-        }
-
-        // TODO: ERROR (unknown CP reg id)
-        return 0;
-    }
-
+    void write(
+        const u8 cp_id_bits, 
+        const u8 CRn,
+        const u8 CRm,
+        const u8 opcode_1, 
+        const u8 opcode_2,
+        const u64 value, 
+        const bool is_forced = false
+    );
 
     u32 read(
+        const u8 cp_id_bits, 
         const u8 CRn, 
+        const u8 CRm,
         const u8 opcode_1, 
-        const u8 CRm, 
         const u8 opcode_2
-    ) {
-        if ((opcode_1 != 0) && (CRn != 15)) {
-            return 0; // TODO: add warning or error idk, this doesn't exist
-        }
+    );
 
-        // coprocessor number
-        switch (CRn) {
-            case 0:
-                if (CRm == 0) {
-                    if (opcode_2 == 0) { 
-                        return read(id::cp::CP15_R0_ID); 
-                    } else if (opcode_2 == 1) { 
-                        return read(id::cp::CP15_R0_CACHE);
-                    }
-                }
-
-                break;
-
-            case 1:
-                if (CRm == 0) {
-                    if (opcode_2 == 0) { 
-                        return read(id::cp::CP15_R1); 
-                    }
-                }
-
-                break;
-
-            case 2:
-                if (CRm == 0) {
-                    // ?????? TODO
-                }
-
-                break;
-
-            case 3:
-            // TODO rewrite thi, because MMU and PU merge together as registers cuz they're non-mutually exclusive
-                if ((CRm == 0) && (opcode_2 == 0)) {
-                    return read(id::cp::CP15_R3_MMU);
-                }
-
-                break;
-
-            case 4:
-                return read(id::cp::CP15_R4);
-
-            case 5:
-                if (CRm == 0) {
-
-                }
-
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-            case 11:
-            case 12:
-            case 13:
-            case 14:
-            case 15:
-            default: break;
-        }
-
-        return 0; // error or warning
-    }
+    COPROCESSOR(SETTINGS& settings, GLOBALS& globals, CP15& cp15);
 };
 
 

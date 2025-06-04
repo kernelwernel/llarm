@@ -281,30 +281,6 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 u8 REGISTERS::read(const id::cpsr cpsr_macro) {
     if (arch_26.is_26_arch_program()) { // 26-bit
         switch (cpsr_macro) {
@@ -477,17 +453,6 @@ u32 REGISTERS::read(const id::reg register_id) {
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
 void REGISTERS::access_check(const id::reg register_id) {
     if (arch_26.no_26_arch_support()) {
         return;
@@ -519,60 +484,6 @@ void REGISTERS::access_check(const id::reg register_id) {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 id::reg REGISTERS::fetch_reg_id(const u8 value) noexcept {

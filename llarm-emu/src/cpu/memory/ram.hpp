@@ -36,8 +36,7 @@ public:
     }
 
 
-    template <is_integral T>
-    void write(const T value, const u32 address, const u8 access_size) {
+    void write(const u64 &value, const u32 address, const u8 access_size) {
         switch (access_size) {
             case 1: ram.at(address) = value; return;
             case 2: 
@@ -65,17 +64,14 @@ public:
 
             default: shared::out::error("TODO");
         }
-    } 
-
-
+    }
 
 
     std::vector<u8> read(const u32 start, const u32 end) {
         return std::vector<u8>(ram.cbegin() + start, ram.cbegin() + end);
     }
 
-    template <is_integral T>
-    T read(const u32 address, const u8 access_size) {
+    u64 read(const u32 address, const u8 access_size) {
         switch (access_size) {
             case 1: return ram.at(address);
             case 2: return (

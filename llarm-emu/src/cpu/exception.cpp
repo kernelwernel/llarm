@@ -27,7 +27,7 @@ void EXCEPTION::reset() {
     reg.write(id::cpsr::F, 1);
     reg.write(id::cpsr::I, 1);
 
-    if (coprocessor.read(id::cp::CP15_R1_V)) {
+    if (coprocessor.read(id::cp15::R1_V)) {
         reg.write(id::reg::PC, 0xFFFF0000);
     } else {
         reg.write(id::reg::PC, 0x00000000);
@@ -61,7 +61,7 @@ void EXCEPTION::undefined() {
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
 
-    if (coprocessor.read(id::cp::CP15_R1_V)) {
+    if (coprocessor.read(id::cp15::R1_V)) {
         reg.write(id::reg::PC, 0xFFFF0004);
     } else {
         reg.write(id::reg::PC, 0x00000004);
@@ -95,7 +95,7 @@ void EXCEPTION::swi() {
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
 
-    if (coprocessor.read(id::cp::CP15_R1_V)) {
+    if (coprocessor.read(id::cp15::R1_V)) {
         reg.write(id::reg::PC, 0xFFFF0008);
     } else {
         reg.write(id::reg::PC, 0x00000008);
@@ -123,7 +123,7 @@ void EXCEPTION::prefetch_abort() {
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
 
-    if (coprocessor.read(id::cp::CP15_R1_V)) {
+    if (coprocessor.read(id::cp15::R1_V)) {
         reg.write(id::reg::PC, 0xFFFF000C);
     } else {
         reg.write(id::reg::PC, 0x0000000C);
@@ -149,7 +149,7 @@ void EXCEPTION::data_abort() {
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
 
-    if (coprocessor.read(id::cp::CP15_R1_V)) {
+    if (coprocessor.read(id::cp15::R1_V)) {
         reg.write(id::reg::PC, 0xFFFF0010);
     } else {
         reg.write(id::reg::PC, 0x00000010);
@@ -175,7 +175,7 @@ void EXCEPTION::irq() {
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
 
-    if (coprocessor.read(id::cp::CP15_R1_V)) {
+    if (coprocessor.read(id::cp15::R1_V)) {
         reg.write(id::reg::PC, 0xFFFF0018);
     } else {
         reg.write(id::reg::PC, 0x00000018);
@@ -203,7 +203,7 @@ void EXCEPTION::fiq() {
     reg.write(id::cpsr::F, 1);
     reg.write(id::cpsr::I, 1);
 
-    if (coprocessor.read(id::cp::CP15_R1_V)) {
+    if (coprocessor.read(id::cp15::R1_V)) {
         reg.write(id::reg::PC, 0xFFFF001C);
     } else {
         reg.write(id::reg::PC, 0x0000001C);

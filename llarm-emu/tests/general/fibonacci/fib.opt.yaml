@@ -1,0 +1,42 @@
+--- !Passed
+Pass:            loop-delete
+Name:            Invariant
+DebugLoc:        { File: fib.c, Line: 6, Column: 5 }
+Function:        main
+Args:
+  - String:          Loop deleted because it is invariant
+...
+--- !Analysis
+Pass:            prologepilog
+Name:            StackSize
+DebugLoc:        { File: fib.c, Line: 1, Column: 0 }
+Function:        main
+Args:
+  - NumStackBytes:   '0'
+  - String:          ' stack bytes in function '''
+  - Function:        main
+  - String:          ''''
+...
+--- !Analysis
+Pass:            asm-printer
+Name:            InstructionMix
+DebugLoc:        { File: fib.c, Line: 12, Column: 5 }
+Function:        main
+Args:
+  - String:          'BasicBlock: '
+  - BasicBlock:      ''
+  - String:          "\n"
+  - String:          ''
+  - String:          ': '
+  - INST_:           '2'
+  - String:          "\n"
+...
+--- !Analysis
+Pass:            asm-printer
+Name:            InstructionCount
+DebugLoc:        { File: fib.c, Line: 1, Column: 0 }
+Function:        main
+Args:
+  - NumInstructions: '2'
+  - String:          ' instructions in function'
+...

@@ -11,6 +11,7 @@ struct SETTINGS {
     bool is_arm_enabled;
     bool is_jazelle_enabled;
     bool is_enhanced_DSP_enabled;
+    bool is_mpu_separate;
     bool is_mpu_enabled; // not to be confused with both
     bool is_mmu_enabled; // not to be confused with both
     /**/ bool is_fcse_enabled;
@@ -212,6 +213,7 @@ struct SETTINGS {
         is_arm_enabled(false),
         is_jazelle_enabled(false),
         is_enhanced_DSP_enabled(false),
+        is_mpu_separate(false),
         is_mpu_enabled(false),
         is_mmu_enabled(false),
         is_fcse_enabled(false),

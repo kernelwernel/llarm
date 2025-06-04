@@ -35,7 +35,7 @@ void core::initialise(const std::vector<u8> &binary) {
     // initialisations
     GLOBALS globals;
     CP15 cp15(settings, globals); // SEGFAULT HERE in release version for some reason
-    COPROCESSOR coprocessor(cp15);
+    COPROCESSOR coprocessor(settings, globals, cp15);
     RAM ram(globals);
     ARCH_26 arch_26(coprocessor, settings);
     MMU mmu(globals, ram, coprocessor, settings);
@@ -56,9 +56,9 @@ void core::initialise(const std::vector<u8> &binary) {
 
     // core reset, setup, and boot
     reg.reset();
-    coprocessor.write(id::cp::CP15_R1_M, false, FORCED); // disable MMU/MPU
-    coprocessor.write(id::cp::CP15_R1_P, true, FORCED); // set to 32-bit mode (maybe temporary idk)
-    coprocessor.write(id::cp::CP15_R1_D, true, FORCED); // set to 32-bit mode (maybe temporary idk)
+    coprocessor.write(id::cp15::R1_M, false, id::cp::CP15, FORCED); // disable MMU/MPU
+    coprocessor.write(id::cp15::R1_P, true, id::cp::CP15, FORCED); // set to 32-bit mode (maybe temporary idk)
+    coprocessor.write(id::cp15::R1_D, true, id::cp::CP15, FORCED); // set to 32-bit mode (maybe temporary idk)
     // reg.switch_mode(id::mode::SUPERVISOR); only enable for system mode
     reg.switch_mode(id::mode::USER); // only for user programs, temporary
     //reg.write(id::cpsr::T, 1); // switch to thumb  // TODO: double check if it actually starts in thumb mode

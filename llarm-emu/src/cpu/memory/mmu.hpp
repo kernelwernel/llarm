@@ -50,8 +50,8 @@ private:
         }
 
         // the AP == 0 is added because the S and R bits are irrelevant if the AP is anything other than 00
-        const bool S = (coprocessor.read(id::cp::CP15_R1_S) & (raw_AP_bits == 0b00));
-        const bool R = (coprocessor.read(id::cp::CP15_R1_R) & (raw_AP_bits == 0b00)); 
+        const bool S = (coprocessor.read(id::cp15::R1_S) & (raw_AP_bits == 0b00));
+        const bool R = (coprocessor.read(id::cp15::R1_R) & (raw_AP_bits == 0b00)); 
 
         // fetching the access permission depends entirely on the AP, S, R, and mode.
         // so instead of creating a labyrinth of convoluted if conditions, i'm adding
@@ -194,22 +194,22 @@ private:
         u8 cp_domain_bits = 0;
 
         switch (raw_domain_bits) {
-            case 0:  cp_domain_bits = coprocessor.read(id::cp::CP15_R3_MMU_D0);  break;
-            case 1:  cp_domain_bits = coprocessor.read(id::cp::CP15_R3_MMU_D1);  break;
-            case 2:  cp_domain_bits = coprocessor.read(id::cp::CP15_R3_MMU_D2);  break;
-            case 3:  cp_domain_bits = coprocessor.read(id::cp::CP15_R3_MMU_D3);  break;
-            case 4:  cp_domain_bits = coprocessor.read(id::cp::CP15_R3_MMU_D4);  break;
-            case 5:  cp_domain_bits = coprocessor.read(id::cp::CP15_R3_MMU_D5);  break;
-            case 6:  cp_domain_bits = coprocessor.read(id::cp::CP15_R3_MMU_D6);  break;
-            case 7:  cp_domain_bits = coprocessor.read(id::cp::CP15_R3_MMU_D7);  break;
-            case 8:  cp_domain_bits = coprocessor.read(id::cp::CP15_R3_MMU_D8);  break;
-            case 9:  cp_domain_bits = coprocessor.read(id::cp::CP15_R3_MMU_D9);  break;
-            case 10: cp_domain_bits = coprocessor.read(id::cp::CP15_R3_MMU_D10); break;
-            case 11: cp_domain_bits = coprocessor.read(id::cp::CP15_R3_MMU_D11); break;
-            case 12: cp_domain_bits = coprocessor.read(id::cp::CP15_R3_MMU_D12); break;
-            case 13: cp_domain_bits = coprocessor.read(id::cp::CP15_R3_MMU_D13); break;
-            case 14: cp_domain_bits = coprocessor.read(id::cp::CP15_R3_MMU_D14); break;
-            case 15: cp_domain_bits = coprocessor.read(id::cp::CP15_R3_MMU_D15); break;
+            case 0:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D0);  break;
+            case 1:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D1);  break;
+            case 2:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D2);  break;
+            case 3:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D3);  break;
+            case 4:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D4);  break;
+            case 5:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D5);  break;
+            case 6:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D6);  break;
+            case 7:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D7);  break;
+            case 8:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D8);  break;
+            case 9:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D9);  break;
+            case 10: cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D10); break;
+            case 11: cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D11); break;
+            case 12: cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D12); break;
+            case 13: cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D13); break;
+            case 14: cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D14); break;
+            case 15: cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D15); break;
         }
 
         switch (cp_domain_bits) {
@@ -354,7 +354,7 @@ private:
 public:
     bool is_mmu_enabled() {
         return (
-            (coprocessor.read(id::cp::CP15_R1_M) == true) &&
+            (coprocessor.read(id::cp15::R1_M) == true) &&
             (settings.is_mmu_enabled)
         );
     }
@@ -378,7 +378,7 @@ public:
 
 /*
         if (
-            (coprocessor.read(id::cp::CP15_R1_A)) && // check if allignment fault is enabled
+            (coprocessor.read(id::cp15::R1_A)) && // check if allignment fault is enabled
             (access_type != id::access_type::INSTRUCTION_FETCH)
         ) {
             switch (access_byte_size) {
@@ -403,7 +403,7 @@ public:
             }
         }
 
-        const u32 translation_base = coprocessor.read(id::cp::CP15_R2_MMU_TRANSLATION_BASE); // TODO: optimise this with direct register access
+        const u32 translation_base = coprocessor.read(id::cp15::R2_MMU_TRANSLATION_BASE); // TODO: optimise this with direct register access
         const u32 table_index = shared::util::bit_range(address, 20, 31);
 
         const u32 first_level_descriptor_address = ((translation_base << 14) | (table_index << 2));
@@ -457,15 +457,13 @@ public:
     }
 
 
-    memory_struct<> write_manager(const u32 address, const u8 access_size) {
-        translation_struct translation = translate_address(address, id::access_type::WRITE, access_size);
+    mem_write_struct write(const u32 address, const u8 access_size) {
+        const translation_struct translation = translate_address(address, id::access_type::WRITE, access_size);
 
-        memory_struct<> data = {};
+        mem_write_struct data = {};
 
-        /* TEMPORARY*/ data.new_address = 0;
         /* TEMPORARY*/ data.has_failed = false;
         /* TEMPORARY*/ data.abort_code = translation.status;
-        /* TEMPORARY*/ data.value = 0;
         /* TEMPORARY*/ return data;
 
 /*
@@ -486,21 +484,24 @@ public:
 */
     }
 
-    template <is_integral T>
-    memory_struct<T> read_manager(const u32 address, const u8 access_size) {
+    mem_read_struct read(const u32 address, const u8 access_size) {
         translation_struct translation = translate_address(address, id::access_type::READ, access_size);
 
-        memory_struct<T> data = {};
+        // TODO WRITE THE READING MECHANISM HERE
+    
+        mem_read_struct data = {};
 
         if (translation.status == id::aborts::NO_ABORT) {
             data.has_failed = false;
             data.abort_code = id::aborts::NO_ABORT;
             data.new_address = translation.virtual_address;
+            data.access_size = access_size;
             data.value = 0; // will be updated later
         } else {
             data.has_failed = true;
             data.abort_code = translation.status;
             data.new_address = 0;
+            data.access_size = access_size;
             data.value = 0; // will be updated later
         }
 

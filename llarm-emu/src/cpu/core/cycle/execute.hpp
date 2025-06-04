@@ -15,6 +15,7 @@ private:
     std::map<llarm::as::id::arm, std::function<void(const arm_code_t&)>> arm_map;
     
     std::map<llarm::as::id::thumb, std::function<void(const thumb_code_t&)>> thumb_map;
+
     //std::map<id::jazelle_instruction, std::function<void(const jazelle_code_t&)>> jazelle_map;
 
 public:
