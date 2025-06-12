@@ -30,7 +30,6 @@
  */
 void INSTRUCTIONS::arm::load::LDM1(const arm_code_t &code) {
     const u16 list = shared::util::bit_range<u16>(code, 0, 15);
-    const u32 Rn = reg.read(code, 16, 19);
 
     const address_struct addresses = address_mode.load_store_multiple(code);
 
@@ -39,7 +38,7 @@ void INSTRUCTIONS::arm::load::LDM1(const arm_code_t &code) {
     const std::vector<id::reg> reg_list = operation.register_list(list);
 
     for (const auto reg_id : reg_list) {
-        const memory_struct access = memory.read<u32>(address, 4);
+        const mem_read_struct access = memory.read(address, 4);
     
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -51,7 +50,7 @@ void INSTRUCTIONS::arm::load::LDM1(const arm_code_t &code) {
     }
 
     if (shared::util::bit_fetch(list, 15) == true) {
-        const memory_struct access = memory.read<u32>(address, 4);
+        const mem_read_struct access = memory.read(address, 4);
     
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -103,7 +102,7 @@ void INSTRUCTIONS::arm::load::LDR(const arm_code_t &code) {
 
     const u8 type = shared::util::bit_range(address, 0, 1);
 
-    const memory_struct access = memory.read<u32>(address, 4);
+    const mem_read_struct access = memory.read(address, 4);
     
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -141,7 +140,7 @@ void INSTRUCTIONS::arm::load::LDR(const arm_code_t &code) {
 void INSTRUCTIONS::arm::load::LDRB(const arm_code_t &code) {
     const u32 address = address_mode.load_store(code);
 
-    const memory_struct access = memory.read<u8>(address, 1);
+    const mem_read_struct access = memory.read(address, 1);
     
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -159,7 +158,7 @@ void INSTRUCTIONS::arm::load::LDRB(const arm_code_t &code) {
 void INSTRUCTIONS::arm::load::LDRBT(const arm_code_t &code) {
     const u32 address = address_mode.load_store(code);
 
-    const memory_struct access = memory.read<u8>(address, 1);
+    const mem_read_struct access = memory.read(address, 1);
     
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -184,7 +183,7 @@ void INSTRUCTIONS::arm::load::LDRH(const arm_code_t &code) {
     u16 data = 0;
 
     if ((address & 1) == 0) {
-        const memory_struct access = memory.read<u16>(address, 2);
+        const mem_read_struct access = memory.read(address, 2);
         
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -208,7 +207,7 @@ void INSTRUCTIONS::arm::load::LDRH(const arm_code_t &code) {
 void INSTRUCTIONS::arm::load::LDRSB(const arm_code_t &code) {
     const u32 address = address_mode.load_store_misc(code);
 
-    const memory_struct access = memory.read<u8>(address, 1);
+    const mem_read_struct access = memory.read(address, 1);
         
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -233,7 +232,7 @@ void INSTRUCTIONS::arm::load::LDRSH(const arm_code_t &code) {
     u32 data = 0;
 
     if ((address & 1) == 0) {
-        const memory_struct access = memory.read<u16>(address, 2);
+        const mem_read_struct access = memory.read(address, 2);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -263,7 +262,7 @@ void INSTRUCTIONS::arm::load::LDRSH(const arm_code_t &code) {
 void INSTRUCTIONS::arm::load::LDRT(const arm_code_t &code) {
     const u32 address = address_mode.load_store(code);
     
-    const memory_struct access = memory.read<u32>(address, 4);
+    const mem_read_struct access = memory.read(address, 4);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -306,7 +305,7 @@ void INSTRUCTIONS::arm::load::LDM2(const arm_code_t &code) {
     std::vector<id::reg> reg_list = operation.register_list(list);
 
     for (const auto reg_id : reg_list) {
-        const memory_struct access = memory.read<u32>(address, 4);
+        const mem_read_struct access = memory.read(address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -351,7 +350,7 @@ void INSTRUCTIONS::arm::load::LDM3(const arm_code_t &code) {
     std::vector<id::reg> reg_list = operation.register_list(list);
 
     for (const auto reg_id : reg_list) {
-        const memory_struct access = memory.read<u32>(address, 4);
+        const mem_read_struct access = memory.read(address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -364,7 +363,7 @@ void INSTRUCTIONS::arm::load::LDM3(const arm_code_t &code) {
 
     reg.write(id::reg::CPSR, id::reg::SPSR);
 
-    const memory_struct access = memory.read<u32>(address, 4);
+    const mem_read_struct access = memory.read(address, 4);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);

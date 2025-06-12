@@ -104,3 +104,9 @@ set(LINUX_COMMON_LINKER_FLAGS
     -lstdc++
     -lm
 )
+
+
+set(BOLT_LINKER_FLAGS
+    --emit-relocs
+    -fno-reorder-blocks-and-partition # specifically for GCC8 
+)

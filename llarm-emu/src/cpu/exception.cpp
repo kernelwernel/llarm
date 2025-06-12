@@ -103,8 +103,6 @@ void EXCEPTION::swi() {
 }
 
 
-
-
 /*
  * R14_abt = address of the aborted instruction + 4
  * SPSR_abt = CPSR
@@ -208,6 +206,29 @@ void EXCEPTION::fiq() {
     } else {
         reg.write(id::reg::PC, 0x0000001C);
     }
+}
+
+
+/**
+ * R14_svc[25:2] = address of instruction + 8
+ * R14_svc[31:26,1,0] = R15[31:26,1,0]
+ * M[1:0] = 0b11 // Supervisor mode
+ * F = unchanged
+ * I = 1 // (normal) interrupts disabled
+ * PC = 0x14
+ */
+// not sure if this "address exception" also applies to 32-bit
+void EXCEPTION::address_exception_26(const u32 faulty_address) {
+    u32 R15_copy = reg.read(id::reg::R15);
+
+    util::swap_bits(R15_copy, 2, 25, faulty_address + 8); // TODO: CHECK IF THIS WORKS
+
+    reg.write(id::reg::R14_svc, R15_copy);
+
+    reg.write(id::cpsr::M, 0b11);
+    reg.write(id::cpsr::I, 1);
+
+    reg.write(id::reg::PC, 0x14);
 }
 
 

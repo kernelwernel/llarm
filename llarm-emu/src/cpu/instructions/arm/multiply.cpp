@@ -45,7 +45,7 @@ void INSTRUCTIONS::arm::multiply::MUL(const arm_code_t &code) {
     const u32 Rs = reg.read(code, 8, 11);
 
     const u64 tmp = (Rm * Rs);
-    const u32 Rd = shared::util::bit_range(code, 0, 31);
+    const u32 Rd = shared::util::bit_range(tmp, 0, 31);
 
     reg.write(code, 16, 19, Rd);
 

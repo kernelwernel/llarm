@@ -1,6 +1,7 @@
 #include "addressing_modes.hpp"
 
 #include "shared/types.hpp"
+#include "shared/util.hpp"
 
 /**
  * ===== 32-bit immediate mode =====

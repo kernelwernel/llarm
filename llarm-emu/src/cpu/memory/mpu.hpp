@@ -4,6 +4,7 @@
 #include "../coprocessor/coprocessor.hpp"
 #include "structure.hpp"
 #include "ram.hpp"
+#include "fcse.hpp"
 
 #include "shared/types.hpp"
 
@@ -14,6 +15,7 @@ private:
     COPROCESSOR& coprocessor;
     SETTINGS& settings;
     RAM& ram;
+    FCSE& fcse;
     
 private:
     u32 region_0_start = 0;
@@ -104,27 +106,19 @@ public:
 
     mem_read_struct read(const u32 address, const u8 access_size);
 
-    // try to scan from most priority to least, rather than upwards
-    
-    // if the access is outside of any region, do an abort (doesn't say which tho) 
-
-    // alignment checking is also allowed, implement this TODO
-
-    // extra thing: region 0 could be set to 4GB, as a backup if all other regions fail
-
-    void setup_R6_PU();
-
     void reset();
 
     MPU(
         GLOBALS& globals, 
         COPROCESSOR& coprocessor,
         SETTINGS& settings,
-        RAM& ram
+        RAM& ram,
+        FCSE& fcse
     ) : globals(globals), 
         coprocessor(coprocessor),
         settings(settings),
-        ram(ram)
+        ram(ram),
+        fcse(fcse)
     {
         
     }

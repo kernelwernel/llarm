@@ -3,6 +3,7 @@
 #include "../instructions.hpp"
 
 #include "shared/types.hpp"
+#include "shared/util.hpp"
 
 /*
  * if ConditionPassed(cond) then
@@ -107,7 +108,7 @@ void INSTRUCTIONS::arm::logic::CMP(const arm_code_t &code) {
     reg.write(id::cpsr::Z, (alu_out == 0));
     reg.write(id::cpsr::C, !operation.borrow_sub(Rn, shifter_operand.value));
     reg.write(id::cpsr::V, operation.overflow_sub(Rn, shifter_operand.value));
-}
+} 
 
 
 /**

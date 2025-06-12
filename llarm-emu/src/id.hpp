@@ -133,7 +133,8 @@ namespace id {
     };
 
     enum class cp : u8 {
-        CP0 = 1,
+        UNKNOWN = 0,
+        CP0,
         CP1,
         CP2,
         CP3,
@@ -427,13 +428,10 @@ namespace id {
         R15 // DO NOT MODIFY/REARRANGE SINCE IT'S USED AS AN ENDING INDEX
     };
 
-
-    enum class memory : u8 {
-        NO_ACCESS_PERMISSION = 1,
-        READ_WRITE,
-        READ
+    enum class memory_type : u8 {
+        SECTION,
+        PAGE
     };
-
 
     enum class first_level : u8 {
         FAULT = 1, 
@@ -475,14 +473,21 @@ namespace id {
         ALIGNMENT,
         ABORT,
         PREFETCH_ABORT,
+        VECTOR,
+        TERMINAL,
         ADDRESS_EXCEPTION,
-        TRANSLATION,
         SECTION_TRANSLATION,
         PAGE_TRANSLATION,
         PAGE_DOMAIN,
         SUB_PAGE_PERMISSION,
         SECTION_DOMAIN,
         SECTION_PERMISSION
+    };
+
+    enum class tlb_type : u8 {
+        UNIFIED,
+        SEPARATE_INST,
+        SEPARATE_DATA
     };
 
     enum class pu_region : u8 { // pu = protection unit

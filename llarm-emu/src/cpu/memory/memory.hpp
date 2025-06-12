@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../exception.hpp"
+#include "../core/registers.hpp"
 #include "mmu.hpp"
 #include "mpu.hpp"
 #include "ram.hpp"
@@ -11,6 +12,7 @@
 
 struct MEMORY {
 private:
+    REGISTERS& reg;
     RAM& ram;
     MMU& mmu;
     MPU& mpu;
@@ -32,13 +34,15 @@ public:
     void reset();
 
     MEMORY(
+        REGISTERS& reg,
         RAM& ram, 
         MMU& mmu,
         MPU& mpu,
         FCSE& fcse,
         ARCH_26& arch_26,
         EXCEPTION& exception
-    ) : ram(ram), 
+    ) : reg(reg),
+        ram(ram), 
         mmu(mmu), 
         mpu(mpu),
         fcse(fcse),

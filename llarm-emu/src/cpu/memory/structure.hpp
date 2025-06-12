@@ -11,14 +11,20 @@
 struct mem_write_struct {
     bool has_failed;
     id::aborts abort_code;
-    //u8 access_size;
 };
 
 
 struct mem_read_struct {
     bool has_failed;
     id::aborts abort_code;
-    u32 new_address;
     u8 access_size;
-    u64 value; // the data in that memory location, specific to read access
+    u64 value;
+};
+
+
+// specific to the MMU
+struct translation_struct {
+    bool has_failed;
+    id::aborts abort_code;
+    u32 physical_address;
 };

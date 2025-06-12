@@ -100,9 +100,6 @@ void REGISTERS::write(const id::cpsr cpsr_macro, const u8 value) {
         write(id::reg::R15, R15_copy);
         return;
     } else {
-        static constinit u32 GE_mask = (0b1111 << 16);
-        static constinit u32 DNM_mask = (0b1111 << 20);
-
         switch (cpsr_macro) {
             case id::cpsr::M: util::swap_bits(CPSR, 0, 4, value); return;
             case id::cpsr::T: 
@@ -111,27 +108,21 @@ void REGISTERS::write(const id::cpsr cpsr_macro, const u8 value) {
                 } else if (value == false) {
                     globals.instruction_set = id::instruction_sets::ARM;
                 }
-                CPSR |= (value << 5); 
+                util::modify_bit(CPSR, 5, value);
                 return;
-            case id::cpsr::F: CPSR |= (value << 6); return;
-            case id::cpsr::I: CPSR |= (value << 7); return;
-            case id::cpsr::A: CPSR |= (value << 8); return;
-            case id::cpsr::E: CPSR |= (value << 9); return;
+            case id::cpsr::F: util::modify_bit(CPSR, 6, value); return;
+            case id::cpsr::I: util::modify_bit(CPSR, 7, value); return;
+            case id::cpsr::A: util::modify_bit(CPSR, 8, value); return;
+            case id::cpsr::E: util::modify_bit(CPSR, 9, value); return;
             case id::cpsr::IT: return; // TODO: think of a good exception
-            case id::cpsr::GE: 
-                CPSR &= ~GE_mask;
-                CPSR |= (value & GE_mask); 
-                return;
-            case id::cpsr::DNM:
-                CPSR &= ~DNM_mask;
-                CPSR |= (value & DNM_mask); 
-                return;
-            case id::cpsr::J: CPSR |= (value << 24); return;
-            case id::cpsr::Q: CPSR |= (value << 27); return;
-            case id::cpsr::V: CPSR |= (value << 28); return;
-            case id::cpsr::C: CPSR |= (value << 29); return;
-            case id::cpsr::Z: CPSR |= (value << 30); return;
-            case id::cpsr::N: CPSR |= (value << 31); return;
+            case id::cpsr::GE: util::swap_bits(CPSR, 16, 19, value); return;
+            case id::cpsr::DNM: util::swap_bits(CPSR, 20, 23, value); return;
+            case id::cpsr::J: util::modify_bit(CPSR, 24, value); return;
+            case id::cpsr::Q: util::modify_bit(CPSR, 27, value); return;
+            case id::cpsr::V: util::modify_bit(CPSR, 28, value); return;
+            case id::cpsr::C: util::modify_bit(CPSR, 29, value); return;
+            case id::cpsr::Z: util::modify_bit(CPSR, 30, value); return;
+            case id::cpsr::N: util::modify_bit(CPSR, 31, value); return;
             default:
                 shared::out::error("No known enum value for write()");
         }
@@ -140,7 +131,7 @@ void REGISTERS::write(const id::cpsr cpsr_macro, const u8 value) {
 
 
 void REGISTERS::write(const arm_code_t& code, const u8 start, const u8 end, const u32 value) {
-    const id::reg id = fetch_reg_id(shared::util::bit_range<u32>(code, start, end));
+    const id::reg id = fetch_reg_id(shared::util::bit_range(code, start, end));
     write(id, value);
 }
 
@@ -482,7 +473,6 @@ void REGISTERS::access_check(const id::reg register_id) {
             default: break;
         }
     }
-
 }
 
 

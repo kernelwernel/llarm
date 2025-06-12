@@ -14,6 +14,8 @@ struct SETTINGS {
     bool is_mpu_separate;
     bool is_mpu_enabled; // not to be confused with both
     bool is_mmu_enabled; // not to be confused with both
+    bool is_mmu_tlb_separate;
+    bool is_mmu_tlb_unified;
     /**/ bool is_fcse_enabled;
     bool has_coprocessor;
     /**/ bool has_cache;
@@ -125,7 +127,15 @@ struct SETTINGS {
 
         }
 
-        // i'm not sure if enabling FCSE while MMU or MPU is active is valid, research more
+        if (is_mmu_tlb_separate && is_mmu_tlb_unified) {
+
+        }
+
+        if (is_mmu_enabled && (is_mmu_tlb_separate == false && is_mmu_tlb_unified == false)) {
+            
+        }
+
+        // i'm not sure if enabling FCSE while MMU or MPU is active is valid, research more TODO
 
         if (
             (backwards_compat_support_26_bits && only_26_bits) || 
@@ -216,6 +226,7 @@ struct SETTINGS {
         is_mpu_separate(false),
         is_mpu_enabled(false),
         is_mmu_enabled(false),
+        is_mmu_tlb_separate(false),
         is_fcse_enabled(false),
         has_coprocessor(false),
         has_cache(false),

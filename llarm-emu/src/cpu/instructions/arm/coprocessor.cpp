@@ -2,6 +2,7 @@
 #include "../instructions.hpp"
 
 #include "shared/types.hpp"
+#include "shared/util.hpp"
 
 // NOTE: MSR is still available in backwards compatible 26-bit mode
 
@@ -26,12 +27,12 @@ void INSTRUCTIONS::arm::coprocessor_inst::MCR(const arm_code_t &code) {
     }
 
 
-    const u8 opcode_1 = shared::util::bit_range<u8>(code, 21, 23);
+    //const u8 opcode_1 = shared::util::bit_range<u8>(code, 21, 23);
     const u8 opcode_2 = shared::util::bit_range<u8>(code, 5, 7);
     const u8 CRm = shared::util::bit_range<u8>(code, 0, 3);
     const u8 CRn = shared::util::bit_range<u8>(code, 16, 19);
     const u8 cp_num = shared::util::bit_range<u8>(code, 8, 11);
-    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    //const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
 
 
     // write-only special case for R8_MMU register in CP15 (B3-26)

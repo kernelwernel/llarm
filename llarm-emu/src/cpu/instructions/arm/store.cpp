@@ -23,7 +23,7 @@ void INSTRUCTIONS::arm::store::STM1(const arm_code_t &code) {
     std::vector<id::reg> reg_list = operation.register_list(list);
 
     for (const auto reg_id : reg_list) {
-        const memory_struct access = memory.write(reg.read(reg_id), address, 4);
+        const mem_write_struct access = memory.write(reg.read(reg_id), address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -57,7 +57,7 @@ void INSTRUCTIONS::arm::store::STM2(const arm_code_t &code) {
 
     for (const auto reg_id : reg_list) {
         const u32 value = reg.read(reg_id);
-        const memory_struct access = memory.write(value, address, 4);
+        const mem_write_struct access = memory.write(value, address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -78,7 +78,7 @@ void INSTRUCTIONS::arm::store::STR(const arm_code_t &code) {
 
     const u32 value = reg.read(code, 12, 15);
 
-    const memory_struct access = memory.write(value, address, 4);
+    const mem_write_struct access = memory.write(value, address, 4);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -97,7 +97,7 @@ void INSTRUCTIONS::arm::store::STRB(const arm_code_t &code) {
     const u32 Rd = reg.read(code, 12, 15);
     const u8 value = shared::util::bit_range(Rd, 0, 7);
 
-    const memory_struct access = memory.write(value, address, 1);
+    const mem_write_struct access = memory.write(value, address, 1);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -116,7 +116,7 @@ void INSTRUCTIONS::arm::store::STRBT(const arm_code_t &code) {
     const u32 Rd = reg.read(code, 12, 15);
     const u8 value = shared::util::bit_range(Rd, 0, 7);
 
-    const memory_struct access = memory.write(value, address, 1);
+    const mem_write_struct access = memory.write(value, address, 1);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -145,7 +145,7 @@ void INSTRUCTIONS::arm::store::STRH(const arm_code_t &code) {
         // TODO UNPREDICTABLE
     }
 
-    const memory_struct access = memory.write(data, address, 2);
+    const mem_write_struct access = memory.write(data, address, 2);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -163,7 +163,7 @@ void INSTRUCTIONS::arm::store::STRT(const arm_code_t &code) {
 
     const u32 Rd = reg.read(code, 12, 15);
 
-    const memory_struct access = memory.write(Rd, address, 4);
+    const mem_write_struct access = memory.write(Rd, address, 4);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -199,7 +199,7 @@ void INSTRUCTIONS::arm::store::SWP(const arm_code_t &code) {
         case 0b11: rotate = 24; break;
     }
 
-    const memory_struct read_access = memory.read<u32>(Rn, 4);
+    const mem_read_struct read_access = memory.read(Rn, 4);
 
     if (read_access.has_failed) {
         memory.manage_abort(read_access.abort_code);
@@ -208,7 +208,7 @@ void INSTRUCTIONS::arm::store::SWP(const arm_code_t &code) {
 
     const u32 Rm = reg.read(code, 0, 3);
     
-    const memory_struct write_access = memory.write<u32>(Rm, Rn, 4);
+    const mem_write_struct write_access = memory.write(Rm, Rn, 4);
     
     if (write_access.has_failed) {
         memory.manage_abort(write_access.abort_code);
@@ -228,7 +228,7 @@ void INSTRUCTIONS::arm::store::SWP(const arm_code_t &code) {
 void INSTRUCTIONS::arm::store::SWPB(const arm_code_t &code) {
     const u32 Rn = reg.read(code, 16, 19);
 
-    const memory_struct read_access = memory.read<u32>(Rn, 1);
+    const mem_read_struct read_access = memory.read(Rn, 1);
 
     if (read_access.has_failed) {
         memory.manage_abort(read_access.abort_code);
@@ -240,7 +240,7 @@ void INSTRUCTIONS::arm::store::SWPB(const arm_code_t &code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u8 value = shared::util::bit_range(Rm, 0, 7);
 
-    const memory_struct write_access = memory.write(value, Rn, 1);
+    const mem_write_struct write_access = memory.write(value, Rn, 1);
 
     if (write_access.has_failed) {
         memory.manage_abort(write_access.abort_code);

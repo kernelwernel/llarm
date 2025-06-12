@@ -1,5 +1,5 @@
 # basic info
-cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.29 FATAL_ERROR)
 project(
     llarm-asm
     VERSION 0.1 
@@ -14,8 +14,11 @@ include("../cmake/variables.cmake") # general variables, usually file paths
 include("../cmake/target_flags.cmake") # flag configurator
 include("../cmake/build_type.cmake") # build definitions
 include("../cmake/compiler.cmake") # compiler choice
-include("../cmake/linker_flags.cmake") # linker config
-include("../cmake/clang_tidy.cmake") # clang-tidy
+include("../cmake/linker.cmake") # linker config
+include("../cmake/linker_flags.cmake") # linker flag config
+include("../cmake/clang_format.cmake") # clang-format
+include("../cmake/clang-tidy.cmake") # clang-tidy
+
 
 
 # targets
@@ -88,15 +91,6 @@ write_basic_package_version_file(
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/llarm-asm-config-version.cmake
     DESTINATION /usr/lib/cmake/llarm-asm
 )
-
-
-# select the compiler, preferably clang++ (defined in llarm/cmake/compiler.cmake)
-configure_compiler()
-
-
-# define compiler macros and the release/debug build type (defined in llarm/cmake/build_type.cmake)
-configure_build_type(${TARGET_BIN})
-configure_build_type(${TARGET_LIB})
 
 
 # configure the target flags (defined in llarm/cmake/target_flags.cmake)

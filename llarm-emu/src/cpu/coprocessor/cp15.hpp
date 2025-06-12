@@ -12,6 +12,7 @@
 #include "../../settings.hpp"
 #include "../../id.hpp"
 #include "../globals.hpp"
+#include "../memory/tlb.hpp"
 
 #include "shared/types.hpp"
 
@@ -40,6 +41,7 @@ struct CP15 {
 private:
     SETTINGS& settings;
     GLOBALS& globals;
+    TLB& tlb;
 
 public:
 
@@ -103,7 +105,7 @@ public:
     // cache/write buffer control
     u32 R7 = 0;
 
-    // MMU: TLB control, this register doesn't really exist (B3-26
+    // MMU: TLB control, this register doesn't really exist since it's write-only (B3-26)
     // MPU: reserved
     u32 R8 = 0;
 
@@ -112,7 +114,7 @@ public:
 
     // MMU: TLB lockdown
     // MPU: reserved
-    u32 R10;
+    u32 R10 = 0;
 
     // reserved
     u32 R11 = 0;
@@ -134,8 +136,10 @@ public:
     id::cp15 identify(const u8 CRn, const u8 CRm, const u8 opcode2);
 
     u32 read(const id::cp15 reg);
-
     void write(const id::cp15 reg, const u32 value, const bool forced = false);
+    void write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u8 CRm, const u32 data, const bool forced = false);
+
+    void reset();
 
 private:
     void setup_R0_processor_id();
@@ -146,5 +150,5 @@ private:
     void setup_R1_control();
 
 public:
-    CP15(SETTINGS& settings, GLOBALS& globals);
+    CP15(SETTINGS& settings, GLOBALS& globals, TLB& tlb);
 };

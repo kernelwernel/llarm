@@ -2,6 +2,7 @@
 #include "../../core/registers.hpp"
 
 #include "shared/types.hpp"
+#include "shared/util.hpp"
 
 /**
  * start_address = Rn
@@ -27,7 +28,7 @@ void INSTRUCTIONS::thumb::load::LDMIA(const thumb_code_t &code) {
     std::vector<id::reg> reg_vec = operation.register_list(register_list);
 
     for (const id::reg reg_id : reg_vec) {
-        const memory_struct access = memory.read<u32>(address, 4);
+        const mem_read_struct access = memory.read(address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -67,7 +68,7 @@ void INSTRUCTIONS::thumb::load::LDR1(const thumb_code_t &code) {
     u32 value = 0;
 
     if ((address & 0b11) == 0b00) {
-        const memory_struct access = memory.read<u32>(address, 4);
+        const mem_read_struct access = memory.read(address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -103,7 +104,7 @@ void INSTRUCTIONS::thumb::load::LDR2(const thumb_code_t &code) {
     u32 value = 0;
 
     if ((address & 0b11) == 0b00) {
-        const memory_struct access = memory.read<u32>(address, 4);
+        const mem_read_struct access = memory.read(address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -132,7 +133,7 @@ void INSTRUCTIONS::thumb::load::LDR3(const thumb_code_t &code) {
     // lord have mercy
     const u32 address = (shared::util::bit_range(reg.read(id::reg::PC), 2, 31) << 2) + (immed_8 * 4);
 
-    const memory_struct access = memory.read<u32>(address, 4);
+    const mem_read_struct access = memory.read(address, 4);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -162,7 +163,7 @@ void INSTRUCTIONS::thumb::load::LDR4(const thumb_code_t &code) {
     u32 value = 0;
 
     if ((address & 0b11) == 0b00) {
-        const memory_struct access = memory.read<u32>(address, 4);
+        const mem_read_struct access = memory.read(address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -191,7 +192,7 @@ void INSTRUCTIONS::thumb::load::LDRB1(const thumb_code_t &code) {
 
     const u32 address = Rn + immed_5;
 
-    const memory_struct access = memory.read<u8>(address, 1);
+    const mem_read_struct access = memory.read(address, 1);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -215,7 +216,7 @@ void INSTRUCTIONS::thumb::load::LDRB2(const thumb_code_t &code) {
 
     const u32 address = Rn + Rm;
 
-    const memory_struct access = memory.read<u8>(address, 1);
+    const mem_read_struct access = memory.read(address, 1);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -246,7 +247,7 @@ void INSTRUCTIONS::thumb::load::LDRH1(const thumb_code_t &code) {
     u16 value = 0;
 
     if ((address & 1) == 0) {
-        const memory_struct access = memory.read<u16>(address, 2);
+        const mem_read_struct access = memory.read(address, 2);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -282,7 +283,7 @@ void INSTRUCTIONS::thumb::load::LDRH2(const thumb_code_t &code) {
     u16 value = 0;
 
     if ((address & 1) == 0) {
-        const memory_struct access = memory.read<u16>(address, 2);
+        const mem_read_struct access = memory.read(address, 2);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -311,7 +312,7 @@ void INSTRUCTIONS::thumb::load::LDRSB(const thumb_code_t &code) {
 
     const u32 address = (Rn + Rm);
 
-    const memory_struct access = memory.read<u8>(address, 1);
+    const mem_read_struct access = memory.read(address, 1);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -342,7 +343,7 @@ void INSTRUCTIONS::thumb::load::LDRSH(const thumb_code_t &code) {
     u16 value = 0;
 
     if ((address & 1) == 0) {
-        const memory_struct access = memory.read<u16>(address, 2);
+        const mem_read_struct access = memory.read(address, 2);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -392,7 +393,7 @@ void INSTRUCTIONS::thumb::load::POP(const thumb_code_t &code) {
     std::vector<id::reg> reg_vec = operation.register_list(register_list);
 
     for (const id::reg reg_id : reg_vec) {
-        const memory_struct access = memory.read<u32>(address, 4);
+        const mem_read_struct access = memory.read(address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -404,7 +405,7 @@ void INSTRUCTIONS::thumb::load::POP(const thumb_code_t &code) {
     }
 
     if (R == 1) {
-        const memory_struct access = memory.read<u32>(address, 4);
+        const mem_read_struct access = memory.read(address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);

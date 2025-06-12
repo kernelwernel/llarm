@@ -2,6 +2,7 @@
 #include "../../core/registers.hpp"
 
 #include "shared/types.hpp"
+#include "shared/util.hpp"
 
 /**
  * start_address = Rn
@@ -27,7 +28,7 @@ void INSTRUCTIONS::thumb::store::STMIA(const thumb_code_t& code) {
     std::vector<id::reg> reg_vec = operation.register_list(register_list);
 
     for (const id::reg reg_id : reg_vec) {
-        const memory_struct access = memory.write(reg.read(reg_id), address, 4);
+        const mem_write_struct access = memory.write(reg.read(reg_id), address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -67,7 +68,7 @@ void INSTRUCTIONS::thumb::store::STR1(const thumb_code_t& code) {
         // UNPREDICTABLE, TODO
     }
 
-    const memory_struct access = memory.write(value, address, 4);
+    const mem_write_struct access = memory.write(value, address, 4);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -98,7 +99,7 @@ void INSTRUCTIONS::thumb::store::STR2(const thumb_code_t& code) {
         // UNPREDICTABLE, TODO
     }
     
-    const memory_struct access = memory.write(value, address, 4);
+    const mem_write_struct access = memory.write(value, address, 4);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -128,7 +129,7 @@ void INSTRUCTIONS::thumb::store::STR3(const thumb_code_t& code) {
         // UNPREDICTABLE, TODO
     }
 
-    const memory_struct access = memory.write(value, address, 4);
+    const mem_write_struct access = memory.write(value, address, 4);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -148,7 +149,7 @@ void INSTRUCTIONS::thumb::store::STRB1(const thumb_code_t& code) {
 
     const u32 address = (Rn + immed_5);
 
-    const memory_struct access = memory.write(shared::util::bit_range<u8>(Rd, 0, 7), address , 1);
+    const mem_write_struct access = memory.write(shared::util::bit_range<u8>(Rd, 0, 7), address , 1);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -168,7 +169,7 @@ void INSTRUCTIONS::thumb::store::STRB2(const thumb_code_t& code) {
 
     const u32 address = (Rn + Rm);
 
-    const memory_struct access = memory.write(shared::util::bit_range(Rd, 0, 7), address, 1);
+    const mem_write_struct access = memory.write(shared::util::bit_range(Rd, 0, 7), address, 1);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -199,7 +200,7 @@ void INSTRUCTIONS::thumb::store::STRH1(const thumb_code_t& code) { // TODO
         // UNPREDICTABLE, TODO
     }
 
-    const memory_struct access = memory.write(value, address, 2);
+    const mem_write_struct access = memory.write(value, address, 2);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -230,7 +231,7 @@ void INSTRUCTIONS::thumb::store::STRH2(const thumb_code_t& code) { // TODO
         // UNPREDICTABLE, TODO
     }
 
-    const memory_struct access = memory.write(value, address, 2);
+    const mem_write_struct access = memory.write(value, address, 2);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -267,7 +268,7 @@ void INSTRUCTIONS::thumb::store::PUSH(const thumb_code_t& code) {
     std::vector<id::reg> reg_vec = operation.register_list(register_list);
 
     for (const id::reg reg_id : reg_vec) {
-        const memory_struct access = memory.write(reg.read(reg_id), address, 4);
+        const mem_write_struct access = memory.write(reg.read(reg_id), address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -278,7 +279,7 @@ void INSTRUCTIONS::thumb::store::PUSH(const thumb_code_t& code) {
     }
 
     if (R == true) {
-        const memory_struct access = memory.write(reg.read(id::reg::LR), address, 4);
+        const mem_write_struct access = memory.write(reg.read(id::reg::LR), address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);

@@ -152,37 +152,36 @@ id::aborts MPU::is_access_valid(const u32 address, const u8 access_size, const i
     const u32 address_end = address + access_size; 
 
     if (settings.is_mpu_separate) {
-        // TODO IMPLEMENT FOR BOTH INST AND DATA
         if (access_type == id::access_type::INSTRUCTION_FETCH) {
-            if      ((address_start >= region_inst_7_start && address_end <= region_inst_7_end) && region_inst_7_enabled) { AP_region_id = id::cp15::R5_PU_INST_AP7; } 
-            else if ((address_start >= region_inst_6_start && address_end <= region_inst_6_end) && region_inst_6_enabled) { AP_region_id = id::cp15::R5_PU_INST_AP6; }
-            else if ((address_start >= region_inst_5_start && address_end <= region_inst_5_end) && region_inst_5_enabled) { AP_region_id = id::cp15::R5_PU_INST_AP5; }
-            else if ((address_start >= region_inst_4_start && address_end <= region_inst_4_end) && region_inst_4_enabled) { AP_region_id = id::cp15::R5_PU_INST_AP4; }
-            else if ((address_start >= region_inst_3_start && address_end <= region_inst_3_end) && region_inst_3_enabled) { AP_region_id = id::cp15::R5_PU_INST_AP3; }
-            else if ((address_start >= region_inst_2_start && address_end <= region_inst_2_end) && region_inst_2_enabled) { AP_region_id = id::cp15::R5_PU_INST_AP2; }
-            else if ((address_start >= region_inst_1_start && address_end <= region_inst_1_end) && region_inst_1_enabled) { AP_region_id = id::cp15::R5_PU_INST_AP1; }
-            else if ((address_start >= region_inst_0_start && address_end <= region_inst_0_end) && region_inst_0_enabled) { AP_region_id = id::cp15::R5_PU_INST_AP0; }
+            if      (region_inst_7_enabled && (address_start >= region_inst_7_start && address_end <= region_inst_7_end)) { AP_region_id = id::cp15::R5_PU_INST_AP7; } 
+            else if (region_inst_6_enabled && (address_start >= region_inst_6_start && address_end <= region_inst_6_end)) { AP_region_id = id::cp15::R5_PU_INST_AP6; }
+            else if (region_inst_5_enabled && (address_start >= region_inst_5_start && address_end <= region_inst_5_end)) { AP_region_id = id::cp15::R5_PU_INST_AP5; }
+            else if (region_inst_4_enabled && (address_start >= region_inst_4_start && address_end <= region_inst_4_end)) { AP_region_id = id::cp15::R5_PU_INST_AP4; }
+            else if (region_inst_3_enabled && (address_start >= region_inst_3_start && address_end <= region_inst_3_end)) { AP_region_id = id::cp15::R5_PU_INST_AP3; }
+            else if (region_inst_2_enabled && (address_start >= region_inst_2_start && address_end <= region_inst_2_end)) { AP_region_id = id::cp15::R5_PU_INST_AP2; }
+            else if (region_inst_1_enabled && (address_start >= region_inst_1_start && address_end <= region_inst_1_end)) { AP_region_id = id::cp15::R5_PU_INST_AP1; }
+            else if (region_inst_0_enabled && (address_start >= region_inst_0_start && address_end <= region_inst_0_end)) { AP_region_id = id::cp15::R5_PU_INST_AP0; }
             else { return id::aborts::PREFETCH_ABORT; }
         } else {
-            if      ((address_start >= region_data_7_start && address_end <= region_data_7_end) && region_data_7_enabled) { AP_region_id = id::cp15::R5_PU_DATA_AP7; } 
-            else if ((address_start >= region_data_6_start && address_end <= region_data_6_end) && region_data_6_enabled) { AP_region_id = id::cp15::R5_PU_DATA_AP6; }
-            else if ((address_start >= region_data_5_start && address_end <= region_data_5_end) && region_data_5_enabled) { AP_region_id = id::cp15::R5_PU_DATA_AP5; }
-            else if ((address_start >= region_data_4_start && address_end <= region_data_4_end) && region_data_4_enabled) { AP_region_id = id::cp15::R5_PU_DATA_AP4; }
-            else if ((address_start >= region_data_3_start && address_end <= region_data_3_end) && region_data_3_enabled) { AP_region_id = id::cp15::R5_PU_DATA_AP3; }
-            else if ((address_start >= region_data_2_start && address_end <= region_data_2_end) && region_data_2_enabled) { AP_region_id = id::cp15::R5_PU_DATA_AP2; }
-            else if ((address_start >= region_data_1_start && address_end <= region_data_1_end) && region_data_1_enabled) { AP_region_id = id::cp15::R5_PU_DATA_AP1; }
-            else if ((address_start >= region_data_0_start && address_end <= region_data_0_end) && region_data_0_enabled) { AP_region_id = id::cp15::R5_PU_DATA_AP0; }
+            if      (region_data_7_enabled && (address_start >= region_data_7_start && address_end <= region_data_7_end)) { AP_region_id = id::cp15::R5_PU_DATA_AP7; } 
+            else if (region_data_6_enabled && (address_start >= region_data_6_start && address_end <= region_data_6_end)) { AP_region_id = id::cp15::R5_PU_DATA_AP6; }
+            else if (region_data_5_enabled && (address_start >= region_data_5_start && address_end <= region_data_5_end)) { AP_region_id = id::cp15::R5_PU_DATA_AP5; }
+            else if (region_data_4_enabled && (address_start >= region_data_4_start && address_end <= region_data_4_end)) { AP_region_id = id::cp15::R5_PU_DATA_AP4; }
+            else if (region_data_3_enabled && (address_start >= region_data_3_start && address_end <= region_data_3_end)) { AP_region_id = id::cp15::R5_PU_DATA_AP3; }
+            else if (region_data_2_enabled && (address_start >= region_data_2_start && address_end <= region_data_2_end)) { AP_region_id = id::cp15::R5_PU_DATA_AP2; }
+            else if (region_data_1_enabled && (address_start >= region_data_1_start && address_end <= region_data_1_end)) { AP_region_id = id::cp15::R5_PU_DATA_AP1; }
+            else if (region_data_0_enabled && (address_start >= region_data_0_start && address_end <= region_data_0_end)) { AP_region_id = id::cp15::R5_PU_DATA_AP0; }
             else { return id::aborts::ABORT; }
         }
     } else {
-        if      ((address_start >= region_7_start && address_end <= region_7_end) && region_7_enabled) { AP_region_id = id::cp15::R5_PU_AP7; } 
-        else if ((address_start >= region_6_start && address_end <= region_6_end) && region_6_enabled) { AP_region_id = id::cp15::R5_PU_AP6; }
-        else if ((address_start >= region_5_start && address_end <= region_5_end) && region_5_enabled) { AP_region_id = id::cp15::R5_PU_AP5; }
-        else if ((address_start >= region_4_start && address_end <= region_4_end) && region_4_enabled) { AP_region_id = id::cp15::R5_PU_AP4; }
-        else if ((address_start >= region_3_start && address_end <= region_3_end) && region_3_enabled) { AP_region_id = id::cp15::R5_PU_AP3; }
-        else if ((address_start >= region_2_start && address_end <= region_2_end) && region_2_enabled) { AP_region_id = id::cp15::R5_PU_AP2; }
-        else if ((address_start >= region_1_start && address_end <= region_1_end) && region_1_enabled) { AP_region_id = id::cp15::R5_PU_AP1; }
-        else if ((address_start >= region_0_start && address_end <= region_0_end) && region_0_enabled) { AP_region_id = id::cp15::R5_PU_AP0; }
+        if      (region_7_enabled && (address_start >= region_7_start && address_end <= region_7_end)) { AP_region_id = id::cp15::R5_PU_AP7; } 
+        else if (region_6_enabled && (address_start >= region_6_start && address_end <= region_6_end)) { AP_region_id = id::cp15::R5_PU_AP6; }
+        else if (region_5_enabled && (address_start >= region_5_start && address_end <= region_5_end)) { AP_region_id = id::cp15::R5_PU_AP5; }
+        else if (region_4_enabled && (address_start >= region_4_start && address_end <= region_4_end)) { AP_region_id = id::cp15::R5_PU_AP4; }
+        else if (region_3_enabled && (address_start >= region_3_start && address_end <= region_3_end)) { AP_region_id = id::cp15::R5_PU_AP3; }
+        else if (region_2_enabled && (address_start >= region_2_start && address_end <= region_2_end)) { AP_region_id = id::cp15::R5_PU_AP2; }
+        else if (region_1_enabled && (address_start >= region_1_start && address_end <= region_1_end)) { AP_region_id = id::cp15::R5_PU_AP1; }
+        else if (region_0_enabled && (address_start >= region_0_start && address_end <= region_0_end)) { AP_region_id = id::cp15::R5_PU_AP0; }
         else {
             // at this point, an abort is performed 
             if (access_type == id::access_type::INSTRUCTION_FETCH) {
@@ -253,33 +252,28 @@ mem_write_struct MPU::write(const u32 address, const u32 value, const u8 access_
 }
 
 
-// try to scan from most priority to least, rather than upwards
+mem_read_struct MPU::read(const u32 address, const u8 access_size) {
+    const id::aborts abort_code = is_access_valid(address, access_size, id::access_type::WRITE);
 
-// if the access is outside of any region, do an abort (doesn't say which tho) 
+    const bool access_has_failed = (abort_code != id::aborts::NO_ABORT);
 
-// alignment checking is also allowed, implement this TODO
+    if (access_has_failed) {
+        return mem_read_struct {
+            /* has_failed  */ true,
+            /* abort_code  */ abort_code,
+            /* access_size */ access_size,
+            /* value       */ 0
+        };
+    }
 
-// extra thing: region 0 could be set to 4GB, as a backup if all other regions fail
+    const u64 data = ram.read(address, access_size);
 
-void MPU::setup_R6_PU() {
-    // The starting address of a region must be a multiple 
-    // of its size. For example, a 4KB region (size 0x1000)
-    // can start at address 0x12345000, but an 8KB region 
-    // (size 0x2000) or larger can not.
-
-    // 
-
-    //if ((address % size) != 0) {
-        // unpredictable
-
-    //}
-
-    // Some implementations (typically those with separate 
-    // instruction and data caches) provide two separate sets
-    // of eight protection regions, with one set being used 
-    // for instruction fetches and the other set for data accesses.
-
-    // if the address doesn't lie in any protection region, a memory access abort is made 
+    return mem_read_struct {
+        /* has_failed  */ false,
+        /* abort_code  */ id::aborts::NO_ABORT,
+        /* access_size */ access_size,
+        /* value       */ data
+    };
 }
 
 
@@ -333,7 +327,6 @@ void MPU::reset() {
     region_inst_5_enabled = false;
     region_inst_6_enabled = false;
     region_inst_7_enabled = false;
-
 
     region_data_0_start = 0;
     region_data_1_start = 0;

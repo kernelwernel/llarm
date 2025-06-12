@@ -14,7 +14,7 @@ FETCH::FETCH(
 
 
 arm_fetch_struct FETCH::arm_fetch() {
-    memory_struct access = memory.read<u32>(reg.read(id::reg::PC), 4, id::access_type::INSTRUCTION_FETCH);
+    mem_read_struct access = memory.read(reg.read(id::reg::PC), 4, id::access_type::INSTRUCTION_FETCH);
     
     if (globals.is_little_endian) {
         access.value = util::swap_endianness<u32>(access.value);
@@ -36,7 +36,7 @@ arm_fetch_struct FETCH::arm_fetch() {
 
 
 thumb_fetch_struct FETCH::thumb_fetch() {
-    memory_struct access = memory.read<u16>(reg.read(id::reg::PC), 2, id::access_type::INSTRUCTION_FETCH);
+    mem_read_struct access = memory.read(reg.read(id::reg::PC), 2, id::access_type::INSTRUCTION_FETCH);
 
     if (globals.is_little_endian) {
         access.value = util::swap_endianness<u16>(access.value);

@@ -2,6 +2,7 @@
 #include "../instructions.hpp"
 
 #include "shared/types.hpp"
+#include "shared/util.hpp"
 
 /**
  * if ConditionPassed(cond) then

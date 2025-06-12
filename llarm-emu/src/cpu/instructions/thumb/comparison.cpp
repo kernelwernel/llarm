@@ -2,6 +2,7 @@
 #include "../../core/registers.hpp"
 
 #include "shared/types.hpp"
+#include "shared/util.hpp"
 
 /*
  * alu_out = Rn + Rm

@@ -22,12 +22,9 @@ private:
     GLOBALS& globals;
     CP15& cp15;
 
-
 public:
     id::cp fetch_cp_id(const u8 raw_cp_num);
 
-
-public:
     void write(
         const id::cp15 cp15_id, 
         const u32 value,
@@ -35,7 +32,6 @@ public:
     );
 
     u32 read(const id::cp15 cp15_id);
-
 
     void write(
         const u8 cp_id_bits, 
@@ -55,7 +51,13 @@ public:
         const u8 opcode_2
     );
 
-    COPROCESSOR(SETTINGS& settings, GLOBALS& globals, CP15& cp15);
+    void reset(const id::cp cp = id::cp::UNKNOWN);
+
+    COPROCESSOR(
+        SETTINGS& settings, 
+        GLOBALS& globals, 
+        CP15& cp15
+    );
 };
 
 

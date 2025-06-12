@@ -1,5 +1,5 @@
 # basic info
-cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.29 FATAL_ERROR)
 project(
     llarm-emu
     VERSION 0.1 
@@ -17,8 +17,10 @@ include("../cmake/variables.cmake") # general variables, usually file paths
 include("../cmake/target_flags.cmake") # flag configurator
 include("../cmake/build_type.cmake") # build definitions
 include("../cmake/compiler.cmake") # compiler choice
-include("../cmake/linker_flags.cmake") # linker config
+include("../cmake/linker.cmake") # linker config
+include("../cmake/linker_flags.cmake") # linker flag config
 include("../cmake/clang_format.cmake") # clang-format
+include("../cmake/clang_tidy.cmake") # clang-tidy
 
 
 # targets
@@ -49,16 +51,8 @@ set_target_properties(${TARGET_BIN} PROPERTIES OUTPUT_NAME "llarm-emu")
 install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION /usr/bin)
 
 
-# to include shared/
+# for shared/ inclusion
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../)
-
-
-# select the compiler, preferably clang++ (defined in llarm/cmake/compiler.cmake)
-configure_compiler()
-
-
-# define compiler macros and the release/debug build type (defined in llarm/cmake/build_type.cmake)
-configure_build_type(${TARGET_BIN})
 
 
 # configure the target flags (defined in llarm/cmake/target_flags.cmake)

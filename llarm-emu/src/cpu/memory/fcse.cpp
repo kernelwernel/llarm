@@ -19,3 +19,5 @@ u32 FCSE::modify_address(const u32 address) {
     const u8 PID = coprocessor.read(id::cp15::R13_PID);
     return (address | PID << 25);
 }
+
+// TODO ctrl+f for "FCSE" in the arm docs once all the MMU, cache, and write buffer stuff are complete

@@ -20,3 +20,4 @@ docs/
 CONTRIBUTING.md
 README.md
 tmpCMakeLists.txt
+.cache/

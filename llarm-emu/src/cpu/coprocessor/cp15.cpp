@@ -7,8 +7,6 @@
 // https://github.com/torvalds/linux/blob/619f0b6fad524f08d493a98d55bac9ab8895e3a6/arch/arm64/include/asm/cputype.h#L57 (ARM64)
 // https://github.com/torvalds/linux/blob/619f0b6fad524f08d493a98d55bac9ab8895e3a6/arch/arm/include/asm/cputype.h#L66 (ARM32)
 
-#pragma once
-
 #include "../../settings.hpp"
 #include "../../id.hpp"
 #include "../globals.hpp"
@@ -421,7 +419,7 @@ u32 CP15::read(const id::cp15 reg) {
         case id::cp15::R7: return R7;
         case id::cp15::R7_CACHE_INDEX: // TODO
         case id::cp15::R7_CACHE_SET: // TODO
-        case id::cp15::R8_MMU: return 0; // UNPREDICTABLE
+        case id::cp15::R8_MMU: return 0; // UNPREDICTABLE TODO
         case id::cp15::R8_PU: return R8;
         case id::cp15::R9: return R9;
         case id::cp15::R9_CACHE_INDEX: // TODO
@@ -444,6 +442,11 @@ u32 CP15::read(const id::cp15 reg) {
 
 
 void CP15::write(const id::cp15 reg, const u32 value, const bool forced) {
+    write(reg, value, 0, 0, 0, forced);
+}
+
+
+void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u8 CRm, const u32 data, const bool forced) {
     // TODO writing to c0 is unpredictable
     
     switch (reg) {
@@ -978,28 +981,26 @@ void CP15::write(const id::cp15 reg, const u32 value, const bool forced) {
                 default: return; // TODO dev error
             }
 
-        case id::cp15::R7:     R7 = value; return;
+        case id::cp15::R7: R7 = value; return;
         case id::cp15::R7_CACHE_INDEX: // TODO
         case id::cp15::R7_CACHE_SET: // TODO
-        case id::cp15::R8_MMU:       
-            // see page B3-26 for TLB invalidation function list
-            return;
-        case id::cp15::R8_PU:        R8 = value; return;
-        case id::cp15::R9:           R9 = value; return;
+        case id::cp15::R8_MMU: tlb.function(opcode_2, CRm, data, read(id::cp15::R2_MMU_TRANSLATION_BASE)); return;
+        case id::cp15::R8_PU: R8 = value; return;
+        case id::cp15::R9: R9 = value; return;
         case id::cp15::R9_CACHE_INDEX: // TODO
         case id::cp15::R9_CACHE_L: // TODO
-        case id::cp15::R10:          R10 = value; return;
-        case id::cp15::R10_MMU:      R10 = value; return;
+        case id::cp15::R10: R10 = value; return;
+        case id::cp15::R10_MMU: R10 = value; return;
         case id::cp15::R10_MMU_BASE: // TODO: SEE PAGE B3-27
         case id::cp15::R10_MMU_VICTIM: // TODO: SEE PAGE B3-27
-        case id::cp15::R10_MMU_P:    util::modify_bit(R10, 0, value); break;
-        case id::cp15::R10_PU:       R10 = value; return;
-        case id::cp15::R11:          R11 = value; return;
-        case id::cp15::R12:          R12 = value; return;
-        case id::cp15::R13:          R13 = value; return;
-        case id::cp15::R13_PID:      util::swap_bits(R13, 25, 31, value); return;
-        case id::cp15::R14:          R14 = value; return;
-        case id::cp15::R15:          R15 = value; return;
+        case id::cp15::R10_MMU_P: util::modify_bit(R10, 0, value); return;
+        case id::cp15::R10_PU: R10 = value; return;
+        case id::cp15::R11: R11 = value; return;
+        case id::cp15::R12: R12 = value; return;
+        case id::cp15::R13: R13 = value; return;
+        case id::cp15::R13_PID: util::swap_bits(R13, 25, 31, value); return;
+        case id::cp15::R14: R14 = value; return;
+        case id::cp15::R15: R15 = value; return;
     };
 }
 
@@ -1375,15 +1376,58 @@ void CP15::setup_R1_control() {
 }
 
 
+void CP15::reset() {
+    // i'm aware i can do "write(id::cp15::R1, 0)" instead, but 
+    // assigning them directly eliminates any unnecessary overhead
+    R0_ID = 0;
+    R0_CACHE = 0;
+    R1 = 0;
+    R2 = 0;
+    R3 = 0;
+    R3_PU_INST = 0;
+    R3_PU_DATA = 0;
+    R4 = 0;
+    R5 = 0;
+    R5_PU_INST = 0;
+    R5_PU_DATA = 0;
+    R6 = 0;
+    R6_PU_0 = 0;
+    R6_PU_1 = 0;
+    R6_PU_2 = 0;
+    R6_PU_3 = 0;
+    R6_PU_4 = 0;
+    R6_PU_5 = 0;
+    R6_PU_6 = 0;
+    R6_PU_7 = 0;
+    R6_PU_INST_0 = 0;
+    R6_PU_INST_1 = 0;
+    R6_PU_INST_2 = 0;
+    R6_PU_INST_3 = 0;
+    R6_PU_INST_4 = 0;
+    R6_PU_INST_5 = 0;
+    R6_PU_INST_6 = 0;
+    R6_PU_INST_7 = 0;
+    R6_PU_DATA_0 = 0;
+    R6_PU_DATA_1 = 0;
+    R6_PU_DATA_2 = 0;
+    R6_PU_DATA_3 = 0;
+    R6_PU_DATA_4 = 0;
+    R6_PU_DATA_5 = 0;
+    R6_PU_DATA_6 = 0;
+    R6_PU_DATA_7 = 0;
+    R7 = 0;
+    R8 = 0;
+    R9 = 0;
+    R10 = 0;
+    R11 = 0;
+    R12 = 0;
+    R13 = 0;
+    R14 = 0;
+    R15 = 0;
+}
 
 
-
-
-
-
-
-
-CP15::CP15(SETTINGS& settings, GLOBALS& globals) : settings(settings), globals(globals) {
+CP15::CP15(SETTINGS& settings, GLOBALS& globals, TLB& tlb) : settings(settings), globals(globals), tlb(tlb) {
     // R0 setup
     setup_R0_processor_id();
     setup_R0_cache();

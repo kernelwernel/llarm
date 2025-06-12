@@ -7,8 +7,6 @@
 // https://github.com/torvalds/linux/blob/619f0b6fad524f08d493a98d55bac9ab8895e3a6/arch/arm64/include/asm/cputype.h#L57 (ARM64)
 // https://github.com/torvalds/linux/blob/619f0b6fad524f08d493a98d55bac9ab8895e3a6/arch/arm/include/asm/cputype.h#L66 (ARM32)
 
-#pragma once
-
 #include "../../id.hpp"
 #include "cp15.hpp"
 
@@ -53,6 +51,7 @@ void COPROCESSOR::write(
     const id::cp cp_id = fetch_cp_id(cp_id_bits);
 
     switch (cp_id) {
+        case id::cp::UNKNOWN: shared::out::error("Unknown coprocessor id for write operation"); // TODO dev error
         case id::cp::CP0:
         case id::cp::CP1:
         case id::cp::CP2:
@@ -72,6 +71,8 @@ void COPROCESSOR::write(
             cp15.write(
                 cp15.identify(CRn, CRm, opcode_2), 
                 static_cast<u32>(value), 
+                opcode_2,
+                CRm,
                 is_forced
             );
     }
@@ -90,6 +91,7 @@ u32 COPROCESSOR::read(
     const id::cp cp_id = fetch_cp_id(cp_id_bits);
 
     switch (cp_id) {
+        case id::cp::UNKNOWN: shared::out::error("Unknown coprocessor id for read operation"); // TODO dev error
         case id::cp::CP0:
         case id::cp::CP1:
         case id::cp::CP2:
@@ -124,6 +126,34 @@ void COPROCESSOR::write(
 
 u32 COPROCESSOR::read(const id::cp15 cp15_id) {
     return cp15.read(cp15_id);
+}
+
+
+void COPROCESSOR::reset(const id::cp cp_id) {
+    if (cp_id == id::cp::UNKNOWN) {
+        // clear ALL coprocessors, add more of them here once i complete cp10, 11, and 14 TODO
+        cp15.reset();
+    }
+
+    switch (cp_id) {
+        case id::cp::UNKNOWN: shared::out::error("Unknown coprocessor id for read operation"); // TODO dev error
+        case id::cp::CP0: return;
+        case id::cp::CP1: return;
+        case id::cp::CP2: return;
+        case id::cp::CP3: return;
+        case id::cp::CP4: return;
+        case id::cp::CP5: return;
+        case id::cp::CP6: return;
+        case id::cp::CP7: return;
+        case id::cp::CP8: return;
+        case id::cp::CP9: return;
+        case id::cp::CP10: return;
+        case id::cp::CP11: return;
+        case id::cp::CP12: return;
+        case id::cp::CP13: return;
+        case id::cp::CP14: return;
+        case id::cp::CP15: cp15.reset(); return;
+    }
 }
 
 

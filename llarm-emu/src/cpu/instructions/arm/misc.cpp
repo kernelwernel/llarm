@@ -2,6 +2,7 @@
 #include "../instructions.hpp"
 
 #include "shared/types.hpp"
+#include "shared/util.hpp"
 
 void INSTRUCTIONS::arm::misc::NOP(const arm_code_t &code) noexcept {
     return;

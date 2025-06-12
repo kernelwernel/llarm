@@ -168,12 +168,7 @@ void INSTRUCTIONS::arm::vfp::FMSCS(const arm_code_t& code) {
 
 }
 
-/**
- * if ConditionPassed(cond) then
- *     Sn = Rd
- */
 void INSTRUCTIONS::arm::vfp::FMSR(const arm_code_t& code) {
-    //const id::reg Rn_id = reg.fetch_reg_id(code, 12, 15);
 
 }
 

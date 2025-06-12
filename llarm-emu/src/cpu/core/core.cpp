@@ -8,6 +8,7 @@
 #include "../memory/memory.hpp"
 #include "../memory/mmu.hpp"
 #include "../memory/mpu.hpp"
+#include "../memory/tlb.hpp"
 #include "../memory/ram.hpp"
 #include "../memory/fcse.hpp"
 #include "../coprocessor/coprocessor.hpp"
@@ -17,11 +18,11 @@
 #include "cycle/execute.hpp"
 #include "registers.hpp"
 
-#include <vector>
-
 #include "core.hpp"
 
 #include "shared/types.hpp"
+
+#include <vector>
 
 #include <llarm-asm/llarm-asm.hpp>
 
@@ -32,23 +33,29 @@ void core::initialise(const std::vector<u8> &binary) {
 
     settings = settings.default_settings();
 
-    // initialisations
     GLOBALS globals;
-    CP15 cp15(settings, globals); // SEGFAULT HERE in release version for some reason
+    TLB tlb(settings);
+    CP15 cp15(settings, globals, tlb);
     COPROCESSOR coprocessor(settings, globals, cp15);
-    RAM ram(globals);
     ARCH_26 arch_26(coprocessor, settings);
-    MMU mmu(globals, ram, coprocessor, settings);
-    MPU mpu(globals, coprocessor, settings);
-    FCSE fcse(coprocessor, settings);
     REGISTERS reg(coprocessor, globals, arch_26, settings);
-    //VFP vfp(reg);
     EXCEPTION exception(reg, coprocessor);
-    MEMORY memory(ram, mmu, mpu, fcse, arch_26, exception);
+
+    // memory
+    FCSE fcse(coprocessor, settings);
+    ALIGNMENT alignment(coprocessor, settings);
+    RAM ram(globals);
+    MMU mmu(globals, ram, alignment, coprocessor, settings, tlb);
+    MPU mpu(globals, coprocessor, settings, ram, fcse);
+    MEMORY memory(reg, ram, mmu, mpu, fcse, arch_26, exception);
+
+    // instructions
     OPERATION operation;
     ADDRESSING_MODE address_mode(reg, operation);
     INSTRUCTIONS instructions(reg, address_mode, operation, coprocessor, settings, memory);
     INSTRUCTION_SET instruction_set(instructions);
+
+    // core cycle
     FETCH fetch(reg, memory, globals);
     DECODE decode(instruction_set, reg, settings);
     EXECUTE execute(instruction_set);
@@ -56,9 +63,9 @@ void core::initialise(const std::vector<u8> &binary) {
 
     // core reset, setup, and boot
     reg.reset();
-    coprocessor.write(id::cp15::R1_M, false, id::cp::CP15, FORCED); // disable MMU/MPU
-    coprocessor.write(id::cp15::R1_P, true, id::cp::CP15, FORCED); // set to 32-bit mode (maybe temporary idk)
-    coprocessor.write(id::cp15::R1_D, true, id::cp::CP15, FORCED); // set to 32-bit mode (maybe temporary idk)
+    coprocessor.write(id::cp15::R1_M, false, FORCED); // disable MMU/MPU
+    coprocessor.write(id::cp15::R1_P, true, FORCED); // set to 32-bit mode (maybe temporary idk)
+    coprocessor.write(id::cp15::R1_D, true, FORCED); // set to 32-bit mode (maybe temporary idk)
     // reg.switch_mode(id::mode::SUPERVISOR); only enable for system mode
     reg.switch_mode(id::mode::USER); // only for user programs, temporary
     //reg.write(id::cpsr::T, 1); // switch to thumb  // TODO: double check if it actually starts in thumb mode
