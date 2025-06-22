@@ -25,6 +25,8 @@ public:
     bool signed_overflow_add(const u32, const u32);
 
     i32 sign_extend(const u32 value, const u8 sign_index = 31);
+    i32 signed_sat(const u32 x, const u32 n);
+    bool signed_does_sat(const u32 x, const u32 n);
 
     bool arithmetic_shift_right(u32 num, const u8 shift); // why is this not a reference? research more...
 

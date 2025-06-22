@@ -59,10 +59,10 @@ private:
     address_struct ls_mul_dec_after(const arm_code_t&);
     address_struct ls_mul_dec_before(const arm_code_t&);
 
-    //address_struct ls_coproc_imm(const arm_code_t&);
-    //address_struct ls_coproc_imm_pre(const arm_code_t&);
-    //address_struct ls_coproc_imm_post(const arm_code_t&);
-    //address_struct ls_coproc_unindexed(const arm_code_t&);
+    address_struct ls_coproc_imm(const arm_code_t&);
+    address_struct ls_coproc_imm_pre(const arm_code_t&);
+    address_struct ls_coproc_imm_post(const arm_code_t&);
+    address_struct ls_coproc_unindexed(const arm_code_t&);
 
 
 public:
@@ -74,7 +74,7 @@ public:
 
     address_struct load_store_multiple(const arm_code_t&);
 
-    //address_struct load_store_coprocessor(const arm_code_t&);
+    address_struct load_store_coprocessor(const arm_code_t&);
 
 
     ADDRESSING_MODE(

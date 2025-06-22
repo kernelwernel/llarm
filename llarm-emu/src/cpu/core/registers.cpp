@@ -5,6 +5,7 @@
 #include "shared/out.hpp"
 #include "shared/util.hpp"
 
+// TODO SYSTEM MODE IS NOT SUPPORTED IN EARLIER VERSIONS
 id::mode REGISTERS::read_mode() {
     if (arch_26.is_26_arch_program()) { // 26-bit mode arch
         switch (read(id::cpsr::M)) {
@@ -112,19 +113,17 @@ void REGISTERS::write(const id::cpsr cpsr_macro, const u8 value) {
                 return;
             case id::cpsr::F: util::modify_bit(CPSR, 6, value); return;
             case id::cpsr::I: util::modify_bit(CPSR, 7, value); return;
-            case id::cpsr::A: util::modify_bit(CPSR, 8, value); return;
-            case id::cpsr::E: util::modify_bit(CPSR, 9, value); return;
-            case id::cpsr::IT: return; // TODO: think of a good exception
-            case id::cpsr::GE: util::swap_bits(CPSR, 16, 19, value); return;
-            case id::cpsr::DNM: util::swap_bits(CPSR, 20, 23, value); return;
-            case id::cpsr::J: util::modify_bit(CPSR, 24, value); return;
+            //case id::cpsr::A: util::modify_bit(CPSR, 8, value); return;
+            //case id::cpsr::E: util::modify_bit(CPSR, 9, value); return;
+            //case id::cpsr::IT: return; // TODO: think of a good exception
+            //case id::cpsr::GE: util::swap_bits(CPSR, 16, 19, value); return;
+            //case id::cpsr::DNM: util::swap_bits(CPSR, 20, 23, value); return;
+            //case id::cpsr::J: util::modify_bit(CPSR, 24, value); return;
             case id::cpsr::Q: util::modify_bit(CPSR, 27, value); return;
             case id::cpsr::V: util::modify_bit(CPSR, 28, value); return;
             case id::cpsr::C: util::modify_bit(CPSR, 29, value); return;
             case id::cpsr::Z: util::modify_bit(CPSR, 30, value); return;
             case id::cpsr::N: util::modify_bit(CPSR, 31, value); return;
-            default:
-                shared::out::error("No known enum value for write()");
         }
     }
 }
@@ -171,14 +170,14 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
             case id::mode::SUPERVISOR_26: SPSR_svc = value; return;
             case id::mode::ABORT: SPSR_abt = value; return;
             case id::mode::UNDEFINED: SPSR_und = value; return;
-            default: shared::out::error("TODO"); // TODO add error or warning idk
+            default: shared::out::error("Invalid SPSR write");
         }
     }
 
     switch (mode) {
         case id::mode::SYSTEM:
-            if (static_cast<u8>(settings.arch) < 4) {
-                shared::out::error("TODO"); // maybe add a warning/error, idk
+            if (settings.arch < id::arch::ARMv4) {
+                shared::out::error("system mode is only supported from ARMv4 onwards");
             }
         case id::mode::USER:
         case id::mode::USER_26:
@@ -266,8 +265,6 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
                 default: break;
             }
             break;
-
-        default: shared::out::error("unknown idk TODO");
     }
 }
 
@@ -291,19 +288,11 @@ u8 REGISTERS::read(const id::cpsr cpsr_macro) {
             case id::cpsr::T: return shared::util::bit_fetch(CPSR, 5);
             case id::cpsr::F: return shared::util::bit_fetch(CPSR, 6);
             case id::cpsr::I: return shared::util::bit_fetch(CPSR, 7);
-            case id::cpsr::A: return shared::util::bit_fetch(CPSR, 8);
-            case id::cpsr::E: return shared::util::bit_fetch(CPSR, 9);
-            //case id::cpsr::IT: return 0; TODO: think of a good exception here 
-            case id::cpsr::GE: return ((CPSR >> 16) & 0b1111);
-            case id::cpsr::DNM: return ((CPSR >> 20) & 0b1111);
-            case id::cpsr::J: return shared::util::bit_fetch(CPSR, 24);
             case id::cpsr::Q: return shared::util::bit_fetch(CPSR, 27);
             case id::cpsr::V: return shared::util::bit_fetch(CPSR, 28);
             case id::cpsr::C: return shared::util::bit_fetch(CPSR, 29);
             case id::cpsr::Z: return shared::util::bit_fetch(CPSR, 30);
             case id::cpsr::N: return shared::util::bit_fetch(CPSR, 31);
-            default:
-                shared::out::error("No known enum value for read()");
         }
     }
 }
@@ -349,7 +338,7 @@ u32 REGISTERS::read(const id::reg register_id) {
 
     switch (mode) {
         case id::mode::SYSTEM:
-            if (static_cast<u8>(settings.arch) < 4) {
+            if (settings.arch < id::arch::ARMv4) {
                 shared::out::error("TODO"); // maybe add a warning/error, idk
             }
         case id::mode::USER:

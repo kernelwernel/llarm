@@ -112,6 +112,8 @@ void TLB::function(const u8 opcode_2, const u8 CRm, const u32 virtual_address, c
         // invalidate data single entry
         case 0b0010110: invalidate(virtual_address, translation_base, id::tlb_type::SEPARATE_DATA); return;
 
-        default: return; // TODO UNPREDICTABLE
+        default: 
+            shared::out::unpredictable("Unknown TLB function");
+            return;
     }
 }

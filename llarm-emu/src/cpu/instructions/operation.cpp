@@ -16,7 +16,7 @@ bool OPERATION::carry_add(const u32 sum1, const u32 sum2) {
     return ((sum1 + sum2) > max);
 }
 
-// CHECK IF THIS WORKS
+// CHECK IF THIS WORKS TODO
 bool OPERATION::carry_add(const u32 sum1, const u32 sum2, const u32 sum3) {
     constexpr u64 max = ((1ULL << 32) - 1);
     return ((sum1 + sum2 + sum3) > max);
@@ -110,6 +110,31 @@ i32 OPERATION::sign_extend(const u32 value, const u8 sign_index) {
 
     return static_cast<i32>(value);
 }
+
+
+// source: Glossary-XII
+i32 OPERATION::signed_sat(const u32 x, const u32 n) {
+    const i32 neg_range = std::pow(-2, n - 1);
+    const i32 pos_range = std::pow(2, n - 1) - 1;
+
+    if (x < neg_range) {
+        return neg_range;
+    } else if (neg_range <= x <= pos_range) {
+        return x;
+    } else if (x > pos_range) {
+        return pos_range;
+    }
+}
+
+
+// source: Glossary-XII
+bool OPERATION::signed_does_sat(const u32 x, const u32 n) {
+    const i32 neg_range = std::pow(-2, n - 1);
+    const i32 pos_range = std::pow(2, n - 1) - 1;
+
+    return (neg_range <= x <= pos_range);
+}
+
 
 
 std::vector<id::reg> OPERATION::register_list(const u16 reg_list) {

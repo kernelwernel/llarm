@@ -6,6 +6,7 @@
 #include "../settings.hpp"
 
 #include "shared/types.hpp"
+#include "shared/out.hpp"
 
 #include <string>
 
@@ -52,8 +53,8 @@ std::string disassemble::thumb_generate(const u16 code, const u32 PC, const sett
         case id::thumb::MVN: return generators::thumb::movement::MVN(code, settings);
         case id::thumb::B1: return generators::thumb::branching::B1(code, PC, settings);
         case id::thumb::B2: return generators::thumb::branching::B2(code, PC, settings);
-        case id::thumb::BL:
-        case id::thumb::BLX1:
+        case id::thumb::BL: // TODO
+        case id::thumb::BLX1: // TODO
         case id::thumb::BLX2: return generators::thumb::branching::BLX2(code, settings);
         case id::thumb::BX: return generators::thumb::branching::BX(code, settings);
         case id::thumb::BKPT: return generators::thumb::misc::BKPT(code, settings);
@@ -79,7 +80,8 @@ std::string disassemble::thumb_generate(const u16 code, const u32 PC, const sett
         case id::thumb::STRB2: return generators::thumb::store::STRB2(code, settings);
         case id::thumb::STRH1: return generators::thumb::store::STRH1(code, settings);
         case id::thumb::STRH2: return generators::thumb::store::STRH2(code, settings);
-        default: return "idk, todo";
+        case id::thumb::UNKNOWN: shared::out::error("Unknown instruction encountered for thumb disassembly");
+        case id::thumb::NOP: shared::out::error("NOP instruction encountered for thumb disassembly");
     }
 }
 
@@ -94,10 +96,12 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
         case id::arm::B: return generators::arm::branching::B(code, PC, settings); 
         case id::arm::BL: return generators::arm::branching::BL(code, PC, settings); 
         case id::arm::BIC: return generators::arm::logic::BIC(code, settings); 
+        case id::arm::CDP2: 
         case id::arm::CDP: return generators::arm::coprocessor::CDP(code, settings);
         case id::arm::CMN: return generators::arm::logic::CMN(code, settings);
         case id::arm::CMP: return generators::arm::logic::CMP(code, settings);
         case id::arm::EOR: return generators::arm::logic::EOR(code, settings);
+        case id::arm::LDC2:
         case id::arm::LDC: return generators::arm::coprocessor::LDC(code, settings);
         case id::arm::LDM1: return generators::arm::load::LDM1(code, settings);
         case id::arm::LDM2: return generators::arm::load::LDM2(code, settings);
@@ -106,9 +110,11 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
         case id::arm::LDRB: return generators::arm::load::LDRB(code, settings);
         case id::arm::LDRBT: return generators::arm::load::LDRBT(code, settings);
         case id::arm::LDRT: return generators::arm::load::LDRT(code, settings);
+        case id::arm::MCR2: 
         case id::arm::MCR: return generators::arm::coprocessor::MCR(code, settings);
         case id::arm::MLA: return generators::arm::multiply::MLA(code, settings);
         case id::arm::MOV: return generators::arm::movement::MOV(code, settings);
+        case id::arm::MRC2: 
         case id::arm::MRC: return generators::arm::coprocessor::MRC(code, settings);
         case id::arm::MRS: return generators::arm::movement::MRS(code, settings);
         case id::arm::MSR_IMM: return generators::arm::movement::MSR_IMM(code, settings);
@@ -119,6 +125,7 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
         case id::arm::RSB: return generators::arm::math::RSB(code, settings);
         case id::arm::RSC: return generators::arm::math::RSC(code, settings);
         case id::arm::SBC: return generators::arm::math::SBC(code, settings);
+        case id::arm::STC2: 
         case id::arm::STC: return generators::arm::coprocessor::STC(code, settings);
         case id::arm::STM1: return generators::arm::store::STM1(code, settings);
         case id::arm::STM2: return generators::arm::store::STM2(code, settings);
@@ -223,7 +230,8 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
         case id::arm::FTOUIS: return generators::arm::vfp::FTOUIS(code, settings);
         case id::arm::FUITOD: return generators::arm::vfp::FUITOD(code, settings);
         case id::arm::FUITOS: return generators::arm::vfp::FUITOS(code, settings); 
-        default: return "idk, todo";
+        case id::arm::UNKNOWN: shared::out::error("Unknown instruction encountered for disassembly");
+        case id::arm::UNDEFINED: shared::out::error("Undefined instruction encountered for disassembly");
     }
 }
 

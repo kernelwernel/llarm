@@ -31,6 +31,11 @@ public:
         const bool is_forced = false
     );
 
+    void force_write(
+        const id::cp15 cp15_id, 
+        const u32 value
+    );
+
     u32 read(const id::cp15 cp15_id);
 
     void write(

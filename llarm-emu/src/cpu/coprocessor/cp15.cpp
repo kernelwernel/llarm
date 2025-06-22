@@ -493,9 +493,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 }
 
                 util::modify_bit(R1, 0, value); 
-            } else if (settings.is_mmu_enabled) {
-                util::modify_bit(R1, 0, value); 
-            } else if (forced) {
+            } else if (settings.is_mmu_enabled || forced) {
                 util::modify_bit(R1, 0, value); 
             }
             return;
@@ -565,7 +563,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
 
         case id::cp15::R1_L: // TODO, idk what the fuck is the "old abort model"
             // On later processors, this bit reads as 1 and ignores writes.
-            if ((static_cast<u8>(settings.arch) > 3) && !forced) {
+            if ((settings.arch > id::arch::ARMv3) && !forced) {
                 return;
             }
 
@@ -660,7 +658,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             // version 5 or above, this bit controls a backwards-
             // compatibility feature with previous versions of 
             // the architecture.
-            if ((static_cast<u8>(settings.arch) >= 5) && !forced) {
+            if ((settings.arch >= id::arch::ARMv5) && !forced) {
                 return;
             }
         
@@ -677,7 +675,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             }
 
             util::swap_bits(R2, 14, 31, value);
-            // mmu.flush_tlb(); // B3-3 TODO, ENABLED THIS WHEN MMU DEVELOPMENT STARTS
+            tlb.flush();
             return;
         case id::cp15::R2: R2 = value; return;
         case id::cp15::R2_PU: R2 = value; return;
@@ -1006,6 +1004,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
 
 
 void CP15::setup_R0_processor_id() {
+    // not to be confused with ARMv7, that's different to ARM7
     bool pre_arm7 = false;
     bool arm7 = false;
     bool post_arm7 = false;
@@ -1018,13 +1017,22 @@ void CP15::setup_R0_processor_id() {
         case id::product_family::ARM7:
         case id::product_family::ARM7T:
         case id::product_family::ARM7EJ: arm7 = true; break;
-        default: 
-            post_arm7 = true; break;
+        case id::product_family::ARM8:
+        case id::product_family::ARM9T:
+        case id::product_family::ARM9E:
+        case id::product_family::ARM10E:
+        case id::product_family::ARM11:
+        case id::product_family::SecurCore:
+        case id::product_family::CORTEX_M:
+        case id::product_family::CORTEX_R:
+        case id::product_family::CORTEX_A_32:
+        case id::product_family::CORTEX_A_64:
+        case id::product_family::CORTEX_X:
+        case id::product_family::NEOVERSE: post_arm7 = true; break;
+        case id::product_family::UNKNOWN: shared::out::error("Cannot configure R0_ID coprocessor register for unknown processor");
     }
 
-
     write(id::cp15::R0_ID_REVISION, settings.revision);
-
 
     if (pre_arm7) {
         switch (settings.processor) {
@@ -1032,10 +1040,9 @@ void CP15::setup_R0_processor_id() {
             case id::processor::ARM600: write(id::cp15::R0_ID_PRE7_ID, 0x4156060); break;
             case id::processor::ARM610: write(id::cp15::R0_ID_PRE7_ID, 0x4156061); break;
             case id::processor::ARM620: write(id::cp15::R0_ID_PRE7_ID, 0x4156062); break;
-            // TODO: ADD MORE
-            // could be useful:
-            // https://github.com/NetBSD/src/blob/461e4391743c2e1fdff97bb2b351cfb1a5fd083a/sys/arch/arm/include/cputypes.h#L113
-            default: write(id::cp15::R0_ID_PRE7_ID, 0);
+            default: 
+                shared::out::warning("Pre-ARM7 configuration is invalid, defaulting the processor ID to ARM620");
+                write(id::cp15::R0_ID_PRE7_ID, 0x4156062);
         }
     } else {
         // https://developer.arm.com/documentation/ddi0406/b/Appendices/ARMv4-and-ARMv5-Differences/System-Control-coprocessor--CP15--support/c0--ID-support?lang=en#CHDGAGJH
@@ -1050,7 +1057,7 @@ void CP15::setup_R0_processor_id() {
             } else if (settings.specific_arch == id::specific_arch::ARMv4T) {
                 write(id::cp15::R0_ID_7_A, true);
             } else {
-                // TODO: add an error, not sure here
+                shared::out::warning("\"A\" bit in R0 processor ID for ARM7 is invalid, defaulting to 1 (ARMv4T)");
             }
         } else if (post_arm7) {
             // architecure
@@ -1072,6 +1079,7 @@ void CP15::setup_R0_processor_id() {
 
         // implementor
         // source: https://developer.arm.com/documentation/ddi0406/b/System-Level-Architecture/Virtual-Memory-System-Architecture--VMSA-/CP15-registers-for-a-VMSA-implementation/c0--Main-ID-Register--MIDR-?lang=en
+        //         https://github.com/NetBSD/src/blob/461e4391743c2e1fdff97bb2b351cfb1a5fd083a/sys/arch/arm/include/cputypes.h#L48
         switch (settings.implementor) {
             case id::implementor::ARM:      write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::ARM /* A */); break;
             case id::implementor::BRCM:     write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::BRCM /* B */); break;
@@ -1080,7 +1088,17 @@ void CP15::setup_R0_processor_id() {
             case id::implementor::QUALCOMM: write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::QUALCOMM /* Q */); break;
             case id::implementor::MARVELL:  write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::MARVELL /* V */); break;
             case id::implementor::INTEL:    write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::INTEL /* i */); break;
-            case id::implementor::LLARM:   
+            case id::implementor::CAVIUM:   write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::CAVIUM /* C */); break;
+            case id::implementor::FUJITSU:  write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::FUJITSU /* F */); break;
+            case id::implementor::INFINEON: write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::INFINEON /* I */); break;
+            case id::implementor::NVIDIA:   write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::NVIDIA /* N */); break;
+            case id::implementor::APM:      write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::APM /* P */); break;
+            case id::implementor::SAMSUNG:  write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::SAMSUNG /* S */); break;
+            case id::implementor::TI:       write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::TI /* T */); break;
+            case id::implementor::APPLE:    write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::APPLE /* a */); break;
+            case id::implementor::FARADAY:  write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::FARADAY /* f */); break;
+            case id::implementor::AMPERE:   write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::AMPERE /* À */); break;
+            case id::implementor::LLARM:    
                 u8 implementor_code = 0;
 
                 // if this is some kind of malware environment sandbox, try to hide that it's an emulator
@@ -1095,7 +1113,11 @@ void CP15::setup_R0_processor_id() {
         }
 
         // primary part number
-        write(id::cp15::R0_ID_PPN, settings.ppn);
+        if (settings.ppn != 0) {
+            write(id::cp15::R0_ID_PPN, settings.ppn);
+        } else {
+            // TODO 
+        }
     }
 
     // last minute CPU checks just in case (TODO)
@@ -1118,7 +1140,7 @@ void CP15::setup_R0_cache() {
     } else if (separate) {
         write(id::cp15::R0_CACHE_S, true);
     } else {
-        // TODO error
+        shared::out::dev_error("Invalid cache configuration (separate/unified)");
     }
 
     // ctype field
@@ -1160,7 +1182,7 @@ void CP15::setup_R0_cache() {
         case KB_48: write(id::cp15::R0_CACHE_DSIZE_SIZE, 0b110); break;
         case KB_64: 
         case KB_96: write(id::cp15::R0_CACHE_DSIZE_SIZE, 0b111); break;
-        default: break; // TODO ADD ERROR
+        default: shared::out::dev_error("Invalid data cache size configuration");
     }
 
     // instruction cache size
@@ -1181,7 +1203,7 @@ void CP15::setup_R0_cache() {
         case KB_48: write(id::cp15::R0_CACHE_ISIZE_SIZE, 0b110); break;
         case KB_64: 
         case KB_96: write(id::cp15::R0_CACHE_ISIZE_SIZE, 0b111); break;
-        default: break; // TODO ADD ERROR OR WARNING
+        default: break; shared::out::dev_error("Invalid instruction cache size configuration");
     }
 
     // data cache line length
@@ -1190,7 +1212,7 @@ void CP15::setup_R0_cache() {
         case 16: write(id::cp15::R0_CACHE_DSIZE_LEN, 0b01); break;
         case 32: write(id::cp15::R0_CACHE_DSIZE_LEN, 0b10); break;
         case 64: write(id::cp15::R0_CACHE_DSIZE_LEN, 0b11); break;
-        default: break; // TODO ADD ERROR OR WARNING 
+        default: shared::out::dev_error("Unsupported data cahe line length");
     }
 
     // instruction cache line length
@@ -1199,7 +1221,7 @@ void CP15::setup_R0_cache() {
         case 16: write(id::cp15::R0_CACHE_ISIZE_LEN, 0b01); break;
         case 32: write(id::cp15::R0_CACHE_ISIZE_LEN, 0b10); break;
         case 64: write(id::cp15::R0_CACHE_ISIZE_LEN, 0b11); break;
-        default: break; // TODO ADD ERROR OR WARNING 
+        default: shared::out::dev_error("Unsupported instruction cache line length");
     }
 
     // data cache associativity
@@ -1219,7 +1241,7 @@ void CP15::setup_R0_cache() {
         case 96: write(id::cp15::R0_CACHE_DSIZE_ASSOC, 0b110); break;
         case 128:
         case 192: write(id::cp15::R0_CACHE_DSIZE_ASSOC, 0b111); break;
-        default: break; // TODO ADD ERROR OR WARNING
+        default: shared::out::dev_error("Unsupported data cache associativity");
     }
 
     // instruction cache associativity
@@ -1239,7 +1261,7 @@ void CP15::setup_R0_cache() {
         case 96: write(id::cp15::R0_CACHE_ISIZE_ASSOC, 0b110); break;
         case 128:
         case 192: write(id::cp15::R0_CACHE_ISIZE_ASSOC, 0b111); break;
-        default: break; // TODO ADD ERROR OR WARNING
+        default: shared::out::dev_error("Unsupported instruction cache associativity");
     }
 
 
@@ -1255,7 +1277,7 @@ void CP15::setup_R0_cache() {
     ) {
         write(id::cp15::R0_CACHE_DSIZE_M, false);
     } else {
-        // ADD WARNING OR ERROR HERE IDK
+        shared::out::dev_error("Unsupported M bit data cache");
     }
 
 
@@ -1271,7 +1293,7 @@ void CP15::setup_R0_cache() {
     ) {
         write(id::cp15::R0_CACHE_ISIZE_M, false);
     } else {
-        // ADD WARNING OR ERROR HERE IDK
+        shared::out::dev_error("Unsupported M bit instruction cache");
     }
 }
 
@@ -1279,100 +1301,98 @@ void CP15::setup_R0_cache() {
 
 void CP15::setup_R1_control() {
     // M
-    write(id::cp15::R1_M, settings.is_mmu_enabled, FORCED);
+    force_write(id::cp15::R1_M, settings.is_mmu_enabled);
 
     // A
-    write(id::cp15::R1_A, settings.has_alignment_fault_checking, FORCED);
+    force_write(id::cp15::R1_A, settings.has_alignment_fault_checking);
 
     // C
     if (settings.has_cache) {
-        if (settings.cache_cannot_disable) {
-            write(id::cp15::R1_C, true, FORCED);
-        } else if (settings.has_unified_cache) {
-            write(id::cp15::R1_C, true, FORCED);
-        } else if (settings.has_separate_data_cache && settings.has_separate_cache) {
-            write(id::cp15::R1_C, true, FORCED);
+        if (
+            (settings.cache_cannot_disable || settings.has_unified_cache) || 
+            (settings.has_separate_data_cache && settings.has_separate_cache)
+        ) {
+            force_write(id::cp15::R1_C, true);
         } else {
-            write(id::cp15::R1_C, false, FORCED); // maybe, idk
-            // error TODO
+            shared::out::error("Invalid C bit configuration in R1 cache setup");
         }
     } else {
-        write(id::cp15::R1_C, false, FORCED); // no cache present
+        force_write(id::cp15::R1_C, false); // no cache present
     }
 
     // W
-    write(id::cp15::R1_W, settings.has_write_buffer, FORCED);
+    force_write(id::cp15::R1_W, settings.has_write_buffer);
 
     // P
     if (settings.no_26_bits || settings.backwards_compat_support_26_bits) {
-        write(id::cp15::R1_P, true, FORCED);
+        force_write(id::cp15::R1_P, true);
     } else if (settings.only_26_bits) {
-        write(id::cp15::R1_P, false, FORCED);
+        force_write(id::cp15::R1_P, false);
     } else {
-        // TODO dev error config
+        shared::out::error("Invalid P bit configuration in R1 cache setup");
     }
 
     // D
     if (settings.no_26_bits || settings.backwards_compat_support_26_bits) {
-        write(id::cp15::R1_D, true, FORCED);
+        force_write(id::cp15::R1_D, true);
     } else if (settings.only_26_bits) {
-        write(id::cp15::R1_D, false, FORCED);
+        force_write(id::cp15::R1_D, false);
     } else {
-        // TODO dev error config
+        shared::out::error("Invalid D bit configuration in R1 cache setup");
     }
 
     // L
     if (settings.is_abort_model_early) {
-        write(id::cp15::R1_L, false, FORCED);
+        force_write(id::cp15::R1_L, false);
     } else if (settings.is_abort_model_late) {
-        write(id::cp15::R1_L, true, FORCED);
+        force_write(id::cp15::R1_L, true);
     } else {
-        // TODO dev error config
+        shared::out::error("Invalid L bit configuration in R1 cache setup");
     }
 
     // B
     if (settings.only_little_endian) {
-        write(id::cp15::R1_B, false, FORCED);
+        force_write(id::cp15::R1_B, false);
         globals.is_little_endian = true;
     } else if (settings.only_big_endian) {
-        write(id::cp15::R1_B, true, FORCED);
+        force_write(id::cp15::R1_B, true);
         globals.is_little_endian = false;
     } else {
         if (settings.is_little_endian) {
-            write(id::cp15::R1_B, false, FORCED);
+            force_write(id::cp15::R1_B, false);
             globals.is_little_endian = true;
         } else if (settings.is_big_endian) {
-            write(id::cp15::R1_B, true, FORCED);
+            force_write(id::cp15::R1_B, true);
             globals.is_little_endian = false;
         } else {
-            // TODO dev error config
+            shared::out::error("Invalid B bit configuration in R1 cache setup");
         }
     }
 
 
     // S
-    write(id::cp15::R1_S, settings.has_system_protection_bit, FORCED);
+    force_write(id::cp15::R1_S, settings.has_system_protection_bit);
 
     // R
-    write(id::cp15::R1_S, settings.has_rom_protection_bit, FORCED);
+    force_write(id::cp15::R1_S, settings.has_rom_protection_bit);
 
     // F
-    write(id::cp15::R1_F, settings.has_F_bit_enabled_cp15, FORCED);
+    force_write(id::cp15::R1_F, settings.has_F_bit_enabled_cp15);
 
     // Z
-    write(id::cp15::R1_Z, settings.has_branch_prediction, FORCED);
+    force_write(id::cp15::R1_Z, settings.has_branch_prediction);
 
     // I
-    write(id::cp15::R1_I, settings.has_separate_inst_cache, FORCED);
+    force_write(id::cp15::R1_I, settings.has_separate_inst_cache);
 
     // V
-    write(id::cp15::R1_V, settings.has_high_vectors, FORCED);
+    force_write(id::cp15::R1_V, settings.has_high_vectors);
 
     // RR
-    write(id::cp15::R1_RR, settings.has_predictable_cache_strategy, FORCED);
+    force_write(id::cp15::R1_RR, settings.has_predictable_cache_strategy);
 
     // L4
-    write(id::cp15::R1_L4, settings.is_L4_bit_enabled_cp15, FORCED);
+    force_write(id::cp15::R1_L4, settings.is_L4_bit_enabled_cp15);
 }
 
 

@@ -72,7 +72,7 @@ void INSTRUCTIONS::arm::dsp::QSUB(const arm_code_t& code) {
 /**
  * 
  */
-void INSTRUCTIONS::arm::dsp::SMLA(const arm_code_t& code) {
+void INSTRUCTIONS::arm::dsp::SMLAXY(const arm_code_t& code) {
 
 }
 
@@ -80,7 +80,7 @@ void INSTRUCTIONS::arm::dsp::SMLA(const arm_code_t& code) {
 /**
  * 
  */
-void INSTRUCTIONS::arm::dsp::SMLAL(const arm_code_t& code) {
+void INSTRUCTIONS::arm::dsp::SMLALXY(const arm_code_t& code) {
 
 }
 
@@ -88,7 +88,7 @@ void INSTRUCTIONS::arm::dsp::SMLAL(const arm_code_t& code) {
 /**
  * 
  */
-void INSTRUCTIONS::arm::dsp::SMLAW(const arm_code_t& code) {
+void INSTRUCTIONS::arm::dsp::SMLAWY(const arm_code_t& code) {
 
 }
 
@@ -96,7 +96,7 @@ void INSTRUCTIONS::arm::dsp::SMLAW(const arm_code_t& code) {
 /**
  * 
  */
-void INSTRUCTIONS::arm::dsp::SMUL(const arm_code_t& code) {
+void INSTRUCTIONS::arm::dsp::SMULXY(const arm_code_t& code) {
 
 }
 
@@ -104,7 +104,7 @@ void INSTRUCTIONS::arm::dsp::SMUL(const arm_code_t& code) {
 /**
  * 
  */
-void INSTRUCTIONS::arm::dsp::SMULW(const arm_code_t& code) {
+void INSTRUCTIONS::arm::dsp::SMULWY(const arm_code_t& code) {
 
 }
 

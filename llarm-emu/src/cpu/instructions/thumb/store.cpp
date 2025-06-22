@@ -65,7 +65,7 @@ void INSTRUCTIONS::thumb::store::STR1(const thumb_code_t& code) {
     if ((address & 0b11) == 0b00) {
         value = reg.read(Rd_id);
     } else {
-        // UNPREDICTABLE, TODO
+        shared::out::unpredictable("STR1 memory write data");
     }
 
     const mem_write_struct access = memory.write(value, address, 4);
@@ -96,7 +96,7 @@ void INSTRUCTIONS::thumb::store::STR2(const thumb_code_t& code) {
     if ((address & 0b11) == 0b00) {
         value = reg.read(Rd_id);
     } else {
-        // UNPREDICTABLE, TODO
+        shared::out::unpredictable("STR2 memory write data");
     }
     
     const mem_write_struct access = memory.write(value, address, 4);
@@ -126,7 +126,7 @@ void INSTRUCTIONS::thumb::store::STR3(const thumb_code_t& code) {
     if ((address & 0b11) == 0b00) {
         value = reg.read(Rd_id);
     } else {
-        // UNPREDICTABLE, TODO
+        shared::out::unpredictable("STR3 memory write data");
     }
 
     const mem_write_struct access = memory.write(value, address, 4);
@@ -197,7 +197,7 @@ void INSTRUCTIONS::thumb::store::STRH1(const thumb_code_t& code) { // TODO
     if ((address & 0b11) == 0) {
         value = shared::util::bit_range(Rd, 0, 15);
     } else {
-        // UNPREDICTABLE, TODO
+        shared::out::unpredictable("STRH1 memory write data");
     }
 
     const mem_write_struct access = memory.write(value, address, 2);
@@ -228,7 +228,7 @@ void INSTRUCTIONS::thumb::store::STRH2(const thumb_code_t& code) { // TODO
     if ((address & 0b11) == 0) {
         value = shared::util::bit_range(Rd, 0, 15);
     } else {
-        // UNPREDICTABLE, TODO
+        shared::out::unpredictable("STRH2 memory write data");
     }
 
     const mem_write_struct access = memory.write(value, address, 2);

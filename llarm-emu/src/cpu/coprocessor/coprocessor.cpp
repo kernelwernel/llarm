@@ -51,7 +51,7 @@ void COPROCESSOR::write(
     const id::cp cp_id = fetch_cp_id(cp_id_bits);
 
     switch (cp_id) {
-        case id::cp::UNKNOWN: shared::out::error("Unknown coprocessor id for write operation"); // TODO dev error
+        case id::cp::UNKNOWN: shared::out::dev_error("Unknown coprocessor id for write operation");
         case id::cp::CP0:
         case id::cp::CP1:
         case id::cp::CP2:
@@ -66,7 +66,7 @@ void COPROCESSOR::write(
         case id::cp::CP11:
         case id::cp::CP12:
         case id::cp::CP13:
-        case id::cp::CP14:
+        case id::cp::CP14: shared::out::dev_error("Currently unsupported coprocessor in write operation");
         case id::cp::CP15:
             cp15.write(
                 cp15.identify(CRn, CRm, opcode_2), 
@@ -76,8 +76,6 @@ void COPROCESSOR::write(
                 is_forced
             );
     }
-
-    return;
 }
 
 
@@ -120,7 +118,15 @@ void COPROCESSOR::write(
     const u32 value,
     const bool is_forced
 ) {
-    return cp15.write(cp15_id, value, is_forced);
+    cp15.write(cp15_id, value, is_forced);
+}
+
+
+void COPROCESSOR::force_write(
+    const id::cp15 cp15_id, 
+    const u32 value
+) {
+    write(cp15_id, value, true);
 }
 
 

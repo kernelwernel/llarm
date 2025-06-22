@@ -105,6 +105,20 @@ bool opcodes::arm::CDP(const arm_code_t &raw_code) noexcept {
     );
 }
 
+bool opcodes::arm::CDP2(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(31) == 1) &&
+        (raw_code.test(30) == 1) &&
+        (raw_code.test(29) == 1) &&
+        (raw_code.test(28) == 1) &&
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(4) == 0)
+    );
+}
+
 bool opcodes::arm::CMN(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
@@ -142,6 +156,20 @@ bool opcodes::arm::EOR(const arm_code_t &raw_code) noexcept {
 
 bool opcodes::arm::LDC(const arm_code_t &raw_code) noexcept {
     return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(20) == 0)
+    );
+}
+
+
+bool opcodes::arm::LDC2(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(31) == 1) &&
+        (raw_code.test(30) == 1) &&
+        (raw_code.test(29) == 1) &&
+        (raw_code.test(28) == 1) &&
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
         (raw_code.test(25) == 0) &&
@@ -233,6 +261,21 @@ bool opcodes::arm::MCR(const arm_code_t &raw_code) noexcept {
     );
 }
 
+bool opcodes::arm::MCR2(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(31) == 1) &&
+        (raw_code.test(30) == 1) &&
+        (raw_code.test(29) == 1) &&
+        (raw_code.test(28) == 1) &&
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(20) == 0) &&
+        (raw_code.test(4) == 1)
+    );
+}
+
 bool opcodes::arm::MLA(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 0) &&
@@ -262,6 +305,21 @@ bool opcodes::arm::MOV(const arm_code_t &raw_code) noexcept {
 
 bool opcodes::arm::MRC(const arm_code_t &raw_code) noexcept {
     return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 1) &&
+        (raw_code.test(24) == 0) &&
+        (raw_code.test(20) == 1) &&
+        (raw_code.test(4) == 1)
+    );
+}
+
+bool opcodes::arm::MRC2(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(31) == 1) &&
+        (raw_code.test(30) == 1) &&
+        (raw_code.test(29) == 1) &&
+        (raw_code.test(28) == 1) &&
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
         (raw_code.test(25) == 1) &&
@@ -384,6 +442,19 @@ bool opcodes::arm::SBC(const arm_code_t &raw_code) noexcept {
 
 bool opcodes::arm::STC(const arm_code_t &raw_code) noexcept {
     return (
+        (raw_code.test(27) == 1) &&
+        (raw_code.test(26) == 1) &&
+        (raw_code.test(25) == 0) &&
+        (raw_code.test(20) == 0)
+    );
+}
+
+bool opcodes::arm::STC2(const arm_code_t &raw_code) noexcept {
+    return (
+        (raw_code.test(31) == 1) &&
+        (raw_code.test(30) == 1) &&
+        (raw_code.test(29) == 1) &&
+        (raw_code.test(28) == 1) &&
         (raw_code.test(27) == 1) &&
         (raw_code.test(26) == 1) &&
         (raw_code.test(25) == 0) &&
@@ -1604,7 +1675,7 @@ bool opcodes::arm::FMRDH(const arm_code_t &raw_code) noexcept {
     );
 }
 
-/*
+/* what is this? todo
 bool opcodes::arm::(const arm_code_t &raw_code) noexcept {
     return (
         (raw_code.test(27) == 1) &&

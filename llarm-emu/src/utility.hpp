@@ -139,7 +139,7 @@ namespace util {
             case id::specific_arch::ARMv8_6_A: return id::arch::ARMv8;
             case id::specific_arch::ARMv9_A: 
             case id::specific_arch::ARMv9_2_A: return id::arch::ARMv9;
-            default: shared::out::error("TODO");
+            //default: shared::out::error("TODO");
         }
     }
 
@@ -202,7 +202,4 @@ namespace util {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }
-
-    constexpr u64 lower_mask_64 = 0x00000000FFFFFFFF;
-    constexpr u64 upper_mask_64 = 0xFFFFFFFF00000000;
 }

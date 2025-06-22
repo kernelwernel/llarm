@@ -21,12 +21,22 @@ namespace constants {
     namespace implementor {
         /* A */ constexpr u8 ARM = 0x41;
         /* B */ constexpr u8 BRCM = 0x42;
-        /* C */ constexpr u8 LLARM = 0x43;
+        /* L */ constexpr u8 LLARM = 0x4C; // custom
         /* D */ constexpr u8 DEC = 0x44;
         /* M */ constexpr u8 MOTOROLA = 0x4D;
         /* Q */ constexpr u8 QUALCOMM = 0x51;
         /* V */ constexpr u8 MARVELL = 0x56;
         /* i */ constexpr u8 INTEL = 0x69;
+        /* C */ constexpr u8 CAVIUM = 0x43;
+        /* F */ constexpr u8 FUJITSU = 0x46;
+        /* I */ constexpr u8 INFINEON = 0x49;
+        /* N */ constexpr u8 NVIDIA = 0x4e;
+        /* P */ constexpr u8 APM = 0x50;
+        /* S */ constexpr u8 SAMSUNG = 0x53;
+        /* T */ constexpr u8 TI = 0x54;
+        /* a */ constexpr u8 APPLE = 0x61;
+        /* f */ constexpr u8 FARADAY = 0x66;
+        /* À */ constexpr u8 AMPERE = 0xc0;
     }
 
     enum cond : u8 {
@@ -46,24 +56,5 @@ namespace constants {
         LE = 0b1101, // less than or equal
         AL = 0b1110, // always
         NV = 0b1111 // not a real condition
-    };
-
-    enum operation : u8 {
-        AND = 0b0000, // Rd:= Op1 AND Op2
-        EOR = 0b0001, // Rd:= Op1 EOR Op2
-        SUB = 0b0010, // Rd:= Op1 - Op2
-        RSB = 0b0011, // Rd:= Op2 - Op1
-        ADD = 0b0100, // Rd:= Op1 + Op2
-        ADC = 0b0101, // Rd:= Op1 + Op2 + C
-        SBC = 0b0110, // Rd:= Op1 - Op2 + C - 1
-        RSC = 0b0111, // Rd:= Op2 - Op1 + C - 1
-        TST = 0b1000, // set condition codes on Op1 AND Op2
-        TEQ = 0b1001, // set condition codes on Op1 EOR Op2
-        CMP = 0b1010, // set condition codes on Op1 - Op2
-        CMN = 0b1011, // set condition codes on Op1 + Op2
-        ORR = 0b1100, // Rd:= Op1 OR Op2
-        MOV = 0b1101, // Rd:= Op2
-        BIC = 0b1110, // Rd:= Op1 AND NOT Op2
-        MVN = 0b1111 // Rd:= NOT Op2
     };
 }

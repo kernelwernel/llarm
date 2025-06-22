@@ -59,7 +59,6 @@ void INSTRUCTIONS::arm::misc::PSR(const arm_code_t &code) noexcept {
     reg.write(id::cpsr::C, C);
     reg.write(id::cpsr::V, V);
 
-
     if ((reg.read(id::reg::R15) & 0b11) == 0b00) { // user mode
         return; // all the flag bit updates are done
     } else { // privileged

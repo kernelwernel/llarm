@@ -110,4 +110,5 @@ notes:
 - try the bolt post-link optimiser, looks super interesting and promising
 - try [[gnu::pure]] and [[gnu::const]] optimisation opportunities
 - allow for json settings files as an input argument for the emulator
-- try a mold setup again
+- rewrite the whole decode (identifier) and execute cycle phases so that they use switches instead of std::maps
+- install flamegraph and measure the difference between the std::map<key, std::function> thingy and the switch

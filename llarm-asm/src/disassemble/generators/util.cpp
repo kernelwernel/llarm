@@ -281,7 +281,7 @@ std::string util::reg_list(const u16 list, const settings settings, const reg_id
     }
 
     if (registers.empty()) {
-        // unpredictable TODO
+        shared::out::unpredictable("Empty register set for register list addressing mode");
     }
 
     tmp += "{ ";
@@ -330,7 +330,7 @@ std::string util::raw_cond(const u8 cond, const settings settings) {
         case 0b1111: return "";
     }
 
-    shared::out::error("TODO");
+    shared::out::dev_error("Unknown condition bits encountered");
 }
 
 
@@ -352,11 +352,12 @@ std::string util::vfp_reg_string_bits(const u32 code, const u8 start, const u8 e
 
 
 std::string util::reg_string_bits(const u32 code, const u8 start, const u8 end, const bool top_bit, const settings settings) {
+    if ((end - start) != 2) { // 3-bit wide register check (mostly for thumb)
+        shared::out::error("Invalid register width");
+    }
+
     u8 reg_bits = shared::util::bit_range<u8>(code, start, end);
 
-    if ((end - start) != 2) { // 3-bit wide register check (mostly for thumb)
-        shared::out::error("TODO");   
-    }
 
     reg_bits = static_cast<u8>(reg_bits | (top_bit << 3));
 

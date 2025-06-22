@@ -33,10 +33,12 @@ namespace internal::instructions {
         arm_table.push_back({ id::arm::BL, opcodes::arm::BL }); 
         arm_table.push_back({ id::arm::BIC, opcodes::arm::BIC }); 
         arm_table.push_back({ id::arm::CDP, opcodes::arm::CDP }); 
+        arm_table.push_back({ id::arm::CDP2, opcodes::arm::CDP2 }); 
         arm_table.push_back({ id::arm::CMN, opcodes::arm::CMN }); 
         arm_table.push_back({ id::arm::CMP, opcodes::arm::CMP }); 
         arm_table.push_back({ id::arm::EOR, opcodes::arm::EOR }); 
         arm_table.push_back({ id::arm::LDC, opcodes::arm::LDC }); 
+        arm_table.push_back({ id::arm::LDC2, opcodes::arm::LDC2 }); 
         arm_table.push_back({ id::arm::LDM1, opcodes::arm::LDM1 }); 
         arm_table.push_back({ id::arm::LDM2, opcodes::arm::LDM2 }); 
         arm_table.push_back({ id::arm::LDM3, opcodes::arm::LDM3 }); 
@@ -45,9 +47,11 @@ namespace internal::instructions {
         arm_table.push_back({ id::arm::LDRBT, opcodes::arm::LDRBT }); 
         arm_table.push_back({ id::arm::LDRT, opcodes::arm::LDRT }); 
         arm_table.push_back({ id::arm::MCR, opcodes::arm::MCR }); 
+        arm_table.push_back({ id::arm::MCR2, opcodes::arm::MCR2 }); 
         arm_table.push_back({ id::arm::MLA, opcodes::arm::MLA }); 
         arm_table.push_back({ id::arm::MOV, opcodes::arm::MOV }); 
         arm_table.push_back({ id::arm::MRC, opcodes::arm::MRC }); 
+        arm_table.push_back({ id::arm::MRC2, opcodes::arm::MRC2 }); 
         arm_table.push_back({ id::arm::MRS, opcodes::arm::MRS }); 
         arm_table.push_back({ id::arm::MSR_IMM, opcodes::arm::MSR_IMM }); 
         arm_table.push_back({ id::arm::MSR_REG, opcodes::arm::MSR_REG }); 
@@ -58,6 +62,7 @@ namespace internal::instructions {
         arm_table.push_back({ id::arm::RSC, opcodes::arm::RSC }); 
         arm_table.push_back({ id::arm::SBC, opcodes::arm::SBC }); 
         arm_table.push_back({ id::arm::STC, opcodes::arm::STC }); 
+        arm_table.push_back({ id::arm::STC2, opcodes::arm::STC2 }); 
         arm_table.push_back({ id::arm::STM1, opcodes::arm::STM1 }); 
         arm_table.push_back({ id::arm::STM2, opcodes::arm::STM2 }); 
         arm_table.push_back({ id::arm::STR, opcodes::arm::STR }); 

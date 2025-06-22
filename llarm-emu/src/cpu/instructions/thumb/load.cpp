@@ -416,8 +416,7 @@ void INSTRUCTIONS::thumb::load::POP(const thumb_code_t &code) {
 
         reg.write(id::reg::PC, value & 0xFFFFFFFE);
 
-        // "if ARMv5 or above"
-        if (static_cast<u8>(settings.arch) >= 5) {
+        if (settings.arch >= id::arch::ARMv5) {
             reg.write(id::cpsr::T, (value & 1));
         }
 

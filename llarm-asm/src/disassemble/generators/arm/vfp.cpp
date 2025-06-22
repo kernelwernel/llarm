@@ -661,7 +661,7 @@ std::string generators::arm::vfp::FMRX(const u32 code, const settings settings) 
         case 0b0000: vfp_sys_reg = (settings.capitals ? "FPSID" : "fpsid"); break;
         case 0b0001: vfp_sys_reg = (settings.capitals ? "FPSCR" : "fpscr"); break;
         case 0b1000: vfp_sys_reg = (settings.capitals ? "FPEXC" : "fpexc"); break;
-        default: shared::out::error("Unrecognised VFP system register for FMRX"); // unpredictable todo
+        default: shared::out::error("Unrecognised VFP system register for FMRX");
     }
 
     return util::make_string("FMRX", util::cond(code, settings), " ", Rd, ", ", vfp_sys_reg);
@@ -804,7 +804,7 @@ std::string generators::arm::vfp::FMXR(const u32 code, const settings settings) 
         case 0b0000: vfp_sys_reg = "FPSID"; break;
         case 0b0001: vfp_sys_reg = "FPSCR"; break;
         case 0b1000: vfp_sys_reg = "FPEXC"; break;
-        default: shared::out::error("Unrecognised VFP system register for FMXR"); // unpredictable todo
+        default: shared::out::error("Unrecognised VFP system register for FMXR");
     }
 
     return util::make_string("FMXR", util::cond(code, settings), " ", vfp_sys_reg, ", ", Rd);

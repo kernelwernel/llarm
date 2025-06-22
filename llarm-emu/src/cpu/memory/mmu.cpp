@@ -3,6 +3,7 @@
 #include "../globals.hpp"
 #include "llarm-emu/src/id.hpp"
 #include "ram.hpp"
+#include "shared/out.hpp"
 #include "structure.hpp"
 
 #include "mmu.hpp"
@@ -110,7 +111,7 @@ id::access_domain MMU::fetch_domain(const u8 raw_domain_bits) {
         case 0b01: return id::access_domain::CLIENT;
         case 0b10: return id::access_domain::RESERVED;
         case 0b11: return id::access_domain::MANAGER;
-        default: shared::out::error("Something went horribly wrong, todo"); // dev error TODO
+        default: shared::out::dev_error("Unknown coprocessor domain bits provided");
     }
 }
 
@@ -121,7 +122,7 @@ u8 MMU::fetch_subpage_AP(const u8 subpage, const u32 entry) {
         case 1: return shared::util::bit_range(entry, 6, 7);
         case 2: return shared::util::bit_range(entry, 8, 9);
         case 3: return shared::util::bit_range(entry, 10, 11);
-        default: shared::out::error("Failure to deduce subpage index for page descriptor"); // TODO dev error
+        default: shared::out::dev_error("Failure to deduce subpage index for page descriptor"); 
     }
 }
 
@@ -277,7 +278,9 @@ bool MMU::is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type)
                 (access_type == id::access_type::READ)
             );
         case id::access_perm::NO_ACCESS: return false;
-        case id::access_perm::UNPREDICTABLE: return true; // TODO: add unpredictability log here
+        case id::access_perm::UNPREDICTABLE: 
+            shared::out::unpredictable("MMU access permission ID is unpredictable");
+            return true;
     }
 }
 
@@ -306,7 +309,7 @@ id::aborts MMU::check_block_access(
             return id::aborts::NO_ABORT;
         }
 
-        case id::access_domain::RESERVED:  // TODO unpredictable
+        case id::access_domain::RESERVED: shared::out::unpredictable("Reserved access domain encountered, defaulting to no access");
         case id::access_domain::NO_ACCESS: {
             // section
             if (section_access) {
@@ -586,7 +589,7 @@ mem_read_struct MMU::read(const u32 address, const u8 access_size) {
 
     return mem_read_struct {
         /* has_failed  */ false,
-        /* abort_code  */ id::aborts::NO_ABORT, // TEMPORARY, TODO
+        /* abort_code  */ id::aborts::NO_ABORT,
         /* access_size */ access_size,
         /* value       */ value
     };
@@ -595,7 +598,7 @@ mem_read_struct MMU::read(const u32 address, const u8 access_size) {
 
 void MMU::manage_abort(const id::aborts abort, const u32 virtual_address, const u8 domain_bits) {
     if (abort == id::aborts::NO_ABORT) {
-        // dev error TODO
+        shared::out::error("Invalid abort in MMU provided");
         return;
     }
 
@@ -612,7 +615,7 @@ void MMU::manage_abort(const id::aborts abort, const u32 virtual_address, const 
             case id::aborts::SUB_PAGE_PERMISSION: return 0b1111;
             case id::aborts::SECTION_DOMAIN: return 0b1001;
             case id::aborts::SECTION_PERMISSION: return 0b1101;
-            default: return 0; // this shouldn't happen, dev warning TODO
+            default: shared::out::warning("non-MMU abort provided in MMU"); return 0;
         }
     }();
 

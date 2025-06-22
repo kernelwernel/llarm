@@ -52,6 +52,7 @@ struct SETTINGS {
     bool anti_emulation_detection;
     bool is_vfp_enabled;
     bool is_vfp_double_precision_enabled;
+    bool is_multiply_enabled;
     bool fresh_system;
 
     // /**/ = "not sure what to do with this, todo"
@@ -96,6 +97,8 @@ struct SETTINGS {
         tmp.is_little_endian = true;
         tmp.is_big_endian = true;
         tmp.only_big_endian = false;
+        tmp.is_multiply_enabled = true;
+        tmp.is_multiply_fully_enabled = true;
         tmp.thumb_version = 1;
         tmp.core_count = 1;
         tmp.memsize = util::get_kb(32);
@@ -210,9 +213,12 @@ struct SETTINGS {
         }
 
         if (core_count == 0) {
-
+            // core count must be at least 1
         }
 
+        if (arch == id::arch::ARMv2 && is_multiply_enaled) {
+            // ARMv2 has no support for multiplications
+        }
 
         // all of the checks above should mostly just set a default correct value instead of crashing completely
     }
@@ -263,6 +269,7 @@ struct SETTINGS {
         anti_emulation_detection(false),
         is_vfp_enabled(false),
         is_vfp_double_precision_enabled(false),
+        is_multiply_enabled(false),
         fresh_system(false),
 
         unified_cache_size(0),

@@ -107,13 +107,15 @@ public:
         struct coprocessor_inst {
             REGISTERS& reg;
             OPERATION& operation;
+            ADDRESSING_MODE& address_mode;
             COPROCESSOR& coprocessor;
 
             coprocessor_inst(
                 REGISTERS& reg, 
                 OPERATION& operation, 
+                ADDRESSING_MODE& address_mode,
                 COPROCESSOR& coprocessor
-            ) : reg(reg), operation(operation), coprocessor(coprocessor) {}
+            ) : reg(reg), operation(operation), address_mode(address_mode), coprocessor(coprocessor) {}
     
             void CDP(const arm_code_t&); // TODO
             void LDC(const arm_code_t&); // TODO
@@ -161,15 +163,15 @@ public:
             {}
     
             void LDM1(const arm_code_t&); // TODO, ADD CHECK FOR L4 BIT
-            void LDM2(const arm_code_t&); // TODO
-            void LDM3(const arm_code_t&); // TODO
+            void LDM2(const arm_code_t&);
+            void LDM3(const arm_code_t&);
             void LDR(const arm_code_t&); // TODO, ADD CHECK FOR L4 BIT
-            void LDRB(const arm_code_t&); // TODO
-            void LDRBT(const arm_code_t&); // TODO
-            void LDRH(const arm_code_t&); // TODO
-            void LDRSB(const arm_code_t&); // TODO
-            void LDRSH(const arm_code_t&); // TODO
-            void LDRT(const arm_code_t&); // TODO
+            void LDRB(const arm_code_t&);
+            void LDRBT(const arm_code_t&);
+            void LDRH(const arm_code_t&);
+            void LDRSB(const arm_code_t&);
+            void LDRSH(const arm_code_t&);
+            void LDRT(const arm_code_t&);
         } load; 
 
         struct store {
@@ -189,15 +191,15 @@ public:
                 address_mode(address_mode)
             {}
 
-            void STM1(const arm_code_t&); // TODO
-            void STM2(const arm_code_t&); // TODO
-            void STR(const arm_code_t&); // TODO
-            void STRB(const arm_code_t&); // TODO
-            void STRBT(const arm_code_t&); // TODO
-            void STRH(const arm_code_t&); // TODO
-            void STRT(const arm_code_t&); // TODO
-            void SWP(const arm_code_t&); // TODO
-            void SWPB(const arm_code_t&); // TODO
+            void STM1(const arm_code_t&);
+            void STM2(const arm_code_t&);
+            void STR(const arm_code_t&);
+            void STRB(const arm_code_t&);
+            void STRBT(const arm_code_t&);
+            void STRH(const arm_code_t&);
+            void STRT(const arm_code_t&);
+            void SWP(const arm_code_t&);
+            void SWPB(const arm_code_t&);
         } store;
 
         struct dsp {
@@ -214,11 +216,11 @@ public:
             void QDADD(const arm_code_t&); // TODO
             void QDSUB(const arm_code_t&); // TODO
             void QSUB(const arm_code_t&); // TODO
-            void SMLA(const arm_code_t&); // TODO
-            void SMLAL(const arm_code_t&); // TODO
-            void SMLAW(const arm_code_t&); // TODO
-            void SMUL(const arm_code_t&); // TODO
-            void SMULW(const arm_code_t&); // TODO
+            void SMLAXY(const arm_code_t&); // TODO
+            void SMLALXY(const arm_code_t&); // TODO
+            void SMLAWY(const arm_code_t&); // TODO
+            void SMULXY(const arm_code_t&); // TODO
+            void SMULWY(const arm_code_t&); // TODO
             void STRD(const arm_code_t&); // TODO
         } dsp;
 
@@ -305,7 +307,7 @@ public:
             movement(reg, operation, address_mode),
             multiply(reg, operation),
             branching(reg, operation),
-            coprocessor_inst(reg, operation, coprocessor),
+            coprocessor_inst(reg, operation, address_mode, coprocessor),
             misc(reg, operation, address_mode, coprocessor),
             load(reg, operation, memory, address_mode, settings),
             store(reg, operation, memory, address_mode),

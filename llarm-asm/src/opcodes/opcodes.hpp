@@ -12,11 +12,14 @@ namespace internal::opcodes {
         bool B(const arm_code_t &raw_code) noexcept;
         bool BL(const arm_code_t &raw_code) noexcept;
         bool BIC(const arm_code_t &raw_code) noexcept;
+        bool BKPT(const arm_code_t &raw_code) noexcept;
         bool CDP(const arm_code_t &raw_code) noexcept;
+        bool CDP2(const arm_code_t &raw_code) noexcept;
         bool CMN(const arm_code_t &raw_code) noexcept;
         bool CMP(const arm_code_t &raw_code) noexcept;
         bool EOR(const arm_code_t &raw_code) noexcept;
         bool LDC(const arm_code_t &raw_code) noexcept;
+        bool LDC2(const arm_code_t &raw_code) noexcept;
         bool LDM1(const arm_code_t &raw_code) noexcept;
         bool LDM2(const arm_code_t &raw_code) noexcept;
         bool LDM3(const arm_code_t &raw_code) noexcept;
@@ -25,9 +28,11 @@ namespace internal::opcodes {
         bool LDRBT(const arm_code_t &raw_code) noexcept;
         bool LDRT(const arm_code_t &raw_code) noexcept;
         bool MCR(const arm_code_t &raw_code) noexcept;
+        bool MCR2(const arm_code_t &raw_code) noexcept;
         bool MLA(const arm_code_t &raw_code) noexcept;
         bool MOV(const arm_code_t &raw_code) noexcept;
         bool MRC(const arm_code_t &raw_code) noexcept;
+        bool MRC2(const arm_code_t &raw_code) noexcept;
         bool MRS(const arm_code_t &raw_code) noexcept;
         bool MSR_IMM(const arm_code_t &raw_code) noexcept;
         bool MSR_REG(const arm_code_t &raw_code) noexcept;
@@ -38,6 +43,7 @@ namespace internal::opcodes {
         bool RSC(const arm_code_t &raw_code) noexcept;
         bool SBC(const arm_code_t &raw_code) noexcept;
         bool STC(const arm_code_t &raw_code) noexcept;
+        bool STC2(const arm_code_t &raw_code) noexcept;
         bool STM1(const arm_code_t &raw_code) noexcept;
         bool STM2(const arm_code_t &raw_code) noexcept;
         bool STR(const arm_code_t &raw_code) noexcept;

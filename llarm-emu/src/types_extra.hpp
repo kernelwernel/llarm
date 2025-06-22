@@ -77,5 +77,3 @@ concept is_integral = (
 #else
 #define LLARM_CONSTEVAL constexpr
 #endif
-
-static constexpr bool FORCED = true; // specifically for coprocessor.write()

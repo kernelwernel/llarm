@@ -4,7 +4,7 @@
 
 namespace id {
     enum class exception_mode : u8 {
-        RESET = 1,
+        RESET,
         UNDEFINED,
         SWI, // software interrupt
         PREFETCH_ABORT, // instruction fetch memory abort
@@ -14,7 +14,7 @@ namespace id {
     };
 
     enum class exception_priority : u8  {
-        RESET = 1,
+        RESET,
         DATA_ABORT,
         FIQ,
         IRQ,
@@ -24,16 +24,16 @@ namespace id {
     };
 
     enum class cpsr : u8 {
-        M = 0,   // processor mode bits
-        T = 5,   // Thumb state bit
+        M,   // processor mode bits
+        T,   // Thumb state bit
         F,   // FIQ disable bit
         I,   // IRQ disable bit
-        A,   // imprecise data abort disable bit
-        E,   // data endianness bit
-        IT,  // if-then state bits
-        GE, // greater-than-or-equal-to bits
-        DNM, // the "do not modify" bits
-        J = 26,   // Java state bit
+        //A,   // imprecise data abort disable bit
+        //E,   // data endianness bit
+        //IT,  // if-then state bits
+        //GE, // greater-than-or-equal-to bits
+        //DNM, // the "do not modify" bits
+        //J = 26,   // Java state bit
         Q,   // sticky overflow bit
         V,   // overflow bit
         C,   // carry/borrow/extend bit
@@ -42,7 +42,7 @@ namespace id {
     };
 
     enum class reg : u8 {
-        R0 = 1,
+        R0,
         R1,
         R2,
         R3,
@@ -87,7 +87,7 @@ namespace id {
     };
 
     enum class mode : u8 {
-        USER = 1,   // normal program execution mode
+        USER,   // normal program execution mode
         SUPERVISOR, // protected mode for the OS
         ABORT,      // implements virtual memory and/or memory protection
         UNDEFINED,  // supports software emulation of hardware coprocessors
@@ -101,7 +101,7 @@ namespace id {
     };
 
     enum class cond : u8 {
-        EQ = 1,
+        EQ,
         NE,
         CS,
         CC,
@@ -120,20 +120,20 @@ namespace id {
     };
 
     enum class instruction_sets : u8 {
-        ARM = 1,
+        ARM,
         THUMB,
         JAZELLE
     };
 
     enum class arguments : u8 {
-        NULL_ARG = 0,
+        NULL_ARG,
         HELP,
         VERBOSE,
         THUMB_ARG
     };
 
     enum class cp : u8 {
-        UNKNOWN = 0,
+        UNKNOWN,
         CP0,
         CP1,
         CP2,
@@ -154,7 +154,7 @@ namespace id {
 
     // coprocessor registers and bits
     enum class cp15 : u16 {
-        UNKNOWN = 0,
+        UNKNOWN,
         R0_ID, // DO NOT MODIFY/REARRANGE SINCE IT'S USED AS A STARTING INDEX
         R0_ID_REVISION,
         R0_ID_IMPLEMENTOR,
@@ -434,14 +434,14 @@ namespace id {
     };
 
     enum class first_level : u8 {
-        FAULT = 1, 
+        FAULT, 
         COARSE, 
         FINE,
         SECTION
     };
 
     enum class second_level : u8 {
-        FAULT = 1, 
+        FAULT, 
         LARGE,
         SMALL,
         TINY
@@ -491,7 +491,7 @@ namespace id {
     };
 
     enum class pu_region : u8 { // pu = protection unit
-        REGION_0 = 0,
+        REGION_0,
         REGION_1,
         REGION_2,
         REGION_3,
@@ -592,7 +592,7 @@ namespace id {
     };
 
     enum class product_family : u8 {
-        UNKNOWN = 0,
+        UNKNOWN,
         ARM1,
         ARM2,
         ARM2aS,
@@ -615,7 +615,7 @@ namespace id {
     };
 
     enum class arch : u8 {
-        UNKNOWN = 0,
+        UNKNOWN,
         ARMv1,
         ARMv2,
         ARMv3,
@@ -628,16 +628,22 @@ namespace id {
     };
 
     enum class specific_arch : u8 {
-        UNKNOWN = 0,
+        UNKNOWN,
         ARMv1,
         ARMv2,
         ARMv2a,
         ARMv3,
+        ARMv3M,
         ARMv4,
+        ARMv4xM,
         ARMv4T,
-        ARMv5, // assuming this exists, idk
-        ARMv5T, // same
+        ARMv4TxM,
+        ARMv5,
+        ARMv5xM
+        ARMv5T,
+        ARMv5TxM,
         ARMv5TE,
+        ARMv5TExP,
         ARMv5TEJ,
         ARMv6,
         ARMv6T2,
@@ -663,9 +669,9 @@ namespace id {
     };
 
     enum class processor : u8 {
-        // TODO  (https://en.wikipedia.org/wiki/List_of_ARM_processors)
+        // (https://en.wikipedia.org/wiki/List_of_ARM_processors)
         // https://sourceware.org/binutils/docs/as/ARM-Options.html
-        UNKNOWN = 0,
+        UNKNOWN,
         ARM1,
         ARM2,
         ARM250,
@@ -767,42 +773,76 @@ namespace id {
         // custom processors intended for specific use cases 
         // if no real-world ARM processor is being used or set
 
-        LLARM_FAST,     // meant to be as fast as possible (no mmu,mpu and cache because it takes longer to emulate those)
-        LLARM_MINIMAL,  // the minimal working example (no mmu/mpu, no cache, no vfp, no dsp, no thumb, etc...)
+        LLARM_FAST,     // meant to be as fast as possible (no mmu/mpu/cache because it takes longer to emulate those)
+        LLARM_MINIMAL,  // the minimal working example (no mmu/mpu/cache, no vfp, no dsp, no thumb, etc...)
         LLARM_FULL,     // all features are present
+        LLARM_PROGRAM,  // designed for binary file emulation
         LLARM_DEFAULT,  // default options for stability reasons
     };
 
+    enum class third_party_processor : u8 {
+        SA_110,
+        SA_1100,
+        FA510,
+        FA526,
+        FA626,
+        FA606TE,
+        FA626TE,
+        FMP626TE,
+        FA726TE,
+        XScale,
+        Bulverde,
+        Monahans,
+        Feroceon,
+        Jolteon,
+        PJ1_Mohawk,
+        PJ4,
+        Scorpion,
+        Krait,
+        Kryo,
+        Swift,
+        Cyclone,
+        Typhoon,
+        Twister,
+        Hurricane_Zephyr,
+        Monsoon_Mistral,
+        Vortex_Tempest,
+        Lightning_Thunder,
+        Firestorm_Icestorm,
+        Avalanche_Blizzard,
+        Everest_Sawtooth,
+        Apple_A17_Pro,
+        Apple_M3,
+        Apple_M4,
+        X_Gene,
+        Denver,
+        Carmel,
+        ThunderX,
+        M1_Mongoose,
+        M2_Mongoose,
+        M3_Meerkat,
+        M4_Cheetah,
+        M5_Lion
+    };
+
     enum class implementor : u8 {
-        ARM = 1,
+        ARM,
         BRCM, // broadcom 
         DEC, // digital equipment corporation
         MOTOROLA,
         QUALCOMM,
         MARVELL, 
         INTEL,
+        CAVIUM,
+        FUJITSU,
+        INFINEON,
+        NVIDIA,
+        APM,
+        SAMSUNG,
+        TI, // texas instruments (this is a guess)
+        APPLE,
+        FARADAY,
+        AMPERE,
         LLARM // custom
-    };
-
-    enum class error : u8 {
-        UNKNOWN = 0,
-        REG_26_NO_COMPAT
-    };
-
-    enum class warning : u8 {
-        UNKNOWN = 0,
-        SBZ, 
-        UNPREDICTABLE,
-        DNM
-    };
-
-    enum class dev_warning : u8 {
-        UNKNOWN = 0,
-        TRIM_IS_ALL_ZERO
-    };
-
-    enum class dev_error : u8 {
-        UNKNOWN = 0,
-        TRIM_IS_ALL_ZERO
     };
 }

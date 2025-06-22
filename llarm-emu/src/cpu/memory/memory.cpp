@@ -109,9 +109,9 @@ mem_read_struct MEMORY::read(
 
 void MEMORY::reset() {
     if (mmu.is_mmu_enabled()) {
-        return mmu.reset();
+        mmu.reset(); // this also resets the TLB
     } else if (mpu.is_mpu_enabled()) {
-        return mpu.reset();
+        mpu.reset();
     }
 
     ram.reset();

@@ -4,6 +4,7 @@
 #include "../../core/registers.hpp"
 #include "../instructions.hpp"
 
+#include "shared/out.hpp"
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 
@@ -192,7 +193,7 @@ void INSTRUCTIONS::arm::load::LDRH(const arm_code_t &code) {
 
         data = access.value;
     } else {
-        // TODO unpredictable
+        shared::out::unpredictable("LDRH data assignment");
     }
 
     reg.write(code, 12, 15, data);
@@ -241,7 +242,7 @@ void INSTRUCTIONS::arm::load::LDRSH(const arm_code_t &code) {
 
         data = access.value;
     } else {
-        // TODO unpredictable
+        shared::out::unpredictable("LDRSH data assignment");
     }
 
     reg.write(code, 12, 15, (operation.sign_extend(data, 15)));
