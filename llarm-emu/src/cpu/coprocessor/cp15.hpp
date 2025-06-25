@@ -136,7 +136,8 @@ public:
     id::cp15 identify(const u8 CRn, const u8 CRm, const u8 opcode2);
 
     u32 read(const id::cp15 reg);
-    void write(const id::cp15 reg, const u32 value, const bool forced = false);
+    void force_write(const id::cp15 reg, const u32 value);
+    void write(const id::cp15 reg, const u32 value);
     void write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u8 CRm, const u32 data, const bool forced = false);
 
     void reset();

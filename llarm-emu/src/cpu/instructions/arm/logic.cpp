@@ -135,6 +135,30 @@ void INSTRUCTIONS::arm::logic::CMN(const arm_code_t &code) {
 
 /**
  * if ConditionPassed(cond) then
+ *     Rd = Rn AND NOT shifter_operand
+ *     if S == 1 and Rd == R15 then
+ *         CPSR = SPSR
+ *     else if S == 1 then
+ *         N Flag = Rd[31]
+ *         Z Flag = if Rd == 0 then 1 else 0
+ *         C Flag = shifter_carry_out
+ *         V Flag = unaffected
+ */
+void INSTRUCTIONS::arm::logic::BIC(const arm_code_t &code) {
+    const data_struct shifter_operand = address_mode.data_processing(code);
+    
+    const u32 Rn = reg.read(code, 16, 19);
+    const u32 Rd = (Rn & ~shifter_operand.value);
+    reg.write(code, 12, 15, Rd);
+
+    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::Z, (Rd == 0));
+    reg.write(id::cpsr::C, shifter_operand.carry);
+}
+
+
+/**
+ * if ConditionPassed(cond) then
  *   Rd = Rn OR shifter_operand
  *   if S == 1 and Rd == R15 then
  *     CPSR = SPSR

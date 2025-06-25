@@ -55,6 +55,7 @@ public:
             void CLZ(const arm_code_t&); // (test if this works, manually)
             void EOR(const arm_code_t&); // TODO
             void ORR(const arm_code_t&); // TODO
+            void BIC(const arm_code_t&); // TODO
             void TEQ(const arm_code_t&); // TODO
             void TST(const arm_code_t&); // TODO
         } logic;
@@ -122,6 +123,11 @@ public:
             void MCR(const arm_code_t&); // TODO
             void MRC(const arm_code_t&); // TODO
             void STC(const arm_code_t&); // TODO
+            void CDP2(const arm_code_t&); // TODO
+            void LDC2(const arm_code_t&); // TODO
+            void MCR2(const arm_code_t&); // TODO
+            void MRC2(const arm_code_t&); // TODO
+            void STC2(const arm_code_t&); // TODO
         } coprocessor_inst;
 
         struct misc {
@@ -139,7 +145,8 @@ public:
 
             void NOP(const arm_code_t&) noexcept;
             void PSR(const arm_code_t&) noexcept;
-            void SWI(const arm_code_t&); // TODO
+            void SWI(const arm_code_t&);
+            void BKPT(const arm_code_t&);
         } misc;
 
         struct load {

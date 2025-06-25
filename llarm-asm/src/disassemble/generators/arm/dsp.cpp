@@ -72,7 +72,7 @@ std::string generators::arm::dsp::QSUB(const u32 code, const settings settings) 
 }
 
 
-std::string generators::arm::dsp::SMLA(const u32 code, const settings settings) {
+std::string generators::arm::dsp::SMLAXY(const u32 code, const settings settings) {
     const char x = (shared::util::bit_fetch(code, 5) ? 'T' : 'B');
     const char y = (shared::util::bit_fetch(code, 6) ? 'T' : 'B');
 
@@ -85,7 +85,7 @@ std::string generators::arm::dsp::SMLA(const u32 code, const settings settings) 
 }
 
 
-std::string generators::arm::dsp::SMLAL(const u32 code, const settings settings) {
+std::string generators::arm::dsp::SMLALXY(const u32 code, const settings settings) {
     const char x = (shared::util::bit_fetch(code, 5) ? 'T' : 'B');
     const char y = (shared::util::bit_fetch(code, 6) ? 'T' : 'B');
 
@@ -98,7 +98,7 @@ std::string generators::arm::dsp::SMLAL(const u32 code, const settings settings)
 }
 
 
-std::string generators::arm::dsp::SMLAW(const u32 code, const settings settings) {
+std::string generators::arm::dsp::SMLAWY(const u32 code, const settings settings) {
     const char y = (shared::util::bit_fetch(code, 6) ? 'T' : 'B');
 
     const std::string Rd = util::reg_string(code, 16, 19, settings);
@@ -110,7 +110,7 @@ std::string generators::arm::dsp::SMLAW(const u32 code, const settings settings)
 }
 
 
-std::string generators::arm::dsp::SMUL(const u32 code, const settings settings) {
+std::string generators::arm::dsp::SMULXY(const u32 code, const settings settings) {
     const char x = (shared::util::bit_fetch(code, 5) ? 'T' : 'B');
     const char y = (shared::util::bit_fetch(code, 6) ? 'T' : 'B');
 
@@ -122,7 +122,7 @@ std::string generators::arm::dsp::SMUL(const u32 code, const settings settings) 
 }
 
 
-std::string generators::arm::dsp::SMULW(const u32 code, const settings settings) {
+std::string generators::arm::dsp::SMULWY(const u32 code, const settings settings) {
     const char y = (shared::util::bit_fetch(code, 6) ? 'T' : 'B');
 
     const std::string Rd = util::reg_string(code, 16, 19, settings);

@@ -82,9 +82,9 @@ void INSTRUCTIONS::arm::misc::PSR(const arm_code_t &code) noexcept {
  *     PC = 0x00000008
  */
 void INSTRUCTIONS::arm::misc::SWI(const arm_code_t &code) {
+    reg.switch_mode(id::mode::SUPERVISOR);
     reg.write(id::reg::R14_svc, reg.read(id::reg::PC) + 4);
     reg.write(id::reg::SPSR_svc, reg.CPSR);
-    reg.switch_mode(id::mode::SUPERVISOR);
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
 
@@ -92,5 +92,33 @@ void INSTRUCTIONS::arm::misc::SWI(const arm_code_t &code) {
         reg.write(id::reg::PC, 0xFFFF0008);
     } else {
         reg.write(id::reg::PC, 0x00000008);
+    }
+}
+
+
+/**
+ * if (not overridden by debug hardware)
+ *     R14_abt = address of BKPT instruction + 4
+ *     SPSR_abt = CPSR
+ *     CPSR[4:0] = 0b10111 // Enter Abort mode
+ *     CPSR[5] = 0 // Execute in ARM state
+ *     CPSR[7] = 1 // Disable normal interrupts
+ *     if high vectors configured then
+ *         PC = 0xFFFF000C
+ *     else
+ *         PC = 0x0000000C
+ */
+void INSTRUCTIONS::arm::misc::BKPT(const arm_code_t &code) {
+    reg.switch_mode(id::mode::ABORT);
+
+    reg.write(id::reg::R14_abt, reg.read(id::reg::PC) + 4);
+    reg.write(id::reg::SPSR_abt, reg.read(id::reg::CPSR));
+    reg.write(id::cpsr::T, false);
+    reg.write(id::cpsr::I, true);
+
+    if (coprocessor.read(id::cp15::R1_V)) {
+        reg.write(id::reg::PC, 0xFFFF000C);
+    } else {
+        reg.write(id::reg::PC, 0x0000000C);   
     }
 }

@@ -2,6 +2,8 @@
 
 #include "operation.hpp"
 
+#include <cmath>
+
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 

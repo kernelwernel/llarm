@@ -7,10 +7,46 @@
 #include <llarm-asm/llarm-asm.hpp>
 
 
-inline void arm_cycle()
+inline void CORE::arm_cycle(const llarm::as::settings &settings) {
+    std::cout << ">>>>> PC: 0x" << std::hex << reg.read(id::reg::PC) << std::dec << "\n";
 
-void core::initialise(const std::vector<u8> &binary) {
+    const arm_fetch_struct arm_code_access = fetch.arm_fetch();
 
+    if (arm_code_access.has_failed) {
+        return;
+    }
+
+    std::cout << "0x" << std::hex << arm_code_access.code.to_ulong() << std::dec << "\n";
+    
+    const arm_decode_struct instruction = decode.arm_decode(arm_code_access.code);
+
+    std::cout << llarm::as::arm_id_to_string(instruction.id) << "\n";
+    std::cout << llarm::as::disassemble::arm(instruction.code, reg.read_PC(), settings) << "\n";
+
+    execute.arm_execute(instruction);
+
+    reg.arm_increment_PC();
+
+    util::dev::pause();
+}
+
+
+inline void CORE::thumb_cycle() {
+    const thumb_fetch_struct thumb_code_access = fetch.thumb_fetch();
+
+    if (thumb_code_access.has_failed) {
+        return;
+    }
+
+    const thumb_decode_struct instruction = decode.thumb_decode(thumb_code_access.code);
+
+    execute.thumb_execute(instruction);
+
+    reg.thumb_increment_PC();
+}
+
+
+void CORE::initialise(const std::vector<u8> &binary) {
 
     // core reset, setup, and boot
     reg.reset();
@@ -28,69 +64,14 @@ void core::initialise(const std::vector<u8> &binary) {
         reg.write(id::reg::SP, util::get_kb(16));
     }
 
-    const llarm::as::settings tmp = { false, true, false, true, true };
+    // temporary, for development purposes
+    const llarm::as::settings settings = { false, true, false, true, true };
 
     // instruction cycle 
     for (;;) {
         switch (globals.instruction_set) {
-            case id::instruction_sets::ARM: {
-                std::cout << ">>>>> PC: 0x" << std::hex << reg.read(id::reg::PC) << std::dec << "\n";
-
-                const arm_fetch_struct arm_code_access = fetch.arm_fetch();
-
-                if (arm_code_access.has_failed) {
-                    continue;
-                }
-
-                std::cout << "0x" << std::hex << arm_code_access.code.to_ulong() << std::dec << "\n";
-                
-                const arm_decode_struct instruction = decode.arm_decode(arm_code_access.code);
-
-                std::cout << llarm::as::arm_id_to_string(instruction.id) << "\n";
-                std::cout << llarm::as::disassemble::arm(instruction.code, reg.read_PC(), tmp) << "\n";
-
-                execute.arm_execute(instruction);
-
-                reg.arm_increment_PC();
-
-                util::dev::pause();
-                continue;
-            }
-
-            case id::instruction_sets::THUMB: {
-                const thumb_fetch_struct thumb_code_access = fetch.thumb_fetch();
-
-                if (thumb_code_access.has_failed) {
-                    continue;
-                }
-
-                const thumb_decode_struct instruction = decode.thumb_decode(thumb_code_access.code);
-
-                execute.thumb_execute(instruction);
-
-                reg.thumb_increment_PC();
-                continue;
-                // TODO benchmark by having the object allocations before the for (;;) loop
-            }
-
-            case id::instruction_sets::JAZELLE: {
-                // this might look strange, but the fetch and decode stages are switched 
-                // because Java bytecode can have varying instruction sizes unlike ARM 
-                // (32-bit) or Thumb (16-bit). Only the opcode is known to have 1 byte 
-                // while the operands take up space depending on which instruction it's 
-                // being run. So basically this code will DECODE which instruction this 
-                // is, FETCH the appropriate operands based on the identified instruction's 
-                // operand size, then EXECUTE that instruction. It's weird, but whatever.
-
-                // fetch
-                //const u8 jazelle_code = fetch.jazelle_fetch();
-                // decode
-
-                // execute
-
-
-                continue;
-            }
+            case id::instruction_sets::ARM: arm_cycle(settings); continue;
+            case id::instruction_sets::THUMB: thumb_cycle(); continue;
         }
     }
 }

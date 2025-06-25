@@ -106,11 +106,11 @@ namespace internal::generators {
             std::string QDADD(u32, settings);
             std::string QDSUB(u32, settings);
             std::string QSUB(u32, settings);
-            std::string SMLA(u32, settings);
-            std::string SMLAL(u32, settings);
-            std::string SMLAW(u32, settings);
-            std::string SMUL(u32, settings);
-            std::string SMULW(u32, settings);
+            std::string SMLAXY(u32, settings);
+            std::string SMLALXY(u32, settings);
+            std::string SMLAWY(u32, settings);
+            std::string SMULXY(u32, settings);
+            std::string SMULWY(u32, settings);
             std::string STRD(u32, settings);
         }
 

@@ -121,8 +121,8 @@ namespace id {
 
     enum class instruction_sets : u8 {
         ARM,
-        THUMB,
-        JAZELLE
+        THUMB
+        //JAZELLE
     };
 
     enum class arguments : u8 {
@@ -627,6 +627,13 @@ namespace id {
         ARMv9
     };
 
+    enum class thumb_version : u8 {
+        NO_THUMB,
+        THUMB1,
+        THUMB2,
+        THUMBEE
+    };
+
     enum class specific_arch : u8 {
         UNKNOWN,
         ARMv1,
@@ -639,7 +646,7 @@ namespace id {
         ARMv4T,
         ARMv4TxM,
         ARMv5,
-        ARMv5xM
+        ARMv5xM,
         ARMv5T,
         ARMv5TxM,
         ARMv5TE,

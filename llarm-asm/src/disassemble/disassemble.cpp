@@ -80,14 +80,14 @@ std::string disassemble::thumb_generate(const u16 code, const u32 PC, const sett
         case id::thumb::STRB2: return generators::thumb::store::STRB2(code, settings);
         case id::thumb::STRH1: return generators::thumb::store::STRH1(code, settings);
         case id::thumb::STRH2: return generators::thumb::store::STRH2(code, settings);
-        case id::thumb::UNKNOWN: shared::out::error("Unknown instruction encountered for thumb disassembly");
+        case id::thumb::UNDEFINED: shared::out::error("Undefined instruction encountered for thumb disassembly");
         case id::thumb::NOP: shared::out::error("NOP instruction encountered for thumb disassembly");
     }
 }
 
 
 std::string disassemble::arm_generate(const u32 code, const u32 PC, const settings settings) {
-    const id::arm id = identifiers::arm(code);
+    const id::arm id = identifiers::arm(code, settings);
 
     switch (id) {
         case id::arm::ADC: return generators::arm::math::ADC(code, settings);
@@ -162,10 +162,11 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
         case id::arm::QDADD: return generators::arm::dsp::QDADD(code, settings);
         case id::arm::QDSUB: return generators::arm::dsp::QDSUB(code, settings);
         case id::arm::QSUB: return generators::arm::dsp::QSUB(code, settings);
-        case id::arm::SMLA: return generators::arm::dsp::SMLA(code, settings);
-        case id::arm::SMLAW: return generators::arm::dsp::SMLAW(code, settings);
-        case id::arm::SMUL: return generators::arm::dsp::SMUL(code, settings);
-        case id::arm::SMULW: return generators::arm::dsp::SMULW(code, settings);
+        case id::arm::SMLAXY: return generators::arm::dsp::SMLAXY(code, settings);
+        case id::arm::SMLALXY: return generators::arm::dsp::SMLALXY(code, settings);
+        case id::arm::SMLAWY: return generators::arm::dsp::SMLAWY(code, settings);
+        case id::arm::SMULXY: return generators::arm::dsp::SMULXY(code, settings);
+        case id::arm::SMULWY: return generators::arm::dsp::SMULWY(code, settings);
         case id::arm::STRD: return generators::arm::dsp::STRD(code, settings);
         case id::arm::FABSD: return generators::arm::vfp::FABSD(code, settings);
         case id::arm::FABSS: return generators::arm::vfp::FABSS(code, settings);

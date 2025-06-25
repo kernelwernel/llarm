@@ -17,7 +17,7 @@ include("../cmake/compiler.cmake") # compiler choice
 include("../cmake/linker.cmake") # linker config
 include("../cmake/linker_flags.cmake") # linker flag config
 include("../cmake/clang_format.cmake") # clang-format
-include("../cmake/clang-tidy.cmake") # clang-tidy
+include("../cmake/clang_tidy.cmake") # clang-tidy
 
 
 

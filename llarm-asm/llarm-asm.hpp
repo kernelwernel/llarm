@@ -33,12 +33,12 @@ namespace llarm {
 
 
         namespace identify {
-            inline id::arm arm(const arm_code_t &raw_code) {
-                return internal::identifiers::arm(raw_code);
+            inline id::arm arm(const arm_code_t &raw_code, const settings &settings = default_settings()) {
+                return internal::identifiers::arm(raw_code, settings);
             }
 
-            inline id::arm arm(const u32 raw_code) {
-                return internal::identifiers::arm(raw_code);
+            inline id::arm arm(const u32 raw_code, const settings &settings = default_settings()) {
+                return internal::identifiers::arm(raw_code, settings);
             }
 
             inline id::thumb thumb(const thumb_code_t &raw_code) {
@@ -47,10 +47,6 @@ namespace llarm {
 
             inline id::thumb thumb(const u16 raw_code) {
                 return internal::identifiers::thumb(raw_code);
-            }
-
-            inline id::jazelle jazelle(const u8 raw_code) {
-                return internal::identifiers::jazelle(raw_code);
             }
         }
 
@@ -94,7 +90,7 @@ namespace llarm {
 
         inline std::string thumb_id_to_string(const id::thumb id) {
             switch (id) {
-                case id::thumb::UNKNOWN: return "UNKNOWN";
+                case id::thumb::UNDEFINED: return "UNDEFINED";
                 case id::thumb::ADC: return "ADC";
                 case id::thumb::ADD1: return "ADD1";
                 case id::thumb::ADD2: return "ADD2";
@@ -235,10 +231,11 @@ namespace llarm {
                 case id::arm::QDADD: return "QDADD"; 
                 case id::arm::QDSUB: return "QDSUB"; 
                 case id::arm::QSUB: return "QSUB"; 
-                case id::arm::SMLA: return "SMLA"; 
-                case id::arm::SMLAW: return "SMLAW"; 
-                case id::arm::SMUL: return "SMUL"; 
-                case id::arm::SMULW: return "SMULW"; 
+                case id::arm::SMLAXY: return "SMLA<x><y>"; 
+                case id::arm::SMLALXY: return "SMLAL<x><y>";
+                case id::arm::SMLAWY: return "SMLAW<y>"; 
+                case id::arm::SMULXY: return "SMUL<x><y>"; 
+                case id::arm::SMULWY: return "SMULW<y>"; 
                 case id::arm::STRD: return "STRD"; 
                 case id::arm::FABSD: return "FABSD"; 
                 case id::arm::FABSS: return "FABSS"; 
@@ -302,7 +299,12 @@ namespace llarm {
                 case id::arm::FTOUID: return "FTOUID"; 
                 case id::arm::FTOUIS: return "FTOUIS"; 
                 case id::arm::FUITOD: return "FUITOD"; 
-                case id::arm::FUITOS: return "FUITOS"; 
+                case id::arm::FUITOS: return "FUITOS";
+                case id::arm::CDP2: return "CDP2";
+                case id::arm::LDC2: return "LDC2";
+                case id::arm::MCR2: return "MCR2";
+                case id::arm::MRC2: return "MRC2";
+                case id::arm::STC2: return "STC2";
             }
         }
     }

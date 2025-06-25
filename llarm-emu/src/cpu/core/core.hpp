@@ -1,12 +1,8 @@
 #pragma once
 
-#include "../../types_extra.hpp"
 #include "../../settings.hpp"
-#include "../../id.hpp"
 #include "../globals.hpp"
-#include "../instruction_set.hpp"
 #include "../exception.hpp"
-#include "../core/core.hpp"
 #include "../memory/memory.hpp"
 #include "../memory/mmu.hpp"
 #include "../memory/mpu.hpp"
@@ -21,51 +17,68 @@
 #include "cycle/execute.hpp"
 #include "registers.hpp"
 
-#include <vector>
 
 #include "shared/types.hpp"
 
-struct core {
+struct CORE {
 private:
     // essential settings
     SETTINGS settings;
-
-    settings = settings.default_settings();
-
     GLOBALS globals;
-    TLB tlb(settings);
-    CP15 cp15(settings, globals, tlb);
-    COPROCESSOR coprocessor(settings, globals, cp15);
-    ARCH_26 arch_26(coprocessor, settings);
-    REGISTERS reg(coprocessor, globals, arch_26, settings);
-    EXCEPTION exception(reg, coprocessor);
+    TLB tlb;
+    CP15 cp15;
+    COPROCESSOR coprocessor;
+    ARCH_26 arch_26;
+    REGISTERS reg;
+    EXCEPTION exception;
 
     // memory
-    ALIGNMENT alignment(coprocessor, settings);
-    RAM ram(globals);
-    MMU mmu(globals, ram, alignment, coprocessor, settings, tlb);
-    MPU mpu(globals, coprocessor, settings, ram, fcse);
-    FCSE fcse(coprocessor, settings);
-    MEMORY memory(reg, ram, mmu, mpu, fcse, arch_26, exception);
+    ALIGNMENT alignment;
+    RAM ram;
+    MMU mmu;
+    MPU mpu;
+    FCSE fcse;
+    MEMORY memory;
 
     // instructions
     OPERATION operation;
-    ADDRESSING_MODE address_mode(reg, operation);
-    INSTRUCTIONS instructions(reg, address_mode, operation, coprocessor, settings, memory);
-    INSTRUCTION_SET instruction_set(settings, instructions);
+    ADDRESSING_MODE address_mode;
+    INSTRUCTIONS instructions;
 
     // core cycle
-    FETCH fetch(reg, memory, globals);
-    DECODE decode(instruction_set, reg, settings);
-    EXECUTE execute(instruction_set);
+    FETCH fetch;
+    DECODE decode;
+    EXECUTE execute;
 
 public:
     void initialise(const std::vector<u8> &binary);
 
-    void arm_cycle();
+    void arm_cycle(const llarm::as::settings &settings);
+    void thumb_cycle();
 
 public:
-    core() {
-
+    CORE(const std::vector<u8> &binary) :
+        settings(default_settings()), 
+        globals(),
+        tlb(settings),
+        cp15(settings, globals, tlb),
+        coprocessor(settings, globals, cp15),
+        arch_26(coprocessor, settings),
+        reg(coprocessor, globals, arch_26, settings),
+        exception(reg, coprocessor),
+        alignment(coprocessor, settings),
+        ram(globals),
+        mmu(globals, ram, alignment, coprocessor, settings, tlb),
+        mpu(globals, coprocessor, settings, ram, fcse),
+        fcse(coprocessor, settings),
+        memory(reg, ram, mmu, mpu, fcse, arch_26, exception),
+        operation(),
+        address_mode(reg, operation),
+        instructions(reg, address_mode, operation, coprocessor, settings, memory),
+        fetch(reg, memory, globals),
+        decode(reg, settings),
+        execute(instructions, exception)
+    {
+        initialise(binary);
     }
-}
+};

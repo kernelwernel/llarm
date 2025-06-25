@@ -1,7 +1,6 @@
 #pragma once
 
 #include "id.hpp"
-#include "utility.hpp"
 #include "constants.hpp"
 
 #include "shared/types.hpp"
@@ -11,6 +10,7 @@ struct SETTINGS {
     bool is_arm_enabled;
     bool is_jazelle_enabled;
     bool is_enhanced_DSP_enabled;
+    bool is_arch_version_inst_check_enabled;
     bool is_mpu_separate;
     bool is_mpu_enabled; // not to be confused with both
     bool is_mmu_enabled; // not to be confused with both
@@ -51,6 +51,7 @@ struct SETTINGS {
     bool has_debug_hardware;
     bool anti_emulation_detection;
     bool is_vfp_enabled;
+    bool is_vfp_single_precision_enabled;
     bool is_vfp_double_precision_enabled;
     bool is_multiply_enabled;
     bool fresh_system;
@@ -69,7 +70,7 @@ struct SETTINGS {
     /**/ u8 cache_ctype_field; // 0b0000, 0b0001, 0b0010, 0b0110, 0b0111 are supported
 
     /**/ u8 vfp_version;
-    u8 thumb_version; // either 1 or 2, 0 if not supported
+    id::thumb_version thumb_version; // either 1 or 2, 0 if not supported
     /**/ u8 core_count;
     /**/ u16 clock_speed_mhz; // 0 will mean no clock speed constraints 
     /**/ u64 memsize;
@@ -83,146 +84,7 @@ struct SETTINGS {
     u16 ppn; // primary part number, implementation defined
     u8 revision; // implementation defined
 
-
-
-    SETTINGS default_settings() {
-        SETTINGS tmp;
-
-        tmp.is_thumb_enabled = true;
-        tmp.is_arm_enabled = true;
-        tmp.is_jazelle_enabled = true;
-        tmp.is_enhanced_DSP_enabled = true;
-        tmp.no_26_bits = true;
-        tmp.no_clock_constraint = true;
-        tmp.is_little_endian = true;
-        tmp.is_big_endian = true;
-        tmp.only_big_endian = false;
-        tmp.is_multiply_enabled = true;
-        tmp.is_multiply_fully_enabled = true;
-        tmp.thumb_version = 1;
-        tmp.core_count = 1;
-        tmp.memsize = util::get_kb(32);
-        tmp.arch = id::arch::ARMv4;
-        tmp.specific_arch = id::specific_arch::ARMv4T;
-        tmp.product_family = id::product_family::ARM7T;
-        tmp.processor = id::processor::ARM7TDMI_S;
-
-        tmp.sanitize();
-
-        return tmp;
-    }
-
-
-    void sanitize() {
-        // only jazelle 
-        if (
-            (is_thumb_enabled == false) &&
-            (is_arm_enabled == false) &&
-            (is_jazelle_enabled == true)
-        ) {
-            
-        }
-
-        if (
-            (is_mpu_enabled == true) &&
-            (is_mmu_enabled == true)
-        ) {
-
-        }
-
-        if (is_mmu_tlb_separate && is_mmu_tlb_unified) {
-
-        }
-
-        if (is_mmu_enabled && (is_mmu_tlb_separate == false && is_mmu_tlb_unified == false)) {
-            
-        }
-
-        // i'm not sure if enabling FCSE while MMU or MPU is active is valid, research more TODO
-
-        if (
-            (backwards_compat_support_26_bits && only_26_bits) || 
-            (backwards_compat_support_26_bits && no_26_bits) || 
-            (only_26_bits && no_26_bits)
-        ) {
-            // only one of them should be enabled, can't have more than 2
-        }
-
-        if ((backwards_compat_support_26_bits || only_26_bits || no_26_bits) == false) {
-            // at least one should be enabled
-        }
-
-        if (
-            (is_little_endian && only_big_endian) ||
-            (is_big_endian && only_little_endian)
-        ) {
-            // mismatched endianness constraints
-        }
-
-        if (
-            (is_mmu_enabled && has_system_protection_bit) ||
-            (is_mmu_enabled && has_rom_protection_bit)
-        ) {
-            // system or rom protection settings shouldn't be enabled without an MMU
-        }
-
-        if (
-            (is_mpu_enabled && has_system_protection_bit) ||
-            (is_mpu_enabled && has_rom_protection_bit)
-        ) {
-            // system or rom protection settings shouldn't be enabled without an MPU
-        }
-
-        if (    
-            (has_branch_prediction == false) &&
-            (branch_prediction_cannot_disable == true)
-        ) {
-
-        }
-
-        if (
-            (is_vfp_enabled == false) && 
-            (is_vfp_double_precision_enabled == true)
-        ) {
-
-        }
-
-        if (
-            (thumb_version == 0) && 
-            (is_thumb_enabled == true)
-        ) {
-            // thumb must have a valid version specified
-        }
-
-        if (
-            (!((thumb_version == 1) || (thumb_version == 2))) &&
-            (is_thumb_enabled == true)
-        ) {
-            // thumb must have a valid version specified
-        }
-
-        if (
-            ((thumb_version == 1) || (thumb_version == 2)) &&
-            (is_thumb_enabled == false)
-        ) {
-            // thumb setting must be enabled
-        }
-
-        if (util::simplify_arch_version(specific_arch) == arch) {
-            // the specific arch does not match with the base arch
-        }
-
-        if (core_count == 0) {
-            // core count must be at least 1
-        }
-
-        if (arch == id::arch::ARMv2 && is_multiply_enaled) {
-            // ARMv2 has no support for multiplications
-        }
-
-        // all of the checks above should mostly just set a default correct value instead of crashing completely
-    }
-
+    void sanitize();
 
     SETTINGS() :
         is_thumb_enabled(false),
@@ -268,6 +130,7 @@ struct SETTINGS {
         has_debug_hardware(false),
         anti_emulation_detection(false),
         is_vfp_enabled(false),
+        is_vfp_single_precision_enabled(false),
         is_vfp_double_precision_enabled(false),
         is_multiply_enabled(false),
         fresh_system(false),
@@ -282,7 +145,7 @@ struct SETTINGS {
         cache_ctype_field(0),
 
         vfp_version(0),
-        thumb_version(0),
+        thumb_version(id::thumb_version::NO_THUMB),
         core_count(0),
         clock_speed_mhz(0),
         memsize(0),
@@ -299,6 +162,9 @@ struct SETTINGS {
 
     }
 };
+
+
+SETTINGS default_settings();
 
 
 // MAKE SURE TO DO SANITY CHECKS ON:

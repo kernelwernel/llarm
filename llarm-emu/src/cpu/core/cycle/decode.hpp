@@ -2,7 +2,6 @@
 
 #include "../../../id.hpp"
 #include "../../../settings.hpp"
-#include "../../instruction_set.hpp"
 #include "../registers.hpp"
 
 #include "shared/types.hpp"
@@ -22,20 +21,20 @@ struct thumb_decode_struct {
 
 struct DECODE {
 private:
-    INSTRUCTION_SET& inst_set;
     REGISTERS& reg;
     SETTINGS& settings;
 
 private:
-    bool condition_match(const id::cond cond) const;
+    bool has_condition_failed(const id::cond cond);
+
+    bool is_arm_instruction_unsupported(const llarm::as::id::arm id);
+    bool is_thumb_instruction_unsupported(const llarm::as::id::thumb id);
 
 public:
-    arm_decode_struct arm_decode(const arm_code_t &raw_code) const;
-    thumb_decode_struct thumb_decode(const thumb_code_t &raw_code) const;
-    llarm::as::id::jazelle jazelle_decode(const u8 raw_code) const;
+    arm_decode_struct arm_decode(const arm_code_t &raw_code);
+    thumb_decode_struct thumb_decode(const thumb_code_t &raw_code);
 
     DECODE(
-        INSTRUCTION_SET& inst_set,
         REGISTERS& reg,
         SETTINGS& settings
     );
