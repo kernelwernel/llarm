@@ -41,11 +41,11 @@ public:
         }
     }
 */
-    bool is_thumb() noexcept {
+    bool is_thumb() {
         return (reg.read(id::cpsr::T) == 1);
     }
 
-    bool is_arm() noexcept {
+    bool is_arm() {
         return (reg.read(id::cpsr::T) == 0);
     }
 

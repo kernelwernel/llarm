@@ -4,19 +4,22 @@
 
 #include "shared/types.hpp"
 #include "shared/util.hpp"
+#include "shared/out.hpp"
 
-u32 ADDRESSING_MODE::load_store(const arm_code_t &code) {
+u32 ADDRESSING_MODE::load_store(const u32 code) {
+    using namespace shared::util;
+
     if (
-        (code.test(27) != false) || 
-        (code.test(26) != true)
+        (bit_fetch(code, 27) != false) || 
+        (bit_fetch(code, 26) != true)
     ) {
         shared::out::error("TODO");
     }
 
     const u8 shift_type = (
-        (code.test(25) << 2) | 
-        (code.test(24) << 1) | 
-        (code.test(21))
+        (bit_fetch(code, 25) << 2) | 
+        (bit_fetch(code, 24) << 1) | 
+        (bit_fetch(code, 21))
     );
 
     switch (shift_type) {
@@ -26,7 +29,7 @@ u32 ADDRESSING_MODE::load_store(const arm_code_t &code) {
         case 0b110: 
             if (shared::util::bit_range(code, 4, 11) == 0) {
                 return ls_reg(code); 
-            } else if (code.test(4) == 0) {
+            } else if (bit_fetch(code, 4) == 0) {
                 return ls_scaled_reg(code);
             }
 
@@ -35,7 +38,7 @@ u32 ADDRESSING_MODE::load_store(const arm_code_t &code) {
         case 0b111: 
             if (shared::util::bit_range(code, 4, 11) == 0) {
                 return ls_reg_pre(code); 
-            } else if (code.test(4) == 0) {
+            } else if (bit_fetch(code, 4) == 0) {
                 return ls_scaled_reg_pre(code);
             }
 
@@ -44,7 +47,7 @@ u32 ADDRESSING_MODE::load_store(const arm_code_t &code) {
         case 0b100: 
             if (shared::util::bit_range(code, 4, 11) == 0) {
                 return ls_reg_post(code); 
-            } else if (code.test(4) == 0) {
+            } else if (bit_fetch(code, 4) == 0) {
                 return ls_scaled_reg_post(code);
             }
             
@@ -61,11 +64,11 @@ u32 ADDRESSING_MODE::load_store(const arm_code_t &code) {
  * else // U == 0
  *     address = Rn - offset_12
  */
-u32 ADDRESSING_MODE::ls_imm(const arm_code_t &code) {
+u32 ADDRESSING_MODE::ls_imm(const u32 code) {
     const u32 Rn = reg.read(code, 16, 19);
     const u16 offset_12 = shared::util::bit_range(code, 0, 11);
     
-    if (code.test(23)) {
+    if (shared::util::bit_fetch(code, 23)) {
         return (Rn + offset_12);
     } else {
         return (Rn - offset_12);
@@ -79,11 +82,11 @@ u32 ADDRESSING_MODE::ls_imm(const arm_code_t &code) {
  * else // U == 0
  *     address = Rn - Rm
  */
-u32 ADDRESSING_MODE::ls_reg(const arm_code_t &code) {
+u32 ADDRESSING_MODE::ls_reg(const u32 code) {
     const u32 Rn = reg.read(code, 16, 19);
     const u32 Rm = reg.read(code, 0, 3);
 
-    if (code.test(23)) {
+    if (shared::util::bit_fetch(code, 23)) {
         return (Rn + Rm);
     } else {
         return (Rn - Rm);
@@ -121,7 +124,7 @@ u32 ADDRESSING_MODE::ls_reg(const arm_code_t &code) {
  * else // U == 0
  *   address = Rn - index
  */
-u32 ADDRESSING_MODE::ls_scaled_reg(const arm_code_t &code) {
+u32 ADDRESSING_MODE::ls_scaled_reg(const u32 code) {
     const u8 shift = shared::util::bit_range(code, 5, 6);
     const u8 shift_imm = shared::util::bit_range(code, 7, 11);
     const u32 Rm = reg.read(code, 0, 3);
@@ -164,7 +167,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg(const arm_code_t &code) {
             break;
     }
 
-    if (code.test(23)) {
+    if (shared::util::bit_fetch(code, 23)) {
         address = (Rn + index);
     } else {
         address = (Rn - index);
@@ -182,7 +185,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg(const arm_code_t &code) {
  * if ConditionPassed(cond) then
  *   Rn = address
  */
-u32 ADDRESSING_MODE::ls_imm_pre(const arm_code_t &code) {
+u32 ADDRESSING_MODE::ls_imm_pre(const u32 code) {
     const u16 offset_12 = shared::util::bit_range(code, 0, 11);
 
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
@@ -190,13 +193,13 @@ u32 ADDRESSING_MODE::ls_imm_pre(const arm_code_t &code) {
 
     u32 address = 0;
 
-    if (code.test(23)) {
+    if (shared::util::bit_fetch(code, 23)) {
         address = (Rn + offset_12);
     } else {
         address = (Rn - offset_12);
     }
 
-    if (reg.check_cond(code)) {
+    if (reg.is_cond_valid(code)) {
         reg.write(Rn_id, address);
     }
 
@@ -214,20 +217,20 @@ u32 ADDRESSING_MODE::ls_imm_pre(const arm_code_t &code) {
  * if ConditionPassed(cond) then
  *   Rn = address
  */
-u32 ADDRESSING_MODE::ls_reg_pre(const arm_code_t &code) {
+u32 ADDRESSING_MODE::ls_reg_pre(const u32 code) {
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
     const u32 Rn = reg.read(Rn_id);
     const u32 Rm = reg.read(code, 0, 3);
     
     u32 address = 0;
 
-    if (code.test(23)) {
+    if (shared::util::bit_fetch(code, 23)) {
         address = (Rn + Rm);
     } else {
         address = (Rn - Rm);
     }
 
-    if (reg.check_cond(code)) {
+    if (reg.is_cond_valid(code)) {
         reg.write(Rn_id, address);
     }
 
@@ -269,7 +272,7 @@ u32 ADDRESSING_MODE::ls_reg_pre(const arm_code_t &code) {
  * if ConditionPassed(cond) then
  *   Rn = address
  */
-u32 ADDRESSING_MODE::ls_scaled_reg_pre(const arm_code_t &code) {
+u32 ADDRESSING_MODE::ls_scaled_reg_pre(const u32 code) {
     const u8 shift = shared::util::bit_range(code, 5, 6);
     const u8 shift_imm = shared::util::bit_range(code, 7, 11);
     const u32 Rm = reg.read(code, 0, 3);
@@ -313,13 +316,13 @@ u32 ADDRESSING_MODE::ls_scaled_reg_pre(const arm_code_t &code) {
             break;
     }
 
-    if (code.test(23)) {
+    if (shared::util::bit_fetch(code, 23)) {
         address = (Rn + index);
     } else {
         address = (Rn - index);
     }
 
-    if (reg.check_cond(code)) {
+    if (reg.is_cond_valid(code)) {
         reg.write(Rn_id, address);
     }
 
@@ -335,15 +338,15 @@ u32 ADDRESSING_MODE::ls_scaled_reg_pre(const arm_code_t &code) {
  *   else // U == 0
  *     Rn = Rn - offset_12
  */
-u32 ADDRESSING_MODE::ls_imm_post(const arm_code_t &code) {
+u32 ADDRESSING_MODE::ls_imm_post(const u32 code) {
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
     const u16 offset_12 = shared::util::bit_range(code, 0, 11);
     const u32 Rn = reg.read(Rn_id);
 
     const u32 address = Rn;
 
-    if (reg.check_cond(code)) {
-        if (code.test(23)) {
+    if (reg.is_cond_valid(code)) {
+        if (shared::util::bit_fetch(code, 23)) {
             reg.write(Rn_id, (Rn + offset_12));
         } else {
             reg.write(Rn_id, (Rn - offset_12));
@@ -362,15 +365,15 @@ u32 ADDRESSING_MODE::ls_imm_post(const arm_code_t &code) {
  *   else // U == 0
  *     Rn = Rn - Rm
  */
-u32 ADDRESSING_MODE::ls_reg_post(const arm_code_t &code) {
+u32 ADDRESSING_MODE::ls_reg_post(const u32 code) {
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
     const u32 Rn = reg.read(Rn_id);
     const u32 Rm = reg.read(code, 0, 3);
 
     const u32 address = Rn;
 
-    if (reg.check_cond(code)) {
-        if (code.test(23)) {
+    if (reg.is_cond_valid(code)) {
+        if (shared::util::bit_fetch(code, 23)) {
             reg.write(Rn_id, (Rn + Rm));
         } else {
             reg.write(Rn_id, (Rn - Rm));
@@ -415,7 +418,7 @@ u32 ADDRESSING_MODE::ls_reg_post(const arm_code_t &code) {
  *   else // U == 0
  *     Rn = Rn - index
  */
-u32 ADDRESSING_MODE::ls_scaled_reg_post(const arm_code_t &code) {
+u32 ADDRESSING_MODE::ls_scaled_reg_post(const u32 code) {
     const u8 shift = shared::util::bit_range(code, 5, 6);
     const u8 shift_imm = shared::util::bit_range(code, 7, 11);
     const u32 Rm = reg.read(code, 0, 3);
@@ -459,8 +462,8 @@ u32 ADDRESSING_MODE::ls_scaled_reg_post(const arm_code_t &code) {
             break;
     }
 
-    if (reg.check_cond(code)) {
-        if (code.test(23)) {
+    if (reg.is_cond_valid(code)) {
+        if (shared::util::bit_fetch(code, 23)) {
             reg.write(Rn_id, Rn + index);
         } else {
             reg.write(Rn_id, Rn - index);

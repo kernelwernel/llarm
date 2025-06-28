@@ -5,6 +5,8 @@
 
 #include "alignment.hpp"
 
+#include "shared/out.hpp"
+
 
 bool ALIGNMENT::is_enabled() {
     return (

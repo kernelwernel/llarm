@@ -6,6 +6,7 @@
 
 #include "shared/types.hpp"
 #include "shared/util.hpp"
+#include "shared/out.hpp"
 
 
 bool OPERATION::carry_add(const u64 &sum) {
@@ -121,11 +122,13 @@ i32 OPERATION::signed_sat(const u32 x, const u32 n) {
 
     if (x < neg_range) {
         return neg_range;
-    } else if (neg_range <= x <= pos_range) {
+    } else if (neg_range <= x && x <= pos_range) {
         return x;
     } else if (x > pos_range) {
         return pos_range;
     }
+
+    shared::out::dev_error("Invalid value for signed saturation operation");
 }
 
 
@@ -134,7 +137,7 @@ bool OPERATION::signed_does_sat(const u32 x, const u32 n) {
     const i32 neg_range = std::pow(-2, n - 1);
     const i32 pos_range = std::pow(2, n - 1) - 1;
 
-    return (neg_range <= x <= pos_range);
+    return (!(neg_range <= x && x <= pos_range));
 }
 
 

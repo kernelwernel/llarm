@@ -33,16 +33,8 @@ namespace llarm {
 
 
         namespace identify {
-            inline id::arm arm(const arm_code_t &raw_code, const settings &settings = default_settings()) {
-                return internal::identifiers::arm(raw_code, settings);
-            }
-
             inline id::arm arm(const u32 raw_code, const settings &settings = default_settings()) {
                 return internal::identifiers::arm(raw_code, settings);
-            }
-
-            inline id::thumb thumb(const thumb_code_t &raw_code) {
-                return internal::identifiers::thumb(raw_code);
             }
 
             inline id::thumb thumb(const u16 raw_code) {
@@ -59,28 +51,12 @@ namespace llarm {
                 return internal::disassemble::arm(raw_code, PC, settings);
             }
 
-            inline std::string arm(
-                const arm_code_t raw_code,
-                const u32 PC = 0,
-                const settings settings = default_settings()
-            ) {
-                return internal::disassemble::arm(raw_code.to_ulong(), PC, settings);
-            }
-
             inline std::string thumb(
                 const u16 raw_code,
                 const u32 PC = 0,
                 const settings settings = default_settings()
             ) {
                 return internal::disassemble::thumb(raw_code, PC, settings);
-            }
-
-            inline std::string thumb(
-                const thumb_code_t raw_code,
-                const u32 PC = 0,
-                const settings settings = default_settings()
-            ) {
-                return internal::disassemble::thumb(raw_code.to_ulong(), PC, settings);
             }
 
             //inline id::jazelle jazelle(const u8 raw_code) {

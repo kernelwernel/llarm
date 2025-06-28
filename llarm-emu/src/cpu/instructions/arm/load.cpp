@@ -29,7 +29,7 @@
  *     address = address + 4
  *   assert end_address = address - 4
  */
-void INSTRUCTIONS::arm::load::LDM1(const arm_code_t &code) {
+void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
     const u16 list = shared::util::bit_range<u16>(code, 0, 15);
 
     const address_struct addresses = address_mode.load_store_multiple(code);
@@ -98,7 +98,7 @@ void INSTRUCTIONS::arm::load::LDM1(const arm_code_t &code) {
  *     else
  *         Rd = value
  */
-void INSTRUCTIONS::arm::load::LDR(const arm_code_t &code) {
+void INSTRUCTIONS::arm::load::LDR(const u32 code) {
     const u32 address = address_mode.load_store(code);
 
     const u8 type = shared::util::bit_range(address, 0, 1);
@@ -138,7 +138,7 @@ void INSTRUCTIONS::arm::load::LDR(const arm_code_t &code) {
  * if ConditionPassed(cond) then
  *     Rd = Memory[address,1]
  */
-void INSTRUCTIONS::arm::load::LDRB(const arm_code_t &code) {
+void INSTRUCTIONS::arm::load::LDRB(const u32 code) {
     const u32 address = address_mode.load_store(code);
 
     const mem_read_struct access = memory.read(address, 1);
@@ -156,7 +156,7 @@ void INSTRUCTIONS::arm::load::LDRB(const arm_code_t &code) {
  * if ConditionPassed(cond) then
  *     Rd = Memory[address,1]
  */
-void INSTRUCTIONS::arm::load::LDRBT(const arm_code_t &code) {
+void INSTRUCTIONS::arm::load::LDRBT(const u32 code) {
     const u32 address = address_mode.load_store(code);
 
     const mem_read_struct access = memory.read(address, 1);
@@ -178,7 +178,7 @@ void INSTRUCTIONS::arm::load::LDRBT(const arm_code_t &code) {
  *         data = UNPREDICTABLE
  *     Rd = data
  */
-void INSTRUCTIONS::arm::load::LDRH(const arm_code_t &code) {
+void INSTRUCTIONS::arm::load::LDRH(const u32 code) {
     const u32 address = address_mode.load_store_misc(code);
 
     u16 data = 0;
@@ -205,7 +205,7 @@ void INSTRUCTIONS::arm::load::LDRH(const arm_code_t &code) {
  *     data = Memory[address,1]
  *     Rd = SignExtend(data)
  */
-void INSTRUCTIONS::arm::load::LDRSB(const arm_code_t &code) {
+void INSTRUCTIONS::arm::load::LDRSB(const u32 code) {
     const u32 address = address_mode.load_store_misc(code);
 
     const mem_read_struct access = memory.read(address, 1);
@@ -227,7 +227,7 @@ void INSTRUCTIONS::arm::load::LDRSB(const arm_code_t &code) {
  *         data = UNPREDICTABLE
  *     Rd = SignExtend(data)
  */
-void INSTRUCTIONS::arm::load::LDRSH(const arm_code_t &code) {
+void INSTRUCTIONS::arm::load::LDRSH(const u32 code) {
     const u32 address = address_mode.load_store_misc(code);
 
     u32 data = 0;
@@ -260,7 +260,7 @@ void INSTRUCTIONS::arm::load::LDRSH(const arm_code_t &code) {
  *     else // address[1:0] == 0b11
  *         Rd = Memory[address,4] Rotate_Right 24
  */
-void INSTRUCTIONS::arm::load::LDRT(const arm_code_t &code) {
+void INSTRUCTIONS::arm::load::LDRT(const u32 code) {
     const u32 address = address_mode.load_store(code);
     
     const mem_read_struct access = memory.read(address, 4);
@@ -296,7 +296,7 @@ void INSTRUCTIONS::arm::load::LDRT(const arm_code_t &code) {
  *             address = address + 4
  *     assert end_address == address - 4
  */
-void INSTRUCTIONS::arm::load::LDM2(const arm_code_t &code) {
+void INSTRUCTIONS::arm::load::LDM2(const u32 code) {
     const address_struct addresses = address_mode.load_store_multiple(code);
 
     u32 address = addresses.start;
@@ -341,7 +341,7 @@ void INSTRUCTIONS::arm::load::LDM2(const arm_code_t &code) {
  *     
  *     assert end_address = address - 4
  */
-void INSTRUCTIONS::arm::load::LDM3(const arm_code_t &code) {
+void INSTRUCTIONS::arm::load::LDM3(const u32 code) {
     const address_struct addresses = address_mode.load_store_multiple(code);
 
     u32 address = addresses.start;

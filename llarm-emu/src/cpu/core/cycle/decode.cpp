@@ -9,7 +9,7 @@
 
 
 bool DECODE::has_condition_failed(const id::cond cond) {
-    return (reg.check_cond(cond));
+    return (reg.is_cond_valid(cond) == false);
 }
 
 
@@ -207,7 +207,7 @@ bool DECODE::is_arm_instruction_unsupported(const llarm::as::id::arm id) {
                 }
                 
                 // double precision was introduced in VFPv2
-                if (settings.vfp_version < 2) {
+                if (settings.vfp_version < id::vfp_version::VFPv2) {
                     return true;
                 }
 
@@ -247,35 +247,35 @@ bool DECODE::is_thumb_instruction_unsupported(const llarm::as::id::thumb id) {
 }
 
 
-arm_decode_struct DECODE::arm_decode(const arm_code_t &raw_code) {
+arm_decode_struct DECODE::arm_decode(const u32 code) {
     using namespace llarm; // for llarm::assembly
 
-    const id::cond cond = reg.fetch_cond_id(raw_code);
+    const id::cond cond = reg.fetch_cond_id(code);
 
     if (has_condition_failed(cond)) {
         return arm_decode_struct {
             assembly::id::arm::NOP, // id
-            arm_code_t(0) // code
+            code // code
         };
     }
 
-    const assembly::id::arm id = assembly::identify::arm(raw_code);
+    const assembly::id::arm id = assembly::identify::arm(code);
 
     if (is_arm_instruction_unsupported(id)) {
         return arm_decode_struct {
             assembly::id::arm::UNDEFINED, // id
-            raw_code // code
+            code // code
         };
     }
 
     return arm_decode_struct {
         id, // id
-        raw_code // code
+        code // code
     };
 }
 
 
-thumb_decode_struct DECODE::thumb_decode(const thumb_code_t &raw_code) {
+thumb_decode_struct DECODE::thumb_decode(const u16 raw_code) {
     using namespace llarm; // for llarm::assembly
 
     const assembly::id::thumb id = assembly::identify::thumb(raw_code);

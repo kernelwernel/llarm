@@ -16,7 +16,7 @@ inline void CORE::arm_cycle(const llarm::as::settings &settings) {
         return;
     }
 
-    std::cout << "0x" << std::hex << arm_code_access.code.to_ulong() << std::dec << "\n";
+    std::cout << "0x" << std::hex << arm_code_access.code << std::dec << "\n";
     
     const arm_decode_struct instruction = decode.arm_decode(arm_code_access.code);
 

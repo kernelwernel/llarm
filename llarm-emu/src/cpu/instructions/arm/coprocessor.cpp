@@ -8,7 +8,7 @@
  * if ConditionPassed(cond) then
  *     Coprocessor[cp_num]-dependent operation
  */
-void INSTRUCTIONS::arm::coprocessor_inst::CDP(const arm_code_t &code) {
+void INSTRUCTIONS::arm::coproc::CDP(const u32 code) {
 // TODO
 }
 
@@ -22,7 +22,7 @@ void INSTRUCTIONS::arm::coprocessor_inst::CDP(const arm_code_t &code) {
  *         load Memory[address,4] for Coprocessor[cp_num]
  *     assert address == end_address
  */
-void INSTRUCTIONS::arm::coprocessor_inst::LDC(const arm_code_t &code) {
+void INSTRUCTIONS::arm::coproc::LDC(const u32 code) {
     const address_struct addresses = address_mode.load_store_coprocessor(code);
 
     u32 address = addresses.start;
@@ -33,7 +33,7 @@ void INSTRUCTIONS::arm::coprocessor_inst::LDC(const arm_code_t &code) {
  * if ConditionPassed(cond) then
  *   send Rd value to Coprocessor[cp_num]
  */
-void INSTRUCTIONS::arm::coprocessor_inst::MCR(const arm_code_t &code) {
+void INSTRUCTIONS::arm::coproc::MCR(const u32 code) {
     if (reg.is_privileged() == false) {
         // TODO: UNDEFINED INSTRUCTION EXCEPTION
     }
@@ -60,7 +60,7 @@ void INSTRUCTIONS::arm::coprocessor_inst::MCR(const arm_code_t &code) {
  *   else // Rd is not R15
  *     Rd = data
  */
-void INSTRUCTIONS::arm::coprocessor_inst::MRC(const arm_code_t &code) {
+void INSTRUCTIONS::arm::coproc::MRC(const u32 code) {
     if (reg.is_privileged() == false) {
         // TODO: UNDEFINED INSTRUCTION EXCEPTION
     }
@@ -94,6 +94,31 @@ void INSTRUCTIONS::arm::coprocessor_inst::MRC(const arm_code_t &code) {
  *         Memory[address,4] = value from Coprocessor[cp_num]
  *     assert address == end_address
  */
-void INSTRUCTIONS::arm::coprocessor_inst::STC(const arm_code_t &code) {
+void INSTRUCTIONS::arm::coproc::STC(const u32 code) {
     const address_struct addresses = address_mode.load_store_coprocessor(code);
+}
+
+
+void INSTRUCTIONS::arm::coproc::CDP2(const u32 code) { 
+    CDP(code); 
+}
+
+
+void INSTRUCTIONS::arm::coproc::LDC2(const u32 code) { 
+    LDC(code); 
+}
+
+
+void INSTRUCTIONS::arm::coproc::MCR2(const u32 code) { 
+    MCR(code); 
+}
+
+
+void INSTRUCTIONS::arm::coproc::MRC2(const u32 code) { 
+    MRC(code);
+}
+
+
+void INSTRUCTIONS::arm::coproc::STC2(const u32 code) { 
+    STC(code); 
 }

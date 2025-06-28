@@ -14,11 +14,9 @@ namespace internal::identifiers {
     id::arm vfp_single(const u32 code);
     id::arm vfp_double(const u32 code);
 
-    id::arm arm(const arm_code_t &code, const settings &settings = default_settings());
     id::arm arm(const u32 code, const settings &settings = default_settings());
     //id::arm arm(const std::string string_code);
 
-    id::thumb thumb(const thumb_code_t &code);
     id::thumb thumb(const u16 code);
     //id::thumb thumb(const std::string code);
 }

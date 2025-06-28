@@ -4,6 +4,8 @@
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 
+#include <limits>
+
 /*
  * Rd = Rd + Rm + C Flag
  * N Flag = Rd[31]
@@ -11,8 +13,8 @@
  * C Flag = CarryFrom(Rd + Rm + C Flag)
  * V Flag = OverflowFrom(Rd + Rm + C Flag)
  */
-void INSTRUCTIONS::thumb::math::ADC(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+void INSTRUCTIONS::thumb::math::ADC(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 Rd = reg.read(Rd_id);
     const u32 Rm = reg.read(code, 3, 5);
@@ -36,8 +38,8 @@ void INSTRUCTIONS::thumb::math::ADC(const thumb_code_t &code) {
  * C Flag = CarryFrom(Rn + immed_3)
  * V Flag = OverflowFrom(Rn + immed_3)
  */
-void INSTRUCTIONS::thumb::math::ADD1(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+void INSTRUCTIONS::thumb::math::ADD1(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
     const u8 immed_3 = shared::util::bit_range<u8>(code, 6, 8);
 
     const u32 Rn = reg.read(code, 3, 5);
@@ -60,8 +62,8 @@ void INSTRUCTIONS::thumb::math::ADD1(const thumb_code_t &code) {
  * C Flag = CarryFrom(Rd + immed_8)
  * V Flag = OverflowFrom(Rd + immed_8)
  */
-void INSTRUCTIONS::thumb::math::ADD2(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
+void INSTRUCTIONS::thumb::math::ADD2(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 8, 10);
     const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
 
     reg.write(Rd_id, reg.read(Rd_id) + immed_8);
@@ -82,8 +84,8 @@ void INSTRUCTIONS::thumb::math::ADD2(const thumb_code_t &code) {
  * C Flag = CarryFrom(Rn + Rm)
  * V Flag = OverflowFrom(Rn + Rm)
  */
-void INSTRUCTIONS::thumb::math::ADD3(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+void INSTRUCTIONS::thumb::math::ADD3(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 Rn = reg.read(code, 3, 5);
     const u32 Rm = reg.read(code, 6, 8);
@@ -102,11 +104,11 @@ void INSTRUCTIONS::thumb::math::ADD3(const thumb_code_t &code) {
 /*
  * Rd = Rd + Rm
  */
-void INSTRUCTIONS::thumb::math::ADD4(const thumb_code_t &code) {
+void INSTRUCTIONS::thumb::math::ADD4(const u16 code) {
     u8 Rd_bits = shared::util::bit_range<u8>(code, 0, 2);
     u8 Rm_bits = shared::util::bit_range<u8>(code, 3, 5);
-    const bool H1 = code.test(7);
-    const bool H2 = code.test(6);
+    const bool H1 = shared::util::bit_fetch(code, 7);
+    const bool H2 = shared::util::bit_fetch(code, 6);
 
     // branchless version of "if H1/H2 is true, add 8" 
     Rd_bits = Rd_bits + (8 * H1);
@@ -125,10 +127,10 @@ void INSTRUCTIONS::thumb::math::ADD4(const thumb_code_t &code) {
 /*
  * Rd = (PC AND 0xFFFFFFFC) + (immed_8 << 2)
  */
-void INSTRUCTIONS::thumb::math::ADD5(const thumb_code_t &code) {
+void INSTRUCTIONS::thumb::math::ADD5(const u16 code) {
     const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
 
-    const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 8, 10);
 
     reg.write(Rd_id, (reg.read(id::reg::PC) & 0xFFFFFFFC) + (immed_8 << 2));
 }
@@ -137,9 +139,9 @@ void INSTRUCTIONS::thumb::math::ADD5(const thumb_code_t &code) {
 /*
  * Rd = SP + (immed_8 << 2)
  */
-void INSTRUCTIONS::thumb::math::ADD6(const thumb_code_t &code) {
+void INSTRUCTIONS::thumb::math::ADD6(const u16 code) {
     const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
-    const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 8, 10);
 
     reg.write(Rd_id, (reg.read(id::reg::SP) + (immed_8 << 2)));
 }
@@ -148,7 +150,7 @@ void INSTRUCTIONS::thumb::math::ADD6(const thumb_code_t &code) {
 /*
  * SP = SP + (immed_7 << 2)
  */
-void INSTRUCTIONS::thumb::math::ADD7(const thumb_code_t &code) {
+void INSTRUCTIONS::thumb::math::ADD7(const u16 code) {
     const u8 immed_7 = shared::util::bit_range<u8>(code, 0, 6);
 
     reg.write(id::reg::SP, (reg.read(id::reg::SP) + (immed_7 << 2)));
@@ -162,8 +164,8 @@ void INSTRUCTIONS::thumb::math::ADD7(const thumb_code_t &code) {
  * C Flag = NOT BorrowFrom(Rd - Rm - NOT(C Flag))
  * V Flag = OverflowFrom(Rd - Rm - NOT(C Flag))
  */
-void INSTRUCTIONS::thumb::math::SBC(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+void INSTRUCTIONS::thumb::math::SBC(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
 
@@ -185,10 +187,10 @@ void INSTRUCTIONS::thumb::math::SBC(const thumb_code_t &code) {
  * C Flag = NOT BorrowFrom(Rn - immed_3)
  * V Flag = OverflowFrom(Rn - immed_3)
  */
-void INSTRUCTIONS::thumb::math::SUB1(const thumb_code_t &code) {
+void INSTRUCTIONS::thumb::math::SUB1(const u16 code) {
     const u8 immed_3 = shared::util::bit_range<u8>(code, 6, 8);
-    const id::reg Rn_id = reg.fetch_reg_id(code, 3, 5);
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+    const id::reg Rn_id = reg.thumb_fetch_reg_id(code, 3, 5);
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 Rn = reg.read(Rn_id);
 
@@ -210,9 +212,9 @@ void INSTRUCTIONS::thumb::math::SUB1(const thumb_code_t &code) {
  * C Flag = NOT BorrowFrom(Rd - immed_8)
  * V Flag = OverflowFrom(Rd - immed_8)
  */
-void INSTRUCTIONS::thumb::math::SUB2(const thumb_code_t &code) {
+void INSTRUCTIONS::thumb::math::SUB2(const u16 code) {
     const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
-    const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 8, 10);
 
     reg.write(Rd_id, (reg.read(Rd_id) - immed_8));
 
@@ -232,10 +234,10 @@ void INSTRUCTIONS::thumb::math::SUB2(const thumb_code_t &code) {
  * C Flag = NOT BorrowFrom(Rn - Rm)
  * V Flag = OverflowFrom(Rn - Rm)
  */
-void INSTRUCTIONS::thumb::math::SUB3(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
-    const id::reg Rn_id = reg.fetch_reg_id(code, 3, 5);
-    const id::reg Rm_id = reg.fetch_reg_id(code, 6, 8);
+void INSTRUCTIONS::thumb::math::SUB3(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
+    const id::reg Rn_id = reg.thumb_fetch_reg_id(code, 3, 5);
+    const id::reg Rm_id = reg.thumb_fetch_reg_id(code, 6, 8);
 
     reg.write(Rd_id, (reg.read(Rn_id) - reg.read(Rm_id)));
 
@@ -252,7 +254,7 @@ void INSTRUCTIONS::thumb::math::SUB3(const thumb_code_t &code) {
 /**
  * SP = SP - (immed_7 << 2)
  */
-void INSTRUCTIONS::thumb::math::SUB4(const thumb_code_t &code) {
+void INSTRUCTIONS::thumb::math::SUB4(const u16 code) {
     const u8 immed_7 = shared::util::bit_range<u8>(code, 0, 6);
 
     reg.write(id::reg::SP, (reg.read(id::reg::SP) - (immed_7 << 2)));
@@ -266,8 +268,8 @@ void INSTRUCTIONS::thumb::math::SUB4(const thumb_code_t &code) {
  * C Flag = unaffected
  * V Flag = unaffected
  */
-void INSTRUCTIONS::thumb::math::MUL(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+void INSTRUCTIONS::thumb::math::MUL(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
 

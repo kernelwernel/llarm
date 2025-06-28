@@ -4,6 +4,7 @@
 #include "../globals.hpp"
 
 #include "shared/types.hpp"
+#include "shared/out.hpp"
 
 #include <vector>
 #include <array>

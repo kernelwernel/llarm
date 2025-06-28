@@ -22,59 +22,57 @@ private:
     REGISTERS& reg;
     OPERATION& operation;
 
-public:
-
 private:
-    data_struct data_process_immediate_mode(const arm_code_t&);
-    data_struct data_process_register(const arm_code_t&);
-    data_struct data_process_logical_shift_left_immediate(const arm_code_t&);
-    data_struct data_process_logical_shift_right_immediate(const arm_code_t&);
-    data_struct data_process_arithmetic_shift_right_immediate(const arm_code_t&);
-    data_struct data_process_rotate_right_immediate(const arm_code_t&);
-    data_struct data_process_logical_shift_left_register(const arm_code_t&);
-    data_struct data_process_logical_shift_right_register(const arm_code_t&);
-    data_struct data_process_arithmetic_shift_right_register(const arm_code_t&);
-    data_struct data_process_rotate_right_register(const arm_code_t&);
-    data_struct data_process_rotate_right_extend(const arm_code_t&);
+    data_struct data_process_immediate_mode(const u32);
+    data_struct data_process_register(const u32);
+    data_struct data_process_logical_shift_left_immediate(const u32);
+    data_struct data_process_logical_shift_right_immediate(const u32);
+    data_struct data_process_arithmetic_shift_right_immediate(const u32);
+    data_struct data_process_rotate_right_immediate(const u32);
+    data_struct data_process_logical_shift_left_register(const u32);
+    data_struct data_process_logical_shift_right_register(const u32);
+    data_struct data_process_arithmetic_shift_right_register(const u32);
+    data_struct data_process_rotate_right_register(const u32);
+    data_struct data_process_rotate_right_extend(const u32);
 
-    u32 ls_imm(const arm_code_t&);
-    u32 ls_reg(const arm_code_t&);
-    u32 ls_scaled_reg(const arm_code_t&);
-    u32 ls_imm_pre(const arm_code_t&);
-    u32 ls_reg_pre(const arm_code_t&);
-    u32 ls_scaled_reg_pre(const arm_code_t&);
-    u32 ls_imm_post(const arm_code_t&);
-    u32 ls_reg_post(const arm_code_t&);
-    u32 ls_scaled_reg_post(const arm_code_t&);
+    u32 ls_imm(const u32);
+    u32 ls_reg(const u32);
+    u32 ls_scaled_reg(const u32);
+    u32 ls_imm_pre(const u32);
+    u32 ls_reg_pre(const u32);
+    u32 ls_scaled_reg_pre(const u32);
+    u32 ls_imm_post(const u32);
+    u32 ls_reg_post(const u32);
+    u32 ls_scaled_reg_post(const u32);
 
-    u32 ls_misc_imm(const arm_code_t&);
-    u32 ls_misc_reg(const arm_code_t&);
-    u32 ls_misc_imm_pre(const arm_code_t&);
-    u32 ls_misc_reg_pre(const arm_code_t&);
-    u32 ls_misc_imm_post(const arm_code_t&);
-    u32 ls_misc_reg_post(const arm_code_t&);
+    u32 ls_misc_imm(const u32);
+    u32 ls_misc_reg(const u32);
+    u32 ls_misc_imm_pre(const u32);
+    u32 ls_misc_reg_pre(const u32);
+    u32 ls_misc_imm_post(const u32);
+    u32 ls_misc_reg_post(const u32);
     
-    address_struct ls_mul_inc_after(const arm_code_t&);
-    address_struct ls_mul_inc_before(const arm_code_t&);
-    address_struct ls_mul_dec_after(const arm_code_t&);
-    address_struct ls_mul_dec_before(const arm_code_t&);
+    address_struct ls_mul_inc_after(const u32);
+    address_struct ls_mul_inc_before(const u32);
+    address_struct ls_mul_dec_after(const u32);
+    address_struct ls_mul_dec_before(const u32);
 
-    address_struct ls_coproc_imm(const arm_code_t&);
-    address_struct ls_coproc_imm_pre(const arm_code_t&);
-    address_struct ls_coproc_imm_post(const arm_code_t&);
-    address_struct ls_coproc_unindexed(const arm_code_t&);
+    address_struct ls_coproc_imm(const u32);
+    address_struct ls_coproc_imm_pre(const u32);
+    address_struct ls_coproc_imm_post(const u32);
+    address_struct ls_coproc_unindexed(const u32);
 
 
 public:
-    data_struct data_processing(const arm_code_t&);
+    data_struct data_processing(const u32);
 
-    u32 load_store(const arm_code_t&);
+    u32 load_store(const u32);
 
-    u32 load_store_misc(const arm_code_t&);
+    u32 load_store_misc(const u32);
 
-    address_struct load_store_multiple(const arm_code_t&);
+    address_struct load_store_multiple(const u32);
 
-    address_struct load_store_coprocessor(const arm_code_t&);
+    address_struct load_store_coprocessor(const u32);
 
 
     ADDRESSING_MODE(

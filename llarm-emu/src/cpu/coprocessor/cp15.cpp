@@ -16,6 +16,7 @@
 
 #include "shared/types.hpp"
 #include "shared/util.hpp"
+#include "shared/out.hpp"
 
 
 id::cp15 CP15::identify_R6(const u8 CRm, const u8 opcode_2) {
@@ -441,7 +442,6 @@ u32 CP15::read(const id::cp15 reg) {
     }
 }
 
-
 void CP15::force_write(const id::cp15 reg, const u32 value) {
     write(reg, value, 0, 0, 0, true);
 }
@@ -449,7 +449,6 @@ void CP15::force_write(const id::cp15 reg, const u32 value) {
 void CP15::write(const id::cp15 reg, const u32 value) {
     write(reg, value, 0, 0, 0, false);
 }
-
 
 
 void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u8 CRm, const u32 data, const bool forced) {

@@ -16,14 +16,14 @@
  *     C Flag = shifter_carry_out
  *     V Flag = unaffected
  */
-void INSTRUCTIONS::arm::logic::AND(const arm_code_t &code) {
+void INSTRUCTIONS::arm::logic::AND(const u32 code) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
 
     const data_struct shifter_operand = address_mode.data_processing(code);
 
     const u32 Rn = reg.read(code, 16, 19);
 
-    const bool S = code.test(20);
+    const bool S = shared::util::bit_fetch(code, 20);
 
     reg.write(Rd_id, Rn & shifter_operand.value);
 
@@ -44,7 +44,7 @@ void INSTRUCTIONS::arm::logic::AND(const arm_code_t &code) {
  * else
  *   Rd = 31 - (bit position of most significant ’1’ in Rm)
  */
-void INSTRUCTIONS::arm::logic::CLZ(const arm_code_t &code) {
+void INSTRUCTIONS::arm::logic::CLZ(const u32 code) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
 
     const u32 Rm = reg.read(code, 0, 3);
@@ -68,13 +68,13 @@ void INSTRUCTIONS::arm::logic::CLZ(const arm_code_t &code) {
  *     C Flag = shifter_carry_out
  *     V Flag = unaffected
  */
-void INSTRUCTIONS::arm::logic::EOR(const arm_code_t &code) {
+void INSTRUCTIONS::arm::logic::EOR(const u32 code) {
     const data_struct shifter_operand = address_mode.data_processing(code);
 
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
 
-    const bool S = code.test(20);
+    const bool S = shared::util::bit_fetch(code, 20);
 
     reg.write(Rd_id, (Rn ^ shifter_operand.value));
 
@@ -97,7 +97,7 @@ void INSTRUCTIONS::arm::logic::EOR(const arm_code_t &code) {
  *   C Flag = NOT BorrowFrom(Rn - shifter_operand)
  *   V Flag = OverflowFrom(Rn - shifter_operand)
  */
-void INSTRUCTIONS::arm::logic::CMP(const arm_code_t &code) {
+void INSTRUCTIONS::arm::logic::CMP(const u32 code) {
     const data_struct shifter_operand = address_mode.data_processing(code);
     
     const u32 Rn = reg.read(code, 16, 19);
@@ -119,7 +119,7 @@ void INSTRUCTIONS::arm::logic::CMP(const arm_code_t &code) {
  *   C Flag = CarryFrom(Rn + shifter_operand)
  *   V Flag = OverflowFrom(Rn + shifter_operand)
  */
-void INSTRUCTIONS::arm::logic::CMN(const arm_code_t &code) {
+void INSTRUCTIONS::arm::logic::CMN(const u32 code) {
     const data_struct shifter_operand = address_mode.data_processing(code);
     
     const u32 Rn = reg.read(code, 16, 19);
@@ -144,7 +144,7 @@ void INSTRUCTIONS::arm::logic::CMN(const arm_code_t &code) {
  *         C Flag = shifter_carry_out
  *         V Flag = unaffected
  */
-void INSTRUCTIONS::arm::logic::BIC(const arm_code_t &code) {
+void INSTRUCTIONS::arm::logic::BIC(const u32 code) {
     const data_struct shifter_operand = address_mode.data_processing(code);
     
     const u32 Rn = reg.read(code, 16, 19);
@@ -168,13 +168,13 @@ void INSTRUCTIONS::arm::logic::BIC(const arm_code_t &code) {
  *     C Flag = shifter_carry_out
  *     V Flag = unaffected
  */
-void INSTRUCTIONS::arm::logic::ORR(const arm_code_t &code) {
+void INSTRUCTIONS::arm::logic::ORR(const u32 code) {
     const data_struct shifter_operand = address_mode.data_processing(code);
         
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
 
-    const bool S = code.test(20);
+    const bool S = shared::util::bit_fetch(code, 20);
 
     reg.write(Rd_id, (Rn | shifter_operand.value));
 
@@ -197,7 +197,7 @@ void INSTRUCTIONS::arm::logic::ORR(const arm_code_t &code) {
  *   C Flag = shifter_carry_out
  *   V Flag = unaffected
  */
-void INSTRUCTIONS::arm::logic::TEQ(const arm_code_t &code) {
+void INSTRUCTIONS::arm::logic::TEQ(const u32 code) {
     const data_struct shifter_operand = address_mode.data_processing(code);
         
     const u32 Rn = reg.read(code, 16, 19);
@@ -218,7 +218,7 @@ void INSTRUCTIONS::arm::logic::TEQ(const arm_code_t &code) {
  *   C Flag = shifter_carry_out
  *   V Flag = unaffected
  */
-void INSTRUCTIONS::arm::logic::TST(const arm_code_t &code) {
+void INSTRUCTIONS::arm::logic::TST(const u32 code) {
     const data_struct shifter_operand = address_mode.data_processing(code);
     
     const u32 Rn = reg.read(code, 16, 19);

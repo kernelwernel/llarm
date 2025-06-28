@@ -7,13 +7,8 @@
 
 using namespace internal;
 
-
-id::thumb identifiers::thumb(const thumb_code_t &code) {
-    return thumb(static_cast<u16>(code.to_ulong()));
-}
-
 id::thumb identifiers::thumb(const u16 code) {
-    const u8 bytecode = shared::util::bit_range(code, 13, 15);
+    const u8 bytecode = shared::util::bit_range<u8>(code, 13, 15);
 
     switch (bytecode) {
         // shift by immediate
@@ -133,7 +128,8 @@ id::thumb identifiers::thumb(const u16 code) {
                 case 0b00: return id::thumb::ADD5;
                 case 0b01: return id::thumb::ADD6;
                 case 0b10: {
-                    const u8 tmp = shared::util::bit_range(code, 7, 10);
+                    const u8 tmp = shared::util::bit_range<u8>(code, 7, 10);
+                    
                     if (tmp == 0b0000) {
                         return id::thumb::ADD7;
                     } else if (tmp == 0b0001) {
@@ -147,7 +143,8 @@ id::thumb identifiers::thumb(const u16 code) {
                 }
 
                 case 0b11: {
-                    const u8 tmp2 = shared::util::bit_range(code, 8, 10);
+                    const u8 tmp2 = shared::util::bit_range<u8>(code, 8, 10);
+                    
                     if (tmp2 == 0b110) {
                         return id::thumb::BKPT;
                     }

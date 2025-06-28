@@ -6,7 +6,7 @@
 void EXECUTE::arm_execute(const arm_decode_struct &decode) {
     using namespace llarm; // for llarm::as
 
-    const arm_code_t code = decode.code;
+    const u32 code = decode.code;
     const as::id::arm id = decode.id;
 
     switch (id) {
@@ -46,11 +46,11 @@ void EXECUTE::arm_execute(const arm_decode_struct &decode) {
         case as::id::arm::STRB: instructions.arm.store.STRB(code); return; 
         case as::id::arm::STRBT: instructions.arm.store.STRBT(code); return;
         case as::id::arm::STRT: instructions.arm.store.STRT(code); return; 
-        case as::id::arm::CDP: instructions.arm.coprocessor_inst.CDP(code); return;
-        case as::id::arm::LDC: instructions.arm.coprocessor_inst.LDC(code); return;
-        case as::id::arm::MCR: instructions.arm.coprocessor_inst.MCR(code); return;
-        case as::id::arm::MRC: instructions.arm.coprocessor_inst.MRC(code); return;
-        case as::id::arm::STC: instructions.arm.coprocessor_inst.STC(code); return;
+        case as::id::arm::CDP: instructions.arm.coproc.CDP(code); return;
+        case as::id::arm::LDC: instructions.arm.coproc.LDC(code); return;
+        case as::id::arm::MCR: instructions.arm.coproc.MCR(code); return;
+        case as::id::arm::MRC: instructions.arm.coproc.MRC(code); return;
+        case as::id::arm::STC: instructions.arm.coproc.STC(code); return;
         case as::id::arm::SWP: instructions.arm.store.SWP(code); return;
         case as::id::arm::SWPB: instructions.arm.store.SWPB(code); return;
         case as::id::arm::MLA: instructions.arm.multiply.MLA(code); return;
@@ -71,11 +71,11 @@ void EXECUTE::arm_execute(const arm_decode_struct &decode) {
         case as::id::arm::BLX1: instructions.arm.branching.BLX1(code); return;
         case as::id::arm::BLX2: instructions.arm.branching.BLX2(code); return;
         case as::id::arm::CLZ: instructions.arm.logic.CLZ(code); return;
-        case as::id::arm::CDP2: instructions.arm.coprocessor_inst.CDP2(code); return;
-        case as::id::arm::LDC2: instructions.arm.coprocessor_inst.LDC2(code); return;
-        case as::id::arm::MCR2: instructions.arm.coprocessor_inst.MCR2(code); return;
-        case as::id::arm::MRC2: instructions.arm.coprocessor_inst.MRC2(code); return;
-        case as::id::arm::STC2: instructions.arm.coprocessor_inst.STC2(code); return;
+        case as::id::arm::CDP2: instructions.arm.coproc.CDP2(code); return;
+        case as::id::arm::LDC2: instructions.arm.coproc.LDC2(code); return;
+        case as::id::arm::MCR2: instructions.arm.coproc.MCR2(code); return;
+        case as::id::arm::MRC2: instructions.arm.coproc.MRC2(code); return;
+        case as::id::arm::STC2: instructions.arm.coproc.STC2(code); return;
         case as::id::arm::MCRR: instructions.arm.dsp.MCRR(code); return;
         case as::id::arm::MRRC: instructions.arm.dsp.MRRC(code); return;
         case as::id::arm::PLD: instructions.arm.dsp.PLD(code); return;
@@ -157,9 +157,77 @@ void EXECUTE::arm_execute(const arm_decode_struct &decode) {
 }
 
 void EXECUTE::thumb_execute(const thumb_decode_struct &instruction) {
-    
-}
+    using namespace llarm;
 
-EXECUTE::EXECUTE(INSTRUCTIONS& instructions, EXCEPTION& exception) : instructions(instructions), exception(exception) {
+    const u16 code = instruction.code;
+    const as::id::thumb id = instruction.id;
 
+    switch (instruction.id) {
+        case as::id::thumb::UNDEFINED: exception.undefined(); return;
+        case as::id::thumb::ADC: instructions.thumb.math.ADC(code); return;
+        case as::id::thumb::ADD1: instructions.thumb.math.ADD1(code); return;
+        case as::id::thumb::ADD2: instructions.thumb.math.ADD2(code); return;
+        case as::id::thumb::ADD3: instructions.thumb.math.ADD3(code); return;
+        case as::id::thumb::ADD4: instructions.thumb.math.ADD4(code); return;
+        case as::id::thumb::ADD5: instructions.thumb.math.ADD5(code); return;
+        case as::id::thumb::ADD6: instructions.thumb.math.ADD6(code); return;
+        case as::id::thumb::ADD7: instructions.thumb.math.ADD7(code); return;
+        case as::id::thumb::SBC: instructions.thumb.math.SBC(code); return;
+        case as::id::thumb::SUB1: instructions.thumb.math.SUB1(code); return;
+        case as::id::thumb::SUB2: instructions.thumb.math.SUB2(code); return;
+        case as::id::thumb::SUB3: instructions.thumb.math.SUB3(code); return;
+        case as::id::thumb::SUB4: instructions.thumb.math.SUB4(code); return;
+        case as::id::thumb::MUL: instructions.thumb.math.MUL(code); return;
+        case as::id::thumb::AND: instructions.thumb.logic.AND(code); return;
+        case as::id::thumb::ASR1: instructions.thumb.logic.ASR1(code); return;
+        case as::id::thumb::ASR2: instructions.thumb.logic.ASR2(code); return;
+        case as::id::thumb::BIC: instructions.thumb.logic.BIC(code); return;
+        case as::id::thumb::EOR: instructions.thumb.logic.EOR(code); return;
+        case as::id::thumb::LSL1: instructions.thumb.logic.LSL1(code); return;
+        case as::id::thumb::LSL2: instructions.thumb.logic.LSL2(code); return;
+        case as::id::thumb::LSR1: instructions.thumb.logic.LSR1(code); return;
+        case as::id::thumb::LSR2: instructions.thumb.logic.LSR2(code); return;
+        case as::id::thumb::NEG: instructions.thumb.logic.NEG(code); return;
+        case as::id::thumb::ORR: instructions.thumb.logic.ORR(code); return;
+        case as::id::thumb::ROR: instructions.thumb.logic.ROR(code); return;
+        case as::id::thumb::TST: instructions.thumb.logic.TST(code); return;
+        case as::id::thumb::CMN: instructions.thumb.compare.CMN(code); return;
+        case as::id::thumb::CMP1: instructions.thumb.compare.CMP1(code); return;
+        case as::id::thumb::CMP2: instructions.thumb.compare.CMP2(code); return;
+        case as::id::thumb::CMP3: instructions.thumb.compare.CMP3(code); return;
+        case as::id::thumb::MOV1: instructions.thumb.movement.MOV1(code); return;
+        case as::id::thumb::MOV2: instructions.thumb.movement.MOV2(code); return;
+        case as::id::thumb::MOV3: instructions.thumb.movement.MOV3(code); return;
+        case as::id::thumb::MVN: instructions.thumb.movement.MVN(code); return;
+        case as::id::thumb::B1: instructions.thumb.branching.B1(code); return;
+        case as::id::thumb::B2: instructions.thumb.branching.B2(code); return;
+        case as::id::thumb::BL: instructions.thumb.branching.BL(code); return;
+        case as::id::thumb::BLX1: instructions.thumb.branching.BLX1(code); return;
+        case as::id::thumb::BLX2: instructions.thumb.branching.BLX2(code); return;
+        case as::id::thumb::BX: instructions.thumb.branching.BX(code); return;
+        case as::id::thumb::NOP: instructions.thumb.misc.NOP(code); return;
+        case as::id::thumb::BKPT: instructions.thumb.misc.BKPT(code); return;
+        case as::id::thumb::SWI: instructions.thumb.misc.SWI(code); return;
+        case as::id::thumb::LDMIA: instructions.thumb.load.LDMIA(code); return;
+        case as::id::thumb::LDR1: instructions.thumb.load.LDR1(code); return;
+        case as::id::thumb::LDR2: instructions.thumb.load.LDR2(code); return;
+        case as::id::thumb::LDR3: instructions.thumb.load.LDR3(code); return;
+        case as::id::thumb::LDR4: instructions.thumb.load.LDR4(code); return;
+        case as::id::thumb::LDRB1: instructions.thumb.load.LDRB1(code); return;
+        case as::id::thumb::LDRB2: instructions.thumb.load.LDRB2(code); return;
+        case as::id::thumb::LDRH1: instructions.thumb.load.LDRH1(code); return;
+        case as::id::thumb::LDRH2: instructions.thumb.load.LDRH2(code); return;
+        case as::id::thumb::LDRSB: instructions.thumb.load.LDRSB(code); return;
+        case as::id::thumb::LDRSH: instructions.thumb.load.LDRSH(code); return;
+        case as::id::thumb::POP: instructions.thumb.load.POP(code); return;
+        case as::id::thumb::PUSH: instructions.thumb.store.PUSH(code); return;
+        case as::id::thumb::STMIA: instructions.thumb.store.STMIA(code); return;
+        case as::id::thumb::STR1: instructions.thumb.store.STR1(code); return;
+        case as::id::thumb::STR2: instructions.thumb.store.STR2(code); return;
+        case as::id::thumb::STR3: instructions.thumb.store.STR3(code); return;
+        case as::id::thumb::STRB1: instructions.thumb.store.STRB1(code); return;
+        case as::id::thumb::STRB2: instructions.thumb.store.STRB2(code); return;
+        case as::id::thumb::STRH1: instructions.thumb.store.STRH1(code); return;
+        case as::id::thumb::STRH2: instructions.thumb.store.STRH2(code); return;
+    }
 }

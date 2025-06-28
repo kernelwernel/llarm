@@ -129,9 +129,14 @@ void REGISTERS::write(const id::cpsr cpsr_macro, const u8 value) {
 }
 
 
-void REGISTERS::write(const arm_code_t& code, const u8 start, const u8 end, const u32 value) {
+void REGISTERS::write(const u32 code, const u8 start, const u8 end, const u32 value) {
     const id::reg id = fetch_reg_id(shared::util::bit_range(code, start, end));
     write(id, value);
+}
+
+
+void REGISTERS::write(const u8 reg_bits, const u32 value) {
+    write(fetch_reg_id(reg_bits), value);
 }
 
 
@@ -465,7 +470,7 @@ void REGISTERS::access_check(const id::reg register_id) {
 }
 
 
-id::reg REGISTERS::fetch_reg_id(const u8 value) noexcept {
+id::reg REGISTERS::fetch_reg_id(const u8 value) {
     switch (value) {
         case 0: return id::reg::R0;
         case 1: return id::reg::R1;
@@ -489,9 +494,9 @@ id::reg REGISTERS::fetch_reg_id(const u8 value) noexcept {
     shared::out::error("Couldn't find suitable match for register identification in identifier()");
 }
 
-id::reg REGISTERS::fetch_reg_id(const arm_code_t &code, const u8 start, const u8 end) noexcept {
-    const u8 Rd_bits = shared::util::bit_range<u8, u32>(code.to_ulong(), start, end);
-    
+id::reg REGISTERS::fetch_reg_id(const u32 code, const u8 start, const u8 end) {
+    const u8 Rd_bits = shared::util::bit_range<u8>(code, start, end);
+
     id::reg reg_id = fetch_reg_id(Rd_bits);
 
     // if the start and end indexes are 16 and 19 while in 26-bit mode,
@@ -510,22 +515,20 @@ id::reg REGISTERS::fetch_reg_id(const arm_code_t &code, const u8 start, const u8
     return reg_id;
 }
 
-id::reg REGISTERS::fetch_reg_id(const thumb_code_t &code, const u8 start, const u8 end) noexcept {
-    const u8 Rd_bits = shared::util::bit_range<u8, u32>(code.to_ulong(), start, end);
+
+id::reg REGISTERS::thumb_fetch_reg_id(const u16 code, const u8 start, const u8 end) {
+    const u8 Rd_bits = shared::util::bit_range<u8>(code, start, end);
     return fetch_reg_id(Rd_bits);
 }
 
-u32 REGISTERS::read(const arm_code_t &code, const u8 start, const u8 end) noexcept {
-    id::reg reg_id = fetch_reg_id(code, start, end);
-    return read(reg_id);
-}
 
-u32 REGISTERS::read(const thumb_code_t &code, const u8 start, const u8 end) noexcept {
+u32 REGISTERS::read(const u32 code, const u8 start, const u8 end) {
     const id::reg reg_id = fetch_reg_id(code, start, end);
     return read(reg_id);
 }
 
-u32 REGISTERS::read(const u8 reg_bits) noexcept {
+
+u32 REGISTERS::read(const u8 reg_bits) {
     return read(fetch_reg_id(reg_bits));
 }
 
@@ -554,7 +557,7 @@ id::cond REGISTERS::fetch_cond_id(const u8 cond) {
 }
 
 
-id::cond REGISTERS::fetch_cond_id(const arm_code_t &code) {
+id::cond REGISTERS::fetch_cond_id(const u32 code) {
     return fetch_cond_id(shared::util::bit_range<u8>(code, 28, 31));
 }
 
@@ -578,7 +581,7 @@ id::mode REGISTERS::fetch_mode_id(const u8 mode) {
 
 
 
-bool REGISTERS::check_cond(const id::cond cond) {
+bool REGISTERS::is_cond_valid(const id::cond cond) {
     switch (cond) {
         case id::cond::EQ: return (read(id::cpsr::Z) == 1);
         case id::cond::NE: return (read(id::cpsr::Z) == 0);
@@ -625,7 +628,17 @@ bool REGISTERS::check_cond(const id::cond cond) {
                 )
             );
         case id::cond::AL: return true;
-        case id::cond::NV: return true;
+        case id::cond::NV: 
+            switch (settings.arch) {
+                case id::arch::ARMv1:
+                case id::arch::ARMv2: return false;
+                case id::arch::ARMv3: 
+                case id::arch::ARMv4: 
+                    shared::out::unpredictable("NV condition field for ARMv3 and ARMv4 are unpredictable"); 
+                    return true;
+        
+                default: return true;
+            }
         default: shared::out::error("TODO");
     }
 }
@@ -647,10 +660,11 @@ void REGISTERS::switch_mode(const id::mode mode) {
 }
 
 
-bool REGISTERS::check_cond(const arm_code_t &code) {
+bool REGISTERS::is_cond_valid(const u32 code) {
     const id::cond cond_id = fetch_cond_id(code);
-    return check_cond(cond_id);
+    return is_cond_valid(cond_id);
 }
+
 
 void REGISTERS::write_PC(const u32 address) {
     if (arch_26.is_26_arch_address()) {
@@ -659,6 +673,7 @@ void REGISTERS::write_PC(const u32 address) {
         R15 = address;
     }
 }
+
 
 u32 REGISTERS::read_PC() {
     if (arch_26.is_26_arch_address()) {

@@ -1,62 +1,24 @@
 #pragma once
 
-#include "types_extra.hpp"
 #include "id.hpp"
 
-#include <iostream>
-
 #include "shared/types.hpp"
-#include "shared/out.hpp"
-
 
 namespace util {
-    // TODO: maybe replace this with the 0-shifter strategy
+    void modify_bit(u32 &original, const u8 index, const bool value);
 
+    void swap_bits(u32 &original, const u8 start, const u8 end, const u32 value);
 
+    // custom integral concept template
+    template <typename T>
+    concept is_integral = (
+        std::same_as<T, u8>  ||
+        std::same_as<T, u16> ||
+        std::same_as<T, u32> ||
+        std::same_as<T, u64>
+    );
 
-
-    inline void modify_bit(u32 &original, const u8 index, const bool value) {
-        if (index > 31) {
-            throw std::out_of_range("Index must be between 0 and 31.");
-        }
-
-        if (value) {
-            original |= (1U << index);
-        } else {
-            original &= ~(1U << index);
-        }
-    }
-
-    // 1-based counting
-    inline constexpr u32 trim(const u32 original, const u8 lhs, const u8 rhs) noexcept {
-        if (lhs + rhs >= 32) {
-            // TODO thing of a dev warning message here
-            return 0;
-        }
-
-        u32 original_copy = original;
-
-        original_copy >>= rhs;
-        original_copy <<= rhs + lhs;
-        original_copy >>= lhs;
-
-        return original_copy;
-    }
-
-
-    inline void swap_bits(u32 &original, const u8 start, const u8 end, const u32 value) {
-        if (start >= 32 || end >= 32 || start >= end) {
-            // TODO, ERROR
-            return;
-        }
-
-        const u8 num_bits = end - start + 1;
-        const u32 mask = (1 << num_bits) - 1;
-        original &= ~(mask << start);
-        original |= (value & mask) << start;
-    }
-
-
+    // this is a hot steaming pile of absolute garbage, might rewrite this in the future
     template <is_integral T>
     inline T swap_endianness(const T value) {
         if constexpr (std::is_same_v<T, u16>) {
@@ -103,20 +65,25 @@ namespace util {
         }
     }
 
-
-
     // for example, ARMv5TEJ will be simplified to ARMv5
-    inline id::arch simplify_arch_version(const id::specific_arch arch) {
+    constexpr id::arch simplify_arch_version(const id::specific_arch arch) {
         switch (arch) {
+            case id::specific_arch::UNKNOWN: return id::arch::UNKNOWN;
             case id::specific_arch::ARMv1: return id::arch::ARMv1;
             case id::specific_arch::ARMv2: 
             case id::specific_arch::ARMv2a: return id::arch::ARMv2;
+            case id::specific_arch::ARMv3M:
             case id::specific_arch::ARMv3: return id::arch::ARMv3;
-            case id::specific_arch::ARMv4: 
+            case id::specific_arch::ARMv4:
+            case id::specific_arch::ARMv4xM:
+            case id::specific_arch::ARMv4TxM:
             case id::specific_arch::ARMv4T: return id::arch::ARMv4;
             case id::specific_arch::ARMv5: 
+            case id::specific_arch::ARMv5xM: 
+            case id::specific_arch::ARMv5TxM: 
             case id::specific_arch::ARMv5T: 
             case id::specific_arch::ARMv5TE: 
+            case id::specific_arch::ARMv5TExP: 
             case id::specific_arch::ARMv5TEJ: return id::arch::ARMv5;
             case id::specific_arch::ARMv6: 
             case id::specific_arch::ARMv6T2: 
@@ -143,7 +110,8 @@ namespace util {
         }
     }
 
-    inline LLARM_CONSTEVAL u32 get_kb(const u16 kb) {
+
+    LLARM_CONSTEVAL u32 get_kb(const u16 kb) {
         switch (kb) {
             case 1:   return (1 << 10); // 1KB
             case 2:   return (1 << 11); // 2KB
@@ -160,7 +128,7 @@ namespace util {
         }
     }
 
-    inline LLARM_CONSTEVAL u32 get_mb(const u16 mb) {
+    LLARM_CONSTEVAL u32 get_mb(const u16 mb) {
         switch(mb) {
             case 1:   return (1 << 20); // 1MB
             case 2:   return (1 << 21); // 2MB
@@ -176,8 +144,8 @@ namespace util {
             default: return 0;
         }
     }
-    
-    inline LLARM_CONSTEVAL u64 get_gb(const u16 gb) {
+
+    LLARM_CONSTEVAL u64 get_gb(const u16 gb) {
         switch (gb) {
             case 1:   return (1ULL << 30); // 1GB
             case 2:   return (1ULL << 31); // 2GB
@@ -194,12 +162,8 @@ namespace util {
         }
     }
 
-
     // these are for development and debug purposes, ignore this section
     namespace dev {
-        inline void pause() {
-            std::cout << "press enter to continue...";
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        }
+        [[maybe_unused]] void pause();
     }
 }

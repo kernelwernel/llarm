@@ -118,7 +118,11 @@ void COPROCESSOR::write(
     const u32 value,
     const bool is_forced
 ) {
-    cp15.write(cp15_id, value, is_forced);
+    if (is_forced) {
+        cp15.force_write(cp15_id, value);
+    } else {
+        cp15.write(cp15_id, value);
+    }
 }
 
 

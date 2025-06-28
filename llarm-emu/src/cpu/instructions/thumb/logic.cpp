@@ -14,8 +14,8 @@
  * C Flag = unaffected
  * V Flag = unaffected
  */
-void INSTRUCTIONS::thumb::logic::AND(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+void INSTRUCTIONS::thumb::logic::AND(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
 
@@ -42,8 +42,8 @@ void INSTRUCTIONS::thumb::logic::AND(const thumb_code_t &code) {
  * Z Flag = if Rd == 0 then 1 else 0
  * V Flag = unaffected
  */
-void INSTRUCTIONS::thumb::logic::ASR1(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+void INSTRUCTIONS::thumb::logic::ASR1(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
     const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
@@ -83,9 +83,9 @@ void INSTRUCTIONS::thumb::logic::ASR1(const thumb_code_t &code) {
  * Z Flag = if Rd == 0 then 1 else 0
  * V Flag = unaffected
  */
-void INSTRUCTIONS::thumb::logic::ASR2(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
-    const id::reg Rs_id = reg.fetch_reg_id(code, 3, 5);
+void INSTRUCTIONS::thumb::logic::ASR2(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
+    const id::reg Rs_id = reg.thumb_fetch_reg_id(code, 3, 5);
 
     const u32 Rd = reg.read(Rd_id);
     const u32 Rs = reg.read(Rs_id);
@@ -117,9 +117,9 @@ void INSTRUCTIONS::thumb::logic::ASR2(const thumb_code_t &code) {
  * C Flag = unaffected
  * V Flag = unaffected
  */
-void INSTRUCTIONS::thumb::logic::BIC(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
-    const id::reg Rm_id = reg.fetch_reg_id(code, 3, 5);
+void INSTRUCTIONS::thumb::logic::BIC(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
+    const id::reg Rm_id = reg.thumb_fetch_reg_id(code, 3, 5);
 
     reg.write(Rd_id, (reg.read(Rd_id) & ~reg.read(Rm_id)));
 
@@ -137,8 +137,8 @@ void INSTRUCTIONS::thumb::logic::BIC(const thumb_code_t &code) {
  * C Flag = unaffected
  * V Flag = unaffected
  */
-void INSTRUCTIONS::thumb::logic::EOR(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+void INSTRUCTIONS::thumb::logic::EOR(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
 
@@ -162,9 +162,9 @@ void INSTRUCTIONS::thumb::logic::EOR(const thumb_code_t &code) {
  * Z Flag = if Rd == 0 then 1 else 0
  * V Flag = unaffected
  */
-void INSTRUCTIONS::thumb::logic::LSL1(const thumb_code_t &code) {
+void INSTRUCTIONS::thumb::logic::LSL1(const u16 code) {
     const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
 
@@ -199,8 +199,8 @@ void INSTRUCTIONS::thumb::logic::LSL1(const thumb_code_t &code) {
  * Z Flag = if Rd == 0 then 1 else 0
  * V Flag = unaffected
  */
-void INSTRUCTIONS::thumb::logic::LSL2(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+void INSTRUCTIONS::thumb::logic::LSL2(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 Rs = reg.read(code, 3, 5);
 
@@ -235,8 +235,8 @@ void INSTRUCTIONS::thumb::logic::LSL2(const thumb_code_t &code) {
  * Z Flag = if Rd == 0 then 1 else 0
  * V Flag = unaffected
  */
-void INSTRUCTIONS::thumb::logic::LSR1(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+void INSTRUCTIONS::thumb::logic::LSR1(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
     const u32 Rm = reg.read(code, 3, 5);
@@ -273,8 +273,8 @@ void INSTRUCTIONS::thumb::logic::LSR1(const thumb_code_t &code) {
  * Z Flag = if Rd == 0 then 1 else 0
  * V Flag = unaffected
  */
-void INSTRUCTIONS::thumb::logic::LSR2(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+void INSTRUCTIONS::thumb::logic::LSR2(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 Rs = reg.read(code, 3, 5);
 
@@ -305,8 +305,8 @@ void INSTRUCTIONS::thumb::logic::LSR2(const thumb_code_t &code) {
  * C Flag = NOT BorrowFrom(0 - Rm)
  * V Flag = OverflowFrom(0 - Rm)
  */
-void INSTRUCTIONS::thumb::logic::NEG(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+void INSTRUCTIONS::thumb::logic::NEG(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
 
@@ -328,8 +328,8 @@ void INSTRUCTIONS::thumb::logic::NEG(const thumb_code_t &code) {
  * C Flag = unaffected
  * V Flag = unaffected
  */
-void INSTRUCTIONS::thumb::logic::ORR(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+void INSTRUCTIONS::thumb::logic::ORR(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
 
@@ -356,8 +356,8 @@ void INSTRUCTIONS::thumb::logic::ORR(const thumb_code_t &code) {
  * Z Flag = if Rd == 0 then 1 else 0
  * V Flag = unaffected
  */
-void INSTRUCTIONS::thumb::logic::ROR(const thumb_code_t &code) {
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+void INSTRUCTIONS::thumb::logic::ROR(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 Rs = reg.read(code, 3, 5);
 
@@ -386,7 +386,7 @@ void INSTRUCTIONS::thumb::logic::ROR(const thumb_code_t &code) {
  * C Flag = unaffected
  * V Flag = unaffected
  */
-void INSTRUCTIONS::thumb::logic::TST(const thumb_code_t &code) {
+void INSTRUCTIONS::thumb::logic::TST(const u16 code) {
     const u32 Rn = reg.read(code, 0, 2);
     const u32 Rm = reg.read(code, 3, 5);
 

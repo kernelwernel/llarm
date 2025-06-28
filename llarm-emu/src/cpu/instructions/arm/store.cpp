@@ -13,7 +13,7 @@
  *             address = address + 4
  *     assert end_address == address - 4
  */
-void INSTRUCTIONS::arm::store::STM1(const arm_code_t &code) {
+void INSTRUCTIONS::arm::store::STM1(const u32 code) {
     const address_struct addresses = address_mode.load_store_multiple(code);
 
     u32 address = addresses.start;
@@ -46,7 +46,7 @@ void INSTRUCTIONS::arm::store::STM1(const arm_code_t &code) {
  *             address = address + 4
  *     assert end_address == address - 4
  */
-void INSTRUCTIONS::arm::store::STM2(const arm_code_t &code) {
+void INSTRUCTIONS::arm::store::STM2(const u32 code) {
     const address_struct addresses = address_mode.load_store_multiple(code);
 
     u32 address = addresses.start;
@@ -73,7 +73,7 @@ void INSTRUCTIONS::arm::store::STM2(const arm_code_t &code) {
  * if ConditionPassed(cond) then
  *     Memory[address,4] = Rd
  */
-void INSTRUCTIONS::arm::store::STR(const arm_code_t &code) {
+void INSTRUCTIONS::arm::store::STR(const u32 code) {
     const u32 address = address_mode.load_store(code); 
 
     const u32 value = reg.read(code, 12, 15);
@@ -91,7 +91,7 @@ void INSTRUCTIONS::arm::store::STR(const arm_code_t &code) {
  * if ConditionPassed(cond) then
  *     Memory[address,1] = Rd[7:0]
  */
-void INSTRUCTIONS::arm::store::STRB(const arm_code_t &code) {
+void INSTRUCTIONS::arm::store::STRB(const u32 code) {
     const u32 address = address_mode.load_store(code); 
 
     const u32 Rd = reg.read(code, 12, 15);
@@ -110,7 +110,7 @@ void INSTRUCTIONS::arm::store::STRB(const arm_code_t &code) {
  * if ConditionPassed(cond) then
  *     Memory[address,1] = Rd[7:0]
  */
-void INSTRUCTIONS::arm::store::STRBT(const arm_code_t &code) {
+void INSTRUCTIONS::arm::store::STRBT(const u32 code) {
     const u32 address = address_mode.load_store(code); 
 
     const u32 Rd = reg.read(code, 12, 15);
@@ -133,7 +133,7 @@ void INSTRUCTIONS::arm::store::STRBT(const arm_code_t &code) {
  *         data = UNPREDICTABLE
  *     Memory[address,2] = data
  */
-void INSTRUCTIONS::arm::store::STRH(const arm_code_t &code) {
+void INSTRUCTIONS::arm::store::STRH(const u32 code) {
     const u32 address = address_mode.load_store_misc(code);
 
     u32 data = 0;
@@ -158,7 +158,7 @@ void INSTRUCTIONS::arm::store::STRH(const arm_code_t &code) {
  * if ConditionPassed(cond) then
  *     Memory[address,4] = Rd
  */
-void INSTRUCTIONS::arm::store::STRT(const arm_code_t &code) {
+void INSTRUCTIONS::arm::store::STRT(const u32 code) {
     const u32 address = address_mode.load_store(code);
 
     const u32 Rd = reg.read(code, 12, 15);
@@ -185,7 +185,7 @@ void INSTRUCTIONS::arm::store::STRT(const arm_code_t &code) {
  *     Memory[Rn,4] = Rm
  *     Rd = temp
  */
-void INSTRUCTIONS::arm::store::SWP(const arm_code_t &code) {
+void INSTRUCTIONS::arm::store::SWP(const u32 code) {
     const u32 Rn = reg.read(code, 16, 19);
 
     const u8 type = shared::util::bit_range(Rn, 0, 1);
@@ -225,7 +225,7 @@ void INSTRUCTIONS::arm::store::SWP(const arm_code_t &code) {
  *     Memory[Rn,1] = Rm[7:0]
  *     Rd = temp
  */
-void INSTRUCTIONS::arm::store::SWPB(const arm_code_t &code) {
+void INSTRUCTIONS::arm::store::SWPB(const u32 code) {
     const u32 Rn = reg.read(code, 16, 19);
 
     const mem_read_struct read_access = memory.read(Rn, 1);

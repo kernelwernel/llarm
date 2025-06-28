@@ -4,7 +4,7 @@
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 
-void INSTRUCTIONS::arm::misc::NOP(const arm_code_t &code) noexcept {
+void INSTRUCTIONS::arm::misc::NOP(const u32 code) {
     return;
 }
 
@@ -27,7 +27,7 @@ void INSTRUCTIONS::arm::misc::NOP(const arm_code_t &code) noexcept {
  *        R15[31:26] = <alu_out>[31:26] // update NZCVIF and ...
  *        R15[1:0] = <alu_out>[1:0] // ... update M[1:0]
  */
-void INSTRUCTIONS::arm::misc::PSR(const arm_code_t &code) noexcept {
+void INSTRUCTIONS::arm::misc::PSR(const u32 code) {
     const u8 opc = shared::util::bit_range<u8>(code, 21, 22);
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
 
@@ -81,7 +81,7 @@ void INSTRUCTIONS::arm::misc::PSR(const arm_code_t &code) noexcept {
  *   else
  *     PC = 0x00000008
  */
-void INSTRUCTIONS::arm::misc::SWI(const arm_code_t &code) {
+void INSTRUCTIONS::arm::misc::SWI(const u32 code) {
     reg.switch_mode(id::mode::SUPERVISOR);
     reg.write(id::reg::R14_svc, reg.read(id::reg::PC) + 4);
     reg.write(id::reg::SPSR_svc, reg.CPSR);
@@ -108,7 +108,7 @@ void INSTRUCTIONS::arm::misc::SWI(const arm_code_t &code) {
  *     else
  *         PC = 0x0000000C
  */
-void INSTRUCTIONS::arm::misc::BKPT(const arm_code_t &code) {
+void INSTRUCTIONS::arm::misc::BKPT(const u32 code) {
     reg.switch_mode(id::mode::ABORT);
 
     reg.write(id::reg::R14_abt, reg.read(id::reg::PC) + 4);

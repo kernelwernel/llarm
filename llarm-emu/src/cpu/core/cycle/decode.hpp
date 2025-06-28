@@ -10,12 +10,12 @@
 
 struct arm_decode_struct {
     llarm::as::id::arm id;
-    arm_code_t code;
+    u32 code;
 };
 
 struct thumb_decode_struct {
     llarm::as::id::thumb id;
-    thumb_code_t code;
+    u16 code;
 };
 
 
@@ -31,8 +31,8 @@ private:
     bool is_thumb_instruction_unsupported(const llarm::as::id::thumb id);
 
 public:
-    arm_decode_struct arm_decode(const arm_code_t &raw_code);
-    thumb_decode_struct thumb_decode(const thumb_code_t &raw_code);
+    arm_decode_struct arm_decode(const u32 raw_code);
+    thumb_decode_struct thumb_decode(const u16 raw_code);
 
     DECODE(
         REGISTERS& reg,

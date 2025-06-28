@@ -15,10 +15,10 @@
  * assert end_address == address - 4
  * Rn = Rn + (Number_Of_Set_Bits_In(register_list) * 4)
  */
-void INSTRUCTIONS::thumb::store::STMIA(const thumb_code_t& code) {
+void INSTRUCTIONS::thumb::store::STMIA(const u16 code) {
     const u8 register_list = shared::util::bit_range<u8>(code, 0, 7);
     const u32 Rn = reg.read(code, 8, 10);
-    const id::reg Rn_id = reg.fetch_reg_id(code, 8, 10);
+    const id::reg Rn_id = reg.thumb_fetch_reg_id(code, 8, 10);
 
     const u32 start_address = Rn;
     const u32 end_address = (Rn + (shared::util::popcount(register_list) * 4) - 4);
@@ -53,10 +53,10 @@ void INSTRUCTIONS::thumb::store::STMIA(const thumb_code_t& code) {
  * else
  *   Memory[address,4] = UNPREDICTABLE
  */
-void INSTRUCTIONS::thumb::store::STR1(const thumb_code_t& code) {
+void INSTRUCTIONS::thumb::store::STR1(const u16 code) {
     const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
     const u32 Rn = reg.read(code, 3, 5);
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 address = (Rn + (immed_5 * 4));
 
@@ -84,10 +84,10 @@ void INSTRUCTIONS::thumb::store::STR1(const thumb_code_t& code) {
  * else
  *    Memory[address,4] = UNPREDICTABLE
  */
-void INSTRUCTIONS::thumb::store::STR2(const thumb_code_t& code) {
+void INSTRUCTIONS::thumb::store::STR2(const u16 code) {
     const u32 Rm = reg.read(code, 6, 8);
     const u32 Rn = reg.read(code, 3, 5);
-    const id::reg Rd_id = reg.fetch_reg_id(code, 0, 2);
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 address = (Rn + Rm);
 
@@ -115,9 +115,9 @@ void INSTRUCTIONS::thumb::store::STR2(const thumb_code_t& code) {
  * else
  *    Memory[address,4] = UNPREDICTABLE
  */
-void INSTRUCTIONS::thumb::store::STR3(const thumb_code_t& code) {
+void INSTRUCTIONS::thumb::store::STR3(const u16 code) {
     const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
-    const id::reg Rd_id = reg.fetch_reg_id(code, 8, 10);
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 8, 10);
 
     const u32 address = (reg.read(id::reg::SP) + (immed_8 * 4));
 
@@ -142,7 +142,7 @@ void INSTRUCTIONS::thumb::store::STR3(const thumb_code_t& code) {
  * address = Rn + immed_5
  * Memory[address,1] = Rd[7:0]
  */
-void INSTRUCTIONS::thumb::store::STRB1(const thumb_code_t& code) {
+void INSTRUCTIONS::thumb::store::STRB1(const u16 code) {
     const u32 Rd = reg.read(code, 0, 2);
     const u32 Rn = reg.read(code, 3, 5);
     const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
@@ -162,7 +162,7 @@ void INSTRUCTIONS::thumb::store::STRB1(const thumb_code_t& code) {
  * address = Rn + Rm
  * Memory[address,1] = Rd[7:0]
  */
-void INSTRUCTIONS::thumb::store::STRB2(const thumb_code_t& code) {
+void INSTRUCTIONS::thumb::store::STRB2(const u16 code) {
     const u32 Rd = reg.read(code, 0, 2);
     const u32 Rn = reg.read(code, 3, 5);
     const u32 Rm = reg.read(code, 6, 8);
@@ -185,7 +185,7 @@ void INSTRUCTIONS::thumb::store::STRB2(const thumb_code_t& code) {
  * else
  *    Memory[address,2] = UNPREDICTABLE
  */
-void INSTRUCTIONS::thumb::store::STRH1(const thumb_code_t& code) { // TODO
+void INSTRUCTIONS::thumb::store::STRH1(const u16 code) { // TODO
     const u32 Rd = reg.read(code, 0, 2);
     const u32 Rn = reg.read(code, 3, 5);
     const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
@@ -216,7 +216,7 @@ void INSTRUCTIONS::thumb::store::STRH1(const thumb_code_t& code) { // TODO
  * else
  *    Memory[address,2] = UNPREDICTABLE
  */
-void INSTRUCTIONS::thumb::store::STRH2(const thumb_code_t& code) { // TODO
+void INSTRUCTIONS::thumb::store::STRH2(const u16 code) { // TODO
     const u32 Rd = reg.read(code, 0, 2);
     const u32 Rn = reg.read(code, 3, 5);
     const u32 Rm = reg.read(code, 6, 8);
@@ -254,9 +254,9 @@ void INSTRUCTIONS::thumb::store::STRH2(const thumb_code_t& code) { // TODO
  * assert end_address == address - 4
  * SP = SP - 4*(R + Number_Of_Set_Bits_In(register_list))
  */
-void INSTRUCTIONS::thumb::store::PUSH(const thumb_code_t& code) {
+void INSTRUCTIONS::thumb::store::PUSH(const u16 code) {
     const u8 register_list = shared::util::bit_range<u8>(code, 0, 7);
-    const bool R = code.test(8);
+    const bool R = shared::util::bit_fetch(code, 8);
 
     const u32 SP = reg.read(id::reg::SP);
 

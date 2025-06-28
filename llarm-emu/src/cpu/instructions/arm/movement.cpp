@@ -15,12 +15,12 @@
  *     C Flag = shifter_carry_out
  *     V Flag = unaffected
  */
-void INSTRUCTIONS::arm::movement::MOV(const arm_code_t &code) {
+void INSTRUCTIONS::arm::movement::MOV(const u32 code) {
     const data_struct shifter_operand = address_mode.data_processing(code);
     
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
 
-    const bool S = code.test(20);
+    const bool S = shared::util::bit_fetch(code, 20);
 
     reg.write(Rd_id, shifter_operand.value);
 
@@ -47,12 +47,12 @@ void INSTRUCTIONS::arm::movement::MOV(const arm_code_t &code) {
  *     C Flag = shifter_carry_out
  *     V Flag = unaffected
  */
-void INSTRUCTIONS::arm::movement::MVN(const arm_code_t &code) {
+void INSTRUCTIONS::arm::movement::MVN(const u32 code) {
     const data_struct shifter_operand = address_mode.data_processing(code);
 
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
 
-    const bool S = code.test(20);
+    const bool S = shared::util::bit_fetch(code, 20);
 
     reg.write(Rd_id, ~shifter_operand.value);
 
@@ -68,7 +68,7 @@ void INSTRUCTIONS::arm::movement::MVN(const arm_code_t &code) {
 }
 
 
-void INSTRUCTIONS::arm::movement::MRS(const arm_code_t&) {};// TODO
+void INSTRUCTIONS::arm::movement::MRS(const u32) {};// TODO
 
 
 
@@ -98,13 +98,13 @@ void INSTRUCTIONS::arm::movement::MRS(const arm_code_t&) {};// TODO
  *     if field_mask[3] == 1 and CurrentModeHasSPSR() then
  *       SPSR[31:24] = operand[31:24]
  */
-void INSTRUCTIONS::arm::movement::MSR_IMM(const arm_code_t &code) {
-    const bool R = code.test(22);
+void INSTRUCTIONS::arm::movement::MSR_IMM(const u32 code) {
+    const bool R = shared::util::bit_fetch(code, 22);
 
-    const bool field_mask_c = code.test(16);
-    const bool field_mask_x = code.test(17);
-    const bool field_mask_s = code.test(18);
-    const bool field_mask_f = code.test(19);
+    const bool field_mask_c = shared::util::bit_fetch(code, 16);
+    const bool field_mask_x = shared::util::bit_fetch(code, 17);
+    const bool field_mask_s = shared::util::bit_fetch(code, 18);
+    const bool field_mask_f = shared::util::bit_fetch(code, 19);
 
     u32 operand = 0;
 
@@ -187,13 +187,13 @@ void INSTRUCTIONS::arm::movement::MSR_IMM(const arm_code_t &code) {
  *     if field_mask[3] == 1 and CurrentModeHasSPSR() then
  *       SPSR[31:24] = operand[31:24]
  */
-void INSTRUCTIONS::arm::movement::MSR_REG(const arm_code_t &code) {
-    const bool R = code.test(22);
+void INSTRUCTIONS::arm::movement::MSR_REG(const u32 code) {
+    const bool R = shared::util::bit_fetch(code, 22);
 
-    const bool field_mask_c = code.test(16);
-    const bool field_mask_x = code.test(17);
-    const bool field_mask_s = code.test(18);
-    const bool field_mask_f = code.test(19);
+    const bool field_mask_c = shared::util::bit_fetch(code, 16);
+    const bool field_mask_x = shared::util::bit_fetch(code, 17);
+    const bool field_mask_s = shared::util::bit_fetch(code, 18);
+    const bool field_mask_f = shared::util::bit_fetch(code, 19);
 
     u32 operand = 0;
 

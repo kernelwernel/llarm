@@ -23,12 +23,12 @@ arm_fetch_struct FETCH::arm_fetch() {
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
         return arm_fetch_struct {
-            arm_code_t(0), // code
+            0, // code
             true // has_failed
         };
     } else {
         return arm_fetch_struct {
-            arm_code_t(access.value), // code
+            static_cast<u32>(access.value), // code
             false // has_failed
         };
     }
@@ -45,18 +45,13 @@ thumb_fetch_struct FETCH::thumb_fetch() {
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
         return thumb_fetch_struct {
-            thumb_code_t(0), // code
+            0, // code
             true // has_failed
         };
     } else {
         return thumb_fetch_struct {
-            thumb_code_t(access.value), // code
+            static_cast<u16>(access.value), // code
             false // has_failed
         };
     }
 }
-
-
-//jazelle_code_t FETCH::jazelle_fetch() const {
-//    return memory.read(reg.read(id::reg::PC));
-//}

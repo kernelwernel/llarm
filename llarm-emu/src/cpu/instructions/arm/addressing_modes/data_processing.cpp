@@ -2,6 +2,7 @@
 
 #include "shared/types.hpp"
 #include "shared/util.hpp"
+#include "shared/out.hpp"
 
 /**
  * ===== 32-bit immediate mode =====
@@ -14,7 +15,7 @@
  * 
  * (A5-6)
  */
-data_struct ADDRESSING_MODE::data_process_immediate_mode(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_immediate_mode(const u32 code) {
     data_struct data = {};
 
     const u8 rotate_imm = shared::util::bit_range<u8>(code, 8, 11);
@@ -40,7 +41,7 @@ data_struct ADDRESSING_MODE::data_process_immediate_mode(const arm_code_t &code)
  * 
  * (A5-8)
  */
-data_struct ADDRESSING_MODE::data_process_register(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_register(const u32 code) {
     data_struct data = {};
 
     const u32 Rm = reg.read(code, 0, 3);
@@ -64,7 +65,7 @@ data_struct ADDRESSING_MODE::data_process_register(const arm_code_t &code) {
  * 
  * (A5-9)
  */
-data_struct ADDRESSING_MODE::data_process_logical_shift_left_immediate(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_logical_shift_left_immediate(const u32 code) {
     data_struct data = {};
 
     const u8 shift_imm = shared::util::bit_range<u8>(code, 7, 11);
@@ -94,7 +95,7 @@ data_struct ADDRESSING_MODE::data_process_logical_shift_left_immediate(const arm
  * 
  * (A5-11)
  */
-data_struct ADDRESSING_MODE::data_process_logical_shift_right_immediate(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_logical_shift_right_immediate(const u32 code) {
     data_struct data = {};
 
     const u8 shift_imm = shared::util::bit_range<u8>(code, 7, 11);
@@ -128,7 +129,7 @@ data_struct ADDRESSING_MODE::data_process_logical_shift_right_immediate(const ar
  * 
  * (A5-13)
  */
-data_struct ADDRESSING_MODE::data_process_arithmetic_shift_right_immediate(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_arithmetic_shift_right_immediate(const u32 code) {
     data_struct data = {};
 
     const u8 shift_imm = shared::util::bit_range<u8>(code, 7, 11);
@@ -162,7 +163,7 @@ data_struct ADDRESSING_MODE::data_process_arithmetic_shift_right_immediate(const
  * 
  * (A5-15)
  */
-data_struct ADDRESSING_MODE::data_process_rotate_right_immediate(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_rotate_right_immediate(const u32 code) {
     data_struct data = {};
 
     const u8 shift_imm = shared::util::bit_range<u8>(code, 7, 11);
@@ -197,7 +198,7 @@ data_struct ADDRESSING_MODE::data_process_rotate_right_immediate(const arm_code_
  * 
  * (A5-10)
  */
-data_struct ADDRESSING_MODE::data_process_logical_shift_left_register(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_logical_shift_left_register(const u32 code) {
     data_struct data = {};
 
     const u32 Rs = reg.read(code, 8, 11);
@@ -238,7 +239,7 @@ data_struct ADDRESSING_MODE::data_process_logical_shift_left_register(const arm_
  *   shifter_operand = 0
  *   shifter_carry_out = 0
  */
-data_struct ADDRESSING_MODE::data_process_logical_shift_right_register(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_logical_shift_right_register(const u32 code) {
     data_struct data = {};
 
     const u32 Rs = reg.read(code, 8, 11);
@@ -285,7 +286,7 @@ data_struct ADDRESSING_MODE::data_process_logical_shift_right_register(const arm
  * 
  * (A5-14)
  */
-data_struct ADDRESSING_MODE::data_process_arithmetic_shift_right_register(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_arithmetic_shift_right_register(const u32 code) {
     data_struct data = {};
 
     const u32 Rs = reg.read(code, 8, 11);
@@ -327,7 +328,7 @@ data_struct ADDRESSING_MODE::data_process_arithmetic_shift_right_register(const 
  * 
  * (A5-16)
  */
-data_struct ADDRESSING_MODE::data_process_rotate_right_register(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_rotate_right_register(const u32 code) {
     data_struct data = {};
     
     const u32 Rs = reg.read(code, 8, 11);
@@ -358,7 +359,7 @@ data_struct ADDRESSING_MODE::data_process_rotate_right_register(const arm_code_t
  * 
  * (A5-17)
  */
-data_struct ADDRESSING_MODE::data_process_rotate_right_extend(const arm_code_t &code) {
+data_struct ADDRESSING_MODE::data_process_rotate_right_extend(const u32 code) {
     data_struct data = {};
 
     const u32 Rm = reg.read(code, 0, 3);
@@ -370,45 +371,47 @@ data_struct ADDRESSING_MODE::data_process_rotate_right_extend(const arm_code_t &
 }
 
 
-data_struct ADDRESSING_MODE::data_processing(const arm_code_t &code) {
-    if ((code.test(27) != false) || (code.test(26) != false)) {
+data_struct ADDRESSING_MODE::data_processing(const u32 code) {
+    using namespace shared::util;
+
+    if ((bit_fetch(code, 27) != false) || (bit_fetch(code, 26) != false)) {
         // TODO, error
     }
 
-    const bool I = code.test(25);
+    const bool I = bit_fetch(code, 25);
 
     if (I) {
         return data_process_immediate_mode(code);
     }
     
     if (
-        (code.test(11) == false) &&
-        (code.test(10) == false) &&
-        (code.test(9) == false) &&
-        (code.test(8) == false) &&
-        (code.test(7) == false) &&
-        (code.test(6) == true) &&
-        (code.test(5) == true) &&
-        (code.test(4) == false)
+        (bit_fetch(code, 11) == false) &&
+        (bit_fetch(code, 10) == false) &&
+        (bit_fetch(code, 9) == false) &&
+        (bit_fetch(code, 8) == false) &&
+        (bit_fetch(code, 7) == false) &&
+        (bit_fetch(code, 6) == true) &&
+        (bit_fetch(code, 5) == true) &&
+        (bit_fetch(code, 4) == false)
     ) {
         return data_process_rotate_right_extend(code);
     }
 
     // immediate shift mode
-    if (code.test(4) == false) {
+    if (bit_fetch(code, 4) == false) {
         if (
-            (code.test(11) == false) &&
-            (code.test(10) == false) &&
-            (code.test(9) == false) &&
-            (code.test(8) == false) &&
-            (code.test(7) == false) &&
-            (code.test(6) == false) &&
-            (code.test(5) == false)
+            (bit_fetch(code, 11) == false) &&
+            (bit_fetch(code, 10) == false) &&
+            (bit_fetch(code, 9) == false) &&
+            (bit_fetch(code, 8) == false) &&
+            (bit_fetch(code, 7) == false) &&
+            (bit_fetch(code, 6) == false) &&
+            (bit_fetch(code, 5) == false)
         ) {
             return data_process_register(code);
         }
 
-        const u8 bytecode = ((code.test(6) << 1) | code.test(5));
+        const u8 bytecode = ((bit_fetch(code, 6) << 1) | bit_fetch(code, 5));
 
         switch (bytecode) {
             case 0b00: return data_process_logical_shift_left_immediate(code);
@@ -422,10 +425,10 @@ data_struct ADDRESSING_MODE::data_processing(const arm_code_t &code) {
 
     // register mode
     if (
-        (code.test(7) == false) &&
-        (code.test(4) == true)
+        (bit_fetch(code, 7) == false) &&
+        (bit_fetch(code, 4) == true)
     ) {
-        const u8 bytecode = ((code.test(6) << 1) | code.test(5));
+        const u8 bytecode = ((bit_fetch(code, 6) << 1) | bit_fetch(code, 5));
 
         switch (bytecode) {
             case 0b00: return data_process_logical_shift_left_register(code);

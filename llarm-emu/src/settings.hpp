@@ -2,6 +2,7 @@
 
 #include "id.hpp"
 #include "constants.hpp"
+#include "utility.hpp"
 
 #include "shared/types.hpp"
 
@@ -69,7 +70,8 @@ struct SETTINGS {
     /**/ u8 instruction_cache_assoc_way; 
     /**/ u8 cache_ctype_field; // 0b0000, 0b0001, 0b0010, 0b0110, 0b0111 are supported
 
-    /**/ u8 vfp_version;
+    /**/ id::vfp_version vfp_version;
+    /**/ id::vfp_format vfp_format;
     id::thumb_version thumb_version; // either 1 or 2, 0 if not supported
     /**/ u8 core_count;
     /**/ u16 clock_speed_mhz; // 0 will mean no clock speed constraints 
@@ -83,10 +85,121 @@ struct SETTINGS {
     u8 variant; // cpu variant, implementation defined
     u16 ppn; // primary part number, implementation defined
     u8 revision; // implementation defined
+    u8 vfp_variant;
+    u16 vfp_ppn;
+    u8 vfp_revision;
 
-    void sanitize();
+    constexpr void sanitize() {
+        // only jazelle 
+        if (
+            (is_thumb_enabled == false) &&
+            (is_arm_enabled == false) &&
+            (is_jazelle_enabled == true)
+        ) {
+            
+        }
 
-    SETTINGS() :
+        if (
+            (is_mpu_enabled == true) &&
+            (is_mmu_enabled == true)
+        ) {
+
+        }
+
+        if (is_mmu_tlb_separate && is_mmu_tlb_unified) {
+
+        }
+
+        if (is_mmu_enabled && (is_mmu_tlb_separate == false && is_mmu_tlb_unified == false)) {
+            
+        }
+
+        // i'm not sure if enabling FCSE while MMU or MPU is active is valid, research more TODO
+
+        if (
+            (backwards_compat_support_26_bits && only_26_bits) || 
+            (backwards_compat_support_26_bits && no_26_bits) || 
+            (only_26_bits && no_26_bits)
+        ) {
+            // only one of them should be enabled, can't have more than 2
+        }
+
+        if ((backwards_compat_support_26_bits || only_26_bits || no_26_bits) == false) {
+            // at least one should be enabled
+        }
+
+        if (
+            (is_little_endian && only_big_endian) ||
+            (is_big_endian && only_little_endian)
+        ) {
+            // mismatched endianness constraints
+        }
+
+        if (
+            (is_mmu_enabled && has_system_protection_bit) ||
+            (is_mmu_enabled && has_rom_protection_bit)
+        ) {
+            // system or rom protection settings shouldn't be enabled without an MMU
+        }
+
+        if (
+            (is_mpu_enabled && has_system_protection_bit) ||
+            (is_mpu_enabled && has_rom_protection_bit)
+        ) {
+            // system or rom protection settings shouldn't be enabled without an MPU
+        }
+
+        if (    
+            (has_branch_prediction == false) &&
+            (branch_prediction_cannot_disable == true)
+        ) {
+
+        }
+
+        if (
+            (is_vfp_enabled == false) && 
+            (is_vfp_double_precision_enabled == true)
+        ) {
+
+        }
+
+        if (
+            (thumb_version == id::thumb_version::NO_THUMB) && 
+            (is_thumb_enabled == true)
+        ) {
+            // thumb must have a valid version specified
+        }
+
+        if (
+            (!((thumb_version == id::thumb_version::THUMB1) || (thumb_version == id::thumb_version::THUMB2))) &&
+            (is_thumb_enabled == true)
+        ) {
+            // thumb must have a valid version specified
+        }
+
+        if (
+            ((thumb_version == id::thumb_version::THUMB1) || (thumb_version == id::thumb_version::THUMB2)) &&
+            (is_thumb_enabled == false)
+        ) {
+            // thumb setting must be enabled
+        }
+
+        if (util::simplify_arch_version(specific_arch) == arch) {
+            // the specific arch does not match with the base arch
+        }
+
+        if (core_count == 0) {
+            // core count must be at least 1
+        }
+
+        if (arch == id::arch::ARMv2 && is_multiply_enabled) {
+            // ARMv2 has no support for multiplications
+        }
+
+        // all of the checks above should mostly just set a default correct value instead of crashing completely
+    }
+
+    constexpr SETTINGS() :
         is_thumb_enabled(false),
         is_arm_enabled(false),
         is_jazelle_enabled(false),
@@ -143,8 +256,8 @@ struct SETTINGS {
         data_cache_assoc_way(0), 
         instruction_cache_assoc_way(0), 
         cache_ctype_field(0),
-
-        vfp_version(0),
+        vfp_version(id::vfp_version::UNKNOWN),
+        vfp_format(id::vfp_format::NON_STANDARD),
         thumb_version(id::thumb_version::NO_THUMB),
         core_count(0),
         clock_speed_mhz(0),
@@ -157,14 +270,42 @@ struct SETTINGS {
         processor(id::processor::UNKNOWN),
         variant(0),
         ppn(0),
-        revision(0)
+        revision(0),
+        vfp_variant(0),
+        vfp_ppn(0),
+        vfp_revision(0)
     {
 
     }
 };
 
 
-SETTINGS default_settings();
+constexpr SETTINGS default_settings() {
+    SETTINGS tmp;
+
+    tmp.is_thumb_enabled = true;
+    tmp.is_arm_enabled = true;
+    tmp.is_jazelle_enabled = true;
+    tmp.is_enhanced_DSP_enabled = true;
+    tmp.no_26_bits = true;
+    tmp.no_clock_constraint = true;
+    tmp.is_little_endian = true;
+    tmp.is_big_endian = true;
+    tmp.only_big_endian = false;
+    tmp.is_multiply_enabled = true;
+    tmp.is_abort_model_early = true;
+    tmp.thumb_version = id::thumb_version::THUMB1;
+    tmp.core_count = 1;
+    tmp.memsize = util::get_kb(32);
+    tmp.arch = id::arch::ARMv4;
+    tmp.specific_arch = id::specific_arch::ARMv4T;
+    tmp.product_family = id::product_family::ARM7T;
+    tmp.processor = id::processor::ARM7TDMI_S;
+
+    tmp.sanitize();
+
+    return tmp;
+}
 
 
 // MAKE SURE TO DO SANITY CHECKS ON:

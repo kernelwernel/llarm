@@ -59,7 +59,7 @@ id::arm identifiers::misc_instructions(const u32 code) {
         case 0b1010:
         case 0b1100:
         case 0b1110:
-            const u16 bytecode = (shared::util::bit_range(code, 20, 27) << 4) | shared::util::bit_range(code, 4, 7);
+            const u16 bytecode = static_cast<u16>(shared::util::bit_range<u8>(code, 20, 27) << 4) | shared::util::bit_range<u8>(code, 4, 7);
             
             switch (bytecode) {
                 case 0b000100001000:
@@ -98,8 +98,8 @@ id::arm identifiers::misc_instructions(const u32 code) {
 
 
 id::arm identifiers::multiply_extra_load_store(const u32 code) {
-    const u8 second_half = shared::util::bit_range(code, 20, 24);
-    const u8 first_half = shared::util::bit_range(code, 4, 7);
+    const u8 second_half = shared::util::bit_range<u8>(code, 20, 24);
+    const u8 first_half = shared::util::bit_range<u8>(code, 4, 7);
 
     switch (first_half) {
         // multiplies
@@ -252,7 +252,7 @@ id::arm identifiers::load_store(const u32 code) {
     const bool bit_22 = shared::util::bit_fetch(code, 22);
     const bool bit_20 = shared::util::bit_fetch(code, 20);
 
-    const u8 bytecode = ((bit_22 << 1) | bit_20);
+    const u8 bytecode = (static_cast<u8>(bit_22 << 1) | bit_20);
 
     switch (bytecode) {
         case 0b00: return id::arm::STR;
@@ -264,7 +264,7 @@ id::arm identifiers::load_store(const u32 code) {
     const bool bit_24 = shared::util::bit_fetch(code, 24);
     const bool bit_21 = shared::util::bit_fetch(code, 21);
 
-    const u8 bytecode2 = ((bit_24 << 3) | (bit_22 << 2) | (bit_21 << 1) | bit_20);
+    const u8 bytecode2 = static_cast<u8>((bit_24 << 3) | (bit_22 << 2) | (bit_21 << 1) | bit_20);
 
     switch (bytecode2) {
         case 0b0010: return id::arm::STRT;
@@ -284,22 +284,22 @@ id::arm identifiers::vfp_single(const u32 code) {
     const bool bit_21 = shared::util::bit_fetch(code, 21);
     const bool bit_20 = shared::util::bit_fetch(code, 20);
 
-    const u8 bytecode = (
+    const u8 bytecode = static_cast<u8>(
         (bit_24 << 7) |
         (bit_23 << 6) |
         (bit_21 << 5) |
         (bit_20 << 4) |
-        //(shared::util::bit_range(code, 16, 19) << 4) |
-        shared::util::bit_range(code, 4, 7)
+        shared::util::bit_range<u8>(code, 4, 7)
     );
 
-    const u8 middle_zone = shared::util::bit_range(code, 16, 19);
+    const u8 middle_zone = shared::util::bit_range<u8>(code, 16, 19);
     switch (bytecode) {
         case 0b01111100:
             if (middle_zone == 0b0101) {
                 return id::arm::FCMPEZS;
             }
-            // no break on purpose
+
+            [[fallthrough]]; // no break on purpose
         case 0b01111110: 
             switch (middle_zone) {
                 case 0b0100: return id::arm::FCMPES;
@@ -400,6 +400,7 @@ id::arm identifiers::vfp_single(const u32 code) {
             if (shared::util::bit_fetch(code, 22) == true) {
                 return id::arm::FMXR;
             }
+            break;
     
         case 0b00110100:
         case 0b00110110:
@@ -430,8 +431,8 @@ id::arm identifiers::vfp_single(const u32 code) {
 
 
 id::arm identifiers::vfp_double(const u32 code) {
-    const u8 left = shared::util::bit_range(code, 20, 23);
-    const u8 right = shared::util::bit_range(code, 4, 7);
+    const u8 left = shared::util::bit_range<u8>(code, 20, 23);
+    const u8 right = shared::util::bit_range<u8>(code, 4, 7);
 
     switch (left) {
         case 0b0000:
@@ -468,7 +469,8 @@ id::arm identifiers::vfp_double(const u32 code) {
             } else if (right == 0b0100) {
                 return id::arm::FNMSCD;
             }
-            // no break on puipose
+
+            [[fallthrough]]; // no break on purpose
 
         case 0b1001:
             if (shared::util::bit_range(code, 8, 11) == 0b1011) {
@@ -477,7 +479,7 @@ id::arm identifiers::vfp_double(const u32 code) {
             break;
 
         case 0b1011: {
-            const u8 middle = shared::util::bit_range(code, 16, 19);
+            const u8 middle = shared::util::bit_range<u8>(code, 16, 19);
 
             if (right == 0b1100) {
                 switch (middle) {
@@ -539,7 +541,7 @@ id::arm identifiers::vfp_double(const u32 code) {
             break;
         
         case 0b1111:
-            const u8 middle = shared::util::bit_range(code, 16, 19);
+            const u8 middle = shared::util::bit_range<u8>(code, 16, 19);
 
             if (right == 0b1100) {
                 if (middle == 0b0111) {
@@ -631,7 +633,7 @@ id::arm identifiers::arm(const u32 code, const settings &settings) {
             const bool bit_23 = shared::util::bit_fetch(code, 23);
             const bool bit_24 = shared::util::bit_fetch(code, 24);
 
-            const u8 bytecode = ((bit_24 << 3) | (bit_23 << 2) | (bit_21 << 1) | bit_20);
+            const u8 bytecode = static_cast<u8>((bit_24 << 3) | (bit_23 << 2) | (bit_21 << 1) | bit_20);
 
             if (bytecode == 0b1000) {
                 return id::arm::UNDEFINED;
@@ -705,14 +707,14 @@ id::arm identifiers::arm(const u32 code, const settings &settings) {
         // complete
         case 0b110: {
             // coprocessor load/store and double register transfers [6]
-            const u8 bytecode = shared::util::bit_range(code, 20, 24);
+            const u8 bytecode = shared::util::bit_range<u8>(code, 20, 24);
 
             if (shared::util::bit_fetch(code, 20) == 0) {
                 if (bytecode == 0b00100) {
                     return id::arm::MCRR;
                 } 
 
-                const u8 middle_right_zone = shared::util::bit_range(code, 8, 11);
+                const u8 middle_right_zone = shared::util::bit_range<u8>(code, 8, 11);
                 if (middle_right_zone == 0b1010) {
                     if (
                         (shared::util::bit_fetch(code, 24)) &&
@@ -752,7 +754,7 @@ id::arm identifiers::arm(const u32 code, const settings &settings) {
                         }
                 }
 
-                const u8 middle_right_zone = shared::util::bit_range(code, 8, 11);
+                const u8 middle_right_zone = shared::util::bit_range<u8>(code, 8, 11);
                 if (middle_right_zone == 0b1010) {
                     return id::arm::FLDMS;
                 } else if (
@@ -790,7 +792,7 @@ id::arm identifiers::arm(const u32 code, const settings &settings) {
                         return id::arm::MCR;
                     }
                 } else {
-                    const u8 cp_num = shared::util::bit_range(code, 8, 11);
+                    const u8 cp_num = shared::util::bit_range<u8>(code, 8, 11);
                     if (cp_num == 0b1010) {
                         return vfp_single(code);
                     } else if (cp_num == 0b1011) {
@@ -805,5 +807,3 @@ id::arm identifiers::arm(const u32 code, const settings &settings) {
 
     return id::arm::UNDEFINED;
 }
-
-//id::arm arm(const std::string string_code) {}

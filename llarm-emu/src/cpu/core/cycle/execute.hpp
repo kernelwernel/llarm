@@ -17,5 +17,12 @@ public:
     
     void thumb_execute(const thumb_decode_struct &code);
 
-    EXECUTE(INSTRUCTIONS& instructions, EXCEPTION& exception);
+    EXECUTE(
+        INSTRUCTIONS& instructions, 
+        EXCEPTION& exception
+    ) : instructions(instructions), 
+        exception(exception) 
+    {
+
+    }
 };

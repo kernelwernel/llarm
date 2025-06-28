@@ -501,6 +501,18 @@ namespace id {
         REGION_7
     };
 
+    enum class vfp_version : u8 {
+        UNKNOWN,
+        VFPv1,
+        VFPv2,
+        VFPv3,
+        VFPv3_D16,
+        VFPv3_F16,
+        VFPv4,
+        VFPv4_D16,
+        VFPv5_D16_M
+    };
+
     enum class vfp_exception : u8 {
         INVALID_OPERATION,
         DIV_BY_ZERO,
@@ -589,6 +601,12 @@ namespace id {
         FPEXC,
         FPEXC_EX,
         FPEXC_EN
+    };
+
+    enum class vfp_format {
+        NON_STANDARD,
+        FORMAT_1,
+        FORMAT_2
     };
 
     enum class product_family : u8 {

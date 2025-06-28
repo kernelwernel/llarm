@@ -1,7 +1,9 @@
 #include "tlb.hpp"
 
 #include "llarm-emu/src/id.hpp"
+
 #include "shared/util.hpp"
+#include "shared/out.hpp"
 
 void TLB::flush() {
     if (settings.is_mmu_tlb_unified) {

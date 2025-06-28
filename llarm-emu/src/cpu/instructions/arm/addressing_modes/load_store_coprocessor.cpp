@@ -1,18 +1,22 @@
 #include "addressing_modes.hpp"
+
 #include "shared/types.hpp"
 #include "shared/util.hpp"
+#include "shared/out.hpp"
 
 
-ADDRESSING_MODE::address_struct ADDRESSING_MODE::load_store_coprocessor(const arm_code_t &code) {
+address_struct ADDRESSING_MODE::load_store_coprocessor(const u32 code) {
+    using namespace shared::util;
+
     if (
-        (code.test(27) != true) || 
-        (code.test(26) != true) ||
-        (code.test(25) != false)
+        (bit_fetch(code, 27) != true) || 
+        (bit_fetch(code, 26) != true) ||
+        (bit_fetch(code, 25) != false)
     ) {
         shared::out::error("TODO");
     }
    
-    const u8 shift_type = ((code.test(24) << 1) | (code.test(22)));
+    const u8 shift_type = ((bit_fetch(code, 24) << 1) | (bit_fetch(code, 22)));
 
     switch (shift_type) {
         case 0b10: return ls_coproc_imm(code);
@@ -35,13 +39,15 @@ ADDRESSING_MODE::address_struct ADDRESSING_MODE::load_store_coprocessor(const ar
  *         address = address + 4
  *     end_address = address
  */
-ADDRESSING_MODE::address_struct ADDRESSING_MODE::ls_coproc_imm(const arm_code_t &code) {
+address_struct ADDRESSING_MODE::ls_coproc_imm(const u32 code) {
+    using namespace shared::util;
+
     u32 address = 0;
 
     const u8 offset_8 = shared::util::bit_range<u8>(code, 0, 7);
     const u32 Rn = reg.read(code, 16, 19);
     
-    if (code.test(23)) {
+    if (bit_fetch(code, 23)) {
         address = Rn + (offset_8 * 4);
     } else {
         address = Rn - (offset_8 * 4);
@@ -50,11 +56,12 @@ ADDRESSING_MODE::address_struct ADDRESSING_MODE::ls_coproc_imm(const arm_code_t 
     const u32 start_address = address;
     const u8 cp_num = shared::util::bit_range(code, 8, 11);
 
-    // ????
+    // ???? TODO
 
+    // temporary
     return address_struct {
         start_address,
-        end_address
+        0
     };
 }
 
@@ -71,16 +78,29 @@ ADDRESSING_MODE::address_struct ADDRESSING_MODE::ls_coproc_imm(const arm_code_t 
  *         address = address + 4
  *     end_address = address
  */
-ADDRESSING_MODE::address_struct ADDRESSING_MODE::ls_coproc_imm_pre(const arm_code_t &code) {
+address_struct ADDRESSING_MODE::ls_coproc_imm_pre(const u32 code) {
+    const bool U = shared::util::bit_fetch(code, 23);
+    const u8 offset_8 = shared::util::bit_range(code, 0, 7);
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
 
+    if (U == true) {
+        reg.write(Rn_id, (reg.read(Rn_id) + offset_8 * 4));
+    } else {
+        reg.write(Rn_id, (reg.read(Rn_id) - offset_8 * 4));
+    }
+
+    const u32 start_address = reg.read(Rn_id);
+    u32 address = start_address;
+
+    
 }
 
 
-ADDRESSING_MODE::address_struct ADDRESSING_MODE::ls_coproc_imm_post(const arm_code_t &code) {
-
+address_struct ADDRESSING_MODE::ls_coproc_imm_post(const u32 code) {
+// TODO
 }
 
 
-ADDRESSING_MODE::address_struct ADDRESSING_MODE::ls_coproc_unindexed(const arm_code_t &code) {
-
+address_struct ADDRESSING_MODE::ls_coproc_unindexed(const u32 code) {
+// TODO
 }

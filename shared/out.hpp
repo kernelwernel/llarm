@@ -20,35 +20,35 @@ namespace shared::out {
 
 
     template <typename... Args>
-    static void info(const Args&... message) noexcept {
+    static void info(const Args&... message) {
         std::cout << bold << "[" << blue << "INFO" << ansiexit << bold << "]" << ansiexit << " ";
         ((std::cout << message), ...);
         std::printf("\n");
     }
 
     template <typename... Args>
-    static void warning(const Args&... message) noexcept {
+    static void warning(const Args&... message) {
         std::cout << bold << "[" << orange << "WARNING" << ansiexit << bold << "]" << ansiexit << " ";
         ((std::cout << message), ...);
         std::printf("\n");
     }
 
     template <typename... Args>
-    static void failed_assert(const Args&... message) noexcept {
+    static void failed_assert(const Args&... message) {
         std::cout << bold << "[" << grey << "FAILED ASSERT" << ansiexit << bold << "]" << ansiexit << " ";
         ((std::cout << message), ...);
         std::printf("\n");
     }
 
     template <typename... Args>
-    static void unpredictable(const Args&... message) noexcept {
+    static void unpredictable(const Args&... message) {
         std::cout << bold << "[" << grey << "UNPREDICTABLE" << ansiexit << bold << "]" << ansiexit << " ";
         ((std::cout << message), ...);
         std::printf("\n");
     }
 
     template <typename... Args>
-    [[noreturn]] static void error(const Args&... message) noexcept {
+    [[noreturn]] static void error(const Args&... message) {
         std::cout << bold << "[" << red << "ERROR" << ansiexit << bold << "]" << ansiexit << " ";
         ((std::cout << message),...);
         std::printf("\n");

@@ -16,13 +16,13 @@
  *     C Flag = CarryFrom(Rn + shifter_operand + C Flag)
  *     V Flag = OverflowFrom(Rn + shifter_operand + C Flag)
  */
-void INSTRUCTIONS::arm::math::ADC(const arm_code_t &code) {
+void INSTRUCTIONS::arm::math::ADC(const u32 code) {
     const data_struct shifter_operand = address_mode.data_processing(code);
 
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
 
-    const bool S = code.test(20);
+    const bool S = shared::util::bit_fetch(code, 20);
 
     reg.write(Rd_id, (Rn + shifter_operand.value + reg.read(id::cpsr::C)));
 
@@ -50,13 +50,13 @@ void INSTRUCTIONS::arm::math::ADC(const arm_code_t &code) {
  *     C Flag = CarryFrom(Rn + shifter_operand)
  *     V Flag = OverflowFrom(Rn + shifter_operand)
  */
-void INSTRUCTIONS::arm::math::ADD(const arm_code_t &code) {
+void INSTRUCTIONS::arm::math::ADD(const u32 code) {
     const data_struct shifter_operand = address_mode.data_processing(code);
 
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
 
-    const bool S = code.test(20);
+    const bool S = shared::util::bit_fetch(code, 20);
 
     reg.write(Rd_id, (Rn + shifter_operand.value));
 
@@ -83,13 +83,13 @@ void INSTRUCTIONS::arm::math::ADD(const arm_code_t &code) {
  *     C Flag = NOT BorrowFrom(shifter_operand - Rn - NOT(C Flag))
  *     V Flag = OverflowFrom(shifter_operand - Rn - NOT(C Flag))
  */
-void INSTRUCTIONS::arm::math::RSC(const arm_code_t &code) {
+void INSTRUCTIONS::arm::math::RSC(const u32 code) {
     const data_struct shifter_operand = address_mode.data_processing(code);
     
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
 
-    const bool S = code.test(20);
+    const bool S = shared::util::bit_fetch(code, 20);
 
     reg.write(Rd_id, (shifter_operand.value - Rn - !(reg.read(id::cpsr::C))));
 
@@ -116,13 +116,13 @@ void INSTRUCTIONS::arm::math::RSC(const arm_code_t &code) {
  *     C Flag = NOT BorrowFrom(Rn - shifter_operand - NOT(C Flag))
  *     V Flag = OverflowFrom(Rn - shifter_operand - NOT(C Flag)
  */ 
-void INSTRUCTIONS::arm::math::SBC(const arm_code_t &code) {
+void INSTRUCTIONS::arm::math::SBC(const u32 code) {
     const u16 shifter_operand = shared::util::bit_range<u16>(code, 0, 11);
     
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
 
-    const bool S = code.test(20);
+    const bool S = shared::util::bit_fetch(code, 20);
 
     reg.write(Rd_id, (Rn - shifter_operand - !(reg.read(id::cpsr::C))));
 
@@ -149,13 +149,13 @@ void INSTRUCTIONS::arm::math::SBC(const arm_code_t &code) {
  *     C Flag = NOT BorrowFrom(shifter_operand - Rn)
  *     V Flag = OverflowFrom(shifter_operand - Rn)
  */ 
-void INSTRUCTIONS::arm::math::RSB(const arm_code_t &code) {
+void INSTRUCTIONS::arm::math::RSB(const u32 code) {
     const u16 shifter_operand = shared::util::bit_range<u16>(code, 0, 11);
     
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
 
-    const bool S = code.test(20);
+    const bool S = shared::util::bit_fetch(code, 20);
 
     reg.write(Rd_id, (shifter_operand - Rn));
 
@@ -182,13 +182,13 @@ void INSTRUCTIONS::arm::math::RSB(const arm_code_t &code) {
  *     C Flag = NOT BorrowFrom(Rn - shifter_operand)
  *     V Flag = OverflowFrom(Rn - shifter_operand)
  */
-void INSTRUCTIONS::arm::math::SUB(const arm_code_t &code) {
+void INSTRUCTIONS::arm::math::SUB(const u32 code) {
     const data_struct shifter_operand = address_mode.data_processing(code);
 
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
 
-    const bool S = code.test(20);
+    const bool S = shared::util::bit_fetch(code, 20);
 
     reg.write(Rd_id, (Rn - shifter_operand.value));
 

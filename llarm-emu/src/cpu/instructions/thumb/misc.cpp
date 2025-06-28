@@ -3,7 +3,7 @@
 
 #include "shared/types.hpp"
 
-void INSTRUCTIONS::thumb::misc::NOP(const thumb_code_t &code) noexcept {
+void INSTRUCTIONS::thumb::misc::NOP(const u16 code) {
     std::exit(0);
 
     return;
@@ -22,7 +22,7 @@ void INSTRUCTIONS::thumb::misc::NOP(const thumb_code_t &code) noexcept {
  *     else 
  *         PC = 0x0000000C
  */
-void INSTRUCTIONS::thumb::misc::BKPT(const thumb_code_t &code) {
+void INSTRUCTIONS::thumb::misc::BKPT(const u16 code) {
     if (settings.has_debug_hardware) {
         // TODO: switch to the debug hardware functionality (idk how)
     
@@ -58,7 +58,7 @@ void INSTRUCTIONS::thumb::misc::BKPT(const thumb_code_t &code) {
  * else
  *   PC = 0x00000008
  */
-void INSTRUCTIONS::thumb::misc::SWI(const thumb_code_t &code) {
+void INSTRUCTIONS::thumb::misc::SWI(const u16 code) {
     // IGNORED BY THE ARM HARDWARE, only here for debug purposes
     // const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
 

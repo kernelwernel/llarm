@@ -5,12 +5,12 @@
 #include "shared/types.hpp"
 
 struct arm_fetch_struct {
-    arm_code_t code;
+    u32 code;
     bool has_failed;
 };
 
 struct thumb_fetch_struct {
-    thumb_code_t code;
+    u16 code;
     bool has_failed;
 };
 
