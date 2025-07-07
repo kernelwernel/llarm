@@ -456,24 +456,50 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
     
     switch (reg) {
         case id::cp15::UNKNOWN: return; // TODO log this somehow
-        case id::cp15::R0_ID: R0_ID = value; return;
-        case id::cp15::R0_ID_REVISION: util::swap_bits(R0_ID, 0, 3, value); return;
-        case id::cp15::R0_ID_IMPLEMENTOR: util::swap_bits(R0_ID, 24, 31, value); return;
-        case id::cp15::R0_ID_PPN: util::swap_bits(R0_ID, 4, 15, value); return;
-        case id::cp15::R0_ID_PRE7_ID: util::swap_bits(R0_ID, 0, 3, value); return;
-        case id::cp15::R0_ID_PRE7_REVISION: util::swap_bits(R0_ID, 4, 31, value); return;
-        case id::cp15::R0_ID_7_REVISION: util::swap_bits(R0_ID, 0, 3, value); return;
-        case id::cp15::R0_ID_7_PPN: util::swap_bits(R0_ID, 4, 15, value); return;
-        case id::cp15::R0_ID_7_PPN_TOP: util::swap_bits(R0_ID, 12, 15, value); return;
-        case id::cp15::R0_ID_7_VARIANT: util::swap_bits(R0_ID, 16, 22, value); return;
-        case id::cp15::R0_ID_7_A: util::modify_bit(R0_ID, 23, value); return;
-        case id::cp15::R0_ID_7_IMPLEMENTOR: util::swap_bits(R0_ID, 24, 31, value); return;
-        case id::cp15::R0_ID_POST7_REVISION: util::swap_bits(R0_ID, 0, 3, value); return;
-        case id::cp15::R0_ID_POST7_PPN: util::swap_bits(R0_ID, 4, 15, value); return;
-        case id::cp15::R0_ID_POST7_PPN_TOP: util::swap_bits(R0_ID, 12, 15, value); return;
-        case id::cp15::R0_ID_POST7_ARCHITECTURE: util::swap_bits(R0_ID, 16, 19, value); return;
-        case id::cp15::R0_ID_POST7_VARIANT: util::swap_bits(R0_ID, 20, 23, value); return;
-        case id::cp15::R0_ID_POST7_IMPLEMENTOR: util::swap_bits(R0_ID, 24, 31, value); return;
+        case id::cp15::R0_ID:
+        case id::cp15::R0_ID_REVISION:
+        case id::cp15::R0_ID_IMPLEMENTOR:
+        case id::cp15::R0_ID_PPN:
+        case id::cp15::R0_ID_PRE7_ID:
+        case id::cp15::R0_ID_PRE7_REVISION:
+        case id::cp15::R0_ID_7_REVISION:
+        case id::cp15::R0_ID_7_PPN:
+        case id::cp15::R0_ID_7_PPN_TOP:
+        case id::cp15::R0_ID_7_VARIANT:
+        case id::cp15::R0_ID_7_A:
+        case id::cp15::R0_ID_7_IMPLEMENTOR:
+        case id::cp15::R0_ID_POST7_REVISION:
+        case id::cp15::R0_ID_POST7_PPN:
+        case id::cp15::R0_ID_POST7_PPN_TOP:
+        case id::cp15::R0_ID_POST7_ARCHITECTURE:
+        case id::cp15::R0_ID_POST7_VARIANT:
+        case id::cp15::R0_ID_POST7_IMPLEMENTOR:
+            // all of the zones in the R0_ID register are read-only
+            if (!forced) {
+                return;
+            }
+
+            switch (reg) {
+                case id::cp15::R0_ID: R0_ID = value; return;
+                case id::cp15::R0_ID_REVISION: util::swap_bits(R0_ID, 0, 3, value); return;
+                case id::cp15::R0_ID_IMPLEMENTOR: util::swap_bits(R0_ID, 24, 31, value); return;
+                case id::cp15::R0_ID_PPN: util::swap_bits(R0_ID, 4, 15, value); return;
+                case id::cp15::R0_ID_PRE7_ID: util::swap_bits(R0_ID, 0, 3, value); return;
+                case id::cp15::R0_ID_PRE7_REVISION: util::swap_bits(R0_ID, 4, 31, value); return;
+                case id::cp15::R0_ID_7_REVISION: util::swap_bits(R0_ID, 0, 3, value); return;
+                case id::cp15::R0_ID_7_PPN: util::swap_bits(R0_ID, 4, 15, value); return;
+                case id::cp15::R0_ID_7_PPN_TOP: util::swap_bits(R0_ID, 12, 15, value); return;
+                case id::cp15::R0_ID_7_VARIANT: util::swap_bits(R0_ID, 16, 22, value); return;
+                case id::cp15::R0_ID_7_A: util::modify_bit(R0_ID, 23, value); return;
+                case id::cp15::R0_ID_7_IMPLEMENTOR: util::swap_bits(R0_ID, 24, 31, value); return;
+                case id::cp15::R0_ID_POST7_REVISION: util::swap_bits(R0_ID, 0, 3, value); return;
+                case id::cp15::R0_ID_POST7_PPN: util::swap_bits(R0_ID, 4, 15, value); return;
+                case id::cp15::R0_ID_POST7_PPN_TOP: util::swap_bits(R0_ID, 12, 15, value); return;
+                case id::cp15::R0_ID_POST7_ARCHITECTURE: util::swap_bits(R0_ID, 16, 19, value); return;
+                case id::cp15::R0_ID_POST7_VARIANT: util::swap_bits(R0_ID, 20, 23, value); return;
+                case id::cp15::R0_ID_POST7_IMPLEMENTOR: util::swap_bits(R0_ID, 24, 31, value); return;
+                default: shared::out::dev_error("Impossible write operation on cp15");
+            }
         case id::cp15::R0_CACHE: R0_CACHE = value; return;
         case id::cp15::R0_CACHE_CTYPE: util::swap_bits(R0_CACHE, 25, 28, value); return;
         case id::cp15::R0_CACHE_S: util::modify_bit(R0_CACHE, 24, value); return;
@@ -494,7 +520,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             // this bit reads as 0 and ignores writes. (B2-13)
             if (settings.is_mpu_enabled) {
                 if ((R6_PU_0 + R6_PU_1 + R6_PU_2 + R6_PU_3 + R6_PU_4 + R6_PU_5 + R6_PU_6 + R6_PU_7) == 0) {
-                    // TODO warning: PU must have at least a single protection region setup
+                    shared::out::warning("PU must have at least a single protection region setup");
                 }
 
                 util::modify_bit(R1, 0, value); 
@@ -981,7 +1007,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 case id::cp15::R6_PU_DATA_5: R6_PU_DATA_5 = value; return;
                 case id::cp15::R6_PU_DATA_6: R6_PU_DATA_6 = value; return;
                 case id::cp15::R6_PU_DATA_7: R6_PU_DATA_7 = value; return;
-                default: return; // TODO dev error
+                default: shared::out::dev_error("Impossible write operation on R6_PU register set in cp15");
             }
 
         case id::cp15::R7: R7 = value; return;
@@ -1041,68 +1067,83 @@ void CP15::setup_R0_processor_id() {
 
     if (pre_arm7) {
         switch (settings.processor) {
-            case id::processor::ARM3:   write(id::cp15::R0_ID_PRE7_ID, 0x4156030); break;
-            case id::processor::ARM600: write(id::cp15::R0_ID_PRE7_ID, 0x4156060); break;
-            case id::processor::ARM610: write(id::cp15::R0_ID_PRE7_ID, 0x4156061); break;
-            case id::processor::ARM620: write(id::cp15::R0_ID_PRE7_ID, 0x4156062); break;
+            case id::processor::ARM3:   force_write(id::cp15::R0_ID_PRE7_ID, 0x4156030); break;
+            case id::processor::ARM600: force_write(id::cp15::R0_ID_PRE7_ID, 0x4156060); break;
+            case id::processor::ARM610: force_write(id::cp15::R0_ID_PRE7_ID, 0x4156061); break;
+            case id::processor::ARM620: force_write(id::cp15::R0_ID_PRE7_ID, 0x4156062); break;
             default: 
                 shared::out::warning("Pre-ARM7 configuration is invalid, defaulting the processor ID to ARM620");
-                write(id::cp15::R0_ID_PRE7_ID, 0x4156062);
+                force_write(id::cp15::R0_ID_PRE7_ID, 0x4156062);
         }
     } else {
         // https://developer.arm.com/documentation/ddi0406/b/Appendices/ARMv4-and-ARMv5-Differences/System-Control-coprocessor--CP15--support/c0--ID-support?lang=en#CHDGAGJH
 
+        const u8 upper_ppn = shared::util::bit_range(settings.ppn, 12, 15);
+    
         if (arm7) {
             // variant (ARM7 specific)
-            write(id::cp15::R0_ID_7_VARIANT, settings.variant);
+            force_write(id::cp15::R0_ID_7_VARIANT, settings.variant);
 
             // A bit
             if (settings.specific_arch == id::specific_arch::ARMv3) {
-                write(id::cp15::R0_ID_7_A, false);
+                force_write(id::cp15::R0_ID_7_A, false);
             } else if (settings.specific_arch == id::specific_arch::ARMv4T) {
-                write(id::cp15::R0_ID_7_A, true);
+                force_write(id::cp15::R0_ID_7_A, true);
             } else {
                 shared::out::warning("\"A\" bit in R0 processor ID for ARM7 is invalid, defaulting to 1 (ARMv4T)");
+            }
+
+            // ppn
+            if (upper_ppn != 0x7) {
+                shared::out::error("PPN upper 4 bits must be 0x7 for ARM7 family");
             }
         } else if (post_arm7) {
             // architecure
             switch (settings.specific_arch) {
-                case id::specific_arch::ARMv4:    write(id::cp15::R0_ID_POST7_ARCHITECTURE, 0x1); break;
-                case id::specific_arch::ARMv4T:   write(id::cp15::R0_ID_POST7_ARCHITECTURE, 0x2); break;
-                case id::specific_arch::ARMv5:    write(id::cp15::R0_ID_POST7_ARCHITECTURE, 0x3); break; // obsolete
-                case id::specific_arch::ARMv5T:   write(id::cp15::R0_ID_POST7_ARCHITECTURE, 0x4); break;
-                case id::specific_arch::ARMv5TE:  write(id::cp15::R0_ID_POST7_ARCHITECTURE, 0x5); break;
-                case id::specific_arch::ARMv5TEJ: write(id::cp15::R0_ID_POST7_ARCHITECTURE, 0x6); break;
-                case id::specific_arch::ARMv6:    write(id::cp15::R0_ID_POST7_ARCHITECTURE, 0x7); break;
+                case id::specific_arch::ARMv4:    force_write(id::cp15::R0_ID_POST7_ARCHITECTURE, 0x1); break;
+                case id::specific_arch::ARMv4T:   force_write(id::cp15::R0_ID_POST7_ARCHITECTURE, 0x2); break;
+                case id::specific_arch::ARMv5:    force_write(id::cp15::R0_ID_POST7_ARCHITECTURE, 0x3); break; // obsolete
+                case id::specific_arch::ARMv5T:   force_write(id::cp15::R0_ID_POST7_ARCHITECTURE, 0x4); break;
+                case id::specific_arch::ARMv5TE:  force_write(id::cp15::R0_ID_POST7_ARCHITECTURE, 0x5); break;
+                case id::specific_arch::ARMv5TEJ: force_write(id::cp15::R0_ID_POST7_ARCHITECTURE, 0x6); break;
+                case id::specific_arch::ARMv6:    force_write(id::cp15::R0_ID_POST7_ARCHITECTURE, 0x7); break;
                 // https://en.wikipedia.org/wiki/Comparison_of_ARM_processors
-                default: write(id::cp15::R0_ID_POST7_ARCHITECTURE, 0xF); // defined by CPUID scheme, TODO: research wtf this actually is
+                default: force_write(id::cp15::R0_ID_POST7_ARCHITECTURE, 0xF); // defined by CPUID scheme, TODO: research wtf this actually is
             }
 
             // variant (post-ARM7 specific)
-            write(id::cp15::R0_ID_POST7_VARIANT, settings.variant);
+            force_write(id::cp15::R0_ID_POST7_VARIANT, settings.variant);
+
+            // ppn
+            if (upper_ppn == 0x7 || upper_ppn == 0x0) {
+                shared::out::error("PPN upper 4 bits must be 0x7 for post-ARM7 family");
+            }
         }
+
+        // PPN (primary part number)
+        force_write(id::cp15::R0_ID_PPN, settings.ppn);
 
         // implementor
         // source: https://developer.arm.com/documentation/ddi0406/b/System-Level-Architecture/Virtual-Memory-System-Architecture--VMSA-/CP15-registers-for-a-VMSA-implementation/c0--Main-ID-Register--MIDR-?lang=en
         //         https://github.com/NetBSD/src/blob/461e4391743c2e1fdff97bb2b351cfb1a5fd083a/sys/arch/arm/include/cputypes.h#L48
         switch (settings.implementor) {
-            case id::implementor::ARM:      write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::ARM /* A */); break;
-            case id::implementor::BRCM:     write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::BRCM /* B */); break;
-            case id::implementor::DEC:      write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::DEC /* D */); break;
-            case id::implementor::MOTOROLA: write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::MOTOROLA /* M */); break;
-            case id::implementor::QUALCOMM: write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::QUALCOMM /* Q */); break;
-            case id::implementor::MARVELL:  write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::MARVELL /* V */); break;
-            case id::implementor::INTEL:    write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::INTEL /* i */); break;
-            case id::implementor::CAVIUM:   write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::CAVIUM /* C */); break;
-            case id::implementor::FUJITSU:  write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::FUJITSU /* F */); break;
-            case id::implementor::INFINEON: write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::INFINEON /* I */); break;
-            case id::implementor::NVIDIA:   write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::NVIDIA /* N */); break;
-            case id::implementor::APM:      write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::APM /* P */); break;
-            case id::implementor::SAMSUNG:  write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::SAMSUNG /* S */); break;
-            case id::implementor::TI:       write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::TI /* T */); break;
-            case id::implementor::APPLE:    write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::APPLE /* a */); break;
-            case id::implementor::FARADAY:  write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::FARADAY /* f */); break;
-            case id::implementor::AMPERE:   write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::AMPERE /* À */); break;
+            case id::implementor::ARM:      force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::ARM /* A */); break;
+            case id::implementor::BRCM:     force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::BRCM /* B */); break;
+            case id::implementor::DEC:      force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::DEC /* D */); break;
+            case id::implementor::MOTOROLA: force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::MOTOROLA /* M */); break;
+            case id::implementor::QUALCOMM: force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::QUALCOMM /* Q */); break;
+            case id::implementor::MARVELL:  force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::MARVELL /* V */); break;
+            case id::implementor::INTEL:    force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::INTEL /* i */); break;
+            case id::implementor::CAVIUM:   force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::CAVIUM /* C */); break;
+            case id::implementor::FUJITSU:  force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::FUJITSU /* F */); break;
+            case id::implementor::INFINEON: force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::INFINEON /* I */); break;
+            case id::implementor::NVIDIA:   force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::NVIDIA /* N */); break;
+            case id::implementor::APM:      force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::APM /* P */); break;
+            case id::implementor::SAMSUNG:  force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::SAMSUNG /* S */); break;
+            case id::implementor::TI:       force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::TI /* T */); break;
+            case id::implementor::APPLE:    force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::APPLE /* a */); break;
+            case id::implementor::FARADAY:  force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::FARADAY /* f */); break;
+            case id::implementor::AMPERE:   force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::AMPERE /* À */); break;
             case id::implementor::LLARM:    
                 u8 implementor_code = 0;
 
@@ -1113,20 +1154,10 @@ void CP15::setup_R0_processor_id() {
                     implementor_code = constants::implementor::LLARM;
                 }
 
-                write(id::cp15::R0_ID_IMPLEMENTOR, implementor_code);
+                force_write(id::cp15::R0_ID_IMPLEMENTOR, implementor_code);
                 break;
         }
-
-        // primary part number
-        if (settings.ppn != 0) {
-            write(id::cp15::R0_ID_PPN, settings.ppn);
-        } else {
-            // TODO 
-        }
     }
-
-    // last minute CPU checks just in case (TODO)
-
 }
 
 
@@ -1453,6 +1484,11 @@ void CP15::reset() {
 
 
 CP15::CP15(SETTINGS& settings, GLOBALS& globals, TLB& tlb) : settings(settings), globals(globals), tlb(tlb) {
+    // coprocessors didn't exist in ARMv1
+    if (settings.arch == id::arch::ARMv1) {
+        return;
+    }
+
     // R0 setup
     setup_R0_processor_id();
     setup_R0_cache();

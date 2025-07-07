@@ -12,6 +12,8 @@
 #include "../../id.hpp"
 
 #include "cp15.hpp"
+#include "../../settings.hpp"
+#include "../globals.hpp"
 
 #include "shared/types.hpp"
 
@@ -24,7 +26,7 @@ private:
 
 public:
     id::cp fetch_cp_id(const u8 raw_cp_num);
-
+    
     void write(
         const id::cp15 cp15_id, 
         const u32 value,
@@ -64,13 +66,3 @@ public:
         CP15& cp15
     );
 };
-
-
-
-
-
-// NOTES:
-/*
-MRC p15,0,<Rt>,c0,c0,0    ; Read CP15 Main ID Register
-MRC p15,0,<Rt>,c0,c0,1    ; Read CP15 Cache Type Register
-*/

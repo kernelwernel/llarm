@@ -8,6 +8,7 @@ namespace util {
     void modify_bit(u32 &original, const u8 index, const bool value);
 
     void swap_bits(u32 &original, const u8 start, const u8 end, const u32 value);
+    void swap_bits_vfp(u64 &original, const u8 start, const u8 end, const u32 value);
 
     // custom integral concept template
     template <typename T>

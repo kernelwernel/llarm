@@ -1,0 +1,44 @@
+Language: Cpp
+#DisableFormat: true
+IndentWidth: 8
+#TabWidth: 4
+AccessModifierOffset: -4
+#AlignArrayOfStructures: Left
+#AlignEscapedNewlines: Left
+AlignOperands: Align
+AlignAfterOpenBracket: DontAlign
+##AlignConsecutiveAssignments:
+##  Enabled: true
+##  AcrossEmptyLines: false
+##  AcrossComments: false
+##  AlignCompound: false
+##  AlignFunctionPointers: false
+##  PadOperators: false
+#AlignConsecutiveDeclarations:
+#  Enabled: false
+#AlignConsecutiveShortCaseStatements:
+#  Enabled: true
+#  AcrossEmptyLines: false
+#  AcrossComments: false
+#  AlignCaseColons: true
+#NamespaceIndentation: All
+#IndentExternBlock: AfterExternBlock
+##AlignTrailingComments:
+##  Kind: Always
+##  OverEmptyLines: 0
+##IndentCaseLabels: false
+#IndentWrappedFunctionNames: false
+#ContinuationIndentWidth: 4
+#IndentAccessModifiers: false
+#AllowShortEnumsOnASingleLine: true
+#AllowShortFunctionsOnASingleLine: Inline
+#AllowShortCaseLabelsOnASingleLine: true
+#FixNamespaceComments: false
+#
+#AlignAfterOpenBracket: DontAlign
+#AlignOperands: DontAlign
+#BinPackArguments: true
+#BinPackParameters: true
+#AllowAllArgumentsOnNextLine: true
+#PenaltyBreakAssignment: 1000
+#PenaltyBreakBeforeFirstCallParameter: 1000

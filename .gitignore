@@ -22,3 +22,4 @@ README.md
 tmpCMakeLists.txt
 .cache/
 gpu/
+assets/private/

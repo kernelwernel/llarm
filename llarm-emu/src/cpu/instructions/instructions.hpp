@@ -3,6 +3,7 @@
 #include "../core/registers.hpp"
 #include "../coprocessor/coprocessor.hpp"
 #include "../memory/memory.hpp"
+#include "../vfp/registers.hpp"
 #include "arm/addressing_modes/addressing_modes.hpp"
 #include "operation.hpp"
 
@@ -250,8 +251,24 @@ public:
         struct vfp {
             REGISTERS& reg;
             OPERATION& operation;
+            COPROCESSOR& coprocessor;
+            MEMORY& memory;
+            VFP_REG& vfp_reg;
 
-            vfp(REGISTERS& reg, OPERATION& operation) : reg(reg), operation(operation) {}
+            vfp(
+                REGISTERS& reg, 
+                OPERATION& operation, 
+                COPROCESSOR& coprocessor,
+                MEMORY& memory,
+                VFP_REG& vfp_reg
+            ) : reg(reg), 
+                operation(operation),
+                coprocessor(coprocessor),
+                memory(memory),
+                vfp_reg(vfp_reg)
+            {
+
+            }
     
             void FABSD(const u32); // TODO, D
             void FABSS(const u32); // TODO
@@ -325,7 +342,8 @@ public:
             COPROCESSOR& coprocessor,
             MEMORY& memory,
             SETTINGS& settings,
-            EXCEPTION& exception
+            EXCEPTION& exception,
+            VFP_REG& vfp_reg
         ) : math(reg, operation, address_mode),
             logic(reg, operation, address_mode),
             movement(reg, operation, address_mode),
@@ -336,7 +354,7 @@ public:
             load(reg, operation, memory, address_mode, settings),
             store(reg, operation, memory, address_mode),
             dsp(reg, operation, memory, address_mode, exception),
-            vfp(reg, operation)
+            vfp(reg, operation, coprocessor, memory, vfp_reg)
         {
 
         }
@@ -534,14 +552,15 @@ public:
         COPROCESSOR& coprocessor,
         SETTINGS& settings,
         MEMORY& memory,
-        EXCEPTION& exception
+        EXCEPTION& exception,
+        VFP_REG& vfp_reg
     ) : reg(reg),
         address_mode(address_mode),
         operation(operation),
         coprocessor(coprocessor),
         settings(settings),
         memory(memory),
-        arm(reg, operation, address_mode, coprocessor, memory, settings, exception),
+        arm(reg, operation, address_mode, coprocessor, memory, settings, exception, vfp_reg),
         thumb(reg, operation, settings, memory)
     {
 

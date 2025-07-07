@@ -522,6 +522,7 @@ namespace id {
     };
 
     enum class vfp_reg : u8 {
+        UNKNOWN,
         S0,
         S1,
         S2,
@@ -856,13 +857,13 @@ namespace id {
         DEC, // digital equipment corporation
         MOTOROLA,
         QUALCOMM,
-        MARVELL, 
+        MARVELL,
         INTEL,
         CAVIUM,
         FUJITSU,
         INFINEON,
         NVIDIA,
-        APM,
+        APM, // applied micro circuits corporation
         SAMSUNG,
         TI, // texas instruments (this is a guess)
         APPLE,

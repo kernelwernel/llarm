@@ -82,7 +82,7 @@ public:
         memory(reg, ram, mmu, mpu, fcse, arch_26, exception),
         operation(),
         address_mode(reg, operation),
-        instructions(reg, address_mode, operation, coprocessor, settings, memory, exception),
+        instructions(reg, address_mode, operation, coprocessor, settings, memory, exception, vfp_reg),
         fetch(reg, memory, globals),
         decode(reg, settings),
         execute(instructions, exception)

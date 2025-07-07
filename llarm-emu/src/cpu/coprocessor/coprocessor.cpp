@@ -34,7 +34,7 @@ id::cp COPROCESSOR::fetch_cp_id(const u8 raw_cp_num) {
         case 0b1101: return id::cp::CP13;
         case 0b1110: return id::cp::CP14;
         case 0b1111: return id::cp::CP15;
-        default: shared::out::error("TODO");
+        default: shared::out::dev_error("Unknown coprocessor id argument for fetching_cp_id()");
     };
 }
 
@@ -107,9 +107,6 @@ u32 COPROCESSOR::read(
         case id::cp::CP14:
         case id::cp::CP15: return cp15.read(cp15.identify(CRn, CRm, opcode_2));
     }
-
-    // TODO ERROR
-    return 0;
 }
 
 
