@@ -49,7 +49,7 @@ void RAM::write(const u64 &value, const u32 address, const u8 access_size) {
 }
 
 
-std::vector<u8> RAM::read(const u32 start, const u32 end) {
+std::vector<u8> RAM::vector_read(const u32 start, const u32 end) {
     return std::vector<u8>(ram.cbegin() + start, ram.cbegin() + end);
 }
 

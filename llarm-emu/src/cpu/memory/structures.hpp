@@ -28,3 +28,12 @@ struct translation_struct {
     id::aborts abort_code;
     u32 physical_address;
 };
+
+
+// specific to the TLB
+struct tlb_fetch_struct {
+    bool is_found;
+    bool is_in_unified_table;
+    bool is_in_inst_table;
+    bool is_in_data_table;
+};

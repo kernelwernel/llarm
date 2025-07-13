@@ -2,7 +2,7 @@
 
 #include "../globals.hpp"
 #include "../coprocessor/coprocessor.hpp"
-#include "structure.hpp"
+#include "structures.hpp"
 #include "ram.hpp"
 #include "fcse.hpp"
 

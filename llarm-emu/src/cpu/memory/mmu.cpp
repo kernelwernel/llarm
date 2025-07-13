@@ -4,7 +4,7 @@
 #include "llarm-emu/src/id.hpp"
 #include "ram.hpp"
 #include "shared/out.hpp"
-#include "structure.hpp"
+#include "structures.hpp"
 
 #include "mmu.hpp"
 
@@ -38,49 +38,6 @@ id::second_level MMU::get_second_level_id(const u8 entry) {
         case 0b11: return id::second_level::TINY;
         default: shared::out::error("Something went horribly wrong, todo"); // dev error TODO
     }
-}
-
-
-u32 MMU::first_level_fetch(const u32 key) {
-    const auto it = tlb.first_level.find(key);
-
-    if (it != tlb.first_level.end()) {
-        return it->second;
-    } else {
-        // not found, do a table walk (i think) TODO
-        return 0; // temporary
-    }
-}
-
-
-u32 MMU::second_level_fetch(const u32 key, const id::first_level first_level_type) {
-    switch (first_level_type) {
-        case id::first_level::COARSE: {
-            const auto it_coarse = tlb.second_level_coarse.find(key);
-
-            if (it_coarse != tlb.second_level_coarse.end()) {
-                return it_coarse->second;
-            } else {
-                // not found, do a table walk (i think) TODO
-            }
-            return 0; // temporary, only here to remove errors 
-        }
-
-        case id::first_level::FINE: {
-            const auto it_fine = tlb.second_level_fine.find(key);
-
-            if (it_fine != tlb.second_level_fine.end()) {
-                return it_fine->second;
-            } else {
-                // not found, do a table walk (i think) TODO
-            }
-            return 0; // temporary, only here to remove errors 
-        }
-        
-        default: break;
-    }
-
-    shared::out::error("Something went horribly wrong here..."); // dev error TODO
 }
 
 
@@ -492,7 +449,7 @@ bool MMU::is_mmu_enabled() {
 }
 
 
-translation_struct MMU::translate_address(const u32 address, const id::access_type access_type, const u8 access_size) {
+translation_struct MMU::page_walk(const u32 address, const id::access_type access_type, const u8 access_size) {
     if (
         (alignment.is_enabled()) && 
         (access_type != id::access_type::INSTRUCTION_FETCH)
@@ -512,7 +469,7 @@ translation_struct MMU::translate_address(const u32 address, const id::access_ty
 
     const u32 first_level_descriptor_address = ((translation_base << 14) | (table_index << 2));
 
-    const u32 first_level_descriptor = first_level_fetch(first_level_descriptor_address);
+    const u32 first_level_descriptor = ram.read(first_level_descriptor_address, 4);
 
     // TODO EXTERNAL ABORT MANAGEMENT HERE
 
@@ -533,13 +490,16 @@ translation_struct MMU::translate_address(const u32 address, const id::access_ty
             };
     };
 
-    const u32 second_level_descriptor = second_level_fetch(second_key, first_level_id);
+    const u32 second_level_descriptor = ram.read(second_key, 4);
 
     const id::second_level entry_id = get_second_level_id(second_level_descriptor);
 
     const u8 domain_bits = shared::util::bit_range(first_level_descriptor, 5, 8);
 
     switch (entry_id) {
+        case id::second_level::LARGE: return second_large(second_level_descriptor, address, access_size, access_type, domain_bits);
+        case id::second_level::SMALL: return second_small(second_level_descriptor, address, access_size, access_type, domain_bits);
+        case id::second_level::TINY: return second_tiny(second_level_descriptor, address, access_size, access_type, domain_bits);
         case id::second_level::FAULT:
             manage_abort(id::aborts::PAGE_TRANSLATION, address, domain_bits);
             return translation_struct {
@@ -547,9 +507,21 @@ translation_struct MMU::translate_address(const u32 address, const id::access_ty
                 /* abort_code */ id::aborts::PAGE_TRANSLATION,
                 /* physical_address */ 0
             };
-        case id::second_level::LARGE: return second_large(second_level_descriptor, address, access_size, access_type, domain_bits);
-        case id::second_level::SMALL: return second_small(second_level_descriptor, address, access_size, access_type, domain_bits);
-        case id::second_level::TINY: return second_tiny(second_level_descriptor, address, access_size, access_type, domain_bits);
+    }
+}
+
+
+translation_struct MMU::translate_address(const u32 address, const id::access_type access_type, const u8 access_size) {
+    const tlb_fetch_struct tlb_fetch = tlb.is_translation_cached(address);
+
+    if (tlb_fetch.is_found) { // TLB hit
+        return translation_struct {
+            /* has_failed */ false,
+            /* abort_code */ id::aborts::NO_ABORT,
+            /* physical_address */ tlb.fetch(address, tlb_fetch)
+        };
+    } else { // TLB miss
+        return page_walk(address, access_type, access_size);
     }
 }
 
@@ -692,4 +664,8 @@ void MMU::reset() {
      * 5: when the address is finally retrieved, put that in the TLB
      *   5a: write it by either in a currently unused entry 
      *   5b: or by overwriting an existing entry
+
+
+    coase = 256 entries
+    fine = 1024 entries
      */

@@ -1,41 +1,40 @@
 #pragma once
 
 #include "../../settings.hpp"
+#include "structures.hpp"
 
 #include "shared/types.hpp"
 
-#include <map>
+#include <unordered_map>
 
 
 struct TLB {
 private:
     SETTINGS& settings;
 
-public:
-    // holds section translations and pointers to second level table indexes
-    std::map<u32, u32> first_level {};
-    std::map<u32, u32> second_level_coarse {}; // holds large and small page translations (256)
-    std::map<u32, u32> second_level_fine {}; // holds large, small, and tiny page translations (B3-7) (1024)
-
-    std::map<u32, u32> first_level_inst {};
-    std::map<u32, u32> second_level_coarse_inst {};
-    std::map<u32, u32> second_level_fine_inst {};
-
-    std::map<u32, u32> first_level_data {};
-    std::map<u32, u32> second_level_coarse_data {};
-    std::map<u32, u32> second_level_fine_data {};
-
 private:
-    void invalidate(const u32 virtual_address, const u32 translation_base, const id::tlb_type tlb_type);
+    std::unordered_map<u32, u32> unified_table;
+    std::unordered_map<u32, u32> inst_table;
+    std::unordered_map<u32, u32> data_table;
 
 public:
+    // read B3-27 for more context
+    u32 W_unified;
+    u32 W_inst;
+    u32 W_data;
+
+public:
+    void invalidate(const u32 virtual_address, const id::tlb_type tlb_type);
+
     void flush();
 
-    void table_walk();
+    u32 fetch(const u32 virtual_address, const tlb_fetch_struct tlb_fetch);
 
-    void function(const u8 opcode_2, const u8 CRm, const u32 data, const u32 translation_base);
+    tlb_fetch_struct is_translation_cached(const u32 virtual_address);
 
-    TLB(SETTINGS& settings) : settings(settings) {
+    bool is_type_invalid(const id::tlb_type tlb_type);
 
-    }
+    void function(const u8 opcode_2, const u8 CRm, const u32 data);
+
+    TLB(SETTINGS& settings);
 };

@@ -3,7 +3,7 @@
 #include "../coprocessor/coprocessor.hpp"
 #include "llarm-emu/src/id.hpp"
 #include "shared/out.hpp"
-#include "structure.hpp"
+#include "structures.hpp"
 
 #include "mpu.hpp"
 

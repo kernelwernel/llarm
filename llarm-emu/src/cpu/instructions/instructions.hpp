@@ -540,11 +540,6 @@ public:
         }
     } thumb;
 
-
-   // struct jazelle {
-   //     
-   // }
-
     INSTRUCTIONS(
         REGISTERS& reg, 
         ADDRESSING_MODE& address_mode,

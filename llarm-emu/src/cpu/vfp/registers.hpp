@@ -46,6 +46,8 @@ public:
     id::vfp_reg fetch_single_reg_id(const u32 code, const u8 start, const u8 end);
     id::vfp_reg fetch_double_reg_id(const u32 code, const u8 start, const u8 end);
 
+    u8 fetch_vec_len();
+
     void reset();
 
     void setup();

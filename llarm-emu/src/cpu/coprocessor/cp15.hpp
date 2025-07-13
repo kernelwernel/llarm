@@ -115,6 +115,8 @@ public:
     // MMU: TLB lockdown
     // MPU: reserved
     u32 R10 = 0;
+    u32 R10_INST = 0;
+    u32 R10_DATA = 0;
 
     // reserved
     u32 R11 = 0;

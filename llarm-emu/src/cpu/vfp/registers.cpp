@@ -349,6 +349,11 @@ id::vfp_reg VFP_REG::fetch_double_reg_id(const u32 code, const u8 start, const u
 }
 
 
+u8 VFP_REG::fetch_vec_len() {
+    return shared::util::bit_range(FPSCR, 16, 18);
+}
+
+
 void VFP_REG::reset() {
     write(id::vfp_reg::FPEXC_EN, false);
     D0 = 0;

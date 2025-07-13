@@ -6,7 +6,7 @@
 #include "ram.hpp"
 #include "tlb.hpp"
 #include "alignment.hpp"
-#include "structure.hpp"
+#include "structures.hpp"
 
 #include "shared/types.hpp"
 
@@ -48,6 +48,8 @@ private:
 
 public:
     bool is_mmu_enabled();
+
+    translation_struct page_walk(const u32 address, const id::access_type access_type, const u8 access_size);
 
     translation_struct translate_address(const u32 address, const id::access_type access_type, const u8 access_size);
 

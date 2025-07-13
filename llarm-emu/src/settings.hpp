@@ -15,8 +15,8 @@ struct SETTINGS {
     bool is_mpu_separate;
     bool is_mpu_enabled; // not to be confused with both
     bool is_mmu_enabled; // not to be confused with both
-    bool is_mmu_tlb_separate;
-    bool is_mmu_tlb_unified;
+    bool is_tlb_separate;
+    bool is_tlb_unified;
     /**/ bool is_fcse_enabled;
     bool has_coprocessor;
     /**/ bool has_cache;
@@ -46,8 +46,8 @@ struct SETTINGS {
     bool has_branch_prediction;
     bool branch_prediction_cannot_disable;
     bool has_high_vectors;
-    /**/ bool has_normal_cache_strategy;
-    /**/ bool has_predictable_cache_strategy;
+    /**/ bool has_random_replacement_cache_strategy;
+    /**/ bool has_round_robin_replacement_cache_strategy;
     /**/ bool is_L4_bit_enabled_cp15;
     bool has_debug_hardware;
     bool anti_emulation_detection;
@@ -69,6 +69,11 @@ struct SETTINGS {
     /**/ u8 data_cache_assoc_way; 
     /**/ u8 instruction_cache_assoc_way; 
     /**/ u8 cache_ctype_field; // 0b0000, 0b0001, 0b0010, 0b0110, 0b0111 are supported
+
+    /**/ u8 unified_tlb_entry_size;
+    /**/ u8 inst_tlb_entry_size;
+    /**/ u8 data_tlb_entry_size;
+    /**/ id::tlb_type tlb_type;
 
     /**/ id::vfp_version vfp_version;
     /**/ id::vfp_format vfp_format;
@@ -106,11 +111,11 @@ struct SETTINGS {
 
         }
 
-        if (is_mmu_tlb_separate && is_mmu_tlb_unified) {
+        if (is_tlb_separate && is_tlb_unified) {
 
         }
 
-        if (is_mmu_enabled && (is_mmu_tlb_separate == false && is_mmu_tlb_unified == false)) {
+        if (is_mmu_enabled && (is_tlb_separate == false && is_tlb_unified == false)) {
             
         }
 
@@ -207,7 +212,7 @@ struct SETTINGS {
         is_mpu_separate(false),
         is_mpu_enabled(false),
         is_mmu_enabled(false),
-        is_mmu_tlb_separate(false),
+        is_tlb_separate(false),
         is_fcse_enabled(false),
         has_coprocessor(false),
         has_cache(false),
@@ -237,8 +242,8 @@ struct SETTINGS {
         has_branch_prediction(false),
         branch_prediction_cannot_disable(false),
         has_high_vectors(false),
-        has_normal_cache_strategy(false),
-        has_predictable_cache_strategy(false),
+        has_random_replacement_cache_strategy(false),
+        has_round_robin_replacement_cache_strategy(false),
         is_L4_bit_enabled_cp15(false),
         has_debug_hardware(false),
         anti_emulation_detection(false),
@@ -256,6 +261,9 @@ struct SETTINGS {
         data_cache_assoc_way(0), 
         instruction_cache_assoc_way(0), 
         cache_ctype_field(0),
+        unified_tlb_entry_size(0),
+        inst_tlb_entry_size(0),
+        data_tlb_entry_size(0),
         vfp_version(id::vfp_version::UNKNOWN),
         vfp_format(id::vfp_format::NON_STANDARD),
         thumb_version(id::thumb_version::NO_THUMB),
@@ -301,6 +309,8 @@ constexpr SETTINGS default_settings() {
     tmp.specific_arch = id::specific_arch::ARMv4T;
     tmp.product_family = id::product_family::ARM7T;
     tmp.processor = id::processor::ARM7TDMI_S;
+    tmp.has_round_robin_replacement_cache_strategy = true;
+    tmp.ppn = 0x7;
 
     tmp.sanitize();
 

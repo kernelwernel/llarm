@@ -419,6 +419,14 @@ namespace id {
         R10_MMU_VICTIM,
         R10_MMU_P,
         R10_PU,
+        R10_MMU_INST,
+        R10_MMU_INST_BASE,
+        R10_MMU_INST_VICTIM,
+        R10_MMU_INST_P,
+        R10_MMU_DATA,
+        R10_MMU_DATA_BASE,
+        R10_MMU_DATA_VICTIM,
+        R10_MMU_DATA_P,
 
         R11,
         R12,
@@ -486,6 +494,7 @@ namespace id {
 
     enum class tlb_type : u8 {
         UNIFIED,
+        SEPARATE,
         SEPARATE_INST,
         SEPARATE_DATA
     };

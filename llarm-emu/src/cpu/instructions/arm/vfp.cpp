@@ -4,58 +4,55 @@
 #include "shared/util.hpp"
 
 
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Dd[i] = abs(Dm[i])
+ */
 void INSTRUCTIONS::arm::vfp::FABSD(const u32 code) {
-
-
+    for (u8 i = 0; i < vfp_reg.fetch_vec_len() - 1; i++) {
+        
+    }
 }
 
-void INSTRUCTIONS::arm::vfp::FABSS(const u32 code) {
 
+void INSTRUCTIONS::arm::vfp::FABSS(const u32 code) {
 
 }
 
 void INSTRUCTIONS::arm::vfp::FADDD(const u32 code) {
 
-
 }
 
 void INSTRUCTIONS::arm::vfp::FADDS(const u32 code) {
-
 
 }
 
 void INSTRUCTIONS::arm::vfp::FCMPD(const u32 code) {
 
-
 }
 
 void INSTRUCTIONS::arm::vfp::FCMPED(const u32 code) {
-
 
 }
 
 void INSTRUCTIONS::arm::vfp::FCMPES(const u32 code) {
 
-
 }
 
 void INSTRUCTIONS::arm::vfp::FCMPEZD(const u32 code) {
-
 
 }
 
 void INSTRUCTIONS::arm::vfp::FCMPEZS(const u32 code) {
 
-
 }
 
 void INSTRUCTIONS::arm::vfp::FCMPS(const u32 code) {
 
-
 }
 
 void INSTRUCTIONS::arm::vfp::FCMPZD(const u32 code) {
-
 
 }
 

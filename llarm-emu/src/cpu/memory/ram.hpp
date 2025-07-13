@@ -33,7 +33,7 @@ public:
 
     void write(const u64 &value, const u32 address, const u8 access_size);
 
-    std::vector<u8> read(const u32 start, const u32 end);
+    std::vector<u8> vector_read(const u32 start, const u32 end);
 
     u64 read(const u32 address, const u8 access_size);
 

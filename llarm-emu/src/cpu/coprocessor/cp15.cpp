@@ -18,7 +18,6 @@
 #include "shared/util.hpp"
 #include "shared/out.hpp"
 
-
 id::cp15 CP15::identify_R6(const u8 CRm, const u8 opcode_2) {
     if (settings.is_mpu_enabled) {
         if (settings.is_mpu_separate) {
@@ -79,6 +78,8 @@ id::cp15 CP15::identify(const u8 CRn, const u8 CRm, const u8 opcode_2) {
                 return id::cp15::R0_ID;
             }
 
+            return id::cp15::UNKNOWN;
+
         case 1: return id::cp15::R1;
 
         case 2: 
@@ -86,9 +87,9 @@ id::cp15 CP15::identify(const u8 CRn, const u8 CRm, const u8 opcode_2) {
                 return id::cp15::R2_PU;
             } else if (settings.is_mmu_enabled) {
                 return id::cp15::R2_MMU;
-            } else {
-                return id::cp15::UNKNOWN;
             }
+        
+            return id::cp15::UNKNOWN;
         
         case 3: 
             if (settings.is_mpu_enabled) {
@@ -105,18 +106,18 @@ id::cp15 CP15::identify(const u8 CRn, const u8 CRm, const u8 opcode_2) {
                 return id::cp15::R3_PU;
             } else if (settings.is_mmu_enabled) {
                 return id::cp15::R3_MMU;
-            } else {
-                return id::cp15::UNKNOWN;
             }
+        
+            return id::cp15::UNKNOWN;
         
         case 4: 
             if (settings.is_mpu_enabled) {
                 return id::cp15::R4_PU;
             } else if (settings.is_mmu_enabled) {
                 return id::cp15::R4_MMU;
-            } else {
-                return id::cp15::UNKNOWN;
             }
+        
+            return id::cp15::UNKNOWN;
         
         case 5: 
             if (settings.is_mpu_enabled) {
@@ -133,9 +134,9 @@ id::cp15 CP15::identify(const u8 CRn, const u8 CRm, const u8 opcode_2) {
                 return id::cp15::R5_PU;
             } else if (settings.is_mmu_enabled) {
                 return id::cp15::R5_MMU;
-            } else {
-                return id::cp15::UNKNOWN;
             }
+
+            return id::cp15::UNKNOWN;
         
         // this is the only function for specific identification because of the 
         // amount of indentation if this was manually inlined here
@@ -148,9 +149,9 @@ id::cp15 CP15::identify(const u8 CRn, const u8 CRm, const u8 opcode_2) {
                 return id::cp15::R8_PU;
             } else if (settings.is_mmu_enabled) {
                 return id::cp15::R8_MMU;
-            } else {
-                return id::cp15::UNKNOWN;
-            }
+            } 
+
+            return id::cp15::UNKNOWN;
 
         case 9: return id::cp15::R9;
 
@@ -158,10 +159,22 @@ id::cp15 CP15::identify(const u8 CRn, const u8 CRm, const u8 opcode_2) {
             if (settings.is_mpu_enabled) {
                 return id::cp15::R10_PU;
             } else if (settings.is_mmu_enabled) {
-                return id::cp15::R10_MMU;
-            } else {
-                return id::cp15::UNKNOWN;
+                if (settings.is_tlb_unified) {
+                    return id::cp15::R10_MMU;
+                } 
+
+                if (CRm != 0) {
+                    return id::cp15::UNKNOWN;
+                }
+
+                if (opcode_2 == 0) {
+                    return id::cp15::R10_MMU_DATA;
+                } else if (opcode_2 == 1) {
+                    return id::cp15::R10_MMU_INST;
+                }
             }
+
+            return id::cp15::UNKNOWN;
 
         case 11: return id::cp15::R11; 
         case 12: return id::cp15::R12; 
@@ -428,9 +441,17 @@ u32 CP15::read(const id::cp15 reg) {
         case id::cp15::R9_CACHE_L: // TODO
         case id::cp15::R10: return R10;
         case id::cp15::R10_MMU: return R10;
-        case id::cp15::R10_MMU_BASE: // TODO: SEE PAGE B3-27
-        case id::cp15::R10_MMU_VICTIM: // TODO: SEE PAGE B3-27
+        case id::cp15::R10_MMU_BASE: return shared::util::bit_range(R10, (32 - tlb.W_unified), 31);
+        case id::cp15::R10_MMU_VICTIM: return shared::util::bit_range(R10, (32 - (2 * tlb.W_unified)), (31 - tlb.W_unified));
         case id::cp15::R10_MMU_P: return (R10 & 1);
+        case id::cp15::R10_MMU_INST: return R10_INST;
+        case id::cp15::R10_MMU_INST_BASE: return shared::util::bit_range(R10_INST, (32 - tlb.W_inst), 31);
+        case id::cp15::R10_MMU_INST_VICTIM: return shared::util::bit_range(R10_INST, (32 - (2 * tlb.W_inst)), (31 - tlb.W_inst));
+        case id::cp15::R10_MMU_INST_P: return (R10_INST & 1);
+        case id::cp15::R10_MMU_DATA: return R10_DATA;
+        case id::cp15::R10_MMU_DATA_BASE: return shared::util::bit_range(R10_DATA, (32 - tlb.W_data), 31);
+        case id::cp15::R10_MMU_DATA_VICTIM: return shared::util::bit_range(R10_DATA, (32 - (2 * tlb.W_data)), (31 - tlb.W_data)); 
+        case id::cp15::R10_MMU_DATA_P: return (R10_DATA & 1);
         case id::cp15::R10_PU: return R10;
         case id::cp15::R11: return R11;
         case id::cp15::R12: return R12;
@@ -678,7 +699,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 return;
             }
 
-            if (settings.has_predictable_cache_strategy || forced) {
+            if (settings.has_round_robin_replacement_cache_strategy || forced) {
                 util::modify_bit(R1, 14, value);
             }
 
@@ -1013,16 +1034,24 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
         case id::cp15::R7: R7 = value; return;
         case id::cp15::R7_CACHE_INDEX: // TODO
         case id::cp15::R7_CACHE_SET: // TODO
-        case id::cp15::R8_MMU: tlb.function(opcode_2, CRm, data, read(id::cp15::R2_MMU_TRANSLATION_BASE)); return;
+        case id::cp15::R8_MMU: tlb.function(opcode_2, CRm, data); return;
         case id::cp15::R8_PU: R8 = value; return;
         case id::cp15::R9: R9 = value; return;
         case id::cp15::R9_CACHE_INDEX: // TODO
         case id::cp15::R9_CACHE_L: // TODO
         case id::cp15::R10: R10 = value; return;
         case id::cp15::R10_MMU: R10 = value; return;
-        case id::cp15::R10_MMU_BASE: // TODO: SEE PAGE B3-27
-        case id::cp15::R10_MMU_VICTIM: // TODO: SEE PAGE B3-27
+        case id::cp15::R10_MMU_BASE: util::swap_bits(R10, (32 - tlb.W_unified), 31, value); return;
+        case id::cp15::R10_MMU_VICTIM: util::swap_bits(R10, (32 - (2 * tlb.W_unified)), (31 - tlb.W_unified), value); return;
         case id::cp15::R10_MMU_P: util::modify_bit(R10, 0, value); return;
+        case id::cp15::R10_MMU_INST: R10_INST = value; return;
+        case id::cp15::R10_MMU_INST_BASE: util::swap_bits(R10_INST, (32 - tlb.W_inst), 31, value); return;
+        case id::cp15::R10_MMU_INST_VICTIM: util::swap_bits(R10_INST, (32 - (2 * tlb.W_inst)), (31 - tlb.W_data), value); return;
+        case id::cp15::R10_MMU_INST_P: util::modify_bit(R10_INST, 0, value); return;
+        case id::cp15::R10_MMU_DATA: R10_DATA = value; return;
+        case id::cp15::R10_MMU_DATA_BASE: util::swap_bits(R10_DATA, (32 - tlb.W_data), 31, value); return;
+        case id::cp15::R10_MMU_DATA_VICTIM: util::swap_bits(R10_DATA, (32 - (2 * tlb.W_data)), (31 - tlb.W_data), value); return;
+        case id::cp15::R10_MMU_DATA_P: util::modify_bit(R10_DATA, 0, value); return;
         case id::cp15::R10_PU: R10 = value; return;
         case id::cp15::R11: R11 = value; return;
         case id::cp15::R12: R12 = value; return;
@@ -1078,7 +1107,7 @@ void CP15::setup_R0_processor_id() {
     } else {
         // https://developer.arm.com/documentation/ddi0406/b/Appendices/ARMv4-and-ARMv5-Differences/System-Control-coprocessor--CP15--support/c0--ID-support?lang=en#CHDGAGJH
 
-        const u8 upper_ppn = shared::util::bit_range(settings.ppn, 12, 15);
+        const u8 upper_ppn = settings.ppn;
     
         if (arm7) {
             // variant (ARM7 specific)
@@ -1121,7 +1150,7 @@ void CP15::setup_R0_processor_id() {
         }
 
         // PPN (primary part number)
-        force_write(id::cp15::R0_ID_PPN, settings.ppn);
+        force_write(id::cp15::R0_ID_PPN, upper_ppn);
 
         // implementor
         // source: https://developer.arm.com/documentation/ddi0406/b/System-Level-Architecture/Virtual-Memory-System-Architecture--VMSA-/CP15-registers-for-a-VMSA-implementation/c0--Main-ID-Register--MIDR-?lang=en
@@ -1401,7 +1430,7 @@ void CP15::setup_R1_control() {
             force_write(id::cp15::R1_B, true);
             globals.is_little_endian = false;
         } else {
-            shared::out::error("Invalid B bit configuration in R1 cache setup");
+            shared::out::error("Invalid B bit configuration in CP15 R1 cache setup");
         }
     }
 
@@ -1425,7 +1454,14 @@ void CP15::setup_R1_control() {
     force_write(id::cp15::R1_V, settings.has_high_vectors);
 
     // RR
-    force_write(id::cp15::R1_RR, settings.has_predictable_cache_strategy);
+    
+    if (settings.has_round_robin_replacement_cache_strategy) {
+        force_write(id::cp15::R1_RR, true);
+    } else if (settings.has_random_replacement_cache_strategy) {
+        force_write(id::cp15::R1_RR, false);
+    } else {
+        shared::out::error("Invalid RR bit configuration in CP15 R1 cache setup");
+    }
 
     // L4
     force_write(id::cp15::R1_L4, settings.is_L4_bit_enabled_cp15);
@@ -1487,7 +1523,7 @@ CP15::CP15(SETTINGS& settings, GLOBALS& globals, TLB& tlb) : settings(settings),
     // coprocessors didn't exist in ARMv1
     if (settings.arch == id::arch::ARMv1) {
         return;
-    }
+    }    
 
     // R0 setup
     setup_R0_processor_id();
