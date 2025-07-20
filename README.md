@@ -4,7 +4,7 @@
 <br>
 <img src="assets/logo/dog.png" height="250" title="LLARM">
 <br>
-<small>Artwork by <a href="https://t04st3r.carrd.co/">T04st3r</a><small>
+<small>Artwork by <a href="https://t04st3r.carrd.co/">T04st3r</a></small>
 </div>
 
 **LLARM** (Low Level ARM) is an infrastructure toolchain for the ARM architecture that provides libraries and/or tools for:
@@ -17,7 +17,7 @@
  - and many other sub-projects are planned or currently in development
 
 
-
+- - -
 
 > [!IMPORTANT]
 > ## Note from the developer
@@ -27,6 +27,7 @@
 > 
 > My objective is to provide a completely new framework to work with the ARM architecture, with goals to have it become a suitable industry standard candidate for many low-level embedded development requirements out there. Think of it as LLVM but for ARM instead of compilers.
 
+<br>
 
 # Current development roadmap 
 TODO
