@@ -1,8 +1,10 @@
 #include "../instructions.hpp"
 
+#include "llarm-emu/src/utility.hpp"
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 
+#include <cstring>
 
 /**
  * if ConditionPassed(cond) then
@@ -11,7 +13,7 @@
  */
 void INSTRUCTIONS::arm::vfp::FABSD(const u32 code) {
     for (u8 i = 0; i < vfp_reg.fetch_vec_len() - 1; i++) {
-        
+        // TODO   
     }
 }
 
@@ -61,30 +63,100 @@ void INSTRUCTIONS::arm::vfp::FCMPZS(const u32 code) {
 
 }
 
+
+/** 
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Dd[i] = Dm[i]
+ */
 void INSTRUCTIONS::arm::vfp::FCPYD(const u32 code) {
+    const u64 Dm = vfp_reg.read_double(code, 0, 3);
 
+    for (u8 i = 0; i < vfp_reg.fetch_vec_len() - 1; i++) {
+        // TODO
+    }
 
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Sd[i] = Sm[i]
+ */
 void INSTRUCTIONS::arm::vfp::FCPYS(const u32 code) {
+    const u32 Sm = vfp_reg.read_single(code, 0, 3, 5);
+    u32 Sd_copy = vfp_reg.read_single(code, 12, 15, 22);
 
-
+    for (u8 i = 0; i < vfp_reg.fetch_vec_len() - 1; i++) {
+        // TODO
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    Dd = ConvertSingleToDouble(Sm)
+ */
 void INSTRUCTIONS::arm::vfp::FCVTDS(const u32 code) {
+    const float Sm = vfp_reg.read_single_IEEE(code, 0, 3, 5);
 
+    /** note: 
+     * x86 compilers would optimise this away with the 
+     * cvttss2si instruction (even under -O0), which i'm 
+     * not sure if that can be called an optimisation 
+     * rather than just a basic implementation methodology
+     * but anyways, ARM uses the same floating point 
+     * standard of the IEEE 754 Standard, so I presume 
+     * this is a valid way to implement the instruction
+     */
+    const double Dd = static_cast<double>(Sm);
 
+    u64 ret = 0;
+
+    std::memcpy(&ret, &Dd, sizeof(ret));
+
+    vfp_reg.write_double(code, 12, 15, ret);
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    Sd = ConvertDoubleToSingle(Dm)
+ */
 void INSTRUCTIONS::arm::vfp::FCVTSD(const u32 code) {
+    const double Dm = vfp_reg.read_double_IEEE(code, 0, 3);
 
+    //sorta the same story as FCVTDS 
+    const float Sd = static_cast<float>(Dm);
 
+    u32 ret = 0;
+
+    std::memcpy(&ret, &Sd, sizeof(ret));
+
+    vfp_reg.write_single(code, 12, 15, 22, ret);
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Dd[i] = Dn[i] / Dm[i]
+ */
 void INSTRUCTIONS::arm::vfp::FDIVD(const u32 code) {
+    const u64 Dm = vfp_reg.read_double(code, 0, 3);
+    const u64 Dn = vfp_reg.read_double(code, 16, 19);
 
+    u64 Dd_copy = vfp_reg.read_double(code, 12, 15);
 
+    for (u8 i = 0; i < vfp_reg.fetch_vec_len() - 1; i++) {
+        // TODO
+    }
+
+    vfp_reg.write_double(code, 12, 15, Dd_copy);
 }
+
+
 
 void INSTRUCTIONS::arm::vfp::FDIVS(const u32 code) {
 

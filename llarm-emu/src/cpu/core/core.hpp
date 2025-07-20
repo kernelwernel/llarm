@@ -24,7 +24,7 @@
 
 struct CORE {
 private:
-    // essential settings
+    // essential modules
     SETTINGS settings;
     GLOBALS globals;
     TLB tlb;
@@ -37,7 +37,7 @@ private:
     REGISTERS reg;
     EXCEPTION exception;
 
-    // memory
+    // memory modules
     ALIGNMENT alignment;
     RAM ram;
     MMU mmu;
@@ -45,12 +45,12 @@ private:
     FCSE fcse;
     MEMORY memory;
 
-    // instructions
+    // instructions modules
     OPERATION operation;
     ADDRESSING_MODE address_mode;
     INSTRUCTIONS instructions;
 
-    // core cycle
+    // core cycle modules
     FETCH fetch;
     DECODE decode;
     EXECUTE execute;

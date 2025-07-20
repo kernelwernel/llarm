@@ -30,6 +30,8 @@ public:
 
     bool arithmetic_shift_right(u32 num, const u8 shift); // why is this not a reference? research more...
 
+    bool is_nan(const u32 vfp_reg);
+
     std::vector<id::reg> register_list(const u16 reg_list);
 };
 

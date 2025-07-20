@@ -7,6 +7,8 @@
 #include "shared/util.hpp"
 #include "shared/out.hpp"
 
+#include <cstring>
+
 void VFP_REG::write(const id::vfp_reg vfp_reg_id, const u64 value) {
     static constexpr u64 low_half = 0x00000000FFFFFFFF;
     static constexpr u64 high_half = 0xFFFFFFFF00000000;
@@ -215,13 +217,32 @@ u64 VFP_REG::read_double(const u32 code, const u8 start, const u8 end) {
     return read(id);
 }
 
+double VFP_REG::read_double_IEEE(const u32 code, const u8 start, const u8 end) {
+    const u64 raw_bytes = read_double(code, start, end);
+    double d;
 
-u64 VFP_REG::read_single(const u32 code, const u8 start, const u8 end, const u8 bottom_bit) {
+    std::memcpy(&d, &raw_bytes, sizeof(d));
+
+    return d;
+}
+
+
+u32 VFP_REG::read_single(const u32 code, const u8 start, const u8 end, const u8 bottom_bit) {
     const bool bottom = shared::util::bit_fetch(code, bottom_bit);
     const u8 reg_bits = (shared::util::bit_range(code, start, end) << 1) | bottom;
     
     const id::vfp_reg id = fetch_single_reg_id(reg_bits);
-    return read(id);
+    return static_cast<u32>(read(id));
+}
+
+
+float VFP_REG::read_single_IEEE(const u32 code, const u8 start, const u8 end, const u8 bottom_bit) {
+    const u32 raw_bytes = read_single(code, start, end, bottom_bit);
+    float f;
+
+    std::memcpy(&f, &raw_bytes, sizeof(f));
+
+    return f;
 }
 
 

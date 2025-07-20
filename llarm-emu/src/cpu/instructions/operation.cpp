@@ -172,6 +172,10 @@ std::vector<id::reg> OPERATION::register_list(const u16 reg_list) {
 }
 
 
+bool OPERATION::is_nan(const u32 vfp_reg) {
+    // TODO
+}
+
 /*
     overflow:
     Returns 1 if the addition or subtraction specified as 

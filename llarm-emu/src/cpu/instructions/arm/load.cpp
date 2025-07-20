@@ -70,11 +70,10 @@ void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
         address += 4;
     }
 
-    // TODO assert
+    if (addresses.end != address - 4) {
+        shared::out::error("LDM1 assert failed");
+    }
 }
-
-
-
 
 
 // TODO, ADD CHECK FOR L4 BIT
@@ -317,7 +316,9 @@ void INSTRUCTIONS::arm::load::LDM2(const u32 code) {
         address += 4;
     }
 
-    // TODO assert
+    if (addresses.end != address - 4) {
+        shared::out::error("LDM2 assert failed");
+    }
 }
 
 
@@ -384,5 +385,7 @@ void INSTRUCTIONS::arm::load::LDM3(const u32 code) {
 
     address += 4;
 
-    // TODO assert 
+    if (addresses.end != address - 4) {
+        shared::out::error("LDM3 assert failed");
+    }
 }

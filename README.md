@@ -1,16 +1,33 @@
 <div style="text-align: center;">
 
-<h2>LLARM<h2>
+<h1>LLARM<h1>
 <br>
 <img src="assets/logo/dog.png" height="250" title="LLARM">
 <br>
 <sup><sub>Artwork by <a href="https://t04st3r.carrd.co/">T04st3r</sub></sup></a>
 </div>
 
-**LLARM** (Low Level ARM) is a toolchain infrastructure for the ARM architecture.
+**LLARM** (Low Level ARM) is an infrastructure toolchain for the ARM architecture that provides libraries and/or tools for:
+    - full system emulation (llarm-emu)
+    - assembly, disassembly, and instruction identification (llarm-asm)
+    - instruction documentation lookup (llarm-inst)
+    - ARM CPU information fetching (llarm-cpu)
+    - heat and power efficiency simulator (llarm-phys)
+    - random ARM binary generation for samples and stress-testing (llarm-rand)
+    - and many other sub-projects are planned or currently in development
+
+
 
 
 > [!IMPORTANT]
-> I've written approximately 30k lines of C++ so far and have been working on this project for over a year. At the moment, it only supports ARMv5 (which came out in the early 2000s), so the project doesn't have any practical use in real-world scenarios in its current state. That being said, my plan is to eventually support modern architectures like ARMv8 and above, which is a very long way ahead. 
+> ## Note from the developer
+> I've written approximately 30k lines of C++ so far and have been working on this project for over a year. At the moment, the project doesn't have any practical use in real-world scenarios in its current state (especially since it only supports AArch32 for now). That being said, my plan is to eventually support modern Aarch64 architectures, but it's a very long way ahead.
 >
-> My ambition is to expand it into something much bigger than it already is. The reason why I'm sharing this year-long project now is because I wanted to publish the progress I've made so far, and maybe get feedback from people to determine what could be better. But for the moment, this is only the beginning. My objective is to provide a completely new framework to work with the ARM architecture, with goals to have it become a suitable industry standard candidate for most embedded development requirements out there. Think of it as LLVM but for ARM instead of compilers.
+> My ambition is to expand it into something much bigger than it already is. The reason why I'm sharing this year-long project now is because I wanted to publish the progress I've made so far, and maybe get feedback from people to determine what could be better. But for the moment, this is only the beginning. 
+> 
+> My objective is to provide a completely new framework to work with the ARM architecture, with goals to have it become a suitable industry standard candidate for many low-level embedded development requirements out there. Think of it as LLVM but for ARM instead of compilers.
+
+
+
+
+# Current development roadmap 

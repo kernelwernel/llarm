@@ -32,16 +32,22 @@ void INSTRUCTIONS::arm::dsp::LDRD(const u32 code) {
         (shared::util::bit_range(address, 0, 2) == 0b000) &&
         (Rd_bits != 14)
     ) {
-        // this will cover both the lower and high 4 bytes
-        const mem_read_struct access = memory.read(address, 8);
+        const mem_read_struct access = memory.read(address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
             return;
         }
 
+        const mem_read_struct access2 = memory.read(address + 4, 4);
+
+        if (access2.has_failed) {
+            memory.manage_abort(access2.abort_code);
+            return;
+        }
+
         reg.write(Rd_bits, shared::util::bit_range(access.value, 0, 31));
-        reg.write(Rd_bits + 1, shared::util::bit_range(access.value, 32, 63));
+        reg.write(Rd_bits + 1, shared::util::bit_range(access2.value, 32, 63));
     } else {
         shared::out::unpredictable("LDRD has unpredictable arguments");
     }
@@ -395,14 +401,23 @@ void INSTRUCTIONS::arm::dsp::STRD(const u32 code) {
         (shared::util::bit_range(address, 0, 2) == 0b000) &&
         (Rd_bits != 14)
     ) {
-        const u64 value = (static_cast<u64>(reg.read(Rd_bits + 1)) << 32) | reg.read(Rd_bits);
-        const mem_write_struct access = memory.write(value, address, 8);
+        const u64 value = reg.read(Rd_bits);
+        const u32 value2 = reg.read(Rd_bits + 1);
+
+        const mem_write_struct access = memory.write(value, address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
             return;
         }
+        
+        const mem_write_struct access2 = memory.write(value2, address + 4, 4);
+
+        if (access2.has_failed) {
+            memory.manage_abort(access2.abort_code);
+            return;
+        }
     } else {
-        shared::out::unpredictable("LDRD has unpredictable arguments");
+        shared::out::unpredictable("STRD has unpredictable arguments");
     }
 }

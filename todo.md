@@ -113,4 +113,4 @@ notes:
 - rewrite the whole decode (identifier) and execute cycle phases so that they use switches instead of std::maps
 - install flamegraph and measure the difference between the std::map<key, std::function> thingy and the switch
 - in the future, make a more "memory friendly" option such as making an inner virtual memory system for the memory 
-  by using std::vector instead of std::array for the RAM, and using std:: 
+  by using std::vector instead of std::array for the RAM, and using std::vector instead of std::unordered_map for the TLB lookup

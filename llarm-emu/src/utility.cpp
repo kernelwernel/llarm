@@ -19,6 +19,17 @@ void util::modify_bit(u32 &original, const u8 index, const bool value) {
     }
 }
 
+void util::modify_vfp_bit(u64 &original, const u8 index, const bool value) {
+    if (index > 63) {
+        shared::out::dev_error("Index for modify_vfp_bit() must be between 0 and 63");
+    }
+
+    if (value) {
+        original |= (1U << index);
+    } else {
+        original &= ~(1U << index);
+    }
+}
 
 void util::swap_bits(u32 &original, const u8 start, const u8 end, const u32 value) {
     if (start >= 32 || end >= 32 || start >= end) {
