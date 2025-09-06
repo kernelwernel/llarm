@@ -1,6 +1,7 @@
 #include "../../instructions/instructions.hpp"
 #include "../../core/registers.hpp"
 
+#include "shared/out.hpp"
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 
@@ -41,12 +42,10 @@ void INSTRUCTIONS::thumb::load::LDMIA(const u16 code) {
     }
 
     if (end_address != (address - 4)) {
-        // TODO idk, do an assertation handler
+        shared::out::dev_error("assertation failed in thumb LDMIA instruction");
     }
 
     reg.write(Rn_id, (Rn + (shared::util::popcount(register_list) * 4)));
-
-
 }
 
 
@@ -67,22 +66,20 @@ void INSTRUCTIONS::thumb::load::LDR1(const u16 code) {
 
     u32 value = 0;
 
-    if ((address & 0b11) == 0b00) {
-        const mem_read_struct access = memory.read(address, 4);
-
-        if (access.has_failed) {
-            memory.manage_abort(access.abort_code);
-            return;
-        }
-
-        value = access.value;
-    } else {
-        // UNPREDICTABLE, TODO
+    if ((address & 0b11) != 0b00) {
+        shared::out::unpredictable("unpredictable alignment in LDR1 instruction");
+        reg.write(Rd_id, 0);
+        return;
     }
 
-    reg.write(Rd_id, value);
+    const mem_read_struct access = memory.read(address, 4);
 
+    if (access.has_failed) {
+        memory.manage_abort(access.abort_code);
+        return;
+    }
 
+    reg.write(Rd_id, access.value);
 }
 
 
@@ -101,24 +98,20 @@ void INSTRUCTIONS::thumb::load::LDR2(const u16 code) {
 
     const u32 address = (Rn + Rm);
 
-    u32 value = 0;
-
-    if ((address & 0b11) == 0b00) {
-        const mem_read_struct access = memory.read(address, 4);
-
-        if (access.has_failed) {
-            memory.manage_abort(access.abort_code);
-            return;
-        }
-
-        value = access.value;
-    } else {
-        // UNPREDICTABLE, TODO
+    if ((address & 0b11) != 0b00) {
+        shared::out::unpredictable("unpredictable alignment in LDR2 instruction");
+        reg.write(Rd_id, 0);
+        return;
     }
-    
-    reg.write(Rd_id, value);
 
+    const mem_read_struct access = memory.read(address, 4);
 
+    if (access.has_failed) {
+        memory.manage_abort(access.abort_code);
+        return;
+    }
+
+    reg.write(Rd_id, access.value);
 }
 
 
@@ -141,8 +134,6 @@ void INSTRUCTIONS::thumb::load::LDR3(const u16 code) {
     }
 
     reg.write(Rd_id, access.value);
-
-
 }
 
 
@@ -160,24 +151,20 @@ void INSTRUCTIONS::thumb::load::LDR4(const u16 code) {
 
     const u32 address = reg.read(id::reg::SP) + (immed_8 * 4);
 
-    u32 value = 0;
-
-    if ((address & 0b11) == 0b00) {
-        const mem_read_struct access = memory.read(address, 4);
-
-        if (access.has_failed) {
-            memory.manage_abort(access.abort_code);
-            return;
-        }
-
-        value = access.value;
-    } else {
-        // UNPREDICTABLE, TODO
+    if ((address & 0b11) != 0b00) {
+        shared::out::unpredictable("unpredictable alignment in LDR4 instruction");
+        reg.write(Rd_id, 0);
+        return;
     }
 
-    reg.write(Rd_id, value);
+    const mem_read_struct access = memory.read(address, 4);
 
+    if (access.has_failed) {
+        memory.manage_abort(access.abort_code);
+        return;
+    }
 
+    reg.write(Rd_id, access.value);
 }
 
 
@@ -200,8 +187,6 @@ void INSTRUCTIONS::thumb::load::LDRB1(const u16 code) {
     }
 
     reg.write(Rd_id, access.value);
-
-
 }
 
 
@@ -224,8 +209,6 @@ void INSTRUCTIONS::thumb::load::LDRB2(const u16 code) {
     }
 
     reg.write(Rd_id, access.value);
-
-
 }
 
 
@@ -244,24 +227,20 @@ void INSTRUCTIONS::thumb::load::LDRH1(const u16 code) {
 
     const u32 address = (Rn + (immed_5 * 2));
 
-    u16 value = 0;
-
-    if ((address & 1) == 0) {
-        const mem_read_struct access = memory.read(address, 2);
-
-        if (access.has_failed) {
-            memory.manage_abort(access.abort_code);
-            return;
-        }
-
-        value = access.value;
-    } else {
-        // UNPREDICTABLE, TODO
+    if ((address & 1) != 0) {
+        shared::out::unpredictable("unpredictable alignment in LDRH1 instruction");
+        reg.write(Rd_id, 0);
+        return;
     }
 
-    reg.write(Rd_id, value);
+    const mem_read_struct access = memory.read(address, 2);
 
+    if (access.has_failed) {
+        memory.manage_abort(access.abort_code);
+        return;
+    }
 
+    reg.write(Rd_id, access.value);
 }
 
 
@@ -280,24 +259,20 @@ void INSTRUCTIONS::thumb::load::LDRH2(const u16 code) {
 
     const u32 address = (Rn + Rm);
 
-    u16 value = 0;
-
-    if ((address & 1) == 0) {
-        const mem_read_struct access = memory.read(address, 2);
-
-        if (access.has_failed) {
-            memory.manage_abort(access.abort_code);
-            return;
-        }
-
-        value = access.value;
-    } else {
-        // UNPREDICTABLE, TODO
+    if ((address & 1) != 0) {
+        shared::out::unpredictable("unpredictable alignment in LDRH2 instruction");
+        reg.write(Rd_id, 0);
+        return;
     }
-    
-    reg.write(Rd_id, value);
 
+    const mem_read_struct access = memory.read(address, 2);
 
+    if (access.has_failed) {
+        memory.manage_abort(access.abort_code);
+        return;
+    }
+
+    reg.write(Rd_id, access.value);
 }
 
 
@@ -320,8 +295,6 @@ void INSTRUCTIONS::thumb::load::LDRSB(const u16 code) {
     }
 
     reg.write(Rd_id, operation.sign_extend(access.value));
-
-
 }
 
 
@@ -340,22 +313,20 @@ void INSTRUCTIONS::thumb::load::LDRSH(const u16 code) {
 
     const u32 address = (Rn + Rm);
 
-    u16 value = 0;
-
-    if ((address & 1) == 0) {
-        const mem_read_struct access = memory.read(address, 2);
-
-        if (access.has_failed) {
-            memory.manage_abort(access.abort_code);
-            return;
-        }
-
-        value = access.value;
-    } else {
-        // UNPREDICTABLE, TODO
+    if ((address & 1) != 0) {
+        shared::out::unpredictable("unpredictable alignment in LDRSH instruction");
+        reg.write(Rd_id, 0);
+        return;
     }
 
-    reg.write(Rd_id, operation.sign_extend(value));
+    const mem_read_struct access = memory.read(address, 2);
+
+    if (access.has_failed) {
+        memory.manage_abort(access.abort_code);
+        return;
+    }
+
+    reg.write(Rd_id, operation.sign_extend(access.value));
 }
 
 
@@ -424,7 +395,7 @@ void INSTRUCTIONS::thumb::load::POP(const u16 code) {
     }
 
     if (end_address != address) {
-        // TODO idk, do an assertation handler
+        shared::out::dev_error("assertation failed in thumb POP instruction");
     }
 
     reg.write(id::reg::SP, end_address);

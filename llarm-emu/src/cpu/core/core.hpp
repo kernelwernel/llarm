@@ -12,8 +12,8 @@
 #include "../coprocessor/coprocessor.hpp"
 #include "../instructions/instructions.hpp"
 #include "../instructions/operation.hpp"
-#include "../vfp/vfp.hpp"
 #include "../vfp/registers.hpp"
+#include "../vfp/addressing_modes.hpp"
 #include "cycle/fetch.hpp"
 #include "cycle/decode.hpp"
 #include "cycle/execute.hpp"
@@ -31,7 +31,7 @@ private:
     CP15 cp15;
     VFP_REG vfp_reg;
     VFP_EXCEPTION vfp_exception;
-    VFP vfp;
+    VFP_ADDRESS_MODE vfp_addressing_mode;
     COPROCESSOR coprocessor;
     ARCH_26 arch_26;
     REGISTERS reg;
@@ -69,10 +69,10 @@ public:
         cp15(settings, globals, tlb),
         vfp_reg(settings),
         vfp_exception(vfp_reg),
-        vfp(vfp_reg, vfp_exception),
         coprocessor(settings, globals, cp15),
         arch_26(coprocessor, settings),
         reg(coprocessor, globals, arch_26, settings),
+        vfp_addressing_mode(settings, reg, vfp_reg),
         exception(reg, coprocessor),
         alignment(coprocessor, settings),
         ram(globals),
@@ -82,7 +82,7 @@ public:
         memory(reg, ram, mmu, mpu, fcse, arch_26, exception),
         operation(),
         address_mode(reg, operation),
-        instructions(reg, address_mode, operation, coprocessor, settings, memory, exception, vfp_reg),
+        instructions(reg, address_mode, operation, coprocessor, settings, memory, exception, vfp_reg, vfp_exception, vfp_addressing_mode),
         fetch(reg, memory, globals),
         decode(reg, settings),
         execute(instructions, exception)

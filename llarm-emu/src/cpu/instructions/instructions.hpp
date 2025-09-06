@@ -5,6 +5,8 @@
 #include "../memory/memory.hpp"
 #include "../vfp/registers.hpp"
 #include "arm/addressing_modes/addressing_modes.hpp"
+#include "llarm-emu/src/cpu/vfp/exception.hpp"
+#include "llarm-emu/src/cpu/vfp/addressing_modes.hpp"
 #include "operation.hpp"
 
 #include "shared/types.hpp"
@@ -254,18 +256,24 @@ public:
             COPROCESSOR& coprocessor;
             MEMORY& memory;
             VFP_REG& vfp_reg;
+            VFP_EXCEPTION& vfp_exception;
+            VFP_ADDRESS_MODE& vfp_addressing_mode;
 
             vfp(
                 REGISTERS& reg, 
                 OPERATION& operation, 
                 COPROCESSOR& coprocessor,
                 MEMORY& memory,
-                VFP_REG& vfp_reg
+                VFP_REG& vfp_reg,
+                VFP_EXCEPTION& vfp_exception,
+                VFP_ADDRESS_MODE& vfp_addressing_mode
             ) : reg(reg), 
                 operation(operation),
                 coprocessor(coprocessor),
                 memory(memory),
-                vfp_reg(vfp_reg)
+                vfp_reg(vfp_reg),
+                vfp_exception(vfp_exception),
+                vfp_addressing_mode(vfp_addressing_mode)
             {
 
             }
@@ -343,7 +351,9 @@ public:
             MEMORY& memory,
             SETTINGS& settings,
             EXCEPTION& exception,
-            VFP_REG& vfp_reg
+            VFP_REG& vfp_reg,
+            VFP_EXCEPTION& vfp_exception,
+            VFP_ADDRESS_MODE& vfp_addressing_mode
         ) : math(reg, operation, address_mode),
             logic(reg, operation, address_mode),
             movement(reg, operation, address_mode),
@@ -354,7 +364,7 @@ public:
             load(reg, operation, memory, address_mode, settings),
             store(reg, operation, memory, address_mode),
             dsp(reg, operation, memory, address_mode, exception),
-            vfp(reg, operation, coprocessor, memory, vfp_reg)
+            vfp(reg, operation, coprocessor, memory, vfp_reg, vfp_exception, vfp_addressing_mode)
         {
 
         }
@@ -548,14 +558,16 @@ public:
         SETTINGS& settings,
         MEMORY& memory,
         EXCEPTION& exception,
-        VFP_REG& vfp_reg
+        VFP_REG& vfp_reg,
+        VFP_EXCEPTION& vfp_exception,
+        VFP_ADDRESS_MODE& vfp_addressing_mode
     ) : reg(reg),
         address_mode(address_mode),
         operation(operation),
         coprocessor(coprocessor),
         settings(settings),
         memory(memory),
-        arm(reg, operation, address_mode, coprocessor, memory, settings, exception, vfp_reg),
+        arm(reg, operation, address_mode, coprocessor, memory, settings, exception, vfp_reg, vfp_exception, vfp_addressing_mode),
         thumb(reg, operation, settings, memory)
     {
 

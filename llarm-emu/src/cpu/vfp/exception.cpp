@@ -1,4 +1,3 @@
-#include "registers.hpp"
 #include "exception.hpp"
 
 void VFP_EXCEPTION::invalid_operation() {

@@ -17,7 +17,11 @@ private:
 private:
     static constexpr u32 default_size = util::get_kb(32); // 32KB
 
+#if (LLARM_LOW_MEMORY)
+    std::map<u32, u8> ram{};
+#else
     std::array<u8, default_size> ram{};
+#endif
 
 public:
     void write(const std::vector<u8> &data, const u32 address);

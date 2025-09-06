@@ -42,11 +42,16 @@ public:
     u64 read_double(const u32 code, const u8 start, const u8 end);
     double read_double_IEEE(const u32 code, const u8 start, const u8 end);
     float read_single_IEEE(const u32 code, const u8 start, const u8 end, const u8 bottom_bit);
+    double read_double_IEEE(const id::vfp_reg vfp_reg_id);
+    float read_single_IEEE(const id::vfp_reg vfp_reg_id);
 
     id::vfp_reg fetch_single_reg_id(const u8 reg_bits);
     id::vfp_reg fetch_double_reg_id(const u8 reg_bits);
     id::vfp_reg fetch_single_reg_id(const u32 code, const u8 start, const u8 end);
     id::vfp_reg fetch_double_reg_id(const u32 code, const u8 start, const u8 end);
+
+    bool is_single_nan(const u32 code, const u8 start, const u8 end, const u8 bottom_bit);
+    bool is_double_nan(const u32 code, const u8 start, const u8 end);
 
     u8 fetch_vec_len();
 

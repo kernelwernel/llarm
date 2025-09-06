@@ -67,5 +67,4 @@ namespace shared::out {
         std::printf("%s", error);
         std::exit(1);
     }
-
 }

@@ -17,6 +17,7 @@ struct SETTINGS {
     bool is_mmu_enabled; // not to be confused with both
     bool is_tlb_separate;
     bool is_tlb_unified;
+    /**/ bool has_random_replacement_tlb_strategy;
     /**/ bool is_fcse_enabled;
     bool has_coprocessor;
     /**/ bool has_cache;
@@ -70,9 +71,9 @@ struct SETTINGS {
     /**/ u8 instruction_cache_assoc_way; 
     /**/ u8 cache_ctype_field; // 0b0000, 0b0001, 0b0010, 0b0110, 0b0111 are supported
 
-    /**/ u8 unified_tlb_entry_size;
-    /**/ u8 inst_tlb_entry_size;
-    /**/ u8 data_tlb_entry_size;
+    /**/ u8 unified_tlb_table_size;
+    /**/ u8 inst_tlb_table_size;
+    /**/ u8 data_tlb_table_size;
     /**/ id::tlb_type tlb_type;
 
     /**/ id::vfp_version vfp_version;
@@ -93,6 +94,7 @@ struct SETTINGS {
     u8 vfp_variant;
     u16 vfp_ppn;
     u8 vfp_revision;
+    u8 vfp_load_multiple_value;
 
     constexpr void sanitize() {
         // only jazelle 
@@ -261,9 +263,9 @@ struct SETTINGS {
         data_cache_assoc_way(0), 
         instruction_cache_assoc_way(0), 
         cache_ctype_field(0),
-        unified_tlb_entry_size(0),
-        inst_tlb_entry_size(0),
-        data_tlb_entry_size(0),
+        unified_tlb_table_size(0),
+        inst_tlb_table_size(0),
+        data_tlb_table_size(0),
         vfp_version(id::vfp_version::UNKNOWN),
         vfp_format(id::vfp_format::NON_STANDARD),
         thumb_version(id::thumb_version::NO_THUMB),
@@ -281,7 +283,8 @@ struct SETTINGS {
         revision(0),
         vfp_variant(0),
         vfp_ppn(0),
-        vfp_revision(0)
+        vfp_revision(0),
+        vfp_load_multiple_value(0)
     {
 
     }

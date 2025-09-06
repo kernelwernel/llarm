@@ -6,6 +6,7 @@
 #include "shared/out.hpp"
 
 #include <cmath>
+#include <random>
 
 
 void TLB::flush() {
@@ -38,6 +39,49 @@ void TLB::invalidate(const u32 virtual_address, const id::tlb_type tlb_type) {
 }
 
 
+void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, const u32 physical_address) {
+    // random replacement strategy, i guess different strategies could be added in the future
+
+    const u8 size = [=, this]() -> u8 {
+        switch (tlb_type) {
+            case id::tlb_type::UNIFIED: return settings.unified_tlb_table_size; 
+            case id::tlb_type::SEPARATE: shared::out::dev_error("Unsupported TLB invalidation for auto replacement");
+            case id::tlb_type::SEPARATE_INST: return settings.inst_tlb_table_size; 
+            case id::tlb_type::SEPARATE_DATA: return settings.data_tlb_table_size; 
+        }
+    }();
+
+    std::uniform_int_distribution<> distribution(0, size);
+
+    const u8 index = distribution(seed);
+
+    switch (tlb_type) {
+        case id::tlb_type::UNIFIED: {
+            const u32 unified_key = unified_table.at(index);
+            unified_table.erase(unified_key);
+            unified_table.insert({ virtual_address, physical_address });
+            return;
+        }
+
+        case id::tlb_type::SEPARATE: shared::out::dev_error("Unsupported TLB invalidation for auto replacement");
+
+        case id::tlb_type::SEPARATE_INST: {
+            const u32 inst_key = inst_table.at(index);
+            inst_table.erase(inst_key);
+            inst_table.insert({ virtual_address, physical_address });
+            return;
+        }
+
+        case id::tlb_type::SEPARATE_DATA: {
+            const u32 data_key = data_table.at(index);
+            data_table.erase(data_key);
+            data_table.insert({ virtual_address, physical_address });
+            return;
+        }
+    }
+}
+
+
 u32 TLB::fetch(const u32 virtual_address, const tlb_fetch_struct tlb_fetch) {
     if (settings.tlb_type == id::tlb_type::UNIFIED) {
         return unified_table.at(virtual_address);
@@ -50,6 +94,30 @@ u32 TLB::fetch(const u32 virtual_address, const tlb_fetch_struct tlb_fetch) {
     }
 
     shared::out::dev_error("Impossible TLB entry fetch");
+}
+
+
+void TLB::insert(const u32 virtual_address, const u32 physical_address, const id::tlb_type tlb_type) {
+    switch (tlb_type) {
+        case id::tlb_type::UNIFIED: 
+            if (unified_table.size() == settings.unified_tlb_table_size) {
+                auto_replace(id::tlb_type::UNIFIED, virtual_address, physical_address);
+            }
+            return;
+
+        case id::tlb_type::SEPARATE: shared::out::dev_error("Unsupported TLB invalidation for insertion");
+        case id::tlb_type::SEPARATE_INST:
+            if (inst_table.size() == settings.inst_tlb_table_size) {
+                auto_replace(id::tlb_type::SEPARATE_INST, virtual_address, physical_address);
+            }
+            return;
+
+        case id::tlb_type::SEPARATE_DATA:
+            if (data_table.size() == settings.data_tlb_table_size) {
+                auto_replace(id::tlb_type::SEPARATE_DATA, virtual_address, physical_address);
+            }
+            return;
+    }
 }
 
 
@@ -145,15 +213,23 @@ void TLB::function(const u8 opcode_2, const u8 CRm, const u32 virtual_address) {
 
 
 TLB::TLB(SETTINGS& settings) : settings(settings) {
+    unified_table.reserve(settings.unified_tlb_table_size);
+    inst_table.reserve(settings.inst_tlb_table_size);
+    data_table.reserve(settings.data_tlb_table_size);
+
+    if (settings.is_mmu_enabled == false) {
+        return;
+    }
+
     // read B3-27 for more context
     if (settings.is_tlb_unified) {
-        W_unified = static_cast<u32>(std::ceil(std::log2(settings.unified_tlb_entry_size)));
+        W_unified = static_cast<u32>(std::ceil(std::log2(settings.unified_tlb_table_size)));
     } else if (settings.is_tlb_separate) {
-        W_inst = static_cast<u32>(std::ceil(std::log2(settings.inst_tlb_entry_size)));
-        W_data = static_cast<u32>(std::ceil(std::log2(settings.data_tlb_entry_size)));
+        W_inst = static_cast<u32>(std::ceil(std::log2(settings.inst_tlb_table_size)));
+        W_data = static_cast<u32>(std::ceil(std::log2(settings.data_tlb_table_size)));
     }
-    
-    unified_table.reserve(settings.unified_tlb_entry_size);
-    inst_table.reserve(settings.inst_tlb_entry_size);
-    data_table.reserve(settings.data_tlb_entry_size);
+
+    std::random_device rd;
+    std::mt19937 tmp(rd());
+    seed = tmp;
 }

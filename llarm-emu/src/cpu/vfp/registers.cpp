@@ -2,12 +2,14 @@
 #include "../../utility.hpp"
 
 #include "registers.hpp"
+#include "utils.hpp"
+
+#include <cmath>
 
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 #include "shared/out.hpp"
 
-#include <cstring>
 
 void VFP_REG::write(const id::vfp_reg vfp_reg_id, const u64 value) {
     static constexpr u64 low_half = 0x00000000FFFFFFFF;
@@ -219,11 +221,7 @@ u64 VFP_REG::read_double(const u32 code, const u8 start, const u8 end) {
 
 double VFP_REG::read_double_IEEE(const u32 code, const u8 start, const u8 end) {
     const u64 raw_bytes = read_double(code, start, end);
-    double d;
-
-    std::memcpy(&d, &raw_bytes, sizeof(d));
-
-    return d;
+    return vfp_utils::u64_to_double(raw_bytes);
 }
 
 
@@ -238,11 +236,19 @@ u32 VFP_REG::read_single(const u32 code, const u8 start, const u8 end, const u8 
 
 float VFP_REG::read_single_IEEE(const u32 code, const u8 start, const u8 end, const u8 bottom_bit) {
     const u32 raw_bytes = read_single(code, start, end, bottom_bit);
-    float f;
+    return vfp_utils::u32_to_single(raw_bytes);
+}
 
-    std::memcpy(&f, &raw_bytes, sizeof(f));
 
-    return f;
+double VFP_REG::read_double_IEEE(const id::vfp_reg vfp_reg_id) {
+    const u64 raw_bytes = read(vfp_reg_id);
+    return vfp_utils::u64_to_double(raw_bytes);
+}
+
+
+float VFP_REG::read_single_IEEE(const id::vfp_reg vfp_reg_id) {
+    const u32 raw_bytes = read(vfp_reg_id);
+    return vfp_utils::u32_to_single(raw_bytes);
 }
 
 
@@ -293,6 +299,18 @@ void VFP_REG::setup() {
     write(id::vfp_reg::FPSID_PART_NUM, settings.vfp_ppn);
     write(id::vfp_reg::FPSID_VARIANT, settings.vfp_variant);
     write(id::vfp_reg::FPSID_REVISION, settings.vfp_revision);
+}
+
+
+bool VFP_REG::is_single_nan(const u32 code, const u8 start, const u8 end, const u8 bottom_bit) {
+    const float tmp = read_single_IEEE(code, start, end, bottom_bit);
+    return std::isnan(tmp);
+}
+
+
+bool VFP_REG::is_double_nan(const u32 code, const u8 start, const u8 end) {
+    const double tmp = read_double_IEEE(code, start, end);
+    return std::isnan(tmp);
 }
 
 

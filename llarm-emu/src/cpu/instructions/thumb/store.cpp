@@ -39,7 +39,7 @@ void INSTRUCTIONS::thumb::store::STMIA(const u16 code) {
     }
 
     if (end_address != (address - 4)) {
-        // TODO idk, do an assertation handler
+        shared::out::dev_error("assertation failed in thumb STMIA instruction");
     }
 
     reg.write(Rn_id, (Rn + (shared::util::popcount(register_list) * 4)));
@@ -72,7 +72,6 @@ void INSTRUCTIONS::thumb::store::STR1(const u16 code) {
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
-        return;
     }
 }
 
@@ -103,7 +102,6 @@ void INSTRUCTIONS::thumb::store::STR2(const u16 code) {
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
-        return;
     }
 }
 
@@ -133,7 +131,6 @@ void INSTRUCTIONS::thumb::store::STR3(const u16 code) {
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
-        return;
     }
 }
 
@@ -153,7 +150,6 @@ void INSTRUCTIONS::thumb::store::STRB1(const u16 code) {
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
-        return;
     }
 }
 
@@ -173,7 +169,6 @@ void INSTRUCTIONS::thumb::store::STRB2(const u16 code) {
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
-        return;
     }
 }
 
@@ -185,7 +180,7 @@ void INSTRUCTIONS::thumb::store::STRB2(const u16 code) {
  * else
  *    Memory[address,2] = UNPREDICTABLE
  */
-void INSTRUCTIONS::thumb::store::STRH1(const u16 code) { // TODO
+void INSTRUCTIONS::thumb::store::STRH1(const u16 code) {
     const u32 Rd = reg.read(code, 0, 2);
     const u32 Rn = reg.read(code, 3, 5);
     const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
@@ -197,14 +192,13 @@ void INSTRUCTIONS::thumb::store::STRH1(const u16 code) { // TODO
     if ((address & 0b11) == 0) {
         value = shared::util::bit_range(Rd, 0, 15);
     } else {
-        shared::out::unpredictable("STRH1 memory write data");
+        shared::out::unpredictable("unpredictable STRH1 memory write data alignment");
     }
 
     const mem_write_struct access = memory.write(value, address, 2);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
-        return;
     }
 }
 
@@ -216,7 +210,7 @@ void INSTRUCTIONS::thumb::store::STRH1(const u16 code) { // TODO
  * else
  *    Memory[address,2] = UNPREDICTABLE
  */
-void INSTRUCTIONS::thumb::store::STRH2(const u16 code) { // TODO
+void INSTRUCTIONS::thumb::store::STRH2(const u16 code) {
     const u32 Rd = reg.read(code, 0, 2);
     const u32 Rn = reg.read(code, 3, 5);
     const u32 Rm = reg.read(code, 6, 8);
@@ -228,14 +222,13 @@ void INSTRUCTIONS::thumb::store::STRH2(const u16 code) { // TODO
     if ((address & 0b11) == 0) {
         value = shared::util::bit_range(Rd, 0, 15);
     } else {
-        shared::out::unpredictable("STRH2 memory write data");
+        shared::out::unpredictable("unpredictable STRH2 memory write data alignment");
     }
 
     const mem_write_struct access = memory.write(value, address, 2);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
-        return;
     }
 }
 
@@ -290,7 +283,7 @@ void INSTRUCTIONS::thumb::store::PUSH(const u16 code) {
     }
 
     if (end_address != (address - 4)) {
-        // TODO idk, do an assertation handler
+        shared::out::dev_error("assertation failed in thumb PUSH instruction");
     }
 
     reg.write(id::reg::SP, (SP - (4 * (R + shared::util::popcount(register_list)))));

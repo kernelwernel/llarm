@@ -5,7 +5,13 @@
 
 #include "shared/types.hpp"
 
-#include <unordered_map>
+#if (LLARM_LOW_MEMORY)
+    #include <map>
+#else
+    #include <unordered_map>
+#endif
+
+#include <random>
 
 
 struct TLB {
@@ -13,9 +19,18 @@ private:
     SETTINGS& settings;
 
 private:
+    std::mt19937 seed;
+
+    // https://quick-bench.com/q/bhDceFgnZ7D3qR3ZR2GdCjwlt8g
+#if (LLARM_LOW_MEMORY)
+    std::map<u32, u32> unified_table;
+    std::map<u32, u32> inst_table;
+    std::map<u32, u32> data_table;
+#else
     std::unordered_map<u32, u32> unified_table;
     std::unordered_map<u32, u32> inst_table;
     std::unordered_map<u32, u32> data_table;
+#endif
 
 public:
     // read B3-27 for more context
@@ -26,9 +41,13 @@ public:
 public:
     void invalidate(const u32 virtual_address, const id::tlb_type tlb_type);
 
+    void auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, const u32 physical_address);
+
     void flush();
 
     u32 fetch(const u32 virtual_address, const tlb_fetch_struct tlb_fetch);
+
+    void insert(const u32 virtual_address, const u32 physical_address, const id::tlb_type tlb_type);
 
     tlb_fetch_struct is_translation_cached(const u32 virtual_address);
 

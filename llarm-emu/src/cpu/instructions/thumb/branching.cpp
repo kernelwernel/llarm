@@ -81,7 +81,7 @@ void INSTRUCTIONS::thumb::branching::BLX1(const u16 code) {
     } else if (H == 0b11) {
         reg.write(id::reg::PC, (reg.read(id::reg::LR) + (offset_11 << 1)));
         reg.write(id::reg::LR, ((next_instruction_address + 2) | 1));
-    } else if (H == 0b01) { // TODO: v5 specific
+    } else if (H == 0b01) {
         reg.write(id::reg::PC, ((reg.read(id::reg::LR) + (offset_11 << 1)) & 0xFFFFFFFC));
         reg.write(id::reg::LR, (next_instruction_address | 1));
         reg.write(id::cpsr::T, false);

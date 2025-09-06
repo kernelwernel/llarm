@@ -1,10 +1,13 @@
 #include "../instructions.hpp"
 
-#include "llarm-emu/src/utility.hpp"
+#include "../../vfp/utils.hpp"
+
+#include "llarm-emu/src/cpu/vfp/addressing_modes.hpp"
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 
-#include <cstring>
+
+// TODO work on exceptions, this might take a while
 
 /**
  * if ConditionPassed(cond) then
@@ -12,55 +15,263 @@
  *       Dd[i] = abs(Dm[i])
  */
 void INSTRUCTIONS::arm::vfp::FABSD(const u32 code) {
-    for (u8 i = 0; i < vfp_reg.fetch_vec_len() - 1; i++) {
-        // TODO   
+    const double_encoding_struct encoding = vfp_addressing_mode.double_precision_monadic(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const double Dm = vfp_reg.read(regs.Dm_id);
+        
+        vfp_reg.write(regs.Dd_id, std::abs(Dm));
     }
 }
 
 
+/**
+ * if ConditionPassed(cond) then
+ *     for i = 0 to vec_len-1
+ *         Sd[i] = abs(Sm[i]) 
+ */
 void INSTRUCTIONS::arm::vfp::FABSS(const u32 code) {
+    const single_encoding_struct encoding = vfp_addressing_mode.single_precision_monadic(code);
 
+    for (const auto regs : encoding.vec_regs) {
+        const double Sm = vfp_reg.read(regs.Sm_id);
+        
+        vfp_reg.write(regs.Sd_id, std::abs(Sm));
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *     for i = 0 to vec_len-1
+ *         Dd[i] = Dn[i] + Dm[i]
+ */
+ // TODO EXCEPTION
 void INSTRUCTIONS::arm::vfp::FADDD(const u32 code) {
+    const double_encoding_struct encoding = vfp_addressing_mode.double_precision(code);
 
+    for (const auto regs : encoding.vec_regs) {
+        const double result = (vfp_reg.read_single_IEEE(regs.Dn_id) + vfp_reg.read_single_IEEE(regs.Dm_id));
+
+        vfp_reg.write(regs.Dd_id, vfp_utils::double_to_u64(result)); 
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *     for i = 0 to vec_len-1
+ *         Sd[i] = Sn[i] + Sm[i]
+ */
+ // TODO EXCEPTION
 void INSTRUCTIONS::arm::vfp::FADDS(const u32 code) {
+    const single_encoding_struct encoding = vfp_addressing_mode.single_precision(code);
 
+    for (const auto regs : encoding.vec_regs) {
+        const float result = (vfp_reg.read_single_IEEE(regs.Sn_id) + vfp_reg.read_single_IEEE(regs.Sm_id));
+
+        vfp_reg.write(regs.Sd_id, vfp_utils::single_to_u32(result)); 
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *     if (Dd is a signaling NaN) or (Dm is a signaling NaN) then
+ *         raise Invalid Operation exception
+ *     FPSCR N flag = if (Dd < Dm) then 1 else 0
+ *     FPSCR Z flag = if (Dd == Dm) then 1 else 0
+ *     FPSCR C flag = if (Dd < Dm) then 0 else 1
+ *     FPSCR V flag = if (Dd and Dm compare as unordered) then 1 else 0
+ */
 void INSTRUCTIONS::arm::vfp::FCMPD(const u32 code) {
+    const double Dd = vfp_reg.read_double_IEEE(code, 12, 15);
+    const double Dm = vfp_reg.read_double_IEEE(code, 0, 3);
 
+    if (vfp_utils::is_signaling_nan(Dd) || vfp_utils::is_signaling_nan(Dm)) {
+        vfp_exception.invalid_operation();
+        return;
+    }
+
+    vfp_reg.write(id::vfp_reg::FPSCR_N, (Dd < Dm));
+    vfp_reg.write(id::vfp_reg::FPSCR_Z, (Dd == Dm));
+    vfp_reg.write(id::vfp_reg::FPSCR_C, !(Dd < Dm));
+    vfp_reg.write(id::vfp_reg::FPSCR_V, 0); // TODO
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *     if (Dd is a NaN) or (Dm is a NaN) then
+ *         raise Invalid Operation exception
+ *     FPSCR N flag = if (Dd < Dm) then 1 else 0
+ *     FPSCR Z flag = if (Dd == Dm) then 1 else 0
+ *     FPSCR C flag = if (Dd < Dm) then 0 else 1
+ *     FPSCR V flag = if (Dd and Dm compare as unordered) then 1 else 0
+ */
 void INSTRUCTIONS::arm::vfp::FCMPED(const u32 code) {
+    const double Dd = vfp_reg.read_double_IEEE(code, 12, 15);
+    const double Dm = vfp_reg.read_double_IEEE(code, 0, 3);
 
+    if (std::isnan(Dd) || std::isnan(Dm)) {
+        vfp_exception.invalid_operation();
+        return;
+    }
+
+    vfp_reg.write(id::vfp_reg::FPSCR_N, (Dd < Dm));
+    vfp_reg.write(id::vfp_reg::FPSCR_Z, (Dd == Dm));
+    vfp_reg.write(id::vfp_reg::FPSCR_C, !(Dd < Dm));
+    vfp_reg.write(id::vfp_reg::FPSCR_V, 0); // TODO
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *     if (Sd is a NaN) or (Sm is a NaN) then
+ *         raise Invalid Operation exception
+ *     FPSCR N flag = if (Sd < Sm) then 1 else 0
+ *     FPSCR Z flag = if (Sd == Sm) then 1 else 0
+ *     FPSCR C flag = if (Sd < Sm) then 0 else 1
+ *     FPSCR V flag = if (Sd and Sm compare as unordered) then 1 else 0
+ */
 void INSTRUCTIONS::arm::vfp::FCMPES(const u32 code) {
+    const float Sd = vfp_reg.read_single_IEEE(code, 12, 15, 22);
+    const float Sm = vfp_reg.read_single_IEEE(code, 0, 3, 5);
 
+    if (std::isnan(Sd) || std::isnan(Sm)) {
+        vfp_exception.invalid_operation();
+        return;
+    }
+
+    vfp_reg.write(id::vfp_reg::FPSCR_N, (Sd < Sm));
+    vfp_reg.write(id::vfp_reg::FPSCR_Z, (Sd == Sm));
+    vfp_reg.write(id::vfp_reg::FPSCR_C, !(Sd < Sm));
+    vfp_reg.write(id::vfp_reg::FPSCR_V, 0); // TODO
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *     if (Dd is a NaN) then
+ *         raise Invalid Operation exception
+ *     FPSCR N flag = if (Dd < 0.0) then 1 else 0
+ *     FPSCR Z flag = if (Dd == 0.0) then 1 else 0
+ *     FPSCR C flag = if (Dd < 0.0) then 0 else 1
+ *     FPSCR V flag = if (Dd is a NaN) then 1 else 0
+ */
 void INSTRUCTIONS::arm::vfp::FCMPEZD(const u32 code) {
+    const double Dd = vfp_reg.read_double_IEEE(code, 12, 15);
 
+    const bool is_Dd_nan = std::isnan(Dd);
+
+    if (is_Dd_nan) {
+        vfp_exception.invalid_operation();
+        return;
+    }
+
+    vfp_reg.write(id::vfp_reg::FPSCR_N, (Dd < 0.0));
+    vfp_reg.write(id::vfp_reg::FPSCR_Z, (Dd == 0.0));
+    vfp_reg.write(id::vfp_reg::FPSCR_C, !(Dd < 0.0));
+    vfp_reg.write(id::vfp_reg::FPSCR_V, is_Dd_nan);
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *     if (Sd is a NaN) then
+ *         raise Invalid Operation exception
+ *     FPSCR N flag = if (Sd < 0.0) then 1 else 0
+ *     FPSCR Z flag = if (Sd == 0.0) then 1 else 0
+ *     FPSCR C flag = if (Sd < 0.0) then 0 else 1
+ *     FPSCR V flag = if (Sd is a NaN) then 1 else 0
+ */
 void INSTRUCTIONS::arm::vfp::FCMPEZS(const u32 code) {
+    const float Sd = vfp_reg.read_single_IEEE(code, 12, 15, 22);
 
+    const bool is_Sd_nan = std::isnan(Sd);
+
+    if (is_Sd_nan) {
+        vfp_exception.invalid_operation();
+        return;
+    }
+
+    vfp_reg.write(id::vfp_reg::FPSCR_N, (Sd < 0.0));
+    vfp_reg.write(id::vfp_reg::FPSCR_Z, (Sd == 0.0));
+    vfp_reg.write(id::vfp_reg::FPSCR_C, !(Sd < 0.0));
+    vfp_reg.write(id::vfp_reg::FPSCR_V, is_Sd_nan);
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *     if (Sd is a signaling NaN) or (Sm is a signaling NaN) then
+ *         raise Invalid Operation exception
+ *     FPSCR N flag = if (Sd < Sm) then 1 else 0
+ *     FPSCR Z flag = if (Sd == Sm) then 1 else 0
+ *     FPSCR C flag = if (Sd < Sm) then 0 else 1
+ *     FPSCR V flag = if (Sd and Sm compare as unordered) then 1 else 0
+ */
 void INSTRUCTIONS::arm::vfp::FCMPS(const u32 code) {
+    const float Sd = vfp_reg.read_single_IEEE(code, 12, 15, 22);
+    const float Sm = vfp_reg.read_single_IEEE(code, 0, 3, 5);
 
+    if (vfp_utils::is_signaling_nan(Sd) || vfp_utils::is_signaling_nan(Sm)) {
+        vfp_exception.invalid_operation();
+        return;
+    }
+
+    vfp_reg.write(id::vfp_reg::FPSCR_N, (Sd < Sm));
+    vfp_reg.write(id::vfp_reg::FPSCR_Z, (Sd == Sm));
+    vfp_reg.write(id::vfp_reg::FPSCR_C, !(Sd < Sm));
+    vfp_reg.write(id::vfp_reg::FPSCR_V, 0); // TODO
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *     if (Dd is a signaling NaN) then
+ *         raise Invalid Operation exception
+ *     FPSCR N flag = if (Dd < 0.0) then 1 else 0
+ *     FPSCR Z flag = if (Dd == 0.0) then 1 else 0
+ *     FPSCR C flag = if (Dd < 0.0) then 0 else 1
+ *     FPSCR V flag = if (Dd is a NaN) then 1 else 0
+ */
 void INSTRUCTIONS::arm::vfp::FCMPZD(const u32 code) {
+    const double Dd = vfp_reg.read_double_IEEE(code, 12, 15);
 
+    if (vfp_utils::is_signaling_nan(Dd)) {
+        vfp_exception.invalid_operation();
+        return;
+    }
+
+    vfp_reg.write(id::vfp_reg::FPSCR_N, (Dd < 0.0));
+    vfp_reg.write(id::vfp_reg::FPSCR_Z, (Dd == 0.0));
+    vfp_reg.write(id::vfp_reg::FPSCR_C, !(Dd < 0.0));
+    vfp_reg.write(id::vfp_reg::FPSCR_V, std::isnan(Dd));
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *     if (Sd is a signaling NaN) then
+ *         raise Invalid Operation exception
+ *     FPSCR N flag = if (Sd < 0.0) then 1 else 0
+ *     FPSCR Z flag = if (Sd == 0.0) then 1 else 0
+ *     FPSCR C flag = if (Sd < 0.0) then 0 else 1
+ *     FPSCR V flag = if (Sd is a NaN) then 1 else 0
+ */
 void INSTRUCTIONS::arm::vfp::FCMPZS(const u32 code) {
+    const float Sd = vfp_reg.read_single_IEEE(code, 12, 15, 22);
 
+    if (vfp_utils::is_signaling_nan(Sd)) {
+        vfp_exception.invalid_operation();
+        return;
+    }
 
+    vfp_reg.write(id::vfp_reg::FPSCR_N, (Sd < 0.0));
+    vfp_reg.write(id::vfp_reg::FPSCR_Z, (Sd == 0.0));
+    vfp_reg.write(id::vfp_reg::FPSCR_C, !(Sd < 0.0));
+    vfp_reg.write(id::vfp_reg::FPSCR_V, std::isnan(Sd));
 }
 
 
@@ -70,12 +281,11 @@ void INSTRUCTIONS::arm::vfp::FCMPZS(const u32 code) {
  *       Dd[i] = Dm[i]
  */
 void INSTRUCTIONS::arm::vfp::FCPYD(const u32 code) {
-    const u64 Dm = vfp_reg.read_double(code, 0, 3);
+    const double_encoding_struct encoding = vfp_addressing_mode.double_precision_monadic(code);
 
-    for (u8 i = 0; i < vfp_reg.fetch_vec_len() - 1; i++) {
-        // TODO
+    for (const auto regs : encoding.vec_regs) {
+        vfp_reg.write(regs.Dd_id, vfp_reg.read(regs.Dm_id)); 
     }
-
 }
 
 
@@ -85,11 +295,10 @@ void INSTRUCTIONS::arm::vfp::FCPYD(const u32 code) {
  *       Sd[i] = Sm[i]
  */
 void INSTRUCTIONS::arm::vfp::FCPYS(const u32 code) {
-    const u32 Sm = vfp_reg.read_single(code, 0, 3, 5);
-    u32 Sd_copy = vfp_reg.read_single(code, 12, 15, 22);
+    const single_encoding_struct encoding = vfp_addressing_mode.single_precision_monadic(code);
 
-    for (u8 i = 0; i < vfp_reg.fetch_vec_len() - 1; i++) {
-        // TODO
+    for (const auto regs : encoding.vec_regs) {
+        vfp_reg.write(regs.Sd_id, vfp_reg.read(regs.Sm_id)); 
     }
 }
 
@@ -98,6 +307,7 @@ void INSTRUCTIONS::arm::vfp::FCPYS(const u32 code) {
  * if ConditionPassed(cond) then
  *    Dd = ConvertSingleToDouble(Sm)
  */
+ // TODO EXCEPTION 
 void INSTRUCTIONS::arm::vfp::FCVTDS(const u32 code) {
     const float Sm = vfp_reg.read_single_IEEE(code, 0, 3, 5);
 
@@ -110,12 +320,9 @@ void INSTRUCTIONS::arm::vfp::FCVTDS(const u32 code) {
      * standard of the IEEE 754 Standard, so I presume 
      * this is a valid way to implement the instruction
      */
-    const double Dd = static_cast<double>(Sm);
+    const double d = static_cast<double>(Sm);
 
-    u64 ret = 0;
-
-    std::memcpy(&ret, &Dd, sizeof(ret));
-
+    const u64 ret = vfp_utils::double_to_u64(Sm);
     vfp_reg.write_double(code, 12, 15, ret);
 }
 
@@ -124,16 +331,12 @@ void INSTRUCTIONS::arm::vfp::FCVTDS(const u32 code) {
  * if ConditionPassed(cond) then
  *    Sd = ConvertDoubleToSingle(Dm)
  */
+ // TODO EXCEPTION
 void INSTRUCTIONS::arm::vfp::FCVTSD(const u32 code) {
     const double Dm = vfp_reg.read_double_IEEE(code, 0, 3);
 
-    //sorta the same story as FCVTDS 
-    const float Sd = static_cast<float>(Dm);
-
-    u32 ret = 0;
-
-    std::memcpy(&ret, &Sd, sizeof(ret));
-
+    const float f = static_cast<float>(Dm);
+    const u32 ret = vfp_utils::single_to_u32(Dm);
     vfp_reg.write_single(code, 12, 15, 22, ret);
 }
 
@@ -143,24 +346,38 @@ void INSTRUCTIONS::arm::vfp::FCVTSD(const u32 code) {
  *    for i = 0 to vec_len-1
  *       Dd[i] = Dn[i] / Dm[i]
  */
+ // TODO EXCEPTION
 void INSTRUCTIONS::arm::vfp::FDIVD(const u32 code) {
-    const u64 Dm = vfp_reg.read_double(code, 0, 3);
-    const u64 Dn = vfp_reg.read_double(code, 16, 19);
+    const double_encoding_struct encoding = vfp_addressing_mode.double_precision(code);
 
-    u64 Dd_copy = vfp_reg.read_double(code, 12, 15);
+    for (const auto regs : encoding.vec_regs) {
+        const double Dm = vfp_reg.read(regs.Dm_id);
+        const double Dn = vfp_reg.read(regs.Dn_id);
 
-    for (u8 i = 0; i < vfp_reg.fetch_vec_len() - 1; i++) {
-        // TODO
+        const double result  = Dn / Dm; 
+
+        vfp_reg.write(regs.Dd_id, result);
     }
-
-    vfp_reg.write_double(code, 12, 15, Dd_copy);
 }
 
 
-
+/**
+ * if ConditionPassed(cond) then
+ *     for i = 0 to vec_len-1
+ *         Sd[i] = Sn[i] / Sm[i]
+ */
+ // TODO EXCEPTION
 void INSTRUCTIONS::arm::vfp::FDIVS(const u32 code) {
+    const single_encoding_struct encoding = vfp_addressing_mode.single_precision(code);
 
+    for (const auto regs : encoding.vec_regs) {
+        const float Sm = vfp_reg.read(regs.Sm_id);
+        const float Sn = vfp_reg.read(regs.Sn_id);
 
+        const float result  = Sn / Sm;
+
+        vfp_reg.write(regs.Sd_id, result);
+    }
 }
 
 
@@ -211,15 +428,105 @@ void INSTRUCTIONS::arm::vfp::FLDD(const u32 code) {
     }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *     address = start_address
+ *     for i = 0 to (offset-2)/2
+ *         // d is the number of register Dd;
+ *         // D(n) is the double-precision register numbered n
+ *         if (big-endian)
+ *             D(d+i) = (Memory[address,] << 32) OR Memory[address+4,4]
+ *         else
+ *             D(d+i) = (Memory[address+4,4] << 32) OR Memory[address,4]
+ *         address = address + 8
+ *     assert end_address = address - 4
+ */
 void INSTRUCTIONS::arm::vfp::FLDMD(const u32 code) {
+    const vfp_address_struct addresses = vfp_addressing_mode.vfp_load_multiple(code);
 
+    u32 address = addresses.start;
+    const u8 offset = shared::util::bit_range(code, 0, 7);
+    const u8 cond = (offset - 2) / 2;
 
+    const u8 d = shared::util::bit_range(code, 12, 15);
+
+    for (u8 i = 0; i < cond; i++) {
+        const mem_read_struct access = memory.read(address, 4);
+
+        if (access.has_failed) {
+            memory.manage_abort(access.abort_code);
+            return;
+        }
+
+        const mem_read_struct access2 = memory.read(address + 4, 4);
+
+        if (access2.has_failed) {
+            memory.manage_abort(access2.abort_code);
+            return;
+        }
+
+        u32 value = 0;
+
+        // is big endian
+        if (coprocessor.read(id::cp15::R1_B)) {
+            value = (access.value << 32 | access2.value);
+        } else {
+            value = (access2.value << 32 | access.value);
+        }
+
+        const id::vfp_reg Dd_id = vfp_reg.fetch_double_reg_id(d + i);
+
+        vfp_reg.write(Dd_id, value);
+
+        address += 8;
+    }
+
+    if (addresses.end != (address - 4)) {
+        shared::out::error("Assertion failed for FLDMD instruction");
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *     address = start_address
+ *     for i = 0 to offset-1
+ *         // d is as defined for <registers> above;
+ *         // S(n) is the single-precision register numbered n
+ *         S(d+i) = Memory[address,4]
+ *         address = address + 4
+ *     assert end_address = address - 4
+ */
 void INSTRUCTIONS::arm::vfp::FLDMS(const u32 code) {
+    const vfp_address_struct addresses = vfp_addressing_mode.vfp_load_multiple(code);
 
+    u32 address = addresses.start;
 
+    const u8 offset = shared::util::bit_range(code, 0, 7);
+
+    const u8 d = shared::util::bit_range(code, 12, 15);
+
+    for (u8 i = 0; i < offset - 1; i++) {
+        const mem_read_struct access = memory.read(address + 4, 4);
+
+        if (access.has_failed) {
+            memory.manage_abort(access.abort_code);
+            return;
+        }
+
+        const id::vfp_reg Sd_id = vfp_reg.fetch_single_reg_id(d + i);
+
+        vfp_reg.write(Sd_id, access.value);
+        address += 4;
+    }
+
+    if (addresses.end != (address - 4)) {
+        shared::out::error("Assertion failed for FLDMS instruction");
+    }
 }
+
+
 
 void INSTRUCTIONS::arm::vfp::FLDMX(const u32 code) {
 
