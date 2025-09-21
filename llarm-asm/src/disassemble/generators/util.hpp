@@ -2,6 +2,8 @@
 
 #include "../../settings.hpp"
 
+#include <string>
+
 #include "shared/types.hpp"
 
 namespace internal::util {
@@ -150,7 +152,7 @@ namespace internal::util {
     u32 thumb_sign_extend(u32 value, const u8 sign_index, const u32 PC);
 
 
-    // i'm deeply sorry to whoever is reading this absolute mess.
+    // i'm deeply sorry to whoever is reading this absolute mess, same for the function below.
     template<typename T>
     void append_arg(std::string& result, T&& arg) {
         if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {

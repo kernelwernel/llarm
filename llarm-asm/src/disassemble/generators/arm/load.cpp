@@ -332,7 +332,7 @@ std::string generators::arm::load::LDRT(const u32 code, const settings settings)
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
     const shifters::mode mode_id = shifters::identify_ls_shifter(code);
-    
+
     switch (mode_id) {
         case shifters::mode::LS_IMM_POST:
         case shifters::mode::LS_REG_POST:

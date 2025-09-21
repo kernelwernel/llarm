@@ -170,8 +170,8 @@ namespace internal::id {
     };
 
 
-
     enum class thumb : u8 {
+        UNKNOWN,
         UNDEFINED,
         ADC,
         ADD1,

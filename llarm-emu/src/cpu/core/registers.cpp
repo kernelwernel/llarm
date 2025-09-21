@@ -88,13 +88,13 @@ void REGISTERS::write(const id::cpsr cpsr_macro, const u8 value) {
                     default: break;
                 }
 
-                util::swap_bits(R15_copy, 0, 1, value); break;
-            case id::cpsr::N: util::modify_bit(R15_copy, 31, value); break;
-            case id::cpsr::Z: util::modify_bit(R15_copy, 30, value); break;
-            case id::cpsr::C: util::modify_bit(R15_copy, 29, value); break;
-            case id::cpsr::V: util::modify_bit(R15_copy, 28, value); break;
-            case id::cpsr::I: util::modify_bit(R15_copy, 27, value); break;
-            case id::cpsr::F: util::modify_bit(R15_copy, 26, value); break;
+                shared::util::swap_bits(R15_copy, 0, 1, value); break;
+            case id::cpsr::N: shared::util::modify_bit(R15_copy, 31, value); break;
+            case id::cpsr::Z: shared::util::modify_bit(R15_copy, 30, value); break;
+            case id::cpsr::C: shared::util::modify_bit(R15_copy, 29, value); break;
+            case id::cpsr::V: shared::util::modify_bit(R15_copy, 28, value); break;
+            case id::cpsr::I: shared::util::modify_bit(R15_copy, 27, value); break;
+            case id::cpsr::F: shared::util::modify_bit(R15_copy, 26, value); break;
             default: shared::out::error("No known enum value for write() (26-bit)");
         }
 
@@ -102,28 +102,28 @@ void REGISTERS::write(const id::cpsr cpsr_macro, const u8 value) {
         return;
     } else {
         switch (cpsr_macro) {
-            case id::cpsr::M: util::swap_bits(CPSR, 0, 4, value); return;
+            case id::cpsr::M: shared::util::swap_bits(CPSR, 0, 4, value); return;
             case id::cpsr::T: 
                 if (value == true) {
                     globals.instruction_set = id::instruction_sets::THUMB;
                 } else if (value == false) {
                     globals.instruction_set = id::instruction_sets::ARM;
                 }
-                util::modify_bit(CPSR, 5, value);
+                shared::util::modify_bit(CPSR, 5, value);
                 return;
-            case id::cpsr::F: util::modify_bit(CPSR, 6, value); return;
-            case id::cpsr::I: util::modify_bit(CPSR, 7, value); return;
-            //case id::cpsr::A: util::modify_bit(CPSR, 8, value); return;
-            //case id::cpsr::E: util::modify_bit(CPSR, 9, value); return;
+            case id::cpsr::F: shared::util::modify_bit(CPSR, 6, value); return;
+            case id::cpsr::I: shared::util::modify_bit(CPSR, 7, value); return;
+            //case id::cpsr::A: shared::util::modify_bit(CPSR, 8, value); return;
+            //case id::cpsr::E: shared::util::modify_bit(CPSR, 9, value); return;
             //case id::cpsr::IT: return; // TODO: think of a good exception
-            //case id::cpsr::GE: util::swap_bits(CPSR, 16, 19, value); return;
-            //case id::cpsr::DNM: util::swap_bits(CPSR, 20, 23, value); return;
-            //case id::cpsr::J: util::modify_bit(CPSR, 24, value); return;
-            case id::cpsr::Q: util::modify_bit(CPSR, 27, value); return;
-            case id::cpsr::V: util::modify_bit(CPSR, 28, value); return;
-            case id::cpsr::C: util::modify_bit(CPSR, 29, value); return;
-            case id::cpsr::Z: util::modify_bit(CPSR, 30, value); return;
-            case id::cpsr::N: util::modify_bit(CPSR, 31, value); return;
+            //case id::cpsr::GE: shared::util::swap_bits(CPSR, 16, 19, value); return;
+            //case id::cpsr::DNM: shared::util::swap_bits(CPSR, 20, 23, value); return;
+            //case id::cpsr::J: shared::util::modify_bit(CPSR, 24, value); return;
+            case id::cpsr::Q: shared::util::modify_bit(CPSR, 27, value); return;
+            case id::cpsr::V: shared::util::modify_bit(CPSR, 28, value); return;
+            case id::cpsr::C: shared::util::modify_bit(CPSR, 29, value); return;
+            case id::cpsr::Z: shared::util::modify_bit(CPSR, 30, value); return;
+            case id::cpsr::N: shared::util::modify_bit(CPSR, 31, value); return;
         }
     }
 }
@@ -668,7 +668,7 @@ bool REGISTERS::is_cond_valid(const u32 code) {
 
 void REGISTERS::write_PC(const u32 address) {
     if (arch_26.is_26_arch_address()) {
-        // util::swap_bits(R15, 2, 25, (address & 0x03FFFFFF)); TODO, this is most likely wrong
+        // shared::util::swap_bits(R15, 2, 25, (address & 0x03FFFFFF)); TODO, this is most likely wrong
     } else {
         R15 = address;
     }

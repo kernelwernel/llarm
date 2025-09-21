@@ -248,22 +248,22 @@ bool DECODE::is_thumb_instruction_unsupported(const llarm::as::id::thumb id) {
 
 
 arm_decode_struct DECODE::arm_decode(const u32 code) {
-    using namespace llarm; // for llarm::assembly
+    using namespace llarm; // for llarm::as
 
     const id::cond cond = reg.fetch_cond_id(code);
 
     if (has_condition_failed(cond)) {
         return arm_decode_struct {
-            assembly::id::arm::NOP, // id
+            as::id::arm::NOP, // id
             code // code
         };
     }
 
-    const assembly::id::arm id = assembly::identify::arm(code);
+    const as::id::arm id = as::identify::arm(code);
 
     if (is_arm_instruction_unsupported(id)) {
         return arm_decode_struct {
-            assembly::id::arm::UNDEFINED, // id
+            as::id::arm::UNDEFINED, // id
             code // code
         };
     }
@@ -276,13 +276,12 @@ arm_decode_struct DECODE::arm_decode(const u32 code) {
 
 
 thumb_decode_struct DECODE::thumb_decode(const u16 raw_code) {
-    using namespace llarm; // for llarm::assembly
-
-    const assembly::id::thumb id = assembly::identify::thumb(raw_code);
+    using namespace llarm; // for llarm::ass
+    const as::id::thumb id = as::identify::thumb(raw_code);
 
     if (is_thumb_instruction_unsupported(id)) {
         return thumb_decode_struct {
-            assembly::id::thumb::UNDEFINED, // id
+            as::id::thumb::UNDEFINED, // id
             raw_code // code
         };
     }

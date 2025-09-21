@@ -414,22 +414,6 @@ id::arm identifiers::vfp_single(const u32 code) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 id::arm identifiers::vfp_double(const u32 code) {
     const u8 left = shared::util::bit_range<u8>(code, 20, 23);
     const u8 right = shared::util::bit_range<u8>(code, 4, 7);
@@ -562,18 +546,6 @@ id::arm identifiers::vfp_double(const u32 code) {
 
     return id::arm::UNDEFINED;
 }
-    
-    
-
-
-
-
-
-
-
-
-
-
 
 
 id::arm identifiers::arm(const u32 code, const settings &settings) {

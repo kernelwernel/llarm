@@ -118,19 +118,19 @@ void INSTRUCTIONS::arm::movement::MSR_IMM(const u32 code) {
         u32 new_CPSR = reg.read(id::reg::CPSR);
 
         if (field_mask_c && is_privileged) {
-            util::swap_bits(new_CPSR, 0, 7, shared::util::bit_range<u8>(operand, 0, 7));
+            shared::util::swap_bits(new_CPSR, 0, 7, shared::util::bit_range<u8>(operand, 0, 7));
         }
 
         if (field_mask_x && is_privileged) {
-            util::swap_bits(new_CPSR, 8, 15, shared::util::bit_range<u8>(operand, 8, 15));
+            shared::util::swap_bits(new_CPSR, 8, 15, shared::util::bit_range<u8>(operand, 8, 15));
         }
 
         if (field_mask_s && is_privileged) {
-            util::swap_bits(new_CPSR, 16, 23, shared::util::bit_range<u8>(operand, 16, 23));
+            shared::util::swap_bits(new_CPSR, 16, 23, shared::util::bit_range<u8>(operand, 16, 23));
         }
 
         if (field_mask_f) {
-            util::swap_bits(new_CPSR, 24, 31, shared::util::bit_range<u8>(operand, 24, 31));
+            shared::util::swap_bits(new_CPSR, 24, 31, shared::util::bit_range<u8>(operand, 24, 31));
         }
 
         reg.write(id::reg::CPSR, new_CPSR);
@@ -141,19 +141,19 @@ void INSTRUCTIONS::arm::movement::MSR_IMM(const u32 code) {
             u32 new_SPSR = reg.read(id::reg::SPSR);
             
             if (field_mask_c) {
-                util::swap_bits(new_SPSR, 0, 7, shared::util::bit_range<u8>(operand, 0, 7));
+                shared::util::swap_bits(new_SPSR, 0, 7, shared::util::bit_range<u8>(operand, 0, 7));
             }
 
             if (field_mask_x) {
-                util::swap_bits(new_SPSR, 8, 15, shared::util::bit_range<u8>(operand, 8, 15));
+                shared::util::swap_bits(new_SPSR, 8, 15, shared::util::bit_range<u8>(operand, 8, 15));
             }
 
             if (field_mask_s) {
-                util::swap_bits(new_SPSR, 16, 23, shared::util::bit_range<u8>(operand, 16, 23));
+                shared::util::swap_bits(new_SPSR, 16, 23, shared::util::bit_range<u8>(operand, 16, 23));
             }
 
             if (field_mask_f) {
-                util::swap_bits(new_SPSR, 24, 31, shared::util::bit_range<u8>(operand, 24, 31));
+                shared::util::swap_bits(new_SPSR, 24, 31, shared::util::bit_range<u8>(operand, 24, 31));
             }
 
             reg.write(id::reg::SPSR, new_SPSR);
@@ -206,19 +206,19 @@ void INSTRUCTIONS::arm::movement::MSR_REG(const u32 code) {
         u32 new_CPSR = reg.read(id::reg::CPSR);
 
         if (field_mask_c && is_privileged) {
-            util::swap_bits(new_CPSR, 0, 7, shared::util::bit_range<u8>(operand, 0, 7));
+            shared::util::swap_bits(new_CPSR, 0, 7, shared::util::bit_range<u8>(operand, 0, 7));
         }
 
         if (field_mask_x && is_privileged) {
-            util::swap_bits(new_CPSR, 8, 15, shared::util::bit_range<u8>(operand, 8, 15));
+            shared::util::swap_bits(new_CPSR, 8, 15, shared::util::bit_range<u8>(operand, 8, 15));
         }
 
         if (field_mask_s && is_privileged) {
-            util::swap_bits(new_CPSR, 16, 23, shared::util::bit_range<u8>(operand, 16, 23));
+            shared::util::swap_bits(new_CPSR, 16, 23, shared::util::bit_range<u8>(operand, 16, 23));
         }
 
         if (field_mask_f) {
-            util::swap_bits(new_CPSR, 24, 31, shared::util::bit_range<u8>(operand, 24, 31));
+            shared::util::swap_bits(new_CPSR, 24, 31, shared::util::bit_range<u8>(operand, 24, 31));
         }
 
         reg.write(id::reg::CPSR, new_CPSR);
@@ -229,19 +229,19 @@ void INSTRUCTIONS::arm::movement::MSR_REG(const u32 code) {
             u32 new_SPSR = reg.read(id::reg::SPSR);
             
             if (field_mask_c) {
-                util::swap_bits(new_SPSR, 0, 7, shared::util::bit_range<u8>(operand, 0, 7));
+                shared::util::swap_bits(new_SPSR, 0, 7, shared::util::bit_range<u8>(operand, 0, 7));
             }
 
             if (field_mask_x) {
-                util::swap_bits(new_SPSR, 8, 15, shared::util::bit_range<u8>(operand, 8, 15));
+                shared::util::swap_bits(new_SPSR, 8, 15, shared::util::bit_range<u8>(operand, 8, 15));
             }
 
             if (field_mask_s) {
-                util::swap_bits(new_SPSR, 16, 23, shared::util::bit_range<u8>(operand, 16, 23));
+                shared::util::swap_bits(new_SPSR, 16, 23, shared::util::bit_range<u8>(operand, 16, 23));
             }
 
             if (field_mask_f) {
-                util::swap_bits(new_SPSR, 24, 31, shared::util::bit_range<u8>(operand, 24, 31));
+                shared::util::swap_bits(new_SPSR, 24, 31, shared::util::bit_range<u8>(operand, 24, 31));
             }
 
             reg.write(id::reg::SPSR, new_SPSR);

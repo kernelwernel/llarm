@@ -13,7 +13,7 @@
  - instruction documentation lookups (`llarm-inst`)
  - fetching ARM CPU information (`llarm-cpu`)
  - heat and power efficiency simulation (`llarm-sim`)
- - random ARM binary generation for samples and stress-testing (`llarm-rand`)
+ - random ARM binary generation for sampling and stress-testing (`llarm-rand`)
  - and many other sub-projects are planned or currently in development
 
 - - -

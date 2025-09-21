@@ -2,10 +2,10 @@
 #include "../identifiers/identifiers.hpp"
 #include "../instruction_id.hpp"
 #include "generators/generators.hpp"
-#include "generators/util.hpp"
 #include "../settings.hpp"
 
 #include "shared/types.hpp"
+#include "shared/util.hpp"
 #include "shared/out.hpp"
 
 #include <string>
@@ -81,6 +81,7 @@ std::string disassemble::thumb_generate(const u16 code, const u32 PC, const sett
         case id::thumb::STRH1: return generators::thumb::store::STRH1(code, settings);
         case id::thumb::STRH2: return generators::thumb::store::STRH2(code, settings);
         case id::thumb::UNDEFINED: shared::out::error("Undefined instruction encountered for thumb disassembly");
+        case id::thumb::UNKNOWN: shared::out::error("Unknown instruction encountered for disassembly");
         case id::thumb::NOP: shared::out::error("NOP instruction encountered for thumb disassembly");
     }
 }
@@ -245,7 +246,7 @@ std::string disassemble::arm(const u32 code, const u32 PC, const settings settin
     std::string instruction = arm_generate(code, PC, settings);
 
     if (settings.capitals == false) {
-        util::to_lower(instruction);
+        shared::util::to_lower(instruction);
     }
 
     return instruction;
@@ -257,7 +258,7 @@ std::string disassemble::thumb(const u16 code, const u32 PC, const settings sett
     std::string instruction = thumb_generate(code, PC, settings);
 
     if (settings.capitals == false) {
-        util::to_lower(instruction);
+        shared::util::to_lower(instruction);
     }
 
     return instruction;

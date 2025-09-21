@@ -370,7 +370,7 @@ std::string generators::arm::vfp::FLDMD(const u32 code, const settings settings)
     );
 
     if (settings.capitals == false) {
-        util::to_lower(tmp);
+        shared::util::to_lower(tmp);
     }
 
     return tmp;
@@ -424,7 +424,7 @@ std::string generators::arm::vfp::FLDMS(const u32 code, const settings settings)
     );
 
     if (settings.capitals == false) {
-        util::to_lower(tmp);
+        shared::util::to_lower(tmp);
     }
 
     return tmp;
@@ -474,7 +474,7 @@ std::string generators::arm::vfp::FLDMX(const u32 code, const settings settings)
     );
 
     if (settings.capitals == false) {
-        util::to_lower(tmp);
+        shared::util::to_lower(tmp);
     }
 
     return tmp;

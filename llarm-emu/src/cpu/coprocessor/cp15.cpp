@@ -502,38 +502,38 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
 
             switch (reg) {
                 case id::cp15::R0_ID: R0_ID = value; return;
-                case id::cp15::R0_ID_REVISION: util::swap_bits(R0_ID, 0, 3, value); return;
-                case id::cp15::R0_ID_IMPLEMENTOR: util::swap_bits(R0_ID, 24, 31, value); return;
-                case id::cp15::R0_ID_PPN: util::swap_bits(R0_ID, 4, 15, value); return;
-                case id::cp15::R0_ID_PRE7_ID: util::swap_bits(R0_ID, 0, 3, value); return;
-                case id::cp15::R0_ID_PRE7_REVISION: util::swap_bits(R0_ID, 4, 31, value); return;
-                case id::cp15::R0_ID_7_REVISION: util::swap_bits(R0_ID, 0, 3, value); return;
-                case id::cp15::R0_ID_7_PPN: util::swap_bits(R0_ID, 4, 15, value); return;
-                case id::cp15::R0_ID_7_PPN_TOP: util::swap_bits(R0_ID, 12, 15, value); return;
-                case id::cp15::R0_ID_7_VARIANT: util::swap_bits(R0_ID, 16, 22, value); return;
-                case id::cp15::R0_ID_7_A: util::modify_bit(R0_ID, 23, value); return;
-                case id::cp15::R0_ID_7_IMPLEMENTOR: util::swap_bits(R0_ID, 24, 31, value); return;
-                case id::cp15::R0_ID_POST7_REVISION: util::swap_bits(R0_ID, 0, 3, value); return;
-                case id::cp15::R0_ID_POST7_PPN: util::swap_bits(R0_ID, 4, 15, value); return;
-                case id::cp15::R0_ID_POST7_PPN_TOP: util::swap_bits(R0_ID, 12, 15, value); return;
-                case id::cp15::R0_ID_POST7_ARCHITECTURE: util::swap_bits(R0_ID, 16, 19, value); return;
-                case id::cp15::R0_ID_POST7_VARIANT: util::swap_bits(R0_ID, 20, 23, value); return;
-                case id::cp15::R0_ID_POST7_IMPLEMENTOR: util::swap_bits(R0_ID, 24, 31, value); return;
+                case id::cp15::R0_ID_REVISION: shared::util::swap_bits(R0_ID, 0, 3, value); return;
+                case id::cp15::R0_ID_IMPLEMENTOR: shared::util::swap_bits(R0_ID, 24, 31, value); return;
+                case id::cp15::R0_ID_PPN: shared::util::swap_bits(R0_ID, 4, 15, value); return;
+                case id::cp15::R0_ID_PRE7_ID: shared::util::swap_bits(R0_ID, 0, 3, value); return;
+                case id::cp15::R0_ID_PRE7_REVISION: shared::util::swap_bits(R0_ID, 4, 31, value); return;
+                case id::cp15::R0_ID_7_REVISION: shared::util::swap_bits(R0_ID, 0, 3, value); return;
+                case id::cp15::R0_ID_7_PPN: shared::util::swap_bits(R0_ID, 4, 15, value); return;
+                case id::cp15::R0_ID_7_PPN_TOP: shared::util::swap_bits(R0_ID, 12, 15, value); return;
+                case id::cp15::R0_ID_7_VARIANT: shared::util::swap_bits(R0_ID, 16, 22, value); return;
+                case id::cp15::R0_ID_7_A: shared::util::modify_bit(R0_ID, 23, value); return;
+                case id::cp15::R0_ID_7_IMPLEMENTOR: shared::util::swap_bits(R0_ID, 24, 31, value); return;
+                case id::cp15::R0_ID_POST7_REVISION: shared::util::swap_bits(R0_ID, 0, 3, value); return;
+                case id::cp15::R0_ID_POST7_PPN: shared::util::swap_bits(R0_ID, 4, 15, value); return;
+                case id::cp15::R0_ID_POST7_PPN_TOP: shared::util::swap_bits(R0_ID, 12, 15, value); return;
+                case id::cp15::R0_ID_POST7_ARCHITECTURE: shared::util::swap_bits(R0_ID, 16, 19, value); return;
+                case id::cp15::R0_ID_POST7_VARIANT: shared::util::swap_bits(R0_ID, 20, 23, value); return;
+                case id::cp15::R0_ID_POST7_IMPLEMENTOR: shared::util::swap_bits(R0_ID, 24, 31, value); return;
                 default: shared::out::dev_error("Impossible write operation on cp15");
             }
         case id::cp15::R0_CACHE: R0_CACHE = value; return;
-        case id::cp15::R0_CACHE_CTYPE: util::swap_bits(R0_CACHE, 25, 28, value); return;
-        case id::cp15::R0_CACHE_S: util::modify_bit(R0_CACHE, 24, value); return;
-        case id::cp15::R0_CACHE_DSIZE: util::swap_bits(R0_CACHE, 12, 23, value); return;
-        case id::cp15::R0_CACHE_DSIZE_LEN: util::swap_bits(R0_CACHE, 12, 13, value); return;
-        case id::cp15::R0_CACHE_DSIZE_M: util::modify_bit(R0_CACHE, 14, value); return;
-        case id::cp15::R0_CACHE_DSIZE_ASSOC: util::swap_bits(R0_CACHE, 15, 17, value); return;
-        case id::cp15::R0_CACHE_DSIZE_SIZE: util::swap_bits(R0_CACHE, 18, 20, value); return;
-        case id::cp15::R0_CACHE_ISIZE: util::swap_bits(R0_CACHE, 0, 11, value); return;
-        case id::cp15::R0_CACHE_ISIZE_LEN: util::swap_bits(R0_CACHE, 0, 1, value); return;
-        case id::cp15::R0_CACHE_ISIZE_M: util::modify_bit(R0_CACHE, 2, value); return;
-        case id::cp15::R0_CACHE_ISIZE_ASSOC: util::swap_bits(R0_CACHE, 3, 5, value); return;
-        case id::cp15::R0_CACHE_ISIZE_SIZE: util::swap_bits(R0_CACHE, 6, 8, value); return;
+        case id::cp15::R0_CACHE_CTYPE: shared::util::swap_bits(R0_CACHE, 25, 28, value); return;
+        case id::cp15::R0_CACHE_S: shared::util::modify_bit(R0_CACHE, 24, value); return;
+        case id::cp15::R0_CACHE_DSIZE: shared::util::swap_bits(R0_CACHE, 12, 23, value); return;
+        case id::cp15::R0_CACHE_DSIZE_LEN: shared::util::swap_bits(R0_CACHE, 12, 13, value); return;
+        case id::cp15::R0_CACHE_DSIZE_M: shared::util::modify_bit(R0_CACHE, 14, value); return;
+        case id::cp15::R0_CACHE_DSIZE_ASSOC: shared::util::swap_bits(R0_CACHE, 15, 17, value); return;
+        case id::cp15::R0_CACHE_DSIZE_SIZE: shared::util::swap_bits(R0_CACHE, 18, 20, value); return;
+        case id::cp15::R0_CACHE_ISIZE: shared::util::swap_bits(R0_CACHE, 0, 11, value); return;
+        case id::cp15::R0_CACHE_ISIZE_LEN: shared::util::swap_bits(R0_CACHE, 0, 1, value); return;
+        case id::cp15::R0_CACHE_ISIZE_M: shared::util::modify_bit(R0_CACHE, 2, value); return;
+        case id::cp15::R0_CACHE_ISIZE_ASSOC: shared::util::swap_bits(R0_CACHE, 3, 5, value); return;
+        case id::cp15::R0_CACHE_ISIZE_SIZE: shared::util::swap_bits(R0_CACHE, 6, 8, value); return;
 
         case id::cp15::R1: R1 = value; return;
         case id::cp15::R1_M: 
@@ -544,9 +544,9 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                     shared::out::warning("PU must have at least a single protection region setup");
                 }
 
-                util::modify_bit(R1, 0, value); 
+                shared::util::modify_bit(R1, 0, value); 
             } else if (settings.is_mmu_enabled || forced) {
-                util::modify_bit(R1, 0, value); 
+                shared::util::modify_bit(R1, 0, value); 
             }
             return;
 
@@ -555,7 +555,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             // reads as 1 or 0 according to whether the memory system 
             // does or does not check the alignment of data memory accesses.
             if (settings.has_alignment_fault_checking || forced) {
-                util::modify_bit(R1, 1, value);
+                shared::util::modify_bit(R1, 1, value);
             }
             return;
 
@@ -572,7 +572,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             }
 
             if (settings.has_cache || forced) {
-                util::modify_bit(R1, 2, value); 
+                shared::util::modify_bit(R1, 2, value); 
             }
 
             return;
@@ -586,7 +586,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             }
 
             if (settings.has_write_buffer || forced) {
-                util::modify_bit(R1, 3, value);
+                shared::util::modify_bit(R1, 3, value);
             }
 
             return;
@@ -599,7 +599,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 return;
             }
             
-            util::modify_bit(R1, 4, value);
+            shared::util::modify_bit(R1, 4, value);
             return;
 
         case id::cp15::R1_D:
@@ -610,7 +610,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 return;
             }
 
-            util::modify_bit(R1, 5, value);
+            shared::util::modify_bit(R1, 5, value);
             return;
 
         case id::cp15::R1_L: // TODO, idk what the fuck is the "old abort model"
@@ -619,7 +619,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 return;
             }
 
-            util::modify_bit(R1, 6, value);  
+            shared::util::modify_bit(R1, 6, value);  
             return;
 
         case id::cp15::R1_B: 
@@ -631,19 +631,19 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 return;
             }
 
-            util::modify_bit(R1, 7, value);
+            shared::util::modify_bit(R1, 7, value);
             return;
 
         case id::cp15::R1_S:     
-            util::modify_bit(R1, 8, value);  
+            shared::util::modify_bit(R1, 8, value);  
             return;
 
         case id::cp15::R1_R:     
-            util::modify_bit(R1, 9, value);
+            shared::util::modify_bit(R1, 9, value);
             return;
 
         case id::cp15::R1_F: 
-            util::modify_bit(R1, 10, value);
+            shared::util::modify_bit(R1, 10, value);
             return; 
 
         case id::cp15::R1_Z: 
@@ -655,7 +655,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             }
 
             if (settings.has_branch_prediction || forced) {
-                util::modify_bit(R1, 11, value); 
+                shared::util::modify_bit(R1, 11, value); 
             }
             
             return;
@@ -676,7 +676,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             }
 
             if (settings.has_separate_cache || forced) {
-                util::modify_bit(R1, 12, value); 
+                shared::util::modify_bit(R1, 12, value); 
             }
             
             return;
@@ -685,7 +685,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             // On ARM processors that do not support high vectors, 
             // this bit reads as 0 and ignores writes.
             if (settings.has_high_vectors || forced) {
-                util::modify_bit(R1, 13, value); 
+                shared::util::modify_bit(R1, 13, value); 
             }
 
             return;
@@ -700,7 +700,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             }
 
             if (settings.has_round_robin_replacement_cache_strategy || forced) {
-                util::modify_bit(R1, 14, value);
+                shared::util::modify_bit(R1, 14, value);
             }
 
             return;
@@ -715,7 +715,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             }
         
             if (settings.is_L4_bit_enabled_cp15 || forced) {
-                util::modify_bit(R1, 15, value);
+                shared::util::modify_bit(R1, 15, value);
             }
 
             return;
@@ -726,64 +726,64 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 return;
             }
 
-            util::swap_bits(R2, 14, 31, value);
+            shared::util::swap_bits(R2, 14, 31, value);
             tlb.flush();
             return;
         case id::cp15::R2: R2 = value; return;
         case id::cp15::R2_PU: R2 = value; return;
-        case id::cp15::R2_PU_C0: util::modify_bit(R2, 0, value); return;
-        case id::cp15::R2_PU_C1: util::modify_bit(R2, 1, value); return;
-        case id::cp15::R2_PU_C2: util::modify_bit(R2, 2, value); return;
-        case id::cp15::R2_PU_C3: util::modify_bit(R2, 3, value); return;
-        case id::cp15::R2_PU_C4: util::modify_bit(R2, 4, value); return;
-        case id::cp15::R2_PU_C5: util::modify_bit(R2, 5, value); return;
-        case id::cp15::R2_PU_C6: util::modify_bit(R2, 6, value); return;
-        case id::cp15::R2_PU_C7: util::modify_bit(R2, 7, value); return;
+        case id::cp15::R2_PU_C0: shared::util::modify_bit(R2, 0, value); return;
+        case id::cp15::R2_PU_C1: shared::util::modify_bit(R2, 1, value); return;
+        case id::cp15::R2_PU_C2: shared::util::modify_bit(R2, 2, value); return;
+        case id::cp15::R2_PU_C3: shared::util::modify_bit(R2, 3, value); return;
+        case id::cp15::R2_PU_C4: shared::util::modify_bit(R2, 4, value); return;
+        case id::cp15::R2_PU_C5: shared::util::modify_bit(R2, 5, value); return;
+        case id::cp15::R2_PU_C6: shared::util::modify_bit(R2, 6, value); return;
+        case id::cp15::R2_PU_C7: shared::util::modify_bit(R2, 7, value); return;
         case id::cp15::R3: R3 = value; return;
         case id::cp15::R3_MMU: R3 = value; return;
-        case id::cp15::R3_MMU_D0: util::swap_bits(R3, 0, 1, value);  return;
-        case id::cp15::R3_MMU_D1: util::swap_bits(R3, 2, 3, value);  return;
-        case id::cp15::R3_MMU_D2: util::swap_bits(R3, 4, 5, value);  return;
-        case id::cp15::R3_MMU_D3: util::swap_bits(R3, 6, 7, value);  return;
-        case id::cp15::R3_MMU_D4: util::swap_bits(R3, 8, 9, value);  return;
-        case id::cp15::R3_MMU_D5: util::swap_bits(R3, 10, 11, value); return;
-        case id::cp15::R3_MMU_D6: util::swap_bits(R3, 12, 13, value); return;
-        case id::cp15::R3_MMU_D7: util::swap_bits(R3, 14, 15, value); return;
-        case id::cp15::R3_MMU_D8: util::swap_bits(R3, 16, 17, value); return;
-        case id::cp15::R3_MMU_D9: util::swap_bits(R3, 18, 19, value); return;
-        case id::cp15::R3_MMU_D10: util::swap_bits(R3, 20, 21, value); return;
-        case id::cp15::R3_MMU_D11: util::swap_bits(R3, 22, 23, value); return;
-        case id::cp15::R3_MMU_D12: util::swap_bits(R3, 24, 25, value); return;
-        case id::cp15::R3_MMU_D13: util::swap_bits(R3, 26, 27, value); return;
-        case id::cp15::R3_MMU_D14: util::swap_bits(R3, 28, 29, value); return;
-        case id::cp15::R3_MMU_D15: util::swap_bits(R3, 30, 31, value); return;
+        case id::cp15::R3_MMU_D0: shared::util::swap_bits(R3, 0, 1, value);  return;
+        case id::cp15::R3_MMU_D1: shared::util::swap_bits(R3, 2, 3, value);  return;
+        case id::cp15::R3_MMU_D2: shared::util::swap_bits(R3, 4, 5, value);  return;
+        case id::cp15::R3_MMU_D3: shared::util::swap_bits(R3, 6, 7, value);  return;
+        case id::cp15::R3_MMU_D4: shared::util::swap_bits(R3, 8, 9, value);  return;
+        case id::cp15::R3_MMU_D5: shared::util::swap_bits(R3, 10, 11, value); return;
+        case id::cp15::R3_MMU_D6: shared::util::swap_bits(R3, 12, 13, value); return;
+        case id::cp15::R3_MMU_D7: shared::util::swap_bits(R3, 14, 15, value); return;
+        case id::cp15::R3_MMU_D8: shared::util::swap_bits(R3, 16, 17, value); return;
+        case id::cp15::R3_MMU_D9: shared::util::swap_bits(R3, 18, 19, value); return;
+        case id::cp15::R3_MMU_D10: shared::util::swap_bits(R3, 20, 21, value); return;
+        case id::cp15::R3_MMU_D11: shared::util::swap_bits(R3, 22, 23, value); return;
+        case id::cp15::R3_MMU_D12: shared::util::swap_bits(R3, 24, 25, value); return;
+        case id::cp15::R3_MMU_D13: shared::util::swap_bits(R3, 26, 27, value); return;
+        case id::cp15::R3_MMU_D14: shared::util::swap_bits(R3, 28, 29, value); return;
+        case id::cp15::R3_MMU_D15: shared::util::swap_bits(R3, 30, 31, value); return;
         case id::cp15::R3_PU: R3 = value; return;
-        case id::cp15::R3_PU_B0: util::modify_bit(R3, 0, value); return;
-        case id::cp15::R3_PU_B1: util::modify_bit(R3, 1, value); return;
-        case id::cp15::R3_PU_B2: util::modify_bit(R3, 2, value); return;
-        case id::cp15::R3_PU_B3: util::modify_bit(R3, 3, value); return;
-        case id::cp15::R3_PU_B4: util::modify_bit(R3, 4, value); return;
-        case id::cp15::R3_PU_B5: util::modify_bit(R3, 5, value); return;
-        case id::cp15::R3_PU_B6: util::modify_bit(R3, 6, value); return;
-        case id::cp15::R3_PU_B7: util::modify_bit(R3, 7, value); return;
+        case id::cp15::R3_PU_B0: shared::util::modify_bit(R3, 0, value); return;
+        case id::cp15::R3_PU_B1: shared::util::modify_bit(R3, 1, value); return;
+        case id::cp15::R3_PU_B2: shared::util::modify_bit(R3, 2, value); return;
+        case id::cp15::R3_PU_B3: shared::util::modify_bit(R3, 3, value); return;
+        case id::cp15::R3_PU_B4: shared::util::modify_bit(R3, 4, value); return;
+        case id::cp15::R3_PU_B5: shared::util::modify_bit(R3, 5, value); return;
+        case id::cp15::R3_PU_B6: shared::util::modify_bit(R3, 6, value); return;
+        case id::cp15::R3_PU_B7: shared::util::modify_bit(R3, 7, value); return;
         case id::cp15::R3_PU_INST: R3_PU_INST = value; return;
-        case id::cp15::R3_PU_INST_B0: util::modify_bit(R3_PU_INST, 0, value); return;
-        case id::cp15::R3_PU_INST_B1: util::modify_bit(R3_PU_INST, 1, value); return;
-        case id::cp15::R3_PU_INST_B2: util::modify_bit(R3_PU_INST, 2, value); return;
-        case id::cp15::R3_PU_INST_B3: util::modify_bit(R3_PU_INST, 3, value); return;
-        case id::cp15::R3_PU_INST_B4: util::modify_bit(R3_PU_INST, 4, value); return;
-        case id::cp15::R3_PU_INST_B5: util::modify_bit(R3_PU_INST, 5, value); return;
-        case id::cp15::R3_PU_INST_B6: util::modify_bit(R3_PU_INST, 6, value); return;
-        case id::cp15::R3_PU_INST_B7: util::modify_bit(R3_PU_INST, 7, value); return;
+        case id::cp15::R3_PU_INST_B0: shared::util::modify_bit(R3_PU_INST, 0, value); return;
+        case id::cp15::R3_PU_INST_B1: shared::util::modify_bit(R3_PU_INST, 1, value); return;
+        case id::cp15::R3_PU_INST_B2: shared::util::modify_bit(R3_PU_INST, 2, value); return;
+        case id::cp15::R3_PU_INST_B3: shared::util::modify_bit(R3_PU_INST, 3, value); return;
+        case id::cp15::R3_PU_INST_B4: shared::util::modify_bit(R3_PU_INST, 4, value); return;
+        case id::cp15::R3_PU_INST_B5: shared::util::modify_bit(R3_PU_INST, 5, value); return;
+        case id::cp15::R3_PU_INST_B6: shared::util::modify_bit(R3_PU_INST, 6, value); return;
+        case id::cp15::R3_PU_INST_B7: shared::util::modify_bit(R3_PU_INST, 7, value); return;
         case id::cp15::R3_PU_DATA: R3_PU_DATA = value; return;
-        case id::cp15::R3_PU_DATA_B0: util::modify_bit(R3_PU_DATA, 0, value); return;
-        case id::cp15::R3_PU_DATA_B1: util::modify_bit(R3_PU_DATA, 1, value); return;
-        case id::cp15::R3_PU_DATA_B2: util::modify_bit(R3_PU_DATA, 2, value); return;
-        case id::cp15::R3_PU_DATA_B3: util::modify_bit(R3_PU_DATA, 3, value); return;
-        case id::cp15::R3_PU_DATA_B4: util::modify_bit(R3_PU_DATA, 4, value); return;
-        case id::cp15::R3_PU_DATA_B5: util::modify_bit(R3_PU_DATA, 5, value); return;
-        case id::cp15::R3_PU_DATA_B6: util::modify_bit(R3_PU_DATA, 6, value); return;
-        case id::cp15::R3_PU_DATA_B7: util::modify_bit(R3_PU_DATA, 7, value); return;
+        case id::cp15::R3_PU_DATA_B0: shared::util::modify_bit(R3_PU_DATA, 0, value); return;
+        case id::cp15::R3_PU_DATA_B1: shared::util::modify_bit(R3_PU_DATA, 1, value); return;
+        case id::cp15::R3_PU_DATA_B2: shared::util::modify_bit(R3_PU_DATA, 2, value); return;
+        case id::cp15::R3_PU_DATA_B3: shared::util::modify_bit(R3_PU_DATA, 3, value); return;
+        case id::cp15::R3_PU_DATA_B4: shared::util::modify_bit(R3_PU_DATA, 4, value); return;
+        case id::cp15::R3_PU_DATA_B5: shared::util::modify_bit(R3_PU_DATA, 5, value); return;
+        case id::cp15::R3_PU_DATA_B6: shared::util::modify_bit(R3_PU_DATA, 6, value); return;
+        case id::cp15::R3_PU_DATA_B7: shared::util::modify_bit(R3_PU_DATA, 7, value); return;
 
         case id::cp15::R4: R4 = value; return;
         case id::cp15::R4_MMU: R4 = value; return;
@@ -791,35 +791,35 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
 
         case id::cp15::R5: R5 = value; return;
         case id::cp15::R5_MMU: R5 = value; return;
-        case id::cp15::R5_MMU_DOMAIN: util::swap_bits(R5, 4, 7, value); return;
-        case id::cp15::R5_MMU_STATUS: util::swap_bits(R5, 0, 3, value); return;
+        case id::cp15::R5_MMU_DOMAIN: shared::util::swap_bits(R5, 4, 7, value); return;
+        case id::cp15::R5_MMU_STATUS: shared::util::swap_bits(R5, 0, 3, value); return;
         case id::cp15::R5_PU: R5 = value; return;
-        case id::cp15::R5_PU_AP0: util::swap_bits(R5, 0, 1, value); return;
-        case id::cp15::R5_PU_AP1: util::swap_bits(R5, 2, 3, value); return;
-        case id::cp15::R5_PU_AP2: util::swap_bits(R5, 4, 5, value); return;
-        case id::cp15::R5_PU_AP3: util::swap_bits(R5, 6, 7, value); return;
-        case id::cp15::R5_PU_AP4: util::swap_bits(R5, 8, 9, value); return;
-        case id::cp15::R5_PU_AP5: util::swap_bits(R5, 10, 11, value); return;
-        case id::cp15::R5_PU_AP6: util::swap_bits(R5, 12, 13, value); return;
-        case id::cp15::R5_PU_AP7: util::swap_bits(R5, 14, 15, value); return;
+        case id::cp15::R5_PU_AP0: shared::util::swap_bits(R5, 0, 1, value); return;
+        case id::cp15::R5_PU_AP1: shared::util::swap_bits(R5, 2, 3, value); return;
+        case id::cp15::R5_PU_AP2: shared::util::swap_bits(R5, 4, 5, value); return;
+        case id::cp15::R5_PU_AP3: shared::util::swap_bits(R5, 6, 7, value); return;
+        case id::cp15::R5_PU_AP4: shared::util::swap_bits(R5, 8, 9, value); return;
+        case id::cp15::R5_PU_AP5: shared::util::swap_bits(R5, 10, 11, value); return;
+        case id::cp15::R5_PU_AP6: shared::util::swap_bits(R5, 12, 13, value); return;
+        case id::cp15::R5_PU_AP7: shared::util::swap_bits(R5, 14, 15, value); return;
         case id::cp15::R5_PU_INST: R5_PU_INST = value; return;
-        case id::cp15::R5_PU_INST_AP0: util::swap_bits(R5_PU_INST, 0, 1, value); return;
-        case id::cp15::R5_PU_INST_AP1: util::swap_bits(R5_PU_INST, 2, 3, value); return;
-        case id::cp15::R5_PU_INST_AP2: util::swap_bits(R5_PU_INST, 4, 5, value); return;
-        case id::cp15::R5_PU_INST_AP3: util::swap_bits(R5_PU_INST, 6, 7, value); return;
-        case id::cp15::R5_PU_INST_AP4: util::swap_bits(R5_PU_INST, 8, 9, value); return;
-        case id::cp15::R5_PU_INST_AP5: util::swap_bits(R5_PU_INST, 10, 11, value); return;
-        case id::cp15::R5_PU_INST_AP6: util::swap_bits(R5_PU_INST, 12, 13, value); return;
-        case id::cp15::R5_PU_INST_AP7: util::swap_bits(R5_PU_INST, 14, 15, value); return;
+        case id::cp15::R5_PU_INST_AP0: shared::util::swap_bits(R5_PU_INST, 0, 1, value); return;
+        case id::cp15::R5_PU_INST_AP1: shared::util::swap_bits(R5_PU_INST, 2, 3, value); return;
+        case id::cp15::R5_PU_INST_AP2: shared::util::swap_bits(R5_PU_INST, 4, 5, value); return;
+        case id::cp15::R5_PU_INST_AP3: shared::util::swap_bits(R5_PU_INST, 6, 7, value); return;
+        case id::cp15::R5_PU_INST_AP4: shared::util::swap_bits(R5_PU_INST, 8, 9, value); return;
+        case id::cp15::R5_PU_INST_AP5: shared::util::swap_bits(R5_PU_INST, 10, 11, value); return;
+        case id::cp15::R5_PU_INST_AP6: shared::util::swap_bits(R5_PU_INST, 12, 13, value); return;
+        case id::cp15::R5_PU_INST_AP7: shared::util::swap_bits(R5_PU_INST, 14, 15, value); return;
         case id::cp15::R5_PU_DATA: R5_PU_DATA = value; return;
-        case id::cp15::R5_PU_DATA_AP0: util::swap_bits(R5_PU_DATA, 0, 1, value); return;
-        case id::cp15::R5_PU_DATA_AP1: util::swap_bits(R5_PU_DATA, 2, 3, value); return;
-        case id::cp15::R5_PU_DATA_AP2: util::swap_bits(R5_PU_DATA, 4, 5, value); return;
-        case id::cp15::R5_PU_DATA_AP3: util::swap_bits(R5_PU_DATA, 6, 7, value); return;
-        case id::cp15::R5_PU_DATA_AP4: util::swap_bits(R5_PU_DATA, 8, 9, value); return;
-        case id::cp15::R5_PU_DATA_AP5: util::swap_bits(R5_PU_DATA, 10, 11, value); return;
-        case id::cp15::R5_PU_DATA_AP6: util::swap_bits(R5_PU_DATA, 12, 13, value); return;
-        case id::cp15::R5_PU_DATA_AP7: util::swap_bits(R5_PU_DATA, 14, 15, value); return;
+        case id::cp15::R5_PU_DATA_AP0: shared::util::swap_bits(R5_PU_DATA, 0, 1, value); return;
+        case id::cp15::R5_PU_DATA_AP1: shared::util::swap_bits(R5_PU_DATA, 2, 3, value); return;
+        case id::cp15::R5_PU_DATA_AP2: shared::util::swap_bits(R5_PU_DATA, 4, 5, value); return;
+        case id::cp15::R5_PU_DATA_AP3: shared::util::swap_bits(R5_PU_DATA, 6, 7, value); return;
+        case id::cp15::R5_PU_DATA_AP4: shared::util::swap_bits(R5_PU_DATA, 8, 9, value); return;
+        case id::cp15::R5_PU_DATA_AP5: shared::util::swap_bits(R5_PU_DATA, 10, 11, value); return;
+        case id::cp15::R5_PU_DATA_AP6: shared::util::swap_bits(R5_PU_DATA, 12, 13, value); return;
+        case id::cp15::R5_PU_DATA_AP7: shared::util::swap_bits(R5_PU_DATA, 14, 15, value); return;
 
         case id::cp15::R6_MMU: R6 = value; return;
         case id::cp15::R6_MMU_FAR: R6 = value; return;
@@ -930,30 +930,30 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             globals.mpu_address_change = true;
 
             switch (reg) {
-                case id::cp15::R6_PU_0_BASE_ADDRESS: util::swap_bits(R6_PU_0, 12, 31, value); return;
-                case id::cp15::R6_PU_1_BASE_ADDRESS: util::swap_bits(R6_PU_1, 12, 31, value); return; 
-                case id::cp15::R6_PU_2_BASE_ADDRESS: util::swap_bits(R6_PU_2, 12, 31, value); return;
-                case id::cp15::R6_PU_3_BASE_ADDRESS: util::swap_bits(R6_PU_3, 12, 31, value); return;
-                case id::cp15::R6_PU_4_BASE_ADDRESS: util::swap_bits(R6_PU_4, 12, 31, value); return;
-                case id::cp15::R6_PU_5_BASE_ADDRESS: util::swap_bits(R6_PU_5, 12, 31, value); return;
-                case id::cp15::R6_PU_6_BASE_ADDRESS: util::swap_bits(R6_PU_6, 12, 31, value); return;
-                case id::cp15::R6_PU_7_BASE_ADDRESS: util::swap_bits(R6_PU_7, 12, 31, value); return;
-                case id::cp15::R6_PU_0_SIZE: util::swap_bits(R6_PU_0, 1, 5, value); return;
-                case id::cp15::R6_PU_1_SIZE: util::swap_bits(R6_PU_1, 1, 5, value); return;
-                case id::cp15::R6_PU_2_SIZE: util::swap_bits(R6_PU_2, 1, 5, value); return;
-                case id::cp15::R6_PU_3_SIZE: util::swap_bits(R6_PU_3, 1, 5, value); return;
-                case id::cp15::R6_PU_4_SIZE: util::swap_bits(R6_PU_4, 1, 5, value); return;
-                case id::cp15::R6_PU_5_SIZE: util::swap_bits(R6_PU_5, 1, 5, value); return;
-                case id::cp15::R6_PU_6_SIZE: util::swap_bits(R6_PU_6, 1, 5, value); return;
-                case id::cp15::R6_PU_7_SIZE: util::swap_bits(R6_PU_7, 1, 5, value); return;
-                case id::cp15::R6_PU_0_E: util::modify_bit(R6_PU_0, 0, value); return;
-                case id::cp15::R6_PU_1_E: util::modify_bit(R6_PU_1, 0, value); return;
-                case id::cp15::R6_PU_2_E: util::modify_bit(R6_PU_2, 0, value); return;
-                case id::cp15::R6_PU_3_E: util::modify_bit(R6_PU_3, 0, value); return;
-                case id::cp15::R6_PU_4_E: util::modify_bit(R6_PU_4, 0, value); return;
-                case id::cp15::R6_PU_5_E: util::modify_bit(R6_PU_5, 0, value); return;
-                case id::cp15::R6_PU_6_E: util::modify_bit(R6_PU_6, 0, value); return;
-                case id::cp15::R6_PU_7_E: util::modify_bit(R6_PU_7, 0, value); return;
+                case id::cp15::R6_PU_0_BASE_ADDRESS: shared::util::swap_bits(R6_PU_0, 12, 31, value); return;
+                case id::cp15::R6_PU_1_BASE_ADDRESS: shared::util::swap_bits(R6_PU_1, 12, 31, value); return; 
+                case id::cp15::R6_PU_2_BASE_ADDRESS: shared::util::swap_bits(R6_PU_2, 12, 31, value); return;
+                case id::cp15::R6_PU_3_BASE_ADDRESS: shared::util::swap_bits(R6_PU_3, 12, 31, value); return;
+                case id::cp15::R6_PU_4_BASE_ADDRESS: shared::util::swap_bits(R6_PU_4, 12, 31, value); return;
+                case id::cp15::R6_PU_5_BASE_ADDRESS: shared::util::swap_bits(R6_PU_5, 12, 31, value); return;
+                case id::cp15::R6_PU_6_BASE_ADDRESS: shared::util::swap_bits(R6_PU_6, 12, 31, value); return;
+                case id::cp15::R6_PU_7_BASE_ADDRESS: shared::util::swap_bits(R6_PU_7, 12, 31, value); return;
+                case id::cp15::R6_PU_0_SIZE: shared::util::swap_bits(R6_PU_0, 1, 5, value); return;
+                case id::cp15::R6_PU_1_SIZE: shared::util::swap_bits(R6_PU_1, 1, 5, value); return;
+                case id::cp15::R6_PU_2_SIZE: shared::util::swap_bits(R6_PU_2, 1, 5, value); return;
+                case id::cp15::R6_PU_3_SIZE: shared::util::swap_bits(R6_PU_3, 1, 5, value); return;
+                case id::cp15::R6_PU_4_SIZE: shared::util::swap_bits(R6_PU_4, 1, 5, value); return;
+                case id::cp15::R6_PU_5_SIZE: shared::util::swap_bits(R6_PU_5, 1, 5, value); return;
+                case id::cp15::R6_PU_6_SIZE: shared::util::swap_bits(R6_PU_6, 1, 5, value); return;
+                case id::cp15::R6_PU_7_SIZE: shared::util::swap_bits(R6_PU_7, 1, 5, value); return;
+                case id::cp15::R6_PU_0_E: shared::util::modify_bit(R6_PU_0, 0, value); return;
+                case id::cp15::R6_PU_1_E: shared::util::modify_bit(R6_PU_1, 0, value); return;
+                case id::cp15::R6_PU_2_E: shared::util::modify_bit(R6_PU_2, 0, value); return;
+                case id::cp15::R6_PU_3_E: shared::util::modify_bit(R6_PU_3, 0, value); return;
+                case id::cp15::R6_PU_4_E: shared::util::modify_bit(R6_PU_4, 0, value); return;
+                case id::cp15::R6_PU_5_E: shared::util::modify_bit(R6_PU_5, 0, value); return;
+                case id::cp15::R6_PU_6_E: shared::util::modify_bit(R6_PU_6, 0, value); return;
+                case id::cp15::R6_PU_7_E: shared::util::modify_bit(R6_PU_7, 0, value); return;
                 case id::cp15::R6_PU_0: R6_PU_0 = value; return;
                 case id::cp15::R6_PU_1: R6_PU_1 = value; return;
                 case id::cp15::R6_PU_2: R6_PU_2 = value; return;
@@ -963,30 +963,30 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 case id::cp15::R6_PU_6: R6_PU_6 = value; return;
                 case id::cp15::R6_PU_7: R6_PU_7 = value; return;
 
-                case id::cp15::R6_PU_INST_0_BASE_ADDRESS: util::swap_bits(R6_PU_INST_0, 12, 31, value); return;
-                case id::cp15::R6_PU_INST_1_BASE_ADDRESS: util::swap_bits(R6_PU_INST_1, 12, 31, value); return; 
-                case id::cp15::R6_PU_INST_2_BASE_ADDRESS: util::swap_bits(R6_PU_INST_2, 12, 31, value); return;
-                case id::cp15::R6_PU_INST_3_BASE_ADDRESS: util::swap_bits(R6_PU_INST_3, 12, 31, value); return;
-                case id::cp15::R6_PU_INST_4_BASE_ADDRESS: util::swap_bits(R6_PU_INST_4, 12, 31, value); return;
-                case id::cp15::R6_PU_INST_5_BASE_ADDRESS: util::swap_bits(R6_PU_INST_5, 12, 31, value); return;
-                case id::cp15::R6_PU_INST_6_BASE_ADDRESS: util::swap_bits(R6_PU_INST_6, 12, 31, value); return;
-                case id::cp15::R6_PU_INST_7_BASE_ADDRESS: util::swap_bits(R6_PU_INST_7, 12, 31, value); return;
-                case id::cp15::R6_PU_INST_0_SIZE: util::swap_bits(R6_PU_INST_0, 1, 5, value); return;
-                case id::cp15::R6_PU_INST_1_SIZE: util::swap_bits(R6_PU_INST_1, 1, 5, value); return; 
-                case id::cp15::R6_PU_INST_2_SIZE: util::swap_bits(R6_PU_INST_2, 1, 5, value); return;
-                case id::cp15::R6_PU_INST_3_SIZE: util::swap_bits(R6_PU_INST_3, 1, 5, value); return;
-                case id::cp15::R6_PU_INST_4_SIZE: util::swap_bits(R6_PU_INST_4, 1, 5, value); return;
-                case id::cp15::R6_PU_INST_5_SIZE: util::swap_bits(R6_PU_INST_5, 1, 5, value); return;
-                case id::cp15::R6_PU_INST_6_SIZE: util::swap_bits(R6_PU_INST_6, 1, 5, value); return;
-                case id::cp15::R6_PU_INST_7_SIZE: util::swap_bits(R6_PU_INST_7, 1, 5, value); return;
-                case id::cp15::R6_PU_INST_0_E: util::modify_bit(R6_PU_INST_0, 0, value); return;
-                case id::cp15::R6_PU_INST_1_E: util::modify_bit(R6_PU_INST_1, 0, value); return;
-                case id::cp15::R6_PU_INST_2_E: util::modify_bit(R6_PU_INST_2, 0, value); return;
-                case id::cp15::R6_PU_INST_3_E: util::modify_bit(R6_PU_INST_3, 0, value); return;
-                case id::cp15::R6_PU_INST_4_E: util::modify_bit(R6_PU_INST_4, 0, value); return;
-                case id::cp15::R6_PU_INST_5_E: util::modify_bit(R6_PU_INST_5, 0, value); return;
-                case id::cp15::R6_PU_INST_6_E: util::modify_bit(R6_PU_INST_6, 0, value); return;
-                case id::cp15::R6_PU_INST_7_E: util::modify_bit(R6_PU_INST_7, 0, value); return;
+                case id::cp15::R6_PU_INST_0_BASE_ADDRESS: shared::util::swap_bits(R6_PU_INST_0, 12, 31, value); return;
+                case id::cp15::R6_PU_INST_1_BASE_ADDRESS: shared::util::swap_bits(R6_PU_INST_1, 12, 31, value); return; 
+                case id::cp15::R6_PU_INST_2_BASE_ADDRESS: shared::util::swap_bits(R6_PU_INST_2, 12, 31, value); return;
+                case id::cp15::R6_PU_INST_3_BASE_ADDRESS: shared::util::swap_bits(R6_PU_INST_3, 12, 31, value); return;
+                case id::cp15::R6_PU_INST_4_BASE_ADDRESS: shared::util::swap_bits(R6_PU_INST_4, 12, 31, value); return;
+                case id::cp15::R6_PU_INST_5_BASE_ADDRESS: shared::util::swap_bits(R6_PU_INST_5, 12, 31, value); return;
+                case id::cp15::R6_PU_INST_6_BASE_ADDRESS: shared::util::swap_bits(R6_PU_INST_6, 12, 31, value); return;
+                case id::cp15::R6_PU_INST_7_BASE_ADDRESS: shared::util::swap_bits(R6_PU_INST_7, 12, 31, value); return;
+                case id::cp15::R6_PU_INST_0_SIZE: shared::util::swap_bits(R6_PU_INST_0, 1, 5, value); return;
+                case id::cp15::R6_PU_INST_1_SIZE: shared::util::swap_bits(R6_PU_INST_1, 1, 5, value); return; 
+                case id::cp15::R6_PU_INST_2_SIZE: shared::util::swap_bits(R6_PU_INST_2, 1, 5, value); return;
+                case id::cp15::R6_PU_INST_3_SIZE: shared::util::swap_bits(R6_PU_INST_3, 1, 5, value); return;
+                case id::cp15::R6_PU_INST_4_SIZE: shared::util::swap_bits(R6_PU_INST_4, 1, 5, value); return;
+                case id::cp15::R6_PU_INST_5_SIZE: shared::util::swap_bits(R6_PU_INST_5, 1, 5, value); return;
+                case id::cp15::R6_PU_INST_6_SIZE: shared::util::swap_bits(R6_PU_INST_6, 1, 5, value); return;
+                case id::cp15::R6_PU_INST_7_SIZE: shared::util::swap_bits(R6_PU_INST_7, 1, 5, value); return;
+                case id::cp15::R6_PU_INST_0_E: shared::util::modify_bit(R6_PU_INST_0, 0, value); return;
+                case id::cp15::R6_PU_INST_1_E: shared::util::modify_bit(R6_PU_INST_1, 0, value); return;
+                case id::cp15::R6_PU_INST_2_E: shared::util::modify_bit(R6_PU_INST_2, 0, value); return;
+                case id::cp15::R6_PU_INST_3_E: shared::util::modify_bit(R6_PU_INST_3, 0, value); return;
+                case id::cp15::R6_PU_INST_4_E: shared::util::modify_bit(R6_PU_INST_4, 0, value); return;
+                case id::cp15::R6_PU_INST_5_E: shared::util::modify_bit(R6_PU_INST_5, 0, value); return;
+                case id::cp15::R6_PU_INST_6_E: shared::util::modify_bit(R6_PU_INST_6, 0, value); return;
+                case id::cp15::R6_PU_INST_7_E: shared::util::modify_bit(R6_PU_INST_7, 0, value); return;
                 case id::cp15::R6_PU_INST_0: R6_PU_INST_0 = value; return;
                 case id::cp15::R6_PU_INST_1: R6_PU_INST_1 = value; return;
                 case id::cp15::R6_PU_INST_2: R6_PU_INST_2 = value; return;
@@ -996,30 +996,30 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 case id::cp15::R6_PU_INST_6: R6_PU_INST_6 = value; return;
                 case id::cp15::R6_PU_INST_7: R6_PU_INST_7 = value; return;
                 
-                case id::cp15::R6_PU_DATA_0_BASE_ADDRESS: util::swap_bits(R6_PU_DATA_0, 12, 31, value); return;
-                case id::cp15::R6_PU_DATA_1_BASE_ADDRESS: util::swap_bits(R6_PU_DATA_1, 12, 31, value); return; 
-                case id::cp15::R6_PU_DATA_2_BASE_ADDRESS: util::swap_bits(R6_PU_DATA_2, 12, 31, value); return;
-                case id::cp15::R6_PU_DATA_3_BASE_ADDRESS: util::swap_bits(R6_PU_DATA_3, 12, 31, value); return;
-                case id::cp15::R6_PU_DATA_4_BASE_ADDRESS: util::swap_bits(R6_PU_DATA_4, 12, 31, value); return;
-                case id::cp15::R6_PU_DATA_5_BASE_ADDRESS: util::swap_bits(R6_PU_DATA_5, 12, 31, value); return;
-                case id::cp15::R6_PU_DATA_6_BASE_ADDRESS: util::swap_bits(R6_PU_DATA_6, 12, 31, value); return;
-                case id::cp15::R6_PU_DATA_7_BASE_ADDRESS: util::swap_bits(R6_PU_DATA_7, 12, 31, value); return;
-                case id::cp15::R6_PU_DATA_0_SIZE: util::swap_bits(R6_PU_DATA_0, 1, 5, value); return;
-                case id::cp15::R6_PU_DATA_1_SIZE: util::swap_bits(R6_PU_DATA_1, 1, 5, value); return;
-                case id::cp15::R6_PU_DATA_2_SIZE: util::swap_bits(R6_PU_DATA_2, 1, 5, value); return;
-                case id::cp15::R6_PU_DATA_3_SIZE: util::swap_bits(R6_PU_DATA_3, 1, 5, value); return;
-                case id::cp15::R6_PU_DATA_4_SIZE: util::swap_bits(R6_PU_DATA_4, 1, 5, value); return;
-                case id::cp15::R6_PU_DATA_5_SIZE: util::swap_bits(R6_PU_DATA_5, 1, 5, value); return;
-                case id::cp15::R6_PU_DATA_6_SIZE: util::swap_bits(R6_PU_DATA_6, 1, 5, value); return;
-                case id::cp15::R6_PU_DATA_7_SIZE: util::swap_bits(R6_PU_DATA_7, 1, 5, value); return;
-                case id::cp15::R6_PU_DATA_0_E: util::modify_bit(R6_PU_DATA_0, 0, value); return;
-                case id::cp15::R6_PU_DATA_1_E: util::modify_bit(R6_PU_DATA_1, 0, value); return;
-                case id::cp15::R6_PU_DATA_2_E: util::modify_bit(R6_PU_DATA_2, 0, value); return;
-                case id::cp15::R6_PU_DATA_3_E: util::modify_bit(R6_PU_DATA_3, 0, value); return;
-                case id::cp15::R6_PU_DATA_4_E: util::modify_bit(R6_PU_DATA_4, 0, value); return;
-                case id::cp15::R6_PU_DATA_5_E: util::modify_bit(R6_PU_DATA_5, 0, value); return;
-                case id::cp15::R6_PU_DATA_6_E: util::modify_bit(R6_PU_DATA_6, 0, value); return;
-                case id::cp15::R6_PU_DATA_7_E: util::modify_bit(R6_PU_DATA_7, 0, value); return;
+                case id::cp15::R6_PU_DATA_0_BASE_ADDRESS: shared::util::swap_bits(R6_PU_DATA_0, 12, 31, value); return;
+                case id::cp15::R6_PU_DATA_1_BASE_ADDRESS: shared::util::swap_bits(R6_PU_DATA_1, 12, 31, value); return; 
+                case id::cp15::R6_PU_DATA_2_BASE_ADDRESS: shared::util::swap_bits(R6_PU_DATA_2, 12, 31, value); return;
+                case id::cp15::R6_PU_DATA_3_BASE_ADDRESS: shared::util::swap_bits(R6_PU_DATA_3, 12, 31, value); return;
+                case id::cp15::R6_PU_DATA_4_BASE_ADDRESS: shared::util::swap_bits(R6_PU_DATA_4, 12, 31, value); return;
+                case id::cp15::R6_PU_DATA_5_BASE_ADDRESS: shared::util::swap_bits(R6_PU_DATA_5, 12, 31, value); return;
+                case id::cp15::R6_PU_DATA_6_BASE_ADDRESS: shared::util::swap_bits(R6_PU_DATA_6, 12, 31, value); return;
+                case id::cp15::R6_PU_DATA_7_BASE_ADDRESS: shared::util::swap_bits(R6_PU_DATA_7, 12, 31, value); return;
+                case id::cp15::R6_PU_DATA_0_SIZE: shared::util::swap_bits(R6_PU_DATA_0, 1, 5, value); return;
+                case id::cp15::R6_PU_DATA_1_SIZE: shared::util::swap_bits(R6_PU_DATA_1, 1, 5, value); return;
+                case id::cp15::R6_PU_DATA_2_SIZE: shared::util::swap_bits(R6_PU_DATA_2, 1, 5, value); return;
+                case id::cp15::R6_PU_DATA_3_SIZE: shared::util::swap_bits(R6_PU_DATA_3, 1, 5, value); return;
+                case id::cp15::R6_PU_DATA_4_SIZE: shared::util::swap_bits(R6_PU_DATA_4, 1, 5, value); return;
+                case id::cp15::R6_PU_DATA_5_SIZE: shared::util::swap_bits(R6_PU_DATA_5, 1, 5, value); return;
+                case id::cp15::R6_PU_DATA_6_SIZE: shared::util::swap_bits(R6_PU_DATA_6, 1, 5, value); return;
+                case id::cp15::R6_PU_DATA_7_SIZE: shared::util::swap_bits(R6_PU_DATA_7, 1, 5, value); return;
+                case id::cp15::R6_PU_DATA_0_E: shared::util::modify_bit(R6_PU_DATA_0, 0, value); return;
+                case id::cp15::R6_PU_DATA_1_E: shared::util::modify_bit(R6_PU_DATA_1, 0, value); return;
+                case id::cp15::R6_PU_DATA_2_E: shared::util::modify_bit(R6_PU_DATA_2, 0, value); return;
+                case id::cp15::R6_PU_DATA_3_E: shared::util::modify_bit(R6_PU_DATA_3, 0, value); return;
+                case id::cp15::R6_PU_DATA_4_E: shared::util::modify_bit(R6_PU_DATA_4, 0, value); return;
+                case id::cp15::R6_PU_DATA_5_E: shared::util::modify_bit(R6_PU_DATA_5, 0, value); return;
+                case id::cp15::R6_PU_DATA_6_E: shared::util::modify_bit(R6_PU_DATA_6, 0, value); return;
+                case id::cp15::R6_PU_DATA_7_E: shared::util::modify_bit(R6_PU_DATA_7, 0, value); return;
                 case id::cp15::R6_PU_DATA_0: R6_PU_DATA_0 = value; return;
                 case id::cp15::R6_PU_DATA_1: R6_PU_DATA_1 = value; return;
                 case id::cp15::R6_PU_DATA_2: R6_PU_DATA_2 = value; return;
@@ -1041,22 +1041,22 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
         case id::cp15::R9_CACHE_L: // TODO
         case id::cp15::R10: R10 = value; return;
         case id::cp15::R10_MMU: R10 = value; return;
-        case id::cp15::R10_MMU_BASE: util::swap_bits(R10, (32 - tlb.W_unified), 31, value); return;
-        case id::cp15::R10_MMU_VICTIM: util::swap_bits(R10, (32 - (2 * tlb.W_unified)), (31 - tlb.W_unified), value); return;
-        case id::cp15::R10_MMU_P: util::modify_bit(R10, 0, value); return;
+        case id::cp15::R10_MMU_BASE: shared::util::swap_bits(R10, (32 - tlb.W_unified), 31, value); return;
+        case id::cp15::R10_MMU_VICTIM: shared::util::swap_bits(R10, (32 - (2 * tlb.W_unified)), (31 - tlb.W_unified), value); return;
+        case id::cp15::R10_MMU_P: shared::util::modify_bit(R10, 0, value); return;
         case id::cp15::R10_MMU_INST: R10_INST = value; return;
-        case id::cp15::R10_MMU_INST_BASE: util::swap_bits(R10_INST, (32 - tlb.W_inst), 31, value); return;
-        case id::cp15::R10_MMU_INST_VICTIM: util::swap_bits(R10_INST, (32 - (2 * tlb.W_inst)), (31 - tlb.W_data), value); return;
-        case id::cp15::R10_MMU_INST_P: util::modify_bit(R10_INST, 0, value); return;
+        case id::cp15::R10_MMU_INST_BASE: shared::util::swap_bits(R10_INST, (32 - tlb.W_inst), 31, value); return;
+        case id::cp15::R10_MMU_INST_VICTIM: shared::util::swap_bits(R10_INST, (32 - (2 * tlb.W_inst)), (31 - tlb.W_data), value); return;
+        case id::cp15::R10_MMU_INST_P: shared::util::modify_bit(R10_INST, 0, value); return;
         case id::cp15::R10_MMU_DATA: R10_DATA = value; return;
-        case id::cp15::R10_MMU_DATA_BASE: util::swap_bits(R10_DATA, (32 - tlb.W_data), 31, value); return;
-        case id::cp15::R10_MMU_DATA_VICTIM: util::swap_bits(R10_DATA, (32 - (2 * tlb.W_data)), (31 - tlb.W_data), value); return;
-        case id::cp15::R10_MMU_DATA_P: util::modify_bit(R10_DATA, 0, value); return;
+        case id::cp15::R10_MMU_DATA_BASE: shared::util::swap_bits(R10_DATA, (32 - tlb.W_data), 31, value); return;
+        case id::cp15::R10_MMU_DATA_VICTIM: shared::util::swap_bits(R10_DATA, (32 - (2 * tlb.W_data)), (31 - tlb.W_data), value); return;
+        case id::cp15::R10_MMU_DATA_P: shared::util::modify_bit(R10_DATA, 0, value); return;
         case id::cp15::R10_PU: R10 = value; return;
         case id::cp15::R11: R11 = value; return;
         case id::cp15::R12: R12 = value; return;
         case id::cp15::R13: R13 = value; return;
-        case id::cp15::R13_PID: util::swap_bits(R13, 25, 31, value); return;
+        case id::cp15::R13_PID: shared::util::swap_bits(R13, 25, 31, value); return;
         case id::cp15::R14: R14 = value; return;
         case id::cp15::R15: R15 = value; return;
     };

@@ -42,6 +42,50 @@ namespace shared::util {
     inline u8 popcount(const u32 integer) {
         return static_cast<u8>(std::bitset<32>(integer).count());
     }
+
+
+    inline void modify_bit(u32 &original, const u8 index, const bool value) {
+        if (index > 31) {
+            //shared::out::dev_error("Index for modify_bit() must be between 0 and 31");
+            // TODO think of an error
+        }
+
+        if (value) {
+            original |= (1U << index);
+        } else {
+            original &= ~(1U << index);
+        }
+    }
+
+    inline void swap_bits(u32 &original, const u8 start, const u8 end, const u32 value) {
+        if (start >= 32 || end >= 32 || start >= end) {
+            //shared::out::dev_error("util::swap_bits has impossible arguments");
+            // TODO think of an error 
+            return;
+        }
+
+        const u8 num_bits = end - start + 1;
+        const u32 mask = (1 << num_bits) - 1;
+        original &= ~(mask << start);
+        original |= (value & mask) << start;
+    }
+
+    inline void to_lower(std::string& str) {
+        for (char& c : str) {
+            c = (c >= 'A' && c <= 'Z') ? (c | 0x20) : c;
+        }
+    }
+
+    inline std::string to_upper(const std::string& str) {
+        std::string tmp = str;
+
+        for (char& c : tmp) {
+            c = (c >= 'a' && c <= 'z') ? (c & ~0x20) : c;
+        }
+
+        return tmp;
+    }
+
 }
 
 // https://quick-bench.com/q/JqnAzdyhgQ9yuc4WflaEe_3tciE

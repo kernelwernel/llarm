@@ -459,13 +459,6 @@ std::string util::hex(const u32 integer, const settings settings) {
 //}
 
 
-void util::to_lower(std::string& str) {
-    for (char& c : str) {
-        c = (c >= 'A' && c <= 'Z') ? (c | 0x20) : c;
-    }
-}
-
-
 u32 util::thumb_sign_extend(u32 value, const u8 sign_index, const u32 PC) {
     const u32 sign_mask = (1 << sign_index);
     const u32 bit_mask = (1 << (sign_index + 1)) - 1;

@@ -13,7 +13,7 @@
 
 
 namespace llarm {
-    namespace assembly {
+    namespace as {
         // setting aliases
         using settings = internal::settings;
         using default_func = settings(*)();
@@ -24,11 +24,9 @@ namespace llarm {
             // alternatives in case it's under C++17
             using arm = internal::id::arm;
             using thumb = internal::id::thumb;
-            using jazelle = internal::id::jazelle;
 
             //enum class arm : internal::id::arm {};
             //enum class thumb : internal::id::thumb {};
-            //enum class jazelle : internal::id::jazelle {};
         }
 
 
@@ -42,26 +40,40 @@ namespace llarm {
             }
         }
 
+        namespace generate {
+            struct params {
+                u8 cond;
+                u8 Rd;
+                u8 Rn;
+            };
+
+            inline u32 arm(const id::arm code, const params params) {
+                
+            }
+        }
+
         namespace disassemble {
             inline std::string arm(
-                const u32 raw_code, 
+                const u32 code, 
                 const u32 PC = 0, 
                 const settings settings = default_settings()
             ) {
-                return internal::disassemble::arm(raw_code, PC, settings);
+                return internal::disassemble::arm(code, PC, settings);
             }
 
             inline std::string thumb(
-                const u16 raw_code,
+                const u16 code,
                 const u32 PC = 0,
                 const settings settings = default_settings()
             ) {
-                return internal::disassemble::thumb(raw_code, PC, settings);
+                return internal::disassemble::thumb(code, PC, settings);
             }
+        }
 
-            //inline id::jazelle jazelle(const u8 raw_code) {
-            //    return internal::identifiers::jazelle(raw_code);
-            //}
+        namespace assemble {
+            inline u32 arm(const std::string code) {
+
+            }
         }
 
         inline std::string thumb_id_to_string(const id::thumb id) {
@@ -284,7 +296,4 @@ namespace llarm {
             }
         }
     }
-
-    // shortened alias, can't use llarm::asm because "asm" is already a C/C++ keyword
-    namespace as = assembly; // NOLINT(misc-unused-alias-decls)
 }

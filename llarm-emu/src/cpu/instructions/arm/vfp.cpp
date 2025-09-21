@@ -503,12 +503,12 @@ void INSTRUCTIONS::arm::vfp::FLDMS(const u32 code) {
 
     u32 address = addresses.start;
 
-    const u8 offset = shared::util::bit_range(code, 0, 7);
+    const u8 offset = shared::util::bit_range<u8>(code, 0, 7);
 
-    const u8 d = shared::util::bit_range(code, 12, 15);
+    const u8 d = shared::util::bit_range<u8>(code, 12, 15);
 
     for (u8 i = 0; i < offset - 1; i++) {
-        const mem_read_struct access = memory.read(address + 4, 4);
+        const mem_read_struct access = memory.read(address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -527,10 +527,33 @@ void INSTRUCTIONS::arm::vfp::FLDMS(const u32 code) {
 }
 
 
-
+/**
+ * if ConditionPassed(cond) then 
+ *     // d is the number of register Dd;
+ *     // D(n) is the double-precision register numbered n
+ *     Load registers D(d) to D(d+(offset-3)/2) from memory words Memory[start_address,4] through to Memory[end_address-4,4]
+ */
 void INSTRUCTIONS::arm::vfp::FLDMX(const u32 code) {
+    const u8 offset = shared::util::bit_range<u8>(code, 0, 7);
 
+    const u8 d = shared::util::bit_range<u8>(code, 12, 15);
 
+    const vfp_address_struct addresses = vfp_addressing_mode.vfp_load_multiple(code);
+
+    u32 address = addresses.start;
+
+    for (u8 i = 0; i <= (offset - 3) / 2; i++) {
+
+        const mem_read_struct access = memory.read(address, 4);
+
+        if (access.has_failed) {
+            memory.manage_abort(access.abort_code);
+            return;
+        }
+    }
+
+    // TODO
+    
 }
 
 

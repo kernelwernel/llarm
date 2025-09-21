@@ -144,7 +144,7 @@ std::string patterns::vfp_Sd_Sm_Z(const u32 code, const std::string &semi_instru
     std::string tmp = util::make_string(semi_instruction, Z, util::cond(code, settings), " ", Sd, ", ", Sm);
 
     if (settings.capitals == false) {
-        util::to_lower(tmp);
+        shared::util::to_lower(tmp);
     }
 
     return tmp;
@@ -162,7 +162,7 @@ std::string patterns::vfp_Sd_Dm_Z(const u32 code, const std::string &semi_instru
     std::string tmp = util::make_string(semi_instruction, Z, util::cond(code, settings), " ", Sd, ", ", Dm);
 
     if (settings.capitals == false) {
-        util::to_lower(tmp);
+        shared::util::to_lower(tmp);
     }
 
     return tmp;
