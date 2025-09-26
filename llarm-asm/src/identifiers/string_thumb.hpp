@@ -19,7 +19,7 @@ namespace string_thumb {
         id::thumb id;
     };
 
-    constexpr std::array<thumb_inst, 22> pure_thumb_instructions = {{
+    constexpr std::array<thumb_inst, 23> pure_thumb_instructions = {{
         { "ADC", id::thumb::ADC },
         { "SBC", id::thumb::SBC },
         { "MUL", id::thumb::MUL },
@@ -33,6 +33,7 @@ namespace string_thumb {
         { "TST", id::thumb::TST },
         { "CMN", id::thumb::CMN },
         { "MVN", id::thumb::MVN },
+        { "B", id::thumb::B2 },
         { "BX", id::thumb::BX },
         { "SWI", id::thumb::SWI },
         { "BKPT", id::thumb::BKPT },
@@ -49,10 +50,9 @@ namespace string_thumb {
         SUB,
         ASR, 
         LSL, 
-        LSR, 
+        LSR,
         CMP,
         MOV,
-        B,
         BLX,
         LDR,
         LDRB,
@@ -67,7 +67,7 @@ namespace string_thumb {
         sub_inst id;
     };
 
-    constexpr std::array<subinst_struct, 21> thumb_subinstructions = {{
+    constexpr std::array<subinst_struct, 14> thumb_subinstructions = {{
         { "ADD", sub_inst::ADD },
         { "SUB", sub_inst::SUB },
         { "ASR", sub_inst::ASR },
@@ -75,7 +75,6 @@ namespace string_thumb {
         { "LSR", sub_inst::LSR },
         { "CMP", sub_inst::CMP },
         { "MOV", sub_inst::MOV },
-        { "B", sub_inst::B },
         { "BLX", sub_inst::BLX },
         { "LDR", sub_inst::LDR },
         { "LDRB", sub_inst::LDRB },
@@ -85,7 +84,7 @@ namespace string_thumb {
         { "STRH", sub_inst::STRH }
     }};
 
-    id::thumb thumb(std::string code);
+    id::thumb thumb(const std::string &code);
 
     id::thumb ADD(const lexemes_t &lexemes);
     id::thumb SUB(const lexemes_t &lexemes);
@@ -94,7 +93,6 @@ namespace string_thumb {
     id::thumb LSR(const lexemes_t &lexemes);
     id::thumb CMP(const lexemes_t &lexemes);
     id::thumb MOV(const lexemes_t &lexemes);
-    id::thumb B(const lexemes_t &lexemes);
     id::thumb BLX(const lexemes_t &lexemes);
     id::thumb LDR(const lexemes_t &lexemes);
     id::thumb LDRB(const lexemes_t &lexemes);

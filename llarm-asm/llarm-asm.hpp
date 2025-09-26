@@ -31,8 +31,8 @@ namespace llarm {
 
 
         namespace identify {
-            inline id::arm arm(const u32 raw_code, const settings &settings = default_settings()) {
-                return internal::identifiers::arm(raw_code, settings);
+            inline id::arm arm(const u32 raw_code) {
+                return internal::identifiers::arm(raw_code);
             }
 
             inline id::thumb thumb(const u16 raw_code) {

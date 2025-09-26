@@ -7,11 +7,10 @@ namespace internal {
         bool capitals;
         bool simplify;
         bool remove_nulls;
-        bool E_variant;
     };
 
 
     inline settings default_settings() {
-        return settings { true, true, true, false, true, };
+        return settings { true, true, true, false, true };
     }
 }

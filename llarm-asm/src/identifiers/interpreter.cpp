@@ -1,8 +1,9 @@
 #include "interpreter.hpp"
 #include "shared/util.hpp"
+
+#include <string>
 #include <cctype>
 #include <algorithm>
-
 
 std::vector<std::string> interpreter::tokenize(const std::string &code) {
     if (code.empty()) {
@@ -41,11 +42,40 @@ std::vector<std::string> interpreter::tokenize(const std::string &code) {
 }
 
 
+void interpreter::asterisk(interpreter::lexeme_struct &lexeme) {
+    lexeme.token_type = tokens::MUL_OP;
+    lexeme.op = '*';
+}
+
+
+void interpreter::hashtag(const std::string_view token, interpreter::lexeme_struct &lexeme) {
+    if (is_integer(token.substr(1)) == false) {
+        shared::out::error("Invalid immediate value argument in thumb instruction interpretation");
+    }
+    
+    const i32 num = fetch_integer(token.substr(1));
+    
+    if (num <= 0b111) {
+        lexeme.token_type = tokens::IMMED_3;
+    } else if (num <= 0b1'1111) {
+        lexeme.token_type = tokens::IMMED_5;
+    } else if (num <= 0b111'1111) {
+        lexeme.token_type = tokens::IMMED_7;
+    } else if (num <= 0b1111'1111) {
+        lexeme.token_type = tokens::IMMED_8;
+    } else {
+        shared::out::error("Invalid immediate value argument in thumb instruction, maybe try reducing the MSB index");
+    }
+    
+    lexeme.immed = num;
+}
+
+
 std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std::string> &tokens) {
     std::vector<lexeme_struct> lexeme_vec = {};
 
     bool reg_list_continuation = false;
-    std::vector<u8> reg_list = {};
+    u16 reg_list = 0;
 
     for (const auto &raw_token : tokens) {
         const std::string_view token = raw_token;
@@ -57,20 +87,9 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
             0, // integer
             0, // reg
             '\0', // op
-            {} // reg_list
+            0 // reg_list
         };
 
-        const u8 reg = identify_reg(token);
-        const bool is_register = (reg != error);
-
-        if (is_register) {
-            lexeme.token_type = REG;
-            lexeme.reg = reg;
-
-            lexeme_vec.emplace_back(lexeme);
-            continue;
-        }
-        
         if (reg_list_continuation) {
             if (token.back() == '}') {
                 reg_list_continuation = false;
@@ -83,66 +102,45 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
             }
 
             const u8 reg = identify_reg(token);
-
-            reg_list.push_back(reg);
+            shared::util::modify_bit<u16>(reg_list, reg, true);
+    
             continue;
         }
 
-        if (token.front() == '#') {
-            if (is_integer(token.substr(1)) == false) {
-                shared::out::error("Invalid immediate value argument in thumb instruction interpretation");
-            }
+        const u8 reg = identify_reg(token);
+        const bool is_register = (reg != error);
 
-            const u32 num = fetch_integer(token.substr(1));
-
-            if (num <= 0b111) {
-                lexeme.token_type = tokens::IMMED_3;
-            } else if (num <= 0b1'1111) {
-                lexeme.token_type = tokens::IMMED_5;
-            } else if (num <= 0b111'1111) {
-                lexeme.token_type = tokens::IMMED_7;
-            } else if (num <= 0b1111'1111) {
-                lexeme.token_type = tokens::IMMED_8;
-            } else {
-                shared::out::error("Invalid immediate value argument in thumb instruction, maybe try reducing the MSB index");
-            }
-
-            lexeme.immed = num;
+        if (is_register) {
+            lexeme.token_type = REG;
+            lexeme.reg = reg;
 
             lexeme_vec.emplace_back(lexeme);
             continue;
         }
 
-        // might change this in the future
-        if (token.front() == '*') {
-            lexeme.token_type = tokens::MUL_OP;
-            lexeme.op = '*';
+        const unsigned char first_char = token.front();
 
-            lexeme_vec.emplace_back(lexeme);
-            continue;            
+        switch (first_char) {
+            case '{': reg_list_continuation = true; continue;
+            case '[': lexeme.token_type = tokens::MEM_START; break;
+            case ']': lexeme.token_type = tokens::MEM_END; break;
+            case '*': asterisk(lexeme); break;
+            case '#': hashtag(token, lexeme); break;
+
+            // both are basically comments, so everything afterwards is ignored
+            case '@': return lexeme_vec;
+            case '<': return lexeme_vec; 
         }
 
-        if (token.front() == '{') {
-            reg_list_continuation = true;
-            continue;
-        }
-
-        if (token.front() == '[') {
-            lexeme.token_type = tokens::MEM_START;
-            lexeme_vec.emplace_back(lexeme);
-            continue;
-        }
-
-        if (token.front() == ']') {
-            lexeme.token_type = tokens::MEM_END;
+        // check if a token has been identified from the switch above
+        if (lexeme.token_type != tokens::UNKNOWN) {
             lexeme_vec.emplace_back(lexeme);
             continue;
         }
-
 
         if (is_integer(token)) {
             const u32 num = fetch_integer(token);
-            
+
             if (num == 4) {
                 lexeme.token_type = INTEGER_4;
             } else if (num == 2) {
@@ -154,8 +152,32 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
             lexeme.integer = num;
 
             lexeme_vec.emplace_back(lexeme);
+            continue;
+        }
+
+        if (is_hex(token)) {
+            const u32 num = fetch_hex(token);
+
+            lexeme.token_type = tokens::INTEGER;
+            lexeme.integer = num;
+
+            lexeme_vec.emplace_back(lexeme);
             continue;            
         }
+
+        const enum tokens token_type = is_cpsr_spsr_field(token);
+
+        if (token_type != UNKNOWN) {
+            lexeme.token_type = token_type; // either CPSR_FIELD or SPSR_FIELD
+
+            lexeme_vec.emplace_back(lexeme);
+            continue;
+        }
+
+        // unidentifiable token, would be handled 
+        // in different ways outside of this function
+        lexeme.token_type = tokens::UNKNOWN;
+        lexeme_vec.emplace_back(lexeme);
     }
 
     return lexeme_vec;
@@ -262,7 +284,64 @@ bool interpreter::is_integer(const std::string_view str) {
 }
 
 
-u32 interpreter::fetch_integer(std::string_view str) {
+bool interpreter::is_hex(const std::string_view str) {
+    if (str.empty()) {
+        return false;
+    }
+
+    std::size_t start = 0;
+    
+    if (str.size() > 2 && str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) {
+        start = 2;
+    }
+    
+    // for malformed hexes like "0x"
+    if (start == str.size()) {
+        return false;
+    }
+
+    for (std::size_t i = start; i < str.size(); ++i) {
+        if (!std::isxdigit(static_cast<unsigned char>(str[i]))) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+
+interpreter::tokens interpreter::is_cpsr_spsr_field(const std::string_view token) {
+    constexpr std::string_view valid_fields = "cxsf";
+
+    if (token.size() < 6) {
+        return UNKNOWN; 
+    }
+    
+    tokens token_type;
+
+    if (token.rfind("CPSR_", 0) == 0) {
+        token_type = CPSR_FIELD;
+    } else if (token.rfind("SPSR_", 0) == 0) {
+        token_type = SPSR_FIELD;
+    } else {
+        return UNKNOWN;
+    }
+
+    const std::string_view fields = token.substr(5);
+
+    if (fields.empty()) {
+        return UNKNOWN;
+    }
+
+    if (fields.find_first_not_of(valid_fields) == std::string::npos) {
+        return token_type;
+    }
+
+    return UNKNOWN;
+}
+
+
+i32 interpreter::fetch_integer(const std::string_view str) {
     u32 value = 0;
 
     for (char c : str) {
@@ -270,6 +349,11 @@ u32 interpreter::fetch_integer(std::string_view str) {
     }
 
     return value;
+}
+
+
+i32 interpreter::fetch_hex(const std::string_view str) {
+    return std::stoi(std::string(str), nullptr, 16); 
 }
 
 
@@ -286,22 +370,30 @@ bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &t
             continue;
         }
 
-        if ((
-            (pattern_token == tokens::IMMED_3) ||
-            (pattern_token == tokens::IMMED_5) ||
-            (pattern_token == tokens::IMMED_7) ||
-            (pattern_token == tokens::IMMED_8)
-        ) && (
+        const bool is_string_token_immed = (
             (string_token == tokens::IMMED_3) ||
             (string_token == tokens::IMMED_5) ||
             (string_token == tokens::IMMED_7) ||
             (string_token == tokens::IMMED_8)
-        )) {
+        );
+
+        const bool is_pattern_token_immed = (
+            (pattern_token == tokens::IMMED_3) ||
+            (pattern_token == tokens::IMMED_5) ||
+            (pattern_token == tokens::IMMED_7) ||
+            (pattern_token == tokens::IMMED_8)
+        );
+
+        if (is_pattern_token_immed && is_string_token_immed) {
             // an immed_3 can be represented within an immed_7, 
             // that's what this part is checking for 
             if (string_token <= pattern_token) {
                 continue;
             }
+        }
+
+        if (pattern_token == tokens::IMMED && is_string_token_immed) {
+            continue;
         }
 
         if (pattern_token == REG_THUMB && string_token == REG) {
@@ -316,3 +408,32 @@ bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &t
     return true;
 }
 
+
+bool interpreter::cond_match(const std::string_view cond) {
+    return cond_match((cond.at(0) << 8) | (cond.at(1)));
+}
+
+
+bool interpreter::cond_match(const u16 cond) {
+    switch (cond) {
+        case EQ: 
+        case NE: 
+        case CS: 
+        case HS: 
+        case CC: 
+        case LO: 
+        case MI: 
+        case PL: 
+        case VS: 
+        case VC: 
+        case HI: 
+        case LS: 
+        case GE: 
+        case LT: 
+        case GT: 
+        case LE: 
+        case AL: return true;
+    }
+
+    return false;
+}

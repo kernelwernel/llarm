@@ -43,9 +43,9 @@ namespace shared::util {
         return static_cast<u8>(std::bitset<32>(integer).count());
     }
 
-
-    inline void modify_bit(u32 &original, const u8 index, const bool value) {
-        if (index > 31) {
+    template<typename T = u32>
+    inline void modify_bit(T &original, const u8 index, const bool value) {
+        if (index > (sizeof(T) * 8) - 1) {
             //shared::out::dev_error("Index for modify_bit() must be between 0 and 31");
             // TODO think of an error
         }

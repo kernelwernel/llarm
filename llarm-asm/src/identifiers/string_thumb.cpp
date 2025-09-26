@@ -7,7 +7,7 @@
 
 using namespace internal;
 
-id::thumb string_thumb::thumb(std::string code) {
+id::thumb string_thumb::thumb(const std::string &code) {
     const std::string instruction = shared::util::to_upper(code);
     
     const std::string mnemonic = interpreter::fetch_instruction(instruction);
@@ -35,7 +35,6 @@ id::thumb string_thumb::thumb(std::string code) {
                 case sub_inst::LSR: return LSR(lexemes);
                 case sub_inst::CMP: return CMP(lexemes);
                 case sub_inst::MOV: return MOV(lexemes);
-                case sub_inst::B: return B(lexemes);
                 case sub_inst::BLX: return BLX(lexemes);
                 case sub_inst::LDR: return LDR(lexemes);
                 case sub_inst::LDRB: return LDRB(lexemes);
@@ -43,12 +42,25 @@ id::thumb string_thumb::thumb(std::string code) {
                 case sub_inst::STR: return STR(lexemes);
                 case sub_inst::STRB: return STRB(lexemes);
                 case sub_inst::STRH: return STRH(lexemes);
-                default: return id::thumb::UNKNOWN;
+                default: break;
             }
         }
     }
 
-    return id::thumb::UNKNOWN;
+    // this is the stage where further identification happens 
+    // due to edgecases, it's basically the last line of defence 
+    // before an unknown instruction will be returned
+
+    // B1
+    if (mnemonic.front() == 'B' && mnemonic.size() == 3) { // +1 for B, +2 for cond
+        const u16 cond_key = (mnemonic.at(1) << 8) | (mnemonic.at(2));
+
+        if (interpreter::cond_match(cond_key)) {
+            return id::thumb::B1;
+        }
+    }
+
+    return id::thumb::UNDEFINED;
 }
 
 
@@ -215,14 +227,21 @@ id::thumb string_thumb::MOV(const lexemes_t &lexemes) {
     shared::out::error("Unknown MOV thumb instruction variant, cannot be identified");
 }
 
-// TODO
-id::thumb string_thumb::B(const lexemes_t &lexemes) {
-    using namespace interpreter;
-}
 
-// TODO
 id::thumb string_thumb::BLX(const lexemes_t &lexemes) {
+    using namespace interpreter;
 
+    // BLX1
+    if (has_matching_pattern({ INTEGER }, lexemes)) {
+        return id::thumb::BLX1;
+    }
+
+    // BLX2
+    if (has_matching_pattern({ REG }, lexemes)) {
+        return id::thumb::BLX2;
+    }
+
+    shared::out::error("Unknown BLX thumb instruction variant, cannot be identified");
 }
 
 
