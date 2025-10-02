@@ -1,5 +1,6 @@
+#pragma once
+
 #include "../instruction_id.hpp"
-#include "../settings.hpp"
 
 #include "shared/types.hpp"
 

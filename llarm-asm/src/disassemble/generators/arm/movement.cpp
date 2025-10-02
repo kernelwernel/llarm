@@ -120,7 +120,7 @@ std::string generators::arm::movement::MRS(const u32 code, const settings settin
  * reference: A4-62
  */
 std::string generators::arm::movement::MSR_IMM(const u32 code, const settings settings) {
-    const std::string immediate_str = shifters::shifter_to_string(shifters::mode::DATA_IMM, code, settings);
+    const std::string immediate_str = shifters::shifter_to_string(shifter_enum::DATA_IMM, code, settings);
 
     const std::string fields = patterns::psr_fields(code);
 

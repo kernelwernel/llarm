@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../../../identifiers/shifters.hpp"
 #include "../../../../settings.hpp"
 
 #include "shared/types.hpp"
@@ -7,68 +8,6 @@
 // reference: A5-1
 
 namespace internal::shifters {
-
-    // note: 
-    //  - "LS" = "load store"
-    //  - "PRE" = "pre-indexed"
-    //  - "POST" = "post-indexed"
-    enum class mode : u8 {
-        DATA_IMM,
-        DATA_IMM_LSL,
-        DATA_IMM_LSR,
-        DATA_IMM_ASR,
-        DATA_IMM_ROR,
-        DATA_REG,
-        DATA_REG_LSL,
-        DATA_REG_LSR,
-        DATA_REG_ASR,
-        DATA_REG_ROR,
-        DATA_RRX,
-
-        LS_IMM,
-        LS_IMM_PRE,
-        LS_IMM_POST,
-        LS_REG,
-        LS_REG_PRE,
-        LS_REG_POST,
-        LS_REG_SCALED_LSL,
-        LS_REG_SCALED_LSR,
-        LS_REG_SCALED_ASR,
-        LS_REG_SCALED_ROR,
-        LS_REG_SCALED_RRX,
-        LS_REG_SCALED_PRE_LSL,
-        LS_REG_SCALED_PRE_LSR,
-        LS_REG_SCALED_PRE_ASR,
-        LS_REG_SCALED_PRE_ROR,
-        LS_REG_SCALED_PRE_RRX,
-        LS_REG_SCALED_POST_LSL,
-        LS_REG_SCALED_POST_LSR,
-        LS_REG_SCALED_POST_ASR,
-        LS_REG_SCALED_POST_ROR,
-        LS_REG_SCALED_POST_RRX,
-
-        LS_MISC_IMM,
-        LS_MISC_IMM_PRE,
-        LS_MISC_IMM_POST,
-        LS_MISC_REG,
-        LS_MISC_REG_PRE,
-        LS_MISC_REG_POST,
-
-        LS_MUL_INC_AFTER,
-        LS_MUL_INC_BEFORE,
-        LS_MUL_DEC_AFTER,
-        LS_MUL_DEC_BEFORE,
-
-        LS_COPROC_IMM,
-        LS_COPROC_IMM_PRE,
-        LS_COPROC_IMM_POST,
-        LS_COPROC_UNINDEXED,
-
-        VFP_LS_MUL_UNINDEXED,
-        VFP_LS_MUL_INC,
-        VFP_LS_MUL_DEC
-    };
-
     std::string data(const u32 code, const settings settings);
     std::string ls(const u32 code, const settings settings);
     std::string ls_misc(const u32 code, const settings settings);
@@ -76,14 +15,14 @@ namespace internal::shifters {
     std::string ls_coproc(const u32 code, const settings settings);
     std::string vfp_ls_mul(const u32 code, const settings settings);
 
-    mode identify_data_shifter(const u32 code);
-    mode identify_ls_shifter(const u32 code);
-    mode identify_ls_misc_shifter(const u32 code);
-    mode identify_ls_mul_shifter(const u32 code);
-    mode identify_ls_coproc_shifter(const u32 code);
-    mode identify_vfp_ls_mul_shifter(const u32 code);
+    shifter_enum identify_data_shifter(const u32 code);
+    shifter_enum identify_ls_shifter(const u32 code);
+    shifter_enum identify_ls_misc_shifter(const u32 code);
+    shifter_enum identify_ls_mul_shifter(const u32 code);
+    shifter_enum identify_ls_coproc_shifter(const u32 code);
+    shifter_enum identify_vfp_ls_mul_shifter(const u32 code);
 
-    std::string shifter_to_string(const mode mode_id, const u32 code, const settings settings);
+    std::string shifter_to_string(const shifter_enum shifter, const u32 code, const settings settings);
 
     // defined in modes/data.cpp
     std::string data_reg_pattern(const u32 code, const std::string &mode, const settings settings);

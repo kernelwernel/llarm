@@ -4,13 +4,15 @@
 
 #include "shared/types.hpp"
 #include "shared/util.hpp"
+#include "shared/out.hpp"
 
 using namespace internal;
 
 id::thumb string_thumb::thumb(const std::string &code) {
     const std::string instruction = shared::util::to_upper(code);
     
-    const std::string mnemonic = interpreter::fetch_instruction(instruction);
+    const std::string raw_string = interpreter::fetch_instruction(instruction);
+    const std::string_view mnemonic(raw_string);
 
     for (const auto &e : pure_thumb_instructions) {
         if (mnemonic == e.str) {
@@ -22,7 +24,7 @@ id::thumb string_thumb::thumb(const std::string &code) {
     // be a variant (i.e ADD1, ADD2, etc) or it is an invalid
     // string. Categorisation happens after this stage.
 
-    const std::vector<std::string> tokens = interpreter::tokenize(instruction);
+    const tokens_t tokens = interpreter::tokenize(instruction);
     const lexemes_t lexemes = interpreter::lexer(tokens);
 
     for (const auto &inst : thumb_subinstructions) {

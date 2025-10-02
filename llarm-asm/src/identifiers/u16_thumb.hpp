@@ -1,3 +1,4 @@
+#pragma once 
 
 #include "../instruction_id.hpp"
 

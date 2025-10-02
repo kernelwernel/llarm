@@ -1,35 +1,44 @@
 #pragma once
 
 #include <vector>
-#include <variant>
 
 #include "shared/types.hpp"
-#include "shared/out.hpp"
-#include "shared/util.hpp"
-
 
 namespace interpreter {
     enum tokens : u8 {
         UNKNOWN,
-        REG,
-        REG_PC,
-        REG_SP,
-        REG_THUMB,
+        REG, // R0~R15
+        REG_THUMB, // R0~R7
         REG_LIST,
+        REG_LIST_NO_PC,
+
+        // these are only meant for pattern matching, not used as an actual token for analysis
+        REG_LIST_WITH_PC,
+        REG_PC, // R15
+        REG_SP, // R14
+
         IMMED_3,
         IMMED_5,
         IMMED_7,
         IMMED_8,
         IMMED,
         OP,
-        MUL_OP,
+        MUL_OP, // "*"
         INTEGER,
         INTEGER_4,
         INTEGER_2,
         CPSR_FIELD,
         SPSR_FIELD,
-        MEM_START,
-        MEM_END
+        MEM_START, // "{"
+        MEM_END, // "}"
+        LSL,
+        LSR,
+        ASR,
+        ROR,
+        RRX,
+        PRE_INDEX, // '!'
+        CARET, // '^'
+        MNEMONIC
     };
     
     struct lexeme_struct {
@@ -39,6 +48,7 @@ namespace interpreter {
         u8 reg;
         unsigned char op;
         u16 reg_list;
+        bool pre_index;
     };
 
     constexpr u8 error = 255;
@@ -61,7 +71,7 @@ namespace interpreter {
     constexpr u16 LE = ('L' << 8) | 'E';
     constexpr u16 AL = ('A' << 8) | 'L';
 
-    using tokens_t = std::vector<std::string>;
+    using tokens_t = std::vector<std::string_view>;
     using lexemes_t = std::vector<lexeme_struct>;
 
     // argument prefix analysis
@@ -88,4 +98,7 @@ namespace interpreter {
     // condition matching
     bool cond_match(const std::string_view key);
     bool cond_match(const u16 key);
+
+    // basic wrapper for tokenize and lexer
+    lexemes_t analyze(const std::string &str);
 }

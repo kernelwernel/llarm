@@ -8,6 +8,7 @@
 #include "llarm-asm/src/settings.hpp"
 #include "src/identifiers/identifiers.hpp"
 #include "src/instruction_id.hpp"
+#include "src/identifiers/u32_shifters.hpp"
 #include "src/disassemble/disassemble.hpp"
 #include "src/settings.hpp"
 
@@ -19,7 +20,6 @@ namespace llarm {
         using default_func = settings(*)();
         inline default_func default_settings = &internal::default_settings;
 
-
         namespace id {
             // alternatives in case it's under C++17
             using arm = internal::id::arm;
@@ -29,7 +29,6 @@ namespace llarm {
             //enum class thumb : internal::id::thumb {};
         }
 
-
         namespace identify {
             inline id::arm arm(const u32 raw_code) {
                 return internal::identifiers::arm(raw_code);
@@ -38,14 +37,15 @@ namespace llarm {
             inline id::thumb thumb(const u16 raw_code) {
                 return internal::identifiers::thumb(raw_code);
             }
+
+            using shifters = internal::u32_shifters::shifter_enum;
+
+            inline shifters shifter(const u32 raw_code) {
+                return internal::u32_shifters::identify_shifter(raw_code);
+            }
         }
 
         namespace generate {
-            struct params {
-                u8 cond;
-                u8 Rd;
-                u8 Rn;
-            };
 
             inline u32 arm(const id::arm code, const params params) {
                 
@@ -78,6 +78,7 @@ namespace llarm {
 
         inline std::string thumb_id_to_string(const id::thumb id) {
             switch (id) {
+                case id::thumb::UNKNOWN: return "UNDEFINED";
                 case id::thumb::UNDEFINED: return "UNDEFINED";
                 case id::thumb::ADC: return "ADC";
                 case id::thumb::ADD1: return "ADD1";

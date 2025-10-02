@@ -212,16 +212,16 @@ std::string generators::arm::load::LDRB(const u32 code, const settings settings)
  * reference: A4-42
  */
 std::string generators::arm::load::LDRBT(const u32 code, const settings settings) {
-    const shifters::mode mode_id = shifters::identify_ls_shifter(code);
+    const shifter_enum mode_id = shifters::identify_ls_shifter(code);
     
     switch (mode_id) {
-        case shifters::mode::LS_IMM_POST:
-        case shifters::mode::LS_REG_POST:
-        case shifters::mode::LS_REG_SCALED_POST_LSL:
-        case shifters::mode::LS_REG_SCALED_POST_LSR:
-        case shifters::mode::LS_REG_SCALED_POST_ASR:
-        case shifters::mode::LS_REG_SCALED_POST_ROR:
-        case shifters::mode::LS_REG_SCALED_POST_RRX: break;
+        case shifter_enum::LS_IMM_POST:
+        case shifter_enum::LS_REG_POST:
+        case shifter_enum::LS_SCALED_POST_LSL:
+        case shifter_enum::LS_SCALED_POST_LSR:
+        case shifter_enum::LS_SCALED_POST_ASR:
+        case shifter_enum::LS_SCALED_POST_ROR:
+        case shifter_enum::LS_SCALED_POST_RRX: break;
         default: shared::out::error("Only post-indexed addressing modes are allowed for LDRBT");
     }
 
@@ -331,16 +331,16 @@ std::string generators::arm::load::LDRSH(const u32 code, const settings settings
 std::string generators::arm::load::LDRT(const u32 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
-    const shifters::mode mode_id = shifters::identify_ls_shifter(code);
+    const shifter_enum mode_id = shifters::identify_ls_shifter(code);
 
     switch (mode_id) {
-        case shifters::mode::LS_IMM_POST:
-        case shifters::mode::LS_REG_POST:
-        case shifters::mode::LS_REG_SCALED_POST_LSL:
-        case shifters::mode::LS_REG_SCALED_POST_LSR:
-        case shifters::mode::LS_REG_SCALED_POST_ASR:
-        case shifters::mode::LS_REG_SCALED_POST_ROR:
-        case shifters::mode::LS_REG_SCALED_POST_RRX: break;
+        case shifter_enum::LS_IMM_POST:
+        case shifter_enum::LS_REG_POST:
+        case shifter_enum::LS_SCALED_POST_LSL:
+        case shifter_enum::LS_SCALED_POST_LSR:
+        case shifter_enum::LS_SCALED_POST_ASR:
+        case shifter_enum::LS_SCALED_POST_ROR:
+        case shifter_enum::LS_SCALED_POST_RRX: break;
         default: shared::out::error("Only post-indexed addressing modes are allowed for LDRBT");
     }
 

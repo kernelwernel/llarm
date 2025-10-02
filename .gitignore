@@ -15,7 +15,7 @@ blog/
 llarm_infrastructure.md
 code_design_docs.md
 tools/
-docs/
+internal_docs/
 **/notes.md
 CONTRIBUTING.md
 tmpCMakeLists.txt

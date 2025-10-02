@@ -88,7 +88,7 @@ std::string disassemble::thumb_generate(const u16 code, const u32 PC, const sett
 
 
 std::string disassemble::arm_generate(const u32 code, const u32 PC, const settings settings) {
-    const id::arm id = identifiers::arm(code, settings);
+    const id::arm id = identifiers::arm(code);
 
     switch (id) {
         case id::arm::ADC: return generators::arm::math::ADC(code, settings);
@@ -238,10 +238,6 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
 }
 
 
-
-
-
-
 std::string disassemble::arm(const u32 code, const u32 PC, const settings settings) {
     std::string instruction = arm_generate(code, PC, settings);
 
@@ -251,7 +247,6 @@ std::string disassemble::arm(const u32 code, const u32 PC, const settings settin
 
     return instruction;
 }
-
 
 
 std::string disassemble::thumb(const u16 code, const u32 PC, const settings settings) {

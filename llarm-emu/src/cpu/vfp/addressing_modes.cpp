@@ -448,9 +448,9 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision(const u32 code) {
 double_encoding_struct VFP_ADDRESS_MODE::double_precision_monadic(const u32 code) {
     const u8 Dd = shared::util::bit_range<u8>(code, 12, 15);
     const u8 Dm = shared::util::bit_range<u8>(code, 0, 3);
-    
+
     const u8 d_bank = shared::util::bit_range<u8>(Dd, 2, 3);
-    
+
     /**
      * ===== scalar-to-scalar submode =====
      *
@@ -465,7 +465,7 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision_monadic(const u32 code
             /* Dn */ id::vfp_reg::UNKNOWN,
             /* Dm */ vfp_reg.fetch_double_reg_id(Dm)
         };   
-        
+
         return double_encoding_struct {
             /* vec_len */ 1,
             /* vec_regs */ { regs }
@@ -476,7 +476,7 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision_monadic(const u32 code
 
     const u8 n_bank = shared::util::bit_range<u8>(Dn, 2, 3);
     const u8 m_bank = shared::util::bit_range<u8>(Dm, 2, 3);
-    
+
     u8 d_index = shared::util::bit_range<u8>(Dd, 0, 1);
     u8 n_index = shared::util::bit_range<u8>(Dn, 0, 1);
     u8 m_index = shared::util::bit_range<u8>(Dm, 0, 1);

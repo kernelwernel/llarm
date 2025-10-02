@@ -11,6 +11,7 @@ namespace string_thumb {
     using namespace internal;
 
     using interpreter::tokens;
+    using interpreter::tokens_t;
     using interpreter::lexeme_struct;
     using interpreter::lexemes_t;
 

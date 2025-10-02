@@ -22,8 +22,6 @@ namespace string_arm {
         { "BIC", id::arm::BIC },
         { "BKPT", id::arm::BKPT },
         { "BL", id::arm::BL },
-        { "BLX1", id::arm::BLX1 },
-        { "BLX2", id::arm::BLX2 },
         { "BX", id::arm::BX },
         { "CDP", id::arm::CDP },
         { "CDP2", id::arm::CDP2 },
@@ -96,9 +94,6 @@ namespace string_arm {
         { "FUITOS", id::arm::FUITOS },
         { "LDC", id::arm::LDC },
         { "LDC2", id::arm::LDC2 },
-        { "LDM1", id::arm::LDM1 },
-        { "LDM2", id::arm::LDM2 },
-        { "LDM3", id::arm::LDM3 },
         { "LDR", id::arm::LDR },
         { "LDRD", id::arm::LDRD },
         { "MCR", id::arm::MCR },
@@ -131,8 +126,6 @@ namespace string_arm {
         { "SMULXY", id::arm::SMULXY },
         { "STC", id::arm::STC },
         { "STC2", id::arm::STC2 },
-        { "STM1", id::arm::STM1 }, 
-        { "STM2", id::arm::STM2 }, 
         { "STR", id::arm::STR }, 
         { "STRD", id::arm::STRD },
         { "SUB", id::arm::SUB },
@@ -143,6 +136,13 @@ namespace string_arm {
         { "UMLAL", id::arm::UMLAL },
         { "UMULL", id::arm::UMULL }
     };
+    
+    //{ "STM1", id::arm::STM1 }, 
+    //{ "STM2", id::arm::STM2 }, 
+    //{ "LDM1", id::arm::LDM1 },
+    //{ "LDM2", id::arm::LDM2 },
+    //{ "LDM3", id::arm::LDM3 },
+    //{ "BLX", id::arm::UNDEFINED },
 
     std::vector<std::string_view> fetch_candidates(std::string_view mnemonic);
     u16 fetch_last_2_chars(const std::string_view str);
@@ -153,4 +153,7 @@ namespace string_arm {
     id::arm SWPB(const std::string_view code);
     id::arm LDR_family(std::string_view code);
     id::arm STR_family(std::string_view code);
+    id::arm STM(const lexemes_t lexemes);
+    id::arm LDM(const lexemes_t lexemes);
+    id::arm BLX(const lexemes_t lexemes);
 }

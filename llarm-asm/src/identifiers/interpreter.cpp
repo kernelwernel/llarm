@@ -1,41 +1,55 @@
 #include "interpreter.hpp"
 #include "shared/util.hpp"
+#include "shared/out.hpp"
 
 #include <string>
 #include <cctype>
 #include <algorithm>
 
-std::vector<std::string> interpreter::tokenize(const std::string &code) {
+#include <algorithm>
+#include <vector>
+#include <string>
+#include <string_view>
+
+interpreter::tokens_t interpreter::tokenize(const std::string &code) {
     if (code.empty()) {
         shared::out::error("Empty instruction string for tokenization is invalid");
     }
 
-    std::vector<std::string> raw_tokens;
+    std::vector<std::string_view> raw_tokens;
     std::size_t start = 0;
 
     const std::string instruction = strip(code);
 
-    // characters that count as delimiters
-    const std::string_view delimiters = " ,";
+    const std::string_view special_delims = "[]^!-";
+    const std::string_view whitespace_delims = " ,+";
 
     while (start < instruction.size()) {
-        // skip leading delimiters
-        start = instruction.find_first_not_of(delimiters, start);
+        const char c = instruction[start];
 
-        if (start == std::string::npos) {
-            break;
+        if (whitespace_delims.find(c) != std::string_view::npos) {
+            ++start;
+            continue;
         }
 
-        // find end of token
-        const std::size_t end = instruction.find_first_of(delimiters, start);
+        if (special_delims.find(c) != std::string_view::npos) {
+            raw_tokens.emplace_back(&instruction[start], 1);
+            ++start;
+            continue;
+        }
+
+        std::size_t end = start;
+
+        while (
+            (end < instruction.size()) &&
+            whitespace_delims.find(instruction[end]) == std::string_view::npos &&
+            special_delims.find(instruction[end]) == std::string_view::npos
+        ) {
+            ++end;
+        }
 
         raw_tokens.emplace_back(instruction.substr(start, end - start));
-
-        if (end == std::string::npos) {
-            break;
-        }
-
-        start = end + 1;
+        start = end;
     }
 
     return raw_tokens;
@@ -71,14 +85,17 @@ void interpreter::hashtag(const std::string_view token, interpreter::lexeme_stru
 }
 
 
-std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std::string> &tokens) {
+std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std::string_view> &tokens) {
     std::vector<lexeme_struct> lexeme_vec = {};
-
+    
     bool reg_list_continuation = false;
     u16 reg_list = 0;
-
+    u16 index = 0;
+    bool is_r15_present_in_reg_list = false;
+    
     for (const auto &raw_token : tokens) {
-        const std::string_view token = raw_token;
+        std::string_view token = raw_token;
+        index++;
 
         // default values, will be modified later
         lexeme_struct lexeme {
@@ -90,12 +107,26 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
             0 // reg_list
         };
 
+        // first mnemonic of the instruction
+        if (index == 1) {
+            lexeme.token_type = tokens::MNEMONIC;
+            lexeme_vec.emplace_back(lexeme);
+            continue;
+        }
+
         if (reg_list_continuation) {
+            // reg_list end
             if (token.back() == '}') {
                 reg_list_continuation = false;
 
-                lexeme.token_type = REG_LIST;
                 lexeme.reg_list = reg_list;
+
+                // this distinction is important in some instructions like LDM2
+                if (shared::util::bit_fetch(reg_list, 15)) {
+                    lexeme.token_type = REG_LIST;
+                } else {
+                    lexeme.token_type = REG_LIST_NO_PC;
+                }
 
                 lexeme_vec.emplace_back(lexeme);
                 continue;
@@ -104,6 +135,35 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
             const u8 reg = identify_reg(token);
             shared::util::modify_bit<u16>(reg_list, reg, true);
     
+            continue;
+        }
+
+        const unsigned char first_char = token.front();
+
+        switch (first_char) {
+            case '{': reg_list_continuation = true; continue;
+            case '[': lexeme.token_type = tokens::MEM_START; break;
+            case ']': lexeme.token_type = tokens::MEM_END; break;
+            case '*': asterisk(lexeme); break;
+            case '#': hashtag(token, lexeme); break;
+            case '^': lexeme.token_type = tokens::CARET; break;
+
+            // both are basically comments, so everything afterwards is ignored
+            case '@': return lexeme_vec;
+            case '<': return lexeme_vec; 
+        }
+
+        // check if a token has been identified from the switch above
+        if (lexeme.token_type != tokens::UNKNOWN) {
+            lexeme_vec.emplace_back(lexeme);
+            continue;
+        }
+
+        // pre-index symbol
+        if (token.size() == 1 && token.front() == '!') {
+            lexeme.pre_index = true;
+            lexeme.token_type = tokens::PRE_INDEX;
+            lexeme_vec.emplace_back(lexeme);
             continue;
         }
 
@@ -118,24 +178,27 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
             continue;
         }
 
-        const unsigned char first_char = token.front();
+        if (token.size() == 3) {
+            constexpr u32 LSL = ('L' << 16) | ('S' << 8) | 'L';
+            constexpr u32 LSR = ('L' << 16) | ('S' << 8) | 'R';
+            constexpr u32 ASR = ('A' << 16) | ('S' << 8) | 'R';
+            constexpr u32 ROR = ('R' << 16) | ('O' << 8) | 'R';
+            constexpr u32 RRX = ('R' << 16) | ('R' << 8) | 'X';
 
-        switch (first_char) {
-            case '{': reg_list_continuation = true; continue;
-            case '[': lexeme.token_type = tokens::MEM_START; break;
-            case ']': lexeme.token_type = tokens::MEM_END; break;
-            case '*': asterisk(lexeme); break;
-            case '#': hashtag(token, lexeme); break;
+            const u32 key = (token.at(0) << 16) | (token.at(1) << 8) | token.at(2);
 
-            // both are basically comments, so everything afterwards is ignored
-            case '@': return lexeme_vec;
-            case '<': return lexeme_vec; 
-        }
+            switch (key) {
+                case LSL: lexeme.token_type = tokens::LSL; break;
+                case LSR: lexeme.token_type = tokens::LSR; break;
+                case ASR: lexeme.token_type = tokens::ASR; break;
+                case ROR: lexeme.token_type = tokens::ROR; break;
+                case RRX: lexeme.token_type = tokens::RRX; break;
+            }
 
-        // check if a token has been identified from the switch above
-        if (lexeme.token_type != tokens::UNKNOWN) {
-            lexeme_vec.emplace_back(lexeme);
-            continue;
+            if (lexeme.token_type != tokens::UNKNOWN) {
+                lexeme_vec.emplace_back(lexeme);
+                continue;
+            }
         }
 
         if (is_integer(token)) {
@@ -178,6 +241,7 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
         // in different ways outside of this function
         lexeme.token_type = tokens::UNKNOWN;
         lexeme_vec.emplace_back(lexeme);
+
     }
 
     return lexeme_vec;
@@ -362,9 +426,17 @@ bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &t
         return false;
     }
 
+    u16 token_index = 0;
+    u16 lexeme_index = 0;
+
+    // if mnemonic is included, skip. Only the arguments are important
+    if (lexemes.at(0).token_type == tokens::MNEMONIC) {
+        token_index += 1;
+    }
+
     for (std::size_t i = 0; i < lexemes.size(); i++) {
-        const enum tokens pattern_token = token_pattern.at(i);
-        const enum tokens string_token = lexemes.at(i).token_type;
+        const enum tokens pattern_token = token_pattern.at(token_index);
+        const enum tokens string_token = lexemes.at(lexeme_index).token_type;
 
         if (string_token == pattern_token) {
             continue;
@@ -397,7 +469,34 @@ bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &t
         }
 
         if (pattern_token == REG_THUMB && string_token == REG) {
-            if (lexemes.at(i).reg <= 7) {
+            if (lexemes.at(lexeme_index).reg <= 7) {
+                continue;
+            }
+        }
+
+        if (pattern_token == REG_LIST_WITH_PC) {
+            const u16 list = lexemes.at(lexeme_index).reg_list;
+
+            // has R15?
+            if (shared::util::bit_fetch(list, 15)) {
+                continue;
+            }
+        }
+
+        if (pattern_token == REG_LIST_NO_PC) {
+            const u16 list = lexemes.at(lexeme_index).reg_list;
+
+            // does not have R15?
+            if (shared::util::bit_fetch(list, 15) == false) {
+                continue;
+            }
+        }
+
+        if (pattern_token == REG_LIST) {
+            if (
+                (string_token == REG_LIST_WITH_PC) ||
+                (string_token == REG_LIST_NO_PC)
+            ) {
                 continue;
             }
         }
@@ -436,4 +535,10 @@ bool interpreter::cond_match(const u16 cond) {
     }
 
     return false;
+}
+
+
+interpreter::lexemes_t interpreter::analyze(const std::string &str) {
+    const tokens_t tokens = tokenize(str);
+    return lexer(tokens);
 }

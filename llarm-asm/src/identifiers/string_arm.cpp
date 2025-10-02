@@ -23,15 +23,19 @@ id::arm string_arm::arm(const std::string &code) {
         }
     }
 
+    // no conventional instruction found, potentially
+    // an instruction variant (i.e BLX1 and BLX2)
+
+    if (mnemonic.starts_with("BLX")) {
+        return BLX(interpreter::analyze(assembly));
+    }
+
     // since there's no viable instruction found, 
     // the non-conventional ways will now be searched.
 
     // MSR has 2 instruction types
     if (mnemonic.starts_with("MSR")) {
-        const tokens_t tokens = interpreter::tokenize(code);
-        const lexemes_t lexemes = interpreter::lexer(tokens);
-
-        return MSR(lexemes);
+        return MSR(interpreter::analyze(assembly));
     }
 
     // SWPB has a cond between the P and B
@@ -39,11 +43,9 @@ id::arm string_arm::arm(const std::string &code) {
         return SWPB(mnemonic);
     }
 
-
     if (mnemonic.starts_with("STR")) {
         return STR_family(mnemonic);
     }
-
 
     if (mnemonic.starts_with("LDR")) {
         return LDR_family(mnemonic);
@@ -230,6 +232,67 @@ id::arm string_arm::STR_family(std::string_view str) {
             case 'T': return id::arm::STRT;
             case 'H': return id::arm::STRH;
         }
+    }
+
+    return id::arm::UNDEFINED;
+}
+
+
+id::arm string_arm::STM(const lexemes_t lexemes) {
+     using namespace interpreter;
+
+    // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
+    if (has_matching_pattern({ REG, PRE_INDEX, REG_LIST }, lexemes)) {
+        return id::arm::STM1;
+    } else if (has_matching_pattern({ REG, REG_LIST }, lexemes)) {
+        return id::arm::STM1;
+    }
+
+    if (has_matching_pattern({ REG, REG_LIST, CARET }, lexemes)) {
+        return id::arm::STM2;
+    }
+
+    if (has_matching_pattern({ REG, PRE_INDEX, REG_LIST_WITH_PC, CARET }, lexemes)) {
+        return id::arm::LDM3;
+    } else if (has_matching_pattern({ REG, REG_LIST_WITH_PC, CARET }, lexemes)) {
+        return id::arm::LDM3;
+    }
+
+    return id::arm::UNDEFINED;   
+}
+
+
+id::arm string_arm::LDM(const lexemes_t lexemes) {
+    using namespace interpreter;
+
+    // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
+    if (has_matching_pattern({ REG, PRE_INDEX, REG_LIST }, lexemes)) {
+        return id::arm::LDM1;
+    } else if (has_matching_pattern({ REG, REG_LIST }, lexemes)) {
+        return id::arm::LDM1;
+    }
+
+    if (has_matching_pattern({ REG, REG_LIST_NO_PC, CARET }, lexemes)) {
+        return id::arm::LDM2;
+    }
+
+    if (has_matching_pattern({ REG, PRE_INDEX, REG_LIST_WITH_PC, CARET }, lexemes)) {
+        return id::arm::LDM3;
+    } else if (has_matching_pattern({ REG, REG_LIST_WITH_PC, CARET }, lexemes)) {
+        return id::arm::LDM3;
+    }
+
+    return id::arm::UNDEFINED;
+}
+
+
+id::arm string_arm::BLX(const lexemes_t lexemes) {
+    using namespace interpreter;
+
+    if (interpreter::has_matching_pattern({ INTEGER }, lexemes)) {
+        return id::arm::BLX1;
+    } else if (interpreter::has_matching_pattern({ REG }, lexemes)) {
+        return id::arm::BLX2;
     }
 
     return id::arm::UNDEFINED;
