@@ -8,6 +8,8 @@ namespace internal::id {
     enum class arm : u8 {
         UNKNOWN,
         UNDEFINED,
+
+        // ARMv1 and 26-bit architecture instructions
         ADC,
         ADD,
         RSB,
@@ -27,7 +29,6 @@ namespace internal::id {
         B,
         BL,
         NOP,
-        PSR,
         SWI,
         LDM1,
         LDM2,
@@ -42,6 +43,10 @@ namespace internal::id {
         STRB, 
         STRBT,
         STRT, 
+        CMNP,
+        CMPP,
+        TEQP,
+        TSTP,
 
         // ARMv2
         CDP,

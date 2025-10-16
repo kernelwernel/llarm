@@ -1,6 +1,6 @@
 #include "u32_shifters.hpp"
-#include "shifters.hpp"
 #include "identifiers.hpp"
+#include "../shifter_id.hpp"
 #include "../instruction_id.hpp"
 
 #include "shared/types.hpp"

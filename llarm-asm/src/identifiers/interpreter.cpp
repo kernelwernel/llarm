@@ -22,7 +22,7 @@ interpreter::tokens_t interpreter::tokenize(const std::string &code) {
     const std::string instruction = strip(code);
 
     const std::string_view special_delims = "[]^!-";
-    const std::string_view whitespace_delims = " ,+";
+    const std::string_view whitespace_delims = " ,";
 
     while (start < instruction.size()) {
         const char c = instruction[start];
@@ -77,6 +77,8 @@ void interpreter::hashtag(const std::string_view token, interpreter::lexeme_stru
         lexeme.token_type = tokens::IMMED_7;
     } else if (num <= 0b1111'1111) {
         lexeme.token_type = tokens::IMMED_8;
+    } else if (num <= 0b1111'1111'1111) {
+        lexeme.token_type = tokens::IMMED_12;
     } else {
         shared::out::error("Invalid immediate value argument in thumb instruction, maybe try reducing the MSB index");
     }
@@ -99,17 +101,20 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
 
         // default values, will be modified later
         lexeme_struct lexeme {
+            "", // mnemonic
             tokens::UNKNOWN, // token_type
             0, // immed
             0, // integer
             0, // reg
+            0,
             '\0', // op
-            0 // reg_list
+            0, // reg_list
         };
 
         // first mnemonic of the instruction
         if (index == 1) {
             lexeme.token_type = tokens::MNEMONIC;
+            lexeme.mnemonic = raw_token;
             lexeme_vec.emplace_back(lexeme);
             continue;
         }
@@ -167,12 +172,35 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
             continue;
         }
 
-        const u8 reg = identify_reg(token);
-        const bool is_register = (reg != error);
+        // all registers, coprocessors, and CR registers 
+        // have the format of R0~R15 for regs, P0~P15
+        // for coproc, and C0~C15 for CR regs. Since they
+        // are similar in syntax, they're bundled up into 
+        // this mechanism to analyse the token thoroughly
 
-        if (is_register) {
-            lexeme.token_type = REG;
-            lexeme.reg = reg;
+        const u8 num = identify_reg(token);
+        const bool is_valid_range = (num != error);
+
+        if (is_valid_range) {
+            switch (token.front()) {
+                case 'R':
+                    lexeme.token_type = REG;
+                    lexeme.reg = num;
+                    break;
+                
+                case 'P': 
+                    lexeme.token_type = COPROCESSOR;
+                    lexeme.coproc = num;
+                    break;
+                
+                case 'C': 
+                    lexeme.token_type = CR_REG;
+                    lexeme.reg = num;
+                    break;
+
+                default: 
+                    shared::out::dev_error("How the fuck did this happen?");
+            }
 
             lexeme_vec.emplace_back(lexeme);
             continue;
@@ -275,8 +303,17 @@ std::string interpreter::strip(std::string str) {
         }).base(), str.end()
     );
 
+    // remove all instances of '+', redundant to showcase positive integers
+    str.erase(std::remove(str.begin(), str.end(), '+'), str.end());
+
     return str;
 }
+
+
+u16 interpreter::fetch_last_2_chars(const std::string_view str) {
+    const std::string_view sub = (str.substr(str.size() - 2));
+    return (sub.at(0) << 8) | sub.at(1);
+};
 
 
 u8 interpreter::identify_reg(std::string_view reg) {
@@ -284,7 +321,11 @@ u8 interpreter::identify_reg(std::string_view reg) {
         return error;
     }
 
-    if (reg.front() == 'R') {
+    if (
+        (reg.front() == 'R') || // regular register
+        (reg.front() == 'P') || // coprocessor num
+        (reg.front() == 'C')    // CRn/CRm register
+    ) {
         reg.remove_prefix(1);
 
         if (is_integer(reg) == false) {
@@ -422,16 +463,18 @@ i32 interpreter::fetch_hex(const std::string_view str) {
 
 
 bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &token_pattern, const lexemes_t &lexemes) {
-    if (lexemes.size() != token_pattern.size()) {
-        return false;
-    }
-
+    
     u16 token_index = 0;
     u16 lexeme_index = 0;
 
     // if mnemonic is included, skip. Only the arguments are important
     if (lexemes.at(0).token_type == tokens::MNEMONIC) {
         token_index += 1;
+    }
+
+    // pattern mismatch is guaranteed if they're unequal in size
+    if (lexemes.size() != token_pattern.size() - token_index) {
+        return false;
     }
 
     for (std::size_t i = 0; i < lexemes.size(); i++) {
@@ -446,14 +489,16 @@ bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &t
             (string_token == tokens::IMMED_3) ||
             (string_token == tokens::IMMED_5) ||
             (string_token == tokens::IMMED_7) ||
-            (string_token == tokens::IMMED_8)
+            (string_token == tokens::IMMED_8) ||
+            (string_token == tokens::IMMED_12)  
         );
 
         const bool is_pattern_token_immed = (
             (pattern_token == tokens::IMMED_3) ||
             (pattern_token == tokens::IMMED_5) ||
             (pattern_token == tokens::IMMED_7) ||
-            (pattern_token == tokens::IMMED_8)
+            (pattern_token == tokens::IMMED_8) ||
+            (pattern_token == tokens::IMMED_12)
         );
 
         if (is_pattern_token_immed && is_string_token_immed) {
@@ -498,6 +543,17 @@ bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &t
                 (string_token == REG_LIST_NO_PC)
             ) {
                 continue;
+            }
+        }
+
+        if (pattern_token == SHIFT) {
+            switch (string_token) {
+                case LSL: 
+                case LSR:
+                case ASR:
+                case ROR:
+                case RRX: continue;
+                default: break;
             }
         }
 

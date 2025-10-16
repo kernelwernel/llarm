@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../../identifiers/shifters.hpp"
+#include "../../../../shifter_id.hpp"
 #include "../../../../settings.hpp"
 
 #include "shared/types.hpp"

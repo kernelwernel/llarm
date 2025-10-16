@@ -51,22 +51,18 @@ id::arm string_arm::arm(const std::string &code) {
         return LDR_family(mnemonic);
     }
 
+    // 26-bit PSR instructions
+    if (mnemonic.back() == 'P') {
+        return PSR_family(code);
+    }
+
     return id::arm::UNDEFINED;
 }
 
 
-u16 string_arm::fetch_last_2_chars(const std::string_view str) {
-    const std::string_view sub = (str.substr(str.size() - 2));
-    return (sub.at(0) << 8) | sub.at(1);
-};
-
-
-std::vector<std::string_view> string_arm::fetch_candidates(const std::string_view raw_mnemonic) {
+std::vector<std::string_view> string_arm::fetch_candidates(std::string_view mnemonic) {
     std::vector<std::string_view> candidates = {};
 
-    // may be modified and filtered afterwards
-    std::string_view mnemonic = raw_mnemonic;
-    
     // "mnemonic.extra" convention, i.e. "b.eq" (gcc does this)
     const std::size_t dot_pos = mnemonic.find('.');
     const bool has_dot = (dot_pos != std::string_view::npos);
@@ -89,7 +85,7 @@ std::vector<std::string_view> string_arm::fetch_candidates(const std::string_vie
     constexpr u16 DA = ('D' << 8 | 'A');
     constexpr u16 DB = ('D' << 8 | 'B');
 
-    switch (fetch_last_2_chars(mnemonic)) {
+    switch (interpreter::fetch_last_2_chars(mnemonic)) {
         case IA:
         case IB:
         case DA:
@@ -99,7 +95,7 @@ std::vector<std::string_view> string_arm::fetch_candidates(const std::string_vie
     }
 
     // potential cond value
-    if (interpreter::cond_match(fetch_last_2_chars(mnemonic))) {
+    if (interpreter::cond_match(interpreter::fetch_last_2_chars(mnemonic))) {
         candidates.push_back(mnemonic.substr(0, mnemonic.size() - 2));
     }
 
@@ -111,11 +107,37 @@ std::vector<std::string_view> string_arm::fetch_candidates(const std::string_vie
         mnemonic.remove_suffix(1);
 
         candidates.push_back(mnemonic);
-
+        
         // potential cond value + S/L extension
-        if (interpreter::cond_match(fetch_last_2_chars(mnemonic))) { // no S/L this time
+        if (interpreter::cond_match(interpreter::fetch_last_2_chars(mnemonic))) { // no S/L this time
             mnemonic.remove_suffix(2);
             candidates.push_back(mnemonic);
+        }
+    }
+
+    // potential VFP instruction, funky shit happens here
+    if (mnemonic.front() == 'F') {
+        // potential cond value
+        if (interpreter::cond_match(interpreter::fetch_last_2_chars(mnemonic))) {
+            mnemonic.remove_suffix(2);
+        }
+
+        // precision check
+        switch (mnemonic.back()) {
+            case 'D':
+            case 'S':
+            case 'X': 
+                mnemonic.remove_suffix(1);
+                candidates.push_back(mnemonic);
+        }
+
+        switch (interpreter::fetch_last_2_chars(mnemonic)) {
+            case IA:
+            case IB:
+            case DA:
+            case DB:
+                mnemonic.remove_suffix(2);
+                candidates.push_back(mnemonic);
         }
     }
 
@@ -146,19 +168,19 @@ id::arm string_arm::MSR(const lexemes_t &lexemes) {
 }
 
 
-id::arm string_arm::SWPB(std::string_view str) {
+id::arm string_arm::SWPB(std::string_view mnemonic) {
     // no cond
-    if (str == "SWPB") {
+    if (mnemonic == "SWPB") {
         return id::arm::SWPB;
     }
 
-    if (str.back() != 'B' || str.size() != 6) {
+    if (mnemonic.back() != 'B' || mnemonic.size() != 6) {
         return id::arm::UNDEFINED;
     }
 
-    str.remove_suffix(1); // remove the B and leave out the 2 cond characters at the back
+    mnemonic.remove_suffix(1); // remove the B and leave out the 2 cond characters at the back
 
-    if (interpreter::cond_match(fetch_last_2_chars(str))) {
+    if (interpreter::cond_match(interpreter::fetch_last_2_chars(mnemonic))) {
         return id::arm::SWPB;
     }
 
@@ -166,35 +188,35 @@ id::arm string_arm::SWPB(std::string_view str) {
 }
 
 
-id::arm string_arm::LDR_family(std::string_view str) {
-    str.remove_prefix(3); // "LDR"
+id::arm string_arm::LDR_family(std::string_view mnemonic) {
+    mnemonic.remove_prefix(3); // "LDR"
 
-    const u16 potential_cond = (str.at(0) << 8) | str.at(1);
+    const u16 potential_cond = (mnemonic.at(0) << 8) | mnemonic.at(1);
 
     if (interpreter::cond_match(potential_cond)) {
-        str.remove_prefix(2); // remove cond
+        mnemonic.remove_prefix(2); // remove cond
     }
 
     // at this point only the suffix of the instruction should be left
 
-    if (str.size() > 2) {
+    if (mnemonic.size() > 2) {
         return id::arm::UNDEFINED;
     }
 
-    if (str == "BT") {
+    if (mnemonic == "BT") {
         return id::arm::LDRBT;
     }
 
-    if (str == "SH") {
+    if (mnemonic == "SH") {
         return id::arm::LDRSH;
     }
 
-    if (str == "SB") {
+    if (mnemonic == "SB") {
         return id::arm::LDRSB;
     }
 
-    if (str.size() == 1) {
-        switch (str.back()) {
+    if (mnemonic.size() == 1) {
+        switch (mnemonic.back()) {
             case 'B': return id::arm::LDRB;
             case 'T': return id::arm::LDRT;
             case 'H': return id::arm::LDRH;
@@ -205,29 +227,29 @@ id::arm string_arm::LDR_family(std::string_view str) {
 }
 
 
-id::arm string_arm::STR_family(std::string_view str) {
+id::arm string_arm::STR_family(std::string_view mnemonic) {
     // the parameter name and instruction name have no relation just to be clear
 
-    str.remove_prefix(3); // "STR"
+    mnemonic.remove_prefix(3); // "STR"
 
-    const u16 potential_cond = (str.at(0) << 8) | str.at(1);
+    const u16 potential_cond = (mnemonic.at(0) << 8) | mnemonic.at(1);
 
     if (interpreter::cond_match(potential_cond)) {
-        str.remove_prefix(2); // remove cond
+        mnemonic.remove_prefix(2); // remove cond
     }
 
     // at this point only the suffix of the instruction should be left
 
-    if (str.size() > 2) {
+    if (mnemonic.size() > 2) {
         return id::arm::UNDEFINED;
     }
 
-    if (str == "BT") {
+    if (mnemonic == "BT") {
         return id::arm::STRBT;
     }
 
-    if (str.size() == 1) {
-        switch (str.back()) {
+    if (mnemonic.size() == 1) {
+        switch (mnemonic.back()) {
             case 'B': return id::arm::STRB;
             case 'T': return id::arm::STRT;
             case 'H': return id::arm::STRH;
@@ -238,8 +260,8 @@ id::arm string_arm::STR_family(std::string_view str) {
 }
 
 
-id::arm string_arm::STM(const lexemes_t lexemes) {
-     using namespace interpreter;
+id::arm string_arm::STM(const lexemes_t &lexemes) {
+    using namespace interpreter;
 
     // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
     if (has_matching_pattern({ REG, PRE_INDEX, REG_LIST }, lexemes)) {
@@ -252,17 +274,11 @@ id::arm string_arm::STM(const lexemes_t lexemes) {
         return id::arm::STM2;
     }
 
-    if (has_matching_pattern({ REG, PRE_INDEX, REG_LIST_WITH_PC, CARET }, lexemes)) {
-        return id::arm::LDM3;
-    } else if (has_matching_pattern({ REG, REG_LIST_WITH_PC, CARET }, lexemes)) {
-        return id::arm::LDM3;
-    }
-
     return id::arm::UNDEFINED;   
 }
 
 
-id::arm string_arm::LDM(const lexemes_t lexemes) {
+id::arm string_arm::LDM(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
@@ -286,14 +302,37 @@ id::arm string_arm::LDM(const lexemes_t lexemes) {
 }
 
 
-id::arm string_arm::BLX(const lexemes_t lexemes) {
+id::arm string_arm::BLX(const lexemes_t &lexemes) {
     using namespace interpreter;
 
-    if (interpreter::has_matching_pattern({ INTEGER }, lexemes)) {
+    if (has_matching_pattern({ INTEGER }, lexemes)) {
         return id::arm::BLX1;
-    } else if (interpreter::has_matching_pattern({ REG }, lexemes)) {
+    } else if (has_matching_pattern({ REG }, lexemes)) {
         return id::arm::BLX2;
     }
 
     return id::arm::UNDEFINED;
+}
+
+
+id::arm string_arm::PSR_family(const std::string_view mnemonic) {
+    if (mnemonic.size() == 6) {
+        const u8 first_char = mnemonic.at(3);
+        const u8 second_char = mnemonic.at(4);
+
+        const u16 cond = (first_char << 8 | second_char);
+        
+        if (interpreter::cond_match(cond) == false) {
+            return id::arm::UNDEFINED;
+        }
+    }
+
+    if (mnemonic.size() == 4 || mnemonic.size() == 6) {
+        if (mnemonic.starts_with("CMN")) { return id::arm::CMNP; }
+        else if (mnemonic.starts_with("CMP")) { return id::arm::CMPP; }
+        else if (mnemonic.starts_with("TEQ")) { return id::arm::TEQP; }
+        else if (mnemonic.starts_with("TST")) { return id::arm::TSTP; }
+    }
+
+    return id::arm::UNKNOWN;
 }

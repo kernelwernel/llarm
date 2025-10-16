@@ -81,6 +81,7 @@ enum class shifter_enum : u8 {
     VFP_LS_MUL_UNINDEXED,
     VFP_LS_MUL_INC,
     VFP_LS_MUL_DEC,
+    VFP_LS_MUL_SPECIAL
 };
 
 

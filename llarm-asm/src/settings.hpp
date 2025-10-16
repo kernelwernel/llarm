@@ -7,10 +7,11 @@ namespace internal {
         bool capitals;
         bool simplify;
         bool remove_nulls;
+        bool gcc_convention;
     };
 
 
     inline settings default_settings() {
-        return settings { true, true, true, false, true };
+        return settings { true, true, true, false, true, false };
     }
 }

@@ -109,7 +109,10 @@ namespace string_arm {
         { "MVN", id::arm::MVN },
         { "ORR", id::arm::ORR },
         { "PLD", id::arm::PLD },
-        { "PSR", id::arm::PSR },
+        { "CMNP", id::arm::CMNP },
+        { "CMPP", id::arm::CMPP },
+        { "TEQP", id::arm::TEQP },
+        { "TSTP", id::arm::TSTP },
         { "QADD", id::arm::QADD },
         { "QDADD", id::arm::QDADD },
         { "QDSUB", id::arm::QDSUB },
@@ -136,24 +139,18 @@ namespace string_arm {
         { "UMLAL", id::arm::UMLAL },
         { "UMULL", id::arm::UMULL }
     };
-    
-    //{ "STM1", id::arm::STM1 }, 
-    //{ "STM2", id::arm::STM2 }, 
-    //{ "LDM1", id::arm::LDM1 },
-    //{ "LDM2", id::arm::LDM2 },
-    //{ "LDM3", id::arm::LDM3 },
-    //{ "BLX", id::arm::UNDEFINED },
 
     std::vector<std::string_view> fetch_candidates(std::string_view mnemonic);
-    u16 fetch_last_2_chars(const std::string_view str);
 
     id::arm arm(const std::string &code);
-    
+
     id::arm MSR(const lexemes_t &lexemes);
-    id::arm SWPB(const std::string_view code);
-    id::arm LDR_family(std::string_view code);
-    id::arm STR_family(std::string_view code);
-    id::arm STM(const lexemes_t lexemes);
-    id::arm LDM(const lexemes_t lexemes);
-    id::arm BLX(const lexemes_t lexemes);
+    id::arm SWPB(const std::string_view mnemonic);
+    id::arm LDR_family(std::string_view mnemonic);
+    id::arm STR_family(std::string_view mnemonic);
+    id::arm VFP_family(std::string_view mnemonic);
+    id::arm PSR_family(const std::string_view mnemonic);
+    id::arm STM(const lexemes_t &lexemes);
+    id::arm LDM(const lexemes_t &lexemes);
+    id::arm BLX(const lexemes_t &lexemes);
 }

@@ -17,10 +17,14 @@ namespace interpreter {
         REG_PC, // R15
         REG_SP, // R14
 
+        COPROCESSOR, // P0~P15
+        CR_REG, // C0~C15
+
         IMMED_3,
         IMMED_5,
         IMMED_7,
         IMMED_8,
+        IMMED_12,
         IMMED,
         OP,
         MUL_OP, // "*"
@@ -36,16 +40,19 @@ namespace interpreter {
         ASR,
         ROR,
         RRX,
+        SHIFT,
         PRE_INDEX, // '!'
         CARET, // '^'
         MNEMONIC
     };
     
     struct lexeme_struct {
+        std::string_view mnemonic;
         tokens token_type;
         u8 immed;
         u8 integer;
         u8 reg;
+        u8 coproc;
         unsigned char op;
         u16 reg_list;
         bool pre_index;
@@ -86,6 +93,8 @@ namespace interpreter {
     // instruction string manipulation 
     std::string fetch_instruction(const std::string &code);
     std::string strip(std::string str);
+    u16 fetch_last_2_chars(const std::string_view str);
+
 
     // argument analysis
     u8 identify_reg(const std::string_view code);

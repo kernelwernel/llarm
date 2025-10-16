@@ -311,23 +311,44 @@ std::string util::raw_cond(const u8 cond, const settings settings) {
         return "";
     }
 
-    switch (cond) {
-        case 0b0000: return "EQ";
-        case 0b0001: return "NE";
-        case 0b0010: return "CS"; // CS/HS
-        case 0b0011: return "CC"; // CC/LO
-        case 0b0100: return "MI";
-        case 0b0101: return "PL";
-        case 0b0110: return "VS";
-        case 0b0111: return "VC";
-        case 0b1000: return "HI";
-        case 0b1001: return "LS";
-        case 0b1010: return "GE";
-        case 0b1011: return "LT";
-        case 0b1100: return "GT";
-        case 0b1101: return "LE";
-        case 0b1110: return "AL";
-        case 0b1111: return "";
+    if (settings.gcc_convention) {
+        switch (cond) {
+            case 0b0000: return ".EQ";
+            case 0b0001: return ".NE";
+            case 0b0010: return ".CS"; // CS/HS
+            case 0b0011: return ".CC"; // CC/LO
+            case 0b0100: return ".MI";
+            case 0b0101: return ".PL";
+            case 0b0110: return ".VS";
+            case 0b0111: return ".VC";
+            case 0b1000: return ".HI";
+            case 0b1001: return ".LS";
+            case 0b1010: return ".GE";
+            case 0b1011: return ".LT";
+            case 0b1100: return ".GT";
+            case 0b1101: return ".LE";
+            case 0b1110: return ".AL";
+            case 0b1111: return "";
+        }
+    } else {
+        switch (cond) {
+            case 0b0000: return "EQ";
+            case 0b0001: return "NE";
+            case 0b0010: return "CS"; // CS/HS
+            case 0b0011: return "CC"; // CC/LO
+            case 0b0100: return "MI";
+            case 0b0101: return "PL";
+            case 0b0110: return "VS";
+            case 0b0111: return "VC";
+            case 0b1000: return "HI";
+            case 0b1001: return "LS";
+            case 0b1010: return "GE";
+            case 0b1011: return "LT";
+            case 0b1100: return "GT";
+            case 0b1101: return "LE";
+            case 0b1110: return "AL";
+            case 0b1111: return "";
+        }
     }
 
     shared::out::dev_error("Unknown condition bits encountered");

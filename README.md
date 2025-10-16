@@ -24,7 +24,7 @@
 >
 > My ambition is to expand it into something much bigger than it already is. The reason why I'm sharing this year-long project now is because I wanted to publish the progress I've made so far, and maybe get feedback from people to determine what could be better. But for the moment, this is only the beginning. 
 > 
-> My objective is to provide a completely new framework to work with the ARM architecture, with goals to have it become a suitable industry standard candidate for many low-level embedded development requirtopements out there. Think of it as LLVM but for ARM instead of compilers.
+> My objective is to provide a completely new framework to work with the ARM architecture, with goals to have it become a suitable industry standard candidate for many low-level embedded development requirements out there. Think of it as LLVM but for ARM instead of compilers.
 
 <br>
 
