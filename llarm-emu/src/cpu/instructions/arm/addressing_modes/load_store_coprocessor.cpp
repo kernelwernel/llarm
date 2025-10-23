@@ -1,5 +1,7 @@
 #include "addressing_modes.hpp"
 
+#include "llarm-asm/llarm-asm.hpp"
+
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 #include "shared/out.hpp"
@@ -7,23 +9,15 @@
 
 address_struct ADDRESSING_MODE::load_store_coprocessor(const u32 code) {
     using namespace shared::util;
+    
+    const shifter_enum shifter_id = llarm::as::identify::shifter(shift_category::LS_COPROC, code);
 
-    if (
-        (bit_fetch(code, 27) != true) || 
-        (bit_fetch(code, 26) != true) ||
-        (bit_fetch(code, 25) != false)
-    ) {
-        shared::out::error("TODO");
-    }
-   
-    const u8 shift_type = ((bit_fetch(code, 24) << 1) | (bit_fetch(code, 22)));
-
-    switch (shift_type) {
-        case 0b10: return ls_coproc_imm(code);
-        case 0b11: return ls_coproc_imm_pre(code);
-        case 0b01: return ls_coproc_imm_post(code);
-        case 0b00: return ls_coproc_unindexed(code);
-        default: shared::out::dev_error("Invalid coprocessor addressing mode shift type bits");
+    switch (shifter_id) {
+        case shifter_enum::LS_COPROC_IMM: return ls_coproc_imm(code);
+        case shifter_enum::LS_COPROC_IMM_PRE: return ls_coproc_imm_pre(code);
+        case shifter_enum::LS_COPROC_IMM_POST: return ls_coproc_imm_post(code);
+        case shifter_enum::LS_COPROC_UNINDEXED: return ls_coproc_unindexed(code);
+        default: shared::out::error("Impossible identification of ARM load store coprocessor shifter");
     }
 }
 

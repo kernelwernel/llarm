@@ -5,6 +5,8 @@
 enum class shifter_enum : u8 {
     UNKNOWN,
     NONE,
+
+    // addressing mode 1: data processing
     DATA_IMM,
     DATA_RRX,
     DATA_REG,
@@ -42,9 +44,9 @@ enum class shifter_enum : u8 {
     
     // addressing mode 3: miscellaneous load and store
     LS_MISC_IMM,
-    LS_MISC_REG,
     LS_MISC_IMM_PRE,
     LS_MISC_IMM_POST,
+    LS_MISC_REG,
     LS_MISC_REG_PRE,
     LS_MISC_REG_POST,
     
@@ -60,7 +62,7 @@ enum class shifter_enum : u8 {
     LS_COPROC_IMM_POST,
     LS_COPROC_UNINDEXED,
     
-    
+    // vfp addressing modes (too lazy to categorise all 5 of them honestly)
     VFP_SINGLE,
     VFP_SINGLE_SCALAR,
     VFP_SINGLE_MIXED,
@@ -85,7 +87,7 @@ enum class shifter_enum : u8 {
 };
 
 
-enum class shift_category : u8 {
+enum class shifter_category : u8 {
     DATA,
     LS,
     LS_MISC,

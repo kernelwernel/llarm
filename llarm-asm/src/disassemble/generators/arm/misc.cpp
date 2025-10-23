@@ -11,7 +11,7 @@
 using namespace internal;
 
 std::string generators::arm::misc::PSR(const u32 code, const settings settings) {
-    const u8 opc  = shared::util::bit_range<u8>(code, 21, 22);
+    const u8 opc = shared::util::bit_range<u8>(code, 21, 22);
 
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 

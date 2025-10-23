@@ -1,5 +1,6 @@
 #include "disassemble.hpp"
-#include "../identifiers/identifiers.hpp"
+#include "../identifiers/u16_thumb.hpp"
+#include "../identifiers/u32_arm.hpp"
 #include "../instruction_id.hpp"
 #include "generators/generators.hpp"
 #include "../settings.hpp"
@@ -13,7 +14,7 @@
 using namespace internal;
 
 std::string disassemble::thumb_generate(const u16 code, const u32 PC, const settings settings) {
-    const id::thumb id = identifiers::thumb(code);
+    const id::thumb id = u16_thumb::thumb(code);
 
     switch (id) {
         case id::thumb::ADC: return generators::thumb::math::ADC(code, settings);
@@ -88,7 +89,7 @@ std::string disassemble::thumb_generate(const u16 code, const u32 PC, const sett
 
 
 std::string disassemble::arm_generate(const u32 code, const u32 PC, const settings settings) {
-    const id::arm id = identifiers::arm(code);
+    const id::arm id = u32_arm::arm(code);
 
     switch (id) {
         case id::arm::ADC: return generators::arm::math::ADC(code, settings);
@@ -141,7 +142,10 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
         case id::arm::SWPB: return generators::arm::store::SWPB(code, settings);
         case id::arm::TEQ: return generators::arm::logic::TEQ(code, settings);
         case id::arm::TST: return generators::arm::logic::TST(code, settings);
-        case id::arm::PSR: return generators::arm::misc::PSR(code, settings);
+        case id::arm::CMNP: return generators::arm::misc::PSR(code, settings);
+        case id::arm::CMPP: return generators::arm::misc::PSR(code, settings);
+        case id::arm::TEQP: return generators::arm::misc::PSR(code, settings);
+        case id::arm::TSTP: return generators::arm::misc::PSR(code, settings);
         case id::arm::STRH: return generators::arm::store::STRH(code, settings);
         case id::arm::LDRH: return generators::arm::load::LDRH(code, settings);
         case id::arm::LDRSB: return generators::arm::load::LDRSB(code, settings);

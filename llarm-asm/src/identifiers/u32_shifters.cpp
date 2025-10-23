@@ -1,5 +1,5 @@
 #include "u32_shifters.hpp"
-#include "identifiers.hpp"
+#include "u32_arm.hpp"
 #include "../shifter_id.hpp"
 #include "../instruction_id.hpp"
 
@@ -357,7 +357,7 @@ shifter_enum u32_shifters::vfp_ls_multiple(const u32 code) {
 
 
 shifter_enum u32_shifters::identify_shifter(const u32 code) {
-    const id::arm instruction = identifiers::arm(code);
+    const id::arm instruction = u32_arm::arm(code);
 
     switch (instruction) {
         case id::arm::ADC:
@@ -412,18 +412,18 @@ shifter_enum u32_shifters::identify_shifter(const u32 code) {
 
 
 // same as the function above but this acts more as a shortcut based on info that's already known
-shifter_enum u32_shifters::identify_shifter(const shift_category shift_category, const u32 code) {
+shifter_enum u32_shifters::identify_shifter(const shifter_category shift_category, const u32 code) {
     switch (shift_category) {
-        case shift_category::DATA: return data_processing(code);
-        case shift_category::LS: return load_store(code);
-        case shift_category::LS_MUL: return load_store_multiple(code);
-        case shift_category::LS_MISC: return load_store_misc(code);
-        case shift_category::LS_COPROC: return load_store_coprocessor(code);
-        case shift_category::VFP_SINGLE: return vfp_single(code);
-        case shift_category::VFP_SINGLE_MONADIC: return vfp_single_monadic(code);
-        case shift_category::VFP_DOUBLE: return vfp_double(code);
-        case shift_category::VFP_DOUBLE_MONADIC: return vfp_double_monadic(code);
-        case shift_category::VFP_LS_MUL: return vfp_ls_multiple(code);
+        case shifter_category::DATA: return data_processing(code);
+        case shifter_category::LS: return load_store(code);
+        case shifter_category::LS_MUL: return load_store_multiple(code);
+        case shifter_category::LS_MISC: return load_store_misc(code);
+        case shifter_category::LS_COPROC: return load_store_coprocessor(code);
+        case shifter_category::VFP_SINGLE: return vfp_single(code);
+        case shifter_category::VFP_SINGLE_MONADIC: return vfp_single_monadic(code);
+        case shifter_category::VFP_DOUBLE: return vfp_double(code);
+        case shifter_category::VFP_DOUBLE_MONADIC: return vfp_double_monadic(code);
+        case shifter_category::VFP_LS_MUL: return vfp_ls_multiple(code);
         default: return shifter_enum::UNKNOWN;
     }
 }

@@ -5,9 +5,7 @@
 
 #include "interpreter.hpp"
 
-using namespace internal;
-
-namespace string_shifters {
+namespace internal::string_shifters {
     shifter_enum data_instruction(const interpreter::lexemes_t &lexemes);
     shifter_enum ls_instruction(const interpreter::lexemes_t &lexemes);
     shifter_enum ls_misc_instruction(const interpreter::lexemes_t &lexemes);
@@ -18,6 +16,6 @@ namespace string_shifters {
     // PLD has an exception to its addressing mode format
     shifter_enum ls_instruction_PLD(const interpreter::lexemes_t &lexemes);
 
-    shifter_enum arm(const id::arm id, const interpreter::lexemes_t &lexemes);    
-    shifter_enum arm(const std::string &code);
+    shifter_enum identify_shifter(const id::arm id, const interpreter::lexemes_t &lexemes);    
+    shifter_enum identify_shifter(const std::string &code);
 }

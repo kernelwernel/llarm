@@ -1,5 +1,6 @@
 #include "addressing_modes.hpp"
 
+#include "llarm-asm/llarm-asm.hpp"
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 #include "shared/out.hpp"
@@ -374,75 +375,20 @@ data_struct ADDRESSING_MODE::data_process_rotate_right_extend(const u32 code) {
 data_struct ADDRESSING_MODE::data_processing(const u32 code) {
     using namespace shared::util;
 
-    if ((bit_fetch(code, 27) != false) || (bit_fetch(code, 26) != false)) {
-        // TODO, error
+    const shifter_enum shifter_id = llarm::as::identify::shifter(shifter_category::DATA, code);
+
+    switch (shifter_id) {
+        case shifter_enum::DATA_IMM: return data_process_immediate_mode(code);
+        case shifter_enum::DATA_RRX: return data_process_rotate_right_extend(code);
+        case shifter_enum::DATA_REG: return data_process_register(code);
+        case shifter_enum::DATA_IMM_LSL: return data_process_logical_shift_left_immediate(code);
+        case shifter_enum::DATA_IMM_LSR: return data_process_logical_shift_right_immediate(code);
+        case shifter_enum::DATA_IMM_ASR: return data_process_arithmetic_shift_right_immediate(code);
+        case shifter_enum::DATA_IMM_ROR: return data_process_rotate_right_immediate(code);
+        case shifter_enum::DATA_REG_LSL: return data_process_logical_shift_left_register(code);
+        case shifter_enum::DATA_REG_LSR: return data_process_logical_shift_right_register(code);
+        case shifter_enum::DATA_REG_ASR: return data_process_arithmetic_shift_right_register(code);
+        case shifter_enum::DATA_REG_ROR: return data_process_rotate_right_register(code);
+        default: shared::out::error("Impossible identification of ARM data processing shifter");
     }
-
-    const bool I = bit_fetch(code, 25);
-
-    if (I) {
-        return data_process_immediate_mode(code);
-    }
-    
-    if (
-        (bit_fetch(code, 11) == false) &&
-        (bit_fetch(code, 10) == false) &&
-        (bit_fetch(code, 9) == false) &&
-        (bit_fetch(code, 8) == false) &&
-        (bit_fetch(code, 7) == false) &&
-        (bit_fetch(code, 6) == true) &&
-        (bit_fetch(code, 5) == true) &&
-        (bit_fetch(code, 4) == false)
-    ) {
-        return data_process_rotate_right_extend(code);
-    }
-
-    // immediate shift mode
-    if (bit_fetch(code, 4) == false) {
-        if (
-            (bit_fetch(code, 11) == false) &&
-            (bit_fetch(code, 10) == false) &&
-            (bit_fetch(code, 9) == false) &&
-            (bit_fetch(code, 8) == false) &&
-            (bit_fetch(code, 7) == false) &&
-            (bit_fetch(code, 6) == false) &&
-            (bit_fetch(code, 5) == false)
-        ) {
-            return data_process_register(code);
-        }
-
-        const u8 bytecode = ((bit_fetch(code, 6) << 1) | bit_fetch(code, 5));
-
-        switch (bytecode) {
-            case 0b00: return data_process_logical_shift_left_immediate(code);
-            case 0b01: return data_process_logical_shift_right_immediate(code);
-            case 0b10: return data_process_arithmetic_shift_right_immediate(code);
-            case 0b11: return data_process_rotate_right_immediate(code);
-        }
-
-        shared::out::error("TODO");
-    }
-
-    // register mode
-    if (
-        (bit_fetch(code, 7) == false) &&
-        (bit_fetch(code, 4) == true)
-    ) {
-        const u8 bytecode = ((bit_fetch(code, 6) << 1) | bit_fetch(code, 5));
-
-        switch (bytecode) {
-            case 0b00: return data_process_logical_shift_left_register(code);
-            case 0b01: return data_process_logical_shift_right_register(code);
-            case 0b10: return data_process_arithmetic_shift_right_register(code);
-            case 0b11: return data_process_rotate_right_register(code);
-        }
-
-        // TODO ERROR
-        shared::out::error("TODO");
-    }
-
-
-
-    // TODO: ERROR
-    shared::out::error("TODO");
 }

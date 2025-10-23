@@ -4,9 +4,7 @@
 
 #include "shared/types.hpp"
 
-using namespace internal;
-
-namespace u16_thumb {
+namespace internal::u16_thumb {
     id::thumb thumb(const u16 code);
 
     id::thumb bits_000(const u16 code);

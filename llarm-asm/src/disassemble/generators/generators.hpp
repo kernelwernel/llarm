@@ -67,7 +67,10 @@ namespace internal::generators {
 
         namespace misc {
             std::string NOP();
-            std::string PSR(u32, settings);
+            std::string CMNP(u32, settings);
+            std::string CMPP(u32, settings);
+            std::string TEQP(u32, settings);
+            std::string TSTP(u32, settings);
             std::string SWI(u32, settings);
             std::string BKPT(u32, settings);
         }

@@ -20,7 +20,7 @@
 
 > [!IMPORTANT]
 > ## Note from the developer
-> I've written approximately 30k lines of C++ so far and have been working on this project for over a year. At the moment, the project doesn't have any practical use in real-world scenarios in its current state (especially since it only supports AArch32 for now). That being said, my plan is to eventually support modern AArch64 architectures, but it's a very long way ahead.
+> I've written approximately 40k lines of C++ so far and have been working on this project for over a year. At the moment, the project doesn't have any practical use in real-world scenarios in its current state (especially since it only supports AArch32 for now). That being said, my plan is to eventually support modern AArch64 architectures, but it's a very long way ahead.
 >
 > My ambition is to expand it into something much bigger than it already is. The reason why I'm sharing this year-long project now is because I wanted to publish the progress I've made so far, and maybe get feedback from people to determine what could be better. But for the moment, this is only the beginning. 
 > 

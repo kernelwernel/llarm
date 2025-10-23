@@ -21,7 +21,7 @@ interpreter::tokens_t interpreter::tokenize(const std::string &code) {
 
     const std::string instruction = strip(code);
 
-    const std::string_view special_delims = "[]^!-";
+    const std::string_view special_delims = "[]^!-#";
     const std::string_view whitespace_delims = " ,";
 
     while (start < instruction.size()) {
@@ -62,38 +62,14 @@ void interpreter::asterisk(interpreter::lexeme_struct &lexeme) {
 }
 
 
-void interpreter::hashtag(const std::string_view token, interpreter::lexeme_struct &lexeme) {
-    if (is_integer(token.substr(1)) == false) {
-        shared::out::error("Invalid immediate value argument in thumb instruction interpretation");
-    }
-    
-    const i32 num = fetch_integer(token.substr(1));
-    
-    if (num <= 0b111) {
-        lexeme.token_type = tokens::IMMED_3;
-    } else if (num <= 0b1'1111) {
-        lexeme.token_type = tokens::IMMED_5;
-    } else if (num <= 0b111'1111) {
-        lexeme.token_type = tokens::IMMED_7;
-    } else if (num <= 0b1111'1111) {
-        lexeme.token_type = tokens::IMMED_8;
-    } else if (num <= 0b1111'1111'1111) {
-        lexeme.token_type = tokens::IMMED_12;
-    } else {
-        shared::out::error("Invalid immediate value argument in thumb instruction, maybe try reducing the MSB index");
-    }
-    
-    lexeme.immed = num;
-}
-
-
 std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std::string_view> &tokens) {
     std::vector<lexeme_struct> lexeme_vec = {};
     
-    bool reg_list_continuation = false;
+    bool bracket_continuation = false;
     u16 reg_list = 0;
     u16 index = 0;
     bool is_r15_present_in_reg_list = false;
+    bool is_option_bracket = false;
     
     for (const auto &raw_token : tokens) {
         std::string_view token = raw_token;
@@ -119,10 +95,15 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
             continue;
         }
 
-        if (reg_list_continuation) {
-            // reg_list end
+        if (bracket_continuation) {
+            // bracket end
             if (token.back() == '}') {
-                reg_list_continuation = false;
+                bracket_continuation = false;
+
+                if (is_option_bracket) {
+                    lexeme_vec.emplace_back(lexeme);
+                    continue;
+                }
 
                 lexeme.reg_list = reg_list;
 
@@ -137,8 +118,18 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
                 continue;
             }
 
-            const u8 reg = identify_reg(token);
-            shared::util::modify_bit<u16>(reg_list, reg, true);
+            if (is_integer(token)) {
+                const i32 integer = fetch_integer(token);
+
+                if (integer <= 255) {
+                    lexeme.token_type = tokens::OPTION;
+                    lexeme.integer = integer;
+                    is_option_bracket = true;
+                }
+            } else if (is_reg(token)) {
+                const u8 reg = identify_reg(token);
+                shared::util::modify_bit<u16>(reg_list, reg, true);
+            }
     
             continue;
         }
@@ -146,11 +137,11 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
         const unsigned char first_char = token.front();
 
         switch (first_char) {
-            case '{': reg_list_continuation = true; continue;
+            case '{': bracket_continuation = true; continue;
             case '[': lexeme.token_type = tokens::MEM_START; break;
             case ']': lexeme.token_type = tokens::MEM_END; break;
             case '*': asterisk(lexeme); break;
-            case '#': hashtag(token, lexeme); break;
+            case '#': lexeme.token_type = tokens::HASHTAG; break;
             case '^': lexeme.token_type = tokens::CARET; break;
 
             // both are basically comments, so everything afterwards is ignored
@@ -231,6 +222,20 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
 
         if (is_integer(token)) {
             const u32 num = fetch_integer(token);
+
+            if (num <= 0b111) {
+                lexeme.token_type = tokens::IMMED_3;
+            } else if (num <= 0b1'1111) {
+                lexeme.token_type = tokens::IMMED_5;
+            } else if (num <= 0b111'1111) {
+                lexeme.token_type = tokens::IMMED_7;
+            } else if (num <= 0b1111'1111) {
+                lexeme.token_type = tokens::IMMED_8;
+            } else if (num <= 0b1111'1111'1111) {
+                lexeme.token_type = tokens::IMMED_12;
+            } else {
+                lexeme.token_type = tokens::IMMED;
+            }
 
             if (num == 4) {
                 lexeme.token_type = INTEGER_4;
@@ -315,6 +320,16 @@ u16 interpreter::fetch_last_2_chars(const std::string_view str) {
     return (sub.at(0) << 8) | sub.at(1);
 };
 
+
+bool interpreter::is_reg(const std::string_view str) {
+    if (str.front() != 'R') {
+        return false;
+    }
+
+    const u8 reg = identify_reg(str);
+
+    return (reg != error);
+}
 
 u8 interpreter::identify_reg(std::string_view reg) {
     if (reg.size() < 2) {
@@ -463,7 +478,6 @@ i32 interpreter::fetch_hex(const std::string_view str) {
 
 
 bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &token_pattern, const lexemes_t &lexemes) {
-    
     u16 token_index = 0;
     u16 lexeme_index = 0;
 
@@ -501,12 +515,36 @@ bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &t
             (pattern_token == tokens::IMMED_12)
         );
 
+        const bool is_string_token_integer = (
+            (string_token == tokens::INTEGER_4) ||
+            (string_token == tokens::INTEGER_2)
+        );
+
+        const bool is_pattern_token_integer = (
+            (pattern_token == tokens::INTEGER_4) ||
+            (pattern_token == tokens::INTEGER_2)
+        );
+
+        if (is_pattern_token_integer && is_string_token_immed) {
+            if (
+                (string_token == tokens::IMMED_3) &&
+                (
+                    (pattern_token == tokens::INTEGER_4) ||
+                    (pattern_token == tokens::INTEGER_2) 
+                )
+            ) {
+                continue;
+            }
+        }
+
         if (is_pattern_token_immed && is_string_token_immed) {
             // an immed_3 can be represented within an immed_7, 
             // that's what this part is checking for 
             if (string_token <= pattern_token) {
                 continue;
             }
+
+            return false;
         }
 
         if (pattern_token == tokens::IMMED && is_string_token_immed) {
@@ -517,6 +555,8 @@ bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &t
             if (lexemes.at(lexeme_index).reg <= 7) {
                 continue;
             }
+
+            return false;
         }
 
         if (pattern_token == REG_LIST_WITH_PC) {
@@ -526,6 +566,8 @@ bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &t
             if (shared::util::bit_fetch(list, 15)) {
                 continue;
             }
+
+            return false;
         }
 
         if (pattern_token == REG_LIST_NO_PC) {
@@ -535,6 +577,45 @@ bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &t
             if (shared::util::bit_fetch(list, 15) == false) {
                 continue;
             }
+            
+            return false;
+        }
+
+        if (pattern_token == REG_LIST_THUMB_OPTIONAL_PC) {
+            const u16 list = lexemes.at(lexeme_index).reg_list;
+            
+            // does not have R8~R14?
+            if (shared::util::bit_range(list, 8, 14) == 0) {
+                continue;
+            }
+
+            return false;
+        }
+
+        if (pattern_token == REG_LIST_THUMB_OPTIONAL_LR) {
+            const u16 list = lexemes.at(lexeme_index).reg_list;
+            
+            // does not have R8~R13 and R15 is 0?
+            if (
+                (shared::util::bit_range(list, 8, 13) == 0) &&
+                (shared::util::bit_fetch(list, 15) == false)
+            ) {
+                continue;
+            }
+
+            return false;
+        }
+
+
+        if (pattern_token == REG_LIST_THUMB) {
+            const u16 list = lexemes.at(lexeme_index).reg_list;
+
+            // does not have R8~R15?
+            if (shared::util::bit_range(list, 8, 15) == 0) {
+                continue;
+            }
+
+            return false;
         }
 
         if (pattern_token == REG_LIST) {
@@ -544,6 +625,8 @@ bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &t
             ) {
                 continue;
             }
+
+            return false;
         }
 
         if (pattern_token == SHIFT) {
@@ -553,7 +636,7 @@ bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &t
                 case ASR:
                 case ROR:
                 case RRX: continue;
-                default: break;
+                default: return false;
             }
         }
 

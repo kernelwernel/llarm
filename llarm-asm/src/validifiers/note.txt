@@ -1,0 +1,1 @@
+some instructions can only have certain limited shifters within its category, such as PLD

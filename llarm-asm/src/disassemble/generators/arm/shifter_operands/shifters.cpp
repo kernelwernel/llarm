@@ -1,5 +1,5 @@
 #include "shifters.hpp"
-#include "../../../../identifiers/shifters.hpp"
+#include "../../../../identifiers/u32_arm.hpp"
 
 #include "shared/types.hpp"
 #include "shared/util.hpp"
@@ -53,7 +53,6 @@ shifter_enum shifters::identify_data_shifter(const u32 code) {
         shared::out::error("No known data addressing shifter has been found");
     }
 
-
     // 32-bit immediate
     if (util::bit_fetch(code, 25) == 1) {
         return shifter_enum::DATA_IMM;
@@ -66,12 +65,10 @@ shifter_enum shifters::identify_data_shifter(const u32 code) {
         return shifter_enum::DATA_RRX;
     }
 
-
     // register
     if (util::bit_range(code, 4, 11) == 0) {
         return shifter_enum::DATA_REG;
     }
-
 
     // immediate shifts
     if (util::bit_fetch(code, 4) == 0) {
@@ -85,7 +82,6 @@ shifter_enum shifters::identify_data_shifter(const u32 code) {
             default: shared::out::error("No known data immediate addressing shifter has been found");
         }
     }
-
 
     // register shifts
     if (

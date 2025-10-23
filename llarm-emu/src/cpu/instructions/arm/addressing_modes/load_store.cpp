@@ -2,6 +2,8 @@
 
 #include "addressing_modes.hpp"
 
+#include "llarm-asm/llarm-asm.hpp"
+
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 #include "shared/out.hpp"
@@ -9,52 +11,32 @@
 u32 ADDRESSING_MODE::load_store(const u32 code) {
     using namespace shared::util;
 
-    if (
-        (bit_fetch(code, 27) != false) || 
-        (bit_fetch(code, 26) != true)
-    ) {
-        shared::out::error("TODO");
+    const shifter_enum shifter_id = llarm::as::identify::shifter(shift_category::LS, code);
+
+    switch (shifter_id) {
+        case shifter_enum::LS_IMM: return ls_imm(code);
+        case shifter_enum::LS_IMM_PRE: return ls_imm_pre(code);
+        case shifter_enum::LS_IMM_POST: return ls_imm_post(code);
+        case shifter_enum::LS_REG: return ls_reg(code); 
+        case shifter_enum::LS_REG_PRE: return ls_reg_pre(code); 
+        case shifter_enum::LS_REG_POST: return ls_reg_post(code); 
+        case shifter_enum::LS_SCALED_LSL:
+        case shifter_enum::LS_SCALED_LSR:
+        case shifter_enum::LS_SCALED_ASR:
+        case shifter_enum::LS_SCALED_ROR:
+        case shifter_enum::LS_SCALED_RRX: return ls_scaled_reg(code);
+        case shifter_enum::LS_SCALED_PRE_LSL:
+        case shifter_enum::LS_SCALED_PRE_LSR:
+        case shifter_enum::LS_SCALED_PRE_ASR:
+        case shifter_enum::LS_SCALED_PRE_ROR:
+        case shifter_enum::LS_SCALED_PRE_RRX: return ls_scaled_reg_pre(code);
+        case shifter_enum::LS_SCALED_POST_LSL:
+        case shifter_enum::LS_SCALED_POST_LSR:
+        case shifter_enum::LS_SCALED_POST_ASR:
+        case shifter_enum::LS_SCALED_POST_ROR:
+        case shifter_enum::LS_SCALED_POST_RRX: return ls_scaled_reg_post(code);
+        default: shared::out::error("Impossible identification of ARM load store shifter");
     }
-
-    const u8 shift_type = (
-        (bit_fetch(code, 25) << 2) | 
-        (bit_fetch(code, 24) << 1) | 
-        (bit_fetch(code, 21))
-    );
-
-    switch (shift_type) {
-        case 0b010: return ls_imm(code);
-        case 0b011: return ls_imm_pre(code);
-        case 0b000: return ls_imm_post(code);
-        case 0b110: 
-            if (shared::util::bit_range(code, 4, 11) == 0) {
-                return ls_reg(code); 
-            } else if (bit_fetch(code, 4) == 0) {
-                return ls_scaled_reg(code);
-            }
-
-            break;
-    
-        case 0b111: 
-            if (shared::util::bit_range(code, 4, 11) == 0) {
-                return ls_reg_pre(code); 
-            } else if (bit_fetch(code, 4) == 0) {
-                return ls_scaled_reg_pre(code);
-            }
-
-            break;
-
-        case 0b100: 
-            if (shared::util::bit_range(code, 4, 11) == 0) {
-                return ls_reg_post(code); 
-            } else if (bit_fetch(code, 4) == 0) {
-                return ls_scaled_reg_post(code);
-            }
-            
-            break;
-    }
-
-    shared::out::error("TODO");
 }
 
 

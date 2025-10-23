@@ -150,7 +150,7 @@ id::arm string_arm::MSR(const lexemes_t &lexemes) {
 
     // MSR_IMM
     if (
-        (has_matching_pattern({ CPSR_FIELD, IMMED }, lexemes)) ||
+        (has_matching_pattern({ CPSR_FIELD, HASHTAG, IMMED }, lexemes)) ||
         (has_matching_pattern({ SPSR_FIELD, REG }, lexemes))
     ) {
         return id::arm::MSR_IMM;
@@ -158,7 +158,7 @@ id::arm string_arm::MSR(const lexemes_t &lexemes) {
 
     // MSR_REG
     if (
-        (has_matching_pattern({ CPSR_FIELD, IMMED }, lexemes)) ||
+        (has_matching_pattern({ CPSR_FIELD, HASHTAG, IMMED }, lexemes)) ||
         (has_matching_pattern({ SPSR_FIELD, REG }, lexemes))
     ) {
         return id::arm::MSR_REG;

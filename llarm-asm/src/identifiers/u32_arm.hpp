@@ -4,9 +4,7 @@
 
 #include "shared/types.hpp"
 
-using namespace internal;
-
-namespace u32_arm {
+namespace internal::u32_arm {
     id::arm misc_instructions(const u32 code);
     id::arm multiply_extra_load_store(const u32 code);
     id::arm unconditional(const u32 code);

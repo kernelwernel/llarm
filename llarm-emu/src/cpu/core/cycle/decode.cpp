@@ -43,7 +43,10 @@ bool DECODE::is_arm_instruction_unsupported(const llarm::as::id::arm id) {
             case as::id::arm::B:
             case as::id::arm::BL:
             case as::id::arm::NOP:
-            case as::id::arm::PSR:
+            case as::id::arm::CMNP:
+            case as::id::arm::CMPP:
+            case as::id::arm::TEQP:
+            case as::id::arm::TSTP:
             case as::id::arm::SWI:
             case as::id::arm::LDM1:
             case as::id::arm::LDM2:

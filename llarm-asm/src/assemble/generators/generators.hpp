@@ -1,52 +1,90 @@
 #pragma once
 
 #include "../../instruction_id.hpp"
+#include "../../shifter_id.hpp"
 
 #include "shared/types.hpp"
+#include "shared/util.hpp"
 
 using namespace internal;
 
 namespace internal::generators {
-    /*
-    enum class shifters : u8 {
-        NONE,
-        REG_SHIFT,
-        IMM_SHIFT,
-        IMM_32,
-        LS_IMM,
-        LS_REG,
-        LS_SCALED,
-        LS_IMM_PRE,
-        LS_REG_PRE,
-        LS_SCALED_PRE,
-        LS_IMM_POST,
-        LS_REG_POST,
-        LS_SCALED_POST,
-    };
-    */
-
     struct arguments {
-        bool has_S;
+        //bool has_S;
+        //bool has_minus;
+        //bool has_spsr;
+        //bool has_x;
+        //bool has_y;
+        u8 flags;
         u8 cond;
+        u8 PSR_field_mask;
         u8 first_reg;
         u8 second_reg;
         u8 third_reg;
         u8 fourth_reg;
+        u8 coproc;
+        u8 first_CR_reg;
+        u8 second_CR_reg;
+        u8 third_CR_reg;
+        shifter_enum shifter;
         u16 reg_list;
         u32 first_int;
         u32 second_int;
         u32 third_int;
-    };
 
-    struct shift {
-        bool I;
-        bool S;
-        u16 shifter_code;
+        bool has_S() const {
+            return (flags & 1);
+        }
+
+        bool has_minus() const {
+            return shared::util::bit_fetch(flags, 2);
+        }
+
+        bool has_spsr() const {
+            return shared::util::bit_fetch(flags, 3);
+        }
+
+        bool has_x() const {
+            return shared::util::bit_fetch(flags, 4);
+        }
+
+        bool has_y() const {
+            return shared::util::bit_fetch(flags, 5);
+        }
     };
 
     u32 data_instruction(const id::arm instruction, const arguments &arg);
     u32 ls_instruction(const id::arm instruction, const arguments &arg);
+    u32 ls_misc_instruction(const id::arm instruction, const arguments &arg);
+    u32 ls_mul_instruction(const id::arm instruction, const arguments &arg);
+    u32 ls_coproc_instruction(const id::arm id, const arguments &arg);
 
+    bool is_imm_encodable(const u32 imm);
+    void encode_imm(u32 &binary, const u32 imm);
+
+    u32 mul(const arguments &arg);
+    u32 swp(const arguments &arg);
+    u32 swpb(const arguments &arg);
+    u32 mla(const arguments &args);
+    u32 mrs(const arguments &args);
+    u32 msr_imm(const arguments &args);
+    u32 msr_reg(const arguments &args);
+    u32 swi(const arguments &args);
+    u32 clz(const arguments &args);
+    u32 mcr(const arguments &args);
+    u32 mrc(const arguments &args);
+    u32 cdp(const arguments &args);
+    u32 b(const arguments &args);
+    u32 bl(const arguments &args);
+    u32 bkpt(const arguments &args);
+    u32 blx2(const arguments &args);
+    u32 bx(const arguments &args);
+    u32 mcrr(const arguments &args);
+    u32 mrrc(const arguments &args);
+    u32 q_instructions(const id::arm id, const arguments &args);
+    u32 mul_instructions(const id::arm id, const arguments &args);
+    u32 dsp_mul_instructions(const id::arm id, const arguments &args);
+    
     u32 arm(const id::arm id, const arguments &args);
 }
 

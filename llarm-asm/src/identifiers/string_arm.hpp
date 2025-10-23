@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace string_arm {
+namespace internal::string_arm {
     using namespace internal;
 
     using interpreter::tokens;
@@ -121,12 +121,23 @@ namespace string_arm {
         { "RSC", id::arm::RSC },
         { "SBC", id::arm::SBC },
         { "SMLAL", id::arm::SMLAL },
-        { "SMLALXY", id::arm::SMLALXY },
-        { "SMLAWY", id::arm::SMLAWY },
-        { "SMLAXY", id::arm::SMLAXY },
         { "SMULL", id::arm::SMULL },
-        { "SMULWY", id::arm::SMULWY },
-        { "SMULXY", id::arm::SMULXY },
+        { "SMLALBB", id::arm::SMLALXY },
+        { "SMLALBT", id::arm::SMLALXY },
+        { "SMLALTB", id::arm::SMLALXY },
+        { "SMLALTT", id::arm::SMLALXY },
+        { "SMLAWB", id::arm::SMLAWY },
+        { "SMLAWT", id::arm::SMLAWY },
+        { "SMLABB", id::arm::SMLAXY },
+        { "SMLABT", id::arm::SMLAXY },
+        { "SMLATB", id::arm::SMLAXY },
+        { "SMLATT", id::arm::SMLAXY },
+        { "SMULBB", id::arm::SMULXY },
+        { "SMULBT", id::arm::SMULXY },
+        { "SMULTB", id::arm::SMULXY },
+        { "SMULTT", id::arm::SMULXY },
+        { "SMULWB", id::arm::SMULWY },
+        { "SMULWT", id::arm::SMULWY },
         { "STC", id::arm::STC },
         { "STC2", id::arm::STC2 },
         { "STR", id::arm::STR }, 
@@ -154,3 +165,5 @@ namespace string_arm {
     id::arm LDM(const lexemes_t &lexemes);
     id::arm BLX(const lexemes_t &lexemes);
 }
+
+// TODO: work on the +/- thing before an immediate

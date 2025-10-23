@@ -7,7 +7,7 @@
 #include <array>
 
 
-namespace string_thumb {
+namespace internal::string_thumb {
     using namespace internal;
 
     using interpreter::tokens;

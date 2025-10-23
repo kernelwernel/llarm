@@ -17,5 +17,5 @@ namespace internal::u32_shifters {
     shifter_enum vfp_ls_multiple(const u32 code);
 
     shifter_enum identify_shifter(const u32 code);
-    shifter_enum identify_shifter(const shift_category shift_category, const u32 code);
+    shifter_enum identify_shifter(const shifter_category shift_category, const u32 code);
 }

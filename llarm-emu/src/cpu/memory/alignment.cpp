@@ -1,4 +1,3 @@
-
 #include "../../id.hpp"
 #include "../../settings.hpp"
 #include "../coprocessor/coprocessor.hpp"

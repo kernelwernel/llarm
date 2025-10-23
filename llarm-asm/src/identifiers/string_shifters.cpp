@@ -6,14 +6,18 @@
 
 #include "interpreter.hpp"
 #include "shared/types.hpp"
-#include "shared/util.hpp"
 
 using namespace internal;
     
 shifter_enum string_shifters::data_instruction(const interpreter::lexemes_t &lexemes) {
     using namespace interpreter;
 
-    if (has_matching_pattern({ REG, REG, IMMED }, lexemes)) {
+    if (has_matching_pattern({ REG, REG, HASHTAG, IMMED }, lexemes)) {
+        return shifter_enum::DATA_IMM;
+    }
+
+    // alternative to the above
+    if (has_matching_pattern({ REG, REG, HASHTAG, IMMED_8, IMMED }, lexemes)) {
         return shifter_enum::DATA_IMM;
     }
 
@@ -21,7 +25,7 @@ shifter_enum string_shifters::data_instruction(const interpreter::lexemes_t &lex
         return shifter_enum::DATA_REG;
     }
 
-    if (has_matching_pattern({ REG, REG, REG, LSL, IMMED }, lexemes)) {
+    if (has_matching_pattern({ REG, REG, REG, LSL, HASHTAG, IMMED }, lexemes)) {
         return shifter_enum::DATA_IMM_LSL;
     }
 
@@ -29,7 +33,7 @@ shifter_enum string_shifters::data_instruction(const interpreter::lexemes_t &lex
         return shifter_enum::DATA_REG_LSL;
     }
 
-    if (has_matching_pattern({ REG, REG, REG, LSR, IMMED }, lexemes)) {
+    if (has_matching_pattern({ REG, REG, REG, LSR, HASHTAG, IMMED }, lexemes)) {
         return shifter_enum::DATA_IMM_LSR;
     }
 
@@ -37,7 +41,7 @@ shifter_enum string_shifters::data_instruction(const interpreter::lexemes_t &lex
         return shifter_enum::DATA_REG_LSR;
     }
     
-    if (has_matching_pattern({ REG, REG, REG, ASR, IMMED }, lexemes)) {
+    if (has_matching_pattern({ REG, REG, REG, ASR, HASHTAG, IMMED }, lexemes)) {
         return shifter_enum::DATA_IMM_ASR;
     }
 
@@ -45,7 +49,7 @@ shifter_enum string_shifters::data_instruction(const interpreter::lexemes_t &lex
         return shifter_enum::DATA_REG_ASR;
     }
 
-    if (has_matching_pattern({ REG, REG, REG, ROR, IMMED }, lexemes)) {
+    if (has_matching_pattern({ REG, REG, REG, ROR, HASHTAG, IMMED }, lexemes)) {
         return shifter_enum::DATA_IMM_ROR;
     }
 
@@ -65,15 +69,15 @@ shifter_enum string_shifters::data_instruction(const interpreter::lexemes_t &lex
 shifter_enum string_shifters::ls_instruction_PLD(const interpreter::lexemes_t &lexemes) {
     using namespace interpreter;
 
-    if (has_matching_pattern({ MEM_START, REG, IMMED_12, MEM_END }, lexemes)) {
+    if (has_matching_pattern({ MEM_START, REG, HASHTAG, HASHTAG, IMMED_12, MEM_END }, lexemes)) {
         return shifter_enum::LS_IMM;
     }
 
     if (has_matching_pattern({ MEM_START, REG, REG, MEM_END }, lexemes)) {
-        return shifter_enum::LS_IMM;
+        return shifter_enum::LS_REG;
     }
 
-    if (has_matching_pattern({ MEM_START, REG, REG, SHIFT, IMMED, MEM_END }, lexemes)) {
+    if (has_matching_pattern({ MEM_START, REG, REG, SHIFT, HASHTAG, IMMED, MEM_END }, lexemes)) {
         const tokens shift = lexemes.at(4).token_type;
 
         switch (shift) {
@@ -96,7 +100,7 @@ shifter_enum string_shifters::ls_instruction_PLD(const interpreter::lexemes_t &l
 shifter_enum string_shifters::ls_instruction(const interpreter::lexemes_t &lexemes) {
     using namespace interpreter;
 
-    if (has_matching_pattern({ REG, MEM_START, REG, IMMED_12, MEM_END }, lexemes)) {
+    if (has_matching_pattern({ REG, MEM_START, REG, HASHTAG, IMMED_12, MEM_END }, lexemes)) {
         return shifter_enum::LS_IMM;
     }
 
@@ -104,7 +108,7 @@ shifter_enum string_shifters::ls_instruction(const interpreter::lexemes_t &lexem
         return shifter_enum::LS_REG;
     }
 
-    if (has_matching_pattern({ REG, MEM_START, REG, REG, SHIFT, IMMED, MEM_END }, lexemes)) {
+    if (has_matching_pattern({ REG, MEM_START, REG, REG, SHIFT, HASHTAG, IMMED, MEM_END }, lexemes)) {
         const tokens shift = lexemes.at(5).token_type;
 
         switch (shift) {
@@ -120,7 +124,7 @@ shifter_enum string_shifters::ls_instruction(const interpreter::lexemes_t &lexem
         return shifter_enum::LS_SCALED_RRX;
     }
 
-    if (has_matching_pattern({ REG, MEM_START, REG, IMMED_12, MEM_END, PRE_INDEX }, lexemes)) {
+    if (has_matching_pattern({ REG, MEM_START, REG, HASHTAG, IMMED_12, MEM_END, PRE_INDEX }, lexemes)) {
         return shifter_enum::LS_IMM_PRE;
     }
 
@@ -128,7 +132,7 @@ shifter_enum string_shifters::ls_instruction(const interpreter::lexemes_t &lexem
         return shifter_enum::LS_REG_PRE;
     }
 
-    if (has_matching_pattern({ REG, MEM_START, REG, REG, SHIFT, IMMED, MEM_END, PRE_INDEX }, lexemes)) {
+    if (has_matching_pattern({ REG, MEM_START, REG, REG, SHIFT, HASHTAG, IMMED, MEM_END, PRE_INDEX }, lexemes)) {
         const tokens shift = lexemes.at(5).token_type;
 
         switch (shift) {
@@ -144,7 +148,7 @@ shifter_enum string_shifters::ls_instruction(const interpreter::lexemes_t &lexem
         return shifter_enum::LS_SCALED_PRE_RRX;
     }
 
-    if (has_matching_pattern({ REG, MEM_START, REG, MEM_END, IMMED_12 }, lexemes)) {
+    if (has_matching_pattern({ REG, MEM_START, REG, MEM_END, HASHTAG, IMMED_12 }, lexemes)) {
         return shifter_enum::LS_IMM_POST;
     }
 
@@ -152,7 +156,7 @@ shifter_enum string_shifters::ls_instruction(const interpreter::lexemes_t &lexem
         return shifter_enum::LS_REG_POST;
     }
 
-    if (has_matching_pattern({ REG, MEM_START, REG, MEM_END, REG, SHIFT, IMMED }, lexemes)) {
+    if (has_matching_pattern({ REG, MEM_START, REG, MEM_END, REG, SHIFT, HASHTAG, IMMED }, lexemes)) {
         const tokens shift = lexemes.at(6).token_type;
 
         switch (shift) {
@@ -175,7 +179,7 @@ shifter_enum string_shifters::ls_instruction(const interpreter::lexemes_t &lexem
 shifter_enum string_shifters::ls_misc_instruction(const interpreter::lexemes_t &lexemes) {
     using namespace interpreter;
 
-    if (has_matching_pattern({ REG, MEM_START, REG, IMMED_8, MEM_END }, lexemes)) {
+    if (has_matching_pattern({ REG, MEM_START, REG, HASHTAG, IMMED_8, MEM_END }, lexemes)) {
         return shifter_enum::LS_MISC_IMM;
     }
 
@@ -183,7 +187,7 @@ shifter_enum string_shifters::ls_misc_instruction(const interpreter::lexemes_t &
         return shifter_enum::LS_MISC_REG;
     }
 
-    if (has_matching_pattern({ REG, MEM_START, REG, IMMED_8, MEM_END, PRE_INDEX }, lexemes)) {
+    if (has_matching_pattern({ REG, MEM_START, REG, HASHTAG, IMMED_8, MEM_END, PRE_INDEX }, lexemes)) {
         return shifter_enum::LS_MISC_IMM_PRE;
     }
 
@@ -191,7 +195,7 @@ shifter_enum string_shifters::ls_misc_instruction(const interpreter::lexemes_t &
         return shifter_enum::LS_MISC_REG_PRE;
     }
 
-    if (has_matching_pattern({ REG, MEM_START, REG, MEM_END, IMMED_8 }, lexemes)) {
+    if (has_matching_pattern({ REG, MEM_START, REG, MEM_END, HASHTAG, IMMED_8 }, lexemes)) {
         return shifter_enum::LS_MISC_IMM_POST;
     }
 
@@ -228,7 +232,25 @@ shifter_enum string_shifters::ls_mul_instruction(const interpreter::lexemes_t &l
 
 
 shifter_enum string_shifters::ls_coproc_instruction(const interpreter::lexemes_t &lexemes) {
+    using namespace interpreter;
 
+    if (has_matching_pattern({ COPROCESSOR, CR_REG, MEM_START, REG, HASHTAG, IMMED_8, MUL_OP, INTEGER_4, MEM_END }, lexemes)) {
+        return shifter_enum::LS_COPROC_IMM;
+    }
+
+    if (has_matching_pattern({ COPROCESSOR, CR_REG, MEM_START, REG, HASHTAG, IMMED_8, MUL_OP, INTEGER_4, MEM_END, PRE_INDEX }, lexemes)) {
+        return shifter_enum::LS_COPROC_IMM_PRE;
+    }
+
+    if (has_matching_pattern({ COPROCESSOR, CR_REG, MEM_START, REG, MEM_END, HASHTAG, IMMED_8, MUL_OP, INTEGER_4 }, lexemes)) {
+        return shifter_enum::LS_COPROC_IMM_POST;
+    }
+
+    if (has_matching_pattern({ COPROCESSOR, CR_REG, MEM_START, REG, MEM_END, OPTION }, lexemes)) {
+        return shifter_enum::LS_COPROC_UNINDEXED;
+    }
+
+    return shifter_enum::UNKNOWN;
 }
 
 
@@ -255,7 +277,6 @@ shifter_enum string_shifters::vfp_mul_instruction(const interpreter::lexemes_t &
     constexpr u16 IA = ('I' << 8 | 'A');
     constexpr u16 DB = ('D' << 8 | 'B');
 
-
     if (addressing_mode == DB) {
         if (has_matching_pattern({ REG, PRE_INDEX, REG_LIST }, lexemes)) {
             return shifter_enum::VFP_LS_MUL_DEC;
@@ -276,7 +297,7 @@ shifter_enum string_shifters::vfp_mul_instruction(const interpreter::lexemes_t &
 }
 
 
-shifter_enum string_shifters::arm(const id::arm id, const interpreter::lexemes_t &lexemes) {
+shifter_enum string_shifters::identify_shifter(const id::arm id, const interpreter::lexemes_t &lexemes) {
     switch (id) {
         case id::arm::UNKNOWN: return shifter_enum::UNKNOWN;
         case id::arm::UNDEFINED:  return shifter_enum::UNKNOWN;
@@ -321,9 +342,9 @@ shifter_enum string_shifters::arm(const id::arm id, const interpreter::lexemes_t
         case id::arm::LDM3: return ls_mul_instruction(lexemes);
         case id::arm::STM1: return ls_mul_instruction(lexemes); 
         case id::arm::STM2: return ls_mul_instruction(lexemes);
-        case id::arm::STC: return ls_coproc_instruction(lexemes);
+        case id::arm::STC:  return ls_coproc_instruction(lexemes);
         case id::arm::STC2: return ls_coproc_instruction(lexemes);
-        case id::arm::LDC: return ls_coproc_instruction(lexemes);
+        case id::arm::LDC:  return ls_coproc_instruction(lexemes);
         case id::arm::LDC2: return ls_coproc_instruction(lexemes);
         case id::arm::FLDMD: return vfp_mul_instruction(lexemes);
         case id::arm::FLDMS: return vfp_mul_instruction(lexemes);
@@ -353,47 +374,13 @@ shifter_enum string_shifters::arm(const id::arm id, const interpreter::lexemes_t
         case id::arm::FLDS: return shifter_enum::VFP_LS_MUL_SPECIAL;
         case id::arm::FSTD: return shifter_enum::VFP_LS_MUL_SPECIAL;
         case id::arm::FSTS: return shifter_enum::VFP_LS_MUL_SPECIAL;
-        case id::arm::FCMPD:
-        case id::arm::FCMPED:
-        case id::arm::FCMPES:
-        case id::arm::FCMPEZD:
-        case id::arm::FCMPEZS:
-        case id::arm::FCMPS:
-        case id::arm::FCMPZD:
-        case id::arm::FCMPZS:
-        case id::arm::FCVTDS:
-        case id::arm::FCVTSD:
-        case id::arm::FMACD:  
-        case id::arm::FMACS:  
-        case id::arm::FMDHR:  
-        case id::arm::FMDLR:  
-        case id::arm::FMRDH:  
-        case id::arm::FMRDL:  
-        case id::arm::FMRS:  
-        case id::arm::FMRX:  
-        case id::arm::FMSCD:  
-        case id::arm::FMSCS:  
-        case id::arm::FMSR:  
-        case id::arm::FMSTAT:  
-        case id::arm::FMXR:  
-        case id::arm::FNMACD:  
-        case id::arm::FNMACS:  
-        case id::arm::FNMSCD:  
-        case id::arm::FNMSCS:  
-        case id::arm::FSITOD:  
-        case id::arm::FSITOS:  
-        case id::arm::FTOSID:  
-        case id::arm::FTOSIS:  
-        case id::arm::FTOUID:  
-        case id::arm::FTOUIS:  
-        case id::arm::FUITOD:  
-        case id::arm::FUITOS: 
-        case id::arm::MCR2: 
-        case id::arm::MRC2: 
+        default: return shifter_enum::NONE;
     }
 }
 
-shifter_enum string_shifters::arm(const std::string &code) {
+shifter_enum string_shifters::identify_shifter(const std::string &code) {
+    const id::arm id = string_arm::arm(code);
     const interpreter::lexemes_t lexemes = interpreter::analyze(code);
-    return arm(lexemes);
+
+    return identify_shifter(id, lexemes);
 }

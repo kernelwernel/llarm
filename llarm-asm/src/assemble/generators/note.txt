@@ -1,0 +1,1 @@
+MSR and MRS both have CPSR and SPSR, args.has_spsr and args.has_cpsr are both enabled as according to the instruction's involvement with each PSR

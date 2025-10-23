@@ -210,7 +210,7 @@ id::arm u32_arm::data_processing(const u32 code) {
             if (shared::util::bit_fetch(code, 20)) {
                 return id::arm::TST;
             } else if (shared::util::bit_range(code, 12, 15) == 0b1111) {
-                return id::arm::PSR;
+                return id::arm::TSTP;
             }
             return id::arm::UNDEFINED;
 
@@ -218,7 +218,7 @@ id::arm u32_arm::data_processing(const u32 code) {
             if (shared::util::bit_fetch(code, 20)) {
                 return id::arm::TEQ;
             } else if (shared::util::bit_range(code, 12, 15) == 0b1111) {
-                return id::arm::PSR;
+                return id::arm::TEQP;
             }
             return id::arm::UNDEFINED;
 
@@ -226,7 +226,7 @@ id::arm u32_arm::data_processing(const u32 code) {
             if (shared::util::bit_fetch(code, 20)) {
                 return id::arm::CMP;
             } else if (shared::util::bit_range(code, 12, 15) == 0b1111) {
-                return id::arm::PSR;
+                return id::arm::CMPP;
             }
             return id::arm::UNDEFINED;
         
@@ -234,7 +234,7 @@ id::arm u32_arm::data_processing(const u32 code) {
             if (shared::util::bit_fetch(code, 20)) {
                 return id::arm::CMN;
             } else if (shared::util::bit_range(code, 12, 15) == 0b1111) {
-                return id::arm::PSR;
+                return id::arm::CMNP;
             }
             return id::arm::UNDEFINED;
 

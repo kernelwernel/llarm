@@ -6,9 +6,13 @@
 //#include <llarm/internal/llarm-asm/src/instruction_table.hpp>
 
 #include "llarm-asm/src/settings.hpp"
-#include "src/identifiers/identifiers.hpp"
 #include "src/instruction_id.hpp"
 #include "src/identifiers/u32_shifters.hpp"
+#include "src/identifiers/u32_arm.hpp"
+#include "src/identifiers/u16_thumb.hpp"
+#include "src/identifiers/string_arm.hpp"
+#include "src/identifiers/string_thumb.hpp"
+#include "src/identifiers/string_shifters.hpp"
 #include "src/disassemble/disassemble.hpp"
 #include "src/settings.hpp"
 
@@ -31,25 +35,39 @@ namespace llarm {
 
         namespace identify {
             inline id::arm arm(const u32 raw_code) {
-                return internal::identifiers::arm(raw_code);
+                return internal::u32_arm::arm(raw_code);
+            }
+
+            inline id::arm arm(const std::string &code) {
+                return internal::string_arm::arm(code);
             }
 
             inline id::thumb thumb(const u16 raw_code) {
-                return internal::identifiers::thumb(raw_code);
+                return internal::u16_thumb::thumb(raw_code);
             }
 
-            using shifters = internal::u32_shifters::shifter_enum;
+            inline id::thumb thumb(const std::string &code) {
+                return internal::string_thumb::thumb(code);
+            }
 
-            inline shifters shifter(const u32 raw_code) {
+            inline shifter_enum shifter(const u32 raw_code) {
                 return internal::u32_shifters::identify_shifter(raw_code);
+            }
+
+            inline shifter_enum shifter(const std::string &code) {
+                return internal::string_shifters::identify_shifter(code);
+            }
+
+            inline shifter_enum shifter(const shifter_category category, const u32 raw_code) {
+                return internal::u32_shifters::identify_shifter(category, raw_code);
             }
         }
 
         namespace generate {
 
-            inline u32 arm(const id::arm code, const params params) {
-                
-            }
+            //inline u32 arm(const id::arm code, const params params) {
+            //    
+            //}
         }
 
         namespace disassemble {
@@ -71,9 +89,17 @@ namespace llarm {
         }
 
         namespace assemble {
-            inline u32 arm(const std::string code) {
+            //inline u32 arm(const std::string code) {
+//
+            //}
+        }
 
-            }
+        inline bool is_arm_instruction_valid(const u32 code) {
+
+        }
+
+        inline bool is_arm_instruction_valid(const std::string &code) {
+            
         }
 
         inline std::string thumb_id_to_string(const id::thumb id) {
@@ -198,7 +224,10 @@ namespace llarm {
                 case id::arm::SWPB: return "SWPB"; 
                 case id::arm::TEQ: return "TEQ"; 
                 case id::arm::TST: return "TST"; 
-                case id::arm::PSR: return "PSR"; 
+                case id::arm::CMNP: return "CMNP";
+                case id::arm::CMPP: return "CMPP";
+                case id::arm::TEQP: return "TEQP";
+                case id::arm::TSTP: return "TSTP";
                 case id::arm::STRH: return "STRH"; 
                 case id::arm::LDRH: return "LDRH"; 
                 case id::arm::LDRSB: return "LDRSB"; 

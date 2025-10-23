@@ -1,33 +1,24 @@
 #include "addressing_modes.hpp"
 
+#include "llarm-asm/llarm-asm.hpp"
+
 #include "shared/util.hpp"
 #include "shared/out.hpp"
 
 u32 ADDRESSING_MODE::load_store_misc(const u32 code) {
     using namespace shared::util;
 
-    if (
-        (bit_fetch(code, 27) != false) || 
-        (bit_fetch(code, 26) != false) ||
-        (bit_fetch(code, 25) != false) ||
-        (bit_fetch(code, 7) != true) ||
-        (bit_fetch(code, 4) != true)
-    ) {
-        shared::out::error("TODO");
-    }
-    
-    const u8 shift_type = ((bit_fetch(code, 24) << 2) | (bit_fetch(code, 22) << 1) | bit_fetch(code, 21));
+    const shifter_enum shifter_id = llarm::as::identify::shifter(shift_category::LS_MISC, code);
 
-    switch (shift_type) {
-        case 0b110: return ls_misc_imm(code);
-        case 0b100: return ls_misc_reg(code);
-        case 0b111: return ls_misc_imm_pre(code);
-        case 0b101: return ls_misc_reg_pre(code);
-        case 0b010: return ls_misc_imm_post(code);
-        case 0b000: return ls_misc_reg_post(code);
+    switch (shifter_id) {
+        case shifter_enum::LS_MISC_IMM: return ls_misc_imm(code);
+        case shifter_enum::LS_MISC_REG: return ls_misc_reg(code);
+        case shifter_enum::LS_MISC_IMM_PRE: return ls_misc_imm_pre(code);
+        case shifter_enum::LS_MISC_IMM_POST: return ls_misc_imm_post(code);
+        case shifter_enum::LS_MISC_REG_PRE: return ls_misc_reg_pre(code);
+        case shifter_enum::LS_MISC_REG_POST: return ls_misc_reg_post(code);
+        default: shared::out::error("Impossible identification of ARM load store misc shifter");
     }
-
-    shared::out::error("TODO");
 }
 
 
