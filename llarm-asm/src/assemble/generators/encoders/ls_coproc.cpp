@@ -28,10 +28,12 @@ u32 generators::ls_coproc_instruction(const id::arm id, const arguments &args) {
     }
 
     switch (id) {
+        case id::arm::LDC2:
         case id::arm::LDC:
             shared::util::modify_bit(binary, L, true);
             // no break on purpose
 
+        case id::arm::STC2:
         case id::arm::STC:
             shared::util::modify_bit(binary, 27, true);
             shared::util::modify_bit(binary, 26, true);

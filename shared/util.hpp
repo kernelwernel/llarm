@@ -43,6 +43,23 @@ namespace shared::util {
         return static_cast<u8>(std::bitset<32>(integer).count());
     }
 
+
+    inline u8 get_lsb_index(u32 integer) {
+        if (integer == 0) { 
+            return 255;
+        }
+
+        u8 index = 0;
+    
+        while ((integer & 1) == 0) {
+            integer >>= 1;
+            ++index;
+        }
+
+        return index;
+    }
+
+
     template<typename T = u32>
     inline void modify_bit(T &original, const u8 index, const bool value) {
         if (index > (sizeof(T) * 8) - 1) {

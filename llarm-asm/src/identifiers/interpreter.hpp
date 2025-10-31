@@ -9,9 +9,12 @@ namespace interpreter {
         UNKNOWN,
         REG, // R0~R15
         REG_THUMB, // R0~R7
+        REG_SINGLE, // S0~S31
+        REG_DOUBLE, // D0~D15
         REG_LIST,
         REG_LIST_NO_PC,
-        
+        VFP_REG_SPECIAL, // FPSID, FPSCR, or FPEXC
+
         // these are only meant for pattern matching, not used as an actual token for analysis
         REG_LIST_WITH_PC,
         REG_LIST_THUMB,

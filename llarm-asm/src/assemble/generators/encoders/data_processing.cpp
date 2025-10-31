@@ -34,71 +34,73 @@ u32 generators::data_instruction(const id::arm instruction, const arguments &arg
             case id::arm::TSTP: opcode = 0b00; break;
             default: break; // impossible to be otherwise, but whatever
         }
-    }
 
-    if (args.has_S()) {
-        shared::util::modify_bit(binary, 20, true);
-    }
+        shared::util::swap_bits(binary, 21, 22, opcode);
+    } else {
+        if (args.has_S()) {
+            shared::util::modify_bit(binary, 20, true);
+        }
 
-    bool Rd_present = true;
-    bool Rn_present = true;
-    u8 opcode = 0;
+        bool Rd_present = true;
+        bool Rn_present = true;
+        u8 opcode = 0;
 
-    // bits 26 and 27 are 0 for all instructions below, so they're ignored
+        // bits 26 and 27 are 0 for all instructions below, so they're ignored
 
-    switch (instruction) {
-        case id::arm::ADC: opcode = 0b0101; break;
-        case id::arm::ADD: opcode = 0b0100; break;
-        case id::arm::AND: opcode = 0b0000; break;
-        case id::arm::BIC: opcode = 0b1110; break;
-        case id::arm::EOR: opcode = 0b0001; break;
-        case id::arm::ORR: opcode = 0b1100; break;
-        case id::arm::RSB: opcode = 0b0011; break;
-        case id::arm::SBC: opcode = 0b0110; break;
-        case id::arm::RSC: opcode = 0b0111; break;
-        case id::arm::SUB: opcode = 0b0010; break;
+        switch (instruction) {
+            case id::arm::ADC: opcode = 0b0101; break;
+            case id::arm::ADD: opcode = 0b0100; break;
+            case id::arm::AND: opcode = 0b0000; break;
+            case id::arm::BIC: opcode = 0b1110; break;
+            case id::arm::EOR: opcode = 0b0001; break;
+            case id::arm::ORR: opcode = 0b1100; break;
+            case id::arm::RSB: opcode = 0b0011; break;
+            case id::arm::SBC: opcode = 0b0110; break;
+            case id::arm::RSC: opcode = 0b0111; break;
+            case id::arm::SUB: opcode = 0b0010; break;
 
-        case id::arm::TST: 
-            opcode = 0b1000;
-            Rd_present = false;
-            break;
+            case id::arm::TST: 
+                opcode = 0b1000;
+                Rd_present = false;
+                break;
 
-        case id::arm::TEQ: 
-            opcode = 0b1001;
-            Rd_present = false;
-            break;
+            case id::arm::TEQ: 
+                opcode = 0b1001;
+                Rd_present = false;
+                break;
 
-        case id::arm::CMP:
-            opcode = 0b1010;
-            Rd_present = false;
-            break;
+            case id::arm::CMP:
+                opcode = 0b1010;
+                Rd_present = false;
+                break;
 
-        case id::arm::CMN:
-            opcode = 0b1011;
-            Rd_present = false;
-            break;
+            case id::arm::CMN:
+                opcode = 0b1011;
+                Rd_present = false;
+                break;
 
-        case id::arm::MOV: 
-            opcode = 0b1101;
-            Rn_present = false;
-            break;
+            case id::arm::MOV: 
+                opcode = 0b1101;
+                Rn_present = false;
+                break;
 
-        case id::arm::MVN: 
-            opcode = 0b1111;
-            Rn_present = false;
-            break;
+            case id::arm::MVN: 
+                opcode = 0b1111;
+                Rn_present = false;
+                break;
 
-        default: shared::out::dev_error("Invalid configuration to data instruction pattern generation");
-    }
+            default: shared::out::dev_error("Invalid configuration to data instruction pattern generation");
+        }
 
-    shared::util::swap_bits(binary, 21, 24, opcode);
+        shared::util::swap_bits(binary, 21, 24, opcode);
 
-    if (Rd_present) {
-        shared::util::swap_bits(binary, 12, 15, args.first_reg);
-    }
+        if (Rd_present) {
+            shared::util::swap_bits(binary, 12, 15, args.first_reg);
+        }
 
-    if (Rn_present) {
-        shared::util::swap_bits(binary, 16, 19, args.second_reg);
+        if (Rn_present) {
+            shared::util::swap_bits(binary, 16, 19, args.second_reg);
+        }
     }
 
     auto check_immed = [](const u32 immed) -> void {

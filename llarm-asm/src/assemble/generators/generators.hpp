@@ -9,12 +9,14 @@
 using namespace internal;
 
 namespace internal::generators {
+    enum class vfp_special_regs : u8 {
+        NONE,
+        FPSID,
+        FPSCR,
+        FPEXC
+    };
+
     struct arguments {
-        //bool has_S;
-        //bool has_minus;
-        //bool has_spsr;
-        //bool has_x;
-        //bool has_y;
         u8 flags;
         u8 cond;
         u8 PSR_field_mask;
@@ -31,27 +33,19 @@ namespace internal::generators {
         u32 first_int;
         u32 second_int;
         u32 third_int;
-
-        bool has_S() const {
-            return (flags & 1);
-        }
-
-        bool has_minus() const {
-            return shared::util::bit_fetch(flags, 2);
-        }
-
-        bool has_spsr() const {
-            return shared::util::bit_fetch(flags, 3);
-        }
-
-        bool has_x() const {
-            return shared::util::bit_fetch(flags, 4);
-        }
-
-        bool has_y() const {
-            return shared::util::bit_fetch(flags, 5);
-        }
+        vfp_special_regs vfp_special_reg;
+        
+        bool has_S() const { return (flags & 1); }
+        bool has_Z() const { return shared::util::bit_fetch(flags, 1); }
+        bool has_minus() const { return shared::util::bit_fetch(flags, 2); }
+        bool has_spsr() const { return shared::util::bit_fetch(flags, 3); }
+        bool has_x() const { return shared::util::bit_fetch(flags, 4); }
+        bool has_y() const { return shared::util::bit_fetch(flags, 5); }
+        bool has_preindex() const { return shared::util::bit_fetch(flags, 6); }
     };
+
+    bool is_imm_encodable(const u32 imm);
+    void encode_imm(u32 &binary, const u32 imm);
 
     u32 data_instruction(const id::arm instruction, const arguments &arg);
     u32 ls_instruction(const id::arm instruction, const arguments &arg);
@@ -59,9 +53,7 @@ namespace internal::generators {
     u32 ls_mul_instruction(const id::arm instruction, const arguments &arg);
     u32 ls_coproc_instruction(const id::arm id, const arguments &arg);
 
-    bool is_imm_encodable(const u32 imm);
-    void encode_imm(u32 &binary, const u32 imm);
-
+    // defined in encoders/special.cpp
     u32 mul(const arguments &arg);
     u32 swp(const arguments &arg);
     u32 swpb(const arguments &arg);
@@ -81,13 +73,43 @@ namespace internal::generators {
     u32 bx(const arguments &args);
     u32 mcrr(const arguments &args);
     u32 mrrc(const arguments &args);
+
+    // defined in encoders/special_grouping.cpp
     u32 q_instructions(const id::arm id, const arguments &args);
     u32 mul_instructions(const id::arm id, const arguments &args);
     u32 dsp_mul_instructions(const id::arm id, const arguments &args);
-    
+
+    // defined in encoders/vfp.cpp
+    u32 vfp_Dd_Dm_instructions(const id::arm id, const arguments &args);
+    u32 vfp_Dd_Dn_Dm_instructions(const id::arm id, const arguments &args);
+    u32 vfp_Sd_Sm_instructions(const id::arm id, const arguments &args);
+    u32 vfp_Sd_Sn_Sm_instructions(const id::arm id, const arguments &args);
+    u32 vfp_Dd_Sm_instructions(const id::arm id, const arguments &args);
+    u32 vfp_Sd_Dm_instructions(const id::arm id, const arguments &args);
+
+    // defined in encoders/vfp_mul.cpp
+    u32 vfp_mul_instructions(const id::arm id, const arguments &args);
+
+    // defined in vfp.cpp
+    u32 fcmpezd(const arguments &args);
+    u32 fcmpzd(const arguments &args);
+    u32 fcmpezs(const arguments &args);
+    u32 fcmpzs(const arguments &args);
+    u32 fldmd(const arguments &args);
+    u32 fldms(const arguments &args);
+    u32 fldmx(const arguments &args);
+    u32 fmdhr(const arguments &args);
+    u32 fmdlr(const arguments &args);
+    u32 fmrdh(const arguments &args);
+    u32 fmrdl(const arguments &args);
+    u32 fmrs(const arguments &args);
+    u32 fmrx(const arguments &args);
+    u32 fmsr(const arguments &args);
+    u32 fmxr(const arguments &args);
+    u32 fmstat(const arguments &args);
+
     u32 arm(const id::arm id, const arguments &args);
 }
-
 
 
 
@@ -164,5 +186,4 @@ namespace internal::generators {
                 case id::thumb::STRH1: return "STRH1";
                 case id::thumb::STRH2: return "STRH2";
             }
-        }
-            */
+*/

@@ -72,7 +72,7 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
     bool is_option_bracket = false;
     
     for (const auto &raw_token : tokens) {
-        std::string_view token = raw_token;
+        const std::string_view token = raw_token;
         index++;
 
         // default values, will be modified later
@@ -174,6 +174,16 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
 
         if (is_valid_range) {
             switch (token.front()) {
+                case 'S':
+                    lexeme.token_type = REG_SINGLE;
+                    lexeme.reg = num;
+                    break;
+
+                case 'D':
+                    lexeme.token_type = REG_DOUBLE;
+                    lexeme.reg = num;
+                    break;
+
                 case 'R':
                     lexeme.token_type = REG;
                     lexeme.reg = num;
@@ -270,6 +280,15 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
             continue;
         }
 
+        if (
+            (token == "FPSID") ||
+            (token == "FPSCR") ||
+            (token == "FPEXC")
+        ) {
+            lexeme.token_type = VFP_REG_SPECIAL;
+            lexeme_vec.emplace_back(lexeme);
+        }
+
         // unidentifiable token, would be handled 
         // in different ways outside of this function
         lexeme.token_type = tokens::UNKNOWN;
@@ -322,7 +341,11 @@ u16 interpreter::fetch_last_2_chars(const std::string_view str) {
 
 
 bool interpreter::is_reg(const std::string_view str) {
-    if (str.front() != 'R') {
+    if (
+        (str.front() != 'R') &&
+        (str.front() != 'D') &&
+        (str.front() != 'S')
+    ) {
         return false;
     }
 
@@ -332,12 +355,14 @@ bool interpreter::is_reg(const std::string_view str) {
 }
 
 u8 interpreter::identify_reg(std::string_view reg) {
-    if (reg.size() < 2) {
+    if (reg.size() < 2 || reg.size() > 3) {
         return error;
     }
 
     if (
         (reg.front() == 'R') || // regular register
+        (reg.front() == 'D') || // VFP double register
+        (reg.front() == 'S') || // VFP single register
         (reg.front() == 'P') || // coprocessor num
         (reg.front() == 'C')    // CRn/CRm register
     ) {
@@ -348,6 +373,10 @@ u8 interpreter::identify_reg(std::string_view reg) {
         }
 
         const u32 num = fetch_integer(reg);
+
+        if (num > 31) {
+            return error;
+        }
 
         return static_cast<u8>(num);
     }
@@ -605,7 +634,6 @@ bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &t
 
             return false;
         }
-
 
         if (pattern_token == REG_LIST_THUMB) {
             const u16 list = lexemes.at(lexeme_index).reg_list;
