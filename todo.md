@@ -114,3 +114,6 @@ notes:
 - install flamegraph and measure the difference between the std::map<key, std::function> thingy and the switch
 - in the future, make a more "memory friendly" option such as making an inner virtual memory system for the memory 
   by using std::vector instead of std::array for the RAM, and using std::vector instead of std::unordered_map for the TLB lookup
+
+
+- TODO MAKE THE LIBRARY A SHARED OBJECT NOT A STATIC LIBRARY (IMPORTANT)

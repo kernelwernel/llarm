@@ -1,13 +1,13 @@
 #include "string_arm.hpp"
 #include "../instruction_id.hpp"
 
-#include "llarm-asm/src/identifiers/interpreter.hpp"
+#include "../interpreter/interpreter.hpp"
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 
 using namespace internal;
 
-id::arm string_arm::arm(const std::string &code) {
+id::arm ident::string_arm::arm(const std::string &code) {
     const std::string assembly = shared::util::to_upper(code);
 
     const std::string raw_string = interpreter::fetch_instruction(assembly);
@@ -60,7 +60,7 @@ id::arm string_arm::arm(const std::string &code) {
 }
 
 
-std::vector<std::string_view> string_arm::fetch_candidates(std::string_view mnemonic) {
+std::vector<std::string_view> ident::string_arm::fetch_candidates(std::string_view mnemonic) {
     std::vector<std::string_view> candidates = {};
 
     // "mnemonic.extra" convention, i.e. "b.eq" (gcc does this)
@@ -145,7 +145,7 @@ std::vector<std::string_view> string_arm::fetch_candidates(std::string_view mnem
 }
 
 
-id::arm string_arm::MSR(const lexemes_t &lexemes) {
+id::arm ident::string_arm::MSR(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // MSR_IMM
@@ -168,7 +168,7 @@ id::arm string_arm::MSR(const lexemes_t &lexemes) {
 }
 
 
-id::arm string_arm::SWPB(std::string_view mnemonic) {
+id::arm ident::string_arm::SWPB(std::string_view mnemonic) {
     // no cond
     if (mnemonic == "SWPB") {
         return id::arm::SWPB;
@@ -188,7 +188,7 @@ id::arm string_arm::SWPB(std::string_view mnemonic) {
 }
 
 
-id::arm string_arm::LDR_family(std::string_view mnemonic) {
+id::arm ident::string_arm::LDR_family(std::string_view mnemonic) {
     mnemonic.remove_prefix(3); // "LDR"
 
     const u16 potential_cond = (mnemonic.at(0) << 8) | mnemonic.at(1);
@@ -227,7 +227,7 @@ id::arm string_arm::LDR_family(std::string_view mnemonic) {
 }
 
 
-id::arm string_arm::STR_family(std::string_view mnemonic) {
+id::arm ident::string_arm::STR_family(std::string_view mnemonic) {
     // the parameter name and instruction name have no relation just to be clear
 
     mnemonic.remove_prefix(3); // "STR"
@@ -260,7 +260,7 @@ id::arm string_arm::STR_family(std::string_view mnemonic) {
 }
 
 
-id::arm string_arm::STM(const lexemes_t &lexemes) {
+id::arm ident::string_arm::STM(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
@@ -278,7 +278,7 @@ id::arm string_arm::STM(const lexemes_t &lexemes) {
 }
 
 
-id::arm string_arm::LDM(const lexemes_t &lexemes) {
+id::arm ident::string_arm::LDM(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
@@ -302,10 +302,10 @@ id::arm string_arm::LDM(const lexemes_t &lexemes) {
 }
 
 
-id::arm string_arm::BLX(const lexemes_t &lexemes) {
+id::arm ident::string_arm::BLX(const lexemes_t &lexemes) {
     using namespace interpreter;
 
-    if (has_matching_pattern({ INTEGER }, lexemes)) {
+    if (has_matching_pattern({ CONST }, lexemes)) {
         return id::arm::BLX1;
     } else if (has_matching_pattern({ REG }, lexemes)) {
         return id::arm::BLX2;
@@ -315,7 +315,7 @@ id::arm string_arm::BLX(const lexemes_t &lexemes) {
 }
 
 
-id::arm string_arm::PSR_family(const std::string_view mnemonic) {
+id::arm ident::string_arm::PSR_family(const std::string_view mnemonic) {
     if (mnemonic.size() == 6) {
         const u8 first_char = mnemonic.at(3);
         const u8 second_char = mnemonic.at(4);

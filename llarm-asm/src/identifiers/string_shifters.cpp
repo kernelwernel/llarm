@@ -1,15 +1,15 @@
 
 #include "string_shifters.hpp"
-#include "../shifter_id.hpp"
 #include "string_arm.hpp"
+#include "../shifter_id.hpp"
 #include "../instruction_id.hpp"
 
-#include "interpreter.hpp"
+#include "../interpreter/interpreter.hpp"
 #include "shared/types.hpp"
 
 using namespace internal;
     
-shifter_enum string_shifters::data_instruction(const interpreter::lexemes_t &lexemes) {
+shifter_enum ident::string_shifters::data_instruction(const interpreter::lexemes_t &lexemes) {
     using namespace interpreter;
 
     if (has_matching_pattern({ REG, REG, HASHTAG, IMMED }, lexemes)) {
@@ -66,7 +66,7 @@ shifter_enum string_shifters::data_instruction(const interpreter::lexemes_t &lex
 
 
 // PLD has an exception to its addressing mode format
-shifter_enum string_shifters::ls_instruction_PLD(const interpreter::lexemes_t &lexemes) {
+shifter_enum ident::string_shifters::ls_instruction_PLD(const interpreter::lexemes_t &lexemes) {
     using namespace interpreter;
 
     if (has_matching_pattern({ MEM_START, REG, HASHTAG, HASHTAG, IMMED_12, MEM_END }, lexemes)) {
@@ -97,7 +97,7 @@ shifter_enum string_shifters::ls_instruction_PLD(const interpreter::lexemes_t &l
 }
 
 
-shifter_enum string_shifters::ls_instruction(const interpreter::lexemes_t &lexemes) {
+shifter_enum ident::string_shifters::ls_instruction(const interpreter::lexemes_t &lexemes) {
     using namespace interpreter;
 
     if (has_matching_pattern({ REG, MEM_START, REG, HASHTAG, IMMED_12, MEM_END }, lexemes)) {
@@ -176,7 +176,7 @@ shifter_enum string_shifters::ls_instruction(const interpreter::lexemes_t &lexem
 }
 
 
-shifter_enum string_shifters::ls_misc_instruction(const interpreter::lexemes_t &lexemes) {
+shifter_enum ident::string_shifters::ls_misc_instruction(const interpreter::lexemes_t &lexemes) {
     using namespace interpreter;
 
     if (has_matching_pattern({ REG, MEM_START, REG, HASHTAG, IMMED_8, MEM_END }, lexemes)) {
@@ -207,7 +207,7 @@ shifter_enum string_shifters::ls_misc_instruction(const interpreter::lexemes_t &
 }
 
 
-shifter_enum string_shifters::ls_mul_instruction(const interpreter::lexemes_t &lexemes) {
+shifter_enum ident::string_shifters::ls_mul_instruction(const interpreter::lexemes_t &lexemes) {
     const std::string_view mnemonic = lexemes.at(0).mnemonic;
 
     const unsigned char second_char = mnemonic[mnemonic.size() - 1];
@@ -231,18 +231,18 @@ shifter_enum string_shifters::ls_mul_instruction(const interpreter::lexemes_t &l
 }
 
 
-shifter_enum string_shifters::ls_coproc_instruction(const interpreter::lexemes_t &lexemes) {
+shifter_enum ident::string_shifters::ls_coproc_instruction(const interpreter::lexemes_t &lexemes) {
     using namespace interpreter;
 
-    if (has_matching_pattern({ COPROCESSOR, CR_REG, MEM_START, REG, HASHTAG, IMMED_8, MUL_OP, INTEGER_4, MEM_END }, lexemes)) {
+    if (has_matching_pattern({ COPROCESSOR, CR_REG, MEM_START, REG, HASHTAG, IMMED_8, MUL_OP, CONST_4, MEM_END }, lexemes)) {
         return shifter_enum::LS_COPROC_IMM;
     }
 
-    if (has_matching_pattern({ COPROCESSOR, CR_REG, MEM_START, REG, HASHTAG, IMMED_8, MUL_OP, INTEGER_4, MEM_END, PRE_INDEX }, lexemes)) {
+    if (has_matching_pattern({ COPROCESSOR, CR_REG, MEM_START, REG, HASHTAG, IMMED_8, MUL_OP, CONST_4, MEM_END, PRE_INDEX }, lexemes)) {
         return shifter_enum::LS_COPROC_IMM_PRE;
     }
 
-    if (has_matching_pattern({ COPROCESSOR, CR_REG, MEM_START, REG, MEM_END, HASHTAG, IMMED_8, MUL_OP, INTEGER_4 }, lexemes)) {
+    if (has_matching_pattern({ COPROCESSOR, CR_REG, MEM_START, REG, MEM_END, HASHTAG, IMMED_8, MUL_OP, CONST_4 }, lexemes)) {
         return shifter_enum::LS_COPROC_IMM_POST;
     }
 
@@ -254,7 +254,7 @@ shifter_enum string_shifters::ls_coproc_instruction(const interpreter::lexemes_t
 }
 
 
-shifter_enum string_shifters::vfp_mul_instruction(const interpreter::lexemes_t &lexemes) {
+shifter_enum ident::string_shifters::vfp_mul_instruction(const interpreter::lexemes_t &lexemes) {
     using namespace interpreter;
     
     std::string_view mnemonic = lexemes.at(0).mnemonic;
@@ -297,7 +297,7 @@ shifter_enum string_shifters::vfp_mul_instruction(const interpreter::lexemes_t &
 }
 
 
-shifter_enum string_shifters::identify_shifter(const id::arm id, const interpreter::lexemes_t &lexemes) {
+shifter_enum ident::string_shifters::identify_shifter(const id::arm id, const interpreter::lexemes_t &lexemes) {
     switch (id) {
         case id::arm::UNKNOWN: return shifter_enum::UNKNOWN;
         case id::arm::UNDEFINED:  return shifter_enum::UNKNOWN;
@@ -378,8 +378,8 @@ shifter_enum string_shifters::identify_shifter(const id::arm id, const interpret
     }
 }
 
-shifter_enum string_shifters::identify_shifter(const std::string &code) {
-    const id::arm id = string_arm::arm(code);
+shifter_enum ident::string_shifters::identify_shifter(const std::string &code) {
+    const id::arm id = ident::string_arm::arm(code);
     const interpreter::lexemes_t lexemes = interpreter::analyze(code);
 
     return identify_shifter(id, lexemes);

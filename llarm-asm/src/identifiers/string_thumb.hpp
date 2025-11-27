@@ -1,16 +1,15 @@
 #pragma once
 
 #include "../instruction_id.hpp"
-#include "interpreter.hpp"
+#include "../interpreter/interpreter.hpp"
 
 #include <string>
 #include <array>
 
 
-namespace internal::string_thumb {
+namespace internal::ident::string_thumb {
     using namespace internal;
 
-    using interpreter::tokens;
     using interpreter::tokens_t;
     using interpreter::lexeme_struct;
     using interpreter::lexemes_t;

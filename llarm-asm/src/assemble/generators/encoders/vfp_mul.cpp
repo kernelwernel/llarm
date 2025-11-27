@@ -51,16 +51,14 @@ u32 generators::vfp_mul_instructions(const id::arm id, const arguments &args) {
 
     struct reglist {
         u8 Dd;
-        u8 raw_offset;
         u8 offset;
     };
 
     auto process_reglist = [](const u16 raw_reglist) -> reglist {
         const u8 Dd = shared::util::get_lsb_index(raw_reglist);
-        const u8 raw_offset = shared::util::popcount(raw_reglist);
-        const u8 offset = (raw_offset * 2) + 1;
+        const u8 offset = shared::util::popcount(raw_reglist);
 
-        return reglist { Dd, raw_offset, offset };
+        return reglist { Dd, offset };
     };
 
     switch (id) {
@@ -136,9 +134,12 @@ u32 generators::vfp_mul_instructions(const id::arm id, const arguments &args) {
                 
                 shared::util::modify_bit(binary, 22, D);
                 shared::util::swap_bits(binary, 12, 15, Fd);
-                shared::util::swap_bits(binary, 12, 15, data.raw_offset);
-            } else {
                 shared::util::swap_bits(binary, 0, 7, data.offset);
+            } else if (id == id::arm::FSTMX || id == id::arm::FLDMX) {
+                shared::util::swap_bits(binary, 0, 7, (data.offset * 2) + 1);
+                shared::util::swap_bits(binary, 12, 15, data.Dd);
+            } else if (id == id::arm::FSTMD || id == id::arm::FLDMD) {
+                shared::util::swap_bits(binary, 0, 7, (data.offset * 2));
                 shared::util::swap_bits(binary, 12, 15, data.Dd);
             }
 

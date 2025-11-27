@@ -1,14 +1,15 @@
+// TODO rewrite this file and divide it further into separate components. It's a mess.
+
 #include "interpreter.hpp"
+#include "tokens.hpp"
+
 #include "shared/util.hpp"
 #include "shared/out.hpp"
 
 #include <string>
 #include <cctype>
 #include <algorithm>
-
-#include <algorithm>
 #include <vector>
-#include <string>
 #include <string_view>
 
 interpreter::tokens_t interpreter::tokenize(const std::string &code) {
@@ -70,7 +71,10 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
     u16 index = 0;
     bool is_r15_present_in_reg_list = false;
     bool is_option_bracket = false;
-    
+    bool is_reg_list_standard = false;
+    bool is_reg_list_double = false;
+    bool is_reg_list_single = false;
+
     for (const auto &raw_token : tokens) {
         const std::string_view token = raw_token;
         index++;
@@ -107,11 +111,15 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
 
                 lexeme.reg_list = reg_list;
 
-                // this distinction is important in some instructions like LDM2
-                if (shared::util::bit_fetch(reg_list, 15)) {
-                    lexeme.token_type = REG_LIST;
-                } else {
-                    lexeme.token_type = REG_LIST_NO_PC;
+                if (is_reg_list_double) {
+                    lexeme.token_type = REG_LIST_DOUBLE;
+                } else if (is_reg_list_standard) {
+                    // this distinction is important in some instructions like LDM2
+                    if (shared::util::bit_fetch(reg_list, 15)) {
+                        lexeme.token_type = REG_LIST;
+                    } else {
+                        lexeme.token_type = REG_LIST_NO_PC;
+                    }
                 }
 
                 lexeme_vec.emplace_back(lexeme);
@@ -128,6 +136,35 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
                 }
             } else if (is_reg(token)) {
                 const u8 reg = identify_reg(token);
+
+                // TODO MAKE A VERIFIER IF THE REG LIST IS VALID
+
+                if (is_reg_list_standard == false && is_reg_list_double == false) {
+                    if (token.front() == 'R') {
+                        is_reg_list_standard = true;
+                    } else if (token.front() == 'D') {
+                        is_reg_list_double = true;
+                    } else if (token.front() == 'S') {
+                        is_reg_list_single = true;
+                    } else {
+                        lexeme.token_type = tokens::UNKNOWN;
+                        lexeme_vec.emplace_back(lexeme);
+                        return lexeme_vec;
+                    }
+                } else {
+                    const bool standard_list = (is_reg_list_standard && token.front() == 'R');
+                    const bool double_list = (is_reg_list_double && token.front() == 'D');
+                    const bool single_list = (is_reg_list_single && token.front() == 'S');
+
+                    if ((standard_list + double_list + single_list) == 1) {
+                        continue;
+                    } else {
+                        lexeme.token_type = tokens::UNKNOWN;
+                        lexeme_vec.emplace_back(lexeme);
+                        return lexeme_vec;
+                    }
+                }
+
                 shared::util::modify_bit<u16>(reg_list, reg, true);
             }
     
@@ -233,6 +270,7 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
         if (is_integer(token)) {
             const u32 num = fetch_integer(token);
 
+            // this is fucking stupid, redesign this if i come back here
             if (num <= 0b111) {
                 lexeme.token_type = tokens::IMMED_3;
             } else if (num <= 0b1'1111) {
@@ -243,16 +281,20 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
                 lexeme.token_type = tokens::IMMED_8;
             } else if (num <= 0b1111'1111'1111) {
                 lexeme.token_type = tokens::IMMED_12;
+            } else if (num <= 0b1111'1111'1111'1111) {
+                lexeme.token_type = tokens::IMMED_16;
+            } else if (num <= 0b1111'1111'1111'1111'1111'1111) {
+                lexeme.token_type = tokens::IMMED_24;
             } else {
                 lexeme.token_type = tokens::IMMED;
             }
 
             if (num == 4) {
-                lexeme.token_type = INTEGER_4;
+                lexeme.token_type = CONST_4;
             } else if (num == 2) {
-                lexeme.token_type = INTEGER_2;
-            } else {
-                lexeme.token_type = tokens::INTEGER;
+                lexeme.token_type = CONST_2;
+            } else if ((num & 0b11) == 0) { // is this a multiple of 4?
+                lexeme.token_type = CONST_MUL_4;
             }
 
             lexeme.integer = num;
@@ -264,11 +306,11 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
         if (is_hex(token)) {
             const u32 num = fetch_hex(token);
 
-            lexeme.token_type = tokens::INTEGER;
+            lexeme.token_type = tokens::CONST;
             lexeme.integer = num;
 
             lexeme_vec.emplace_back(lexeme);
-            continue;            
+            continue;
         }
 
         const enum tokens token_type = is_cpsr_spsr_field(token);
@@ -353,6 +395,7 @@ bool interpreter::is_reg(const std::string_view str) {
 
     return (reg != error);
 }
+
 
 u8 interpreter::identify_reg(std::string_view reg) {
     if (reg.size() < 2 || reg.size() > 3) {
@@ -459,8 +502,14 @@ bool interpreter::is_hex(const std::string_view str) {
 }
 
 
-interpreter::tokens interpreter::is_cpsr_spsr_field(const std::string_view token) {
+tokens interpreter::is_cpsr_spsr_field(const std::string_view token) {
     constexpr std::string_view valid_fields = "cxsf";
+
+    if (token == "CPSR") {
+        return CPSR;
+    } else if (token == "SPSR") {
+        return SPSR;
+    }
 
     if (token.size() < 6) {
         return UNKNOWN; 
@@ -506,7 +555,7 @@ i32 interpreter::fetch_hex(const std::string_view str) {
 }
 
 
-bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &token_pattern, const lexemes_t &lexemes) {
+bool interpreter::has_matching_pattern(const std::vector<tokens> &token_pattern, const lexemes_t &lexemes) {
     u16 token_index = 0;
     u16 lexeme_index = 0;
 
@@ -515,7 +564,7 @@ bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &t
         token_index += 1;
     }
 
-    // pattern mismatch is guaranteed if they're unequal in size
+    // pattern mismatch is guaranteed if they're unequal in size except for addressing mode instructions
     if (lexemes.size() != token_pattern.size() - token_index) {
         return false;
     }
@@ -533,7 +582,8 @@ bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &t
             (string_token == tokens::IMMED_5) ||
             (string_token == tokens::IMMED_7) ||
             (string_token == tokens::IMMED_8) ||
-            (string_token == tokens::IMMED_12)  
+            (string_token == tokens::IMMED_12) ||
+            (string_token == tokens::IMMED_16) 
         );
 
         const bool is_pattern_token_immed = (
@@ -541,29 +591,36 @@ bool interpreter::has_matching_pattern(const std::vector<interpreter::tokens> &t
             (pattern_token == tokens::IMMED_5) ||
             (pattern_token == tokens::IMMED_7) ||
             (pattern_token == tokens::IMMED_8) ||
-            (pattern_token == tokens::IMMED_12)
+            (pattern_token == tokens::IMMED_12) ||
+            (pattern_token == tokens::IMMED_16) 
         );
 
         const bool is_string_token_integer = (
-            (string_token == tokens::INTEGER_4) ||
-            (string_token == tokens::INTEGER_2)
+            (string_token == tokens::CONST_4) ||
+            (string_token == tokens::CONST_2) ||
+            (string_token == tokens::CONST_MUL_4)
         );
 
         const bool is_pattern_token_integer = (
-            (pattern_token == tokens::INTEGER_4) ||
-            (pattern_token == tokens::INTEGER_2)
+            (pattern_token == tokens::CONST_4) ||
+            (pattern_token == tokens::CONST_2) ||
+            (pattern_token == tokens::CONST_MUL_4)
         );
 
         if (is_pattern_token_integer && is_string_token_immed) {
             if (
                 (string_token == tokens::IMMED_3) &&
                 (
-                    (pattern_token == tokens::INTEGER_4) ||
-                    (pattern_token == tokens::INTEGER_2) 
+                    (pattern_token == tokens::CONST_4) ||
+                    (pattern_token == tokens::CONST_2) 
                 )
             ) {
                 continue;
             }
+        }
+
+        if (pattern_token == CONST_MUL_4) {
+            // TODO THINK OF THIS SHIT WHEN REWRITING THIS FILE
         }
 
         if (is_pattern_token_immed && is_string_token_immed) {

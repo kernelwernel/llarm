@@ -80,10 +80,9 @@ u64 RAM::read(const u32 address, const u8 access_size) {
             (static_cast<u64>(ram.at(address + 7)))
         );
 
-        default: shared::out::error("TODO");
+        default: shared::out::error("Unsupported RAM size fetch for read operation");
     }
 }
-
 
 
 void RAM::reset() {

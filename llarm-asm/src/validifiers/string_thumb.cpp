@@ -1,7 +1,7 @@
-#include "llarm-asm/src/identifiers/string_thumb.hpp"
-#include "validifier.hpp"
+#include "string_thumb.hpp"
+#include "../identifiers/string_thumb.hpp"
 
-#include "../identifiers/interpreter.hpp"
+#include "../interpreter/interpreter.hpp"
 
 using namespace internal;
 
@@ -10,15 +10,15 @@ using namespace internal;
 // as an error. So the only real failure for a thumb instruction would
 // be to identify an undefined or unknown instruction (me thinks)
 
-bool validifier::is_thumb_instruction_valid(const std::string &code) {
-    const id::thumb id = string_thumb::thumb(code);
+bool validation::string_thumb::is_thumb_instruction_valid(const std::string &code) {
+    const id::thumb id = ident::string_thumb::thumb(code);
     const interpreter::lexemes_t lexemes = interpreter::analyze(code);
 
     return is_thumb_instruction_valid(id, lexemes);
 }
 
 
-bool validifier::is_thumb_instruction_valid(const id::thumb id, const interpreter::lexemes_t &lexemes) {
+bool validation::string_thumb::is_thumb_instruction_valid(const id::thumb id, const interpreter::lexemes_t &lexemes) {
     using namespace interpreter;
     
     switch (id) {
@@ -88,10 +88,10 @@ bool validifier::is_thumb_instruction_valid(const id::thumb id, const interprete
         case id::thumb::BKPT: 
         case id::thumb::SWI: return has_matching_pattern({ IMMED_8 }, lexemes); // no hashtag
         case id::thumb::LDRSB: 
-        case id::thumb::LDRSH:  return has_matching_pattern({ REG_THUMB, MEM_START, REG_THUMB, REG_THUMB, MEM_END }, lexemes);
+        case id::thumb::LDRSH: return has_matching_pattern({ REG_THUMB, MEM_START, REG_THUMB, REG_THUMB, MEM_END }, lexemes);
         case id::thumb::LDMIA: 
         case id::thumb::STMIA: return has_matching_pattern({ REG_THUMB, PRE_INDEX, REG_LIST_THUMB }, lexemes);
-        case id::thumb::BL: return has_matching_pattern({ INTEGER }, lexemes);
+        case id::thumb::BL: return has_matching_pattern({ CONST }, lexemes);
         case id::thumb::BX: return has_matching_pattern({ REG }, lexemes);
         case id::thumb::POP: return has_matching_pattern({ REG_LIST_THUMB_OPTIONAL_PC }, lexemes);
         case id::thumb::PUSH: return has_matching_pattern({ REG_LIST_THUMB_OPTIONAL_LR }, lexemes);

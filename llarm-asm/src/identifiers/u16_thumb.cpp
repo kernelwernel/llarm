@@ -8,7 +8,7 @@
 
 using namespace internal;
 
-id::thumb u16_thumb::thumb(const u16 code) {
+id::thumb ident::u16_thumb::thumb(const u16 code) {
     const u8 bytecode = shared::util::bit_range<u8>(code, 13, 15);
 
     switch (bytecode) {
@@ -29,7 +29,7 @@ id::thumb u16_thumb::thumb(const u16 code) {
 // shift by immediate
 // add/subtract register
 // add/subtract immediate
-id::thumb u16_thumb::bits_000(const u16 code) {
+id::thumb ident::u16_thumb::bits_000(const u16 code) {
     switch (shared::util::bit_range(code, 11, 12)) { 
         case 0b00: return id::thumb::LSL1;
         case 0b01: return id::thumb::LSR1;
@@ -52,7 +52,7 @@ id::thumb u16_thumb::bits_000(const u16 code) {
 
 
 // add/subtract/compare/move immediate
-id::thumb u16_thumb::bits_001(const u16 code) {
+id::thumb ident::u16_thumb::bits_001(const u16 code) {
     switch (shared::util::bit_range(code, 11, 12)) {
         case 0b10: return id::thumb::ADD2;
         case 0b01: return id::thumb::CMP1;
@@ -69,7 +69,7 @@ id::thumb u16_thumb::bits_001(const u16 code) {
 // branch/exchange instruction set
 // load from literal pool
 // load/store register offset
-id::thumb u16_thumb::bits_010(const u16 code) {
+id::thumb ident::u16_thumb::bits_010(const u16 code) {
     if (shared::util::bit_range(code, 11, 12) == 0b01) {
         return id::thumb::LDR3;
     }
@@ -125,7 +125,7 @@ id::thumb u16_thumb::bits_010(const u16 code) {
 
 
 // load/store word/byte immediate offset
-id::thumb u16_thumb::bits_011(const u16 code) {
+id::thumb ident::u16_thumb::bits_011(const u16 code) {
     switch (shared::util::bit_range(code, 11, 12)) {
         case 0b00: return id::thumb::STR1;
         case 0b01: return id::thumb::LDR1;
@@ -139,7 +139,7 @@ id::thumb u16_thumb::bits_011(const u16 code) {
 
 // load/store halfword immediate offset
 // load/store to/from stack
-id::thumb u16_thumb::bits_100(const u16 code) {
+id::thumb ident::u16_thumb::bits_100(const u16 code) {
     switch (shared::util::bit_range(code, 11, 12)) {
         case 0b00: return id::thumb::STRH1;
         case 0b01: return id::thumb::LDRH1;
@@ -153,7 +153,7 @@ id::thumb u16_thumb::bits_100(const u16 code) {
 
 // add to SP or PC
 // misc
-id::thumb u16_thumb::bits_101(const u16 code) {
+id::thumb ident::u16_thumb::bits_101(const u16 code) {
     switch (shared::util::bit_range(code, 11, 12)) {
         case 0b00: return id::thumb::ADD5;
         case 0b01: return id::thumb::ADD6;
@@ -192,7 +192,7 @@ id::thumb u16_thumb::bits_101(const u16 code) {
 // load/store multiple
 // conditional branch
 // software interrupt
-id::thumb u16_thumb::bits_110(const u16 code) {
+id::thumb ident::u16_thumb::bits_110(const u16 code) {
     switch (shared::util::bit_range(code, 11, 12)) {
         case 0b00: return id::thumb::STMIA;
         case 0b01: return id::thumb::LDMIA;
@@ -213,7 +213,7 @@ id::thumb u16_thumb::bits_110(const u16 code) {
 // BLX suffix
 // BL/BLX prefix
 // BL suffix
-id::thumb u16_thumb::bits_111(const u16 code) {
+id::thumb ident::u16_thumb::bits_111(const u16 code) {
     switch (shared::util::bit_range(code, 11, 12)) {
         case 0b00: return id::thumb::B2;
         case 0b01: return id::thumb::BLX1;

@@ -99,7 +99,7 @@ u32 generators::arm(const id::arm id, const arguments &args) {
         case id::arm::SWP: return swp(args); 
         case id::arm::SWPB: return swpb(args);
         case id::arm::BKPT: return bkpt(args);
-        case id::arm::BLX1: // TODO
+        case id::arm::BLX1: return blx1(args);
         case id::arm::BLX2: return blx2(args);
         case id::arm::CLZ: return clz(args);
         case id::arm::BX: return bx(args);

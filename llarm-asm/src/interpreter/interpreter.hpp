@@ -1,59 +1,12 @@
 #pragma once
 
+#include "tokens.hpp"
+
 #include <vector>
 
 #include "shared/types.hpp"
 
-namespace interpreter {
-    enum tokens : u8 {
-        UNKNOWN,
-        REG, // R0~R15
-        REG_THUMB, // R0~R7
-        REG_SINGLE, // S0~S31
-        REG_DOUBLE, // D0~D15
-        REG_LIST,
-        REG_LIST_NO_PC,
-        VFP_REG_SPECIAL, // FPSID, FPSCR, or FPEXC
-
-        // these are only meant for pattern matching, not used as an actual token for analysis
-        REG_LIST_WITH_PC,
-        REG_LIST_THUMB,
-        REG_LIST_THUMB_OPTIONAL_PC,
-        REG_LIST_THUMB_OPTIONAL_LR,
-        REG_PC, // R15
-        REG_SP, // R14
-
-        COPROCESSOR, // P0~P15
-        CR_REG, // C0~C15
-
-        HASHTAG,
-        IMMED_3,
-        IMMED_5,
-        IMMED_7,
-        IMMED_8,
-        IMMED_12,
-        IMMED,
-        OP,
-        MUL_OP, // "*"
-        INTEGER,
-        INTEGER_4,
-        INTEGER_2,
-        CPSR_FIELD,
-        SPSR_FIELD,
-        MEM_START, // "{"
-        MEM_END, // "}"
-        LSL,
-        LSR,
-        ASR,
-        ROR,
-        RRX,
-        SHIFT,
-        PRE_INDEX, // '!'
-        CARET, // '^'
-        OPTION, // specific to address mode 5
-        MNEMONIC
-    };
-    
+namespace interpreter {    
     struct lexeme_struct {
         std::string_view mnemonic;
         tokens token_type;

@@ -1,15 +1,14 @@
 #pragma once
 
 #include "../instruction_id.hpp"
-#include "interpreter.hpp"
+#include "../interpreter/interpreter.hpp"
 
 #include <string>
 #include <unordered_map>
 
-namespace internal::string_arm {
+namespace internal::ident::string_arm {
     using namespace internal;
 
-    using interpreter::tokens;
     using interpreter::tokens_t;
     using interpreter::lexeme_struct;
     using interpreter::lexemes_t;

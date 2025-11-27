@@ -28,7 +28,7 @@ void TLB::invalidate(const u32 virtual_address, const id::tlb_type tlb_type) {
         inst_table.erase(virtual_address);
         data_table.erase(virtual_address);
         return;
-    } 
+    }
 
     switch (tlb_type) {
         case id::tlb_type::UNIFIED: unified_table.erase(virtual_address); return;

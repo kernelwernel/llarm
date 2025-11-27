@@ -20,7 +20,6 @@ include("../cmake/clang_format.cmake") # clang-format
 include("../cmake/clang_tidy.cmake") # clang-tidy
 
 
-
 # targets
 set(TARGET_BIN "llarm-asm-bin")
 set(TARGET_LIB "llarm-asm-lib")
@@ -78,8 +77,6 @@ install(EXPORT llarm-asm-lib-targets
     NAMESPACE llarm::
     DESTINATION /usr/lib/cmake/llarm-asm
 )
-
-
 
 
 include(CMakePackageConfigHelpers)

@@ -4,7 +4,7 @@
 
 #include "shared/types.hpp"
 
-namespace internal::u32_shifters {
+namespace internal::ident::u32_shifters {
     shifter_enum load_store(const u32 code);
     shifter_enum data_processing(const u32 code);
     shifter_enum load_store_multiple(const u32 code);

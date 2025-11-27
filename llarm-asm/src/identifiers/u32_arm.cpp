@@ -6,7 +6,7 @@
 
 using namespace internal;
 
-id::arm u32_arm::misc_instructions(const u32 code) {
+id::arm ident::u32_arm::misc_instructions(const u32 code) {
     const u8 second_half = shared::util::bit_range<u8>(code, 20, 24);
     const u8 first_half = shared::util::bit_range<u8>(code, 4, 7);
 
@@ -96,7 +96,7 @@ id::arm u32_arm::misc_instructions(const u32 code) {
 
 
 
-id::arm u32_arm::multiply_extra_load_store(const u32 code) {
+id::arm ident::u32_arm::multiply_extra_load_store(const u32 code) {
     const u8 second_half = shared::util::bit_range<u8>(code, 20, 24);
     const u8 first_half = shared::util::bit_range<u8>(code, 4, 7);
 
@@ -152,7 +152,7 @@ id::arm u32_arm::multiply_extra_load_store(const u32 code) {
     return id::arm::UNDEFINED;
 }
 
-id::arm u32_arm::unconditional(const u32 code) {
+id::arm ident::u32_arm::unconditional(const u32 code) {
     if (shared::util::bit_fetch(code, 27) == false) {
         if (
             (shared::util::bit_fetch(code, 26) == 1) &&
@@ -196,7 +196,7 @@ id::arm u32_arm::unconditional(const u32 code) {
     return id::arm::UNDEFINED;
 }
 
-id::arm u32_arm::data_processing(const u32 code) {
+id::arm ident::u32_arm::data_processing(const u32 code) {
     switch (shared::util::bit_range(code, 21, 24)) {
         case 0b0000: return id::arm::AND; 
         case 0b0001: return id::arm::EOR;
@@ -247,7 +247,7 @@ id::arm u32_arm::data_processing(const u32 code) {
 }
 
 
-id::arm u32_arm::load_store(const u32 code) {
+id::arm ident::u32_arm::load_store(const u32 code) {
     const bool bit_22 = shared::util::bit_fetch(code, 22);
     const bool bit_20 = shared::util::bit_fetch(code, 20);
 
@@ -277,7 +277,7 @@ id::arm u32_arm::load_store(const u32 code) {
 
 
 
-id::arm u32_arm::vfp_single(const u32 code) {
+id::arm ident::u32_arm::vfp_single(const u32 code) {
     const bool bit_24 = shared::util::bit_fetch(code, 24);
     const bool bit_23 = shared::util::bit_fetch(code, 23);
     const bool bit_21 = shared::util::bit_fetch(code, 21);
@@ -413,7 +413,7 @@ id::arm u32_arm::vfp_single(const u32 code) {
 }
 
 
-id::arm u32_arm::vfp_double(const u32 code) {
+id::arm ident::u32_arm::vfp_double(const u32 code) {
     const u8 left = shared::util::bit_range<u8>(code, 20, 23);
     const u8 right = shared::util::bit_range<u8>(code, 4, 7);
 
@@ -547,7 +547,7 @@ id::arm u32_arm::vfp_double(const u32 code) {
 }
 
 
-id::arm u32_arm::arm(const u32 code) {
+id::arm ident::u32_arm::arm(const u32 code) {
     // note: NOP is not handled because it's a pseudo 
     // instruction that's unique to this project. 
     

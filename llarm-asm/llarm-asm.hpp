@@ -19,48 +19,44 @@
 
 namespace llarm {
     namespace as {
-        // setting aliases
+        // setting aliases, ignore these
         using settings = internal::settings;
         using default_func = settings(*)();
         inline default_func default_settings = &internal::default_settings;
 
-        namespace id {
-            // alternatives in case it's under C++17
-            using arm = internal::id::arm;
-            using thumb = internal::id::thumb;
+        // alternatives in case it's under C++17
+        using arm_id = internal::id::arm;
+        using thumb_id = internal::id::thumb;
 
-            //enum class arm : internal::id::arm {};
-            //enum class thumb : internal::id::thumb {};
+        //enum class arm : internal::id::arm {};
+        //enum class thumb : internal::id::thumb {};
+
+        inline arm_id identify_arm(const u32 raw_code) {
+            return internal::ident::u32_arm::arm(raw_code);
         }
 
-        namespace identify {
-            inline id::arm arm(const u32 raw_code) {
-                return internal::u32_arm::arm(raw_code);
-            }
+        inline arm_id identify_arm(const std::string &code) {
+            return internal::ident::string_arm::arm(code);
+        }
 
-            inline id::arm arm(const std::string &code) {
-                return internal::string_arm::arm(code);
-            }
+        inline thumb_id identify_thumb(const u16 raw_code) {
+            return internal::ident::u16_thumb::thumb(raw_code);
+        }
 
-            inline id::thumb thumb(const u16 raw_code) {
-                return internal::u16_thumb::thumb(raw_code);
-            }
+        inline thumb_id identify_thumb(const std::string &code) {
+            return internal::ident::string_thumb::thumb(code);
+        }
 
-            inline id::thumb thumb(const std::string &code) {
-                return internal::string_thumb::thumb(code);
-            }
+        inline shifter_enum identify_shifter(const u32 raw_code) {
+            return internal::ident::u32_shifters::identify_shifter(raw_code);
+        }
 
-            inline shifter_enum shifter(const u32 raw_code) {
-                return internal::u32_shifters::identify_shifter(raw_code);
-            }
+        inline shifter_enum identify_shifter(const std::string &code) {
+            return internal::ident::string_shifters::identify_shifter(code);
+        }
 
-            inline shifter_enum shifter(const std::string &code) {
-                return internal::string_shifters::identify_shifter(code);
-            }
-
-            inline shifter_enum shifter(const shifter_category category, const u32 raw_code) {
-                return internal::u32_shifters::identify_shifter(category, raw_code);
-            }
+        inline shifter_enum identify_shifter(const shifter_category category, const u32 raw_code) {
+            return internal::ident::u32_shifters::identify_shifter(category, raw_code);
         }
 
         namespace generate {
@@ -70,28 +66,24 @@ namespace llarm {
             //}
         }
 
-        namespace disassemble {
-            inline std::string arm(
-                const u32 code, 
-                const u32 PC = 0, 
-                const settings settings = default_settings()
-            ) {
-                return internal::disassemble::arm(code, PC, settings);
-            }
-
-            inline std::string thumb(
-                const u16 code,
-                const u32 PC = 0,
-                const settings settings = default_settings()
-            ) {
-                return internal::disassemble::thumb(code, PC, settings);
-            }
+        inline std::string disassemble_arm(
+            const u32 code, 
+            const u32 PC = 0, 
+            const settings settings = default_settings()
+        ) {
+            return internal::disassemble::arm(code, PC, settings);
         }
 
-        namespace assemble {
-            //inline u32 arm(const std::string code) {
-//
-            //}
+        inline std::string disassemble_thumb(
+            const u16 code,
+            const u32 PC = 0,
+            const settings settings = default_settings()
+        ) {
+            return internal::disassemble::thumb(code, PC, settings);
+        }
+
+        inline u32 assemble_arm(const std::string code) {
+
         }
 
         inline bool is_arm_instruction_valid(const u32 code) {
@@ -102,7 +94,17 @@ namespace llarm {
             
         }
 
-        inline std::string thumb_id_to_string(const id::thumb id) {
+        inline bool is_thumb_instruction_valid(const u16 code) {
+
+        }
+
+        inline bool is_thumb_instruction_valid(const std::string &code) {
+            
+        }
+
+
+        inline std::string thumb_id_to_string(const thumb_id id) {
+            using namespace internal;
             switch (id) {
                 case id::thumb::UNKNOWN: return "UNDEFINED";
                 case id::thumb::UNDEFINED: return "UNDEFINED";
@@ -175,7 +177,9 @@ namespace llarm {
         }
 
 
-        inline std::string arm_id_to_string(const id::arm id) {
+        inline std::string arm_id_to_string(const arm_id id) {
+            using namespace internal;
+
             switch (id) {
                 case id::arm::UNKNOWN: return "UNKNOWN";
                 case id::arm::ADC: return "ADC"; 

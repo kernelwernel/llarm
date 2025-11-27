@@ -1,4 +1,5 @@
 #include "../generators.hpp"
+#include "shared/util.hpp"
 
 
 u32 generators::mul(const arguments &args) {
@@ -211,7 +212,11 @@ u32 generators::b(const arguments &args) {
     shared::util::modify_bit(binary, 27, true);
     shared::util::modify_bit(binary, 25, true);
 
-    // TODO
+    const i32 immed = args.first_int - (args.PC + 8);
+    const i32 offset = (immed >> 2);
+    const u32 target = offset & 0x00FFFFFF;
+
+    shared::util::swap_bits(binary, 0, 23, target);
 
     return binary;
 }
@@ -221,8 +226,6 @@ u32 generators::bl(const arguments &args) {
     u32 binary = b(args);
 
     shared::util::modify_bit(binary, 24, true);
-
-    // TODO
 
     return binary;
 }
@@ -238,6 +241,21 @@ u32 generators::bkpt(const arguments &args) {
 
     shared::util::swap_bits(binary, 8, 19, top_bits);
     shared::util::swap_bits(binary, 0, 3, bottom_bits);
+
+    return binary;
+}
+
+
+u32 generators::blx1(const arguments &args) {
+    u32 binary = 0b1111'1010'0000'0000'0000'0000'0000'0000;
+
+    const i32 offset = args.first_int - (args.PC + 8);
+
+    const i32 immed_24 = (offset >> 2) & 0x00FFFFFF;
+    const bool H = (offset >> 1) & 1;
+
+    shared::util::modify_bit(binary, 24, H);
+    shared::util::swap_bits(binary, 0, 23, immed_24);
 
     return binary;
 }

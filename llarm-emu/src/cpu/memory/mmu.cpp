@@ -415,7 +415,7 @@ translation_struct MMU::second_tiny(
     const id::aborts abort_code = check_block_access(AP, access_type, domain, id::memory_type::PAGE);
     
     const bool access_failed = (abort_code != id::aborts::NO_ABORT);
-    
+
     if (access_failed) {
         manage_abort(abort_code, address, domain_bits);
         return translation_struct {
@@ -427,7 +427,7 @@ translation_struct MMU::second_tiny(
     
     // const bool C = shared::util::bit_fetch(entry, 3); // TODO: DO SOMETHING WITH THESE
     // const bool B = shared::util::bit_fetch(entry, 2); // TODO: DO SOMETHING WITH THESE
-    
+
     const u32 tiny_page_base_address = shared::util::bit_range(entry, 10, 31);
     
     const u16 page_index = shared::util::bit_range(address, 0, 9);

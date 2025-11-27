@@ -8,7 +8,7 @@
 
 using namespace internal;
 
-shifter_enum u32_shifters::load_store(const u32 code) {
+shifter_enum ident::u32_shifters::load_store(const u32 code) {
     using namespace shared::util;
 
     if (
@@ -95,7 +95,7 @@ shifter_enum u32_shifters::load_store(const u32 code) {
 }
 
 
-shifter_enum u32_shifters::data_processing(const u32 code) {
+shifter_enum ident::u32_shifters::data_processing(const u32 code) {
     using namespace shared::util;
 
     if ((bit_fetch(code, 27) != false) || (bit_fetch(code, 26) != false)) {
@@ -167,7 +167,7 @@ shifter_enum u32_shifters::data_processing(const u32 code) {
 }
 
 
-shifter_enum u32_shifters::load_store_multiple(const u32 code) {
+shifter_enum ident::u32_shifters::load_store_multiple(const u32 code) {
     using namespace shared::util;
 
     if (
@@ -191,7 +191,7 @@ shifter_enum u32_shifters::load_store_multiple(const u32 code) {
 }
 
 
-shifter_enum u32_shifters::load_store_misc(const u32 code) {
+shifter_enum ident::u32_shifters::load_store_misc(const u32 code) {
     using namespace shared::util;
 
     if (
@@ -219,7 +219,7 @@ shifter_enum u32_shifters::load_store_misc(const u32 code) {
 }
 
 
-shifter_enum u32_shifters::load_store_coprocessor(const u32 code) {
+shifter_enum ident::u32_shifters::load_store_coprocessor(const u32 code) {
     using namespace shared::util;
 
     if (
@@ -243,7 +243,7 @@ shifter_enum u32_shifters::load_store_coprocessor(const u32 code) {
 }
 
 
-shifter_enum u32_shifters::vfp_single(const u32 code) {
+shifter_enum ident::u32_shifters::vfp_single(const u32 code) {
     const u8 Fd = shared::util::bit_range<u8>(code, 12, 15);
     const u8 Fm = shared::util::bit_range<u8>(code, 0, 3);
 
@@ -268,7 +268,7 @@ shifter_enum u32_shifters::vfp_single(const u32 code) {
 }
 
 
-shifter_enum u32_shifters::vfp_single_monadic(const u32 code) {
+shifter_enum ident::u32_shifters::vfp_single_monadic(const u32 code) {
     const u8 Fd = shared::util::bit_range<u8>(code, 12, 15);
     const u8 Fm = shared::util::bit_range<u8>(code, 0, 3);
 
@@ -293,7 +293,7 @@ shifter_enum u32_shifters::vfp_single_monadic(const u32 code) {
 }
 
 
-shifter_enum u32_shifters::vfp_double(const u32 code) {
+shifter_enum ident::u32_shifters::vfp_double(const u32 code) {
     const u8 Dd = shared::util::bit_range<u8>(code, 12, 15);
     const u8 Dn = shared::util::bit_range<u8>(code, 16, 19);
     const u8 Dm = shared::util::bit_range<u8>(code, 0, 3);
@@ -313,7 +313,7 @@ shifter_enum u32_shifters::vfp_double(const u32 code) {
 }
 
 
-shifter_enum u32_shifters::vfp_double_monadic(const u32 code) {
+shifter_enum ident::u32_shifters::vfp_double_monadic(const u32 code) {
     const u8 Dd = shared::util::bit_range<u8>(code, 12, 15);
     const u8 Dm = shared::util::bit_range<u8>(code, 0, 3);
 
@@ -332,7 +332,7 @@ shifter_enum u32_shifters::vfp_double_monadic(const u32 code) {
 }
 
 
-shifter_enum u32_shifters::vfp_ls_multiple(const u32 code) {
+shifter_enum ident::u32_shifters::vfp_ls_multiple(const u32 code) {
     const u8 bits_23_27 = shared::util::bit_range<u8>(code, 23, 27);
     const bool bit_21 = shared::util::bit_fetch(code, 21);
     
@@ -356,8 +356,8 @@ shifter_enum u32_shifters::vfp_ls_multiple(const u32 code) {
 }
 
 
-shifter_enum u32_shifters::identify_shifter(const u32 code) {
-    const id::arm instruction = u32_arm::arm(code);
+shifter_enum ident::u32_shifters::identify_shifter(const u32 code) {
+    const id::arm instruction = ident::u32_arm::arm(code);
 
     switch (instruction) {
         case id::arm::ADC:
@@ -412,7 +412,7 @@ shifter_enum u32_shifters::identify_shifter(const u32 code) {
 
 
 // same as the function above but this acts more as a shortcut based on info that's already known
-shifter_enum u32_shifters::identify_shifter(const shifter_category shift_category, const u32 code) {
+shifter_enum ident::u32_shifters::identify_shifter(const shifter_category shift_category, const u32 code) {
     switch (shift_category) {
         case shifter_category::DATA: return data_processing(code);
         case shifter_category::LS: return load_store(code);

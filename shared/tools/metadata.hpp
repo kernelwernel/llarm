@@ -19,7 +19,7 @@ namespace shared::metadata {
     static constinit const char* LLARM_VER = "0.1";
     static constinit const char* LLARM_DATE = "00/00/00"; // TODO
 
-    [[noreturn]] void version(const sv project, const sv ver, const sv date) {
+    [[noreturn]] inline void version(const sv project, const sv ver, const sv date) {
         std::cout << 
             project << " v" << ver << " (" << date << ")\n\n" <<
             "Sub-project of the LLARM framework at https://github.com/kernelwernel/LLARM\n" <<
