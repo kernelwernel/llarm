@@ -6,7 +6,7 @@
 #include "shared/out.hpp"
 
 u32 ADDRESSING_MODE::load_store_misc(const u32 code) {
-    using namespace shared::util;
+    using namespace llarm::util;
 
     const shifter_enum shifter_id = llarm::as::identify::shifter(shift_category::LS_MISC, code);
 
@@ -17,7 +17,7 @@ u32 ADDRESSING_MODE::load_store_misc(const u32 code) {
         case shifter_enum::LS_MISC_IMM_POST: return ls_misc_imm_post(code);
         case shifter_enum::LS_MISC_REG_PRE: return ls_misc_reg_pre(code);
         case shifter_enum::LS_MISC_REG_POST: return ls_misc_reg_post(code);
-        default: shared::out::error("Impossible identification of ARM load store misc shifter");
+        default: llarm::out::error("Impossible identification of ARM load store misc shifter");
     }
 }
 
@@ -30,14 +30,14 @@ u32 ADDRESSING_MODE::load_store_misc(const u32 code) {
  *     address = Rn - offset_8
  */
 u32 ADDRESSING_MODE::ls_misc_imm(const u32 code) {
-    const u8 immedH = shared::util::bit_range<u8>(code, 8, 11);
-    const u8 immedL = shared::util::bit_range<u8>(code, 0, 3);
+    const u8 immedH = llarm::util::bit_range<u8>(code, 8, 11);
+    const u8 immedL = llarm::util::bit_range<u8>(code, 0, 3);
 
     const u8 offset_8 = (immedH << 4) | immedL;
 
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
 
-    if (shared::util::bit_fetch(code, 23)) {
+    if (llarm::util::bit_fetch(code, 23)) {
         return (reg.read(Rn_id) + offset_8);
     } else {
         return (reg.read(Rn_id) - offset_8);
@@ -55,7 +55,7 @@ u32 ADDRESSING_MODE::ls_misc_reg(const u32 code) {
     const u32 Rn = reg.read(code, 16, 19);
     const u32 Rm = reg.read(code, 0, 3);
 
-    if (shared::util::bit_fetch(code, 23)) {
+    if (llarm::util::bit_fetch(code, 23)) {
         return Rn + Rm;
     } else {
         return Rn - Rm;
@@ -73,8 +73,8 @@ u32 ADDRESSING_MODE::ls_misc_reg(const u32 code) {
  *     Rn = address
  */
 u32 ADDRESSING_MODE::ls_misc_imm_pre(const u32 code) {
-    const u8 immedH = shared::util::bit_range<u8>(code, 8, 11);
-    const u8 immedL = shared::util::bit_range<u8>(code, 0, 3);
+    const u8 immedH = llarm::util::bit_range<u8>(code, 8, 11);
+    const u8 immedL = llarm::util::bit_range<u8>(code, 0, 3);
 
     const u8 offset_8 = (immedH << 4) | immedL;
 
@@ -82,7 +82,7 @@ u32 ADDRESSING_MODE::ls_misc_imm_pre(const u32 code) {
 
     u32 address = 0;
 
-    if (shared::util::bit_fetch(code, 23)) {
+    if (llarm::util::bit_fetch(code, 23)) {
         address = reg.read(Rn_id) + offset_8;
     } else {
         address = reg.read(Rn_id) - offset_8;
@@ -112,7 +112,7 @@ u32 ADDRESSING_MODE::ls_misc_reg_pre(const u32 code) {
 
     u32 address = 0;
 
-    if (shared::util::bit_fetch(code, 23)) {
+    if (llarm::util::bit_fetch(code, 23)) {
         address = (Rn + Rm);
     } else {
         address = (Rn - Rm);
@@ -143,12 +143,12 @@ u32 ADDRESSING_MODE::ls_misc_imm_post(const u32 code) {
     const u32 address = Rn;
     
     if (reg.is_cond_valid(code)) {
-        const u8 immedH = shared::util::bit_range<u8>(code, 8, 11);
-        const u8 immedL = shared::util::bit_range<u8>(code, 0, 3);
+        const u8 immedH = llarm::util::bit_range<u8>(code, 8, 11);
+        const u8 immedL = llarm::util::bit_range<u8>(code, 0, 3);
         
         const u8 offset_8 = (immedH << 4) | immedL;
 
-        if (shared::util::bit_fetch(code, 23)) {
+        if (llarm::util::bit_fetch(code, 23)) {
             reg.write(Rn_id, (Rn + offset_8));
         } else {
             reg.write(Rn_id, (Rn - offset_8));
@@ -177,7 +177,7 @@ u32 ADDRESSING_MODE::ls_misc_reg_post(const u32 code) {
     if (reg.is_cond_valid(code)) {
         const u32 Rm = reg.read(code, 0, 3);
 
-        if (shared::util::bit_fetch(code, 23)) {
+        if (llarm::util::bit_fetch(code, 23)) {
             reg.write(Rn_id, (Rn + Rm));
         } else {
             reg.write(Rn_id, (Rn - Rm));

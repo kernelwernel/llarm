@@ -12,7 +12,7 @@ bool FCSE::is_fcse_enabled() {
 }
 
 u32 FCSE::modify_address(const u32 address) {
-    if (shared::util::bit_range(address, 31, 25) != 0) {
+    if (llarm::util::bit_range(address, 31, 25) != 0) {
         return address;
     }
 

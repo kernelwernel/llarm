@@ -31,7 +31,7 @@ util::reg_id util::identify_reg(const u8 reg_bits, const prefix prefix) {
                 case 13: return reg_id::R13;
                 case 14: return reg_id::R14;
                 case 15: return reg_id::R15;
-                default: shared::out::error("llarm-asm: No known binary code given for R register identification");
+                default: llarm::out::error("llarm-asm: No known binary code given for R register identification");
             }
     
         case prefix::S:
@@ -68,7 +68,7 @@ util::reg_id util::identify_reg(const u8 reg_bits, const prefix prefix) {
                 case 29: return reg_id::S29;
                 case 30: return reg_id::S30;
                 case 31: return reg_id::S31;
-                default: shared::out::error("llarm-asm: No known binary code given for S register identification");
+                default: llarm::out::error("llarm-asm: No known binary code given for S register identification");
             }
         
         case prefix::D:
@@ -89,7 +89,7 @@ util::reg_id util::identify_reg(const u8 reg_bits, const prefix prefix) {
                 case 13: return reg_id::D13;
                 case 14: return reg_id::D14;
                 case 15: return reg_id::D15;
-                default: shared::out::error("llarm-asm: No known binary code given for D register identification");
+                default: llarm::out::error("llarm-asm: No known binary code given for D register identification");
             }
 
         case prefix::C:
@@ -110,7 +110,7 @@ util::reg_id util::identify_reg(const u8 reg_bits, const prefix prefix) {
                 case 13: return reg_id::C13;
                 case 14: return reg_id::C14;
                 case 15: return reg_id::C15;
-                default: shared::out::error("llarm-asm: No known binary code given for C register identification");
+                default: llarm::out::error("llarm-asm: No known binary code given for C register identification");
             }
 
         
@@ -132,14 +132,14 @@ util::reg_id util::identify_reg(const u8 reg_bits, const prefix prefix) {
                 case 13: return reg_id::P13;
                 case 14: return reg_id::P14;
                 case 15: return reg_id::P15;
-                default: shared::out::error("llarm-asm: No known binary code given for C register identification");
+                default: llarm::out::error("llarm-asm: No known binary code given for C register identification");
             }
     }
 }
 
 
 util::reg_id util::identify_reg(const u32 code, const u8 start, const u8 end, const prefix prefix) {
-    const u8 reg_bits = shared::util::bit_range<u8>(code, start, end);
+    const u8 reg_bits = llarm::util::bit_range<u8>(code, start, end);
     return identify_reg(reg_bits, prefix);
 }
 
@@ -242,7 +242,7 @@ std::string util::reg_id_to_string(const util::reg_id id, const settings setting
         case reg_id::P13: return "P13";
         case reg_id::P14: return "P14";
         case reg_id::P15: return "P15";
-        default: shared::out::error("llarm-asm: No known binary code given for register identification");
+        default: llarm::out::error("llarm-asm: No known binary code given for register identification");
     }
 }
 
@@ -255,7 +255,7 @@ std::string util::reg_string(const u32 code, const u8 start, const u8 end, const
 
 
 std::string util::reg_list(const u16 list, const settings settings, const reg_id extra) {
-    const u8 count = shared::util::popcount(list);
+    const u8 count = llarm::util::popcount(list);
 
     std::string tmp(
         4 + // for the "{  }"
@@ -267,7 +267,7 @@ std::string util::reg_list(const u16 list, const settings settings, const reg_id
     reg_id_list.reserve(16);
 
     for (u8 i = 0; i < (sizeof(list) * 8); i++) {
-        if (shared::util::bit_fetch(list, i) == 1) {
+        if (llarm::util::bit_fetch(list, i) == 1) {
             reg_id_list.push_back(identify_reg(i));
         }
     }
@@ -281,7 +281,7 @@ std::string util::reg_list(const u16 list, const settings settings, const reg_id
     }
 
     if (registers.empty()) {
-        shared::out::unpredictable("Empty register set for register list addressing mode");
+        llarm::out::unpredictable("Empty register set for register list addressing mode");
     }
 
     tmp += "{ ";
@@ -351,18 +351,18 @@ std::string util::raw_cond(const u8 cond, const settings settings) {
         }
     }
 
-    shared::out::dev_error("Unknown condition bits encountered");
+    llarm::out::dev_error("Unknown condition bits encountered");
 }
 
 
 std::string util::cond(const u32 code, const settings settings) {
-    const u8 condition_code = shared::util::bit_range<u8>(code, 28, 31);
+    const u8 condition_code = llarm::util::bit_range<u8>(code, 28, 31);
     return raw_cond(condition_code, settings);
 }
 
 
 std::string util::vfp_reg_string_bits(const u32 code, const u8 start, const u8 end, const bool bottom_bit, const settings settings) {
-    u8 reg_bits = shared::util::bit_range<u8>(code, start, end);
+    u8 reg_bits = llarm::util::bit_range<u8>(code, start, end);
 
     reg_bits = static_cast<u8>((reg_bits << 1) | bottom_bit);
 
@@ -374,10 +374,10 @@ std::string util::vfp_reg_string_bits(const u32 code, const u8 start, const u8 e
 
 std::string util::reg_string_bits(const u32 code, const u8 start, const u8 end, const bool top_bit, const settings settings) {
     if ((end - start) != 2) { // 3-bit wide register check (mostly for thumb)
-        shared::out::error("Invalid register width");
+        llarm::out::error("Invalid register width");
     }
 
-    u8 reg_bits = shared::util::bit_range<u8>(code, start, end);
+    u8 reg_bits = llarm::util::bit_range<u8>(code, start, end);
 
 
     reg_bits = static_cast<u8>(reg_bits | (top_bit << 3));
@@ -390,7 +390,7 @@ std::string util::reg_string_bits(const u32 code, const u8 start, const u8 end, 
 
 std::string util::vfp_register_list(const u8 first_reg, const u8 offset, const settings settings, util::prefix prefix) {
     if (offset & 1) {
-        shared::out::error("VFP register offset list should not be an odd number");
+        llarm::out::error("VFP register offset list should not be an odd number");
     }
 
     const u8 reg_count = (offset >> (prefix == util::prefix::S ? 0 : 1));

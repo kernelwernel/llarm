@@ -8,7 +8,7 @@
 using namespace internal;
 
 id::arm ident::string_arm::arm(const std::string &code) {
-    const std::string assembly = shared::util::to_upper(code);
+    const std::string assembly = llarm::util::to_upper(code);
 
     const std::string raw_string = interpreter::fetch_instruction(assembly);
     const std::string_view mnemonic(raw_string);

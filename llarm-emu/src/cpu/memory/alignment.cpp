@@ -37,6 +37,6 @@ bool ALIGNMENT::is_aligned(const u32 value, const u8 access_size) {
         // dword
         case 8: return ((value & 0b111) == 0b000);
 
-        default: shared::out::error(); // TODO
+        default: llarm::out::error(); // TODO
     }
 }

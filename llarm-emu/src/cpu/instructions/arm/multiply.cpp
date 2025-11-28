@@ -20,12 +20,12 @@ void INSTRUCTIONS::arm::multiply::MLA(const u32 code) {
     const u32 Rn = reg.read(code, 12, 15);
 
     const u64 tmp = (Rm * Rs + Rn);
-    const u32 Rd = shared::util::bit_range(tmp, 0, 31);
+    const u32 Rd = llarm::util::bit_range(tmp, 0, 31);
 
     reg.write(code, 16, 19, Rd);
 
-    if (shared::util::bit_fetch(code, 20)) {
-        reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    if (llarm::util::bit_fetch(code, 20)) {
+        reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
     }
 }
@@ -45,12 +45,12 @@ void INSTRUCTIONS::arm::multiply::MUL(const u32 code) {
     const u32 Rs = reg.read(code, 8, 11);
 
     const u64 tmp = (Rm * Rs);
-    const u32 Rd = shared::util::bit_range(tmp, 0, 31);
+    const u32 Rd = llarm::util::bit_range(tmp, 0, 31);
 
     reg.write(code, 16, 19, Rd);
 
-    if (shared::util::bit_fetch(code, 20)) {
-        reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    if (llarm::util::bit_fetch(code, 20)) {
+        reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
     }
 }
@@ -72,8 +72,8 @@ void INSTRUCTIONS::arm::multiply::SMLAL(const u32 code) {
 
     const i64 result = (Rm * Rs);
 
-    const u32 low_result = shared::util::bit_range(result, 0, 31);
-    const u32 high_result = shared::util::bit_range(result, 32, 63);
+    const u32 low_result = llarm::util::bit_range(result, 0, 31);
+    const u32 high_result = llarm::util::bit_range(result, 32, 63);
 
     const id::reg RdLo_id = reg.fetch_reg_id(code, 12, 15);
     const id::reg RdHi_id = reg.fetch_reg_id(code, 16, 19);
@@ -84,8 +84,8 @@ void INSTRUCTIONS::arm::multiply::SMLAL(const u32 code) {
     reg.write(RdLo_id, RdLo);
     reg.write(RdHi_id, RdHi);
 
-    if (shared::util::bit_fetch(code, 20)) {
-        reg.write(id::cpsr::N, (shared::util::bit_fetch(RdHi, 31)));
+    if (llarm::util::bit_fetch(code, 20)) {
+        reg.write(id::cpsr::N, (llarm::util::bit_fetch(RdHi, 31)));
         reg.write(id::cpsr::Z, ((RdHi == 0) && (RdLo == 0)));
     }
 }
@@ -107,14 +107,14 @@ void INSTRUCTIONS::arm::multiply::SMULL(const u32 code) {
 
     const i64 result = (Rm * Rs);
 
-    const u32 RdLo = shared::util::bit_range(result, 0, 31);
-    const i32 RdHi = shared::util::bit_range(result, 32, 63);
+    const u32 RdLo = llarm::util::bit_range(result, 0, 31);
+    const i32 RdHi = llarm::util::bit_range(result, 32, 63);
     
     reg.write(code, 12, 15, RdLo);
     reg.write(code, 16, 19, RdHi);
 
-    if (shared::util::bit_fetch(code, 20)) {
-        reg.write(id::cpsr::N, (shared::util::bit_fetch(RdHi, 31)));
+    if (llarm::util::bit_fetch(code, 20)) {
+        reg.write(id::cpsr::N, (llarm::util::bit_fetch(RdHi, 31)));
         reg.write(id::cpsr::Z, ((RdHi == 0) && (RdLo == 0)));
     }
 }
@@ -135,8 +135,8 @@ void INSTRUCTIONS::arm::multiply::UMLAL(const u32 code) {
 
     const i64 result = (Rm * Rs);
 
-    const u32 low_result = shared::util::bit_range(result, 0, 31);
-    const u32 high_result = shared::util::bit_range(result, 32, 63);
+    const u32 low_result = llarm::util::bit_range(result, 0, 31);
+    const u32 high_result = llarm::util::bit_range(result, 32, 63);
 
     const id::reg RdLo_id = reg.fetch_reg_id(code, 12, 15);
     const id::reg RdHi_id = reg.fetch_reg_id(code, 16, 19);
@@ -147,8 +147,8 @@ void INSTRUCTIONS::arm::multiply::UMLAL(const u32 code) {
     reg.write(RdLo_id, RdLo);
     reg.write(RdHi_id, RdHi);
 
-    if (shared::util::bit_fetch(code, 20)) {
-        reg.write(id::cpsr::N, (shared::util::bit_fetch(RdHi, 31)));
+    if (llarm::util::bit_fetch(code, 20)) {
+        reg.write(id::cpsr::N, (llarm::util::bit_fetch(RdHi, 31)));
         reg.write(id::cpsr::Z, ((RdHi == 0) && (RdLo == 0)));
     }
 }
@@ -170,14 +170,14 @@ void INSTRUCTIONS::arm::multiply::UMULL(const u32 code) {
 
     const i64 result = (Rm * Rs);
 
-    const u32 RdLo = shared::util::bit_range(result, 0, 31);
-    const u32 RdHi = shared::util::bit_range(result, 32, 63);
+    const u32 RdLo = llarm::util::bit_range(result, 0, 31);
+    const u32 RdHi = llarm::util::bit_range(result, 32, 63);
     
     reg.write(code, 12, 15, RdLo);
     reg.write(code, 16, 19, RdHi);
 
-    if (shared::util::bit_fetch(code, 20)) {
-        reg.write(id::cpsr::N, (shared::util::bit_fetch(RdHi, 31)));
+    if (llarm::util::bit_fetch(code, 20)) {
+        reg.write(id::cpsr::N, (llarm::util::bit_fetch(RdHi, 31)));
         reg.write(id::cpsr::Z, ((RdHi == 0) && (RdLo == 0)));
     }
 }

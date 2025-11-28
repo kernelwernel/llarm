@@ -11,8 +11,8 @@
  *   PC = PC + (SignExtend(signed_immed_24) << 2)
  */
 void INSTRUCTIONS::arm::branching::B(const u32 code) {
-    const i32 signed_immed_24 = shared::util::bit_range<i32>(code, 0, 23);
-    const bool L = shared::util::bit_fetch(code, 24);
+    const i32 signed_immed_24 = llarm::util::bit_range<i32>(code, 0, 23);
+    const bool L = llarm::util::bit_fetch(code, 24);
 
     if (L == 1) {
         reg.write(id::reg::LR, reg.read(id::reg::PC) + 4); // TODO: check if this is correct

@@ -221,7 +221,7 @@ void EXCEPTION::fiq() {
 void EXCEPTION::address_exception_26(const u32 faulty_address) {
     u32 R15_copy = reg.read(id::reg::R15);
 
-    shared::util::swap_bits(R15_copy, 2, 25, faulty_address + 8); // TODO: CHECK IF THIS WORKS
+    llarm::util::swap_bits(R15_copy, 2, 25, faulty_address + 8); // TODO: CHECK IF THIS WORKS
 
     reg.write(id::reg::R14_svc, R15_copy);
 

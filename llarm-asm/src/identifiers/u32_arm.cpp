@@ -7,8 +7,8 @@
 using namespace internal;
 
 id::arm ident::u32_arm::misc_instructions(const u32 code) {
-    const u8 second_half = shared::util::bit_range<u8>(code, 20, 24);
-    const u8 first_half = shared::util::bit_range<u8>(code, 4, 7);
+    const u8 second_half = llarm::util::bit_range<u8>(code, 20, 24);
+    const u8 first_half = llarm::util::bit_range<u8>(code, 4, 7);
 
     switch (first_half) {
         case 0b0000:
@@ -48,7 +48,7 @@ id::arm ident::u32_arm::misc_instructions(const u32 code) {
         case 0b0111: 
             if (
                 (second_half == 0b10010) && 
-                (shared::util::bit_range(code, 28, 31) == 0b1110)
+                (llarm::util::bit_range(code, 28, 31) == 0b1110)
             ) {
                 return id::arm::BKPT;
             }
@@ -58,7 +58,7 @@ id::arm ident::u32_arm::misc_instructions(const u32 code) {
         case 0b1010:
         case 0b1100:
         case 0b1110:
-            const u16 bytecode = static_cast<u16>(shared::util::bit_range<u8>(code, 20, 27) << 4) | shared::util::bit_range<u8>(code, 4, 7);
+            const u16 bytecode = static_cast<u16>(llarm::util::bit_range<u8>(code, 20, 27) << 4) | llarm::util::bit_range<u8>(code, 4, 7);
             
             switch (bytecode) {
                 case 0b000100001000:
@@ -97,8 +97,8 @@ id::arm ident::u32_arm::misc_instructions(const u32 code) {
 
 
 id::arm ident::u32_arm::multiply_extra_load_store(const u32 code) {
-    const u8 second_half = shared::util::bit_range<u8>(code, 20, 24);
-    const u8 first_half = shared::util::bit_range<u8>(code, 4, 7);
+    const u8 second_half = llarm::util::bit_range<u8>(code, 20, 24);
+    const u8 first_half = llarm::util::bit_range<u8>(code, 4, 7);
 
     switch (first_half) {
         // multiplies
@@ -130,21 +130,21 @@ id::arm ident::u32_arm::multiply_extra_load_store(const u32 code) {
 
         // halfwords
         case 0b1011:
-            if (shared::util::bit_fetch(code, 20) == true) {
+            if (llarm::util::bit_fetch(code, 20) == true) {
                 return id::arm::LDRH;
             } else {
                 return id::arm::STRH;
             }
 
         case 0b1101:
-            if (shared::util::bit_fetch(code, 20) == true) {
+            if (llarm::util::bit_fetch(code, 20) == true) {
                 return id::arm::LDRSB;
             } else {
                 return id::arm::LDRD;
             }
 
         case 0b1111:
-            if (shared::util::bit_fetch(code, 20) == true) {
+            if (llarm::util::bit_fetch(code, 20) == true) {
                 return id::arm::LDRSH;
             }
     }
@@ -153,14 +153,14 @@ id::arm ident::u32_arm::multiply_extra_load_store(const u32 code) {
 }
 
 id::arm ident::u32_arm::unconditional(const u32 code) {
-    if (shared::util::bit_fetch(code, 27) == false) {
+    if (llarm::util::bit_fetch(code, 27) == false) {
         if (
-            (shared::util::bit_fetch(code, 26) == 1) &&
-            (shared::util::bit_fetch(code, 24) == 1) &&
-            (shared::util::bit_fetch(code, 22) == 1) &&
-            (shared::util::bit_fetch(code, 21) == 0) &&
-            (shared::util::bit_fetch(code, 20) == 1) &&
-            (shared::util::bit_range(code, 12, 15) == 0b1111)
+            (llarm::util::bit_fetch(code, 26) == 1) &&
+            (llarm::util::bit_fetch(code, 24) == 1) &&
+            (llarm::util::bit_fetch(code, 22) == 1) &&
+            (llarm::util::bit_fetch(code, 21) == 0) &&
+            (llarm::util::bit_fetch(code, 20) == 1) &&
+            (llarm::util::bit_range(code, 12, 15) == 0b1111)
         ) {
             return id::arm::PLD;
         } else {
@@ -168,25 +168,25 @@ id::arm ident::u32_arm::unconditional(const u32 code) {
         }
     }
 
-    switch (shared::util::bit_range(code, 25, 26)) {
+    switch (llarm::util::bit_range(code, 25, 26)) {
         case 0b01: return id::arm::BLX1;
         case 0b10: 
-            if (shared::util::bit_fetch(code, 20) == 1) {
+            if (llarm::util::bit_fetch(code, 20) == 1) {
                 return id::arm::LDC2;
             } else {
                 return id::arm::STC2;
             }
         
         case 0b11:
-            if (shared::util::bit_fetch(code, 24) == 1) {
+            if (llarm::util::bit_fetch(code, 24) == 1) {
                 return id::arm::UNDEFINED;
             }
 
-            if (shared::util::bit_fetch(code, 4) == 0) {
+            if (llarm::util::bit_fetch(code, 4) == 0) {
                 return id::arm::CDP2;
             } 
 
-            if (shared::util::bit_fetch(code, 20) == 1) {
+            if (llarm::util::bit_fetch(code, 20) == 1) {
                 return id::arm::MRC2;
             } else {
                 return id::arm::MCR2;
@@ -197,7 +197,7 @@ id::arm ident::u32_arm::unconditional(const u32 code) {
 }
 
 id::arm ident::u32_arm::data_processing(const u32 code) {
-    switch (shared::util::bit_range(code, 21, 24)) {
+    switch (llarm::util::bit_range(code, 21, 24)) {
         case 0b0000: return id::arm::AND; 
         case 0b0001: return id::arm::EOR;
         case 0b0010: return id::arm::SUB;
@@ -207,33 +207,33 @@ id::arm ident::u32_arm::data_processing(const u32 code) {
         case 0b0110: return id::arm::SBC;
         case 0b0111: return id::arm::RSC;
         case 0b1000: 
-            if (shared::util::bit_fetch(code, 20)) {
+            if (llarm::util::bit_fetch(code, 20)) {
                 return id::arm::TST;
-            } else if (shared::util::bit_range(code, 12, 15) == 0b1111) {
+            } else if (llarm::util::bit_range(code, 12, 15) == 0b1111) {
                 return id::arm::TSTP;
             }
             return id::arm::UNDEFINED;
 
         case 0b1001: 
-            if (shared::util::bit_fetch(code, 20)) {
+            if (llarm::util::bit_fetch(code, 20)) {
                 return id::arm::TEQ;
-            } else if (shared::util::bit_range(code, 12, 15) == 0b1111) {
+            } else if (llarm::util::bit_range(code, 12, 15) == 0b1111) {
                 return id::arm::TEQP;
             }
             return id::arm::UNDEFINED;
 
         case 0b1010: 
-            if (shared::util::bit_fetch(code, 20)) {
+            if (llarm::util::bit_fetch(code, 20)) {
                 return id::arm::CMP;
-            } else if (shared::util::bit_range(code, 12, 15) == 0b1111) {
+            } else if (llarm::util::bit_range(code, 12, 15) == 0b1111) {
                 return id::arm::CMPP;
             }
             return id::arm::UNDEFINED;
         
         case 0b1011: 
-            if (shared::util::bit_fetch(code, 20)) {
+            if (llarm::util::bit_fetch(code, 20)) {
                 return id::arm::CMN;
-            } else if (shared::util::bit_range(code, 12, 15) == 0b1111) {
+            } else if (llarm::util::bit_range(code, 12, 15) == 0b1111) {
                 return id::arm::CMNP;
             }
             return id::arm::UNDEFINED;
@@ -248,8 +248,8 @@ id::arm ident::u32_arm::data_processing(const u32 code) {
 
 
 id::arm ident::u32_arm::load_store(const u32 code) {
-    const bool bit_22 = shared::util::bit_fetch(code, 22);
-    const bool bit_20 = shared::util::bit_fetch(code, 20);
+    const bool bit_22 = llarm::util::bit_fetch(code, 22);
+    const bool bit_20 = llarm::util::bit_fetch(code, 20);
 
     const u8 bytecode = (static_cast<u8>(bit_22 << 1) | bit_20);
 
@@ -260,8 +260,8 @@ id::arm ident::u32_arm::load_store(const u32 code) {
         case 0b11: return id::arm::LDRB;
     }
 
-    const bool bit_24 = shared::util::bit_fetch(code, 24);
-    const bool bit_21 = shared::util::bit_fetch(code, 21);
+    const bool bit_24 = llarm::util::bit_fetch(code, 24);
+    const bool bit_21 = llarm::util::bit_fetch(code, 21);
 
     const u8 bytecode2 = static_cast<u8>((bit_24 << 3) | (bit_22 << 2) | (bit_21 << 1) | bit_20);
 
@@ -278,20 +278,20 @@ id::arm ident::u32_arm::load_store(const u32 code) {
 
 
 id::arm ident::u32_arm::vfp_single(const u32 code) {
-    const bool bit_24 = shared::util::bit_fetch(code, 24);
-    const bool bit_23 = shared::util::bit_fetch(code, 23);
-    const bool bit_21 = shared::util::bit_fetch(code, 21);
-    const bool bit_20 = shared::util::bit_fetch(code, 20);
+    const bool bit_24 = llarm::util::bit_fetch(code, 24);
+    const bool bit_23 = llarm::util::bit_fetch(code, 23);
+    const bool bit_21 = llarm::util::bit_fetch(code, 21);
+    const bool bit_20 = llarm::util::bit_fetch(code, 20);
 
     const u8 bytecode = static_cast<u8>(
         (bit_24 << 7) |
         (bit_23 << 6) |
         (bit_21 << 5) |
         (bit_20 << 4) |
-        shared::util::bit_range<u8>(code, 4, 7)
+        llarm::util::bit_range<u8>(code, 4, 7)
     );
 
-    const u8 middle_zone = shared::util::bit_range<u8>(code, 16, 19);
+    const u8 middle_zone = llarm::util::bit_range<u8>(code, 16, 19);
     switch (bytecode) {
         case 0b01111100:
             if (middle_zone == 0b0101) {
@@ -358,16 +358,16 @@ id::arm ident::u32_arm::vfp_single(const u32 code) {
 
         case 0b00010001:
         case 0b00011001:
-            if (shared::util::bit_fetch(code, 22) == false) {
+            if (llarm::util::bit_fetch(code, 22) == false) {
                 return id::arm::FMRS;
             }
             break;
         
         case 0b01110001:
-            if (shared::util::bit_fetch(code, 22) == true) {
+            if (llarm::util::bit_fetch(code, 22) == true) {
                 if (
-                    (shared::util::bit_range(code, 12, 19) == 0b00011111) &&
-                    (shared::util::bit_fetch(code, 4))
+                    (llarm::util::bit_range(code, 12, 19) == 0b00011111) &&
+                    (llarm::util::bit_fetch(code, 4))
                 ) {
                     return id::arm::FMSTAT;
                 } else {
@@ -384,7 +384,7 @@ id::arm ident::u32_arm::vfp_single(const u32 code) {
         
         case 0b00000001:
         case 0b00001001:
-            if (shared::util::bit_fetch(code, 22) == true) {
+            if (llarm::util::bit_fetch(code, 22) == true) {
                 return id::arm::FMSR;
             }
             break;
@@ -396,7 +396,7 @@ id::arm ident::u32_arm::vfp_single(const u32 code) {
             return id::arm::FMULS;
 
         case 0b01100001:
-            if (shared::util::bit_fetch(code, 22) == true) {
+            if (llarm::util::bit_fetch(code, 22) == true) {
                 return id::arm::FMXR;
             }
             break;
@@ -414,8 +414,8 @@ id::arm ident::u32_arm::vfp_single(const u32 code) {
 
 
 id::arm ident::u32_arm::vfp_double(const u32 code) {
-    const u8 left = shared::util::bit_range<u8>(code, 20, 23);
-    const u8 right = shared::util::bit_range<u8>(code, 4, 7);
+    const u8 left = llarm::util::bit_range<u8>(code, 20, 23);
+    const u8 right = llarm::util::bit_range<u8>(code, 4, 7);
 
     switch (left) {
         case 0b0000:
@@ -456,13 +456,13 @@ id::arm ident::u32_arm::vfp_double(const u32 code) {
             [[fallthrough]]; // no break on purpose
 
         case 0b1001:
-            if (shared::util::bit_range(code, 8, 11) == 0b1011) {
+            if (llarm::util::bit_range(code, 8, 11) == 0b1011) {
                 return id::arm::FLDD;
             }
             break;
 
         case 0b1011: {
-            const u8 middle = shared::util::bit_range<u8>(code, 16, 19);
+            const u8 middle = llarm::util::bit_range<u8>(code, 16, 19);
 
             if (right == 0b1100) {
                 switch (middle) {
@@ -471,9 +471,9 @@ id::arm ident::u32_arm::vfp_double(const u32 code) {
                     case 0b0100: return id::arm::FCMPED;
                     case 0b0101: return id::arm::FCMPEZD;
                     case 0b0111: 
-                        if (shared::util::bit_range(code, 8, 11) == 0b1011) {
+                        if (llarm::util::bit_range(code, 8, 11) == 0b1011) {
                             return id::arm::FCVTSD;
-                        } else if (shared::util::bit_range(code, 8, 11) == 0b1010) {
+                        } else if (llarm::util::bit_range(code, 8, 11) == 0b1010) {
                             return id::arm::FCVTDS;
                         }
                         break;
@@ -524,7 +524,7 @@ id::arm ident::u32_arm::vfp_double(const u32 code) {
             break;
         
         case 0b1111:
-            const u8 middle = shared::util::bit_range<u8>(code, 16, 19);
+            const u8 middle = llarm::util::bit_range<u8>(code, 16, 19);
 
             if (right == 0b1100) {
                 if (middle == 0b0111) {
@@ -551,7 +551,7 @@ id::arm ident::u32_arm::arm(const u32 code) {
     // note: NOP is not handled because it's a pseudo 
     // instruction that's unique to this project. 
     
-    if (shared::util::bit_range(code, 28, 31) == 0b1111) {
+    if (llarm::util::bit_range(code, 28, 31) == 0b1111) {
         const id::arm tmp = unconditional(code);
 
         if (tmp != id::arm::UNDEFINED) {
@@ -559,19 +559,19 @@ id::arm ident::u32_arm::arm(const u32 code) {
         }
     }
 
-    switch (shared::util::bit_range(code, 25, 27)) {
+    switch (llarm::util::bit_range(code, 25, 27)) {
         // completed
         case 0b000: {
-            const bool bit_4 = shared::util::bit_fetch(code, 4);
-            const bool bit_20 = shared::util::bit_fetch(code, 20);
-            const bool bit_23 = shared::util::bit_fetch(code, 23);
-            const bool bit_24 = shared::util::bit_fetch(code, 24);
+            const bool bit_4 = llarm::util::bit_fetch(code, 4);
+            const bool bit_20 = llarm::util::bit_fetch(code, 20);
+            const bool bit_23 = llarm::util::bit_fetch(code, 23);
+            const bool bit_24 = llarm::util::bit_fetch(code, 24);
 
             if (bit_4) {
-                const bool bit_7 = shared::util::bit_fetch(code, 7);
+                const bool bit_7 = llarm::util::bit_fetch(code, 7);
 
                 if (bit_7) {
-                    if (!bit_20 && shared::util::bit_range(code, 4, 7) == 0b1111) {
+                    if (!bit_20 && llarm::util::bit_range(code, 4, 7) == 0b1111) {
                         return id::arm::STRD;
                     }
 
@@ -599,10 +599,10 @@ id::arm ident::u32_arm::arm(const u32 code) {
 
         // complete
         case 0b001: {
-            const bool bit_20 = shared::util::bit_fetch(code, 20);
-            const bool bit_21 = shared::util::bit_fetch(code, 21);
-            const bool bit_23 = shared::util::bit_fetch(code, 23);
-            const bool bit_24 = shared::util::bit_fetch(code, 24);
+            const bool bit_20 = llarm::util::bit_fetch(code, 20);
+            const bool bit_21 = llarm::util::bit_fetch(code, 21);
+            const bool bit_23 = llarm::util::bit_fetch(code, 23);
+            const bool bit_24 = llarm::util::bit_fetch(code, 24);
 
             const u8 bytecode = static_cast<u8>((bit_24 << 3) | (bit_23 << 2) | (bit_21 << 1) | bit_20);
 
@@ -622,7 +622,7 @@ id::arm ident::u32_arm::arm(const u32 code) {
 
         // complete
         case 0b011:
-            if (shared::util::bit_fetch(code, 4) == true) {
+            if (llarm::util::bit_fetch(code, 4) == true) {
                 return id::arm::UNDEFINED;
             }
 
@@ -631,14 +631,14 @@ id::arm ident::u32_arm::arm(const u32 code) {
         
         // complete
         case 0b100: {
-            if (shared::util::bit_range(code, 31, 28) == 0b1111) {
+            if (llarm::util::bit_range(code, 31, 28) == 0b1111) {
                 return id::arm::UNDEFINED;
             }
 
             // load/store multiple
 
-            const bool bit_22 = shared::util::bit_fetch(code, 22);
-            const bool bit_20 = shared::util::bit_fetch(code, 20);
+            const bool bit_22 = llarm::util::bit_fetch(code, 22);
+            const bool bit_20 = llarm::util::bit_fetch(code, 20);
             
             if (!bit_22 && bit_20) {
                 return id::arm::LDM1;
@@ -648,8 +648,8 @@ id::arm ident::u32_arm::arm(const u32 code) {
                 return id::arm::STM1;
             }
 
-            const bool bit_21 = shared::util::bit_fetch(code, 21);
-            const bool bit_15 = shared::util::bit_fetch(code, 15);
+            const bool bit_21 = llarm::util::bit_fetch(code, 21);
+            const bool bit_15 = llarm::util::bit_fetch(code, 15);
 
             if (bit_22 && !bit_21 && !bit_20) {
                 return id::arm::STM2;
@@ -669,7 +669,7 @@ id::arm ident::u32_arm::arm(const u32 code) {
         // complete
         case 0b101:
             // branch and branch with link
-            if (shared::util::bit_fetch(code, 24)) {
+            if (llarm::util::bit_fetch(code, 24)) {
                 return id::arm::BL;
             } else {
                 return id::arm::B;
@@ -678,28 +678,28 @@ id::arm ident::u32_arm::arm(const u32 code) {
         // complete
         case 0b110: {
             // coprocessor load/store and double register transfers [6]
-            const u8 bytecode = shared::util::bit_range<u8>(code, 20, 24);
+            const u8 bytecode = llarm::util::bit_range<u8>(code, 20, 24);
 
-            if (shared::util::bit_fetch(code, 20) == 0) {
+            if (llarm::util::bit_fetch(code, 20) == 0) {
                 if (bytecode == 0b00100) {
                     return id::arm::MCRR;
                 } 
 
-                const u8 middle_right_zone = shared::util::bit_range<u8>(code, 8, 11);
+                const u8 middle_right_zone = llarm::util::bit_range<u8>(code, 8, 11);
                 if (middle_right_zone == 0b1010) {
                     if (
-                        (shared::util::bit_fetch(code, 24)) &&
-                        (shared::util::bit_fetch(code, 21) == 0) &&
-                        (shared::util::bit_fetch(code, 20) == 0)
+                        (llarm::util::bit_fetch(code, 24)) &&
+                        (llarm::util::bit_fetch(code, 21) == 0) &&
+                        (llarm::util::bit_fetch(code, 20) == 0)
                     ) {
                         return id::arm::FSTS;
                     }
                     return id::arm::FSTMS;
                 } else if (middle_right_zone == 0b1011) {
-                    if (shared::util::bit_fetch(code, 22) == 0) {
+                    if (llarm::util::bit_fetch(code, 22) == 0) {
                         if (
-                            (shared::util::bit_fetch(code, 24)) &&
-                            (shared::util::bit_fetch(code, 21) == 0)
+                            (llarm::util::bit_fetch(code, 24)) &&
+                            (llarm::util::bit_fetch(code, 21) == 0)
                         ) {
                             return id::arm::FSTD;
                         }
@@ -720,17 +720,17 @@ id::arm ident::u32_arm::arm(const u32 code) {
                     case 0b10101: 
                     case 0b11001: 
                     case 0b11101: 
-                        if (shared::util::bit_range(code, 8, 11) == 0b1010) {
+                        if (llarm::util::bit_range(code, 8, 11) == 0b1010) {
                             return id::arm::FLDS;
                         }
                 }
 
-                const u8 middle_right_zone = shared::util::bit_range<u8>(code, 8, 11);
+                const u8 middle_right_zone = llarm::util::bit_range<u8>(code, 8, 11);
                 if (middle_right_zone == 0b1010) {
                     return id::arm::FLDMS;
                 } else if (
                     (middle_right_zone == 0b1011) && 
-                    (shared::util::bit_fetch(code, 22) == false)
+                    (llarm::util::bit_fetch(code, 22) == false)
                 ) {
                     // odd offset = FLDMX
                     // even offset = FLDMD 
@@ -749,21 +749,21 @@ id::arm ident::u32_arm::arm(const u32 code) {
 
         // complete
         case 0b111: {
-            if (shared::util::bit_fetch(code, 24) == 1) {
-                if (shared::util::bit_range(code, 31, 28) == 0b1111) {
+            if (llarm::util::bit_fetch(code, 24) == 1) {
+                if (llarm::util::bit_range(code, 31, 28) == 0b1111) {
                     return id::arm::UNDEFINED;
                 } else {
                     return id::arm::SWI;
                 }
             } else {
-                if (shared::util::bit_fetch(code, 4) == 1) {
-                    if (shared::util::bit_fetch(code, 20) == 1) {
+                if (llarm::util::bit_fetch(code, 4) == 1) {
+                    if (llarm::util::bit_fetch(code, 20) == 1) {
                         return id::arm::MRC;
                     } else {
                         return id::arm::MCR;
                     }
                 } else {
-                    const u8 cp_num = shared::util::bit_range<u8>(code, 8, 11);
+                    const u8 cp_num = llarm::util::bit_range<u8>(code, 8, 11);
                     if (cp_num == 0b1010) {
                         return vfp_single(code);
                     } else if (cp_num == 0b1011) {

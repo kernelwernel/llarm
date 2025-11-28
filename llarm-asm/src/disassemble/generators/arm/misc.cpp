@@ -11,7 +11,7 @@
 using namespace internal;
 
 std::string generators::arm::misc::PSR(const u32 code, const settings settings) {
-    const u8 opc = shared::util::bit_range<u8>(code, 21, 22);
+    const u8 opc = llarm::util::bit_range<u8>(code, 21, 22);
 
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
@@ -22,7 +22,7 @@ std::string generators::arm::misc::PSR(const u32 code, const settings settings) 
         case 0b10: instruction = "CMP"; break; 
         case 0b01: instruction = "TEQ"; break; 
         case 0b00: instruction = "TST"; break;
-        default: shared::out::error("Unknown opcode for PSR instruction");
+        default: llarm::out::error("Unknown opcode for PSR instruction");
     }
 
     const std::string addressing_mode = shifters::data(code, settings);
@@ -44,7 +44,7 @@ std::string generators::arm::misc::PSR(const u32 code, const settings settings) 
  * reference: A4-100
  */
 std::string generators::arm::misc::SWI(const u32 code, const settings settings) {
-    const u32 immed_24 = shared::util::bit_range(code, 0, 23);
+    const u32 immed_24 = llarm::util::bit_range(code, 0, 23);
     return util::make_string("SWI", util::cond(code, settings), " ", util::hex(immed_24, settings));
 }
 
@@ -61,8 +61,8 @@ std::string generators::arm::misc::SWI(const u32 code, const settings settings) 
  * reference: A4-14
  */
  std::string generators::arm::misc::BKPT(const u32 code, const settings settings) {
-    const u16 immed_top = shared::util::bit_range<u16>(code, 8, 19);
-    const u16 immed_bottom = shared::util::bit_range<u16>(code, 0, 3);
+    const u16 immed_top = llarm::util::bit_range<u16>(code, 8, 19);
+    const u16 immed_bottom = llarm::util::bit_range<u16>(code, 0, 3);
 
     const u16 immediate = static_cast<u16>((immed_top << 4) | immed_bottom);
 

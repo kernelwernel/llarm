@@ -39,13 +39,13 @@ using namespace internal;
  * reference: A4-84
  */
 std::string generators::arm::store::STM1(const u32 code, const settings settings) {
-    const u16 register_list = shared::util::bit_range<u16>(code, 0, 15);
+    const u16 register_list = llarm::util::bit_range<u16>(code, 0, 15);
     
     const std::string Rn = util::reg_string(code, 16, 19, settings);
     
     const std::string addressing_mode = shifters::ls_mul(code, settings);
 
-    const char* W = (shared::util::bit_fetch(code, 21) ? "!" : "");
+    const char* W = (llarm::util::bit_fetch(code, 21) ? "!" : "");
 
     return util::make_string("STM", util::cond(code, settings), addressing_mode, " ", Rn, W, ", ", util::reg_list(register_list, settings));
 }
@@ -97,7 +97,7 @@ std::string generators::arm::store::STM2(const u32 code, const settings settings
  * reference: A4-88
  */
 std::string generators::arm::store::STR(const u32 code, const settings settings) {
-    const u16 register_list = shared::util::bit_range<u16>(code, 0, 15);
+    const u16 register_list = llarm::util::bit_range<u16>(code, 0, 15);
 
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
@@ -162,7 +162,7 @@ std::string generators::arm::store::STRBT(const u32 code, const settings setting
         case shifter_enum::LS_SCALED_POST_ASR:
         case shifter_enum::LS_SCALED_POST_ROR:
         case shifter_enum::LS_SCALED_POST_RRX: break;
-        default: shared::out::error("Only post-indexed addressing modes are allowed for STRBT");
+        default: llarm::out::error("Only post-indexed addressing modes are allowed for STRBT");
     }
 
     const std::string Rd = util::reg_string(code, 12, 15, settings);
@@ -229,7 +229,7 @@ std::string generators::arm::store::STRT(const u32 code, const settings settings
         case shifter_enum::LS_SCALED_POST_ASR:
         case shifter_enum::LS_SCALED_POST_ROR:
         case shifter_enum::LS_SCALED_POST_RRX: break;
-        default: shared::out::error("Only post-indexed addressing modes are allowed for STRBT");
+        default: llarm::out::error("Only post-indexed addressing modes are allowed for STRBT");
     }
 
     const std::string Rd = util::reg_string(code, 12, 15, settings);

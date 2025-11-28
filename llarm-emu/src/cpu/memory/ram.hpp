@@ -29,7 +29,7 @@ public:
     template <std::size_t N>
     void write(const std::array<u8, N> &data, const u32 address) {
         if (address + N > ram.size()) {
-            shared::out::dev_error("Data exceeds RAM capacity (std::array)");
+            llarm::out::dev_error("Data exceeds RAM capacity (std::array)");
         }
 
         std::move(data.cbegin(), data.cend(), ram.begin() + address);

@@ -9,7 +9,7 @@
 
 void util::modify_vfp_bit(u64 &original, const u8 index, const bool value) {
     if (index > 63) {
-        shared::out::dev_error("Index for modify_vfp_bit() must be between 0 and 63");
+        llarm::out::dev_error("Index for modify_vfp_bit() must be between 0 and 63");
     }
 
     if (value) {
@@ -23,7 +23,7 @@ void util::modify_vfp_bit(u64 &original, const u8 index, const bool value) {
 
 void util::swap_bits_vfp(u64 &original, const u8 start, const u8 end, const u32 value) {
     if (start >= 64 || end >= 64 || start >= end) {
-        shared::out::dev_error("util::swap_bits_vfp has impossible arguments");
+        llarm::out::dev_error("util::swap_bits_vfp has impossible arguments");
         return;
     }
 

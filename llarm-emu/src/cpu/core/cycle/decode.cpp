@@ -22,7 +22,7 @@ bool DECODE::is_arm_instruction_unsupported(const llarm::as::id::arm id) {
 
     const id::specific_arch instruction_arch_support = [=]() -> id::specific_arch {
         switch (id) {
-            case as::id::arm::UNKNOWN: shared::out::warning("Unknown instruction check for ARM arch version support lookup");
+            case as::id::arm::UNKNOWN: llarm::out::warning("Unknown instruction check for ARM arch version support lookup");
             case as::id::arm::UNDEFINED:
             case as::id::arm::ADC:
             case as::id::arm::ADD:
@@ -217,7 +217,7 @@ bool DECODE::is_arm_instruction_unsupported(const llarm::as::id::arm id) {
                 // TODO (ARMv6): more conditions should be added
                 return (settings.product_family != id::product_family::ARM10E);
                 
-            default: shared::out::dev_error("Unknown instruction encountered during instruction support lookup");
+            default: llarm::out::dev_error("Unknown instruction encountered during instruction support lookup");
         }
     }
 

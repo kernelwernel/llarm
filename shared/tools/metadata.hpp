@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-namespace shared::metadata {
+namespace llarm::metadata {
     // versions
     static constinit const char* LLARM_EMU_VER = "0.1";
     static constinit const char* LLARM_ASM_VER = "0.1";

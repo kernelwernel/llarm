@@ -254,7 +254,7 @@ std::string generators::arm::vfp::FCVTDS(const u32 code, const settings settings
  * reference: C4-31
  */
 std::string generators::arm::vfp::FCVTSD(const u32 code, const settings settings) {
-    const bool D = (shared::util::bit_fetch(code, 22));
+    const bool D = (llarm::util::bit_fetch(code, 22));
 
     const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D, settings);
     const std::string Dm = util::reg_string(code, 0, 3, settings, util::prefix::D);
@@ -316,9 +316,9 @@ std::string generators::arm::vfp::FLDD(const u32 code, const settings settings) 
     const std::string Dd = util::reg_string(code, 12, 15, settings, util::prefix::D);
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
-    const u16 offset = shared::util::bit_range<u16>(code, 0, 7) * 4;
+    const u16 offset = llarm::util::bit_range<u16>(code, 0, 7) * 4;
 
-    const char* op = (shared::util::bit_fetch(code, 23) ? "" : "-");
+    const char* op = (llarm::util::bit_fetch(code, 23) ? "" : "-");
 
     // the organisation is awful, i know. 
     return util::make_string(
@@ -358,10 +358,10 @@ std::string generators::arm::vfp::FLDMD(const u32 code, const settings settings)
 
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
-    const char* W = (shared::util::bit_fetch(code, 21) ? "!" : "");
+    const char* W = (llarm::util::bit_fetch(code, 21) ? "!" : "");
 
-    const u8 Dd = shared::util::bit_range<u8>(code, 12, 15);
-    const u8 offset = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 Dd = llarm::util::bit_range<u8>(code, 12, 15);
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
     const std::string registers = util::vfp_register_list(Dd, offset, settings, util::prefix::D);
 
@@ -370,7 +370,7 @@ std::string generators::arm::vfp::FLDMD(const u32 code, const settings settings)
     );
 
     if (settings.capitals == false) {
-        shared::util::to_lower(tmp);
+        llarm::util::to_lower(tmp);
     }
 
     return tmp;
@@ -409,11 +409,11 @@ std::string generators::arm::vfp::FLDMS(const u32 code, const settings settings)
 
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
-    const char* W = (shared::util::bit_fetch(code, 21) ? "!" : "");
+    const char* W = (llarm::util::bit_fetch(code, 21) ? "!" : "");
 
-    const bool D = (shared::util::bit_fetch(code, 22));
-    const u8 Fd = shared::util::bit_range<u8>(code, 12, 15);
-    const u8 offset = shared::util::bit_range<u8>(code, 0, 7);
+    const bool D = (llarm::util::bit_fetch(code, 22));
+    const u8 Fd = llarm::util::bit_range<u8>(code, 12, 15);
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
     const u8 Fd_bits = static_cast<u8>((Fd << 1) | D);
 
@@ -424,7 +424,7 @@ std::string generators::arm::vfp::FLDMS(const u32 code, const settings settings)
     );
 
     if (settings.capitals == false) {
-        shared::util::to_lower(tmp);
+        llarm::util::to_lower(tmp);
     }
 
     return tmp;
@@ -462,10 +462,10 @@ std::string generators::arm::vfp::FLDMX(const u32 code, const settings settings)
 
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
-    const char* W = (shared::util::bit_fetch(code, 21) ? "!" : "");
+    const char* W = (llarm::util::bit_fetch(code, 21) ? "!" : "");
 
-    const u8 Dd = shared::util::bit_range<u8>(code, 12, 15);
-    const u8 offset = shared::util::bit_range<u8>(code, 0, 7) - 1;
+    const u8 Dd = llarm::util::bit_range<u8>(code, 12, 15);
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7) - 1;
 
     const std::string registers = util::vfp_register_list(Dd, offset, settings, util::prefix::D);
 
@@ -474,7 +474,7 @@ std::string generators::arm::vfp::FLDMX(const u32 code, const settings settings)
     );
 
     if (settings.capitals == false) {
-        shared::util::to_lower(tmp);
+        llarm::util::to_lower(tmp);
     }
 
     return tmp;
@@ -496,14 +496,14 @@ std::string generators::arm::vfp::FLDMX(const u32 code, const settings settings)
  * reference: C4-44
  */
 std::string generators::arm::vfp::FLDS(const u32 code, const settings settings) {
-    const bool D = (shared::util::bit_fetch(code, 22));
+    const bool D = (llarm::util::bit_fetch(code, 22));
     
     const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D, settings);
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
-    const u16 offset = shared::util::bit_range<u16>(code, 0, 7) * 4;
+    const u16 offset = llarm::util::bit_range<u16>(code, 0, 7) * 4;
 
-    const char* op = (shared::util::bit_fetch(code, 23) ? "" : "-");
+    const char* op = (llarm::util::bit_fetch(code, 23) ? "" : "-");
 
     return util::make_string(
         "FLDS", util::cond(code, settings), " ", Sd, ", [", Rn, ", #", op, util::hex(offset, settings), "]"
@@ -618,7 +618,7 @@ std::string generators::arm::vfp::FMRDL(const u32 code, const settings settings)
  * reference: C4-56
  */
 std::string generators::arm::vfp::FMRS(const u32 code, const settings settings) {
-    const bool N = (shared::util::bit_fetch(code, 7));
+    const bool N = (llarm::util::bit_fetch(code, 7));
 
     const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N, settings);
     const std::string Rd = util::reg_string(code, 12, 15, settings, util::prefix::R);
@@ -655,13 +655,13 @@ std::string generators::arm::vfp::FMRX(const u32 code, const settings settings) 
     std::string vfp_sys_reg;
     vfp_sys_reg.resize(5); // all system registers are only 5 characters long
 
-    const u8 reg_bits = shared::util::bit_range<u8>(code, 16, 19);
+    const u8 reg_bits = llarm::util::bit_range<u8>(code, 16, 19);
 
     switch (reg_bits) {
         case 0b0000: vfp_sys_reg = (settings.capitals ? "FPSID" : "fpsid"); break;
         case 0b0001: vfp_sys_reg = (settings.capitals ? "FPSCR" : "fpscr"); break;
         case 0b1000: vfp_sys_reg = (settings.capitals ? "FPEXC" : "fpexc"); break;
-        default: shared::out::error("Unrecognised VFP system register for FMRX");
+        default: llarm::out::error("Unrecognised VFP system register for FMRX");
     }
 
     return util::make_string("FMRX", util::cond(code, settings), " ", Rd, ", ", vfp_sys_reg);
@@ -714,7 +714,7 @@ std::string generators::arm::vfp::FMSCS(const u32 code, const settings settings)
  * reference: C4-64
  */
 std::string generators::arm::vfp::FMSR(const u32 code, const settings settings) {
-    const bool N = (shared::util::bit_fetch(code, 7));
+    const bool N = (llarm::util::bit_fetch(code, 7));
 
     const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N, settings);
     const std::string Rd = util::reg_string(code, 12, 15, settings);
@@ -798,13 +798,13 @@ std::string generators::arm::vfp::FMXR(const u32 code, const settings settings) 
     std::string vfp_sys_reg;
     vfp_sys_reg.resize(5); // all system registers are only 5 characters long
 
-    const u8 reg_bits = shared::util::bit_range<u8>(code, 16, 19);
+    const u8 reg_bits = llarm::util::bit_range<u8>(code, 16, 19);
 
     switch (reg_bits) {
         case 0b0000: vfp_sys_reg = "FPSID"; break;
         case 0b0001: vfp_sys_reg = "FPSCR"; break;
         case 0b1000: vfp_sys_reg = "FPEXC"; break;
-        default: shared::out::error("Unrecognised VFP system register for FMXR");
+        default: llarm::out::error("Unrecognised VFP system register for FMXR");
     }
 
     return util::make_string("FMXR", util::cond(code, settings), " ", vfp_sys_reg, ", ", Rd);
@@ -1022,9 +1022,9 @@ std::string generators::arm::vfp::FSTD(const u32 code, const settings settings) 
     const std::string Dd = util::reg_string(code, 12, 15, settings, util::prefix::D);
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
-    const u16 offset = (shared::util::bit_range<u16>(code, 0, 7) * 4);
+    const u16 offset = (llarm::util::bit_range<u16>(code, 0, 7) * 4);
 
-    const char* op = (shared::util::bit_fetch(code, 23) ? "" : "-");
+    const char* op = (llarm::util::bit_fetch(code, 23) ? "" : "-");
 
     return util::make_string("FSTD", util::cond(code, settings), " ", Dd, ", [", Rn, ", #", op, util::hex(offset, settings), "]");
 }
@@ -1059,10 +1059,10 @@ std::string generators::arm::vfp::FSTMD(const u32 code, const settings settings)
 
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
-    const char* W = (shared::util::bit_fetch(code, 21) ? "!" : "");
+    const char* W = (llarm::util::bit_fetch(code, 21) ? "!" : "");
 
-    const u8 Dd = shared::util::bit_range<u8>(code, 12, 15);
-    const u8 offset = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 Dd = llarm::util::bit_range<u8>(code, 12, 15);
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
     const std::string registers = util::vfp_register_list(Dd, offset, settings, util::prefix::D);
 
@@ -1100,11 +1100,11 @@ std::string generators::arm::vfp::FSTMS(const u32 code, const settings settings)
 
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
-    const char* W = (shared::util::bit_fetch(code, 21) ? "!" : "");
+    const char* W = (llarm::util::bit_fetch(code, 21) ? "!" : "");
 
-    const bool D = (shared::util::bit_fetch(code, 22));
-    const u8 Fd = shared::util::bit_range<u8>(code, 12, 15);
-    const u8 offset = shared::util::bit_range<u8>(code, 0, 7);
+    const bool D = (llarm::util::bit_fetch(code, 22));
+    const u8 Fd = llarm::util::bit_range<u8>(code, 12, 15);
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
     const u8 Fd_bits = static_cast<u8>((Fd << 1) | D);
 
@@ -1143,10 +1143,10 @@ std::string generators::arm::vfp::FSTMX(const u32 code, const settings settings)
 
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
-    const char* W = (shared::util::bit_fetch(code, 21) ? "!" : "");
+    const char* W = (llarm::util::bit_fetch(code, 21) ? "!" : "");
 
-    const u8 Dd = shared::util::bit_range<u8>(code, 12, 15);
-    const u8 offset = shared::util::bit_range<u8>(code, 0, 7) - 1;
+    const u8 Dd = llarm::util::bit_range<u8>(code, 12, 15);
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7) - 1;
 
     const std::string registers = util::vfp_register_list(Dd, offset, settings, util::prefix::D);
 
@@ -1159,14 +1159,14 @@ std::string generators::arm::vfp::FSTMX(const u32 code, const settings settings)
  * reference: C4-
  */
 std::string generators::arm::vfp::FSTS(const u32 code, const settings settings) {
-    const bool D = (shared::util::bit_fetch(code, 22));
+    const bool D = (llarm::util::bit_fetch(code, 22));
     
     const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D, settings);
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
-    const u16 offset = shared::util::bit_range<u16>(code, 0, 7) * 4;
+    const u16 offset = llarm::util::bit_range<u16>(code, 0, 7) * 4;
 
-    const char* op = (shared::util::bit_fetch(code, 23) ? "" : "-");
+    const char* op = (llarm::util::bit_fetch(code, 23) ? "" : "-");
 
     return util::make_string("FSTS", util::cond(code, settings), " ", Sd, ", [", Rn, ", #", op, util::hex(offset, settings), "]");
 }

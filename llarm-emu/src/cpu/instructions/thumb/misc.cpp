@@ -30,7 +30,7 @@ void INSTRUCTIONS::thumb::misc::BKPT(const u16 code) {
     }
 
     // IGNORED BY THE ARM HARDWARE, only here for debug purposes
-    // const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    // const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     reg.write(id::reg::R14_abt, (reg.read(id::reg::PC) + 4));
     reg.write(id::reg::SPSR_abt, (reg.read(id::reg::CPSR)));
@@ -60,7 +60,7 @@ void INSTRUCTIONS::thumb::misc::BKPT(const u16 code) {
  */
 void INSTRUCTIONS::thumb::misc::SWI(const u16 code) {
     // IGNORED BY THE ARM HARDWARE, only here for debug purposes
-    // const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    // const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     reg.write(id::reg::R14_svc, (reg.read(id::reg::PC) + 2));
     reg.write(id::reg::SPSR_svc, (reg.read(id::reg::CPSR)));

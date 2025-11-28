@@ -24,7 +24,7 @@ void INSTRUCTIONS::thumb::math::ADC(const u16 code) {
 
     reg.write(Rd_id, (result & (std::numeric_limits<u32>::max()))); // basically the same as static_cast<u32>
 
-    reg.write(id::cpsr::N, shared::util::bit_fetch(reg.read(Rd_id), 31));
+    reg.write(id::cpsr::N, llarm::util::bit_fetch(reg.read(Rd_id), 31));
     reg.write(id::cpsr::Z, (reg.read(Rd_id) == 0));
     reg.write(id::cpsr::C, operation.carry_add(result));
     reg.write(id::cpsr::V, operation.overflow_add(Rd, Rm, c_flag));
@@ -40,7 +40,7 @@ void INSTRUCTIONS::thumb::math::ADC(const u16 code) {
  */
 void INSTRUCTIONS::thumb::math::ADD1(const u16 code) {
     const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
-    const u8 immed_3 = shared::util::bit_range<u8>(code, 6, 8);
+    const u8 immed_3 = llarm::util::bit_range<u8>(code, 6, 8);
 
     const u32 Rn = reg.read(code, 3, 5);
 
@@ -48,7 +48,7 @@ void INSTRUCTIONS::thumb::math::ADD1(const u16 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, operation.carry_add(Rn, immed_3));
     reg.write(id::cpsr::V, operation.overflow_add(Rn, immed_3));
@@ -64,13 +64,13 @@ void INSTRUCTIONS::thumb::math::ADD1(const u16 code) {
  */
 void INSTRUCTIONS::thumb::math::ADD2(const u16 code) {
     const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 8, 10);
-    const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     reg.write(Rd_id, reg.read(Rd_id) + immed_8);
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, operation.carry_add(Rd, immed_8));
     reg.write(id::cpsr::V, operation.overflow_add(Rd, immed_8));
@@ -94,7 +94,7 @@ void INSTRUCTIONS::thumb::math::ADD3(const u16 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, operation.carry_add(Rn, Rm));
     reg.write(id::cpsr::V, operation.overflow_add(Rn, Rm));
@@ -105,10 +105,10 @@ void INSTRUCTIONS::thumb::math::ADD3(const u16 code) {
  * Rd = Rd + Rm
  */
 void INSTRUCTIONS::thumb::math::ADD4(const u16 code) {
-    u8 Rd_bits = shared::util::bit_range<u8>(code, 0, 2);
-    u8 Rm_bits = shared::util::bit_range<u8>(code, 3, 5);
-    const bool H1 = shared::util::bit_fetch(code, 7);
-    const bool H2 = shared::util::bit_fetch(code, 6);
+    u8 Rd_bits = llarm::util::bit_range<u8>(code, 0, 2);
+    u8 Rm_bits = llarm::util::bit_range<u8>(code, 3, 5);
+    const bool H1 = llarm::util::bit_fetch(code, 7);
+    const bool H2 = llarm::util::bit_fetch(code, 6);
 
     // branchless version of "if H1/H2 is true, add 8" 
     Rd_bits = Rd_bits + (8 * H1);
@@ -128,7 +128,7 @@ void INSTRUCTIONS::thumb::math::ADD4(const u16 code) {
  * Rd = (PC AND 0xFFFFFFFC) + (immed_8 << 2)
  */
 void INSTRUCTIONS::thumb::math::ADD5(const u16 code) {
-    const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 8, 10);
 
@@ -140,7 +140,7 @@ void INSTRUCTIONS::thumb::math::ADD5(const u16 code) {
  * Rd = SP + (immed_8 << 2)
  */
 void INSTRUCTIONS::thumb::math::ADD6(const u16 code) {
-    const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
     const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 8, 10);
 
     reg.write(Rd_id, (reg.read(id::reg::SP) + (immed_8 << 2)));
@@ -151,7 +151,7 @@ void INSTRUCTIONS::thumb::math::ADD6(const u16 code) {
  * SP = SP + (immed_7 << 2)
  */
 void INSTRUCTIONS::thumb::math::ADD7(const u16 code) {
-    const u8 immed_7 = shared::util::bit_range<u8>(code, 0, 6);
+    const u8 immed_7 = llarm::util::bit_range<u8>(code, 0, 6);
 
     reg.write(id::reg::SP, (reg.read(id::reg::SP) + (immed_7 << 2)));
 }
@@ -173,7 +173,7 @@ void INSTRUCTIONS::thumb::math::SBC(const u16 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, !operation.borrow_sub(Rd, Rm, !reg.read(id::cpsr::C)));
     reg.write(id::cpsr::V, operation.overflow_sub(Rd, Rm, !reg.read(id::cpsr::C)));
@@ -188,7 +188,7 @@ void INSTRUCTIONS::thumb::math::SBC(const u16 code) {
  * V Flag = OverflowFrom(Rn - immed_3)
  */
 void INSTRUCTIONS::thumb::math::SUB1(const u16 code) {
-    const u8 immed_3 = shared::util::bit_range<u8>(code, 6, 8);
+    const u8 immed_3 = llarm::util::bit_range<u8>(code, 6, 8);
     const id::reg Rn_id = reg.thumb_fetch_reg_id(code, 3, 5);
     const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
@@ -198,7 +198,7 @@ void INSTRUCTIONS::thumb::math::SUB1(const u16 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, !operation.borrow_sub(Rn, immed_3));
     reg.write(id::cpsr::V, operation.overflow_sub(Rn, immed_3));
@@ -213,14 +213,14 @@ void INSTRUCTIONS::thumb::math::SUB1(const u16 code) {
  * V Flag = OverflowFrom(Rd - immed_8)
  */
 void INSTRUCTIONS::thumb::math::SUB2(const u16 code) {
-    const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
     const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 8, 10);
 
     reg.write(Rd_id, (reg.read(Rd_id) - immed_8));
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, !operation.borrow_sub(Rd, immed_8));
     reg.write(id::cpsr::V, operation.overflow_sub(Rd, immed_8));
@@ -245,7 +245,7 @@ void INSTRUCTIONS::thumb::math::SUB3(const u16 code) {
     const u32 Rn = reg.read(Rn_id);
     const u32 Rm = reg.read(Rm_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, !operation.borrow_sub(Rn, Rm));
     reg.write(id::cpsr::V, operation.overflow_sub(Rn, Rm));
@@ -255,7 +255,7 @@ void INSTRUCTIONS::thumb::math::SUB3(const u16 code) {
  * SP = SP - (immed_7 << 2)
  */
 void INSTRUCTIONS::thumb::math::SUB4(const u16 code) {
-    const u8 immed_7 = shared::util::bit_range<u8>(code, 0, 6);
+    const u8 immed_7 = llarm::util::bit_range<u8>(code, 0, 6);
 
     reg.write(id::reg::SP, (reg.read(id::reg::SP) - (immed_7 << 2)));
 }
@@ -277,6 +277,6 @@ void INSTRUCTIONS::thumb::math::MUL(const u16 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 }

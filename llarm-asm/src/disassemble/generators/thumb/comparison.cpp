@@ -37,7 +37,7 @@ std::string generators::thumb::comparison::CMN(const u16 code, const settings se
 std::string generators::thumb::comparison::CMP1(const u16 code, const settings settings) {
     const std::string Rn = util::reg_string(code, 8, 10, settings);
 
-    const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     return util::make_string(
         "CMP ", Rn, ", #", util::hex(immed_8, settings)
@@ -74,8 +74,8 @@ std::string generators::thumb::comparison::CMP2(const u16 code, const settings s
  * reference: A7-37
  */
 std::string generators::thumb::comparison::CMP3(const u16 code, const settings settings) {
-    const bool H1 = (shared::util::bit_fetch(code, 7));
-    const bool H2 = (shared::util::bit_fetch(code, 6));
+    const bool H1 = (llarm::util::bit_fetch(code, 7));
+    const bool H2 = (llarm::util::bit_fetch(code, 6));
 
     const std::string Rn = util::reg_string_bits(code, 0, 2, H1, settings);
     const std::string Rm = util::reg_string_bits(code, 3, 5, H2, settings);

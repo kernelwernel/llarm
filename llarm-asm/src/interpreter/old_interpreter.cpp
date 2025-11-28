@@ -12,50 +12,6 @@
 #include <vector>
 #include <string_view>
 
-interpreter::tokens_t interpreter::tokenize(const std::string &code) {
-    if (code.empty()) {
-        shared::out::error("Empty instruction string for tokenization is invalid");
-    }
-
-    std::vector<std::string_view> raw_tokens;
-    std::size_t start = 0;
-
-    const std::string instruction = strip(code);
-
-    const std::string_view special_delims = "[]^!-#";
-    const std::string_view whitespace_delims = " ,";
-
-    while (start < instruction.size()) {
-        const char c = instruction[start];
-
-        if (whitespace_delims.find(c) != std::string_view::npos) {
-            ++start;
-            continue;
-        }
-
-        if (special_delims.find(c) != std::string_view::npos) {
-            raw_tokens.emplace_back(&instruction[start], 1);
-            ++start;
-            continue;
-        }
-
-        std::size_t end = start;
-
-        while (
-            (end < instruction.size()) &&
-            whitespace_delims.find(instruction[end]) == std::string_view::npos &&
-            special_delims.find(instruction[end]) == std::string_view::npos
-        ) {
-            ++end;
-        }
-
-        raw_tokens.emplace_back(instruction.substr(start, end - start));
-        start = end;
-    }
-
-    return raw_tokens;
-}
-
 
 void interpreter::asterisk(interpreter::lexeme_struct &lexeme) {
     lexeme.token_type = tokens::MUL_OP;
@@ -115,7 +71,7 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
                     lexeme.token_type = REG_LIST_DOUBLE;
                 } else if (is_reg_list_standard) {
                     // this distinction is important in some instructions like LDM2
-                    if (shared::util::bit_fetch(reg_list, 15)) {
+                    if (llarm::util::bit_fetch(reg_list, 15)) {
                         lexeme.token_type = REG_LIST;
                     } else {
                         lexeme.token_type = REG_LIST_NO_PC;
@@ -165,7 +121,7 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
                     }
                 }
 
-                shared::util::modify_bit<u16>(reg_list, reg, true);
+                llarm::util::modify_bit<u16>(reg_list, reg, true);
             }
     
             continue;
@@ -237,7 +193,7 @@ std::vector<interpreter::lexeme_struct> interpreter::lexer(const std::vector<std
                     break;
 
                 default: 
-                    shared::out::dev_error("How the fuck did this happen?");
+                    llarm::out::dev_error("How the fuck did this happen?");
             }
 
             lexeme_vec.emplace_back(lexeme);
@@ -649,7 +605,7 @@ bool interpreter::has_matching_pattern(const std::vector<tokens> &token_pattern,
             const u16 list = lexemes.at(lexeme_index).reg_list;
 
             // has R15?
-            if (shared::util::bit_fetch(list, 15)) {
+            if (llarm::util::bit_fetch(list, 15)) {
                 continue;
             }
 
@@ -660,7 +616,7 @@ bool interpreter::has_matching_pattern(const std::vector<tokens> &token_pattern,
             const u16 list = lexemes.at(lexeme_index).reg_list;
 
             // does not have R15?
-            if (shared::util::bit_fetch(list, 15) == false) {
+            if (llarm::util::bit_fetch(list, 15) == false) {
                 continue;
             }
             
@@ -671,7 +627,7 @@ bool interpreter::has_matching_pattern(const std::vector<tokens> &token_pattern,
             const u16 list = lexemes.at(lexeme_index).reg_list;
             
             // does not have R8~R14?
-            if (shared::util::bit_range(list, 8, 14) == 0) {
+            if (llarm::util::bit_range(list, 8, 14) == 0) {
                 continue;
             }
 
@@ -683,8 +639,8 @@ bool interpreter::has_matching_pattern(const std::vector<tokens> &token_pattern,
             
             // does not have R8~R13 and R15 is 0?
             if (
-                (shared::util::bit_range(list, 8, 13) == 0) &&
-                (shared::util::bit_fetch(list, 15) == false)
+                (llarm::util::bit_range(list, 8, 13) == 0) &&
+                (llarm::util::bit_fetch(list, 15) == false)
             ) {
                 continue;
             }
@@ -696,7 +652,7 @@ bool interpreter::has_matching_pattern(const std::vector<tokens> &token_pattern,
             const u16 list = lexemes.at(lexeme_index).reg_list;
 
             // does not have R8~R15?
-            if (shared::util::bit_range(list, 8, 15) == 0) {
+            if (llarm::util::bit_range(list, 8, 15) == 0) {
                 continue;
             }
 

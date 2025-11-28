@@ -28,7 +28,7 @@ void INSTRUCTIONS::arm::misc::NOP(const u32 code) {
  *        R15[1:0] = <alu_out>[1:0] // ... update M[1:0]
  */
 void INSTRUCTIONS::arm::misc::PSR(const u32 code) {
-    const u8 opc = shared::util::bit_range<u8>(code, 21, 22);
+    const u8 opc = llarm::util::bit_range<u8>(code, 21, 22);
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
 
     const data_struct shifter_operand = address_mode.data_processing(code);
@@ -54,7 +54,7 @@ void INSTRUCTIONS::arm::misc::PSR(const u32 code) {
             break;
     }
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(alu_out, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
     reg.write(id::cpsr::C, C);
     reg.write(id::cpsr::V, V);

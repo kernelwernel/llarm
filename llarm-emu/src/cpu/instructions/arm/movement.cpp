@@ -20,7 +20,7 @@ void INSTRUCTIONS::arm::movement::MOV(const u32 code) {
     
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
 
-    const bool S = shared::util::bit_fetch(code, 20);
+    const bool S = llarm::util::bit_fetch(code, 20);
 
     reg.write(Rd_id, shifter_operand.value);
 
@@ -29,7 +29,7 @@ void INSTRUCTIONS::arm::movement::MOV(const u32 code) {
     if ((S == 1) && (Rd_id == id::reg::R15)) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
     } else {
-        reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+        reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
         reg.write(id::cpsr::C, (shifter_operand.carry));
     }
@@ -52,7 +52,7 @@ void INSTRUCTIONS::arm::movement::MVN(const u32 code) {
 
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
 
-    const bool S = shared::util::bit_fetch(code, 20);
+    const bool S = llarm::util::bit_fetch(code, 20);
 
     reg.write(Rd_id, ~shifter_operand.value);
 
@@ -61,7 +61,7 @@ void INSTRUCTIONS::arm::movement::MVN(const u32 code) {
     if ((S == 1) && (Rd_id == id::reg::R15)) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
     } else {
-        reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+        reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
         reg.write(id::cpsr::C, (shifter_operand.carry));
     }
@@ -99,17 +99,17 @@ void INSTRUCTIONS::arm::movement::MRS(const u32) {};// TODO
  *       SPSR[31:24] = operand[31:24]
  */
 void INSTRUCTIONS::arm::movement::MSR_IMM(const u32 code) {
-    const bool R = shared::util::bit_fetch(code, 22);
+    const bool R = llarm::util::bit_fetch(code, 22);
 
-    const bool field_mask_c = shared::util::bit_fetch(code, 16);
-    const bool field_mask_x = shared::util::bit_fetch(code, 17);
-    const bool field_mask_s = shared::util::bit_fetch(code, 18);
-    const bool field_mask_f = shared::util::bit_fetch(code, 19);
+    const bool field_mask_c = llarm::util::bit_fetch(code, 16);
+    const bool field_mask_x = llarm::util::bit_fetch(code, 17);
+    const bool field_mask_s = llarm::util::bit_fetch(code, 18);
+    const bool field_mask_f = llarm::util::bit_fetch(code, 19);
 
     u32 operand = 0;
 
-    const u8 imm_8 = shared::util::bit_range<u8>(code, 0, 7);
-    const u8 rotate_imm = shared::util::bit_range<u8>(code, 8, 11);
+    const u8 imm_8 = llarm::util::bit_range<u8>(code, 0, 7);
+    const u8 rotate_imm = llarm::util::bit_range<u8>(code, 8, 11);
     operand = std::rotr(imm_8, (rotate_imm * 2)); 
 
     if (R == false) {
@@ -118,19 +118,19 @@ void INSTRUCTIONS::arm::movement::MSR_IMM(const u32 code) {
         u32 new_CPSR = reg.read(id::reg::CPSR);
 
         if (field_mask_c && is_privileged) {
-            shared::util::swap_bits(new_CPSR, 0, 7, shared::util::bit_range<u8>(operand, 0, 7));
+            llarm::util::swap_bits(new_CPSR, 0, 7, llarm::util::bit_range<u8>(operand, 0, 7));
         }
 
         if (field_mask_x && is_privileged) {
-            shared::util::swap_bits(new_CPSR, 8, 15, shared::util::bit_range<u8>(operand, 8, 15));
+            llarm::util::swap_bits(new_CPSR, 8, 15, llarm::util::bit_range<u8>(operand, 8, 15));
         }
 
         if (field_mask_s && is_privileged) {
-            shared::util::swap_bits(new_CPSR, 16, 23, shared::util::bit_range<u8>(operand, 16, 23));
+            llarm::util::swap_bits(new_CPSR, 16, 23, llarm::util::bit_range<u8>(operand, 16, 23));
         }
 
         if (field_mask_f) {
-            shared::util::swap_bits(new_CPSR, 24, 31, shared::util::bit_range<u8>(operand, 24, 31));
+            llarm::util::swap_bits(new_CPSR, 24, 31, llarm::util::bit_range<u8>(operand, 24, 31));
         }
 
         reg.write(id::reg::CPSR, new_CPSR);
@@ -141,19 +141,19 @@ void INSTRUCTIONS::arm::movement::MSR_IMM(const u32 code) {
             u32 new_SPSR = reg.read(id::reg::SPSR);
             
             if (field_mask_c) {
-                shared::util::swap_bits(new_SPSR, 0, 7, shared::util::bit_range<u8>(operand, 0, 7));
+                llarm::util::swap_bits(new_SPSR, 0, 7, llarm::util::bit_range<u8>(operand, 0, 7));
             }
 
             if (field_mask_x) {
-                shared::util::swap_bits(new_SPSR, 8, 15, shared::util::bit_range<u8>(operand, 8, 15));
+                llarm::util::swap_bits(new_SPSR, 8, 15, llarm::util::bit_range<u8>(operand, 8, 15));
             }
 
             if (field_mask_s) {
-                shared::util::swap_bits(new_SPSR, 16, 23, shared::util::bit_range<u8>(operand, 16, 23));
+                llarm::util::swap_bits(new_SPSR, 16, 23, llarm::util::bit_range<u8>(operand, 16, 23));
             }
 
             if (field_mask_f) {
-                shared::util::swap_bits(new_SPSR, 24, 31, shared::util::bit_range<u8>(operand, 24, 31));
+                llarm::util::swap_bits(new_SPSR, 24, 31, llarm::util::bit_range<u8>(operand, 24, 31));
             }
 
             reg.write(id::reg::SPSR, new_SPSR);
@@ -188,12 +188,12 @@ void INSTRUCTIONS::arm::movement::MSR_IMM(const u32 code) {
  *       SPSR[31:24] = operand[31:24]
  */
 void INSTRUCTIONS::arm::movement::MSR_REG(const u32 code) {
-    const bool R = shared::util::bit_fetch(code, 22);
+    const bool R = llarm::util::bit_fetch(code, 22);
 
-    const bool field_mask_c = shared::util::bit_fetch(code, 16);
-    const bool field_mask_x = shared::util::bit_fetch(code, 17);
-    const bool field_mask_s = shared::util::bit_fetch(code, 18);
-    const bool field_mask_f = shared::util::bit_fetch(code, 19);
+    const bool field_mask_c = llarm::util::bit_fetch(code, 16);
+    const bool field_mask_x = llarm::util::bit_fetch(code, 17);
+    const bool field_mask_s = llarm::util::bit_fetch(code, 18);
+    const bool field_mask_f = llarm::util::bit_fetch(code, 19);
 
     u32 operand = 0;
 
@@ -206,19 +206,19 @@ void INSTRUCTIONS::arm::movement::MSR_REG(const u32 code) {
         u32 new_CPSR = reg.read(id::reg::CPSR);
 
         if (field_mask_c && is_privileged) {
-            shared::util::swap_bits(new_CPSR, 0, 7, shared::util::bit_range<u8>(operand, 0, 7));
+            llarm::util::swap_bits(new_CPSR, 0, 7, llarm::util::bit_range<u8>(operand, 0, 7));
         }
 
         if (field_mask_x && is_privileged) {
-            shared::util::swap_bits(new_CPSR, 8, 15, shared::util::bit_range<u8>(operand, 8, 15));
+            llarm::util::swap_bits(new_CPSR, 8, 15, llarm::util::bit_range<u8>(operand, 8, 15));
         }
 
         if (field_mask_s && is_privileged) {
-            shared::util::swap_bits(new_CPSR, 16, 23, shared::util::bit_range<u8>(operand, 16, 23));
+            llarm::util::swap_bits(new_CPSR, 16, 23, llarm::util::bit_range<u8>(operand, 16, 23));
         }
 
         if (field_mask_f) {
-            shared::util::swap_bits(new_CPSR, 24, 31, shared::util::bit_range<u8>(operand, 24, 31));
+            llarm::util::swap_bits(new_CPSR, 24, 31, llarm::util::bit_range<u8>(operand, 24, 31));
         }
 
         reg.write(id::reg::CPSR, new_CPSR);
@@ -229,19 +229,19 @@ void INSTRUCTIONS::arm::movement::MSR_REG(const u32 code) {
             u32 new_SPSR = reg.read(id::reg::SPSR);
             
             if (field_mask_c) {
-                shared::util::swap_bits(new_SPSR, 0, 7, shared::util::bit_range<u8>(operand, 0, 7));
+                llarm::util::swap_bits(new_SPSR, 0, 7, llarm::util::bit_range<u8>(operand, 0, 7));
             }
 
             if (field_mask_x) {
-                shared::util::swap_bits(new_SPSR, 8, 15, shared::util::bit_range<u8>(operand, 8, 15));
+                llarm::util::swap_bits(new_SPSR, 8, 15, llarm::util::bit_range<u8>(operand, 8, 15));
             }
 
             if (field_mask_s) {
-                shared::util::swap_bits(new_SPSR, 16, 23, shared::util::bit_range<u8>(operand, 16, 23));
+                llarm::util::swap_bits(new_SPSR, 16, 23, llarm::util::bit_range<u8>(operand, 16, 23));
             }
 
             if (field_mask_f) {
-                shared::util::swap_bits(new_SPSR, 24, 31, shared::util::bit_range<u8>(operand, 24, 31));
+                llarm::util::swap_bits(new_SPSR, 24, 31, llarm::util::bit_range<u8>(operand, 24, 31));
             }
 
             reg.write(id::reg::SPSR, new_SPSR);

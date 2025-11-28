@@ -34,7 +34,7 @@ id::cp COPROCESSOR::fetch_cp_id(const u8 raw_cp_num) {
         case 0b1101: return id::cp::CP13;
         case 0b1110: return id::cp::CP14;
         case 0b1111: return id::cp::CP15;
-        default: shared::out::dev_error("Unknown coprocessor id argument for fetching_cp_id()");
+        default: llarm::out::dev_error("Unknown coprocessor id argument for fetching_cp_id()");
     };
 }
 
@@ -51,7 +51,7 @@ void COPROCESSOR::write(
     const id::cp cp_id = fetch_cp_id(cp_id_bits);
 
     switch (cp_id) {
-        case id::cp::UNKNOWN: shared::out::dev_error("Unknown coprocessor id for write operation");
+        case id::cp::UNKNOWN: llarm::out::dev_error("Unknown coprocessor id for write operation");
         case id::cp::CP0:
         case id::cp::CP1:
         case id::cp::CP2:
@@ -66,7 +66,7 @@ void COPROCESSOR::write(
         case id::cp::CP11:
         case id::cp::CP12:
         case id::cp::CP13:
-        case id::cp::CP14: shared::out::dev_error("Currently unsupported coprocessor in write operation");
+        case id::cp::CP14: llarm::out::dev_error("Currently unsupported coprocessor in write operation");
         case id::cp::CP15:
             cp15.write(
                 cp15.identify(CRn, CRm, opcode_2), 
@@ -89,7 +89,7 @@ u32 COPROCESSOR::read(
     const id::cp cp_id = fetch_cp_id(cp_id_bits);
 
     switch (cp_id) {
-        case id::cp::UNKNOWN: shared::out::error("Unknown coprocessor id for read operation"); // TODO dev error
+        case id::cp::UNKNOWN: llarm::out::error("Unknown coprocessor id for read operation"); // TODO dev error
         case id::cp::CP0:
         case id::cp::CP1:
         case id::cp::CP2:
@@ -143,7 +143,7 @@ void COPROCESSOR::reset(const id::cp cp_id) {
     }
 
     switch (cp_id) {
-        case id::cp::UNKNOWN: shared::out::error("Unknown coprocessor id for read operation"); // TODO dev error
+        case id::cp::UNKNOWN: llarm::out::error("Unknown coprocessor id for read operation"); // TODO dev error
         case id::cp::CP0: return;
         case id::cp::CP1: return;
         case id::cp::CP2: return;

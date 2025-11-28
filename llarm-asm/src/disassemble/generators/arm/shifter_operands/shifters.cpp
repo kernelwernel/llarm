@@ -50,7 +50,7 @@ shifter_enum shifters::identify_data_shifter(const u32 code) {
         (util::bit_fetch(code, 27) != 0) ||
         (util::bit_fetch(code, 26) != 0) 
     ) {
-        shared::out::error("No known data addressing shifter has been found");
+        llarm::out::error("No known data addressing shifter has been found");
     }
 
     // 32-bit immediate
@@ -79,7 +79,7 @@ shifter_enum shifters::identify_data_shifter(const u32 code) {
             case 0b010: return shifter_enum::DATA_IMM_LSR;
             case 0b100: return shifter_enum::DATA_IMM_ASR;
             case 0b110: return shifter_enum::DATA_IMM_ROR;
-            default: shared::out::error("No known data immediate addressing shifter has been found");
+            default: llarm::out::error("No known data immediate addressing shifter has been found");
         }
     }
 
@@ -95,11 +95,11 @@ shifter_enum shifters::identify_data_shifter(const u32 code) {
             case 0b0011: return shifter_enum::DATA_REG_LSR;
             case 0b0101: return shifter_enum::DATA_REG_ASR;
             case 0b0111: return shifter_enum::DATA_REG_ROR;
-            default: shared::out::error("No known data register addressing shifter has been found");
+            default: llarm::out::error("No known data register addressing shifter has been found");
         }
     }
 
-    shared::out::error("No known data addressing shifter has been found");
+    llarm::out::error("No known data addressing shifter has been found");
 }
 
 
@@ -108,7 +108,7 @@ shifter_enum shifters::identify_ls_shifter(const u32 code) {
         (util::bit_fetch(code, 27) != 0) ||
         (util::bit_fetch(code, 26) != 1)
     ) {
-        shared::out::error("No known load store addressing shifter has been found");
+        llarm::out::error("No known load store addressing shifter has been found");
     }
 
     const bool bit_24 = util::bit_fetch(code, 24);
@@ -128,7 +128,7 @@ shifter_enum shifters::identify_ls_shifter(const u32 code) {
             return shifter_enum::LS_IMM_POST;
         }
 
-        shared::out::error("No known load store immediate addressing shifter has been found");
+        llarm::out::error("No known load store immediate addressing shifter has been found");
     }
 
 
@@ -146,7 +146,7 @@ shifter_enum shifters::identify_ls_shifter(const u32 code) {
             return shifter_enum::LS_REG_POST;
         }
 
-        shared::out::error("No known load store immediate addressing shifter has been found");
+        llarm::out::error("No known load store immediate addressing shifter has been found");
     }
 
 
@@ -180,11 +180,11 @@ shifter_enum shifters::identify_ls_shifter(const u32 code) {
             case 0b000100: return shifter_enum::LS_SCALED_POST_ASR;
             case 0b000110: return shifter_enum::LS_SCALED_POST_ROR;
             case 0b100110: return shifter_enum::LS_SCALED_POST_RRX;
-            default: shared::out::error("No known load store scaled register addressing shifter has been found");
+            default: llarm::out::error("No known load store scaled register addressing shifter has been found");
         }
     }
 
-    shared::out::error("No known load store addressing shifter has been found");
+    llarm::out::error("No known load store addressing shifter has been found");
 }
 
 
@@ -196,7 +196,7 @@ shifter_enum shifters::identify_ls_misc_shifter(const u32 code) {
         (util::bit_fetch(code, 26) != 0) ||
         (util::bit_fetch(code, 25) != 0)
     ) {
-        shared::out::error("No known load store misc addressing shifter has been found");
+        llarm::out::error("No known load store misc addressing shifter has been found");
     }
 
     const bool bit_24 = util::bit_fetch(code, 24);
@@ -215,7 +215,7 @@ shifter_enum shifters::identify_ls_misc_shifter(const u32 code) {
         case 0b100: return shifter_enum::LS_MISC_REG;
         case 0b101: return shifter_enum::LS_MISC_REG_PRE;
         case 0b000: return shifter_enum::LS_MISC_REG_POST;
-        default: shared::out::error("No known load store misc addressing shifter has been found");
+        default: llarm::out::error("No known load store misc addressing shifter has been found");
     }
 }
 
@@ -226,7 +226,7 @@ shifter_enum shifters::identify_ls_mul_shifter(const u32 code) {
         (util::bit_fetch(code, 26) != 0) ||
         (util::bit_fetch(code, 25) != 0)
     ) {
-        shared::out::error("1 No known load store multiple addressing shifter has been found");
+        llarm::out::error("1 No known load store multiple addressing shifter has been found");
     }
 
     const bool bit_24 = util::bit_fetch(code, 24);
@@ -239,7 +239,7 @@ shifter_enum shifters::identify_ls_mul_shifter(const u32 code) {
         case 0b11: return shifter_enum::LS_MUL_INC_BEFORE;
         case 0b00: return shifter_enum::LS_MUL_DEC_AFTER;
         case 0b10: return shifter_enum::LS_MUL_DEC_BEFORE;
-        default: shared::out::error("2 No known load store multiple addressing shifter has been found");
+        default: llarm::out::error("2 No known load store multiple addressing shifter has been found");
     }
 }
 
@@ -250,7 +250,7 @@ shifter_enum shifters::identify_ls_coproc_shifter(const u32 code) {
         (util::bit_fetch(code, 26) != 1) ||
         (util::bit_fetch(code, 25) != 0)
     ) {
-        shared::out::error("No known load store coprocessor addressing shifter has been found");
+        llarm::out::error("No known load store coprocessor addressing shifter has been found");
     }
 
     const bool bit_24 = util::bit_fetch(code, 24);
@@ -263,7 +263,7 @@ shifter_enum shifters::identify_ls_coproc_shifter(const u32 code) {
         case 0b11: return shifter_enum::LS_COPROC_IMM_PRE;
         case 0b01: return shifter_enum::LS_COPROC_IMM_POST;
         case 0b00: return shifter_enum::LS_COPROC_UNINDEXED;
-        default: shared::out::error("No known load store coprocessor addressing shifter has been found");
+        default: llarm::out::error("No known load store coprocessor addressing shifter has been found");
     }
 }
 
@@ -274,7 +274,7 @@ shifter_enum shifters::identify_vfp_ls_mul_shifter(const u32 code) {
         (util::bit_fetch(code, 26) != 1) ||
         (util::bit_fetch(code, 25) != 0)
     ) {
-        shared::out::error("No known VFP load store multiple addressing shifter has been found");
+        llarm::out::error("No known VFP load store multiple addressing shifter has been found");
     }
 
     const bool bit_24 = util::bit_fetch(code, 24);
@@ -287,7 +287,7 @@ shifter_enum shifters::identify_vfp_ls_mul_shifter(const u32 code) {
         case 0b010: return shifter_enum::VFP_LS_MUL_UNINDEXED;
         case 0b011: return shifter_enum::VFP_LS_MUL_INC;
         case 0b101: return shifter_enum::VFP_LS_MUL_DEC;
-        default: shared::out::error("No known VFP load store multiple addressing shifter has been found");
+        default: llarm::out::error("No known VFP load store multiple addressing shifter has been found");
     }
 }
 

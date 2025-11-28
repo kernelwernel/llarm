@@ -53,7 +53,7 @@ id::access_perm MPU::get_access_perm(const u8 AP) {
         }
     }
 
-    shared::out::dev_error("Unknown access permission bits (MPU)");
+    llarm::out::dev_error("Unknown access permission bits (MPU)");
 }
 
 bool MPU::is_mpu_enabled() {
@@ -218,7 +218,7 @@ id::aborts MPU::is_access_valid(const u32 address, const u8 access_size, const i
             }
             break;
 
-        case id::access_perm::UNPREDICTABLE: shared::out::unpredictable("MPU access perm is unpredictable");
+        case id::access_perm::UNPREDICTABLE: llarm::out::unpredictable("MPU access perm is unpredictable");
         case id::access_perm::NO_ACCESS: 
             if (access_type == id::access_type::INSTRUCTION_FETCH) {
                 return id::aborts::PREFETCH_ABORT;

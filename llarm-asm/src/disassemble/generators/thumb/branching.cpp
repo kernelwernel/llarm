@@ -26,9 +26,9 @@ using namespace internal;
  * reference: A7-18
  */
 std::string generators::thumb::branching::B1(const u16 code, const u32 PC, const settings settings) {
-    const u8 cond = shared::util::bit_range<u8>(code, 8, 11);
+    const u8 cond = llarm::util::bit_range<u8>(code, 8, 11);
 
-    const u8 signed_immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 signed_immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     const u32 sign_extend = static_cast<u32>(signed_immed_8 << 1);
     const u32 target_address = (sign_extend + 4 + PC);
@@ -54,7 +54,7 @@ std::string generators::thumb::branching::B1(const u16 code, const u32 PC, const
  * reference: A7-20
  */
 std::string generators::thumb::branching::B2(const u16 code, const u32 PC, const settings settings) {
-    const u16 signed_immed_11 = shared::util::bit_range<u16>(code, 0, 10);
+    const u16 signed_immed_11 = llarm::util::bit_range<u16>(code, 0, 10);
 
     const u32 sign_extend = static_cast<u32>(signed_immed_11 << 1);
     const u32 target_address = (sign_extend + 4 + PC);
@@ -133,9 +133,9 @@ std::string generators::thumb::branching::B2(const u16 code, const u32 PC, const
  * reference: A7-26
  */
 std::string generators::thumb::branching::BL_BLX1(const u16 code, const u32 PC, const settings settings) {
-//    const u16 offset_11 = shared::util::bit_range<u16>(code, 0, 10);
+//    const u16 offset_11 = llarm::util::bit_range<u16>(code, 0, 10);
 
-    const u8 H = shared::util::bit_range<u8>(code, 11, 12);
+    const u8 H = llarm::util::bit_range<u8>(code, 11, 12);
 
     const bool BL = (H == 0b10 || H == 0b11);
     const bool BLX1 = (H == 0b01);
@@ -157,7 +157,7 @@ std::string generators::thumb::branching::BL_BLX1(const u16 code, const u32 PC, 
    //     return util::make_string("BLX ");
    // }
     
-    shared::out::error("todo");
+    llarm::out::error("todo");
 }
 
 

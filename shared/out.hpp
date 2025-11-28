@@ -5,7 +5,7 @@
 
 #include "types.hpp"
 
-namespace shared::out {
+namespace llarm::out {
     constexpr sv
         black_bg = "\x1B[48;2;0;0;0m",
         bold     = "\033[1m",

@@ -9,7 +9,7 @@
 #include "shared/out.hpp"
 
 u32 ADDRESSING_MODE::load_store(const u32 code) {
-    using namespace shared::util;
+    using namespace llarm::util;
 
     const shifter_enum shifter_id = llarm::as::identify::shifter(shift_category::LS, code);
 
@@ -35,7 +35,7 @@ u32 ADDRESSING_MODE::load_store(const u32 code) {
         case shifter_enum::LS_SCALED_POST_ASR:
         case shifter_enum::LS_SCALED_POST_ROR:
         case shifter_enum::LS_SCALED_POST_RRX: return ls_scaled_reg_post(code);
-        default: shared::out::error("Impossible identification of ARM load store shifter");
+        default: llarm::out::error("Impossible identification of ARM load store shifter");
     }
 }
 
@@ -48,9 +48,9 @@ u32 ADDRESSING_MODE::load_store(const u32 code) {
  */
 u32 ADDRESSING_MODE::ls_imm(const u32 code) {
     const u32 Rn = reg.read(code, 16, 19);
-    const u16 offset_12 = shared::util::bit_range(code, 0, 11);
+    const u16 offset_12 = llarm::util::bit_range(code, 0, 11);
     
-    if (shared::util::bit_fetch(code, 23)) {
+    if (llarm::util::bit_fetch(code, 23)) {
         return (Rn + offset_12);
     } else {
         return (Rn - offset_12);
@@ -68,7 +68,7 @@ u32 ADDRESSING_MODE::ls_reg(const u32 code) {
     const u32 Rn = reg.read(code, 16, 19);
     const u32 Rm = reg.read(code, 0, 3);
 
-    if (shared::util::bit_fetch(code, 23)) {
+    if (llarm::util::bit_fetch(code, 23)) {
         return (Rn + Rm);
     } else {
         return (Rn - Rm);
@@ -107,8 +107,8 @@ u32 ADDRESSING_MODE::ls_reg(const u32 code) {
  *   address = Rn - index
  */
 u32 ADDRESSING_MODE::ls_scaled_reg(const u32 code) {
-    const u8 shift = shared::util::bit_range(code, 5, 6);
-    const u8 shift_imm = shared::util::bit_range(code, 7, 11);
+    const u8 shift = llarm::util::bit_range(code, 5, 6);
+    const u8 shift_imm = llarm::util::bit_range(code, 7, 11);
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rn = reg.read(code, 16, 19);
 
@@ -130,7 +130,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg(const u32 code) {
 
         case 0b10: // ASR
             if (shift_imm == 0) {
-                if (shared::util::bit_fetch(Rm, 31) == 1) {
+                if (llarm::util::bit_fetch(Rm, 31) == 1) {
                     index = 0xFFFFFFFF;
                 } else {
                     index = 0;
@@ -149,7 +149,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg(const u32 code) {
             break;
     }
 
-    if (shared::util::bit_fetch(code, 23)) {
+    if (llarm::util::bit_fetch(code, 23)) {
         address = (Rn + index);
     } else {
         address = (Rn - index);
@@ -168,14 +168,14 @@ u32 ADDRESSING_MODE::ls_scaled_reg(const u32 code) {
  *   Rn = address
  */
 u32 ADDRESSING_MODE::ls_imm_pre(const u32 code) {
-    const u16 offset_12 = shared::util::bit_range(code, 0, 11);
+    const u16 offset_12 = llarm::util::bit_range(code, 0, 11);
 
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
     const u32 Rn = reg.read(Rn_id);
 
     u32 address = 0;
 
-    if (shared::util::bit_fetch(code, 23)) {
+    if (llarm::util::bit_fetch(code, 23)) {
         address = (Rn + offset_12);
     } else {
         address = (Rn - offset_12);
@@ -206,7 +206,7 @@ u32 ADDRESSING_MODE::ls_reg_pre(const u32 code) {
     
     u32 address = 0;
 
-    if (shared::util::bit_fetch(code, 23)) {
+    if (llarm::util::bit_fetch(code, 23)) {
         address = (Rn + Rm);
     } else {
         address = (Rn - Rm);
@@ -255,8 +255,8 @@ u32 ADDRESSING_MODE::ls_reg_pre(const u32 code) {
  *   Rn = address
  */
 u32 ADDRESSING_MODE::ls_scaled_reg_pre(const u32 code) {
-    const u8 shift = shared::util::bit_range(code, 5, 6);
-    const u8 shift_imm = shared::util::bit_range(code, 7, 11);
+    const u8 shift = llarm::util::bit_range(code, 5, 6);
+    const u8 shift_imm = llarm::util::bit_range(code, 7, 11);
     const u32 Rm = reg.read(code, 0, 3);
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
     const u32 Rn = reg.read(Rn_id);
@@ -279,7 +279,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg_pre(const u32 code) {
 
         case 0b10: // ASR
             if (shift_imm == 0) {
-                if (shared::util::bit_fetch(Rm, 31) == 1) {
+                if (llarm::util::bit_fetch(Rm, 31) == 1) {
                     index = 0xFFFFFFFF;
                 } else {
                     index = 0;
@@ -298,7 +298,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg_pre(const u32 code) {
             break;
     }
 
-    if (shared::util::bit_fetch(code, 23)) {
+    if (llarm::util::bit_fetch(code, 23)) {
         address = (Rn + index);
     } else {
         address = (Rn - index);
@@ -322,13 +322,13 @@ u32 ADDRESSING_MODE::ls_scaled_reg_pre(const u32 code) {
  */
 u32 ADDRESSING_MODE::ls_imm_post(const u32 code) {
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
-    const u16 offset_12 = shared::util::bit_range(code, 0, 11);
+    const u16 offset_12 = llarm::util::bit_range(code, 0, 11);
     const u32 Rn = reg.read(Rn_id);
 
     const u32 address = Rn;
 
     if (reg.is_cond_valid(code)) {
-        if (shared::util::bit_fetch(code, 23)) {
+        if (llarm::util::bit_fetch(code, 23)) {
             reg.write(Rn_id, (Rn + offset_12));
         } else {
             reg.write(Rn_id, (Rn - offset_12));
@@ -355,7 +355,7 @@ u32 ADDRESSING_MODE::ls_reg_post(const u32 code) {
     const u32 address = Rn;
 
     if (reg.is_cond_valid(code)) {
-        if (shared::util::bit_fetch(code, 23)) {
+        if (llarm::util::bit_fetch(code, 23)) {
             reg.write(Rn_id, (Rn + Rm));
         } else {
             reg.write(Rn_id, (Rn - Rm));
@@ -401,8 +401,8 @@ u32 ADDRESSING_MODE::ls_reg_post(const u32 code) {
  *     Rn = Rn - index
  */
 u32 ADDRESSING_MODE::ls_scaled_reg_post(const u32 code) {
-    const u8 shift = shared::util::bit_range(code, 5, 6);
-    const u8 shift_imm = shared::util::bit_range(code, 7, 11);
+    const u8 shift = llarm::util::bit_range(code, 5, 6);
+    const u8 shift_imm = llarm::util::bit_range(code, 7, 11);
     const u32 Rm = reg.read(code, 0, 3);
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
     const u32 Rn = reg.read(Rn_id);
@@ -425,7 +425,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg_post(const u32 code) {
 
         case 0b10: // ASR
             if (shift_imm == 0) {
-                if (shared::util::bit_fetch(Rm, 31) == 1) {
+                if (llarm::util::bit_fetch(Rm, 31) == 1) {
                     index = 0xFFFFFFFF;
                 } else {
                     index = 0;
@@ -445,7 +445,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg_post(const u32 code) {
     }
 
     if (reg.is_cond_valid(code)) {
-        if (shared::util::bit_fetch(code, 23)) {
+        if (llarm::util::bit_fetch(code, 23)) {
             reg.write(Rn_id, Rn + index);
         } else {
             reg.write(Rn_id, Rn - index);

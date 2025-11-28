@@ -9,7 +9,7 @@
 using namespace internal;
 
 id::thumb ident::u16_thumb::thumb(const u16 code) {
-    const u8 bytecode = shared::util::bit_range<u8>(code, 13, 15);
+    const u8 bytecode = llarm::util::bit_range<u8>(code, 13, 15);
 
     switch (bytecode) {
         case 0b000: return bits_000(code);
@@ -30,20 +30,20 @@ id::thumb ident::u16_thumb::thumb(const u16 code) {
 // add/subtract register
 // add/subtract immediate
 id::thumb ident::u16_thumb::bits_000(const u16 code) {
-    switch (shared::util::bit_range(code, 11, 12)) { 
+    switch (llarm::util::bit_range(code, 11, 12)) { 
         case 0b00: return id::thumb::LSL1;
         case 0b01: return id::thumb::LSR1;
         case 0b10: return id::thumb::ASR1;
     }
 
-    switch (shared::util::bit_range(code, 9, 12)) {
+    switch (llarm::util::bit_range(code, 9, 12)) {
         case 0b1110: return id::thumb::ADD1;
         case 0b1100: return id::thumb::ADD3;
         case 0b1111: return id::thumb::SUB1;
         case 0b1101: return id::thumb::SUB3;
     }
 
-    if (shared::util::bit_range(code, 6, 12) == 0b1110000) {
+    if (llarm::util::bit_range(code, 6, 12) == 0b1110000) {
         return id::thumb::MOV2;
     }
 
@@ -53,7 +53,7 @@ id::thumb ident::u16_thumb::bits_000(const u16 code) {
 
 // add/subtract/compare/move immediate
 id::thumb ident::u16_thumb::bits_001(const u16 code) {
-    switch (shared::util::bit_range(code, 11, 12)) {
+    switch (llarm::util::bit_range(code, 11, 12)) {
         case 0b10: return id::thumb::ADD2;
         case 0b01: return id::thumb::CMP1;
         case 0b00: return id::thumb::MOV1;
@@ -70,11 +70,11 @@ id::thumb ident::u16_thumb::bits_001(const u16 code) {
 // load from literal pool
 // load/store register offset
 id::thumb ident::u16_thumb::bits_010(const u16 code) {
-    if (shared::util::bit_range(code, 11, 12) == 0b01) {
+    if (llarm::util::bit_range(code, 11, 12) == 0b01) {
         return id::thumb::LDR3;
     }
 
-    switch (shared::util::bit_range(code, 9, 12)) {
+    switch (llarm::util::bit_range(code, 9, 12)) {
         case 0b1000: return id::thumb::STR2;
         case 0b1001: return id::thumb::STRH2;
         case 0b1010: return id::thumb::STRB2;
@@ -85,7 +85,7 @@ id::thumb ident::u16_thumb::bits_010(const u16 code) {
         case 0b1111: return id::thumb::LDRSH;
     }
     
-    switch (shared::util::bit_range(code, 6, 12)) {
+    switch (llarm::util::bit_range(code, 6, 12)) {
         case 0b0000101: return id::thumb::ADC;
         case 0b0010000:
         case 0b0010001:
@@ -126,7 +126,7 @@ id::thumb ident::u16_thumb::bits_010(const u16 code) {
 
 // load/store word/byte immediate offset
 id::thumb ident::u16_thumb::bits_011(const u16 code) {
-    switch (shared::util::bit_range(code, 11, 12)) {
+    switch (llarm::util::bit_range(code, 11, 12)) {
         case 0b00: return id::thumb::STR1;
         case 0b01: return id::thumb::LDR1;
         case 0b10: return id::thumb::STRB1;
@@ -140,7 +140,7 @@ id::thumb ident::u16_thumb::bits_011(const u16 code) {
 // load/store halfword immediate offset
 // load/store to/from stack
 id::thumb ident::u16_thumb::bits_100(const u16 code) {
-    switch (shared::util::bit_range(code, 11, 12)) {
+    switch (llarm::util::bit_range(code, 11, 12)) {
         case 0b00: return id::thumb::STRH1;
         case 0b01: return id::thumb::LDRH1;
         case 0b10: return id::thumb::STR3;
@@ -154,11 +154,11 @@ id::thumb ident::u16_thumb::bits_100(const u16 code) {
 // add to SP or PC
 // misc
 id::thumb ident::u16_thumb::bits_101(const u16 code) {
-    switch (shared::util::bit_range(code, 11, 12)) {
+    switch (llarm::util::bit_range(code, 11, 12)) {
         case 0b00: return id::thumb::ADD5;
         case 0b01: return id::thumb::ADD6;
         case 0b10: {
-            const u8 tmp = shared::util::bit_range<u8>(code, 7, 10);
+            const u8 tmp = llarm::util::bit_range<u8>(code, 7, 10);
             
             if (tmp == 0b0000) {
                 return id::thumb::ADD7;
@@ -166,14 +166,14 @@ id::thumb ident::u16_thumb::bits_101(const u16 code) {
                 return id::thumb::SUB4;
             }
 
-            if (shared::util::bit_range(code, 9, 10) == 0b10) {
+            if (llarm::util::bit_range(code, 9, 10) == 0b10) {
                 return id::thumb::PUSH;
             }
             break;
         }
 
         case 0b11: {
-            const u8 tmp2 = shared::util::bit_range<u8>(code, 8, 10);
+            const u8 tmp2 = llarm::util::bit_range<u8>(code, 8, 10);
             
             if (tmp2 == 0b110) {
                 return id::thumb::BKPT;
@@ -193,12 +193,12 @@ id::thumb ident::u16_thumb::bits_101(const u16 code) {
 // conditional branch
 // software interrupt
 id::thumb ident::u16_thumb::bits_110(const u16 code) {
-    switch (shared::util::bit_range(code, 11, 12)) {
+    switch (llarm::util::bit_range(code, 11, 12)) {
         case 0b00: return id::thumb::STMIA;
         case 0b01: return id::thumb::LDMIA;
         case 0b10:
         case 0b11:
-            if (shared::util::bit_range(code, 8, 12) == 0b11111) {
+            if (llarm::util::bit_range(code, 8, 12) == 0b11111) {
                 return id::thumb::SWI;
             }
 
@@ -214,7 +214,7 @@ id::thumb ident::u16_thumb::bits_110(const u16 code) {
 // BL/BLX prefix
 // BL suffix
 id::thumb ident::u16_thumb::bits_111(const u16 code) {
-    switch (shared::util::bit_range(code, 11, 12)) {
+    switch (llarm::util::bit_range(code, 11, 12)) {
         case 0b00: return id::thumb::B2;
         case 0b01: return id::thumb::BLX1;
         case 0b10: // TODO IDK WHAT THE FUCK THIS IS SUPPOSED TO MEAN (A7-26)

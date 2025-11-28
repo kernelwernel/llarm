@@ -128,7 +128,7 @@ i32 OPERATION::signed_sat(const u32 x, const u32 n) {
         return pos_range;
     }
 
-    shared::out::dev_error("Invalid value for signed saturation operation");
+    llarm::out::dev_error("Invalid value for signed saturation operation");
 }
 
 
@@ -146,7 +146,7 @@ std::vector<id::reg> OPERATION::register_list(const u16 reg_list) {
     std::vector<id::reg> tmp = {};
 
     for (u8 i = 0; i < (sizeof(reg_list) * 8); i++) {
-        if (shared::util::bit_fetch(reg_list, i)) {
+        if (llarm::util::bit_fetch(reg_list, i)) {
             switch (i) {
                 case 0: tmp.push_back(id::reg::R0); continue;
                 case 1: tmp.push_back(id::reg::R1); continue;

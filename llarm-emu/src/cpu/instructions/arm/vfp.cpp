@@ -396,9 +396,9 @@ void INSTRUCTIONS::arm::vfp::FLDD(const u32 code) {
     u32 address = 0;
 
     const u32 Rn = reg.read(code, 16, 19);
-    const u8 offset = shared::util::bit_range(code, 0, 7);
+    const u8 offset = llarm::util::bit_range(code, 0, 7);
 
-    if (shared::util::bit_fetch(code, 23) == 1) {
+    if (llarm::util::bit_fetch(code, 23) == 1) {
         address = Rn + offset * 4;
     } else {
         address = Rn - offset * 4;
@@ -446,10 +446,10 @@ void INSTRUCTIONS::arm::vfp::FLDMD(const u32 code) {
     const vfp_address_struct addresses = vfp_addressing_mode.vfp_load_multiple(code);
 
     u32 address = addresses.start;
-    const u8 offset = shared::util::bit_range(code, 0, 7);
+    const u8 offset = llarm::util::bit_range(code, 0, 7);
     const u8 cond = (offset - 2) / 2;
 
-    const u8 d = shared::util::bit_range(code, 12, 15);
+    const u8 d = llarm::util::bit_range(code, 12, 15);
 
     for (u8 i = 0; i < cond; i++) {
         const mem_read_struct access = memory.read(address, 4);
@@ -483,7 +483,7 @@ void INSTRUCTIONS::arm::vfp::FLDMD(const u32 code) {
     }
 
     if (addresses.end != (address - 4)) {
-        shared::out::error("Assertion failed for FLDMD instruction");
+        llarm::out::error("Assertion failed for FLDMD instruction");
     }
 }
 
@@ -503,9 +503,9 @@ void INSTRUCTIONS::arm::vfp::FLDMS(const u32 code) {
 
     u32 address = addresses.start;
 
-    const u8 offset = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
-    const u8 d = shared::util::bit_range<u8>(code, 12, 15);
+    const u8 d = llarm::util::bit_range<u8>(code, 12, 15);
 
     for (u8 i = 0; i < offset - 1; i++) {
         const mem_read_struct access = memory.read(address, 4);
@@ -522,7 +522,7 @@ void INSTRUCTIONS::arm::vfp::FLDMS(const u32 code) {
     }
 
     if (addresses.end != (address - 4)) {
-        shared::out::error("Assertion failed for FLDMS instruction");
+        llarm::out::error("Assertion failed for FLDMS instruction");
     }
 }
 
@@ -534,9 +534,9 @@ void INSTRUCTIONS::arm::vfp::FLDMS(const u32 code) {
  *     Load registers D(d) to D(d+(offset-3)/2) from memory words Memory[start_address,4] through to Memory[end_address-4,4]
  */
 void INSTRUCTIONS::arm::vfp::FLDMX(const u32 code) {
-    const u8 offset = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
-    const u8 d = shared::util::bit_range<u8>(code, 12, 15);
+    const u8 d = llarm::util::bit_range<u8>(code, 12, 15);
 
     const vfp_address_struct addresses = vfp_addressing_mode.vfp_load_multiple(code);
 
@@ -566,11 +566,11 @@ void INSTRUCTIONS::arm::vfp::FLDMX(const u32 code) {
  *    Sd = Memory[address,4]
  */
 void INSTRUCTIONS::arm::vfp::FLDS(const u32 code) {
-    const bool U = shared::util::bit_fetch(code, 23);
+    const bool U = llarm::util::bit_fetch(code, 23);
     u32 address = 0;
 
     const u32 Rn = reg.read(code, 16, 19);
-    const u8 offset = shared::util::bit_range(code, 0, 7);
+    const u8 offset = llarm::util::bit_range(code, 0, 7);
 
     if (U == 1) {
         address = Rn + offset * 4;
@@ -634,7 +634,7 @@ void INSTRUCTIONS::arm::vfp::FMDLR(const u32 code) {
  */
 void INSTRUCTIONS::arm::vfp::FMRDH(const u32 code) {
     const u64 Dn = vfp_reg.read_double(code, 16, 19);
-    reg.write(code, 12, 15, shared::util::bit_range(Dn, 32, 63));
+    reg.write(code, 12, 15, llarm::util::bit_range(Dn, 32, 63));
 }
 
 
@@ -644,7 +644,7 @@ void INSTRUCTIONS::arm::vfp::FMRDH(const u32 code) {
  */
 void INSTRUCTIONS::arm::vfp::FMRDL(const u32 code) {
     const u64 Dn = vfp_reg.read_double(code, 16, 19);
-    reg.write(code, 12, 15, shared::util::bit_range(Dn, 0, 31));
+    reg.write(code, 12, 15, llarm::util::bit_range(Dn, 0, 31));
 }
 
 
@@ -663,7 +663,7 @@ void INSTRUCTIONS::arm::vfp::FMRS(const u32 code) {
  *    Rd = reg
  */
 void INSTRUCTIONS::arm::vfp::FMRX(const u32 code) {
-    const u8 reg_id = shared::util::bit_range(code, 16, 19);
+    const u8 reg_id = llarm::util::bit_range(code, 16, 19);
 
     id::vfp_reg id = id::vfp_reg::UNKNOWN;
 
@@ -672,7 +672,7 @@ void INSTRUCTIONS::arm::vfp::FMRX(const u32 code) {
         case 0b0001: id = id::vfp_reg::FPSCR; break;
         case 0b1000: id = id::vfp_reg::FPEXC; break;
         default: 
-            shared::out::warning("No known VFP system register for FMRX, defaulting to FPSCR");
+            llarm::out::warning("No known VFP system register for FMRX, defaulting to FPSCR");
             id = id::vfp_reg::FPSCR;
     }
 
@@ -732,7 +732,7 @@ void INSTRUCTIONS::arm::vfp::FMULS(const u32 code) {
  *    reg = Rd
  */
 void INSTRUCTIONS::arm::vfp::FMXR(const u32 code) {
-    const u8 reg_id = shared::util::bit_range(code, 16, 19);
+    const u8 reg_id = llarm::util::bit_range(code, 16, 19);
 
     id::vfp_reg id = id::vfp_reg::UNKNOWN;
 
@@ -741,7 +741,7 @@ void INSTRUCTIONS::arm::vfp::FMXR(const u32 code) {
         case 0b0001: id = id::vfp_reg::FPSCR; break;
         case 0b1000: id = id::vfp_reg::FPEXC; break;
         default: 
-            shared::out::warning("No known VFP system register for FMXR, defaulting to FPSCR");
+            llarm::out::warning("No known VFP system register for FMXR, defaulting to FPSCR");
             id = id::vfp_reg::FPSCR;
     }
 
@@ -828,9 +828,9 @@ void INSTRUCTIONS::arm::vfp::FSQRTS(const u32 code) {
 void INSTRUCTIONS::arm::vfp::FSTD(const u32 code) {
     u32 address = 0;
     const u32 Rn = reg.read(code, 16, 19);
-    const u8 offset = shared::util::bit_range(code, 0, 7);
+    const u8 offset = llarm::util::bit_range(code, 0, 7);
 
-    if (shared::util::bit_fetch(code, 23)) {
+    if (llarm::util::bit_fetch(code, 23)) {
         address = Rn + offset * 4;
     } else {
         address = Rn - offset * 4;
@@ -838,8 +838,8 @@ void INSTRUCTIONS::arm::vfp::FSTD(const u32 code) {
 
     const u64 Dd = vfp_reg.read_double(code, 12, 15);
 
-    const u32 low_Dd = shared::util::bit_range(Dd, 0, 31);
-    const u32 high_Dd = shared::util::bit_range(Dd, 32, 63);
+    const u32 low_Dd = llarm::util::bit_range(Dd, 0, 31);
+    const u32 high_Dd = llarm::util::bit_range(Dd, 32, 63);
 
     u32 first_access = 0;
     u32 second_access = 0;

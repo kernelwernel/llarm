@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
     }
 
     if (arg_bitset.test(NULL_ARG)) {
-        shared::out::error("llarm-asm: unknown argument \"", potential_null_arg, "\"");
+        llarm::out::error("llarm-asm: unknown argument \"", potential_null_arg, "\"");
     }
 
 
@@ -133,10 +133,10 @@ int main(int argc, char* argv[]) {
     }
 
     if (arg_bitset.test(VERSION)) {
-        shared::metadata::version(
+        llarm::metadata::version(
             "llarm-asm", 
-            shared::metadata::LLARM_ASM_VER, 
-            shared::metadata::LLARM_ASM_DATE
+            llarm::metadata::LLARM_ASM_VER, 
+            llarm::metadata::LLARM_ASM_DATE
         );
         return 0;
     }

@@ -18,7 +18,7 @@
  *       UNDEFINED
  */
 void INSTRUCTIONS::arm::dsp::LDRD(const u32 code) {
-    const u8 Rd_bits = shared::util::bit_range(code, 12, 15);
+    const u8 Rd_bits = llarm::util::bit_range(code, 12, 15);
 
     // is even
     if (Rd_bits & 1) {
@@ -29,7 +29,7 @@ void INSTRUCTIONS::arm::dsp::LDRD(const u32 code) {
     const u32 address = address_mode.load_store_misc(code);
 
     if (
-        (shared::util::bit_range(address, 0, 2) == 0b000) &&
+        (llarm::util::bit_range(address, 0, 2) == 0b000) &&
         (Rd_bits != 14)
     ) {
         const mem_read_struct access = memory.read(address, 4);
@@ -46,10 +46,10 @@ void INSTRUCTIONS::arm::dsp::LDRD(const u32 code) {
             return;
         }
 
-        reg.write(Rd_bits, shared::util::bit_range(access.value, 0, 31));
-        reg.write(Rd_bits + 1, shared::util::bit_range(access2.value, 32, 63));
+        reg.write(Rd_bits, llarm::util::bit_range(access.value, 0, 31));
+        reg.write(Rd_bits + 1, llarm::util::bit_range(access2.value, 32, 63));
     } else {
-        shared::out::unpredictable("LDRD has unpredictable arguments");
+        llarm::out::unpredictable("LDRD has unpredictable arguments");
     }
 }
 
@@ -184,22 +184,22 @@ void INSTRUCTIONS::arm::dsp::SMLAXY(const u32 code) {
     const u32 Rs = reg.read(code, 8, 11);
     const u32 Rn = reg.read(code, 12, 15);
 
-    const bool X = shared::util::bit_fetch(code, 5);
-    const bool Y = shared::util::bit_fetch(code, 6);
+    const bool X = llarm::util::bit_fetch(code, 5);
+    const bool Y = llarm::util::bit_fetch(code, 6);
 
     u32 operand1 = 0;
     u32 operand2 = 0;
 
     if (X == false) {
-        operand1 = operation.sign_extend(shared::util::bit_range(Rm, 0, 15), 15);
+        operand1 = operation.sign_extend(llarm::util::bit_range(Rm, 0, 15), 15);
     } else {
-        operand1 = operation.sign_extend(shared::util::bit_range(Rm, 16, 31), 31);
+        operand1 = operation.sign_extend(llarm::util::bit_range(Rm, 16, 31), 31);
     }
 
     if (Y == false) {
-        operand2 = operation.sign_extend(shared::util::bit_range(Rs, 0, 15), 15);   
+        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 0, 15), 15);   
     } else {
-        operand2 = operation.sign_extend(shared::util::bit_range(Rs, 16, 31), 31);
+        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 16, 31), 31);
     }
 
     const u32 result = (operand1 * operand2);
@@ -232,22 +232,22 @@ void INSTRUCTIONS::arm::dsp::SMLALXY(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rs = reg.read(code, 8, 11);
 
-    const bool X = shared::util::bit_fetch(code, 5);
-    const bool Y = shared::util::bit_fetch(code, 6);
+    const bool X = llarm::util::bit_fetch(code, 5);
+    const bool Y = llarm::util::bit_fetch(code, 6);
 
     u32 operand1 = 0;
     u32 operand2 = 0;    
 
     if (X == false) {
-        operand1 = operation.sign_extend(shared::util::bit_range(Rm, 0, 15), 15);
+        operand1 = operation.sign_extend(llarm::util::bit_range(Rm, 0, 15), 15);
     } else {
-        operand1 = operation.sign_extend(shared::util::bit_range(Rm, 16, 31), 31);
+        operand1 = operation.sign_extend(llarm::util::bit_range(Rm, 16, 31), 31);
     }
 
     if (Y == false) {
-        operand2 = operation.sign_extend(shared::util::bit_range(Rs, 0, 15), 15);
+        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 0, 15), 15);
     } else {
-        operand2 = operation.sign_extend(shared::util::bit_range(Rs, 16, 31), 31);
+        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 16, 31), 31);
     }
 
     const id::reg RdLo_id = reg.fetch_reg_id(code, 21, 15);
@@ -284,19 +284,19 @@ void INSTRUCTIONS::arm::dsp::SMLAWY(const u32 code) {
     const u32 Rn = reg.read(code, 12, 15);
     const u32 Rd = reg.read(code, 16, 19);
 
-    const bool Y = shared::util::bit_fetch(code, 6);
+    const bool Y = llarm::util::bit_fetch(code, 6);
 
     // not sure why the docs call it operand2 instead of just operand, 
     // where's the first one then? i have no idea.
     u32 operand2 = 0;
 
     if (Y == false) {
-        operand2 = operation.sign_extend(shared::util::bit_range(Rs, 0, 15), 15);
+        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 0, 15), 15);
     } else {
-        operand2 = operation.sign_extend(shared::util::bit_range(Rs, 16, 31), 31);
+        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 16, 31), 31);
     }
 
-    const u32 result = shared::util::bit_range<u32>(static_cast<u64>(Rm) * operand2, 16, 47);
+    const u32 result = llarm::util::bit_range<u32>(static_cast<u64>(Rm) * operand2, 16, 47);
 
     reg.write(code, 16, 19, result + Rn);
 
@@ -325,22 +325,22 @@ void INSTRUCTIONS::arm::dsp::SMULXY(const u32 code) {
     const u32 Rs = reg.read(code, 8, 11);
     const u32 Rd = reg.read(code, 16, 19);
 
-    const bool Y = shared::util::bit_fetch(code, 6);
-    const bool X = shared::util::bit_fetch(code, 5);
+    const bool Y = llarm::util::bit_fetch(code, 6);
+    const bool X = llarm::util::bit_fetch(code, 5);
 
     u32 operand1 = 0;
     u32 operand2 = 0;
 
     if (X == false) {
-        operand1 = operation.sign_extend(shared::util::bit_range(Rm, 0, 15), 15);
+        operand1 = operation.sign_extend(llarm::util::bit_range(Rm, 0, 15), 15);
     } else {
-        operand1 = operation.sign_extend(shared::util::bit_range(Rm, 16, 31), 31);
+        operand1 = operation.sign_extend(llarm::util::bit_range(Rm, 16, 31), 31);
     }
 
     if (Y == false) {
-        operand2 = operation.sign_extend(shared::util::bit_range(Rs, 0, 15), 15);
+        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 0, 15), 15);
     } else {
-        operand2 = operation.sign_extend(shared::util::bit_range(Rs, 16, 31), 31);
+        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 16, 31), 31);
     }
 
     reg.write(code, 16, 19, operand1 * operand2);
@@ -360,18 +360,18 @@ void INSTRUCTIONS::arm::dsp::SMULWY(const u32 code) {
     const u32 Rs = reg.read(code, 8, 11);
     const u32 Rd = reg.read(code, 16, 19);
 
-    const bool Y = shared::util::bit_fetch(code, 6);
+    const bool Y = llarm::util::bit_fetch(code, 6);
 
     // same as SMLAWY, where tf is operand1 in the docs? i'm not on drugs am i?
     u32 operand2 = 0;
 
     if (Y == false) {
-        operand2 = operation.sign_extend(shared::util::bit_range(Rs, 0, 15), 15);
+        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 0, 15), 15);
     } else {
-        operand2 = operation.sign_extend(shared::util::bit_range(Rs, 16, 31), 31);
+        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 16, 31), 31);
     }
 
-    reg.write(code, 16, 19, shared::util::bit_range<u32>(static_cast<u64>(Rm * operand2), 16, 47));
+    reg.write(code, 16, 19, llarm::util::bit_range<u32>(static_cast<u64>(Rm * operand2), 16, 47));
 }
 
 
@@ -387,7 +387,7 @@ void INSTRUCTIONS::arm::dsp::SMULWY(const u32 code) {
  *       UNDEFINED
  */
 void INSTRUCTIONS::arm::dsp::STRD(const u32 code) {
-    const u8 Rd_bits = shared::util::bit_range(code, 12, 15);
+    const u8 Rd_bits = llarm::util::bit_range(code, 12, 15);
 
     // is odd
     if (Rd_bits & 1) {
@@ -398,7 +398,7 @@ void INSTRUCTIONS::arm::dsp::STRD(const u32 code) {
     const u32 address = address_mode.load_store_misc(code);
 
     if (
-        (shared::util::bit_range(address, 0, 2) == 0b000) &&
+        (llarm::util::bit_range(address, 0, 2) == 0b000) &&
         (Rd_bits != 14)
     ) {
         const u64 value = reg.read(Rd_bits);
@@ -418,6 +418,6 @@ void INSTRUCTIONS::arm::dsp::STRD(const u32 code) {
             return;
         }
     } else {
-        shared::out::unpredictable("STRD has unpredictable arguments");
+        llarm::out::unpredictable("STRD has unpredictable arguments");
     }
 }

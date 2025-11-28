@@ -25,12 +25,12 @@ u32 patterns::logic_arithmetic(const param_struct params) {
 
     u32 instruction = 0;
 
-    shared::util::swap_bits(instruction, 28, 31, params.cond);
-    shared::util::swap_bits(instruction, 16, 19, Rn);
-    shared::util::swap_bits(instruction, 12, 15, Rd);
-    shared::util::swap_bits(instruction, 0, 11, shifter);
-    shared::util::modify_bit(instruction, 25, I);
-    shared::util::modify_bit(instruction, 20, S);
+    llarm::util::swap_bits(instruction, 28, 31, params.cond);
+    llarm::util::swap_bits(instruction, 16, 19, Rn);
+    llarm::util::swap_bits(instruction, 12, 15, Rd);
+    llarm::util::swap_bits(instruction, 0, 11, shifter);
+    llarm::util::modify_bit(instruction, 25, I);
+    llarm::util::modify_bit(instruction, 20, S);
 
     return instruction;
 }
@@ -55,11 +55,11 @@ u32 patterns::load_store(const param_struct params, const u8 bits_27_25) {
 
     u32 instruction = 0;
 
-    shared::util::swap_bits(instruction, 28, 31, params.cond);
-    shared::util::swap_bits(instruction, 16, 19, Rn);
-    shared::util::swap_bits(instruction, 0, 15, reg_list);
-    shared::util::modify_bit(instruction, 25, I);
-    shared::util::modify_bit(instruction, 20, S);
+    llarm::util::swap_bits(instruction, 28, 31, params.cond);
+    llarm::util::swap_bits(instruction, 16, 19, Rn);
+    llarm::util::swap_bits(instruction, 0, 15, reg_list);
+    llarm::util::modify_bit(instruction, 25, I);
+    llarm::util::modify_bit(instruction, 20, S);
 
     return instruction;
 }

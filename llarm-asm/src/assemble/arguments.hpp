@@ -1,3 +1,5 @@
+#pragma once
+
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 
@@ -32,12 +34,12 @@ struct arguments {
     vfp_special_regs vfp_special_reg;
 
     bool has_S() const { return (flags & 1); }
-    bool has_Z() const { return shared::util::bit_fetch(flags, 1); }
-    bool has_minus() const { return shared::util::bit_fetch(flags, 2); }
-    bool has_spsr() const { return shared::util::bit_fetch(flags, 3); }
-    bool has_x() const { return shared::util::bit_fetch(flags, 4); }
-    bool has_y() const { return shared::util::bit_fetch(flags, 5); }
-    bool has_preindex() const { return shared::util::bit_fetch(flags, 6); }
+    bool has_Z() const { return llarm::util::bit_fetch(flags, 1); }
+    bool has_minus() const { return llarm::util::bit_fetch(flags, 2); }
+    bool has_spsr() const { return llarm::util::bit_fetch(flags, 3); }
+    bool has_x() const { return llarm::util::bit_fetch(flags, 4); }
+    bool has_y() const { return llarm::util::bit_fetch(flags, 5); }
+    bool has_preindex() const { return llarm::util::bit_fetch(flags, 6); }
 };
 
 

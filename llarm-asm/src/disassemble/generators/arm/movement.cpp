@@ -89,7 +89,7 @@ std::string generators::arm::movement::MVN(const u32 code, const settings settin
  */ 
 std::string generators::arm::movement::MRS(const u32 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 12, 15, settings);
-    const bool R = (shared::util::bit_fetch(code, 22));
+    const bool R = (llarm::util::bit_fetch(code, 22));
 
     const char* PSR = (R ? "SPSR" : "CPSR");
 

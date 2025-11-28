@@ -30,7 +30,7 @@
  *   assert end_address = address - 4
  */
 void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
-    const u16 list = shared::util::bit_range<u16>(code, 0, 15);
+    const u16 list = llarm::util::bit_range<u16>(code, 0, 15);
 
     const address_struct addresses = address_mode.load_store_multiple(code);
 
@@ -50,7 +50,7 @@ void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
         address += 4;
     }
 
-    if (shared::util::bit_fetch(list, 15) == true) {
+    if (llarm::util::bit_fetch(list, 15) == true) {
         const mem_read_struct access = memory.read(address, 4);
     
         if (access.has_failed) {
@@ -71,7 +71,7 @@ void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
     }
 
     if (addresses.end != address - 4) {
-        shared::out::error("LDM1 assert failed");
+        llarm::out::error("LDM1 assert failed");
     }
 }
 
@@ -100,7 +100,7 @@ void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
 void INSTRUCTIONS::arm::load::LDR(const u32 code) {
     const u32 address = address_mode.load_store(code);
 
-    const u8 type = shared::util::bit_range(address, 0, 1);
+    const u8 type = llarm::util::bit_range(address, 0, 1);
 
     const mem_read_struct access = memory.read(address, 4);
     
@@ -192,7 +192,7 @@ void INSTRUCTIONS::arm::load::LDRH(const u32 code) {
 
         data = access.value;
     } else {
-        shared::out::unpredictable("LDRH data assignment");
+        llarm::out::unpredictable("LDRH data assignment");
     }
 
     reg.write(code, 12, 15, data);
@@ -241,7 +241,7 @@ void INSTRUCTIONS::arm::load::LDRSH(const u32 code) {
 
         data = access.value;
     } else {
-        shared::out::unpredictable("LDRSH data assignment");
+        llarm::out::unpredictable("LDRSH data assignment");
     }
 
     reg.write(code, 12, 15, (operation.sign_extend(data, 15)));
@@ -273,7 +273,7 @@ void INSTRUCTIONS::arm::load::LDRT(const u32 code) {
 
     u32 value = 0;
 
-    const u8 type = shared::util::bit_range(address, 0, 1);
+    const u8 type = llarm::util::bit_range(address, 0, 1);
 
     switch (type) {
         case 0b00: value = data; break;
@@ -300,7 +300,7 @@ void INSTRUCTIONS::arm::load::LDM2(const u32 code) {
 
     u32 address = addresses.start;
 
-    const u16 list = shared::util::bit_range(code, 0, 14);
+    const u16 list = llarm::util::bit_range(code, 0, 14);
 
     std::vector<id::reg> reg_list = operation.register_list(list);
 
@@ -317,7 +317,7 @@ void INSTRUCTIONS::arm::load::LDM2(const u32 code) {
     }
 
     if (addresses.end != address - 4) {
-        shared::out::error("LDM2 assert failed");
+        llarm::out::error("LDM2 assert failed");
     }
 }
 
@@ -347,7 +347,7 @@ void INSTRUCTIONS::arm::load::LDM3(const u32 code) {
 
     u32 address = addresses.start;
 
-    const u16 list = shared::util::bit_range(code, 0, 14);
+    const u16 list = llarm::util::bit_range(code, 0, 14);
 
     std::vector<id::reg> reg_list = operation.register_list(list);
 
@@ -386,6 +386,6 @@ void INSTRUCTIONS::arm::load::LDM3(const u32 code) {
     address += 4;
 
     if (addresses.end != address - 4) {
-        shared::out::error("LDM3 assert failed");
+        llarm::out::error("LDM3 assert failed");
     }
 }

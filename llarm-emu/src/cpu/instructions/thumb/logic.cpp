@@ -23,7 +23,7 @@ void INSTRUCTIONS::thumb::logic::AND(const u16 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 }
 
@@ -46,22 +46,22 @@ void INSTRUCTIONS::thumb::logic::ASR1(const u16 code) {
     const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
-    const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
+    const u8 immed_5 = llarm::util::bit_range<u8>(code, 6, 10);
 
     if (immed_5 == 0) {
-        const bool carry_bit = (shared::util::bit_fetch(Rm, 31));
+        const bool carry_bit = (llarm::util::bit_fetch(Rm, 31));
         reg.write(id::cpsr::C, carry_bit);
 
         reg.write(Rd_id, 0xFFFFFFFF * carry_bit);
     } else {
         //C Flag = Rm[immed_5 - 1]
-        reg.write(id::cpsr::C, (shared::util::bit_fetch(Rm, (immed_5 - 1))));
+        reg.write(id::cpsr::C, (llarm::util::bit_fetch(Rm, (immed_5 - 1))));
         reg.write(Rd_id, operation.arithmetic_shift_right(Rm, immed_5));
     }
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 }
 
@@ -90,22 +90,22 @@ void INSTRUCTIONS::thumb::logic::ASR2(const u16 code) {
     const u32 Rd = reg.read(Rd_id);
     const u32 Rs = reg.read(Rs_id);
 
-    const u8 Rs_0_7 = shared::util::bit_range<u8, u32>(Rs, 0, 7);
+    const u8 Rs_0_7 = llarm::util::bit_range<u8, u32>(Rs, 0, 7);
 
     if (Rs_0_7 == 0) {
 
     } else if (Rs_0_7 < 32) {
-        reg.write(id::cpsr::C, shared::util::bit_fetch(Rd, (Rs_0_7 - 1)));
+        reg.write(id::cpsr::C, llarm::util::bit_fetch(Rd, (Rs_0_7 - 1)));
         reg.write(Rd_id, operation.arithmetic_shift_right(Rd, Rs_0_7));
     } else {
-        reg.write(id::cpsr::C, (shared::util::bit_fetch(Rd, 31)));
+        reg.write(id::cpsr::C, (llarm::util::bit_fetch(Rd, 31)));
 
-        const bool carry_bit = shared::util::bit_fetch(Rd, 31);
+        const bool carry_bit = llarm::util::bit_fetch(Rd, 31);
 
         reg.write(Rd_id, 0xFFFFFFFF * carry_bit);
     }
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 }
 
@@ -125,7 +125,7 @@ void INSTRUCTIONS::thumb::logic::BIC(const u16 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 }
 
@@ -146,7 +146,7 @@ void INSTRUCTIONS::thumb::logic::EOR(const u16 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 }
 
@@ -163,7 +163,7 @@ void INSTRUCTIONS::thumb::logic::EOR(const u16 code) {
  * V Flag = unaffected
  */
 void INSTRUCTIONS::thumb::logic::LSL1(const u16 code) {
-    const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
+    const u8 immed_5 = llarm::util::bit_range<u8>(code, 6, 10);
     const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
     const u32 Rm = reg.read(code, 3, 5);
@@ -171,13 +171,13 @@ void INSTRUCTIONS::thumb::logic::LSL1(const u16 code) {
     if (immed_5 == 0) {
         reg.write(Rd_id, Rm);
     } else {
-        reg.write(id::cpsr::C, (shared::util::bit_fetch(Rm, (32 - immed_5))));
+        reg.write(id::cpsr::C, (llarm::util::bit_fetch(Rm, (32 - immed_5))));
         reg.write(Rd_id, (Rm << immed_5));
     }
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 }
 
@@ -207,7 +207,7 @@ void INSTRUCTIONS::thumb::logic::LSL2(const u16 code) {
     if ((Rs & 0xFF) == 0) {
 
     } else if ((Rs & 0xFF) < 32) {
-        reg.write(id::cpsr::C, shared::util::bit_fetch(reg.read(Rd_id), (32 - (Rs & 0xFF))));
+        reg.write(id::cpsr::C, llarm::util::bit_fetch(reg.read(Rd_id), (32 - (Rs & 0xFF))));
         reg.write(Rd_id, (reg.read(Rd_id) << (Rs & 0xFF)));
     } else if ((Rs & 0xFF) == 32) {
         reg.write(id::cpsr::C, (reg.read(Rd_id) & 1));
@@ -219,7 +219,7 @@ void INSTRUCTIONS::thumb::logic::LSL2(const u16 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 }
 
@@ -238,20 +238,20 @@ void INSTRUCTIONS::thumb::logic::LSL2(const u16 code) {
 void INSTRUCTIONS::thumb::logic::LSR1(const u16 code) {
     const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
-    const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
+    const u8 immed_5 = llarm::util::bit_range<u8>(code, 6, 10);
     const u32 Rm = reg.read(code, 3, 5);
 
     if (immed_5 == 0) {
-        reg.write(id::cpsr::C, shared::util::bit_fetch(reg.read(Rd_id), 31));
+        reg.write(id::cpsr::C, llarm::util::bit_fetch(reg.read(Rd_id), 31));
         reg.write(Rd_id, 0);
     } else {
-        reg.write(id::cpsr::C, shared::util::bit_fetch(reg.read(Rd_id), (immed_5 - 1)));
+        reg.write(id::cpsr::C, llarm::util::bit_fetch(reg.read(Rd_id), (immed_5 - 1)));
         reg.write(Rd_id, (Rm >> immed_5));
     }
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 }
 
@@ -281,10 +281,10 @@ void INSTRUCTIONS::thumb::logic::LSR2(const u16 code) {
     if ((Rs & 0xFF) == 0) {
 
     } else if ((Rs & 0xFF) < 32) {
-        reg.write(id::cpsr::C, shared::util::bit_fetch(reg.read(Rd_id), ((Rs & 0xFF) - 1)));
+        reg.write(id::cpsr::C, llarm::util::bit_fetch(reg.read(Rd_id), ((Rs & 0xFF) - 1)));
         reg.write(Rd_id, (reg.read(Rd_id) >> (Rs & 0xFF)));
     } else if ((Rs & 0xFF) == 32) {
-        reg.write(id::cpsr::C, shared::util::bit_fetch(reg.read(Rd_id), 31));
+        reg.write(id::cpsr::C, llarm::util::bit_fetch(reg.read(Rd_id), 31));
         reg.write(Rd_id, 0);
     } else {
         reg.write(id::cpsr::C, 0);
@@ -293,7 +293,7 @@ void INSTRUCTIONS::thumb::logic::LSR2(const u16 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 }
 
@@ -314,7 +314,7 @@ void INSTRUCTIONS::thumb::logic::NEG(const u16 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, !operation.borrow_sub(0, Rm));
     reg.write(id::cpsr::V, operation.overflow_sub(0, Rm));
@@ -337,7 +337,7 @@ void INSTRUCTIONS::thumb::logic::ORR(const u16 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 }
 
@@ -366,15 +366,15 @@ void INSTRUCTIONS::thumb::logic::ROR(const u16 code) {
     if ((Rs & 0xFF) == 0) {
 
     } else if (Rs_4_0 == 0) {
-        reg.write(id::cpsr::C, shared::util::bit_fetch(reg.read(Rd_id), 31));
+        reg.write(id::cpsr::C, llarm::util::bit_fetch(reg.read(Rd_id), 31));
     } else {
-        reg.write(id::cpsr::C, shared::util::bit_fetch(reg.read(Rd_id), (Rs_4_0 - 1)));
+        reg.write(id::cpsr::C, llarm::util::bit_fetch(reg.read(Rd_id), (Rs_4_0 - 1)));
         reg.write(Rd_id, std::rotr(reg.read(Rd_id), Rs_4_0));
     }
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 }
 
@@ -392,6 +392,6 @@ void INSTRUCTIONS::thumb::logic::TST(const u16 code) {
 
     const u32 alu_out = Rn & Rm;
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(alu_out, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
 }

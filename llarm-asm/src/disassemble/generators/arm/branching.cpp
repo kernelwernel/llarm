@@ -30,7 +30,7 @@ using namespace internal;
  * reference: A4-10
  */
 std::string generators::arm::branching::B(const u32 code, const u32 PC, const settings settings) {
-    const u32 signed_immed_24 = shared::util::bit_range(code, 0, 23);
+    const u32 signed_immed_24 = llarm::util::bit_range(code, 0, 23);
 
     const u32 target_address = util::thumb_sign_extend(signed_immed_24, 23, PC);
 
@@ -40,7 +40,7 @@ std::string generators::arm::branching::B(const u32 code, const u32 PC, const se
 
 // basically the same as B above
 std::string generators::arm::branching::BL(const u32 code, const u32 PC, const settings settings) {
-    const u32 signed_immed_24 = shared::util::bit_range(code, 0, 23);
+    const u32 signed_immed_24 = llarm::util::bit_range(code, 0, 23);
 
     const u32 target_address = util::thumb_sign_extend(signed_immed_24, 23, PC);
 
@@ -82,7 +82,7 @@ std::string generators::arm::branching::BX(const u32 code, const settings settin
  * reference: A4-16
  */
 std::string generators::arm::branching::BLX1(const u32 code, const u32 PC, const settings settings) {
-    const u32 signed_immed_24 = shared::util::bit_range(code, 0, 23);
+    const u32 signed_immed_24 = llarm::util::bit_range(code, 0, 23);
 
     const u32 target_address = util::thumb_sign_extend(signed_immed_24, 23, PC);
 

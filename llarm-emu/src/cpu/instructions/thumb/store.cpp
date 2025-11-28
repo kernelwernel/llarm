@@ -16,12 +16,12 @@
  * Rn = Rn + (Number_Of_Set_Bits_In(register_list) * 4)
  */
 void INSTRUCTIONS::thumb::store::STMIA(const u16 code) {
-    const u8 register_list = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 register_list = llarm::util::bit_range<u8>(code, 0, 7);
     const u32 Rn = reg.read(code, 8, 10);
     const id::reg Rn_id = reg.thumb_fetch_reg_id(code, 8, 10);
 
     const u32 start_address = Rn;
-    const u32 end_address = (Rn + (shared::util::popcount(register_list) * 4) - 4);
+    const u32 end_address = (Rn + (llarm::util::popcount(register_list) * 4) - 4);
 
     u32 address = start_address;
 
@@ -39,10 +39,10 @@ void INSTRUCTIONS::thumb::store::STMIA(const u16 code) {
     }
 
     if (end_address != (address - 4)) {
-        shared::out::dev_error("assertation failed in thumb STMIA instruction");
+        llarm::out::dev_error("assertation failed in thumb STMIA instruction");
     }
 
-    reg.write(Rn_id, (Rn + (shared::util::popcount(register_list) * 4)));
+    reg.write(Rn_id, (Rn + (llarm::util::popcount(register_list) * 4)));
 }
 
 
@@ -54,7 +54,7 @@ void INSTRUCTIONS::thumb::store::STMIA(const u16 code) {
  *   Memory[address,4] = UNPREDICTABLE
  */
 void INSTRUCTIONS::thumb::store::STR1(const u16 code) {
-    const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
+    const u8 immed_5 = llarm::util::bit_range<u8>(code, 6, 10);
     const u32 Rn = reg.read(code, 3, 5);
     const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
 
@@ -65,7 +65,7 @@ void INSTRUCTIONS::thumb::store::STR1(const u16 code) {
     if ((address & 0b11) == 0b00) {
         value = reg.read(Rd_id);
     } else {
-        shared::out::unpredictable("STR1 memory write data");
+        llarm::out::unpredictable("STR1 memory write data");
     }
 
     const mem_write_struct access = memory.write(value, address, 4);
@@ -95,7 +95,7 @@ void INSTRUCTIONS::thumb::store::STR2(const u16 code) {
     if ((address & 0b11) == 0b00) {
         value = reg.read(Rd_id);
     } else {
-        shared::out::unpredictable("STR2 memory write data");
+        llarm::out::unpredictable("STR2 memory write data");
     }
     
     const mem_write_struct access = memory.write(value, address, 4);
@@ -114,7 +114,7 @@ void INSTRUCTIONS::thumb::store::STR2(const u16 code) {
  *    Memory[address,4] = UNPREDICTABLE
  */
 void INSTRUCTIONS::thumb::store::STR3(const u16 code) {
-    const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
     const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 8, 10);
 
     const u32 address = (reg.read(id::reg::SP) + (immed_8 * 4));
@@ -124,7 +124,7 @@ void INSTRUCTIONS::thumb::store::STR3(const u16 code) {
     if ((address & 0b11) == 0b00) {
         value = reg.read(Rd_id);
     } else {
-        shared::out::unpredictable("STR3 memory write data");
+        llarm::out::unpredictable("STR3 memory write data");
     }
 
     const mem_write_struct access = memory.write(value, address, 4);
@@ -142,11 +142,11 @@ void INSTRUCTIONS::thumb::store::STR3(const u16 code) {
 void INSTRUCTIONS::thumb::store::STRB1(const u16 code) {
     const u32 Rd = reg.read(code, 0, 2);
     const u32 Rn = reg.read(code, 3, 5);
-    const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
+    const u8 immed_5 = llarm::util::bit_range<u8>(code, 6, 10);
 
     const u32 address = (Rn + immed_5);
 
-    const mem_write_struct access = memory.write(shared::util::bit_range<u8>(Rd, 0, 7), address , 1);
+    const mem_write_struct access = memory.write(llarm::util::bit_range<u8>(Rd, 0, 7), address , 1);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -165,7 +165,7 @@ void INSTRUCTIONS::thumb::store::STRB2(const u16 code) {
 
     const u32 address = (Rn + Rm);
 
-    const mem_write_struct access = memory.write(shared::util::bit_range(Rd, 0, 7), address, 1);
+    const mem_write_struct access = memory.write(llarm::util::bit_range(Rd, 0, 7), address, 1);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -183,16 +183,16 @@ void INSTRUCTIONS::thumb::store::STRB2(const u16 code) {
 void INSTRUCTIONS::thumb::store::STRH1(const u16 code) {
     const u32 Rd = reg.read(code, 0, 2);
     const u32 Rn = reg.read(code, 3, 5);
-    const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
+    const u8 immed_5 = llarm::util::bit_range<u8>(code, 6, 10);
 
     const u32 address = (Rn + (immed_5 * 2));
 
     u16 value = 0;
 
     if ((address & 0b11) == 0) {
-        value = shared::util::bit_range(Rd, 0, 15);
+        value = llarm::util::bit_range(Rd, 0, 15);
     } else {
-        shared::out::unpredictable("unpredictable STRH1 memory write data alignment");
+        llarm::out::unpredictable("unpredictable STRH1 memory write data alignment");
     }
 
     const mem_write_struct access = memory.write(value, address, 2);
@@ -220,9 +220,9 @@ void INSTRUCTIONS::thumb::store::STRH2(const u16 code) {
     u16 value = 0;
 
     if ((address & 0b11) == 0) {
-        value = shared::util::bit_range(Rd, 0, 15);
+        value = llarm::util::bit_range(Rd, 0, 15);
     } else {
-        shared::out::unpredictable("unpredictable STRH2 memory write data alignment");
+        llarm::out::unpredictable("unpredictable STRH2 memory write data alignment");
     }
 
     const mem_write_struct access = memory.write(value, address, 2);
@@ -248,12 +248,12 @@ void INSTRUCTIONS::thumb::store::STRH2(const u16 code) {
  * SP = SP - 4*(R + Number_Of_Set_Bits_In(register_list))
  */
 void INSTRUCTIONS::thumb::store::PUSH(const u16 code) {
-    const u8 register_list = shared::util::bit_range<u8>(code, 0, 7);
-    const bool R = shared::util::bit_fetch(code, 8);
+    const u8 register_list = llarm::util::bit_range<u8>(code, 0, 7);
+    const bool R = llarm::util::bit_fetch(code, 8);
 
     const u32 SP = reg.read(id::reg::SP);
 
-    const u32 start_address = (SP - (4 * (R + shared::util::popcount(register_list))));
+    const u32 start_address = (SP - (4 * (R + llarm::util::popcount(register_list))));
     const u32 end_address = (SP - 4);
 
     u32 address = start_address;
@@ -283,8 +283,8 @@ void INSTRUCTIONS::thumb::store::PUSH(const u16 code) {
     }
 
     if (end_address != (address - 4)) {
-        shared::out::dev_error("assertation failed in thumb PUSH instruction");
+        llarm::out::dev_error("assertation failed in thumb PUSH instruction");
     }
 
-    reg.write(id::reg::SP, (SP - (4 * (R + shared::util::popcount(register_list)))));
+    reg.write(id::reg::SP, (SP - (4 * (R + llarm::util::popcount(register_list)))));
 }

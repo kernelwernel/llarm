@@ -8,7 +8,7 @@
 
 
 address_struct ADDRESSING_MODE::load_store_coprocessor(const u32 code) {
-    using namespace shared::util;
+    using namespace llarm::util;
     
     const shifter_enum shifter_id = llarm::as::identify::shifter(shift_category::LS_COPROC, code);
 
@@ -17,7 +17,7 @@ address_struct ADDRESSING_MODE::load_store_coprocessor(const u32 code) {
         case shifter_enum::LS_COPROC_IMM_PRE: return ls_coproc_imm_pre(code);
         case shifter_enum::LS_COPROC_IMM_POST: return ls_coproc_imm_post(code);
         case shifter_enum::LS_COPROC_UNINDEXED: return ls_coproc_unindexed(code);
-        default: shared::out::error("Impossible identification of ARM load store coprocessor shifter");
+        default: llarm::out::error("Impossible identification of ARM load store coprocessor shifter");
     }
 }
 
@@ -34,11 +34,11 @@ address_struct ADDRESSING_MODE::load_store_coprocessor(const u32 code) {
  *     end_address = address
  */
 address_struct ADDRESSING_MODE::ls_coproc_imm(const u32 code) {
-    using namespace shared::util;
+    using namespace llarm::util;
 
     u32 address = 0;
 
-    const u8 offset_8 = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 offset_8 = llarm::util::bit_range<u8>(code, 0, 7);
     const u32 Rn = reg.read(code, 16, 19);
     
     if (bit_fetch(code, 23)) {
@@ -48,7 +48,7 @@ address_struct ADDRESSING_MODE::ls_coproc_imm(const u32 code) {
     }
 
     const u32 start_address = address;
-    const u8 cp_num = shared::util::bit_range(code, 8, 11);
+    const u8 cp_num = llarm::util::bit_range(code, 8, 11);
 
     // ???? TODO
 
@@ -73,8 +73,8 @@ address_struct ADDRESSING_MODE::ls_coproc_imm(const u32 code) {
  *     end_address = address
  */
 address_struct ADDRESSING_MODE::ls_coproc_imm_pre(const u32 code) {
-    const bool U = shared::util::bit_fetch(code, 23);
-    const u8 offset_8 = shared::util::bit_range(code, 0, 7);
+    const bool U = llarm::util::bit_fetch(code, 23);
+    const u8 offset_8 = llarm::util::bit_range(code, 0, 7);
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
 
     if (U == true) {

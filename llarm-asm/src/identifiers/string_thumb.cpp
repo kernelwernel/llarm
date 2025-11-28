@@ -9,7 +9,7 @@
 using namespace internal;
 
 id::thumb ident::string_thumb::thumb(const std::string &code) {
-    const std::string instruction = shared::util::to_upper(code);
+    const std::string instruction = llarm::util::to_upper(code);
     
     const std::string raw_string = interpreter::fetch_instruction(instruction);
     const std::string_view mnemonic(raw_string);
@@ -104,7 +104,7 @@ id::thumb ident::string_thumb::ADD(const lexemes_t &lexemes) {
         return id::thumb::ADD7;
     }
 
-    shared::out::error("Unknown ADD thumb instruction variant, cannot be identified");
+    llarm::out::error("Unknown ADD thumb instruction variant, cannot be identified");
 }
 
 
@@ -131,7 +131,7 @@ id::thumb ident::string_thumb::SUB(const lexemes_t &lexemes) {
         return id::thumb::SUB4;
     }
 
-    shared::out::error("Unknown SUB thumb instruction variant, cannot be identified");
+    llarm::out::error("Unknown SUB thumb instruction variant, cannot be identified");
 }
 
 
@@ -148,7 +148,7 @@ id::thumb ident::string_thumb::ASR(const lexemes_t &lexemes) {
         return id::thumb::ASR2;
     }
 
-    shared::out::error("Unknown ASR thumb instruction variant, cannot be identified");
+    llarm::out::error("Unknown ASR thumb instruction variant, cannot be identified");
 }
 
 
@@ -165,7 +165,7 @@ id::thumb ident::string_thumb::LSL(const lexemes_t &lexemes) {
         return id::thumb::LSL2;
     }
 
-    shared::out::error("Unknown LSL thumb instruction variant, cannot be identified");
+    llarm::out::error("Unknown LSL thumb instruction variant, cannot be identified");
 }
 
 
@@ -182,7 +182,7 @@ id::thumb ident::string_thumb::LSR(const lexemes_t &lexemes) {
         return id::thumb::LSR2;
     }
 
-    shared::out::error("Unknown LSR thumb instruction variant, cannot be identified");
+    llarm::out::error("Unknown LSR thumb instruction variant, cannot be identified");
 }
 
 
@@ -204,7 +204,7 @@ id::thumb ident::string_thumb::CMP(const lexemes_t &lexemes) {
         return id::thumb::CMP3;
     }
 
-    shared::out::error("Unknown CMP thumb instruction variant, cannot be identified");
+    llarm::out::error("Unknown CMP thumb instruction variant, cannot be identified");
 }
 
 
@@ -226,7 +226,7 @@ id::thumb ident::string_thumb::MOV(const lexemes_t &lexemes) {
         return id::thumb::MOV3;
     }
 
-    shared::out::error("Unknown MOV thumb instruction variant, cannot be identified");
+    llarm::out::error("Unknown MOV thumb instruction variant, cannot be identified");
 }
 
 
@@ -243,7 +243,7 @@ id::thumb ident::string_thumb::BLX(const lexemes_t &lexemes) {
         return id::thumb::BLX2;
     }
 
-    shared::out::error("Unknown BLX thumb instruction variant, cannot be identified");
+    llarm::out::error("Unknown BLX thumb instruction variant, cannot be identified");
 }
 
 
@@ -270,7 +270,7 @@ id::thumb ident::string_thumb::LDR(const lexemes_t &lexemes) {
         return id::thumb::LDR4;
     }
 
-    shared::out::error("Unknown LDR thumb instruction variant, cannot be identified");
+    llarm::out::error("Unknown LDR thumb instruction variant, cannot be identified");
 }
 
 
@@ -287,7 +287,7 @@ id::thumb ident::string_thumb::LDRB(const lexemes_t &lexemes) {
         return id::thumb::LDRB2;
     }
 
-    shared::out::error("Unknown LDRB thumb instruction variant, cannot be identified");
+    llarm::out::error("Unknown LDRB thumb instruction variant, cannot be identified");
 }
 
 
@@ -304,7 +304,7 @@ id::thumb ident::string_thumb::LDRH(const lexemes_t &lexemes) {
         return id::thumb::LDRH2;
     }
 
-    shared::out::error("Unknown LDRH thumb instruction variant, cannot be identified");
+    llarm::out::error("Unknown LDRH thumb instruction variant, cannot be identified");
 }
 
 
@@ -326,7 +326,7 @@ id::thumb ident::string_thumb::STR(const lexemes_t &lexemes) {
         return id::thumb::STR3;
     }
 
-    shared::out::error("Unknown STR thumb instruction variant, cannot be identified");
+    llarm::out::error("Unknown STR thumb instruction variant, cannot be identified");
 }
 
 
@@ -343,7 +343,7 @@ id::thumb ident::string_thumb::STRB(const lexemes_t &lexemes) {
         return id::thumb::STRB2;
     }
 
-    shared::out::error("Unknown STRB thumb instruction variant, cannot be identified");
+    llarm::out::error("Unknown STRB thumb instruction variant, cannot be identified");
 }
 
 
@@ -360,5 +360,5 @@ id::thumb ident::string_thumb::STRH(const lexemes_t &lexemes) {
         return id::thumb::STRB2;
     }
 
-    shared::out::error("Unknown STRH thumb instruction variant, cannot be identified");
+    llarm::out::error("Unknown STRH thumb instruction variant, cannot be identified");
 }

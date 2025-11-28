@@ -36,7 +36,7 @@ bool vfp_utils::is_signaling_nan(const float value) {
         return false;
     }
 
-    return (shared::util::bit_fetch(value, 22) == false); // is not quiet
+    return (llarm::util::bit_fetch(value, 22) == false); // is not quiet
 }
 
 bool vfp_utils::is_quiet_nan(const float value) {
@@ -44,5 +44,5 @@ bool vfp_utils::is_quiet_nan(const float value) {
         return false;
     }
 
-    return shared::util::bit_fetch(value, 22); // is quiet
+    return llarm::util::bit_fetch(value, 22); // is quiet
 }

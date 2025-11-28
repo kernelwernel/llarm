@@ -39,7 +39,7 @@ std::string generators::thumb::math::ADD1(const u16 code, const settings setting
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
 
-    const u8 immed_3 = shared::util::bit_range<u8>(code, 6, 8);
+    const u8 immed_3 = llarm::util::bit_range<u8>(code, 6, 8);
 
     return util::make_string(
         "ADD ", Rd, ", ", Rn, ", #", util::hex(immed_3, settings)
@@ -58,7 +58,7 @@ std::string generators::thumb::math::ADD1(const u16 code, const settings setting
 std::string generators::thumb::math::ADD2(const u16 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 8, 10, settings);
 
-    const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     return util::make_string(
         "ADD ", Rd, ", #", util::hex(immed_8, settings)
@@ -98,8 +98,8 @@ std::string generators::thumb::math::ADD3(const u16 code, const settings setting
  * reference: A7-8
  */
 std::string generators::thumb::math::ADD4(const u16 code, const settings settings) {
-    const bool H1 = (shared::util::bit_fetch(code, 7));
-    const bool H2 = (shared::util::bit_fetch(code, 6));
+    const bool H1 = (llarm::util::bit_fetch(code, 7));
+    const bool H2 = (llarm::util::bit_fetch(code, 6));
 
     const std::string Rd = util::reg_string_bits(code, 0, 2, H1, settings);
     const std::string Rm = util::reg_string_bits(code, 3, 5, H2, settings);
@@ -122,7 +122,7 @@ std::string generators::thumb::math::ADD4(const u16 code, const settings setting
 std::string generators::thumb::math::ADD5(const u16 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 8, 10, settings);
 
-    const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     return util::make_string(
         "ADD ", Rd, ", PC, #", util::hex(immed_8, settings), " * 4"
@@ -142,7 +142,7 @@ std::string generators::thumb::math::ADD5(const u16 code, const settings setting
 std::string generators::thumb::math::ADD6(const u16 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 8, 10, settings);
 
-    const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     return util::make_string(
         "ADD ", Rd, ", SP, #", util::hex(immed_8, settings), " * 4"
@@ -159,7 +159,7 @@ std::string generators::thumb::math::ADD6(const u16 code, const settings setting
  * reference: A7-12
  */
 std::string generators::thumb::math::ADD7(const u16 code, const settings settings) {
-    const u8 immed_7 = shared::util::bit_range<u8>(code, 0, 6);
+    const u8 immed_7 = llarm::util::bit_range<u8>(code, 0, 6);
 
     return util::make_string(
         "ADD SP, #", util::hex(immed_7, settings), " * 4"
@@ -198,7 +198,7 @@ std::string generators::thumb::math::SUB1(const u16 code, const settings setting
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
 
-    const u8 immed_3 = shared::util::bit_range<u8>(code, 6, 8);
+    const u8 immed_3 = llarm::util::bit_range<u8>(code, 6, 8);
 
     return util::make_string(
         "SUB ", Rd, ", ", Rn, ", #", util::hex(immed_3, settings)
@@ -217,7 +217,7 @@ std::string generators::thumb::math::SUB1(const u16 code, const settings setting
 std::string generators::thumb::math::SUB2(const u16 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 8, 10, settings);
 
-    const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     return util::make_string(
         "SUB ", Rd, ", #", util::hex(immed_8, settings)
@@ -254,7 +254,7 @@ std::string generators::thumb::math::SUB3(const u16 code, const settings setting
  * reference: A7-101
  */
 std::string generators::thumb::math::SUB4(const u16 code, const settings settings) {
-    const u8 immed_7 = shared::util::bit_range<u8>(code, 0, 6);
+    const u8 immed_7 = llarm::util::bit_range<u8>(code, 0, 6);
 
     return util::make_string(
         "SUB SP, #", util::hex(immed_7, settings), " * 4"

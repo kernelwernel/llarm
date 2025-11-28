@@ -14,13 +14,13 @@
  */
 void INSTRUCTIONS::thumb::movement::MOV1(const u16 code) {
     const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 8, 10);
-    const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     reg.write(Rd_id, immed_8);
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 }
 
@@ -40,7 +40,7 @@ void INSTRUCTIONS::thumb::movement::MOV2(const u16 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
     reg.write(id::cpsr::C, false);
     reg.write(id::cpsr::V, false);
@@ -51,10 +51,10 @@ void INSTRUCTIONS::thumb::movement::MOV2(const u16 code) {
  * Rd = Rm
  */
 void INSTRUCTIONS::thumb::movement::MOV3(const u16 code) {
-    u8 Rd_id_bits = shared::util::bit_range<u8>(code, 0, 2);
+    u8 Rd_id_bits = llarm::util::bit_range<u8>(code, 0, 2);
     const u32 Rm = reg.read(code, 3, 6);
-    const bool H1 = shared::util::bit_fetch(code, 7);
-    // const bool H2 = shared::util::bit_fetch(code, 6); H2 isn't really needed
+    const bool H1 = llarm::util::bit_fetch(code, 7);
+    // const bool H2 = llarm::util::bit_fetch(code, 6); H2 isn't really needed
 
     Rd_id_bits += (H1 * 8);
     const id::reg Rd_id = reg.fetch_reg_id(Rd_id_bits);
@@ -78,6 +78,6 @@ void INSTRUCTIONS::thumb::movement::MVN(const u16 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    reg.write(id::cpsr::N, (shared::util::bit_fetch(Rd, 31)));
+    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
 }

@@ -10,8 +10,8 @@ using namespace internal;
 
 // reference: A5-6
 std::string shifters::data_imm(const u32 code, const settings settings) {
-    const u8 rotate_imm = shared::util::bit_range<u8>(code, 8, 11);
-    const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 rotate_imm = llarm::util::bit_range<u8>(code, 8, 11);
+    const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
     return util::make_string("#", util::hex(std::rotr(immed_8, (rotate_imm * 2)), settings));
 }
 
@@ -36,7 +36,7 @@ std::string shifters::data_reg_pattern(const u32 code, const std::string &mode, 
 
 
 std::string shifters::data_imm_pattern(const u32 code, const std::string &mode, const settings settings) {
-    const u8 shift_imm = shared::util::bit_range<u8>(code, 7, 11);
+    const u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     return util::make_string(Rm, ", ", mode, " #", shift_imm);
 }

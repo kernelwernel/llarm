@@ -9,7 +9,7 @@
 using namespace internal;
 
 shifter_enum ident::u32_shifters::load_store(const u32 code) {
-    using namespace shared::util;
+    using namespace llarm::util;
 
     if (
         (bit_fetch(code, 27) != false) || 
@@ -24,8 +24,8 @@ shifter_enum ident::u32_shifters::load_store(const u32 code) {
         (bit_fetch(code, 21))
     );
 
-    const u8 shift_case = shared::util::bit_range<u8>(code, 5, 6);
-    const u8 shift_imm = shared::util::bit_range<u8>(code, 7, 11);
+    const u8 shift_case = llarm::util::bit_range<u8>(code, 5, 6);
+    const u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
 
     // forgive me with the level of indentation, hopefully nobody sees this...
 
@@ -34,7 +34,7 @@ shifter_enum ident::u32_shifters::load_store(const u32 code) {
         case 0b011: return shifter_enum::LS_IMM_PRE;
         case 0b000: return shifter_enum::LS_IMM_POST;
         case 0b110: 
-            if (shared::util::bit_range(code, 4, 11) == 0) {
+            if (llarm::util::bit_range(code, 4, 11) == 0) {
                 return shifter_enum::LS_REG;
             } else if (bit_fetch(code, 4) == 0) {
                 switch (shift_case) {
@@ -53,7 +53,7 @@ shifter_enum ident::u32_shifters::load_store(const u32 code) {
             break;
 
         case 0b111: 
-            if (shared::util::bit_range(code, 4, 11) == 0) {
+            if (llarm::util::bit_range(code, 4, 11) == 0) {
                 return shifter_enum::LS_REG_PRE;
             } else if (bit_fetch(code, 4) == 0) {
                 switch (shift_case) {
@@ -72,7 +72,7 @@ shifter_enum ident::u32_shifters::load_store(const u32 code) {
             break;
 
         case 0b100: 
-            if (shared::util::bit_range(code, 4, 11) == 0) {
+            if (llarm::util::bit_range(code, 4, 11) == 0) {
                 return shifter_enum::LS_REG_POST;
             } else if (bit_fetch(code, 4) == 0) {
                 switch (shift_case) {
@@ -96,7 +96,7 @@ shifter_enum ident::u32_shifters::load_store(const u32 code) {
 
 
 shifter_enum ident::u32_shifters::data_processing(const u32 code) {
-    using namespace shared::util;
+    using namespace llarm::util;
 
     if ((bit_fetch(code, 27) != false) || (bit_fetch(code, 26) != false)) {
         return shifter_enum::UNKNOWN;
@@ -168,7 +168,7 @@ shifter_enum ident::u32_shifters::data_processing(const u32 code) {
 
 
 shifter_enum ident::u32_shifters::load_store_multiple(const u32 code) {
-    using namespace shared::util;
+    using namespace llarm::util;
 
     if (
         (bit_fetch(code, 27) != true) || 
@@ -178,7 +178,7 @@ shifter_enum ident::u32_shifters::load_store_multiple(const u32 code) {
         return shifter_enum::UNKNOWN;
     }
     
-    const u8 shift_type = shared::util::bit_range<u8>(code, 23, 24);
+    const u8 shift_type = llarm::util::bit_range<u8>(code, 23, 24);
 
     switch (shift_type) {
         case 0b01: return shifter_enum::LS_MUL_INC_AFTER;
@@ -192,7 +192,7 @@ shifter_enum ident::u32_shifters::load_store_multiple(const u32 code) {
 
 
 shifter_enum ident::u32_shifters::load_store_misc(const u32 code) {
-    using namespace shared::util;
+    using namespace llarm::util;
 
     if (
         (bit_fetch(code, 27) != false) || 
@@ -220,7 +220,7 @@ shifter_enum ident::u32_shifters::load_store_misc(const u32 code) {
 
 
 shifter_enum ident::u32_shifters::load_store_coprocessor(const u32 code) {
-    using namespace shared::util;
+    using namespace llarm::util;
 
     if (
         (bit_fetch(code, 27) != true) ||
@@ -244,17 +244,17 @@ shifter_enum ident::u32_shifters::load_store_coprocessor(const u32 code) {
 
 
 shifter_enum ident::u32_shifters::vfp_single(const u32 code) {
-    const u8 Fd = shared::util::bit_range<u8>(code, 12, 15);
-    const u8 Fm = shared::util::bit_range<u8>(code, 0, 3);
+    const u8 Fd = llarm::util::bit_range<u8>(code, 12, 15);
+    const u8 Fm = llarm::util::bit_range<u8>(code, 0, 3);
 
-    const bool D = shared::util::bit_fetch(code, 22);
-    const bool M = shared::util::bit_fetch(code, 5);
+    const bool D = llarm::util::bit_fetch(code, 22);
+    const bool M = llarm::util::bit_fetch(code, 5);
 
     const u8 d_num = ((Fd << 1) | D);
     const u8 m_num = ((Fm << 1) | M);
 
-    const u8 d_bank = shared::util::bit_range<u8>(d_num, 3, 4);
-    const u8 m_bank = shared::util::bit_range<u8>(m_num, 3, 4);
+    const u8 d_bank = llarm::util::bit_range<u8>(d_num, 3, 4);
+    const u8 m_bank = llarm::util::bit_range<u8>(m_num, 3, 4);
 
     if (d_bank == 0) {
         return shifter_enum::VFP_SINGLE_SCALAR;
@@ -269,17 +269,17 @@ shifter_enum ident::u32_shifters::vfp_single(const u32 code) {
 
 
 shifter_enum ident::u32_shifters::vfp_single_monadic(const u32 code) {
-    const u8 Fd = shared::util::bit_range<u8>(code, 12, 15);
-    const u8 Fm = shared::util::bit_range<u8>(code, 0, 3);
+    const u8 Fd = llarm::util::bit_range<u8>(code, 12, 15);
+    const u8 Fm = llarm::util::bit_range<u8>(code, 0, 3);
 
-    const bool D = shared::util::bit_fetch(code, 22);
-    const bool M = shared::util::bit_fetch(code, 5);
+    const bool D = llarm::util::bit_fetch(code, 22);
+    const bool M = llarm::util::bit_fetch(code, 5);
 
     const u8 d_num = ((Fd << 1) | D);
     const u8 m_num = ((Fm << 1) | M);
 
-    const u8 d_bank = shared::util::bit_range<u8>(d_num, 3, 4);
-    const u8 m_bank = shared::util::bit_range<u8>(m_num, 3, 4);
+    const u8 d_bank = llarm::util::bit_range<u8>(d_num, 3, 4);
+    const u8 m_bank = llarm::util::bit_range<u8>(m_num, 3, 4);
     
     if (d_bank == 0) {
         return shifter_enum::VFP_SINGLE_MONADIC_SCALAR_TO_SCALAR;
@@ -294,12 +294,12 @@ shifter_enum ident::u32_shifters::vfp_single_monadic(const u32 code) {
 
 
 shifter_enum ident::u32_shifters::vfp_double(const u32 code) {
-    const u8 Dd = shared::util::bit_range<u8>(code, 12, 15);
-    const u8 Dn = shared::util::bit_range<u8>(code, 16, 19);
-    const u8 Dm = shared::util::bit_range<u8>(code, 0, 3);
+    const u8 Dd = llarm::util::bit_range<u8>(code, 12, 15);
+    const u8 Dn = llarm::util::bit_range<u8>(code, 16, 19);
+    const u8 Dm = llarm::util::bit_range<u8>(code, 0, 3);
 
-    const u8 d_bank = shared::util::bit_range<u8>(Dd, 2, 3);
-    const u8 m_bank = shared::util::bit_range<u8>(Dm, 2, 3);
+    const u8 d_bank = llarm::util::bit_range<u8>(Dd, 2, 3);
+    const u8 m_bank = llarm::util::bit_range<u8>(Dm, 2, 3);
     
     if (d_bank == 0) {
         return shifter_enum::VFP_DOUBLE_SCALAR;
@@ -314,11 +314,11 @@ shifter_enum ident::u32_shifters::vfp_double(const u32 code) {
 
 
 shifter_enum ident::u32_shifters::vfp_double_monadic(const u32 code) {
-    const u8 Dd = shared::util::bit_range<u8>(code, 12, 15);
-    const u8 Dm = shared::util::bit_range<u8>(code, 0, 3);
+    const u8 Dd = llarm::util::bit_range<u8>(code, 12, 15);
+    const u8 Dm = llarm::util::bit_range<u8>(code, 0, 3);
 
-    const u8 d_bank = shared::util::bit_range<u8>(Dd, 2, 3);
-    const u8 m_bank = shared::util::bit_range<u8>(Dm, 2, 3);
+    const u8 d_bank = llarm::util::bit_range<u8>(Dd, 2, 3);
+    const u8 m_bank = llarm::util::bit_range<u8>(Dm, 2, 3);
 
     if (d_bank == 0) {
         return shifter_enum::VFP_DOUBLE_MONADIC_SCALAR_TO_SCALAR;
@@ -333,8 +333,8 @@ shifter_enum ident::u32_shifters::vfp_double_monadic(const u32 code) {
 
 
 shifter_enum ident::u32_shifters::vfp_ls_multiple(const u32 code) {
-    const u8 bits_23_27 = shared::util::bit_range<u8>(code, 23, 27);
-    const bool bit_21 = shared::util::bit_fetch(code, 21);
+    const u8 bits_23_27 = llarm::util::bit_range<u8>(code, 23, 27);
+    const bool bit_21 = llarm::util::bit_fetch(code, 21);
     
     if (bits_23_27 == 0b11001) {
         if (bit_21 == false) {

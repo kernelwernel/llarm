@@ -10,7 +10,7 @@ void EXECUTE::arm_execute(const arm_decode_struct &decode) {
     const as::id::arm id = decode.id;
 
     switch (id) {
-        case as::id::arm::UNKNOWN: shared::out::dev_error("Unknown instruction attempted to be executed");
+        case as::id::arm::UNKNOWN: llarm::out::dev_error("Unknown instruction attempted to be executed");
         case as::id::arm::UNDEFINED: exception.undefined(); return;
         case as::id::arm::ADC: instructions.arm.math.ADC(code); return;
         case as::id::arm::ADD: instructions.arm.math.ADD(code); return;

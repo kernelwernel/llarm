@@ -23,7 +23,7 @@ void TLB::flush() {
 
 void TLB::invalidate(const u32 virtual_address, const id::tlb_type tlb_type) {
     if (is_type_invalid(tlb_type)) {
-        shared::out::unpredictable("Invalid TLB type mismatch between settings and implementation for TLB entry invalidation, defaulting to entry invalidation in all TLB types");
+        llarm::out::unpredictable("Invalid TLB type mismatch between settings and implementation for TLB entry invalidation, defaulting to entry invalidation in all TLB types");
         unified_table.erase(virtual_address);
         inst_table.erase(virtual_address);
         data_table.erase(virtual_address);
@@ -32,7 +32,7 @@ void TLB::invalidate(const u32 virtual_address, const id::tlb_type tlb_type) {
 
     switch (tlb_type) {
         case id::tlb_type::UNIFIED: unified_table.erase(virtual_address); return;
-        case id::tlb_type::SEPARATE: shared::out::dev_error("Unsupported TLB invalidation");
+        case id::tlb_type::SEPARATE: llarm::out::dev_error("Unsupported TLB invalidation");
         case id::tlb_type::SEPARATE_INST: inst_table.erase(virtual_address); return;
         case id::tlb_type::SEPARATE_DATA: data_table.erase(virtual_address); return; 
     }
@@ -45,7 +45,7 @@ void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, c
     const u8 size = [=, this]() -> u8 {
         switch (tlb_type) {
             case id::tlb_type::UNIFIED: return settings.unified_tlb_table_size; 
-            case id::tlb_type::SEPARATE: shared::out::dev_error("Unsupported TLB invalidation for auto replacement");
+            case id::tlb_type::SEPARATE: llarm::out::dev_error("Unsupported TLB invalidation for auto replacement");
             case id::tlb_type::SEPARATE_INST: return settings.inst_tlb_table_size; 
             case id::tlb_type::SEPARATE_DATA: return settings.data_tlb_table_size; 
         }
@@ -63,7 +63,7 @@ void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, c
             return;
         }
 
-        case id::tlb_type::SEPARATE: shared::out::dev_error("Unsupported TLB invalidation for auto replacement");
+        case id::tlb_type::SEPARATE: llarm::out::dev_error("Unsupported TLB invalidation for auto replacement");
 
         case id::tlb_type::SEPARATE_INST: {
             const u32 inst_key = inst_table.at(index);
@@ -93,7 +93,7 @@ u32 TLB::fetch(const u32 virtual_address, const tlb_fetch_struct tlb_fetch) {
         return data_table.at(virtual_address);
     }
 
-    shared::out::dev_error("Impossible TLB entry fetch");
+    llarm::out::dev_error("Impossible TLB entry fetch");
 }
 
 
@@ -105,7 +105,7 @@ void TLB::insert(const u32 virtual_address, const u32 physical_address, const id
             }
             return;
 
-        case id::tlb_type::SEPARATE: shared::out::dev_error("Unsupported TLB invalidation for insertion");
+        case id::tlb_type::SEPARATE: llarm::out::dev_error("Unsupported TLB invalidation for insertion");
         case id::tlb_type::SEPARATE_INST:
             if (inst_table.size() == settings.inst_tlb_table_size) {
                 auto_replace(id::tlb_type::SEPARATE_INST, virtual_address, physical_address);
@@ -165,7 +165,7 @@ bool TLB::is_type_invalid(const id::tlb_type tlb_type) {
         return tlb_type == id::tlb_type::UNIFIED;
     }
 
-    shared::out::dev_error("Invalid configuration for TLB type");
+    llarm::out::dev_error("Invalid configuration for TLB type");
 }
 
 
@@ -206,7 +206,7 @@ void TLB::function(const u8 opcode_2, const u8 CRm, const u32 virtual_address) {
             return;
 
         default: 
-            shared::out::unpredictable("Unknown TLB function");
+            llarm::out::unpredictable("Unknown TLB function");
             return;
     }
 }

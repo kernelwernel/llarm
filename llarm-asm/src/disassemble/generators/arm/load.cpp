@@ -40,13 +40,13 @@ using namespace internal;
  * reference: A4-30
  */
 std::string generators::arm::load::LDM1(const u32 code, const settings settings) {
-    const u16 register_list = shared::util::bit_range<u16>(code, 0, 15);
+    const u16 register_list = llarm::util::bit_range<u16>(code, 0, 15);
 
     const std::string Rn = util::reg_string(code, 16, 19, settings); 
 
     const std::string addressing_mode = shifters::ls_mul(code, settings);
 
-    const std::string W = (shared::util::bit_fetch(code, 21) ? "!" : "");
+    const std::string W = (llarm::util::bit_fetch(code, 21) ? "!" : "");
 
     const std::string registers = util::reg_list(register_list, settings);
 
@@ -83,7 +83,7 @@ std::string generators::arm::load::LDM1(const u32 code, const settings settings)
  * reference: A4-32
  */
 std::string generators::arm::load::LDM2(const u32 code, const settings settings) {
-    const u16 register_list = shared::util::bit_range<u16>(code, 0, 14);
+    const u16 register_list = llarm::util::bit_range<u16>(code, 0, 14);
     
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
@@ -128,13 +128,13 @@ std::string generators::arm::load::LDM2(const u32 code, const settings settings)
  * reference: A4-34
  */
 std::string generators::arm::load::LDM3(const u32 code, const settings settings) {
-    const u16 register_list = shared::util::bit_range<u16>(code, 0, 14);
+    const u16 register_list = llarm::util::bit_range<u16>(code, 0, 14);
 
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
     const std::string addressing_mode = shifters::ls_mul(code, settings);
 
-    const std::string W = (shared::util::bit_fetch(code, 21) ? "!" : "");
+    const std::string W = (llarm::util::bit_fetch(code, 21) ? "!" : "");
 
     const std::string registers_and_pc = util::reg_list(register_list, settings, util::reg_id::R15);
 
@@ -222,7 +222,7 @@ std::string generators::arm::load::LDRBT(const u32 code, const settings settings
         case shifter_enum::LS_SCALED_POST_ASR:
         case shifter_enum::LS_SCALED_POST_ROR:
         case shifter_enum::LS_SCALED_POST_RRX: break;
-        default: shared::out::error("Only post-indexed addressing modes are allowed for LDRBT");
+        default: llarm::out::error("Only post-indexed addressing modes are allowed for LDRBT");
     }
 
     const std::string Rd = util::reg_string(code, 12, 15, settings);
@@ -341,7 +341,7 @@ std::string generators::arm::load::LDRT(const u32 code, const settings settings)
         case shifter_enum::LS_SCALED_POST_ASR:
         case shifter_enum::LS_SCALED_POST_ROR:
         case shifter_enum::LS_SCALED_POST_RRX: break;
-        default: shared::out::error("Only post-indexed addressing modes are allowed for LDRBT");
+        default: llarm::out::error("Only post-indexed addressing modes are allowed for LDRBT");
     }
 
     const std::string post_indexed_addressing_mode = shifters::shifter_to_string(mode_id, code, settings);

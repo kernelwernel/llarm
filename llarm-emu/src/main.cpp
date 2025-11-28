@@ -11,7 +11,7 @@ std::vector<u8> fetch_binary(const std::string& filePath) {
     std::ifstream file(filePath, std::ios::binary | std::ios::ate);
 
     if (!file) {
-        shared::out::error("Failed to open file");
+        llarm::out::error("Failed to open file");
     }
 
     std::size_t file_size = static_cast<std::size_t>(file.tellg());
@@ -20,7 +20,7 @@ std::vector<u8> fetch_binary(const std::string& filePath) {
     std::vector<u8> buffer(file_size);
 
     if (!file.read(reinterpret_cast<char*>(buffer.data()), static_cast<std::streamsize>(file_size))) {
-        shared::out::error("Failed to read file");
+        llarm::out::error("Failed to read file");
     }
 
     return buffer; // Return the vector containing the binary data

@@ -38,7 +38,7 @@ std::string generators::thumb::logic::AND(const u16 code, const settings setting
  * reference: A7-14
  */
 std::string generators::thumb::logic::ASR1(const u16 code, const settings settings) {
-    const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
+    const u8 immed_5 = llarm::util::bit_range<u8>(code, 6, 10);
 
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rm = util::reg_string(code, 3, 5, settings);
@@ -116,7 +116,7 @@ std::string generators::thumb::logic::LSL1(const u16 code, const settings settin
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rm = util::reg_string(code, 3, 5, settings);
 
-    const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
+    const u8 immed_5 = llarm::util::bit_range<u8>(code, 6, 10);
 
     return util::make_string(
         "LSL ", Rd, ", ", Rm, ", #", util::hex(immed_5, settings)
@@ -157,7 +157,7 @@ std::string generators::thumb::logic::LSR1(const u16 code, const settings settin
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rm = util::reg_string(code, 3, 5, settings);
 
-    const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
+    const u8 immed_5 = llarm::util::bit_range<u8>(code, 6, 10);
 
     return util::make_string(
         "LSR ", Rd, ", ", Rm, ", #", util::hex(immed_5, settings)

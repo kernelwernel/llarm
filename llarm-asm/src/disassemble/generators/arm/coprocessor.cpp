@@ -38,13 +38,13 @@ using namespace internal;
  * reference: A4-20
  */
 std::string generators::arm::coprocessor::CDP(const u32 code, const settings settings) {
-    const u8 cond = shared::util::bit_range<u8>(code, 28, 31);
+    const u8 cond = llarm::util::bit_range<u8>(code, 28, 31);
     const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond, settings));
 
     const std::string coproc = util::reg_string(code, 8, 11, settings, util::prefix::P);
 
-    const u8 opcode_1 = shared::util::bit_range<u8>(code, 20, 23);
-    const u8 opcode_2 = shared::util::bit_range<u8>(code, 5, 7);
+    const u8 opcode_1 = llarm::util::bit_range<u8>(code, 20, 23);
+    const u8 opcode_2 = llarm::util::bit_range<u8>(code, 5, 7);
 
     const std::string CRd = util::reg_string(code, 12, 15, settings, util::prefix::C);
     const std::string CRn = util::reg_string(code, 16, 19, settings, util::prefix::C);
@@ -80,10 +80,10 @@ std::string generators::arm::coprocessor::CDP(const u32 code, const settings set
  * reference: A4-28
  */
 std::string generators::arm::coprocessor::LDC(const u32 code, const settings settings) {
-    const u8 cond = shared::util::bit_range<u8>(code, 28, 31);
+    const u8 cond = llarm::util::bit_range<u8>(code, 28, 31);
     const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond, settings));
 
-    const char* L = (shared::util::bit_fetch(code, 22) ? "L" : "");
+    const char* L = (llarm::util::bit_fetch(code, 22) ? "L" : "");
 
     const std::string coproc = util::reg_string(code, 8, 11, settings, util::prefix::P);
 
@@ -117,13 +117,13 @@ std::string generators::arm::coprocessor::LDC(const u32 code, const settings set
  * reference: A4-52
  */
 std::string generators::arm::coprocessor::MCR(const u32 code, const settings settings) {
-    const u8 cond = shared::util::bit_range<u8>(code, 28, 31);
+    const u8 cond = llarm::util::bit_range<u8>(code, 28, 31);
     const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond, settings));
 
     const std::string coproc = util::reg_string(code, 8, 11, settings, util::prefix::P);
 
-    const u8 opcode_1 = shared::util::bit_range<u8>(code, 21, 23);
-    const u8 opcode_2 = shared::util::bit_range<u8>(code, 5, 7);
+    const u8 opcode_1 = llarm::util::bit_range<u8>(code, 21, 23);
+    const u8 opcode_2 = llarm::util::bit_range<u8>(code, 5, 7);
 
     const std::string Rd = util::reg_string(code, 12, 15, settings);
     const std::string CRn = util::reg_string(code, 16, 19, settings, util::prefix::C);
@@ -156,13 +156,13 @@ std::string generators::arm::coprocessor::MCR(const u32 code, const settings set
  * reference: A4-58
  */
 std::string generators::arm::coprocessor::MRC(const u32 code, const settings settings) {
-    const u8 cond = shared::util::bit_range<u8>(code, 28, 31);
+    const u8 cond = llarm::util::bit_range<u8>(code, 28, 31);
     const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond, settings));
 
     const std::string coproc = util::reg_string(code, 8, 11, settings, util::prefix::P);
 
-    const u8 opcode_1 = shared::util::bit_range<u8>(code, 21, 23);
-    const u8 opcode_2 = shared::util::bit_range<u8>(code, 5, 7);
+    const u8 opcode_1 = llarm::util::bit_range<u8>(code, 21, 23);
+    const u8 opcode_2 = llarm::util::bit_range<u8>(code, 5, 7);
 
     const std::string Rd = util::reg_string(code, 12, 15, settings);
     const std::string CRn = util::reg_string(code, 16, 19, settings, util::prefix::C);
@@ -198,10 +198,10 @@ std::string generators::arm::coprocessor::MRC(const u32 code, const settings set
  * reference: A4-82
  */
 std::string generators::arm::coprocessor::STC(const u32 code, const settings settings) {
-    const u8 cond = shared::util::bit_range<u8>(code, 28, 31);
+    const u8 cond = llarm::util::bit_range<u8>(code, 28, 31);
     const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond, settings));
 
-    const char* L = (shared::util::bit_fetch(code, 22) ? "L" : "");
+    const char* L = (llarm::util::bit_fetch(code, 22) ? "L" : "");
 
     const std::string coproc = util::reg_string(code, 8, 11, settings, util::prefix::P);
 

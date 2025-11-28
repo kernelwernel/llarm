@@ -4,7 +4,7 @@
 
 #include <bitset>
 
-namespace shared::util {
+namespace llarm::util {
     template <typename T, typename M>
     inline T bit_range(const M input, const u8 start, const u8 end) {
         if (start >= end) [[unlikely]] {
@@ -63,7 +63,7 @@ namespace shared::util {
     template<typename T = u32>
     inline void modify_bit(T &original, const u8 index, const bool value) {
         if (index > (sizeof(T) * 8) - 1) {
-            //shared::out::dev_error("Index for modify_bit() must be between 0 and 31");
+            //llarm::out::dev_error("Index for modify_bit() must be between 0 and 31");
             // TODO think of an error
         }
 
@@ -76,7 +76,7 @@ namespace shared::util {
 
     inline void swap_bits(u32 &original, const u8 start, const u8 end, const u32 value) {
         if (start >= 32 || end >= 32 || start >= end) {
-            //shared::out::dev_error("util::swap_bits has impossible arguments");
+            //llarm::out::dev_error("util::swap_bits has impossible arguments");
             // TODO think of an error 
             return;
         }

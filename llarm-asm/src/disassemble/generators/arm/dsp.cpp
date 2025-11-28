@@ -27,7 +27,7 @@ std::string generators::arm::dsp::MCRR(const u32 code, const settings settings) 
     const std::string Rn = util::reg_string(code, 16, 19, settings);
     const std::string CRm = util::reg_string(code, 0, 3, settings, util::prefix::C);
 
-    const u8 opcode = shared::util::bit_range<u8>(code, 4, 7);
+    const u8 opcode = llarm::util::bit_range<u8>(code, 4, 7);
 
     return util::make_string("MCRR", util::cond(code, settings), " ", coproc, ", #", opcode, ", ", Rd, ", ", Rn, ", ", CRm);
 }
@@ -40,7 +40,7 @@ std::string generators::arm::dsp::MRRC(const u32 code, const settings settings) 
     const std::string Rn = util::reg_string(code, 16, 19, settings);
     const std::string CRm = util::reg_string(code, 0, 3, settings, util::prefix::C);
 
-    const u8 opcode = shared::util::bit_range<u8>(code, 4, 7);
+    const u8 opcode = llarm::util::bit_range<u8>(code, 4, 7);
 
     return util::make_string("MRRC", util::cond(code, settings), " ", coproc, ", #", opcode, ", ", Rd, ", ", Rn, ", ", CRm);
 }
@@ -73,8 +73,8 @@ std::string generators::arm::dsp::QSUB(const u32 code, const settings settings) 
 
 
 std::string generators::arm::dsp::SMLAXY(const u32 code, const settings settings) {
-    const char x = (shared::util::bit_fetch(code, 5) ? 'T' : 'B');
-    const char y = (shared::util::bit_fetch(code, 6) ? 'T' : 'B');
+    const char x = (llarm::util::bit_fetch(code, 5) ? 'T' : 'B');
+    const char y = (llarm::util::bit_fetch(code, 6) ? 'T' : 'B');
 
     const std::string Rd = util::reg_string(code, 16, 19, settings);
     const std::string Rm = util::reg_string(code, 0, 3, settings);
@@ -86,8 +86,8 @@ std::string generators::arm::dsp::SMLAXY(const u32 code, const settings settings
 
 
 std::string generators::arm::dsp::SMLALXY(const u32 code, const settings settings) {
-    const char x = (shared::util::bit_fetch(code, 5) ? 'T' : 'B');
-    const char y = (shared::util::bit_fetch(code, 6) ? 'T' : 'B');
+    const char x = (llarm::util::bit_fetch(code, 5) ? 'T' : 'B');
+    const char y = (llarm::util::bit_fetch(code, 6) ? 'T' : 'B');
 
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     const std::string Rs = util::reg_string(code, 8, 11, settings);
@@ -99,7 +99,7 @@ std::string generators::arm::dsp::SMLALXY(const u32 code, const settings setting
 
 
 std::string generators::arm::dsp::SMLAWY(const u32 code, const settings settings) {
-    const char y = (shared::util::bit_fetch(code, 6) ? 'T' : 'B');
+    const char y = (llarm::util::bit_fetch(code, 6) ? 'T' : 'B');
 
     const std::string Rd = util::reg_string(code, 16, 19, settings);
     const std::string Rm = util::reg_string(code, 0, 3, settings);
@@ -111,8 +111,8 @@ std::string generators::arm::dsp::SMLAWY(const u32 code, const settings settings
 
 
 std::string generators::arm::dsp::SMULXY(const u32 code, const settings settings) {
-    const char x = (shared::util::bit_fetch(code, 5) ? 'T' : 'B');
-    const char y = (shared::util::bit_fetch(code, 6) ? 'T' : 'B');
+    const char x = (llarm::util::bit_fetch(code, 5) ? 'T' : 'B');
+    const char y = (llarm::util::bit_fetch(code, 6) ? 'T' : 'B');
 
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     const std::string Rs = util::reg_string(code, 8, 11, settings);
@@ -123,7 +123,7 @@ std::string generators::arm::dsp::SMULXY(const u32 code, const settings settings
 
 
 std::string generators::arm::dsp::SMULWY(const u32 code, const settings settings) {
-    const char y = (shared::util::bit_fetch(code, 6) ? 'T' : 'B');
+    const char y = (llarm::util::bit_fetch(code, 6) ? 'T' : 'B');
 
     const std::string Rd = util::reg_string(code, 16, 19, settings);
     const std::string Rm = util::reg_string(code, 0, 3, settings);

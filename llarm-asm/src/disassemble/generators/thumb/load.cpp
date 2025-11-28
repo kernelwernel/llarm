@@ -38,7 +38,7 @@ using namespace internal;
 std::string generators::thumb::load::LDMIA(const u16 code, const settings settings) {
     const std::string Rn = util::reg_string(code, 8, 10, settings);
 
-    const u8 list = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 list = llarm::util::bit_range<u8>(code, 0, 7);
 
     return util::make_string(
         "LDMIA ", Rn, "!, ", util::reg_list(list, settings)
@@ -59,7 +59,7 @@ std::string generators::thumb::load::LDR1(const u16 code, const settings setting
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
 
-    const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
+    const u8 immed_5 = llarm::util::bit_range<u8>(code, 6, 10);
 
     return util::make_string(
         "LDR ", Rd, ", [", Rn, ", #", util::hex(immed_5, settings), " * 4]"
@@ -101,7 +101,7 @@ std::string generators::thumb::load::LDR2(const u16 code, const settings setting
 std::string generators::thumb::load::LDR3(const u16 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 8, 10, settings);
 
-    const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     return util::make_string(
         "LDR ", Rd, ", [PC, #", util::hex(immed_8, settings), " * 4]"
@@ -121,7 +121,7 @@ std::string generators::thumb::load::LDR3(const u16 code, const settings setting
 std::string generators::thumb::load::LDR4(const u16 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 8, 10, settings);
 
-    const u8 immed_8 = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     return util::make_string(
         "LDR ", Rd, ", [SP, #", util::hex(immed_8, settings), " * 4]"
@@ -142,7 +142,7 @@ std::string generators::thumb::load::LDRB1(const u16 code, const settings settin
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
 
-    const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
+    const u8 immed_5 = llarm::util::bit_range<u8>(code, 6, 10);
 
     return util::make_string(
         "LDRB ", Rd, ", [", Rn, ", #", util::hex(immed_5, settings), "]"
@@ -183,7 +183,7 @@ std::string generators::thumb::load::LDRH1(const u16 code, const settings settin
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
 
-    const u8 immed_5 = shared::util::bit_range<u8>(code, 6, 10);
+    const u8 immed_5 = llarm::util::bit_range<u8>(code, 6, 10);
 
     return util::make_string(
         "LDRH ", Rd, ", [", Rn, ", #", util::hex(immed_5, settings), " * 2]"
@@ -282,9 +282,9 @@ std::string generators::thumb::load::LDRSH(const u16 code, const settings settin
  * reference: A7-75
  */
 std::string generators::thumb::load::POP(const u16 code, const settings settings) {
-    const u8 list = shared::util::bit_range<u8>(code, 0, 7);
+    const u8 list = llarm::util::bit_range<u8>(code, 0, 7);
 
-    const bool R = (shared::util::bit_fetch(code, 8));
+    const bool R = (llarm::util::bit_fetch(code, 8));
 
     const util::reg_id extra_reg = (R ? util::reg_id::R15 : util::reg_id::NULL_REG);
 

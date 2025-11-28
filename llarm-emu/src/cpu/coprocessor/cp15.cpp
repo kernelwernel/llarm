@@ -191,163 +191,163 @@ u32 CP15::read(const id::cp15 reg) {
     switch (reg) {
         case id::cp15::UNKNOWN: return 0; // TODO log this somehow
         case id::cp15::R0_ID: return R0_ID;
-        case id::cp15::R0_ID_REVISION: return shared::util::bit_range(R0_ID, 0, 3);
-        case id::cp15::R0_ID_IMPLEMENTOR: return shared::util::bit_range(R0_ID, 24, 31);
-        case id::cp15::R0_ID_PPN: return shared::util::bit_range(R0_ID, 4, 15);
-        case id::cp15::R0_ID_PRE7_ID: return shared::util::bit_range(R0_ID, 4, 31);
-        case id::cp15::R0_ID_PRE7_REVISION: return shared::util::bit_range(R0_ID, 0, 3);
-        case id::cp15::R0_ID_7_REVISION: return shared::util::bit_range(R0_ID, 0, 3);
-        case id::cp15::R0_ID_7_PPN: return shared::util::bit_range(R0_ID, 4, 15);
-        case id::cp15::R0_ID_7_PPN_TOP: return shared::util::bit_range(R0_ID, 12, 15);
-        case id::cp15::R0_ID_7_VARIANT: return shared::util::bit_range(R0_ID, 16, 22);
-        case id::cp15::R0_ID_7_A: return shared::util::bit_fetch(R0_ID, 23);
-        case id::cp15::R0_ID_7_IMPLEMENTOR: return shared::util::bit_range(R0_ID, 24, 31);
-        case id::cp15::R0_ID_POST7_IMPLEMENTOR: return shared::util::bit_range(R0_ID, 24, 31);
-        case id::cp15::R0_ID_POST7_VARIANT: return shared::util::bit_range(R0_ID, 20, 23);
-        case id::cp15::R0_ID_POST7_ARCHITECTURE: return shared::util::bit_range(R0_ID, 16, 19);
-        case id::cp15::R0_ID_POST7_PPN: return shared::util::bit_range(R0_ID, 4, 15);
-        case id::cp15::R0_ID_POST7_PPN_TOP: return shared::util::bit_range(R0_ID, 12, 15);
-        case id::cp15::R0_ID_POST7_REVISION: return shared::util::bit_range(R0_ID, 0, 3);
+        case id::cp15::R0_ID_REVISION: return llarm::util::bit_range(R0_ID, 0, 3);
+        case id::cp15::R0_ID_IMPLEMENTOR: return llarm::util::bit_range(R0_ID, 24, 31);
+        case id::cp15::R0_ID_PPN: return llarm::util::bit_range(R0_ID, 4, 15);
+        case id::cp15::R0_ID_PRE7_ID: return llarm::util::bit_range(R0_ID, 4, 31);
+        case id::cp15::R0_ID_PRE7_REVISION: return llarm::util::bit_range(R0_ID, 0, 3);
+        case id::cp15::R0_ID_7_REVISION: return llarm::util::bit_range(R0_ID, 0, 3);
+        case id::cp15::R0_ID_7_PPN: return llarm::util::bit_range(R0_ID, 4, 15);
+        case id::cp15::R0_ID_7_PPN_TOP: return llarm::util::bit_range(R0_ID, 12, 15);
+        case id::cp15::R0_ID_7_VARIANT: return llarm::util::bit_range(R0_ID, 16, 22);
+        case id::cp15::R0_ID_7_A: return llarm::util::bit_fetch(R0_ID, 23);
+        case id::cp15::R0_ID_7_IMPLEMENTOR: return llarm::util::bit_range(R0_ID, 24, 31);
+        case id::cp15::R0_ID_POST7_IMPLEMENTOR: return llarm::util::bit_range(R0_ID, 24, 31);
+        case id::cp15::R0_ID_POST7_VARIANT: return llarm::util::bit_range(R0_ID, 20, 23);
+        case id::cp15::R0_ID_POST7_ARCHITECTURE: return llarm::util::bit_range(R0_ID, 16, 19);
+        case id::cp15::R0_ID_POST7_PPN: return llarm::util::bit_range(R0_ID, 4, 15);
+        case id::cp15::R0_ID_POST7_PPN_TOP: return llarm::util::bit_range(R0_ID, 12, 15);
+        case id::cp15::R0_ID_POST7_REVISION: return llarm::util::bit_range(R0_ID, 0, 3);
         case id::cp15::R0_CACHE: return R0_CACHE;
-        case id::cp15::R0_CACHE_CTYPE: return shared::util::bit_range(R0_CACHE, 25, 28);
-        case id::cp15::R0_CACHE_S: return shared::util::bit_fetch(R0_CACHE, 24);
-        case id::cp15::R0_CACHE_DSIZE: return shared::util::bit_range(R0_CACHE, 12, 23);
-        case id::cp15::R0_CACHE_DSIZE_LEN: return shared::util::bit_range(R0_CACHE, 12, 13);
-        case id::cp15::R0_CACHE_DSIZE_M: return shared::util::bit_fetch(R0_CACHE, 14);
-        case id::cp15::R0_CACHE_DSIZE_ASSOC: return shared::util::bit_range(R0_CACHE, 15, 17);
-        case id::cp15::R0_CACHE_DSIZE_SIZE: return shared::util::bit_range(R0_CACHE, 18, 20);
-        case id::cp15::R0_CACHE_ISIZE: return shared::util::bit_range(R0_CACHE, 0, 11);
-        case id::cp15::R0_CACHE_ISIZE_LEN: return shared::util::bit_range(R0_CACHE, 0, 1);
-        case id::cp15::R0_CACHE_ISIZE_M: return shared::util::bit_fetch(R0_CACHE, 2);
-        case id::cp15::R0_CACHE_ISIZE_ASSOC: return shared::util::bit_range(R0_CACHE, 3, 5);
-        case id::cp15::R0_CACHE_ISIZE_SIZE: return shared::util::bit_range(R0_CACHE, 6, 8);
+        case id::cp15::R0_CACHE_CTYPE: return llarm::util::bit_range(R0_CACHE, 25, 28);
+        case id::cp15::R0_CACHE_S: return llarm::util::bit_fetch(R0_CACHE, 24);
+        case id::cp15::R0_CACHE_DSIZE: return llarm::util::bit_range(R0_CACHE, 12, 23);
+        case id::cp15::R0_CACHE_DSIZE_LEN: return llarm::util::bit_range(R0_CACHE, 12, 13);
+        case id::cp15::R0_CACHE_DSIZE_M: return llarm::util::bit_fetch(R0_CACHE, 14);
+        case id::cp15::R0_CACHE_DSIZE_ASSOC: return llarm::util::bit_range(R0_CACHE, 15, 17);
+        case id::cp15::R0_CACHE_DSIZE_SIZE: return llarm::util::bit_range(R0_CACHE, 18, 20);
+        case id::cp15::R0_CACHE_ISIZE: return llarm::util::bit_range(R0_CACHE, 0, 11);
+        case id::cp15::R0_CACHE_ISIZE_LEN: return llarm::util::bit_range(R0_CACHE, 0, 1);
+        case id::cp15::R0_CACHE_ISIZE_M: return llarm::util::bit_fetch(R0_CACHE, 2);
+        case id::cp15::R0_CACHE_ISIZE_ASSOC: return llarm::util::bit_range(R0_CACHE, 3, 5);
+        case id::cp15::R0_CACHE_ISIZE_SIZE: return llarm::util::bit_range(R0_CACHE, 6, 8);
         case id::cp15::R1: return R1;
         case id::cp15::R1_M: return (R1 & 1);
-        case id::cp15::R1_A: return shared::util::bit_fetch(R1, 1);
-        case id::cp15::R1_C: return shared::util::bit_fetch(R1, 2);
-        case id::cp15::R1_W: return shared::util::bit_fetch(R1, 3);
-        case id::cp15::R1_P: return shared::util::bit_fetch(R1, 4);
-        case id::cp15::R1_D: return shared::util::bit_fetch(R1, 5);
-        case id::cp15::R1_L: return shared::util::bit_fetch(R1, 6);
-        case id::cp15::R1_B: return shared::util::bit_fetch(R1, 7);
-        case id::cp15::R1_S: return shared::util::bit_fetch(R1, 8);
-        case id::cp15::R1_R: return shared::util::bit_fetch(R1, 9);
-        case id::cp15::R1_F: return shared::util::bit_fetch(R1, 10);
-        case id::cp15::R1_Z: return shared::util::bit_fetch(R1, 11);
-        case id::cp15::R1_I: return shared::util::bit_fetch(R1, 12);
-        case id::cp15::R1_V: return shared::util::bit_fetch(R1, 13);
-        case id::cp15::R1_RR: return shared::util::bit_fetch(R1, 14);
-        case id::cp15::R1_L4: return shared::util::bit_fetch(R1, 15);
+        case id::cp15::R1_A: return llarm::util::bit_fetch(R1, 1);
+        case id::cp15::R1_C: return llarm::util::bit_fetch(R1, 2);
+        case id::cp15::R1_W: return llarm::util::bit_fetch(R1, 3);
+        case id::cp15::R1_P: return llarm::util::bit_fetch(R1, 4);
+        case id::cp15::R1_D: return llarm::util::bit_fetch(R1, 5);
+        case id::cp15::R1_L: return llarm::util::bit_fetch(R1, 6);
+        case id::cp15::R1_B: return llarm::util::bit_fetch(R1, 7);
+        case id::cp15::R1_S: return llarm::util::bit_fetch(R1, 8);
+        case id::cp15::R1_R: return llarm::util::bit_fetch(R1, 9);
+        case id::cp15::R1_F: return llarm::util::bit_fetch(R1, 10);
+        case id::cp15::R1_Z: return llarm::util::bit_fetch(R1, 11);
+        case id::cp15::R1_I: return llarm::util::bit_fetch(R1, 12);
+        case id::cp15::R1_V: return llarm::util::bit_fetch(R1, 13);
+        case id::cp15::R1_RR: return llarm::util::bit_fetch(R1, 14);
+        case id::cp15::R1_L4: return llarm::util::bit_fetch(R1, 15);
         case id::cp15::R2: return R2;
         case id::cp15::R2_MMU: return R2;
-        case id::cp15::R2_MMU_TRANSLATION_BASE: return shared::util::bit_range(R2, 14, 31);
+        case id::cp15::R2_MMU_TRANSLATION_BASE: return llarm::util::bit_range(R2, 14, 31);
         case id::cp15::R2_PU: return R2;
         case id::cp15::R2_PU_C0: return (R2 & 1);
-        case id::cp15::R2_PU_C1: return shared::util::bit_fetch(R2, 1);
-        case id::cp15::R2_PU_C2: return shared::util::bit_fetch(R2, 2);
-        case id::cp15::R2_PU_C3: return shared::util::bit_fetch(R2, 3);
-        case id::cp15::R2_PU_C4: return shared::util::bit_fetch(R2, 4);
-        case id::cp15::R2_PU_C5: return shared::util::bit_fetch(R2, 5);
-        case id::cp15::R2_PU_C6: return shared::util::bit_fetch(R2, 6);
-        case id::cp15::R2_PU_C7: return shared::util::bit_fetch(R2, 7);
+        case id::cp15::R2_PU_C1: return llarm::util::bit_fetch(R2, 1);
+        case id::cp15::R2_PU_C2: return llarm::util::bit_fetch(R2, 2);
+        case id::cp15::R2_PU_C3: return llarm::util::bit_fetch(R2, 3);
+        case id::cp15::R2_PU_C4: return llarm::util::bit_fetch(R2, 4);
+        case id::cp15::R2_PU_C5: return llarm::util::bit_fetch(R2, 5);
+        case id::cp15::R2_PU_C6: return llarm::util::bit_fetch(R2, 6);
+        case id::cp15::R2_PU_C7: return llarm::util::bit_fetch(R2, 7);
         case id::cp15::R3: return R3;
         case id::cp15::R3_MMU: return R3;
-        case id::cp15::R3_MMU_D0: return shared::util::bit_range(R3, 0, 1);
-        case id::cp15::R3_MMU_D1: return shared::util::bit_range(R3, 2, 3);
-        case id::cp15::R3_MMU_D2: return shared::util::bit_range(R3, 4, 5);
-        case id::cp15::R3_MMU_D3: return shared::util::bit_range(R3, 6, 7);
-        case id::cp15::R3_MMU_D4: return shared::util::bit_range(R3, 8, 9);
-        case id::cp15::R3_MMU_D5: return shared::util::bit_range(R3, 10, 11);
-        case id::cp15::R3_MMU_D6: return shared::util::bit_range(R3, 12, 13);
-        case id::cp15::R3_MMU_D7: return shared::util::bit_range(R3, 14, 15);
-        case id::cp15::R3_MMU_D8: return shared::util::bit_range(R3, 16, 17);
-        case id::cp15::R3_MMU_D9: return shared::util::bit_range(R3, 18, 19);
-        case id::cp15::R3_MMU_D10: return shared::util::bit_range(R3, 20, 21);
-        case id::cp15::R3_MMU_D11: return shared::util::bit_range(R3, 22, 23);
-        case id::cp15::R3_MMU_D12: return shared::util::bit_range(R3, 24, 25);
-        case id::cp15::R3_MMU_D13: return shared::util::bit_range(R3, 26, 27);
-        case id::cp15::R3_MMU_D14: return shared::util::bit_range(R3, 28, 29);
-        case id::cp15::R3_MMU_D15: return shared::util::bit_range(R3, 30, 31);
+        case id::cp15::R3_MMU_D0: return llarm::util::bit_range(R3, 0, 1);
+        case id::cp15::R3_MMU_D1: return llarm::util::bit_range(R3, 2, 3);
+        case id::cp15::R3_MMU_D2: return llarm::util::bit_range(R3, 4, 5);
+        case id::cp15::R3_MMU_D3: return llarm::util::bit_range(R3, 6, 7);
+        case id::cp15::R3_MMU_D4: return llarm::util::bit_range(R3, 8, 9);
+        case id::cp15::R3_MMU_D5: return llarm::util::bit_range(R3, 10, 11);
+        case id::cp15::R3_MMU_D6: return llarm::util::bit_range(R3, 12, 13);
+        case id::cp15::R3_MMU_D7: return llarm::util::bit_range(R3, 14, 15);
+        case id::cp15::R3_MMU_D8: return llarm::util::bit_range(R3, 16, 17);
+        case id::cp15::R3_MMU_D9: return llarm::util::bit_range(R3, 18, 19);
+        case id::cp15::R3_MMU_D10: return llarm::util::bit_range(R3, 20, 21);
+        case id::cp15::R3_MMU_D11: return llarm::util::bit_range(R3, 22, 23);
+        case id::cp15::R3_MMU_D12: return llarm::util::bit_range(R3, 24, 25);
+        case id::cp15::R3_MMU_D13: return llarm::util::bit_range(R3, 26, 27);
+        case id::cp15::R3_MMU_D14: return llarm::util::bit_range(R3, 28, 29);
+        case id::cp15::R3_MMU_D15: return llarm::util::bit_range(R3, 30, 31);
         case id::cp15::R3_PU: return R3;
         case id::cp15::R3_PU_B0: return (R3 & 1);
-        case id::cp15::R3_PU_B1: return shared::util::bit_fetch(R3, 1);
-        case id::cp15::R3_PU_B2: return shared::util::bit_fetch(R3, 2);
-        case id::cp15::R3_PU_B3: return shared::util::bit_fetch(R3, 3);
-        case id::cp15::R3_PU_B4: return shared::util::bit_fetch(R3, 4);
-        case id::cp15::R3_PU_B5: return shared::util::bit_fetch(R3, 5);
-        case id::cp15::R3_PU_B6: return shared::util::bit_fetch(R3, 6);
-        case id::cp15::R3_PU_B7: return shared::util::bit_fetch(R3, 7);
+        case id::cp15::R3_PU_B1: return llarm::util::bit_fetch(R3, 1);
+        case id::cp15::R3_PU_B2: return llarm::util::bit_fetch(R3, 2);
+        case id::cp15::R3_PU_B3: return llarm::util::bit_fetch(R3, 3);
+        case id::cp15::R3_PU_B4: return llarm::util::bit_fetch(R3, 4);
+        case id::cp15::R3_PU_B5: return llarm::util::bit_fetch(R3, 5);
+        case id::cp15::R3_PU_B6: return llarm::util::bit_fetch(R3, 6);
+        case id::cp15::R3_PU_B7: return llarm::util::bit_fetch(R3, 7);
         case id::cp15::R3_PU_INST: return R3_PU_INST;
         case id::cp15::R3_PU_INST_B0: return (R3_PU_INST & 1);
-        case id::cp15::R3_PU_INST_B1: return shared::util::bit_fetch(R3_PU_INST, 1);
-        case id::cp15::R3_PU_INST_B2: return shared::util::bit_fetch(R3_PU_INST, 2);
-        case id::cp15::R3_PU_INST_B3: return shared::util::bit_fetch(R3_PU_INST, 3);
-        case id::cp15::R3_PU_INST_B4: return shared::util::bit_fetch(R3_PU_INST, 4);
-        case id::cp15::R3_PU_INST_B5: return shared::util::bit_fetch(R3_PU_INST, 5);
-        case id::cp15::R3_PU_INST_B6: return shared::util::bit_fetch(R3_PU_INST, 6);
-        case id::cp15::R3_PU_INST_B7: return shared::util::bit_fetch(R3_PU_INST, 7);
+        case id::cp15::R3_PU_INST_B1: return llarm::util::bit_fetch(R3_PU_INST, 1);
+        case id::cp15::R3_PU_INST_B2: return llarm::util::bit_fetch(R3_PU_INST, 2);
+        case id::cp15::R3_PU_INST_B3: return llarm::util::bit_fetch(R3_PU_INST, 3);
+        case id::cp15::R3_PU_INST_B4: return llarm::util::bit_fetch(R3_PU_INST, 4);
+        case id::cp15::R3_PU_INST_B5: return llarm::util::bit_fetch(R3_PU_INST, 5);
+        case id::cp15::R3_PU_INST_B6: return llarm::util::bit_fetch(R3_PU_INST, 6);
+        case id::cp15::R3_PU_INST_B7: return llarm::util::bit_fetch(R3_PU_INST, 7);
         case id::cp15::R3_PU_DATA: return R3_PU_DATA;
         case id::cp15::R3_PU_DATA_B0: return (R3_PU_DATA & 1);
-        case id::cp15::R3_PU_DATA_B1: return shared::util::bit_fetch(R3_PU_DATA, 1);
-        case id::cp15::R3_PU_DATA_B2: return shared::util::bit_fetch(R3_PU_DATA, 2);
-        case id::cp15::R3_PU_DATA_B3: return shared::util::bit_fetch(R3_PU_DATA, 3);
-        case id::cp15::R3_PU_DATA_B4: return shared::util::bit_fetch(R3_PU_DATA, 4);
-        case id::cp15::R3_PU_DATA_B5: return shared::util::bit_fetch(R3_PU_DATA, 5);
-        case id::cp15::R3_PU_DATA_B6: return shared::util::bit_fetch(R3_PU_DATA, 6);
-        case id::cp15::R3_PU_DATA_B7: return shared::util::bit_fetch(R3_PU_DATA, 7);
+        case id::cp15::R3_PU_DATA_B1: return llarm::util::bit_fetch(R3_PU_DATA, 1);
+        case id::cp15::R3_PU_DATA_B2: return llarm::util::bit_fetch(R3_PU_DATA, 2);
+        case id::cp15::R3_PU_DATA_B3: return llarm::util::bit_fetch(R3_PU_DATA, 3);
+        case id::cp15::R3_PU_DATA_B4: return llarm::util::bit_fetch(R3_PU_DATA, 4);
+        case id::cp15::R3_PU_DATA_B5: return llarm::util::bit_fetch(R3_PU_DATA, 5);
+        case id::cp15::R3_PU_DATA_B6: return llarm::util::bit_fetch(R3_PU_DATA, 6);
+        case id::cp15::R3_PU_DATA_B7: return llarm::util::bit_fetch(R3_PU_DATA, 7);
         case id::cp15::R4: return R4;
         case id::cp15::R4_MMU: return R4;
         case id::cp15::R4_PU: return R4;
         case id::cp15::R5: return R5;
         case id::cp15::R5_MMU: return R5;
-        case id::cp15::R5_MMU_DOMAIN: return shared::util::bit_range(R5, 4, 7);
-        case id::cp15::R5_MMU_STATUS: return shared::util::bit_range(R5, 0, 3);
+        case id::cp15::R5_MMU_DOMAIN: return llarm::util::bit_range(R5, 4, 7);
+        case id::cp15::R5_MMU_STATUS: return llarm::util::bit_range(R5, 0, 3);
         case id::cp15::R5_PU: return R5;
-        case id::cp15::R5_PU_AP0: return shared::util::bit_range(R5, 0, 1);
-        case id::cp15::R5_PU_AP1: return shared::util::bit_range(R5, 2, 3);
-        case id::cp15::R5_PU_AP2: return shared::util::bit_range(R5, 4, 5);
-        case id::cp15::R5_PU_AP3: return shared::util::bit_range(R5, 6, 7);
-        case id::cp15::R5_PU_AP4: return shared::util::bit_range(R5, 8, 9);
-        case id::cp15::R5_PU_AP5: return shared::util::bit_range(R5, 10, 11);
-        case id::cp15::R5_PU_AP6: return shared::util::bit_range(R5, 12, 13);
-        case id::cp15::R5_PU_AP7: return shared::util::bit_range(R5, 14, 15);
+        case id::cp15::R5_PU_AP0: return llarm::util::bit_range(R5, 0, 1);
+        case id::cp15::R5_PU_AP1: return llarm::util::bit_range(R5, 2, 3);
+        case id::cp15::R5_PU_AP2: return llarm::util::bit_range(R5, 4, 5);
+        case id::cp15::R5_PU_AP3: return llarm::util::bit_range(R5, 6, 7);
+        case id::cp15::R5_PU_AP4: return llarm::util::bit_range(R5, 8, 9);
+        case id::cp15::R5_PU_AP5: return llarm::util::bit_range(R5, 10, 11);
+        case id::cp15::R5_PU_AP6: return llarm::util::bit_range(R5, 12, 13);
+        case id::cp15::R5_PU_AP7: return llarm::util::bit_range(R5, 14, 15);
         case id::cp15::R5_PU_INST: return R5_PU_INST;
-        case id::cp15::R5_PU_INST_AP0: return shared::util::bit_range(R5_PU_INST, 0, 1);
-        case id::cp15::R5_PU_INST_AP1: return shared::util::bit_range(R5_PU_INST, 2, 3);
-        case id::cp15::R5_PU_INST_AP2: return shared::util::bit_range(R5_PU_INST, 4, 5);
-        case id::cp15::R5_PU_INST_AP3: return shared::util::bit_range(R5_PU_INST, 6, 7);
-        case id::cp15::R5_PU_INST_AP4: return shared::util::bit_range(R5_PU_INST, 8, 9);
-        case id::cp15::R5_PU_INST_AP5: return shared::util::bit_range(R5_PU_INST, 10, 11);
-        case id::cp15::R5_PU_INST_AP6: return shared::util::bit_range(R5_PU_INST, 12, 13);
-        case id::cp15::R5_PU_INST_AP7: return shared::util::bit_range(R5_PU_INST, 14, 15);
+        case id::cp15::R5_PU_INST_AP0: return llarm::util::bit_range(R5_PU_INST, 0, 1);
+        case id::cp15::R5_PU_INST_AP1: return llarm::util::bit_range(R5_PU_INST, 2, 3);
+        case id::cp15::R5_PU_INST_AP2: return llarm::util::bit_range(R5_PU_INST, 4, 5);
+        case id::cp15::R5_PU_INST_AP3: return llarm::util::bit_range(R5_PU_INST, 6, 7);
+        case id::cp15::R5_PU_INST_AP4: return llarm::util::bit_range(R5_PU_INST, 8, 9);
+        case id::cp15::R5_PU_INST_AP5: return llarm::util::bit_range(R5_PU_INST, 10, 11);
+        case id::cp15::R5_PU_INST_AP6: return llarm::util::bit_range(R5_PU_INST, 12, 13);
+        case id::cp15::R5_PU_INST_AP7: return llarm::util::bit_range(R5_PU_INST, 14, 15);
         case id::cp15::R5_PU_DATA: return R5_PU_DATA;
-        case id::cp15::R5_PU_DATA_AP0: return shared::util::bit_range(R5_PU_DATA, 0, 1);
-        case id::cp15::R5_PU_DATA_AP1: return shared::util::bit_range(R5_PU_DATA, 2, 3);
-        case id::cp15::R5_PU_DATA_AP2: return shared::util::bit_range(R5_PU_DATA, 4, 5);
-        case id::cp15::R5_PU_DATA_AP3: return shared::util::bit_range(R5_PU_DATA, 6, 7);
-        case id::cp15::R5_PU_DATA_AP4: return shared::util::bit_range(R5_PU_DATA, 8, 9);
-        case id::cp15::R5_PU_DATA_AP5: return shared::util::bit_range(R5_PU_DATA, 10, 11);
-        case id::cp15::R5_PU_DATA_AP6: return shared::util::bit_range(R5_PU_DATA, 12, 13);
-        case id::cp15::R5_PU_DATA_AP7: return shared::util::bit_range(R5_PU_DATA, 14, 15);
+        case id::cp15::R5_PU_DATA_AP0: return llarm::util::bit_range(R5_PU_DATA, 0, 1);
+        case id::cp15::R5_PU_DATA_AP1: return llarm::util::bit_range(R5_PU_DATA, 2, 3);
+        case id::cp15::R5_PU_DATA_AP2: return llarm::util::bit_range(R5_PU_DATA, 4, 5);
+        case id::cp15::R5_PU_DATA_AP3: return llarm::util::bit_range(R5_PU_DATA, 6, 7);
+        case id::cp15::R5_PU_DATA_AP4: return llarm::util::bit_range(R5_PU_DATA, 8, 9);
+        case id::cp15::R5_PU_DATA_AP5: return llarm::util::bit_range(R5_PU_DATA, 10, 11);
+        case id::cp15::R5_PU_DATA_AP6: return llarm::util::bit_range(R5_PU_DATA, 12, 13);
+        case id::cp15::R5_PU_DATA_AP7: return llarm::util::bit_range(R5_PU_DATA, 14, 15);
         case id::cp15::R6_MMU: return R6;
         case id::cp15::R6_MMU_FAR: return R6; // same as above, this is added for the sake of completeness 
 
-        case id::cp15::R6_PU_0_BASE_ADDRESS: return shared::util::bit_range(R6_PU_0, 12, 31);
-        case id::cp15::R6_PU_1_BASE_ADDRESS: return shared::util::bit_range(R6_PU_1, 12, 31);
-        case id::cp15::R6_PU_2_BASE_ADDRESS: return shared::util::bit_range(R6_PU_2, 12, 31);
-        case id::cp15::R6_PU_3_BASE_ADDRESS: return shared::util::bit_range(R6_PU_3, 12, 31);
-        case id::cp15::R6_PU_4_BASE_ADDRESS: return shared::util::bit_range(R6_PU_4, 12, 31);
-        case id::cp15::R6_PU_5_BASE_ADDRESS: return shared::util::bit_range(R6_PU_5, 12, 31);
-        case id::cp15::R6_PU_6_BASE_ADDRESS: return shared::util::bit_range(R6_PU_6, 12, 31);
-        case id::cp15::R6_PU_7_BASE_ADDRESS: return shared::util::bit_range(R6_PU_7, 12, 31);
-        case id::cp15::R6_PU_0_SIZE: return shared::util::bit_range(R6_PU_0, 1, 5);
-        case id::cp15::R6_PU_1_SIZE: return shared::util::bit_range(R6_PU_1, 1, 5);
-        case id::cp15::R6_PU_2_SIZE: return shared::util::bit_range(R6_PU_2, 1, 5);
-        case id::cp15::R6_PU_3_SIZE: return shared::util::bit_range(R6_PU_3, 1, 5);
-        case id::cp15::R6_PU_4_SIZE: return shared::util::bit_range(R6_PU_4, 1, 5);
-        case id::cp15::R6_PU_5_SIZE: return shared::util::bit_range(R6_PU_5, 1, 5);
-        case id::cp15::R6_PU_6_SIZE: return shared::util::bit_range(R6_PU_6, 1, 5);
-        case id::cp15::R6_PU_7_SIZE: return shared::util::bit_range(R6_PU_7, 1, 5);
+        case id::cp15::R6_PU_0_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_0, 12, 31);
+        case id::cp15::R6_PU_1_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_1, 12, 31);
+        case id::cp15::R6_PU_2_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_2, 12, 31);
+        case id::cp15::R6_PU_3_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_3, 12, 31);
+        case id::cp15::R6_PU_4_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_4, 12, 31);
+        case id::cp15::R6_PU_5_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_5, 12, 31);
+        case id::cp15::R6_PU_6_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_6, 12, 31);
+        case id::cp15::R6_PU_7_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_7, 12, 31);
+        case id::cp15::R6_PU_0_SIZE: return llarm::util::bit_range(R6_PU_0, 1, 5);
+        case id::cp15::R6_PU_1_SIZE: return llarm::util::bit_range(R6_PU_1, 1, 5);
+        case id::cp15::R6_PU_2_SIZE: return llarm::util::bit_range(R6_PU_2, 1, 5);
+        case id::cp15::R6_PU_3_SIZE: return llarm::util::bit_range(R6_PU_3, 1, 5);
+        case id::cp15::R6_PU_4_SIZE: return llarm::util::bit_range(R6_PU_4, 1, 5);
+        case id::cp15::R6_PU_5_SIZE: return llarm::util::bit_range(R6_PU_5, 1, 5);
+        case id::cp15::R6_PU_6_SIZE: return llarm::util::bit_range(R6_PU_6, 1, 5);
+        case id::cp15::R6_PU_7_SIZE: return llarm::util::bit_range(R6_PU_7, 1, 5);
         case id::cp15::R6_PU_0_E: return (R6_PU_0 & 1);
         case id::cp15::R6_PU_1_E: return (R6_PU_1 & 1);
         case id::cp15::R6_PU_2_E: return (R6_PU_2 & 1);
@@ -365,22 +365,22 @@ u32 CP15::read(const id::cp15 reg) {
         case id::cp15::R6_PU_6: return R6_PU_6;
         case id::cp15::R6_PU_7: return R6_PU_7;
 
-        case id::cp15::R6_PU_INST_0_BASE_ADDRESS: return shared::util::bit_range(R6_PU_INST_0, 12, 31);
-        case id::cp15::R6_PU_INST_1_BASE_ADDRESS: return shared::util::bit_range(R6_PU_INST_1, 12, 31);
-        case id::cp15::R6_PU_INST_2_BASE_ADDRESS: return shared::util::bit_range(R6_PU_INST_2, 12, 31);
-        case id::cp15::R6_PU_INST_3_BASE_ADDRESS: return shared::util::bit_range(R6_PU_INST_3, 12, 31);
-        case id::cp15::R6_PU_INST_4_BASE_ADDRESS: return shared::util::bit_range(R6_PU_INST_4, 12, 31);
-        case id::cp15::R6_PU_INST_5_BASE_ADDRESS: return shared::util::bit_range(R6_PU_INST_5, 12, 31);
-        case id::cp15::R6_PU_INST_6_BASE_ADDRESS: return shared::util::bit_range(R6_PU_INST_6, 12, 31);
-        case id::cp15::R6_PU_INST_7_BASE_ADDRESS: return shared::util::bit_range(R6_PU_INST_7, 12, 31);
-        case id::cp15::R6_PU_INST_0_SIZE: return shared::util::bit_range(R6_PU_INST_0, 1, 5);
-        case id::cp15::R6_PU_INST_1_SIZE: return shared::util::bit_range(R6_PU_INST_1, 1, 5);
-        case id::cp15::R6_PU_INST_2_SIZE: return shared::util::bit_range(R6_PU_INST_2, 1, 5);
-        case id::cp15::R6_PU_INST_3_SIZE: return shared::util::bit_range(R6_PU_INST_3, 1, 5);
-        case id::cp15::R6_PU_INST_4_SIZE: return shared::util::bit_range(R6_PU_INST_4, 1, 5);
-        case id::cp15::R6_PU_INST_5_SIZE: return shared::util::bit_range(R6_PU_INST_5, 1, 5);
-        case id::cp15::R6_PU_INST_6_SIZE: return shared::util::bit_range(R6_PU_INST_6, 1, 5);
-        case id::cp15::R6_PU_INST_7_SIZE: return shared::util::bit_range(R6_PU_INST_7, 1, 5);
+        case id::cp15::R6_PU_INST_0_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_INST_0, 12, 31);
+        case id::cp15::R6_PU_INST_1_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_INST_1, 12, 31);
+        case id::cp15::R6_PU_INST_2_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_INST_2, 12, 31);
+        case id::cp15::R6_PU_INST_3_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_INST_3, 12, 31);
+        case id::cp15::R6_PU_INST_4_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_INST_4, 12, 31);
+        case id::cp15::R6_PU_INST_5_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_INST_5, 12, 31);
+        case id::cp15::R6_PU_INST_6_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_INST_6, 12, 31);
+        case id::cp15::R6_PU_INST_7_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_INST_7, 12, 31);
+        case id::cp15::R6_PU_INST_0_SIZE: return llarm::util::bit_range(R6_PU_INST_0, 1, 5);
+        case id::cp15::R6_PU_INST_1_SIZE: return llarm::util::bit_range(R6_PU_INST_1, 1, 5);
+        case id::cp15::R6_PU_INST_2_SIZE: return llarm::util::bit_range(R6_PU_INST_2, 1, 5);
+        case id::cp15::R6_PU_INST_3_SIZE: return llarm::util::bit_range(R6_PU_INST_3, 1, 5);
+        case id::cp15::R6_PU_INST_4_SIZE: return llarm::util::bit_range(R6_PU_INST_4, 1, 5);
+        case id::cp15::R6_PU_INST_5_SIZE: return llarm::util::bit_range(R6_PU_INST_5, 1, 5);
+        case id::cp15::R6_PU_INST_6_SIZE: return llarm::util::bit_range(R6_PU_INST_6, 1, 5);
+        case id::cp15::R6_PU_INST_7_SIZE: return llarm::util::bit_range(R6_PU_INST_7, 1, 5);
         case id::cp15::R6_PU_INST_0_E: return (R6_PU_INST_0 & 1);
         case id::cp15::R6_PU_INST_1_E: return (R6_PU_INST_1 & 1);
         case id::cp15::R6_PU_INST_2_E: return (R6_PU_INST_2 & 1);
@@ -398,22 +398,22 @@ u32 CP15::read(const id::cp15 reg) {
         case id::cp15::R6_PU_INST_6: return R6_PU_INST_6;
         case id::cp15::R6_PU_INST_7: return R6_PU_INST_7;
 
-        case id::cp15::R6_PU_DATA_0_BASE_ADDRESS: return shared::util::bit_range(R6_PU_DATA_0, 12, 31);
-        case id::cp15::R6_PU_DATA_1_BASE_ADDRESS: return shared::util::bit_range(R6_PU_DATA_1, 12, 31);
-        case id::cp15::R6_PU_DATA_2_BASE_ADDRESS: return shared::util::bit_range(R6_PU_DATA_2, 12, 31);
-        case id::cp15::R6_PU_DATA_3_BASE_ADDRESS: return shared::util::bit_range(R6_PU_DATA_3, 12, 31);
-        case id::cp15::R6_PU_DATA_4_BASE_ADDRESS: return shared::util::bit_range(R6_PU_DATA_4, 12, 31);
-        case id::cp15::R6_PU_DATA_5_BASE_ADDRESS: return shared::util::bit_range(R6_PU_DATA_5, 12, 31);
-        case id::cp15::R6_PU_DATA_6_BASE_ADDRESS: return shared::util::bit_range(R6_PU_DATA_6, 12, 31);
-        case id::cp15::R6_PU_DATA_7_BASE_ADDRESS: return shared::util::bit_range(R6_PU_DATA_7, 12, 31);
-        case id::cp15::R6_PU_DATA_0_SIZE: return shared::util::bit_range(R6_PU_DATA_0, 1, 5);
-        case id::cp15::R6_PU_DATA_1_SIZE: return shared::util::bit_range(R6_PU_DATA_1, 1, 5);
-        case id::cp15::R6_PU_DATA_2_SIZE: return shared::util::bit_range(R6_PU_DATA_2, 1, 5);
-        case id::cp15::R6_PU_DATA_3_SIZE: return shared::util::bit_range(R6_PU_DATA_3, 1, 5);
-        case id::cp15::R6_PU_DATA_4_SIZE: return shared::util::bit_range(R6_PU_DATA_4, 1, 5);
-        case id::cp15::R6_PU_DATA_5_SIZE: return shared::util::bit_range(R6_PU_DATA_5, 1, 5);
-        case id::cp15::R6_PU_DATA_6_SIZE: return shared::util::bit_range(R6_PU_DATA_6, 1, 5);
-        case id::cp15::R6_PU_DATA_7_SIZE: return shared::util::bit_range(R6_PU_DATA_7, 1, 5);
+        case id::cp15::R6_PU_DATA_0_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_DATA_0, 12, 31);
+        case id::cp15::R6_PU_DATA_1_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_DATA_1, 12, 31);
+        case id::cp15::R6_PU_DATA_2_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_DATA_2, 12, 31);
+        case id::cp15::R6_PU_DATA_3_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_DATA_3, 12, 31);
+        case id::cp15::R6_PU_DATA_4_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_DATA_4, 12, 31);
+        case id::cp15::R6_PU_DATA_5_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_DATA_5, 12, 31);
+        case id::cp15::R6_PU_DATA_6_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_DATA_6, 12, 31);
+        case id::cp15::R6_PU_DATA_7_BASE_ADDRESS: return llarm::util::bit_range(R6_PU_DATA_7, 12, 31);
+        case id::cp15::R6_PU_DATA_0_SIZE: return llarm::util::bit_range(R6_PU_DATA_0, 1, 5);
+        case id::cp15::R6_PU_DATA_1_SIZE: return llarm::util::bit_range(R6_PU_DATA_1, 1, 5);
+        case id::cp15::R6_PU_DATA_2_SIZE: return llarm::util::bit_range(R6_PU_DATA_2, 1, 5);
+        case id::cp15::R6_PU_DATA_3_SIZE: return llarm::util::bit_range(R6_PU_DATA_3, 1, 5);
+        case id::cp15::R6_PU_DATA_4_SIZE: return llarm::util::bit_range(R6_PU_DATA_4, 1, 5);
+        case id::cp15::R6_PU_DATA_5_SIZE: return llarm::util::bit_range(R6_PU_DATA_5, 1, 5);
+        case id::cp15::R6_PU_DATA_6_SIZE: return llarm::util::bit_range(R6_PU_DATA_6, 1, 5);
+        case id::cp15::R6_PU_DATA_7_SIZE: return llarm::util::bit_range(R6_PU_DATA_7, 1, 5);
         case id::cp15::R6_PU_DATA_0_E: return (R6_PU_DATA_0 & 1);
         case id::cp15::R6_PU_DATA_1_E: return (R6_PU_DATA_1 & 1);
         case id::cp15::R6_PU_DATA_2_E: return (R6_PU_DATA_2 & 1);
@@ -441,25 +441,25 @@ u32 CP15::read(const id::cp15 reg) {
         case id::cp15::R9_CACHE_L: // TODO
         case id::cp15::R10: return R10;
         case id::cp15::R10_MMU: return R10;
-        case id::cp15::R10_MMU_BASE: return shared::util::bit_range(R10, (32 - tlb.W_unified), 31);
-        case id::cp15::R10_MMU_VICTIM: return shared::util::bit_range(R10, (32 - (2 * tlb.W_unified)), (31 - tlb.W_unified));
+        case id::cp15::R10_MMU_BASE: return llarm::util::bit_range(R10, (32 - tlb.W_unified), 31);
+        case id::cp15::R10_MMU_VICTIM: return llarm::util::bit_range(R10, (32 - (2 * tlb.W_unified)), (31 - tlb.W_unified));
         case id::cp15::R10_MMU_P: return (R10 & 1);
         case id::cp15::R10_MMU_INST: return R10_INST;
-        case id::cp15::R10_MMU_INST_BASE: return shared::util::bit_range(R10_INST, (32 - tlb.W_inst), 31);
-        case id::cp15::R10_MMU_INST_VICTIM: return shared::util::bit_range(R10_INST, (32 - (2 * tlb.W_inst)), (31 - tlb.W_inst));
+        case id::cp15::R10_MMU_INST_BASE: return llarm::util::bit_range(R10_INST, (32 - tlb.W_inst), 31);
+        case id::cp15::R10_MMU_INST_VICTIM: return llarm::util::bit_range(R10_INST, (32 - (2 * tlb.W_inst)), (31 - tlb.W_inst));
         case id::cp15::R10_MMU_INST_P: return (R10_INST & 1);
         case id::cp15::R10_MMU_DATA: return R10_DATA;
-        case id::cp15::R10_MMU_DATA_BASE: return shared::util::bit_range(R10_DATA, (32 - tlb.W_data), 31);
-        case id::cp15::R10_MMU_DATA_VICTIM: return shared::util::bit_range(R10_DATA, (32 - (2 * tlb.W_data)), (31 - tlb.W_data)); 
+        case id::cp15::R10_MMU_DATA_BASE: return llarm::util::bit_range(R10_DATA, (32 - tlb.W_data), 31);
+        case id::cp15::R10_MMU_DATA_VICTIM: return llarm::util::bit_range(R10_DATA, (32 - (2 * tlb.W_data)), (31 - tlb.W_data)); 
         case id::cp15::R10_MMU_DATA_P: return (R10_DATA & 1);
         case id::cp15::R10_PU: return R10;
         case id::cp15::R11: return R11;
         case id::cp15::R12: return R12;
         case id::cp15::R13: return R13;
-        case id::cp15::R13_PID: return shared::util::bit_range(R13, 25, 31);
+        case id::cp15::R13_PID: return llarm::util::bit_range(R13, 25, 31);
         case id::cp15::R14: return R14;
         case id::cp15::R15: return R15;
-        // default: shared::out::error("TODO");
+        // default: llarm::out::error("TODO");
     }
 }
 
@@ -502,38 +502,38 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
 
             switch (reg) {
                 case id::cp15::R0_ID: R0_ID = value; return;
-                case id::cp15::R0_ID_REVISION: shared::util::swap_bits(R0_ID, 0, 3, value); return;
-                case id::cp15::R0_ID_IMPLEMENTOR: shared::util::swap_bits(R0_ID, 24, 31, value); return;
-                case id::cp15::R0_ID_PPN: shared::util::swap_bits(R0_ID, 4, 15, value); return;
-                case id::cp15::R0_ID_PRE7_ID: shared::util::swap_bits(R0_ID, 0, 3, value); return;
-                case id::cp15::R0_ID_PRE7_REVISION: shared::util::swap_bits(R0_ID, 4, 31, value); return;
-                case id::cp15::R0_ID_7_REVISION: shared::util::swap_bits(R0_ID, 0, 3, value); return;
-                case id::cp15::R0_ID_7_PPN: shared::util::swap_bits(R0_ID, 4, 15, value); return;
-                case id::cp15::R0_ID_7_PPN_TOP: shared::util::swap_bits(R0_ID, 12, 15, value); return;
-                case id::cp15::R0_ID_7_VARIANT: shared::util::swap_bits(R0_ID, 16, 22, value); return;
-                case id::cp15::R0_ID_7_A: shared::util::modify_bit(R0_ID, 23, value); return;
-                case id::cp15::R0_ID_7_IMPLEMENTOR: shared::util::swap_bits(R0_ID, 24, 31, value); return;
-                case id::cp15::R0_ID_POST7_REVISION: shared::util::swap_bits(R0_ID, 0, 3, value); return;
-                case id::cp15::R0_ID_POST7_PPN: shared::util::swap_bits(R0_ID, 4, 15, value); return;
-                case id::cp15::R0_ID_POST7_PPN_TOP: shared::util::swap_bits(R0_ID, 12, 15, value); return;
-                case id::cp15::R0_ID_POST7_ARCHITECTURE: shared::util::swap_bits(R0_ID, 16, 19, value); return;
-                case id::cp15::R0_ID_POST7_VARIANT: shared::util::swap_bits(R0_ID, 20, 23, value); return;
-                case id::cp15::R0_ID_POST7_IMPLEMENTOR: shared::util::swap_bits(R0_ID, 24, 31, value); return;
-                default: shared::out::dev_error("Impossible write operation on cp15");
+                case id::cp15::R0_ID_REVISION: llarm::util::swap_bits(R0_ID, 0, 3, value); return;
+                case id::cp15::R0_ID_IMPLEMENTOR: llarm::util::swap_bits(R0_ID, 24, 31, value); return;
+                case id::cp15::R0_ID_PPN: llarm::util::swap_bits(R0_ID, 4, 15, value); return;
+                case id::cp15::R0_ID_PRE7_ID: llarm::util::swap_bits(R0_ID, 0, 3, value); return;
+                case id::cp15::R0_ID_PRE7_REVISION: llarm::util::swap_bits(R0_ID, 4, 31, value); return;
+                case id::cp15::R0_ID_7_REVISION: llarm::util::swap_bits(R0_ID, 0, 3, value); return;
+                case id::cp15::R0_ID_7_PPN: llarm::util::swap_bits(R0_ID, 4, 15, value); return;
+                case id::cp15::R0_ID_7_PPN_TOP: llarm::util::swap_bits(R0_ID, 12, 15, value); return;
+                case id::cp15::R0_ID_7_VARIANT: llarm::util::swap_bits(R0_ID, 16, 22, value); return;
+                case id::cp15::R0_ID_7_A: llarm::util::modify_bit(R0_ID, 23, value); return;
+                case id::cp15::R0_ID_7_IMPLEMENTOR: llarm::util::swap_bits(R0_ID, 24, 31, value); return;
+                case id::cp15::R0_ID_POST7_REVISION: llarm::util::swap_bits(R0_ID, 0, 3, value); return;
+                case id::cp15::R0_ID_POST7_PPN: llarm::util::swap_bits(R0_ID, 4, 15, value); return;
+                case id::cp15::R0_ID_POST7_PPN_TOP: llarm::util::swap_bits(R0_ID, 12, 15, value); return;
+                case id::cp15::R0_ID_POST7_ARCHITECTURE: llarm::util::swap_bits(R0_ID, 16, 19, value); return;
+                case id::cp15::R0_ID_POST7_VARIANT: llarm::util::swap_bits(R0_ID, 20, 23, value); return;
+                case id::cp15::R0_ID_POST7_IMPLEMENTOR: llarm::util::swap_bits(R0_ID, 24, 31, value); return;
+                default: llarm::out::dev_error("Impossible write operation on cp15");
             }
         case id::cp15::R0_CACHE: R0_CACHE = value; return;
-        case id::cp15::R0_CACHE_CTYPE: shared::util::swap_bits(R0_CACHE, 25, 28, value); return;
-        case id::cp15::R0_CACHE_S: shared::util::modify_bit(R0_CACHE, 24, value); return;
-        case id::cp15::R0_CACHE_DSIZE: shared::util::swap_bits(R0_CACHE, 12, 23, value); return;
-        case id::cp15::R0_CACHE_DSIZE_LEN: shared::util::swap_bits(R0_CACHE, 12, 13, value); return;
-        case id::cp15::R0_CACHE_DSIZE_M: shared::util::modify_bit(R0_CACHE, 14, value); return;
-        case id::cp15::R0_CACHE_DSIZE_ASSOC: shared::util::swap_bits(R0_CACHE, 15, 17, value); return;
-        case id::cp15::R0_CACHE_DSIZE_SIZE: shared::util::swap_bits(R0_CACHE, 18, 20, value); return;
-        case id::cp15::R0_CACHE_ISIZE: shared::util::swap_bits(R0_CACHE, 0, 11, value); return;
-        case id::cp15::R0_CACHE_ISIZE_LEN: shared::util::swap_bits(R0_CACHE, 0, 1, value); return;
-        case id::cp15::R0_CACHE_ISIZE_M: shared::util::modify_bit(R0_CACHE, 2, value); return;
-        case id::cp15::R0_CACHE_ISIZE_ASSOC: shared::util::swap_bits(R0_CACHE, 3, 5, value); return;
-        case id::cp15::R0_CACHE_ISIZE_SIZE: shared::util::swap_bits(R0_CACHE, 6, 8, value); return;
+        case id::cp15::R0_CACHE_CTYPE: llarm::util::swap_bits(R0_CACHE, 25, 28, value); return;
+        case id::cp15::R0_CACHE_S: llarm::util::modify_bit(R0_CACHE, 24, value); return;
+        case id::cp15::R0_CACHE_DSIZE: llarm::util::swap_bits(R0_CACHE, 12, 23, value); return;
+        case id::cp15::R0_CACHE_DSIZE_LEN: llarm::util::swap_bits(R0_CACHE, 12, 13, value); return;
+        case id::cp15::R0_CACHE_DSIZE_M: llarm::util::modify_bit(R0_CACHE, 14, value); return;
+        case id::cp15::R0_CACHE_DSIZE_ASSOC: llarm::util::swap_bits(R0_CACHE, 15, 17, value); return;
+        case id::cp15::R0_CACHE_DSIZE_SIZE: llarm::util::swap_bits(R0_CACHE, 18, 20, value); return;
+        case id::cp15::R0_CACHE_ISIZE: llarm::util::swap_bits(R0_CACHE, 0, 11, value); return;
+        case id::cp15::R0_CACHE_ISIZE_LEN: llarm::util::swap_bits(R0_CACHE, 0, 1, value); return;
+        case id::cp15::R0_CACHE_ISIZE_M: llarm::util::modify_bit(R0_CACHE, 2, value); return;
+        case id::cp15::R0_CACHE_ISIZE_ASSOC: llarm::util::swap_bits(R0_CACHE, 3, 5, value); return;
+        case id::cp15::R0_CACHE_ISIZE_SIZE: llarm::util::swap_bits(R0_CACHE, 6, 8, value); return;
 
         case id::cp15::R1: R1 = value; return;
         case id::cp15::R1_M: 
@@ -541,12 +541,12 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             // this bit reads as 0 and ignores writes. (B2-13)
             if (settings.is_mpu_enabled) {
                 if ((R6_PU_0 + R6_PU_1 + R6_PU_2 + R6_PU_3 + R6_PU_4 + R6_PU_5 + R6_PU_6 + R6_PU_7) == 0) {
-                    shared::out::warning("PU must have at least a single protection region setup");
+                    llarm::out::warning("PU must have at least a single protection region setup");
                 }
 
-                shared::util::modify_bit(R1, 0, value); 
+                llarm::util::modify_bit(R1, 0, value); 
             } else if (settings.is_mmu_enabled || forced) {
-                shared::util::modify_bit(R1, 0, value); 
+                llarm::util::modify_bit(R1, 0, value); 
             }
             return;
 
@@ -555,7 +555,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             // reads as 1 or 0 according to whether the memory system 
             // does or does not check the alignment of data memory accesses.
             if (settings.has_alignment_fault_checking || forced) {
-                shared::util::modify_bit(R1, 1, value);
+                llarm::util::modify_bit(R1, 1, value);
             }
             return;
 
@@ -572,7 +572,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             }
 
             if (settings.has_cache || forced) {
-                shared::util::modify_bit(R1, 2, value); 
+                llarm::util::modify_bit(R1, 2, value); 
             }
 
             return;
@@ -586,7 +586,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             }
 
             if (settings.has_write_buffer || forced) {
-                shared::util::modify_bit(R1, 3, value);
+                llarm::util::modify_bit(R1, 3, value);
             }
 
             return;
@@ -599,7 +599,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 return;
             }
             
-            shared::util::modify_bit(R1, 4, value);
+            llarm::util::modify_bit(R1, 4, value);
             return;
 
         case id::cp15::R1_D:
@@ -610,7 +610,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 return;
             }
 
-            shared::util::modify_bit(R1, 5, value);
+            llarm::util::modify_bit(R1, 5, value);
             return;
 
         case id::cp15::R1_L: // TODO, idk what the fuck is the "old abort model"
@@ -619,7 +619,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 return;
             }
 
-            shared::util::modify_bit(R1, 6, value);  
+            llarm::util::modify_bit(R1, 6, value);  
             return;
 
         case id::cp15::R1_B: 
@@ -631,19 +631,19 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 return;
             }
 
-            shared::util::modify_bit(R1, 7, value);
+            llarm::util::modify_bit(R1, 7, value);
             return;
 
         case id::cp15::R1_S:     
-            shared::util::modify_bit(R1, 8, value);  
+            llarm::util::modify_bit(R1, 8, value);  
             return;
 
         case id::cp15::R1_R:     
-            shared::util::modify_bit(R1, 9, value);
+            llarm::util::modify_bit(R1, 9, value);
             return;
 
         case id::cp15::R1_F: 
-            shared::util::modify_bit(R1, 10, value);
+            llarm::util::modify_bit(R1, 10, value);
             return; 
 
         case id::cp15::R1_Z: 
@@ -655,7 +655,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             }
 
             if (settings.has_branch_prediction || forced) {
-                shared::util::modify_bit(R1, 11, value); 
+                llarm::util::modify_bit(R1, 11, value); 
             }
             
             return;
@@ -676,7 +676,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             }
 
             if (settings.has_separate_cache || forced) {
-                shared::util::modify_bit(R1, 12, value); 
+                llarm::util::modify_bit(R1, 12, value); 
             }
             
             return;
@@ -685,7 +685,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             // On ARM processors that do not support high vectors, 
             // this bit reads as 0 and ignores writes.
             if (settings.has_high_vectors || forced) {
-                shared::util::modify_bit(R1, 13, value); 
+                llarm::util::modify_bit(R1, 13, value); 
             }
 
             return;
@@ -700,7 +700,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             }
 
             if (settings.has_round_robin_replacement_cache_strategy || forced) {
-                shared::util::modify_bit(R1, 14, value);
+                llarm::util::modify_bit(R1, 14, value);
             }
 
             return;
@@ -715,7 +715,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             }
         
             if (settings.is_L4_bit_enabled_cp15 || forced) {
-                shared::util::modify_bit(R1, 15, value);
+                llarm::util::modify_bit(R1, 15, value);
             }
 
             return;
@@ -726,64 +726,64 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 return;
             }
 
-            shared::util::swap_bits(R2, 14, 31, value);
+            llarm::util::swap_bits(R2, 14, 31, value);
             tlb.flush();
             return;
         case id::cp15::R2: R2 = value; return;
         case id::cp15::R2_PU: R2 = value; return;
-        case id::cp15::R2_PU_C0: shared::util::modify_bit(R2, 0, value); return;
-        case id::cp15::R2_PU_C1: shared::util::modify_bit(R2, 1, value); return;
-        case id::cp15::R2_PU_C2: shared::util::modify_bit(R2, 2, value); return;
-        case id::cp15::R2_PU_C3: shared::util::modify_bit(R2, 3, value); return;
-        case id::cp15::R2_PU_C4: shared::util::modify_bit(R2, 4, value); return;
-        case id::cp15::R2_PU_C5: shared::util::modify_bit(R2, 5, value); return;
-        case id::cp15::R2_PU_C6: shared::util::modify_bit(R2, 6, value); return;
-        case id::cp15::R2_PU_C7: shared::util::modify_bit(R2, 7, value); return;
+        case id::cp15::R2_PU_C0: llarm::util::modify_bit(R2, 0, value); return;
+        case id::cp15::R2_PU_C1: llarm::util::modify_bit(R2, 1, value); return;
+        case id::cp15::R2_PU_C2: llarm::util::modify_bit(R2, 2, value); return;
+        case id::cp15::R2_PU_C3: llarm::util::modify_bit(R2, 3, value); return;
+        case id::cp15::R2_PU_C4: llarm::util::modify_bit(R2, 4, value); return;
+        case id::cp15::R2_PU_C5: llarm::util::modify_bit(R2, 5, value); return;
+        case id::cp15::R2_PU_C6: llarm::util::modify_bit(R2, 6, value); return;
+        case id::cp15::R2_PU_C7: llarm::util::modify_bit(R2, 7, value); return;
         case id::cp15::R3: R3 = value; return;
         case id::cp15::R3_MMU: R3 = value; return;
-        case id::cp15::R3_MMU_D0: shared::util::swap_bits(R3, 0, 1, value);  return;
-        case id::cp15::R3_MMU_D1: shared::util::swap_bits(R3, 2, 3, value);  return;
-        case id::cp15::R3_MMU_D2: shared::util::swap_bits(R3, 4, 5, value);  return;
-        case id::cp15::R3_MMU_D3: shared::util::swap_bits(R3, 6, 7, value);  return;
-        case id::cp15::R3_MMU_D4: shared::util::swap_bits(R3, 8, 9, value);  return;
-        case id::cp15::R3_MMU_D5: shared::util::swap_bits(R3, 10, 11, value); return;
-        case id::cp15::R3_MMU_D6: shared::util::swap_bits(R3, 12, 13, value); return;
-        case id::cp15::R3_MMU_D7: shared::util::swap_bits(R3, 14, 15, value); return;
-        case id::cp15::R3_MMU_D8: shared::util::swap_bits(R3, 16, 17, value); return;
-        case id::cp15::R3_MMU_D9: shared::util::swap_bits(R3, 18, 19, value); return;
-        case id::cp15::R3_MMU_D10: shared::util::swap_bits(R3, 20, 21, value); return;
-        case id::cp15::R3_MMU_D11: shared::util::swap_bits(R3, 22, 23, value); return;
-        case id::cp15::R3_MMU_D12: shared::util::swap_bits(R3, 24, 25, value); return;
-        case id::cp15::R3_MMU_D13: shared::util::swap_bits(R3, 26, 27, value); return;
-        case id::cp15::R3_MMU_D14: shared::util::swap_bits(R3, 28, 29, value); return;
-        case id::cp15::R3_MMU_D15: shared::util::swap_bits(R3, 30, 31, value); return;
+        case id::cp15::R3_MMU_D0: llarm::util::swap_bits(R3, 0, 1, value);  return;
+        case id::cp15::R3_MMU_D1: llarm::util::swap_bits(R3, 2, 3, value);  return;
+        case id::cp15::R3_MMU_D2: llarm::util::swap_bits(R3, 4, 5, value);  return;
+        case id::cp15::R3_MMU_D3: llarm::util::swap_bits(R3, 6, 7, value);  return;
+        case id::cp15::R3_MMU_D4: llarm::util::swap_bits(R3, 8, 9, value);  return;
+        case id::cp15::R3_MMU_D5: llarm::util::swap_bits(R3, 10, 11, value); return;
+        case id::cp15::R3_MMU_D6: llarm::util::swap_bits(R3, 12, 13, value); return;
+        case id::cp15::R3_MMU_D7: llarm::util::swap_bits(R3, 14, 15, value); return;
+        case id::cp15::R3_MMU_D8: llarm::util::swap_bits(R3, 16, 17, value); return;
+        case id::cp15::R3_MMU_D9: llarm::util::swap_bits(R3, 18, 19, value); return;
+        case id::cp15::R3_MMU_D10: llarm::util::swap_bits(R3, 20, 21, value); return;
+        case id::cp15::R3_MMU_D11: llarm::util::swap_bits(R3, 22, 23, value); return;
+        case id::cp15::R3_MMU_D12: llarm::util::swap_bits(R3, 24, 25, value); return;
+        case id::cp15::R3_MMU_D13: llarm::util::swap_bits(R3, 26, 27, value); return;
+        case id::cp15::R3_MMU_D14: llarm::util::swap_bits(R3, 28, 29, value); return;
+        case id::cp15::R3_MMU_D15: llarm::util::swap_bits(R3, 30, 31, value); return;
         case id::cp15::R3_PU: R3 = value; return;
-        case id::cp15::R3_PU_B0: shared::util::modify_bit(R3, 0, value); return;
-        case id::cp15::R3_PU_B1: shared::util::modify_bit(R3, 1, value); return;
-        case id::cp15::R3_PU_B2: shared::util::modify_bit(R3, 2, value); return;
-        case id::cp15::R3_PU_B3: shared::util::modify_bit(R3, 3, value); return;
-        case id::cp15::R3_PU_B4: shared::util::modify_bit(R3, 4, value); return;
-        case id::cp15::R3_PU_B5: shared::util::modify_bit(R3, 5, value); return;
-        case id::cp15::R3_PU_B6: shared::util::modify_bit(R3, 6, value); return;
-        case id::cp15::R3_PU_B7: shared::util::modify_bit(R3, 7, value); return;
+        case id::cp15::R3_PU_B0: llarm::util::modify_bit(R3, 0, value); return;
+        case id::cp15::R3_PU_B1: llarm::util::modify_bit(R3, 1, value); return;
+        case id::cp15::R3_PU_B2: llarm::util::modify_bit(R3, 2, value); return;
+        case id::cp15::R3_PU_B3: llarm::util::modify_bit(R3, 3, value); return;
+        case id::cp15::R3_PU_B4: llarm::util::modify_bit(R3, 4, value); return;
+        case id::cp15::R3_PU_B5: llarm::util::modify_bit(R3, 5, value); return;
+        case id::cp15::R3_PU_B6: llarm::util::modify_bit(R3, 6, value); return;
+        case id::cp15::R3_PU_B7: llarm::util::modify_bit(R3, 7, value); return;
         case id::cp15::R3_PU_INST: R3_PU_INST = value; return;
-        case id::cp15::R3_PU_INST_B0: shared::util::modify_bit(R3_PU_INST, 0, value); return;
-        case id::cp15::R3_PU_INST_B1: shared::util::modify_bit(R3_PU_INST, 1, value); return;
-        case id::cp15::R3_PU_INST_B2: shared::util::modify_bit(R3_PU_INST, 2, value); return;
-        case id::cp15::R3_PU_INST_B3: shared::util::modify_bit(R3_PU_INST, 3, value); return;
-        case id::cp15::R3_PU_INST_B4: shared::util::modify_bit(R3_PU_INST, 4, value); return;
-        case id::cp15::R3_PU_INST_B5: shared::util::modify_bit(R3_PU_INST, 5, value); return;
-        case id::cp15::R3_PU_INST_B6: shared::util::modify_bit(R3_PU_INST, 6, value); return;
-        case id::cp15::R3_PU_INST_B7: shared::util::modify_bit(R3_PU_INST, 7, value); return;
+        case id::cp15::R3_PU_INST_B0: llarm::util::modify_bit(R3_PU_INST, 0, value); return;
+        case id::cp15::R3_PU_INST_B1: llarm::util::modify_bit(R3_PU_INST, 1, value); return;
+        case id::cp15::R3_PU_INST_B2: llarm::util::modify_bit(R3_PU_INST, 2, value); return;
+        case id::cp15::R3_PU_INST_B3: llarm::util::modify_bit(R3_PU_INST, 3, value); return;
+        case id::cp15::R3_PU_INST_B4: llarm::util::modify_bit(R3_PU_INST, 4, value); return;
+        case id::cp15::R3_PU_INST_B5: llarm::util::modify_bit(R3_PU_INST, 5, value); return;
+        case id::cp15::R3_PU_INST_B6: llarm::util::modify_bit(R3_PU_INST, 6, value); return;
+        case id::cp15::R3_PU_INST_B7: llarm::util::modify_bit(R3_PU_INST, 7, value); return;
         case id::cp15::R3_PU_DATA: R3_PU_DATA = value; return;
-        case id::cp15::R3_PU_DATA_B0: shared::util::modify_bit(R3_PU_DATA, 0, value); return;
-        case id::cp15::R3_PU_DATA_B1: shared::util::modify_bit(R3_PU_DATA, 1, value); return;
-        case id::cp15::R3_PU_DATA_B2: shared::util::modify_bit(R3_PU_DATA, 2, value); return;
-        case id::cp15::R3_PU_DATA_B3: shared::util::modify_bit(R3_PU_DATA, 3, value); return;
-        case id::cp15::R3_PU_DATA_B4: shared::util::modify_bit(R3_PU_DATA, 4, value); return;
-        case id::cp15::R3_PU_DATA_B5: shared::util::modify_bit(R3_PU_DATA, 5, value); return;
-        case id::cp15::R3_PU_DATA_B6: shared::util::modify_bit(R3_PU_DATA, 6, value); return;
-        case id::cp15::R3_PU_DATA_B7: shared::util::modify_bit(R3_PU_DATA, 7, value); return;
+        case id::cp15::R3_PU_DATA_B0: llarm::util::modify_bit(R3_PU_DATA, 0, value); return;
+        case id::cp15::R3_PU_DATA_B1: llarm::util::modify_bit(R3_PU_DATA, 1, value); return;
+        case id::cp15::R3_PU_DATA_B2: llarm::util::modify_bit(R3_PU_DATA, 2, value); return;
+        case id::cp15::R3_PU_DATA_B3: llarm::util::modify_bit(R3_PU_DATA, 3, value); return;
+        case id::cp15::R3_PU_DATA_B4: llarm::util::modify_bit(R3_PU_DATA, 4, value); return;
+        case id::cp15::R3_PU_DATA_B5: llarm::util::modify_bit(R3_PU_DATA, 5, value); return;
+        case id::cp15::R3_PU_DATA_B6: llarm::util::modify_bit(R3_PU_DATA, 6, value); return;
+        case id::cp15::R3_PU_DATA_B7: llarm::util::modify_bit(R3_PU_DATA, 7, value); return;
 
         case id::cp15::R4: R4 = value; return;
         case id::cp15::R4_MMU: R4 = value; return;
@@ -791,35 +791,35 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
 
         case id::cp15::R5: R5 = value; return;
         case id::cp15::R5_MMU: R5 = value; return;
-        case id::cp15::R5_MMU_DOMAIN: shared::util::swap_bits(R5, 4, 7, value); return;
-        case id::cp15::R5_MMU_STATUS: shared::util::swap_bits(R5, 0, 3, value); return;
+        case id::cp15::R5_MMU_DOMAIN: llarm::util::swap_bits(R5, 4, 7, value); return;
+        case id::cp15::R5_MMU_STATUS: llarm::util::swap_bits(R5, 0, 3, value); return;
         case id::cp15::R5_PU: R5 = value; return;
-        case id::cp15::R5_PU_AP0: shared::util::swap_bits(R5, 0, 1, value); return;
-        case id::cp15::R5_PU_AP1: shared::util::swap_bits(R5, 2, 3, value); return;
-        case id::cp15::R5_PU_AP2: shared::util::swap_bits(R5, 4, 5, value); return;
-        case id::cp15::R5_PU_AP3: shared::util::swap_bits(R5, 6, 7, value); return;
-        case id::cp15::R5_PU_AP4: shared::util::swap_bits(R5, 8, 9, value); return;
-        case id::cp15::R5_PU_AP5: shared::util::swap_bits(R5, 10, 11, value); return;
-        case id::cp15::R5_PU_AP6: shared::util::swap_bits(R5, 12, 13, value); return;
-        case id::cp15::R5_PU_AP7: shared::util::swap_bits(R5, 14, 15, value); return;
+        case id::cp15::R5_PU_AP0: llarm::util::swap_bits(R5, 0, 1, value); return;
+        case id::cp15::R5_PU_AP1: llarm::util::swap_bits(R5, 2, 3, value); return;
+        case id::cp15::R5_PU_AP2: llarm::util::swap_bits(R5, 4, 5, value); return;
+        case id::cp15::R5_PU_AP3: llarm::util::swap_bits(R5, 6, 7, value); return;
+        case id::cp15::R5_PU_AP4: llarm::util::swap_bits(R5, 8, 9, value); return;
+        case id::cp15::R5_PU_AP5: llarm::util::swap_bits(R5, 10, 11, value); return;
+        case id::cp15::R5_PU_AP6: llarm::util::swap_bits(R5, 12, 13, value); return;
+        case id::cp15::R5_PU_AP7: llarm::util::swap_bits(R5, 14, 15, value); return;
         case id::cp15::R5_PU_INST: R5_PU_INST = value; return;
-        case id::cp15::R5_PU_INST_AP0: shared::util::swap_bits(R5_PU_INST, 0, 1, value); return;
-        case id::cp15::R5_PU_INST_AP1: shared::util::swap_bits(R5_PU_INST, 2, 3, value); return;
-        case id::cp15::R5_PU_INST_AP2: shared::util::swap_bits(R5_PU_INST, 4, 5, value); return;
-        case id::cp15::R5_PU_INST_AP3: shared::util::swap_bits(R5_PU_INST, 6, 7, value); return;
-        case id::cp15::R5_PU_INST_AP4: shared::util::swap_bits(R5_PU_INST, 8, 9, value); return;
-        case id::cp15::R5_PU_INST_AP5: shared::util::swap_bits(R5_PU_INST, 10, 11, value); return;
-        case id::cp15::R5_PU_INST_AP6: shared::util::swap_bits(R5_PU_INST, 12, 13, value); return;
-        case id::cp15::R5_PU_INST_AP7: shared::util::swap_bits(R5_PU_INST, 14, 15, value); return;
+        case id::cp15::R5_PU_INST_AP0: llarm::util::swap_bits(R5_PU_INST, 0, 1, value); return;
+        case id::cp15::R5_PU_INST_AP1: llarm::util::swap_bits(R5_PU_INST, 2, 3, value); return;
+        case id::cp15::R5_PU_INST_AP2: llarm::util::swap_bits(R5_PU_INST, 4, 5, value); return;
+        case id::cp15::R5_PU_INST_AP3: llarm::util::swap_bits(R5_PU_INST, 6, 7, value); return;
+        case id::cp15::R5_PU_INST_AP4: llarm::util::swap_bits(R5_PU_INST, 8, 9, value); return;
+        case id::cp15::R5_PU_INST_AP5: llarm::util::swap_bits(R5_PU_INST, 10, 11, value); return;
+        case id::cp15::R5_PU_INST_AP6: llarm::util::swap_bits(R5_PU_INST, 12, 13, value); return;
+        case id::cp15::R5_PU_INST_AP7: llarm::util::swap_bits(R5_PU_INST, 14, 15, value); return;
         case id::cp15::R5_PU_DATA: R5_PU_DATA = value; return;
-        case id::cp15::R5_PU_DATA_AP0: shared::util::swap_bits(R5_PU_DATA, 0, 1, value); return;
-        case id::cp15::R5_PU_DATA_AP1: shared::util::swap_bits(R5_PU_DATA, 2, 3, value); return;
-        case id::cp15::R5_PU_DATA_AP2: shared::util::swap_bits(R5_PU_DATA, 4, 5, value); return;
-        case id::cp15::R5_PU_DATA_AP3: shared::util::swap_bits(R5_PU_DATA, 6, 7, value); return;
-        case id::cp15::R5_PU_DATA_AP4: shared::util::swap_bits(R5_PU_DATA, 8, 9, value); return;
-        case id::cp15::R5_PU_DATA_AP5: shared::util::swap_bits(R5_PU_DATA, 10, 11, value); return;
-        case id::cp15::R5_PU_DATA_AP6: shared::util::swap_bits(R5_PU_DATA, 12, 13, value); return;
-        case id::cp15::R5_PU_DATA_AP7: shared::util::swap_bits(R5_PU_DATA, 14, 15, value); return;
+        case id::cp15::R5_PU_DATA_AP0: llarm::util::swap_bits(R5_PU_DATA, 0, 1, value); return;
+        case id::cp15::R5_PU_DATA_AP1: llarm::util::swap_bits(R5_PU_DATA, 2, 3, value); return;
+        case id::cp15::R5_PU_DATA_AP2: llarm::util::swap_bits(R5_PU_DATA, 4, 5, value); return;
+        case id::cp15::R5_PU_DATA_AP3: llarm::util::swap_bits(R5_PU_DATA, 6, 7, value); return;
+        case id::cp15::R5_PU_DATA_AP4: llarm::util::swap_bits(R5_PU_DATA, 8, 9, value); return;
+        case id::cp15::R5_PU_DATA_AP5: llarm::util::swap_bits(R5_PU_DATA, 10, 11, value); return;
+        case id::cp15::R5_PU_DATA_AP6: llarm::util::swap_bits(R5_PU_DATA, 12, 13, value); return;
+        case id::cp15::R5_PU_DATA_AP7: llarm::util::swap_bits(R5_PU_DATA, 14, 15, value); return;
 
         case id::cp15::R6_MMU: R6 = value; return;
         case id::cp15::R6_MMU_FAR: R6 = value; return;
@@ -930,30 +930,30 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             globals.mpu_address_change = true;
 
             switch (reg) {
-                case id::cp15::R6_PU_0_BASE_ADDRESS: shared::util::swap_bits(R6_PU_0, 12, 31, value); return;
-                case id::cp15::R6_PU_1_BASE_ADDRESS: shared::util::swap_bits(R6_PU_1, 12, 31, value); return; 
-                case id::cp15::R6_PU_2_BASE_ADDRESS: shared::util::swap_bits(R6_PU_2, 12, 31, value); return;
-                case id::cp15::R6_PU_3_BASE_ADDRESS: shared::util::swap_bits(R6_PU_3, 12, 31, value); return;
-                case id::cp15::R6_PU_4_BASE_ADDRESS: shared::util::swap_bits(R6_PU_4, 12, 31, value); return;
-                case id::cp15::R6_PU_5_BASE_ADDRESS: shared::util::swap_bits(R6_PU_5, 12, 31, value); return;
-                case id::cp15::R6_PU_6_BASE_ADDRESS: shared::util::swap_bits(R6_PU_6, 12, 31, value); return;
-                case id::cp15::R6_PU_7_BASE_ADDRESS: shared::util::swap_bits(R6_PU_7, 12, 31, value); return;
-                case id::cp15::R6_PU_0_SIZE: shared::util::swap_bits(R6_PU_0, 1, 5, value); return;
-                case id::cp15::R6_PU_1_SIZE: shared::util::swap_bits(R6_PU_1, 1, 5, value); return;
-                case id::cp15::R6_PU_2_SIZE: shared::util::swap_bits(R6_PU_2, 1, 5, value); return;
-                case id::cp15::R6_PU_3_SIZE: shared::util::swap_bits(R6_PU_3, 1, 5, value); return;
-                case id::cp15::R6_PU_4_SIZE: shared::util::swap_bits(R6_PU_4, 1, 5, value); return;
-                case id::cp15::R6_PU_5_SIZE: shared::util::swap_bits(R6_PU_5, 1, 5, value); return;
-                case id::cp15::R6_PU_6_SIZE: shared::util::swap_bits(R6_PU_6, 1, 5, value); return;
-                case id::cp15::R6_PU_7_SIZE: shared::util::swap_bits(R6_PU_7, 1, 5, value); return;
-                case id::cp15::R6_PU_0_E: shared::util::modify_bit(R6_PU_0, 0, value); return;
-                case id::cp15::R6_PU_1_E: shared::util::modify_bit(R6_PU_1, 0, value); return;
-                case id::cp15::R6_PU_2_E: shared::util::modify_bit(R6_PU_2, 0, value); return;
-                case id::cp15::R6_PU_3_E: shared::util::modify_bit(R6_PU_3, 0, value); return;
-                case id::cp15::R6_PU_4_E: shared::util::modify_bit(R6_PU_4, 0, value); return;
-                case id::cp15::R6_PU_5_E: shared::util::modify_bit(R6_PU_5, 0, value); return;
-                case id::cp15::R6_PU_6_E: shared::util::modify_bit(R6_PU_6, 0, value); return;
-                case id::cp15::R6_PU_7_E: shared::util::modify_bit(R6_PU_7, 0, value); return;
+                case id::cp15::R6_PU_0_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_0, 12, 31, value); return;
+                case id::cp15::R6_PU_1_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_1, 12, 31, value); return; 
+                case id::cp15::R6_PU_2_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_2, 12, 31, value); return;
+                case id::cp15::R6_PU_3_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_3, 12, 31, value); return;
+                case id::cp15::R6_PU_4_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_4, 12, 31, value); return;
+                case id::cp15::R6_PU_5_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_5, 12, 31, value); return;
+                case id::cp15::R6_PU_6_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_6, 12, 31, value); return;
+                case id::cp15::R6_PU_7_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_7, 12, 31, value); return;
+                case id::cp15::R6_PU_0_SIZE: llarm::util::swap_bits(R6_PU_0, 1, 5, value); return;
+                case id::cp15::R6_PU_1_SIZE: llarm::util::swap_bits(R6_PU_1, 1, 5, value); return;
+                case id::cp15::R6_PU_2_SIZE: llarm::util::swap_bits(R6_PU_2, 1, 5, value); return;
+                case id::cp15::R6_PU_3_SIZE: llarm::util::swap_bits(R6_PU_3, 1, 5, value); return;
+                case id::cp15::R6_PU_4_SIZE: llarm::util::swap_bits(R6_PU_4, 1, 5, value); return;
+                case id::cp15::R6_PU_5_SIZE: llarm::util::swap_bits(R6_PU_5, 1, 5, value); return;
+                case id::cp15::R6_PU_6_SIZE: llarm::util::swap_bits(R6_PU_6, 1, 5, value); return;
+                case id::cp15::R6_PU_7_SIZE: llarm::util::swap_bits(R6_PU_7, 1, 5, value); return;
+                case id::cp15::R6_PU_0_E: llarm::util::modify_bit(R6_PU_0, 0, value); return;
+                case id::cp15::R6_PU_1_E: llarm::util::modify_bit(R6_PU_1, 0, value); return;
+                case id::cp15::R6_PU_2_E: llarm::util::modify_bit(R6_PU_2, 0, value); return;
+                case id::cp15::R6_PU_3_E: llarm::util::modify_bit(R6_PU_3, 0, value); return;
+                case id::cp15::R6_PU_4_E: llarm::util::modify_bit(R6_PU_4, 0, value); return;
+                case id::cp15::R6_PU_5_E: llarm::util::modify_bit(R6_PU_5, 0, value); return;
+                case id::cp15::R6_PU_6_E: llarm::util::modify_bit(R6_PU_6, 0, value); return;
+                case id::cp15::R6_PU_7_E: llarm::util::modify_bit(R6_PU_7, 0, value); return;
                 case id::cp15::R6_PU_0: R6_PU_0 = value; return;
                 case id::cp15::R6_PU_1: R6_PU_1 = value; return;
                 case id::cp15::R6_PU_2: R6_PU_2 = value; return;
@@ -963,30 +963,30 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 case id::cp15::R6_PU_6: R6_PU_6 = value; return;
                 case id::cp15::R6_PU_7: R6_PU_7 = value; return;
 
-                case id::cp15::R6_PU_INST_0_BASE_ADDRESS: shared::util::swap_bits(R6_PU_INST_0, 12, 31, value); return;
-                case id::cp15::R6_PU_INST_1_BASE_ADDRESS: shared::util::swap_bits(R6_PU_INST_1, 12, 31, value); return; 
-                case id::cp15::R6_PU_INST_2_BASE_ADDRESS: shared::util::swap_bits(R6_PU_INST_2, 12, 31, value); return;
-                case id::cp15::R6_PU_INST_3_BASE_ADDRESS: shared::util::swap_bits(R6_PU_INST_3, 12, 31, value); return;
-                case id::cp15::R6_PU_INST_4_BASE_ADDRESS: shared::util::swap_bits(R6_PU_INST_4, 12, 31, value); return;
-                case id::cp15::R6_PU_INST_5_BASE_ADDRESS: shared::util::swap_bits(R6_PU_INST_5, 12, 31, value); return;
-                case id::cp15::R6_PU_INST_6_BASE_ADDRESS: shared::util::swap_bits(R6_PU_INST_6, 12, 31, value); return;
-                case id::cp15::R6_PU_INST_7_BASE_ADDRESS: shared::util::swap_bits(R6_PU_INST_7, 12, 31, value); return;
-                case id::cp15::R6_PU_INST_0_SIZE: shared::util::swap_bits(R6_PU_INST_0, 1, 5, value); return;
-                case id::cp15::R6_PU_INST_1_SIZE: shared::util::swap_bits(R6_PU_INST_1, 1, 5, value); return; 
-                case id::cp15::R6_PU_INST_2_SIZE: shared::util::swap_bits(R6_PU_INST_2, 1, 5, value); return;
-                case id::cp15::R6_PU_INST_3_SIZE: shared::util::swap_bits(R6_PU_INST_3, 1, 5, value); return;
-                case id::cp15::R6_PU_INST_4_SIZE: shared::util::swap_bits(R6_PU_INST_4, 1, 5, value); return;
-                case id::cp15::R6_PU_INST_5_SIZE: shared::util::swap_bits(R6_PU_INST_5, 1, 5, value); return;
-                case id::cp15::R6_PU_INST_6_SIZE: shared::util::swap_bits(R6_PU_INST_6, 1, 5, value); return;
-                case id::cp15::R6_PU_INST_7_SIZE: shared::util::swap_bits(R6_PU_INST_7, 1, 5, value); return;
-                case id::cp15::R6_PU_INST_0_E: shared::util::modify_bit(R6_PU_INST_0, 0, value); return;
-                case id::cp15::R6_PU_INST_1_E: shared::util::modify_bit(R6_PU_INST_1, 0, value); return;
-                case id::cp15::R6_PU_INST_2_E: shared::util::modify_bit(R6_PU_INST_2, 0, value); return;
-                case id::cp15::R6_PU_INST_3_E: shared::util::modify_bit(R6_PU_INST_3, 0, value); return;
-                case id::cp15::R6_PU_INST_4_E: shared::util::modify_bit(R6_PU_INST_4, 0, value); return;
-                case id::cp15::R6_PU_INST_5_E: shared::util::modify_bit(R6_PU_INST_5, 0, value); return;
-                case id::cp15::R6_PU_INST_6_E: shared::util::modify_bit(R6_PU_INST_6, 0, value); return;
-                case id::cp15::R6_PU_INST_7_E: shared::util::modify_bit(R6_PU_INST_7, 0, value); return;
+                case id::cp15::R6_PU_INST_0_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_INST_0, 12, 31, value); return;
+                case id::cp15::R6_PU_INST_1_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_INST_1, 12, 31, value); return; 
+                case id::cp15::R6_PU_INST_2_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_INST_2, 12, 31, value); return;
+                case id::cp15::R6_PU_INST_3_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_INST_3, 12, 31, value); return;
+                case id::cp15::R6_PU_INST_4_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_INST_4, 12, 31, value); return;
+                case id::cp15::R6_PU_INST_5_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_INST_5, 12, 31, value); return;
+                case id::cp15::R6_PU_INST_6_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_INST_6, 12, 31, value); return;
+                case id::cp15::R6_PU_INST_7_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_INST_7, 12, 31, value); return;
+                case id::cp15::R6_PU_INST_0_SIZE: llarm::util::swap_bits(R6_PU_INST_0, 1, 5, value); return;
+                case id::cp15::R6_PU_INST_1_SIZE: llarm::util::swap_bits(R6_PU_INST_1, 1, 5, value); return; 
+                case id::cp15::R6_PU_INST_2_SIZE: llarm::util::swap_bits(R6_PU_INST_2, 1, 5, value); return;
+                case id::cp15::R6_PU_INST_3_SIZE: llarm::util::swap_bits(R6_PU_INST_3, 1, 5, value); return;
+                case id::cp15::R6_PU_INST_4_SIZE: llarm::util::swap_bits(R6_PU_INST_4, 1, 5, value); return;
+                case id::cp15::R6_PU_INST_5_SIZE: llarm::util::swap_bits(R6_PU_INST_5, 1, 5, value); return;
+                case id::cp15::R6_PU_INST_6_SIZE: llarm::util::swap_bits(R6_PU_INST_6, 1, 5, value); return;
+                case id::cp15::R6_PU_INST_7_SIZE: llarm::util::swap_bits(R6_PU_INST_7, 1, 5, value); return;
+                case id::cp15::R6_PU_INST_0_E: llarm::util::modify_bit(R6_PU_INST_0, 0, value); return;
+                case id::cp15::R6_PU_INST_1_E: llarm::util::modify_bit(R6_PU_INST_1, 0, value); return;
+                case id::cp15::R6_PU_INST_2_E: llarm::util::modify_bit(R6_PU_INST_2, 0, value); return;
+                case id::cp15::R6_PU_INST_3_E: llarm::util::modify_bit(R6_PU_INST_3, 0, value); return;
+                case id::cp15::R6_PU_INST_4_E: llarm::util::modify_bit(R6_PU_INST_4, 0, value); return;
+                case id::cp15::R6_PU_INST_5_E: llarm::util::modify_bit(R6_PU_INST_5, 0, value); return;
+                case id::cp15::R6_PU_INST_6_E: llarm::util::modify_bit(R6_PU_INST_6, 0, value); return;
+                case id::cp15::R6_PU_INST_7_E: llarm::util::modify_bit(R6_PU_INST_7, 0, value); return;
                 case id::cp15::R6_PU_INST_0: R6_PU_INST_0 = value; return;
                 case id::cp15::R6_PU_INST_1: R6_PU_INST_1 = value; return;
                 case id::cp15::R6_PU_INST_2: R6_PU_INST_2 = value; return;
@@ -996,30 +996,30 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 case id::cp15::R6_PU_INST_6: R6_PU_INST_6 = value; return;
                 case id::cp15::R6_PU_INST_7: R6_PU_INST_7 = value; return;
                 
-                case id::cp15::R6_PU_DATA_0_BASE_ADDRESS: shared::util::swap_bits(R6_PU_DATA_0, 12, 31, value); return;
-                case id::cp15::R6_PU_DATA_1_BASE_ADDRESS: shared::util::swap_bits(R6_PU_DATA_1, 12, 31, value); return; 
-                case id::cp15::R6_PU_DATA_2_BASE_ADDRESS: shared::util::swap_bits(R6_PU_DATA_2, 12, 31, value); return;
-                case id::cp15::R6_PU_DATA_3_BASE_ADDRESS: shared::util::swap_bits(R6_PU_DATA_3, 12, 31, value); return;
-                case id::cp15::R6_PU_DATA_4_BASE_ADDRESS: shared::util::swap_bits(R6_PU_DATA_4, 12, 31, value); return;
-                case id::cp15::R6_PU_DATA_5_BASE_ADDRESS: shared::util::swap_bits(R6_PU_DATA_5, 12, 31, value); return;
-                case id::cp15::R6_PU_DATA_6_BASE_ADDRESS: shared::util::swap_bits(R6_PU_DATA_6, 12, 31, value); return;
-                case id::cp15::R6_PU_DATA_7_BASE_ADDRESS: shared::util::swap_bits(R6_PU_DATA_7, 12, 31, value); return;
-                case id::cp15::R6_PU_DATA_0_SIZE: shared::util::swap_bits(R6_PU_DATA_0, 1, 5, value); return;
-                case id::cp15::R6_PU_DATA_1_SIZE: shared::util::swap_bits(R6_PU_DATA_1, 1, 5, value); return;
-                case id::cp15::R6_PU_DATA_2_SIZE: shared::util::swap_bits(R6_PU_DATA_2, 1, 5, value); return;
-                case id::cp15::R6_PU_DATA_3_SIZE: shared::util::swap_bits(R6_PU_DATA_3, 1, 5, value); return;
-                case id::cp15::R6_PU_DATA_4_SIZE: shared::util::swap_bits(R6_PU_DATA_4, 1, 5, value); return;
-                case id::cp15::R6_PU_DATA_5_SIZE: shared::util::swap_bits(R6_PU_DATA_5, 1, 5, value); return;
-                case id::cp15::R6_PU_DATA_6_SIZE: shared::util::swap_bits(R6_PU_DATA_6, 1, 5, value); return;
-                case id::cp15::R6_PU_DATA_7_SIZE: shared::util::swap_bits(R6_PU_DATA_7, 1, 5, value); return;
-                case id::cp15::R6_PU_DATA_0_E: shared::util::modify_bit(R6_PU_DATA_0, 0, value); return;
-                case id::cp15::R6_PU_DATA_1_E: shared::util::modify_bit(R6_PU_DATA_1, 0, value); return;
-                case id::cp15::R6_PU_DATA_2_E: shared::util::modify_bit(R6_PU_DATA_2, 0, value); return;
-                case id::cp15::R6_PU_DATA_3_E: shared::util::modify_bit(R6_PU_DATA_3, 0, value); return;
-                case id::cp15::R6_PU_DATA_4_E: shared::util::modify_bit(R6_PU_DATA_4, 0, value); return;
-                case id::cp15::R6_PU_DATA_5_E: shared::util::modify_bit(R6_PU_DATA_5, 0, value); return;
-                case id::cp15::R6_PU_DATA_6_E: shared::util::modify_bit(R6_PU_DATA_6, 0, value); return;
-                case id::cp15::R6_PU_DATA_7_E: shared::util::modify_bit(R6_PU_DATA_7, 0, value); return;
+                case id::cp15::R6_PU_DATA_0_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_DATA_0, 12, 31, value); return;
+                case id::cp15::R6_PU_DATA_1_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_DATA_1, 12, 31, value); return; 
+                case id::cp15::R6_PU_DATA_2_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_DATA_2, 12, 31, value); return;
+                case id::cp15::R6_PU_DATA_3_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_DATA_3, 12, 31, value); return;
+                case id::cp15::R6_PU_DATA_4_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_DATA_4, 12, 31, value); return;
+                case id::cp15::R6_PU_DATA_5_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_DATA_5, 12, 31, value); return;
+                case id::cp15::R6_PU_DATA_6_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_DATA_6, 12, 31, value); return;
+                case id::cp15::R6_PU_DATA_7_BASE_ADDRESS: llarm::util::swap_bits(R6_PU_DATA_7, 12, 31, value); return;
+                case id::cp15::R6_PU_DATA_0_SIZE: llarm::util::swap_bits(R6_PU_DATA_0, 1, 5, value); return;
+                case id::cp15::R6_PU_DATA_1_SIZE: llarm::util::swap_bits(R6_PU_DATA_1, 1, 5, value); return;
+                case id::cp15::R6_PU_DATA_2_SIZE: llarm::util::swap_bits(R6_PU_DATA_2, 1, 5, value); return;
+                case id::cp15::R6_PU_DATA_3_SIZE: llarm::util::swap_bits(R6_PU_DATA_3, 1, 5, value); return;
+                case id::cp15::R6_PU_DATA_4_SIZE: llarm::util::swap_bits(R6_PU_DATA_4, 1, 5, value); return;
+                case id::cp15::R6_PU_DATA_5_SIZE: llarm::util::swap_bits(R6_PU_DATA_5, 1, 5, value); return;
+                case id::cp15::R6_PU_DATA_6_SIZE: llarm::util::swap_bits(R6_PU_DATA_6, 1, 5, value); return;
+                case id::cp15::R6_PU_DATA_7_SIZE: llarm::util::swap_bits(R6_PU_DATA_7, 1, 5, value); return;
+                case id::cp15::R6_PU_DATA_0_E: llarm::util::modify_bit(R6_PU_DATA_0, 0, value); return;
+                case id::cp15::R6_PU_DATA_1_E: llarm::util::modify_bit(R6_PU_DATA_1, 0, value); return;
+                case id::cp15::R6_PU_DATA_2_E: llarm::util::modify_bit(R6_PU_DATA_2, 0, value); return;
+                case id::cp15::R6_PU_DATA_3_E: llarm::util::modify_bit(R6_PU_DATA_3, 0, value); return;
+                case id::cp15::R6_PU_DATA_4_E: llarm::util::modify_bit(R6_PU_DATA_4, 0, value); return;
+                case id::cp15::R6_PU_DATA_5_E: llarm::util::modify_bit(R6_PU_DATA_5, 0, value); return;
+                case id::cp15::R6_PU_DATA_6_E: llarm::util::modify_bit(R6_PU_DATA_6, 0, value); return;
+                case id::cp15::R6_PU_DATA_7_E: llarm::util::modify_bit(R6_PU_DATA_7, 0, value); return;
                 case id::cp15::R6_PU_DATA_0: R6_PU_DATA_0 = value; return;
                 case id::cp15::R6_PU_DATA_1: R6_PU_DATA_1 = value; return;
                 case id::cp15::R6_PU_DATA_2: R6_PU_DATA_2 = value; return;
@@ -1028,7 +1028,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 case id::cp15::R6_PU_DATA_5: R6_PU_DATA_5 = value; return;
                 case id::cp15::R6_PU_DATA_6: R6_PU_DATA_6 = value; return;
                 case id::cp15::R6_PU_DATA_7: R6_PU_DATA_7 = value; return;
-                default: shared::out::dev_error("Impossible write operation on R6_PU register set in cp15");
+                default: llarm::out::dev_error("Impossible write operation on R6_PU register set in cp15");
             }
 
         case id::cp15::R7: R7 = value; return;
@@ -1041,22 +1041,22 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
         case id::cp15::R9_CACHE_L: // TODO
         case id::cp15::R10: R10 = value; return;
         case id::cp15::R10_MMU: R10 = value; return;
-        case id::cp15::R10_MMU_BASE: shared::util::swap_bits(R10, (32 - tlb.W_unified), 31, value); return;
-        case id::cp15::R10_MMU_VICTIM: shared::util::swap_bits(R10, (32 - (2 * tlb.W_unified)), (31 - tlb.W_unified), value); return;
-        case id::cp15::R10_MMU_P: shared::util::modify_bit(R10, 0, value); return;
+        case id::cp15::R10_MMU_BASE: llarm::util::swap_bits(R10, (32 - tlb.W_unified), 31, value); return;
+        case id::cp15::R10_MMU_VICTIM: llarm::util::swap_bits(R10, (32 - (2 * tlb.W_unified)), (31 - tlb.W_unified), value); return;
+        case id::cp15::R10_MMU_P: llarm::util::modify_bit(R10, 0, value); return;
         case id::cp15::R10_MMU_INST: R10_INST = value; return;
-        case id::cp15::R10_MMU_INST_BASE: shared::util::swap_bits(R10_INST, (32 - tlb.W_inst), 31, value); return;
-        case id::cp15::R10_MMU_INST_VICTIM: shared::util::swap_bits(R10_INST, (32 - (2 * tlb.W_inst)), (31 - tlb.W_data), value); return;
-        case id::cp15::R10_MMU_INST_P: shared::util::modify_bit(R10_INST, 0, value); return;
+        case id::cp15::R10_MMU_INST_BASE: llarm::util::swap_bits(R10_INST, (32 - tlb.W_inst), 31, value); return;
+        case id::cp15::R10_MMU_INST_VICTIM: llarm::util::swap_bits(R10_INST, (32 - (2 * tlb.W_inst)), (31 - tlb.W_data), value); return;
+        case id::cp15::R10_MMU_INST_P: llarm::util::modify_bit(R10_INST, 0, value); return;
         case id::cp15::R10_MMU_DATA: R10_DATA = value; return;
-        case id::cp15::R10_MMU_DATA_BASE: shared::util::swap_bits(R10_DATA, (32 - tlb.W_data), 31, value); return;
-        case id::cp15::R10_MMU_DATA_VICTIM: shared::util::swap_bits(R10_DATA, (32 - (2 * tlb.W_data)), (31 - tlb.W_data), value); return;
-        case id::cp15::R10_MMU_DATA_P: shared::util::modify_bit(R10_DATA, 0, value); return;
+        case id::cp15::R10_MMU_DATA_BASE: llarm::util::swap_bits(R10_DATA, (32 - tlb.W_data), 31, value); return;
+        case id::cp15::R10_MMU_DATA_VICTIM: llarm::util::swap_bits(R10_DATA, (32 - (2 * tlb.W_data)), (31 - tlb.W_data), value); return;
+        case id::cp15::R10_MMU_DATA_P: llarm::util::modify_bit(R10_DATA, 0, value); return;
         case id::cp15::R10_PU: R10 = value; return;
         case id::cp15::R11: R11 = value; return;
         case id::cp15::R12: R12 = value; return;
         case id::cp15::R13: R13 = value; return;
-        case id::cp15::R13_PID: shared::util::swap_bits(R13, 25, 31, value); return;
+        case id::cp15::R13_PID: llarm::util::swap_bits(R13, 25, 31, value); return;
         case id::cp15::R14: R14 = value; return;
         case id::cp15::R15: R15 = value; return;
     };
@@ -1089,7 +1089,7 @@ void CP15::setup_R0_processor_id() {
         case id::product_family::CORTEX_A_64:
         case id::product_family::CORTEX_X:
         case id::product_family::NEOVERSE: post_arm7 = true; break;
-        case id::product_family::UNKNOWN: shared::out::error("Cannot configure R0_ID coprocessor register for unknown processor");
+        case id::product_family::UNKNOWN: llarm::out::error("Cannot configure R0_ID coprocessor register for unknown processor");
     }
 
     write(id::cp15::R0_ID_REVISION, settings.revision);
@@ -1101,7 +1101,7 @@ void CP15::setup_R0_processor_id() {
             case id::processor::ARM610: force_write(id::cp15::R0_ID_PRE7_ID, 0x4156061); break;
             case id::processor::ARM620: force_write(id::cp15::R0_ID_PRE7_ID, 0x4156062); break;
             default: 
-                shared::out::warning("Pre-ARM7 configuration is invalid, defaulting the processor ID to ARM620");
+                llarm::out::warning("Pre-ARM7 configuration is invalid, defaulting the processor ID to ARM620");
                 force_write(id::cp15::R0_ID_PRE7_ID, 0x4156062);
         }
     } else {
@@ -1119,12 +1119,12 @@ void CP15::setup_R0_processor_id() {
             } else if (settings.specific_arch == id::specific_arch::ARMv4T) {
                 force_write(id::cp15::R0_ID_7_A, true);
             } else {
-                shared::out::warning("\"A\" bit in R0 processor ID for ARM7 is invalid, defaulting to 1 (ARMv4T)");
+                llarm::out::warning("\"A\" bit in R0 processor ID for ARM7 is invalid, defaulting to 1 (ARMv4T)");
             }
 
             // ppn
             if (upper_ppn != 0x7) {
-                shared::out::error("PPN upper 4 bits must be 0x7 for ARM7 family");
+                llarm::out::error("PPN upper 4 bits must be 0x7 for ARM7 family");
             }
         } else if (post_arm7) {
             // architecure
@@ -1145,7 +1145,7 @@ void CP15::setup_R0_processor_id() {
 
             // ppn
             if (upper_ppn == 0x7 || upper_ppn == 0x0) {
-                shared::out::error("PPN upper 4 bits must be 0x7 for post-ARM7 family");
+                llarm::out::error("PPN upper 4 bits must be 0x7 for post-ARM7 family");
             }
         }
 
@@ -1205,7 +1205,7 @@ void CP15::setup_R0_cache() {
     } else if (separate) {
         write(id::cp15::R0_CACHE_S, true);
     } else {
-        shared::out::dev_error("Invalid cache configuration (separate/unified)");
+        llarm::out::dev_error("Invalid cache configuration (separate/unified)");
     }
 
     // ctype field
@@ -1247,7 +1247,7 @@ void CP15::setup_R0_cache() {
         case KB_48: write(id::cp15::R0_CACHE_DSIZE_SIZE, 0b110); break;
         case KB_64: 
         case KB_96: write(id::cp15::R0_CACHE_DSIZE_SIZE, 0b111); break;
-        default: shared::out::dev_error("Invalid data cache size configuration");
+        default: llarm::out::dev_error("Invalid data cache size configuration");
     }
 
     // instruction cache size
@@ -1268,7 +1268,7 @@ void CP15::setup_R0_cache() {
         case KB_48: write(id::cp15::R0_CACHE_ISIZE_SIZE, 0b110); break;
         case KB_64: 
         case KB_96: write(id::cp15::R0_CACHE_ISIZE_SIZE, 0b111); break;
-        default: break; shared::out::dev_error("Invalid instruction cache size configuration");
+        default: break; llarm::out::dev_error("Invalid instruction cache size configuration");
     }
 
     // data cache line length
@@ -1277,7 +1277,7 @@ void CP15::setup_R0_cache() {
         case 16: write(id::cp15::R0_CACHE_DSIZE_LEN, 0b01); break;
         case 32: write(id::cp15::R0_CACHE_DSIZE_LEN, 0b10); break;
         case 64: write(id::cp15::R0_CACHE_DSIZE_LEN, 0b11); break;
-        default: shared::out::dev_error("Unsupported data cahe line length");
+        default: llarm::out::dev_error("Unsupported data cahe line length");
     }
 
     // instruction cache line length
@@ -1286,7 +1286,7 @@ void CP15::setup_R0_cache() {
         case 16: write(id::cp15::R0_CACHE_ISIZE_LEN, 0b01); break;
         case 32: write(id::cp15::R0_CACHE_ISIZE_LEN, 0b10); break;
         case 64: write(id::cp15::R0_CACHE_ISIZE_LEN, 0b11); break;
-        default: shared::out::dev_error("Unsupported instruction cache line length");
+        default: llarm::out::dev_error("Unsupported instruction cache line length");
     }
 
     // data cache associativity
@@ -1306,7 +1306,7 @@ void CP15::setup_R0_cache() {
         case 96: write(id::cp15::R0_CACHE_DSIZE_ASSOC, 0b110); break;
         case 128:
         case 192: write(id::cp15::R0_CACHE_DSIZE_ASSOC, 0b111); break;
-        default: shared::out::dev_error("Unsupported data cache associativity");
+        default: llarm::out::dev_error("Unsupported data cache associativity");
     }
 
     // instruction cache associativity
@@ -1326,39 +1326,39 @@ void CP15::setup_R0_cache() {
         case 96: write(id::cp15::R0_CACHE_ISIZE_ASSOC, 0b110); break;
         case 128:
         case 192: write(id::cp15::R0_CACHE_ISIZE_ASSOC, 0b111); break;
-        default: shared::out::dev_error("Unsupported instruction cache associativity");
+        default: llarm::out::dev_error("Unsupported instruction cache associativity");
     }
 
 
     // M bit (data cache)
     if (
-        (shared::util::popcount(settings.data_cache_size) == 2) &&
-        (shared::util::popcount(settings.data_cache_assoc_way) == 2)
+        (llarm::util::popcount(settings.data_cache_size) == 2) &&
+        (llarm::util::popcount(settings.data_cache_assoc_way) == 2)
     ) {
         write(id::cp15::R0_CACHE_DSIZE_M, true);
     } else if (
-        (shared::util::popcount(settings.data_cache_size) == 1) &&
-        (shared::util::popcount(settings.data_cache_assoc_way) == 1)
+        (llarm::util::popcount(settings.data_cache_size) == 1) &&
+        (llarm::util::popcount(settings.data_cache_assoc_way) == 1)
     ) {
         write(id::cp15::R0_CACHE_DSIZE_M, false);
     } else {
-        shared::out::dev_error("Unsupported M bit data cache");
+        llarm::out::dev_error("Unsupported M bit data cache");
     }
 
 
     // M bit (instruction cache)
     if (
-        (shared::util::popcount(settings.instruction_cache_size) == 2) &&
-        (shared::util::popcount(settings.instruction_cache_assoc_way) == 2)
+        (llarm::util::popcount(settings.instruction_cache_size) == 2) &&
+        (llarm::util::popcount(settings.instruction_cache_assoc_way) == 2)
     ) {
         write(id::cp15::R0_CACHE_ISIZE_M, true);
     } else if (
-        (shared::util::popcount(settings.instruction_cache_size) == 1) &&
-        (shared::util::popcount(settings.instruction_cache_assoc_way) == 1)
+        (llarm::util::popcount(settings.instruction_cache_size) == 1) &&
+        (llarm::util::popcount(settings.instruction_cache_assoc_way) == 1)
     ) {
         write(id::cp15::R0_CACHE_ISIZE_M, false);
     } else {
-        shared::out::dev_error("Unsupported M bit instruction cache");
+        llarm::out::dev_error("Unsupported M bit instruction cache");
     }
 }
 
@@ -1379,7 +1379,7 @@ void CP15::setup_R1_control() {
         ) {
             force_write(id::cp15::R1_C, true);
         } else {
-            shared::out::error("Invalid C bit configuration in R1 cache setup");
+            llarm::out::error("Invalid C bit configuration in R1 cache setup");
         }
     } else {
         force_write(id::cp15::R1_C, false); // no cache present
@@ -1394,7 +1394,7 @@ void CP15::setup_R1_control() {
     } else if (settings.only_26_bits) {
         force_write(id::cp15::R1_P, false);
     } else {
-        shared::out::error("Invalid P bit configuration in R1 cache setup");
+        llarm::out::error("Invalid P bit configuration in R1 cache setup");
     }
 
     // D
@@ -1403,7 +1403,7 @@ void CP15::setup_R1_control() {
     } else if (settings.only_26_bits) {
         force_write(id::cp15::R1_D, false);
     } else {
-        shared::out::error("Invalid D bit configuration in R1 cache setup");
+        llarm::out::error("Invalid D bit configuration in R1 cache setup");
     }
 
     // L
@@ -1412,7 +1412,7 @@ void CP15::setup_R1_control() {
     } else if (settings.is_abort_model_late) {
         force_write(id::cp15::R1_L, true);
     } else {
-        shared::out::error("Invalid L bit configuration in R1 cache setup");
+        llarm::out::error("Invalid L bit configuration in R1 cache setup");
     }
 
     // B
@@ -1430,7 +1430,7 @@ void CP15::setup_R1_control() {
             force_write(id::cp15::R1_B, true);
             globals.is_little_endian = false;
         } else {
-            shared::out::error("Invalid B bit configuration in CP15 R1 cache setup");
+            llarm::out::error("Invalid B bit configuration in CP15 R1 cache setup");
         }
     }
 
@@ -1460,7 +1460,7 @@ void CP15::setup_R1_control() {
     } else if (settings.has_random_replacement_cache_strategy) {
         force_write(id::cp15::R1_RR, false);
     } else {
-        shared::out::error("Invalid RR bit configuration in CP15 R1 cache setup");
+        llarm::out::error("Invalid RR bit configuration in CP15 R1 cache setup");
     }
 
     // L4

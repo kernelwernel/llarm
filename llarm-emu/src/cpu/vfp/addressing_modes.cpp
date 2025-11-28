@@ -12,19 +12,19 @@
 
 
 single_encoding_struct VFP_ADDRESS_MODE::single_precision(const u32 code) {
-    const u8 Fd = shared::util::bit_range<u8>(code, 12, 15);
-    const u8 Fn = shared::util::bit_range<u8>(code, 16, 19);
-    const u8 Fm = shared::util::bit_range<u8>(code, 0, 3);
+    const u8 Fd = llarm::util::bit_range<u8>(code, 12, 15);
+    const u8 Fn = llarm::util::bit_range<u8>(code, 16, 19);
+    const u8 Fm = llarm::util::bit_range<u8>(code, 0, 3);
 
-    const bool D = shared::util::bit_fetch(code, 22);
-    const bool N = shared::util::bit_fetch(code, 7);
-    const bool M = shared::util::bit_fetch(code, 5);
+    const bool D = llarm::util::bit_fetch(code, 22);
+    const bool N = llarm::util::bit_fetch(code, 7);
+    const bool M = llarm::util::bit_fetch(code, 5);
 
     const u8 d_num = ((Fd << 1) | D);
     const u8 n_num = ((Fn << 1) | N);
     const u8 m_num = ((Fm << 1) | M);
 
-    const u8 d_bank = shared::util::bit_range<u8>(d_num, 3, 4);
+    const u8 d_bank = llarm::util::bit_range<u8>(d_num, 3, 4);
 
     /**
      * ===== scalar submode =====
@@ -52,12 +52,12 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision(const u32 code) {
         };
     }
 
-    const u8 n_bank = shared::util::bit_range<u8>(n_num, 3, 4);
-    const u8 m_bank = shared::util::bit_range<u8>(m_num, 3, 4);
+    const u8 n_bank = llarm::util::bit_range<u8>(n_num, 3, 4);
+    const u8 m_bank = llarm::util::bit_range<u8>(m_num, 3, 4);
 
-    u8 d_index = shared::util::bit_range<u8>(d_num, 0, 2);
-    u8 n_index = shared::util::bit_range<u8>(n_num, 0, 2);
-    u8 m_index = shared::util::bit_range<u8>(m_num, 0, 2);
+    u8 d_index = llarm::util::bit_range<u8>(d_num, 0, 2);
+    u8 n_index = llarm::util::bit_range<u8>(n_num, 0, 2);
+    u8 m_index = llarm::util::bit_range<u8>(m_num, 0, 2);
 
     const u8 vec_len = static_cast<u8>(vfp_reg.read(id::vfp_reg::FPSCR_LEN));
     const u8 stride = static_cast<u8>(vfp_reg.read(id::vfp_reg::FPSCR_STRIDE));
@@ -171,16 +171,16 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision(const u32 code) {
 
 
 single_encoding_struct VFP_ADDRESS_MODE::single_precision_monadic(const u32 code) {
-    const u8 Fd = shared::util::bit_range<u8>(code, 12, 15);
-    const u8 Fm = shared::util::bit_range<u8>(code, 0, 3);
+    const u8 Fd = llarm::util::bit_range<u8>(code, 12, 15);
+    const u8 Fm = llarm::util::bit_range<u8>(code, 0, 3);
 
-    const bool D = shared::util::bit_fetch(code, 22);
-    const bool M = shared::util::bit_fetch(code, 5);
+    const bool D = llarm::util::bit_fetch(code, 22);
+    const bool M = llarm::util::bit_fetch(code, 5);
 
     const u8 d_num = ((Fd << 1) | D);
     const u8 m_num = ((Fm << 1) | M);
 
-    const u8 d_bank = shared::util::bit_range<u8>(d_num, 3, 4);
+    const u8 d_bank = llarm::util::bit_range<u8>(d_num, 3, 4);
     
     /**
      * ===== scalar-to-scalar submode =====
@@ -203,10 +203,10 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision_monadic(const u32 code
         };
     }
 
-    const u8 m_bank = shared::util::bit_range<u8>(m_num, 3, 4);
+    const u8 m_bank = llarm::util::bit_range<u8>(m_num, 3, 4);
 
-    u8 d_index = shared::util::bit_range<u8>(d_num, 0, 2);
-    u8 m_index = shared::util::bit_range<u8>(m_num, 0, 2);
+    u8 d_index = llarm::util::bit_range<u8>(d_num, 0, 2);
+    u8 m_index = llarm::util::bit_range<u8>(m_num, 0, 2);
 
     const u8 vec_len = static_cast<u8>(vfp_reg.read(id::vfp_reg::FPSCR_LEN));
     const u8 stride = static_cast<u8>(vfp_reg.read(id::vfp_reg::FPSCR_STRIDE));
@@ -300,11 +300,11 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision_monadic(const u32 code
 
 
 double_encoding_struct VFP_ADDRESS_MODE::double_precision(const u32 code) {
-    const u8 Dd = shared::util::bit_range<u8>(code, 12, 15);
-    const u8 Dn = shared::util::bit_range<u8>(code, 16, 19);
-    const u8 Dm = shared::util::bit_range<u8>(code, 0, 3);
+    const u8 Dd = llarm::util::bit_range<u8>(code, 12, 15);
+    const u8 Dn = llarm::util::bit_range<u8>(code, 16, 19);
+    const u8 Dm = llarm::util::bit_range<u8>(code, 0, 3);
 
-    const u8 d_bank = shared::util::bit_range<u8>(Dd, 2, 3);
+    const u8 d_bank = llarm::util::bit_range<u8>(Dd, 2, 3);
     
     /**
      * ===== scalar submode =====
@@ -328,12 +328,12 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision(const u32 code) {
         };
     }
 
-    const u8 n_bank = shared::util::bit_range<u8>(Dn, 2, 3);
-    const u8 m_bank = shared::util::bit_range<u8>(Dm, 2, 3);
+    const u8 n_bank = llarm::util::bit_range<u8>(Dn, 2, 3);
+    const u8 m_bank = llarm::util::bit_range<u8>(Dm, 2, 3);
     
-    u8 d_index = shared::util::bit_range<u8>(Dd, 0, 1);
-    u8 n_index = shared::util::bit_range<u8>(Dn, 0, 1);
-    u8 m_index = shared::util::bit_range<u8>(Dm, 0, 1);
+    u8 d_index = llarm::util::bit_range<u8>(Dd, 0, 1);
+    u8 n_index = llarm::util::bit_range<u8>(Dn, 0, 1);
+    u8 m_index = llarm::util::bit_range<u8>(Dm, 0, 1);
 
     const u8 vec_len = static_cast<u8>(vfp_reg.read(id::vfp_reg::FPSCR_LEN));
     const u8 stride = static_cast<u8>(vfp_reg.read(id::vfp_reg::FPSCR_STRIDE));
@@ -446,10 +446,10 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision(const u32 code) {
 
 
 double_encoding_struct VFP_ADDRESS_MODE::double_precision_monadic(const u32 code) {
-    const u8 Dd = shared::util::bit_range<u8>(code, 12, 15);
-    const u8 Dm = shared::util::bit_range<u8>(code, 0, 3);
+    const u8 Dd = llarm::util::bit_range<u8>(code, 12, 15);
+    const u8 Dm = llarm::util::bit_range<u8>(code, 0, 3);
 
-    const u8 d_bank = shared::util::bit_range<u8>(Dd, 2, 3);
+    const u8 d_bank = llarm::util::bit_range<u8>(Dd, 2, 3);
 
     /**
      * ===== scalar-to-scalar submode =====
@@ -472,14 +472,14 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision_monadic(const u32 code
         };
     }
 
-    const u8 Dn = shared::util::bit_range<u8>(code, 16, 19);
+    const u8 Dn = llarm::util::bit_range<u8>(code, 16, 19);
 
-    const u8 n_bank = shared::util::bit_range<u8>(Dn, 2, 3);
-    const u8 m_bank = shared::util::bit_range<u8>(Dm, 2, 3);
+    const u8 n_bank = llarm::util::bit_range<u8>(Dn, 2, 3);
+    const u8 m_bank = llarm::util::bit_range<u8>(Dm, 2, 3);
 
-    u8 d_index = shared::util::bit_range<u8>(Dd, 0, 1);
-    u8 n_index = shared::util::bit_range<u8>(Dn, 0, 1);
-    u8 m_index = shared::util::bit_range<u8>(Dm, 0, 1);
+    u8 d_index = llarm::util::bit_range<u8>(Dd, 0, 1);
+    u8 n_index = llarm::util::bit_range<u8>(Dn, 0, 1);
+    u8 m_index = llarm::util::bit_range<u8>(Dm, 0, 1);
 
     const u8 vec_len = static_cast<u8>(vfp_reg.read(id::vfp_reg::FPSCR_LEN));
     const u8 stride = static_cast<u8>(vfp_reg.read(id::vfp_reg::FPSCR_STRIDE));
@@ -572,8 +572,8 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision_monadic(const u32 code
 
 
 vfp_address_struct VFP_ADDRESS_MODE::vfp_load_multiple(const u32 code) {
-    const u8 offset = shared::util::bit_range<u8>(code, 0, 7);
-    const u8 cp_num = shared::util::bit_range<u8>(code, 8, 11);
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
+    const u8 cp_num = llarm::util::bit_range<u8>(code, 8, 11);
 
     /**
      * ===== unindexed submode =====
@@ -587,8 +587,8 @@ vfp_address_struct VFP_ADDRESS_MODE::vfp_load_multiple(const u32 code) {
      * end_address = start_address + 4 * word_count - 4
      */
     if (
-        (shared::util::bit_range(code, 23, 27) == 0b11001) && 
-        (shared::util::bit_fetch(code, 21) == false)
+        (llarm::util::bit_range(code, 23, 27) == 0b11001) && 
+        (llarm::util::bit_fetch(code, 21) == false)
     ) {
         u8 word_count = 0;
 
@@ -624,8 +624,8 @@ vfp_address_struct VFP_ADDRESS_MODE::vfp_load_multiple(const u32 code) {
      *     Rn = Rn + 4 * offset
      */
     if (
-        (shared::util::bit_range(code, 23, 27) == 0b11001) && 
-        (shared::util::bit_fetch(code, 21) == true)
+        (llarm::util::bit_range(code, 23, 27) == 0b11001) && 
+        (llarm::util::bit_fetch(code, 21) == true)
     ) {
         u8 word_count = 0;
 
@@ -668,8 +668,8 @@ vfp_address_struct VFP_ADDRESS_MODE::vfp_load_multiple(const u32 code) {
      *     Rn = Rn - 4 * offset
      */
     if (
-        (shared::util::bit_range(code, 23, 27) == 0b11010) && 
-        (shared::util::bit_fetch(code, 21) == true)
+        (llarm::util::bit_range(code, 23, 27) == 0b11010) && 
+        (llarm::util::bit_fetch(code, 21) == true)
     ) {
         u8 word_count = 0;
 
@@ -698,5 +698,5 @@ vfp_address_struct VFP_ADDRESS_MODE::vfp_load_multiple(const u32 code) {
         };
     }
 
-    shared::out::error("No known instruction configuration for VFP load multiple addressing mode");
+    llarm::out::error("No known instruction configuration for VFP load multiple addressing mode");
 }

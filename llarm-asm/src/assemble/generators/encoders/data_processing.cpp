@@ -7,7 +7,7 @@
 u32 generators::data_instruction(const id::arm instruction, const arguments &args) {
     u32 binary = 0;
 
-    shared::util::swap_bits(binary, 28, 31, args.cond);
+    llarm::util::swap_bits(binary, 28, 31, args.cond);
 
     const bool is_26_bit_instruction = [=]() -> bool {
         switch (instruction) {
@@ -20,10 +20,10 @@ u32 generators::data_instruction(const id::arm instruction, const arguments &arg
     }();
 
     if (is_26_bit_instruction) {
-        shared::util::modify_bit(binary, 24, true);
-        shared::util::modify_bit(binary, 20, true);
-        shared::util::swap_bits(binary, 12, 15, 0b1111);
-        shared::util::swap_bits(binary, 16, 19, args.first_reg);
+        llarm::util::modify_bit(binary, 24, true);
+        llarm::util::modify_bit(binary, 20, true);
+        llarm::util::swap_bits(binary, 12, 15, 0b1111);
+        llarm::util::swap_bits(binary, 16, 19, args.first_reg);
 
         u8 opcode = 0;
 
@@ -35,10 +35,10 @@ u32 generators::data_instruction(const id::arm instruction, const arguments &arg
             default: break; // impossible to be otherwise, but whatever
         }
 
-        shared::util::swap_bits(binary, 21, 22, opcode);
+        llarm::util::swap_bits(binary, 21, 22, opcode);
     } else {
         if (args.has_S()) {
-            shared::util::modify_bit(binary, 20, true);
+            llarm::util::modify_bit(binary, 20, true);
         }
 
         bool Rd_present = true;
@@ -89,101 +89,101 @@ u32 generators::data_instruction(const id::arm instruction, const arguments &arg
                 Rn_present = false;
                 break;
 
-            default: shared::out::dev_error("Invalid configuration to data instruction pattern generation");
+            default: llarm::out::dev_error("Invalid configuration to data instruction pattern generation");
         }
 
-        shared::util::swap_bits(binary, 21, 24, opcode);
+        llarm::util::swap_bits(binary, 21, 24, opcode);
 
         if (Rd_present) {
-            shared::util::swap_bits(binary, 12, 15, args.first_reg);
+            llarm::util::swap_bits(binary, 12, 15, args.first_reg);
         }
 
         if (Rn_present) {
-            shared::util::swap_bits(binary, 16, 19, args.second_reg);
+            llarm::util::swap_bits(binary, 16, 19, args.second_reg);
         }
     }
 
     auto check_immed = [](const u32 immed) -> void {
         if (immed > 31) {
-            shared::out::dev_error("Unencodable immediate shifted argument to data instruction pattern generation, immediate is too big");
+            llarm::out::dev_error("Unencodable immediate shifted argument to data instruction pattern generation, immediate is too big");
         }
     };
 
     switch (args.shifter) {
-        case shifter_enum::DATA_REG: shared::util::swap_bits(binary, 0, 3, args.third_reg); break;
+        case shifter_enum::DATA_REG: llarm::util::swap_bits(binary, 0, 3, args.third_reg); break;
         case shifter_enum::DATA_RRX:
-            shared::util::modify_bit(binary, 5, true);
-            shared::util::modify_bit(binary, 6, true);
-            shared::util::swap_bits(binary, 0, 3, args.third_reg);
+            llarm::util::modify_bit(binary, 5, true);
+            llarm::util::modify_bit(binary, 6, true);
+            llarm::util::swap_bits(binary, 0, 3, args.third_reg);
             break;
 
         case shifter_enum::DATA_IMM_LSL:
             check_immed(args.first_int);
         
-            shared::util::swap_bits(binary, 0, 3, args.third_reg);
-            shared::util::swap_bits(binary, 7, 11, static_cast<u8>(args.first_int));
+            llarm::util::swap_bits(binary, 0, 3, args.third_reg);
+            llarm::util::swap_bits(binary, 7, 11, static_cast<u8>(args.first_int));
             break;
 
         case shifter_enum::DATA_IMM_LSR:
             check_immed(args.first_int);
 
-            shared::util::modify_bit(binary, 5, true);
-            shared::util::swap_bits(binary, 0, 3, args.third_reg);
-            shared::util::swap_bits(binary, 7, 11, static_cast<u8>(args.first_int));
+            llarm::util::modify_bit(binary, 5, true);
+            llarm::util::swap_bits(binary, 0, 3, args.third_reg);
+            llarm::util::swap_bits(binary, 7, 11, static_cast<u8>(args.first_int));
             break;
 
         case shifter_enum::DATA_IMM_ASR:
             check_immed(args.first_int);
 
-            shared::util::modify_bit(binary, 6, true);
-            shared::util::swap_bits(binary, 0, 3, args.third_reg);
-            shared::util::swap_bits(binary, 7, 11, static_cast<u8>(args.first_int));
+            llarm::util::modify_bit(binary, 6, true);
+            llarm::util::swap_bits(binary, 0, 3, args.third_reg);
+            llarm::util::swap_bits(binary, 7, 11, static_cast<u8>(args.first_int));
             break;
 
         case shifter_enum::DATA_IMM_ROR:
             check_immed(args.first_int);
 
-            shared::util::modify_bit(binary, 5, true);
-            shared::util::modify_bit(binary, 6, true);
-            shared::util::swap_bits(binary, 0, 3, static_cast<u8>(args.third_reg));
-            shared::util::swap_bits(binary, 7, 11, static_cast<u8>(args.first_int));
+            llarm::util::modify_bit(binary, 5, true);
+            llarm::util::modify_bit(binary, 6, true);
+            llarm::util::swap_bits(binary, 0, 3, static_cast<u8>(args.third_reg));
+            llarm::util::swap_bits(binary, 7, 11, static_cast<u8>(args.first_int));
             break;
 
         case shifter_enum::DATA_REG_LSL:
-            shared::util::modify_bit(binary, 4, true);
-            shared::util::swap_bits(binary, 0, 3, static_cast<u8>(args.third_reg));
-            shared::util::swap_bits(binary, 8, 11, static_cast<u8>(args.fourth_reg));
+            llarm::util::modify_bit(binary, 4, true);
+            llarm::util::swap_bits(binary, 0, 3, static_cast<u8>(args.third_reg));
+            llarm::util::swap_bits(binary, 8, 11, static_cast<u8>(args.fourth_reg));
             break;
 
         case shifter_enum::DATA_REG_LSR:
-            shared::util::modify_bit(binary, 4, true);
-            shared::util::modify_bit(binary, 5, true);
-            shared::util::swap_bits(binary, 0, 3, static_cast<u8>(args.third_reg));
-            shared::util::swap_bits(binary, 8, 11, static_cast<u8>(args.fourth_reg));
+            llarm::util::modify_bit(binary, 4, true);
+            llarm::util::modify_bit(binary, 5, true);
+            llarm::util::swap_bits(binary, 0, 3, static_cast<u8>(args.third_reg));
+            llarm::util::swap_bits(binary, 8, 11, static_cast<u8>(args.fourth_reg));
             break;
 
         case shifter_enum::DATA_REG_ASR:
-            shared::util::modify_bit(binary, 4, true);
-            shared::util::modify_bit(binary, 6, true);
-            shared::util::swap_bits(binary, 0, 3, static_cast<u8>(args.third_reg));
-            shared::util::swap_bits(binary, 8, 11, static_cast<u8>(args.fourth_reg));
+            llarm::util::modify_bit(binary, 4, true);
+            llarm::util::modify_bit(binary, 6, true);
+            llarm::util::swap_bits(binary, 0, 3, static_cast<u8>(args.third_reg));
+            llarm::util::swap_bits(binary, 8, 11, static_cast<u8>(args.fourth_reg));
             break;
 
         case shifter_enum::DATA_REG_ROR:
-            shared::util::modify_bit(binary, 4, true);
-            shared::util::modify_bit(binary, 5, true);
-            shared::util::modify_bit(binary, 6, true);
-            shared::util::swap_bits(binary, 0, 3, static_cast<u8>(args.third_reg));
-            shared::util::swap_bits(binary, 8, 11, static_cast<u8>(args.fourth_reg));
+            llarm::util::modify_bit(binary, 4, true);
+            llarm::util::modify_bit(binary, 5, true);
+            llarm::util::modify_bit(binary, 6, true);
+            llarm::util::swap_bits(binary, 0, 3, static_cast<u8>(args.third_reg));
+            llarm::util::swap_bits(binary, 8, 11, static_cast<u8>(args.fourth_reg));
             break;
 
         case shifter_enum::DATA_IMM: {
-            shared::util::modify_bit(binary, 25, true); 
+            llarm::util::modify_bit(binary, 25, true); 
 
             const u32 immed = args.first_int;
 
             if (is_imm_encodable(immed) == false) {
-                shared::out::dev_error("Unencodable immediate argument to data instruction pattern generation");
+                llarm::out::dev_error("Unencodable immediate argument to data instruction pattern generation");
             }
 
             encode_imm(binary, immed);
@@ -191,7 +191,7 @@ u32 generators::data_instruction(const id::arm instruction, const arguments &arg
             break;
         }
 
-        default: shared::out::dev_error("Invalid shifter configuration to data instruction pattern generation");
+        default: llarm::out::dev_error("Invalid shifter configuration to data instruction pattern generation");
     }
 
     return binary;

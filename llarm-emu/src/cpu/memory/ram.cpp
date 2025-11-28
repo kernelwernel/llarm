@@ -11,7 +11,7 @@
 
 void RAM::write(const std::vector<u8> &data, const u32 address) {
     if (address + data.size() > ram.size()) {
-        shared::out::dev_error("Data exceeds RAM capacity (std::vector)");
+        llarm::out::dev_error("Data exceeds RAM capacity (std::vector)");
     }
 
     std::copy(data.cbegin(), data.cend(), ram.begin() + address);
@@ -44,7 +44,7 @@ void RAM::write(const u64 &value, const u32 address, const u8 access_size) {
             ram.at(address + 7) = (value & 0xFF00000000000000);
             return;
 
-        default: shared::out::dev_error("Unsupported data size for RAM write operation");
+        default: llarm::out::dev_error("Unsupported data size for RAM write operation");
     }
 }
 
@@ -80,7 +80,7 @@ u64 RAM::read(const u32 address, const u8 access_size) {
             (static_cast<u64>(ram.at(address + 7)))
         );
 
-        default: shared::out::error("Unsupported RAM size fetch for read operation");
+        default: llarm::out::error("Unsupported RAM size fetch for read operation");
     }
 }
 

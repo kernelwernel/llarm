@@ -23,7 +23,7 @@ void VFP_REG::write(const id::vfp_reg vfp_reg_id, const u64 value) {
     };
 
     switch (vfp_reg_id) {
-        case id::vfp_reg::UNKNOWN: shared::out::dev_error("Unknown VFP register id provided for write operation");
+        case id::vfp_reg::UNKNOWN: llarm::out::dev_error("Unknown VFP register id provided for write operation");
         case id::vfp_reg::S0: low(D0); return;
         case id::vfp_reg::S2: low(D1); return;
         case id::vfp_reg::S4: low(D2); return;
@@ -73,36 +73,36 @@ void VFP_REG::write(const id::vfp_reg vfp_reg_id, const u64 value) {
         case id::vfp_reg::D14: D14 = value; return; 
         case id::vfp_reg::D15: D15 = value; return; 
         case id::vfp_reg::FPSID: FPSID = static_cast<u32>(value); return;
-        case id::vfp_reg::FPSID_IMPLEMENTOR: shared::util::swap_bits(FPSID, 24, 31, value); return;
-        case id::vfp_reg::FPSID_SW: shared::util::modify_bit(FPSID, 23, value); return;
-        case id::vfp_reg::FPSID_FORMAT: shared::util::swap_bits(FPSID, 21, 22, value); return;
-        case id::vfp_reg::FPSID_SNG: shared::util::modify_bit(FPSID, 20, value); return;
-        case id::vfp_reg::FPSID_ARCH: shared::util::swap_bits(FPSID, 16, 19, value); return;
-        case id::vfp_reg::FPSID_PART_NUM: shared::util::swap_bits(FPSID, 8, 15, value); return;
-        case id::vfp_reg::FPSID_VARIANT: shared::util::swap_bits(FPSID, 4, 7, value); return;
-        case id::vfp_reg::FPSID_REVISION: shared::util::swap_bits(FPSID, 0, 3, value); return;
+        case id::vfp_reg::FPSID_IMPLEMENTOR: llarm::util::swap_bits(FPSID, 24, 31, value); return;
+        case id::vfp_reg::FPSID_SW: llarm::util::modify_bit(FPSID, 23, value); return;
+        case id::vfp_reg::FPSID_FORMAT: llarm::util::swap_bits(FPSID, 21, 22, value); return;
+        case id::vfp_reg::FPSID_SNG: llarm::util::modify_bit(FPSID, 20, value); return;
+        case id::vfp_reg::FPSID_ARCH: llarm::util::swap_bits(FPSID, 16, 19, value); return;
+        case id::vfp_reg::FPSID_PART_NUM: llarm::util::swap_bits(FPSID, 8, 15, value); return;
+        case id::vfp_reg::FPSID_VARIANT: llarm::util::swap_bits(FPSID, 4, 7, value); return;
+        case id::vfp_reg::FPSID_REVISION: llarm::util::swap_bits(FPSID, 0, 3, value); return;
         case id::vfp_reg::FPSCR: FPSCR = static_cast<u32>(value); return;
-        case id::vfp_reg::FPSCR_N: shared::util::modify_bit(FPSCR, 31, value); return;
-        case id::vfp_reg::FPSCR_Z: shared::util::modify_bit(FPSCR, 30, value); return;
-        case id::vfp_reg::FPSCR_C: shared::util::modify_bit(FPSCR, 29, value); return;
-        case id::vfp_reg::FPSCR_V: shared::util::modify_bit(FPSCR, 28, value); return;
-        case id::vfp_reg::FPSCR_FZ: shared::util::modify_bit(FPSCR, 24, value); return;
-        case id::vfp_reg::FPSCR_RMODE: shared::util::swap_bits(FPSID, 22, 23, value); return;
-        case id::vfp_reg::FPSCR_STRIDE: shared::util::swap_bits(FPSID, 20, 21, value); return;
-        case id::vfp_reg::FPSCR_LEN: shared::util::swap_bits(FPSID, 16, 18, value); return;
-        case id::vfp_reg::FPSCR_IXE: shared::util::modify_bit(FPSCR, 12, value); return;
-        case id::vfp_reg::FPSCR_UFE: shared::util::modify_bit(FPSCR, 11, value); return;
-        case id::vfp_reg::FPSCR_OFE: shared::util::modify_bit(FPSCR, 10, value); return;
-        case id::vfp_reg::FPSCR_DZE: shared::util::modify_bit(FPSCR, 9, value); return;
-        case id::vfp_reg::FPSCR_IOE: shared::util::modify_bit(FPSCR, 8, value); return;
-        case id::vfp_reg::FPSCR_IXC: shared::util::modify_bit(FPSCR, 4, value); return;
-        case id::vfp_reg::FPSCR_UFC: shared::util::modify_bit(FPSCR, 3, value); return;
-        case id::vfp_reg::FPSCR_OFC: shared::util::modify_bit(FPSCR, 2, value); return;
-        case id::vfp_reg::FPSCR_DZC: shared::util::modify_bit(FPSCR, 1, value); return;
-        case id::vfp_reg::FPSCR_IOC: shared::util::modify_bit(FPSCR, 0, value); return;
+        case id::vfp_reg::FPSCR_N: llarm::util::modify_bit(FPSCR, 31, value); return;
+        case id::vfp_reg::FPSCR_Z: llarm::util::modify_bit(FPSCR, 30, value); return;
+        case id::vfp_reg::FPSCR_C: llarm::util::modify_bit(FPSCR, 29, value); return;
+        case id::vfp_reg::FPSCR_V: llarm::util::modify_bit(FPSCR, 28, value); return;
+        case id::vfp_reg::FPSCR_FZ: llarm::util::modify_bit(FPSCR, 24, value); return;
+        case id::vfp_reg::FPSCR_RMODE: llarm::util::swap_bits(FPSID, 22, 23, value); return;
+        case id::vfp_reg::FPSCR_STRIDE: llarm::util::swap_bits(FPSID, 20, 21, value); return;
+        case id::vfp_reg::FPSCR_LEN: llarm::util::swap_bits(FPSID, 16, 18, value); return;
+        case id::vfp_reg::FPSCR_IXE: llarm::util::modify_bit(FPSCR, 12, value); return;
+        case id::vfp_reg::FPSCR_UFE: llarm::util::modify_bit(FPSCR, 11, value); return;
+        case id::vfp_reg::FPSCR_OFE: llarm::util::modify_bit(FPSCR, 10, value); return;
+        case id::vfp_reg::FPSCR_DZE: llarm::util::modify_bit(FPSCR, 9, value); return;
+        case id::vfp_reg::FPSCR_IOE: llarm::util::modify_bit(FPSCR, 8, value); return;
+        case id::vfp_reg::FPSCR_IXC: llarm::util::modify_bit(FPSCR, 4, value); return;
+        case id::vfp_reg::FPSCR_UFC: llarm::util::modify_bit(FPSCR, 3, value); return;
+        case id::vfp_reg::FPSCR_OFC: llarm::util::modify_bit(FPSCR, 2, value); return;
+        case id::vfp_reg::FPSCR_DZC: llarm::util::modify_bit(FPSCR, 1, value); return;
+        case id::vfp_reg::FPSCR_IOC: llarm::util::modify_bit(FPSCR, 0, value); return;
         case id::vfp_reg::FPEXC: FPEXC = static_cast<u32>(value); return;
-        case id::vfp_reg::FPEXC_EX: shared::util::modify_bit(FPEXC, 31, value); return;
-        case id::vfp_reg::FPEXC_EN: shared::util::modify_bit(FPEXC, 30, value); return;
+        case id::vfp_reg::FPEXC_EX: llarm::util::modify_bit(FPEXC, 31, value); return;
+        case id::vfp_reg::FPEXC_EN: llarm::util::modify_bit(FPEXC, 30, value); return;
     }
 }
 
@@ -112,7 +112,7 @@ u64 VFP_REG::read(const id::vfp_reg vfp_reg_id) {
     static constexpr u64 upper_mask_64 = 0xFFFFFFFF00000000;
 
     switch (vfp_reg_id) {
-        case id::vfp_reg::UNKNOWN: shared::out::dev_error("Unknown VFP register id provided for read operation");
+        case id::vfp_reg::UNKNOWN: llarm::out::dev_error("Unknown VFP register id provided for read operation");
         case id::vfp_reg::S1: return ((D0 & upper_mask_64) >> 31);
         case id::vfp_reg::S3: return ((D1 & upper_mask_64) >> 31);
         case id::vfp_reg::S5: return ((D2 & upper_mask_64) >> 31);
@@ -162,50 +162,50 @@ u64 VFP_REG::read(const id::vfp_reg vfp_reg_id) {
         case id::vfp_reg::D14: return D14;
         case id::vfp_reg::D15: return D15;
         case id::vfp_reg::FPSID: return FPSID;
-        case id::vfp_reg::FPSID_IMPLEMENTOR: return shared::util::bit_range(FPSID, 24, 31);
-        case id::vfp_reg::FPSID_SW: return shared::util::bit_fetch(FPSID, 23);
-        case id::vfp_reg::FPSID_FORMAT: return shared::util::bit_range(FPSID, 21, 22);
-        case id::vfp_reg::FPSID_SNG: return shared::util::bit_fetch(FPSID, 20);
-        case id::vfp_reg::FPSID_ARCH: return shared::util::bit_range(FPSID, 16, 19);
-        case id::vfp_reg::FPSID_PART_NUM: return shared::util::bit_range(FPSID, 8, 15);
-        case id::vfp_reg::FPSID_VARIANT: return shared::util::bit_range(FPSID, 4, 7);
-        case id::vfp_reg::FPSID_REVISION: return shared::util::bit_range(FPSID, 0, 3);
+        case id::vfp_reg::FPSID_IMPLEMENTOR: return llarm::util::bit_range(FPSID, 24, 31);
+        case id::vfp_reg::FPSID_SW: return llarm::util::bit_fetch(FPSID, 23);
+        case id::vfp_reg::FPSID_FORMAT: return llarm::util::bit_range(FPSID, 21, 22);
+        case id::vfp_reg::FPSID_SNG: return llarm::util::bit_fetch(FPSID, 20);
+        case id::vfp_reg::FPSID_ARCH: return llarm::util::bit_range(FPSID, 16, 19);
+        case id::vfp_reg::FPSID_PART_NUM: return llarm::util::bit_range(FPSID, 8, 15);
+        case id::vfp_reg::FPSID_VARIANT: return llarm::util::bit_range(FPSID, 4, 7);
+        case id::vfp_reg::FPSID_REVISION: return llarm::util::bit_range(FPSID, 0, 3);
         case id::vfp_reg::FPSCR: return FPSCR;
-        case id::vfp_reg::FPSCR_N: return shared::util::bit_fetch(FPSCR, 31);
-        case id::vfp_reg::FPSCR_Z: return shared::util::bit_fetch(FPSCR, 30);
-        case id::vfp_reg::FPSCR_C: return shared::util::bit_fetch(FPSCR, 29);
-        case id::vfp_reg::FPSCR_V: return shared::util::bit_fetch(FPSCR, 28);
-        case id::vfp_reg::FPSCR_FZ: return shared::util::bit_fetch(FPSCR, 24);
-        case id::vfp_reg::FPSCR_RMODE: return shared::util::bit_range(FPSCR, 22, 23);
-        case id::vfp_reg::FPSCR_STRIDE: return shared::util::bit_range(FPSCR, 20, 21);
-        case id::vfp_reg::FPSCR_LEN: return shared::util::bit_range(FPSCR, 16, 18);
-        case id::vfp_reg::FPSCR_IXE: return shared::util::bit_fetch(FPSCR, 12);
-        case id::vfp_reg::FPSCR_UFE: return shared::util::bit_fetch(FPSCR, 11);
-        case id::vfp_reg::FPSCR_OFE: return shared::util::bit_fetch(FPSCR, 10);
-        case id::vfp_reg::FPSCR_DZE: return shared::util::bit_fetch(FPSCR, 9);
-        case id::vfp_reg::FPSCR_IOE: return shared::util::bit_fetch(FPSCR, 8);
-        case id::vfp_reg::FPSCR_IXC: return shared::util::bit_fetch(FPSCR, 4);
-        case id::vfp_reg::FPSCR_UFC: return shared::util::bit_fetch(FPSCR, 3);
-        case id::vfp_reg::FPSCR_OFC: return shared::util::bit_fetch(FPSCR, 2);
-        case id::vfp_reg::FPSCR_DZC: return shared::util::bit_fetch(FPSCR, 1);
+        case id::vfp_reg::FPSCR_N: return llarm::util::bit_fetch(FPSCR, 31);
+        case id::vfp_reg::FPSCR_Z: return llarm::util::bit_fetch(FPSCR, 30);
+        case id::vfp_reg::FPSCR_C: return llarm::util::bit_fetch(FPSCR, 29);
+        case id::vfp_reg::FPSCR_V: return llarm::util::bit_fetch(FPSCR, 28);
+        case id::vfp_reg::FPSCR_FZ: return llarm::util::bit_fetch(FPSCR, 24);
+        case id::vfp_reg::FPSCR_RMODE: return llarm::util::bit_range(FPSCR, 22, 23);
+        case id::vfp_reg::FPSCR_STRIDE: return llarm::util::bit_range(FPSCR, 20, 21);
+        case id::vfp_reg::FPSCR_LEN: return llarm::util::bit_range(FPSCR, 16, 18);
+        case id::vfp_reg::FPSCR_IXE: return llarm::util::bit_fetch(FPSCR, 12);
+        case id::vfp_reg::FPSCR_UFE: return llarm::util::bit_fetch(FPSCR, 11);
+        case id::vfp_reg::FPSCR_OFE: return llarm::util::bit_fetch(FPSCR, 10);
+        case id::vfp_reg::FPSCR_DZE: return llarm::util::bit_fetch(FPSCR, 9);
+        case id::vfp_reg::FPSCR_IOE: return llarm::util::bit_fetch(FPSCR, 8);
+        case id::vfp_reg::FPSCR_IXC: return llarm::util::bit_fetch(FPSCR, 4);
+        case id::vfp_reg::FPSCR_UFC: return llarm::util::bit_fetch(FPSCR, 3);
+        case id::vfp_reg::FPSCR_OFC: return llarm::util::bit_fetch(FPSCR, 2);
+        case id::vfp_reg::FPSCR_DZC: return llarm::util::bit_fetch(FPSCR, 1);
         case id::vfp_reg::FPSCR_IOC: return (FPSCR & 1);
         case id::vfp_reg::FPEXC: return FPEXC;
-        case id::vfp_reg::FPEXC_EX: return shared::util::bit_fetch(FPEXC, 31);
-        case id::vfp_reg::FPEXC_EN: return shared::util::bit_fetch(FPEXC, 30);
+        case id::vfp_reg::FPEXC_EX: return llarm::util::bit_fetch(FPEXC, 31);
+        case id::vfp_reg::FPEXC_EN: return llarm::util::bit_fetch(FPEXC, 30);
     }
 }
 
 
 void VFP_REG::write_double(const u32 code, const u8 start, const u8 end, const u64 value) {
-    const u8 reg_bits = shared::util::bit_range(code, start, end);
+    const u8 reg_bits = llarm::util::bit_range(code, start, end);
     const id::vfp_reg id = fetch_double_reg_id(reg_bits);
     write(id, value);
 }
 
 
 void VFP_REG::write_single(const u32 code, const u8 start, const u8 end, const u64 value, const u8 bottom_bit) {
-    const bool bottom = shared::util::bit_fetch(code, bottom_bit);
-    const u8 reg_bits = (shared::util::bit_range(code, start, end) << 1) | bottom;
+    const bool bottom = llarm::util::bit_fetch(code, bottom_bit);
+    const u8 reg_bits = (llarm::util::bit_range(code, start, end) << 1) | bottom;
 
     const id::vfp_reg id = fetch_single_reg_id(reg_bits);
     write(id, value);
@@ -213,7 +213,7 @@ void VFP_REG::write_single(const u32 code, const u8 start, const u8 end, const u
 
 
 u64 VFP_REG::read_double(const u32 code, const u8 start, const u8 end) {
-    const u8 reg_bits = shared::util::bit_range(code, start, end);
+    const u8 reg_bits = llarm::util::bit_range(code, start, end);
     const id::vfp_reg id = fetch_double_reg_id(reg_bits);
     return read(id);
 }
@@ -225,8 +225,8 @@ double VFP_REG::read_double_IEEE(const u32 code, const u8 start, const u8 end) {
 
 
 u32 VFP_REG::read_single(const u32 code, const u8 start, const u8 end, const u8 bottom_bit) {
-    const bool bottom = shared::util::bit_fetch(code, bottom_bit);
-    const u8 reg_bits = (shared::util::bit_range(code, start, end) << 1) | bottom;
+    const bool bottom = llarm::util::bit_fetch(code, bottom_bit);
+    const u8 reg_bits = (llarm::util::bit_range(code, start, end) << 1) | bottom;
     
     const id::vfp_reg id = fetch_single_reg_id(reg_bits);
     return static_cast<u32>(read(id));
@@ -282,7 +282,7 @@ void VFP_REG::setup() {
     u8 arch_version = 0;
 
     switch (settings.vfp_version) {
-        case id::vfp_version::UNKNOWN: shared::out::dev_error("Unknown VFP arch version supplied");
+        case id::vfp_version::UNKNOWN: llarm::out::dev_error("Unknown VFP arch version supplied");
         case id::vfp_version::VFPv1: arch_version = 0b0000; break;
         case id::vfp_version::VFPv2: arch_version = 0b0001; break;
         case id::vfp_version::VFPv3: arch_version = 0b0010; break; // i'm not exactly sure about this one, TODO
@@ -347,7 +347,7 @@ id::vfp_reg VFP_REG::fetch_single_reg_id(const u8 reg_bits) {
         case 29: return id::vfp_reg::S29;
         case 30: return id::vfp_reg::S30;
         case 31: return id::vfp_reg::S31;
-        default: shared::out::dev_error("Impossible argument for single_reg_id");
+        default: llarm::out::dev_error("Impossible argument for single_reg_id");
     }
 }
 
@@ -370,25 +370,25 @@ id::vfp_reg VFP_REG::fetch_double_reg_id(const u8 reg_bits) {
         case 13: return id::vfp_reg::D13; 
         case 14: return id::vfp_reg::D14;
         case 15: return id::vfp_reg::D15;
-        default: shared::out::dev_error("Impossible argument for double_reg_id");
+        default: llarm::out::dev_error("Impossible argument for double_reg_id");
     }
 }
 
 
 id::vfp_reg VFP_REG::fetch_single_reg_id(const u32 code, const u8 start, const u8 end) {
-    const u8 reg_bits = shared::util::bit_range(code, start, end);
+    const u8 reg_bits = llarm::util::bit_range(code, start, end);
     return fetch_single_reg_id(reg_bits);
 }
 
 
 id::vfp_reg VFP_REG::fetch_double_reg_id(const u32 code, const u8 start, const u8 end) {
-    const u8 reg_bits = shared::util::bit_range(code, start, end);
+    const u8 reg_bits = llarm::util::bit_range(code, start, end);
     return fetch_double_reg_id(reg_bits);
 }
 
 
 u8 VFP_REG::fetch_vec_len() {
-    return shared::util::bit_range(FPSCR, 16, 18);
+    return llarm::util::bit_range(FPSCR, 16, 18);
 }
 
 

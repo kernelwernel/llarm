@@ -9,7 +9,7 @@ u32 generators::vfp_mul_instructions(const id::arm id, const arguments &args) {
     u8 bits_11_8 = 0;
     u8 bits_27_20 = 0;
 
-    shared::util::swap_bits(binary, 28, 31, args.cond);
+    llarm::util::swap_bits(binary, 28, 31, args.cond);
 
     switch (id) {
         case id::arm::FSTS:
@@ -46,7 +46,7 @@ u32 generators::vfp_mul_instructions(const id::arm id, const arguments &args) {
             bits_27_20 = 0b1100'0001;
             bits_11_8 = 0b1011;
             break;
-        default: shared::out::dev_error("Invalid configuration to vfp load/store instruction pattern generation");
+        default: llarm::out::dev_error("Invalid configuration to vfp load/store instruction pattern generation");
     }
 
     struct reglist {
@@ -55,8 +55,8 @@ u32 generators::vfp_mul_instructions(const id::arm id, const arguments &args) {
     };
 
     auto process_reglist = [](const u16 raw_reglist) -> reglist {
-        const u8 Dd = shared::util::get_lsb_index(raw_reglist);
-        const u8 offset = shared::util::popcount(raw_reglist);
+        const u8 Dd = llarm::util::get_lsb_index(raw_reglist);
+        const u8 offset = llarm::util::popcount(raw_reglist);
 
         return reglist { Dd, offset };
     };
@@ -66,16 +66,16 @@ u32 generators::vfp_mul_instructions(const id::arm id, const arguments &args) {
         case id::arm::FSTS: 
         case id::arm::FLDS: {
             const bool D = (args.first_reg & 1);
-            const u8 Fd = shared::util::bit_range(args.first_reg, 1, 4);
+            const u8 Fd = llarm::util::bit_range(args.first_reg, 1, 4);
 
-            shared::util::swap_bits(binary, 12, 15, Fd);
-            shared::util::swap_bits(binary, 16, 19, args.second_reg);
-            shared::util::swap_bits(binary, 0, 7, args.first_int);
+            llarm::util::swap_bits(binary, 12, 15, Fd);
+            llarm::util::swap_bits(binary, 16, 19, args.second_reg);
+            llarm::util::swap_bits(binary, 0, 7, args.first_int);
 
-            shared::util::modify_bit(binary, 22, true);
+            llarm::util::modify_bit(binary, 22, true);
 
             if (args.has_minus()) {
-                shared::util::modify_bit(binary, 23, true);
+                llarm::util::modify_bit(binary, 23, true);
             }
 
             break;
@@ -84,12 +84,12 @@ u32 generators::vfp_mul_instructions(const id::arm id, const arguments &args) {
         // <Dd>, [<Rn>{, #+/-(<offset>*4)}]
         case id::arm::FSTD: 
         case id::arm::FLDD: {
-            shared::util::swap_bits(binary, 12, 15, args.first_reg);
-            shared::util::swap_bits(binary, 16, 19, args.second_reg);
-            shared::util::swap_bits(binary, 0, 7, args.first_int);
+            llarm::util::swap_bits(binary, 12, 15, args.first_reg);
+            llarm::util::swap_bits(binary, 16, 19, args.second_reg);
+            llarm::util::swap_bits(binary, 0, 7, args.first_int);
 
             if (args.has_minus()) {
-                shared::util::modify_bit(binary, 23, true);
+                llarm::util::modify_bit(binary, 23, true);
             }
 
             break;
@@ -105,17 +105,17 @@ u32 generators::vfp_mul_instructions(const id::arm id, const arguments &args) {
         case id::arm::FLDMD: {
             switch (args.shifter) {
                 case shifter_enum::VFP_LS_MUL_UNINDEXED: 
-                    shared::util::modify_bit(binary, 23, true);
+                    llarm::util::modify_bit(binary, 23, true);
                     break;
 
                 case shifter_enum::VFP_LS_MUL_INC: 
-                    shared::util::modify_bit(binary, 23, true);
-                    shared::util::modify_bit(binary, 21, true);
+                    llarm::util::modify_bit(binary, 23, true);
+                    llarm::util::modify_bit(binary, 21, true);
                     break;
 
                 case shifter_enum::VFP_LS_MUL_DEC: 
-                    shared::util::modify_bit(binary, 24, true);
-                    shared::util::modify_bit(binary, 21, true);
+                    llarm::util::modify_bit(binary, 24, true);
+                    llarm::util::modify_bit(binary, 21, true);
                     break;
 
                 case shifter_enum::VFP_LS_MUL_SPECIAL: break;
@@ -123,31 +123,31 @@ u32 generators::vfp_mul_instructions(const id::arm id, const arguments &args) {
             }
 
             if (args.has_minus()) {
-                shared::util::modify_bit(binary, 23, true);
+                llarm::util::modify_bit(binary, 23, true);
             }
 
             const reglist data = process_reglist(args.reg_list);
 
             if (id == id::arm::FSTMS || id == id::arm::FLDMS) {
                 const bool D = (data.Dd & 1);
-                const u8 Fd = shared::util::bit_range<u8>(data.Dd, 1, 4);
+                const u8 Fd = llarm::util::bit_range<u8>(data.Dd, 1, 4);
                 
-                shared::util::modify_bit(binary, 22, D);
-                shared::util::swap_bits(binary, 12, 15, Fd);
-                shared::util::swap_bits(binary, 0, 7, data.offset);
+                llarm::util::modify_bit(binary, 22, D);
+                llarm::util::swap_bits(binary, 12, 15, Fd);
+                llarm::util::swap_bits(binary, 0, 7, data.offset);
             } else if (id == id::arm::FSTMX || id == id::arm::FLDMX) {
-                shared::util::swap_bits(binary, 0, 7, (data.offset * 2) + 1);
-                shared::util::swap_bits(binary, 12, 15, data.Dd);
+                llarm::util::swap_bits(binary, 0, 7, (data.offset * 2) + 1);
+                llarm::util::swap_bits(binary, 12, 15, data.Dd);
             } else if (id == id::arm::FSTMD || id == id::arm::FLDMD) {
-                shared::util::swap_bits(binary, 0, 7, (data.offset * 2));
-                shared::util::swap_bits(binary, 12, 15, data.Dd);
+                llarm::util::swap_bits(binary, 0, 7, (data.offset * 2));
+                llarm::util::swap_bits(binary, 12, 15, data.Dd);
             }
 
-            shared::util::swap_bits(binary, 16, 19, args.first_reg);
+            llarm::util::swap_bits(binary, 16, 19, args.first_reg);
             break;
         }
 
-        default: shared::out::dev_error("Invalid configuration to vfp load/store instruction pattern generation");
+        default: llarm::out::dev_error("Invalid configuration to vfp load/store instruction pattern generation");
     }
 
     return binary;

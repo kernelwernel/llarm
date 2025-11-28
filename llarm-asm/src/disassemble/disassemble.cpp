@@ -81,9 +81,9 @@ std::string disassemble::thumb_generate(const u16 code, const u32 PC, const sett
         case id::thumb::STRB2: return generators::thumb::store::STRB2(code, settings);
         case id::thumb::STRH1: return generators::thumb::store::STRH1(code, settings);
         case id::thumb::STRH2: return generators::thumb::store::STRH2(code, settings);
-        case id::thumb::UNDEFINED: shared::out::error("Undefined instruction encountered for thumb disassembly");
-        case id::thumb::UNKNOWN: shared::out::error("Unknown instruction encountered for disassembly");
-        case id::thumb::NOP: shared::out::error("NOP instruction encountered for thumb disassembly");
+        case id::thumb::UNDEFINED: llarm::out::error("Undefined instruction encountered for thumb disassembly");
+        case id::thumb::UNKNOWN: llarm::out::error("Unknown instruction encountered for disassembly");
+        case id::thumb::NOP: llarm::out::error("NOP instruction encountered for thumb disassembly");
     }
 }
 
@@ -236,8 +236,8 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
         case id::arm::FTOUIS: return generators::arm::vfp::FTOUIS(code, settings);
         case id::arm::FUITOD: return generators::arm::vfp::FUITOD(code, settings);
         case id::arm::FUITOS: return generators::arm::vfp::FUITOS(code, settings); 
-        case id::arm::UNKNOWN: shared::out::error("Unknown instruction encountered for disassembly");
-        case id::arm::UNDEFINED: shared::out::error("Undefined instruction encountered for disassembly");
+        case id::arm::UNKNOWN: llarm::out::error("Unknown instruction encountered for disassembly");
+        case id::arm::UNDEFINED: llarm::out::error("Undefined instruction encountered for disassembly");
     }
 }
 
@@ -246,7 +246,7 @@ std::string disassemble::arm(const u32 code, const u32 PC, const settings settin
     std::string instruction = arm_generate(code, PC, settings);
 
     if (settings.capitals == false) {
-        shared::util::to_lower(instruction);
+        llarm::util::to_lower(instruction);
     }
 
     return instruction;
@@ -257,7 +257,7 @@ std::string disassemble::thumb(const u16 code, const u32 PC, const settings sett
     std::string instruction = thumb_generate(code, PC, settings);
 
     if (settings.capitals == false) {
-        shared::util::to_lower(instruction);
+        llarm::util::to_lower(instruction);
     }
 
     return instruction;

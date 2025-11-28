@@ -25,7 +25,7 @@ id::first_level MMU::get_first_level_id(const u32 entry) {
         case 0b01: return id::first_level::COARSE;
         case 0b10: return id::first_level::SECTION;
         case 0b11: return id::first_level::FINE;
-        default: shared::out::error("Something went horribly wrong, todo"); // dev error TODO
+        default: llarm::out::error("Something went horribly wrong, todo"); // dev error TODO
     }
 }
 
@@ -36,7 +36,7 @@ id::second_level MMU::get_second_level_id(const u8 entry) {
         case 0b01: return id::second_level::LARGE;
         case 0b10: return id::second_level::SMALL;
         case 0b11: return id::second_level::TINY;
-        default: shared::out::error("Something went horribly wrong, todo"); // dev error TODO
+        default: llarm::out::error("Something went horribly wrong, todo"); // dev error TODO
     }
 }
 
@@ -68,27 +68,27 @@ id::access_domain MMU::fetch_domain(const u8 raw_domain_bits) {
         case 0b01: return id::access_domain::CLIENT;
         case 0b10: return id::access_domain::RESERVED;
         case 0b11: return id::access_domain::MANAGER;
-        default: shared::out::dev_error("Unknown coprocessor domain bits provided");
+        default: llarm::out::dev_error("Unknown coprocessor domain bits provided");
     }
 }
 
 
 u8 MMU::fetch_subpage_AP(const u8 subpage, const u32 entry) {
     switch (subpage) {
-        case 0: return shared::util::bit_range(entry, 4, 5);
-        case 1: return shared::util::bit_range(entry, 6, 7);
-        case 2: return shared::util::bit_range(entry, 8, 9);
-        case 3: return shared::util::bit_range(entry, 10, 11);
-        default: shared::out::dev_error("Failure to deduce subpage index for page descriptor"); 
+        case 0: return llarm::util::bit_range(entry, 4, 5);
+        case 1: return llarm::util::bit_range(entry, 6, 7);
+        case 2: return llarm::util::bit_range(entry, 8, 9);
+        case 3: return llarm::util::bit_range(entry, 10, 11);
+        default: llarm::out::dev_error("Failure to deduce subpage index for page descriptor"); 
     }
 }
 
 
 translation_struct MMU::first_section(const u32 entry, const u32 address, const u8 access_size, const id::access_type access_type) {
-    const u8 domain_bits = shared::util::bit_range(entry, 5, 8);
+    const u8 domain_bits = llarm::util::bit_range(entry, 5, 8);
     const id::access_domain domain = fetch_domain(domain_bits);
 
-    const u8 AP = shared::util::bit_range(entry, 10, 11);
+    const u8 AP = llarm::util::bit_range(entry, 10, 11);
 
     const id::aborts abort_code = check_block_access(AP, access_type, domain, id::memory_type::SECTION);
 
@@ -103,12 +103,12 @@ translation_struct MMU::first_section(const u32 entry, const u32 address, const 
         };
     }
 
-    // const bool B = shared::util::bit_fetch(entry, 2); // TODO DO SOMETHING WITH THESE
-    // const bool C = shared::util::bit_fetch(entry, 3); // TODO DO SOMETHING WITH THESE
+    // const bool B = llarm::util::bit_fetch(entry, 2); // TODO DO SOMETHING WITH THESE
+    // const bool C = llarm::util::bit_fetch(entry, 3); // TODO DO SOMETHING WITH THESE
     
     const u32 section_base_address = 0;
 
-    const u32 section_index = shared::util::bit_range(address, 0, 12); 
+    const u32 section_index = llarm::util::bit_range(address, 0, 12); 
     const u32 physical_address = (section_base_address << 20) | section_index;
 
     return translation_struct {
@@ -121,9 +121,9 @@ translation_struct MMU::first_section(const u32 entry, const u32 address, const 
 
 // B3-9
 u32 MMU::first_coarse(const u32 entry, const u32 address) {
-    const u32 page_table_base_address = shared::util::bit_range(entry, 10, 31);
+    const u32 page_table_base_address = llarm::util::bit_range(entry, 10, 31);
 
-    const u8 second_level_index = shared::util::bit_range(address, 12, 19);
+    const u8 second_level_index = llarm::util::bit_range(address, 12, 19);
     
     const u32 second_level_descriptor_address = (
         (page_table_base_address << 10) |
@@ -136,9 +136,9 @@ u32 MMU::first_coarse(const u32 entry, const u32 address) {
 
 // B3-10
 u32 MMU::first_fine(const u32 entry, const u32 address) {
-    const u32 page_table_base_address = shared::util::bit_range(entry, 12, 31);
+    const u32 page_table_base_address = llarm::util::bit_range(entry, 12, 31);
 
-    const u8 second_level_index = shared::util::bit_range(address, 10, 19);
+    const u8 second_level_index = llarm::util::bit_range(address, 10, 19);
     
     const u32 second_level_descriptor_address = (
         (page_table_base_address << 12) |
@@ -217,7 +217,7 @@ bool MMU::is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type)
                     case AP10_PRIV: return id::access_perm::READ_WRITE; // AP = 10, priv
                     case AP11_USER: return id::access_perm::READ_WRITE; // AP = 11, user
                     case AP11_PRIV: return id::access_perm::READ_WRITE; // AP = 11, priv
-                    default: shared::out::error("something went horribly wrong here...");
+                    default: llarm::out::error("something went horribly wrong here...");
                 }
         }
     }();
@@ -236,7 +236,7 @@ bool MMU::is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type)
             );
         case id::access_perm::NO_ACCESS: return false;
         case id::access_perm::UNPREDICTABLE: 
-            shared::out::unpredictable("MMU access permission ID is unpredictable");
+            llarm::out::unpredictable("MMU access permission ID is unpredictable");
             return true;
     }
 }
@@ -266,7 +266,7 @@ id::aborts MMU::check_block_access(
             return id::aborts::NO_ABORT;
         }
 
-        case id::access_domain::RESERVED: shared::out::unpredictable("Reserved access domain encountered, defaulting to no access");
+        case id::access_domain::RESERVED: llarm::out::unpredictable("Reserved access domain encountered, defaulting to no access");
         case id::access_domain::NO_ACCESS: {
             // section
             if (section_access) {
@@ -287,7 +287,7 @@ translation_struct MMU::second_large(
     const id::access_type access_type, 
     const u8 domain_bits
 ) {
-    const u16 page_index = shared::util::bit_range(address, 0, 15);
+    const u16 page_index = llarm::util::bit_range(address, 0, 15);
     
     // the subpages are 1KB each
     const u8 subpage_index = (page_index / util::get_kb(16));
@@ -328,7 +328,7 @@ translation_struct MMU::second_large(
         }
     }
 
-    const u32 large_page_base_address = shared::util::bit_range(entry, 16, 31);
+    const u32 large_page_base_address = llarm::util::bit_range(entry, 16, 31);
 
     const u32 physical_address = ((large_page_base_address << 16) | page_index);
 
@@ -347,7 +347,7 @@ translation_struct MMU::second_small(
     const id::access_type access_type, 
     const u8 domain_bits
 ) {
-    const u16 page_index = shared::util::bit_range(address, 0, 11);
+    const u16 page_index = llarm::util::bit_range(address, 0, 11);
     
     // the subpages are 1KB each
     const u8 subpage_index = (page_index / util::get_kb(1));
@@ -387,10 +387,10 @@ translation_struct MMU::second_small(
         }
     }
 
-    // const bool C = shared::util::bit_fetch(entry, 3); // TODO: DO SOMETHING WITH THESE
-    // const bool B = shared::util::bit_fetch(entry, 2); // TODO: DO SOMETHING WITH THESE
+    // const bool C = llarm::util::bit_fetch(entry, 3); // TODO: DO SOMETHING WITH THESE
+    // const bool B = llarm::util::bit_fetch(entry, 2); // TODO: DO SOMETHING WITH THESE
 
-    const u32 small_page_base_address = shared::util::bit_range(entry, 12, 31);
+    const u32 small_page_base_address = llarm::util::bit_range(entry, 12, 31);
 
     const u32 physical_address = ((small_page_base_address << 12) | page_index);
 
@@ -409,7 +409,7 @@ translation_struct MMU::second_tiny(
     const id::access_type access_type, 
     const u8 domain_bits
 ) {
-    const u8 AP = shared::util::bit_range(entry, 4, 5);
+    const u8 AP = llarm::util::bit_range(entry, 4, 5);
 
     const id::access_domain domain = fetch_domain(domain_bits);
     const id::aborts abort_code = check_block_access(AP, access_type, domain, id::memory_type::PAGE);
@@ -425,12 +425,12 @@ translation_struct MMU::second_tiny(
         };
     }
     
-    // const bool C = shared::util::bit_fetch(entry, 3); // TODO: DO SOMETHING WITH THESE
-    // const bool B = shared::util::bit_fetch(entry, 2); // TODO: DO SOMETHING WITH THESE
+    // const bool C = llarm::util::bit_fetch(entry, 3); // TODO: DO SOMETHING WITH THESE
+    // const bool B = llarm::util::bit_fetch(entry, 2); // TODO: DO SOMETHING WITH THESE
 
-    const u32 tiny_page_base_address = shared::util::bit_range(entry, 10, 31);
+    const u32 tiny_page_base_address = llarm::util::bit_range(entry, 10, 31);
     
-    const u16 page_index = shared::util::bit_range(address, 0, 9);
+    const u16 page_index = llarm::util::bit_range(address, 0, 9);
     const u32 physical_address = ((tiny_page_base_address << 10) | page_index);
 
     return translation_struct {
@@ -465,7 +465,7 @@ translation_struct MMU::page_walk(const u32 address, const id::access_type acces
     }
 
     const u32 translation_base = coprocessor.read(id::cp15::R2_MMU_TRANSLATION_BASE); // TODO: optimise this with direct register access
-    const u32 table_index = shared::util::bit_range(address, 20, 31);
+    const u32 table_index = llarm::util::bit_range(address, 20, 31);
 
     const u32 first_level_descriptor_address = ((translation_base << 14) | (table_index << 2));
 
@@ -494,7 +494,7 @@ translation_struct MMU::page_walk(const u32 address, const id::access_type acces
 
     const id::second_level entry_id = get_second_level_id(second_level_descriptor);
 
-    const u8 domain_bits = shared::util::bit_range(first_level_descriptor, 5, 8);
+    const u8 domain_bits = llarm::util::bit_range(first_level_descriptor, 5, 8);
 
     switch (entry_id) {
         case id::second_level::LARGE: return second_large(second_level_descriptor, address, access_size, access_type, domain_bits);
@@ -570,7 +570,7 @@ mem_read_struct MMU::read(const u32 address, const u8 access_size) {
 
 void MMU::manage_abort(const id::aborts abort, const u32 virtual_address, const u8 domain_bits) {
     if (abort == id::aborts::NO_ABORT) {
-        shared::out::error("Invalid abort in MMU provided");
+        llarm::out::error("Invalid abort in MMU provided");
         return;
     }
 
@@ -587,7 +587,7 @@ void MMU::manage_abort(const id::aborts abort, const u32 virtual_address, const 
             case id::aborts::SUB_PAGE_PERMISSION: return 0b1111;
             case id::aborts::SECTION_DOMAIN: return 0b1001;
             case id::aborts::SECTION_PERMISSION: return 0b1101;
-            default: shared::out::warning("non-MMU abort provided in MMU"); return 0;
+            default: llarm::out::warning("non-MMU abort provided in MMU"); return 0;
         }
     }();
 
