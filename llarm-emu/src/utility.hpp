@@ -3,6 +3,7 @@
 #include "id.hpp"
 
 #include "shared/types.hpp"
+#include <concepts>
 
 namespace util {
     void modify_bit(u32 &original, const u8 index, const bool value);

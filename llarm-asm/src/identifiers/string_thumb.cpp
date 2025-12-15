@@ -12,7 +12,7 @@ id::thumb ident::string_thumb::thumb(const std::string &code) {
     const std::string instruction = llarm::util::to_upper(code);
     
     const std::string raw_string = interpreter::fetch_instruction(instruction);
-    const std::string_view mnemonic(raw_string);
+    const llarm::string_view mnemonic(raw_string);
 
     for (const auto &e : pure_thumb_instructions) {
         if (mnemonic == e.str) {

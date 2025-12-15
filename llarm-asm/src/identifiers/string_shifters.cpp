@@ -208,7 +208,7 @@ shifter_enum ident::string_shifters::ls_misc_instruction(const interpreter::lexe
 
 
 shifter_enum ident::string_shifters::ls_mul_instruction(const interpreter::lexemes_t &lexemes) {
-    const std::string_view mnemonic = lexemes.at(0).mnemonic;
+    const llarm::string_view mnemonic = lexemes.at(0).mnemonic;
 
     const unsigned char second_char = mnemonic[mnemonic.size() - 1];
     const unsigned char first_char = mnemonic[mnemonic.size() - 2];
@@ -257,7 +257,7 @@ shifter_enum ident::string_shifters::ls_coproc_instruction(const interpreter::le
 shifter_enum ident::string_shifters::vfp_mul_instruction(const interpreter::lexemes_t &lexemes) {
     using namespace interpreter;
     
-    std::string_view mnemonic = lexemes.at(0).mnemonic;
+    llarm::string_view mnemonic = lexemes.at(0).mnemonic;
 
     const u16 cond = fetch_last_2_chars(mnemonic);
 

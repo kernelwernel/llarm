@@ -13,7 +13,7 @@ namespace internal::ident::string_arm {
     using interpreter::lexeme_struct;
     using interpreter::lexemes_t;
 
-    const std::unordered_map<std::string_view, id::arm> arm_instructions = {
+    const std::unordered_map<llarm::string_view, id::arm> arm_instructions = {
         { "ADC", id::arm::ADC },
         { "ADD", id::arm::ADD },
         { "AND", id::arm::AND },
@@ -152,16 +152,16 @@ namespace internal::ident::string_arm {
         { "UMULL", id::arm::UMULL }
     };
 
-    std::vector<std::string_view> fetch_candidates(std::string_view mnemonic);
+    std::vector<llarm::string_view> fetch_candidates(llarm::string_view mnemonic);
 
     id::arm arm(const std::string &code);
 
     id::arm MSR(const lexemes_t &lexemes);
-    id::arm SWPB(const std::string_view mnemonic);
-    id::arm LDR_family(std::string_view mnemonic);
-    id::arm STR_family(std::string_view mnemonic);
-    id::arm VFP_family(std::string_view mnemonic);
-    id::arm PSR_family(const std::string_view mnemonic);
+    id::arm SWPB(const llarm::string_view mnemonic);
+    id::arm LDR_family(llarm::string_view mnemonic);
+    id::arm STR_family(llarm::string_view mnemonic);
+    id::arm VFP_family(llarm::string_view mnemonic);
+    id::arm PSR_family(const llarm::string_view mnemonic);
     id::arm STM(const lexemes_t &lexemes);
     id::arm LDM(const lexemes_t &lexemes);
     id::arm BLX(const lexemes_t &lexemes);

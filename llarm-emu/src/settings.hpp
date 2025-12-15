@@ -15,6 +15,7 @@ struct SETTINGS {
     bool is_mpu_separate;
     bool is_mpu_enabled; // not to be confused with both
     bool is_mmu_enabled; // not to be confused with both
+    bool has_tlb;
     bool is_tlb_separate;
     bool is_tlb_unified;
     /**/ bool has_random_replacement_tlb_strategy;
@@ -71,9 +72,9 @@ struct SETTINGS {
     /**/ u8 instruction_cache_assoc_way; 
     /**/ u8 cache_ctype_field; // 0b0000, 0b0001, 0b0010, 0b0110, 0b0111 are supported
 
-    /**/ u8 unified_tlb_table_size;
-    /**/ u8 inst_tlb_table_size;
-    /**/ u8 data_tlb_table_size;
+    /**/ u16 unified_tlb_table_size;
+    /**/ u16 inst_tlb_table_size;
+    /**/ u16 data_tlb_table_size;
     /**/ id::tlb_type tlb_type;
 
     /**/ id::vfp_version vfp_version;
@@ -95,6 +96,7 @@ struct SETTINGS {
     u16 vfp_ppn;
     u8 vfp_revision;
     u8 vfp_load_multiple_value;
+    u64 tlb_seed;
 
     constexpr void sanitize() {
         // only jazelle 
@@ -114,6 +116,10 @@ struct SETTINGS {
         }
 
         if (is_tlb_separate && is_tlb_unified) {
+
+        }
+
+        if (has_tlb && (is_tlb_separate == false && is_tlb_unified == false)) {
 
         }
 
@@ -214,6 +220,7 @@ struct SETTINGS {
         is_mpu_separate(false),
         is_mpu_enabled(false),
         is_mmu_enabled(false),
+        has_tlb(false),
         is_tlb_separate(false),
         is_fcse_enabled(false),
         has_coprocessor(false),
@@ -284,7 +291,8 @@ struct SETTINGS {
         vfp_variant(0),
         vfp_ppn(0),
         vfp_revision(0),
-        vfp_load_multiple_value(0)
+        vfp_load_multiple_value(0),
+        tlb_seed(0)
     {
 
     }

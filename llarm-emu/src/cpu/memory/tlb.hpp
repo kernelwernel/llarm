@@ -19,7 +19,7 @@ private:
     SETTINGS& settings;
 
 private:
-    std::mt19937 seed;
+    u64 seed;
 
     // https://quick-bench.com/q/bhDceFgnZ7D3qR3ZR2GdCjwlt8g
 #if (LLARM_LOW_MEMORY)

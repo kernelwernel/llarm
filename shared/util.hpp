@@ -1,6 +1,7 @@
 #pragma once
 
 #include "types.hpp"
+#include "string_view.hpp"
 
 #include <bitset>
 
@@ -27,6 +28,13 @@ namespace llarm::util {
 
         return copy;
     }
+
+    template <typename T, std::size_t N>
+    inline T bit_range(const std::bitset<N> &input, const u8 start, const u8 end) {
+        const u32 range = input.to_ulong();
+        return bit_range<T>(range, start, end);
+    }
+
 
     inline bool bit_fetch(const u32 input, const u8 index) {
         return ((input >> index) & 1);
@@ -101,6 +109,37 @@ namespace llarm::util {
         }
 
         return tmp;
+    }
+
+    // this assumes the str has already been checked beforehand
+    inline u32 str_to_u32(const llarm::string_view str) {
+        u32 num = 0;
+
+        for (const unsigned char c : str) {
+            // convert to int
+            if (c >= '0' && c <= '9') {
+                num = num * 10 + (c - '0');
+            }
+        }
+
+        return num;
+    }
+
+    inline i64 hex_to_i64(const llarm::string_view str) {
+        i64 num = 0;
+
+        // convert hex to i32
+        for (const char c : str) {
+            num <<= 4; // multiply by 16
+        
+            if (c >= '0' && c <= '9') {
+                num += c - '0';
+            } else if (c >= 'A' && c <= 'F') {
+                num += c - 'A' + 10;
+            }
+        }
+
+        return num;
     }
 
 }

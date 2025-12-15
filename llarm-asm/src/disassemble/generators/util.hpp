@@ -5,6 +5,7 @@
 #include <string>
 
 #include "shared/types.hpp"
+#include "shared/string_view.hpp"
 
 namespace internal::util {
     enum class reg_id : u8 {
@@ -180,7 +181,7 @@ namespace internal::util {
             if constexpr (std::is_arithmetic_v<std::decay_t<decltype(arg)>>) {
                 total_size += std::to_string(arg).size();
             } else {
-                total_size += std::string_view(arg).size();
+                total_size += llarm::string_view(arg).size();
             }
         }(args), ...);
 

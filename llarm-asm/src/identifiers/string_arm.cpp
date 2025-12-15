@@ -11,9 +11,9 @@ id::arm ident::string_arm::arm(const std::string &code) {
     const std::string assembly = llarm::util::to_upper(code);
 
     const std::string raw_string = interpreter::fetch_instruction(assembly);
-    const std::string_view mnemonic(raw_string);
+    const llarm::string_view mnemonic(raw_string);
 
-    const std::vector<std::string_view> candidates = fetch_candidates(mnemonic);
+    const std::vector<llarm::string_view> candidates = fetch_candidates(mnemonic);
 
     for (const auto candidate : candidates) {
         auto it = arm_instructions.find(candidate);
@@ -60,12 +60,12 @@ id::arm ident::string_arm::arm(const std::string &code) {
 }
 
 
-std::vector<std::string_view> ident::string_arm::fetch_candidates(std::string_view mnemonic) {
-    std::vector<std::string_view> candidates = {};
+std::vector<llarm::string_view> ident::string_arm::fetch_candidates(llarm::string_view mnemonic) {
+    std::vector<llarm::string_view> candidates = {};
 
     // "mnemonic.extra" convention, i.e. "b.eq" (gcc does this)
     const std::size_t dot_pos = mnemonic.find('.');
-    const bool has_dot = (dot_pos != std::string_view::npos);
+    const bool has_dot = (dot_pos != llarm::string_view::npos);
     
     if (has_dot) {
         candidates.push_back(mnemonic.substr(0, dot_pos));
@@ -168,7 +168,7 @@ id::arm ident::string_arm::MSR(const lexemes_t &lexemes) {
 }
 
 
-id::arm ident::string_arm::SWPB(std::string_view mnemonic) {
+id::arm ident::string_arm::SWPB(llarm::string_view mnemonic) {
     // no cond
     if (mnemonic == "SWPB") {
         return id::arm::SWPB;
@@ -188,7 +188,7 @@ id::arm ident::string_arm::SWPB(std::string_view mnemonic) {
 }
 
 
-id::arm ident::string_arm::LDR_family(std::string_view mnemonic) {
+id::arm ident::string_arm::LDR_family(llarm::string_view mnemonic) {
     mnemonic.remove_prefix(3); // "LDR"
 
     const u16 potential_cond = (mnemonic.at(0) << 8) | mnemonic.at(1);
@@ -227,7 +227,7 @@ id::arm ident::string_arm::LDR_family(std::string_view mnemonic) {
 }
 
 
-id::arm ident::string_arm::STR_family(std::string_view mnemonic) {
+id::arm ident::string_arm::STR_family(llarm::string_view mnemonic) {
     // the parameter name and instruction name have no relation just to be clear
 
     mnemonic.remove_prefix(3); // "STR"
@@ -315,7 +315,7 @@ id::arm ident::string_arm::BLX(const lexemes_t &lexemes) {
 }
 
 
-id::arm ident::string_arm::PSR_family(const std::string_view mnemonic) {
+id::arm ident::string_arm::PSR_family(const llarm::string_view mnemonic) {
     if (mnemonic.size() == 6) {
         const u8 first_char = mnemonic.at(3);
         const u8 second_char = mnemonic.at(4);

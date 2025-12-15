@@ -229,11 +229,13 @@ bool MMU::is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type)
                 (access_type == id::access_type::READ) ||
                 (access_type == id::access_type::WRITE)
             );
+
         case id::access_perm::READ_ONLY: 
             return (
                 (access_type == id::access_type::READ_WRITE) ||
                 (access_type == id::access_type::READ)
             );
+
         case id::access_perm::NO_ACCESS: return false;
         case id::access_perm::UNPREDICTABLE: 
             llarm::out::unpredictable("MMU access permission ID is unpredictable");
@@ -520,9 +522,27 @@ translation_struct MMU::translate_address(const u32 address, const id::access_ty
             /* abort_code */ id::aborts::NO_ABORT,
             /* physical_address */ tlb.fetch(address, tlb_fetch)
         };
-    } else { // TLB miss
-        return page_walk(address, access_type, access_size);
+    } 
+    
+    // TLB miss
+    translation_struct translation = page_walk(address, access_type, access_size);
+
+    const bool tlb_is_absent = (
+        settings.has_tlb == false ||
+        (
+            (settings.is_tlb_unified == false) && 
+            (settings.is_tlb_separate == false)
+        )
+    );
+
+    if (tlb_is_absent || translation.has_failed) {
+        return translation;
     }
+
+    // a TLB store can now be made. If it already exists then it'll just replace the old physical address.
+    tlb.insert(address, translation.physical_address, settings.tlb_type);
+
+    return translation;
 }
 
 

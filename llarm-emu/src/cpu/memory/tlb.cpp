@@ -7,7 +7,7 @@
 
 #include <cmath>
 #include <random>
-
+#include <chrono>
 
 void TLB::flush() {
     if (settings.tlb_type == id::tlb_type::UNIFIED) {
@@ -42,23 +42,46 @@ void TLB::invalidate(const u32 virtual_address, const id::tlb_type tlb_type) {
 void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, const u32 physical_address) {
     // random replacement strategy, i guess different strategies could be added in the future
 
-    const u8 size = [=, this]() -> u8 {
+    // splitmix64 implementation
+    auto generate_index = [this, tlb_type]() -> u16 {
+        u64 x = this->seed;
+
+        // these magic numbers are just hash values, look up these values for more details
+        x += 0x9e3779b97f4a7c15ULL;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9ULL;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111ebULL;
+        const u64 r = (x ^ (x >> 31));
+
+        u16 tlb_size = 0;
+
         switch (tlb_type) {
-            case id::tlb_type::UNIFIED: return settings.unified_tlb_table_size; 
+            case id::tlb_type::UNIFIED: tlb_size = settings.unified_tlb_table_size; break;
             case id::tlb_type::SEPARATE: llarm::out::dev_error("Unsupported TLB invalidation for auto replacement");
-            case id::tlb_type::SEPARATE_INST: return settings.inst_tlb_table_size; 
-            case id::tlb_type::SEPARATE_DATA: return settings.data_tlb_table_size; 
+            case id::tlb_type::SEPARATE_INST: tlb_size = settings.inst_tlb_table_size; break;
+            case id::tlb_type::SEPARATE_DATA: tlb_size = settings.data_tlb_table_size; break;
         }
-    }();
+    
+        const u32 range = tlb_size + 1;
 
-    std::uniform_int_distribution<> distribution(0, size);
+        return static_cast<u16>(r % range);
+    };
 
-    const u8 index = distribution(seed);
+    const bool already_exists = is_translation_cached(virtual_address).is_found;
+
+    // this will work by deleting the previous entry in the TLB that occupied that random index,
+    // and then it'll insert that new entry. It's pretty simple, but if the virtual address being
+    // inserted already exists in the TLB, then that specific entry will be replaced instead of
+    // replacing a random index. This prevents duplicate entries for the same virtual address. 
 
     switch (tlb_type) {
         case id::tlb_type::UNIFIED: {
-            const u32 unified_key = unified_table.at(index);
-            unified_table.erase(unified_key);
+            if (already_exists) {
+                invalidate(virtual_address, tlb_type);
+            } else {
+                const u32 unified_key = unified_table.at(generate_index());
+                unified_table.erase(unified_key);
+            }
+
             unified_table.insert({ virtual_address, physical_address });
             return;
         }
@@ -66,15 +89,25 @@ void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, c
         case id::tlb_type::SEPARATE: llarm::out::dev_error("Unsupported TLB invalidation for auto replacement");
 
         case id::tlb_type::SEPARATE_INST: {
-            const u32 inst_key = inst_table.at(index);
-            inst_table.erase(inst_key);
+            if (already_exists) {
+                invalidate(virtual_address, tlb_type);
+            } else {
+                const u32 inst_key = inst_table.at(generate_index());
+                inst_table.erase(inst_key);
+            }
+
             inst_table.insert({ virtual_address, physical_address });
             return;
         }
 
         case id::tlb_type::SEPARATE_DATA: {
-            const u32 data_key = data_table.at(index);
-            data_table.erase(data_key);
+            if (already_exists) {
+                invalidate(virtual_address, tlb_type);
+            } else {
+                const u32 data_key = data_table.at(generate_index());
+                data_table.erase(data_key);
+            }
+
             data_table.insert({ virtual_address, physical_address });
             return;
         }
@@ -229,7 +262,17 @@ TLB::TLB(SETTINGS& settings) : settings(settings) {
         W_data = static_cast<u32>(std::ceil(std::log2(settings.data_tlb_table_size)));
     }
 
-    std::random_device rd;
-    std::mt19937 tmp(rd());
-    seed = tmp;
+    // if the TLB seed has been set by the user already, use it. Otherwise, create our own
+    if (settings.tlb_seed != 0) {
+        seed = settings.tlb_seed;
+    } else {
+        // https://softwareengineering.stackexchange.com/questions/402542/where-do-magic-hashing-constants-like-0x9e3779b9-and-0x9e3779b1-come-from
+        constexpr u64 golden_ratio = 0x9e3779b97f4a7c15ULL;
+
+        static u64 counter = golden_ratio;
+        const u64 t = static_cast<u64>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+        counter += golden_ratio;
+    
+        seed = (t ^ counter);
+    }
 }

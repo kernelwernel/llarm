@@ -15,7 +15,7 @@ namespace internal::ident::string_thumb {
     using interpreter::lexemes_t;
 
     struct thumb_inst {
-        std::string_view str;
+        llarm::string_view str;
         id::thumb id;
     };
 
@@ -63,7 +63,7 @@ namespace internal::ident::string_thumb {
     };
 
     struct subinst_struct {
-        std::string_view str;
+        llarm::string_view str;
         sub_inst id;
     };
 
