@@ -22,7 +22,7 @@ data_struct ADDRESSING_MODE::data_process_immediate_mode(const u32 code) {
     const u8 rotate_imm = llarm::util::bit_range<u8>(code, 8, 11);
     const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
-    data.value = std::rotr(immed_8, (rotate_imm * 2));
+    data.value = llarm::util::rotr(immed_8, (rotate_imm * 2));
 
     if (rotate_imm == 0) {
         data.carry = reg.read(id::cpsr::C);
@@ -173,7 +173,7 @@ data_struct ADDRESSING_MODE::data_process_rotate_right_immediate(const u32 code)
     if (shift_imm == 0) {
         // TODO
     } else {
-        data.value = std::rotr(Rm, shift_imm);
+        data.value = llarm::util::rotr(Rm, shift_imm);
         data.carry = (llarm::util::bit_fetch(Rm, (shift_imm - 1)));
     }
 
@@ -344,7 +344,7 @@ data_struct ADDRESSING_MODE::data_process_rotate_right_register(const u32 code) 
         data.value = Rm;
         data.carry = (llarm::util::bit_fetch(Rm, 31));
     } else {
-        data.value = std::rotr(Rm, Rs_bits_4);
+        data.value = llarm::util::rotr(Rm, Rs_bits_4);
         data.carry = (llarm::util::bit_fetch(Rm, (Rs_bits_4 - 1)));
     }
 

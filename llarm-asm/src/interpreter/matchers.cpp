@@ -6,67 +6,106 @@
 
 #include <cctype>
 
-REG matchers::reg(const llarm::string_view str) {
+REG matchers::reg(sv str) {
     REG reg = {
         reg_type::UNKNOWN, // type
-        0,  // number
-        false, // is_reg_vfp_special
+        WILDCARD,  // number
+        false, // is_thumb_supported
         false, // is_malformed
         true // is_invalid
     };
 
-    const reg_type type = [=]() -> reg_type {
-        switch (str.front()) {
-            case 'R': return reg_type::REGULAR; // regular register
-            case 'D': return reg_type::SINGLE; // VFP double register
-            case 'S': return reg_type::DOUBLE; // VFP single register
-            case 'P': return reg_type::COPROC; // coprocessor num
-            case 'C': return reg_type::CR; // CRn/CRm register
-            default: return reg_type::UNKNOWN;
-        }
-    }();
-
-    if (type == reg_type::UNKNOWN) {
-        reg.is_invalid = true;
+    if (str.size() < 2) {
         return reg;
     }
 
+    // check for register aliasing, for example PC = R15
+    constexpr u16 PC = ('P' << 8) | 'C';
+    constexpr u16 LR = ('L' << 8) | 'R';
+    constexpr u16 SP = ('S' << 8) | 'P';
+
+    // not sure if these 2 are even officially used, but i'll add them anyway
+    constexpr u16 IP = ('I' << 8) | 'P';
+    constexpr u16 FP = ('F' << 8) | 'P';
+
+    const u16 key = str.at(0) << 8 | str.at(1);
+
+    switch (key) {
+        case PC: reg.number = 15; break;
+        case LR: reg.number = 14; break;
+        case SP: reg.number = 13; break;
+        case IP: reg.number = 12; break;
+        case FP: reg.number = 11; break;
+    }
+
+    const bool valid_register_found = (reg.number != WILDCARD);
+
+    if (valid_register_found) {
+        reg.type = reg_type::REGULAR;
+        reg.is_invalid = false;
+        return reg;
+    } 
+
     // register format: <prefix>0~31 (i.e. R13, S28)
     // keep note that only VFP single regs have 0~31
-    // range, otherwise it's 0~15
+    // range, otherwise it's 0~15. This section also
+    // checks for special VFP regs like FPSCR
 
-    for (u8 i = 1; i < str.size(); i++) {
-        if (std::isdigit(str.at(i)) == false) {
+    switch (str.front()) {
+        case 'R': reg.type = reg_type::REGULAR; break; // regular register
+        case 'D': reg.type = reg_type::SINGLE; break; // VFP double register
+        case 'S': reg.type = reg_type::DOUBLE; break; // VFP single register
+        case 'P': reg.type = reg_type::COPROC; break; // coprocessor num
+        case 'C': reg.type = reg_type::CR; break; // CRn/CRm register
+        case 'F': { // special VFP register
+            if (str == "FPSID") {
+                reg.type = reg_type::FPSID;
+            } else if (str == "FPSCR") {
+                reg.type = reg_type::FPSCR;
+            } else if (str == "FPEXC") {
+                reg.type = reg_type::FPEXC;
+            }
+
+            if (reg.type != reg_type::UNKNOWN) {
+                reg.number = WILDCARD;
+                reg.is_invalid = false;
+                return reg;
+            }
+
+            reg.is_invalid = false;
+            return reg;
+        }
+        default: break;
+    }
+
+    str.remove_prefix(1);
+
+    for (const char c : str) {
+        if (std::isdigit(c) == false) {
             reg.is_invalid = true;
             return reg;
         }
     }
 
     const u32 raw_num = llarm::util::str_to_u32(str);
+    
+    const u8 limit = (reg.type == reg_type::SINGLE ? 31 : 15);
+    
+    const bool is_malformed = (raw_num > limit);
 
-    u8 num = 255;
-    bool is_malformed = false;
-
-    const u8 limit = (type == reg_type::SINGLE ? 31 : 15);
- 
-    if (raw_num > limit) {
-        is_malformed = true;
-    } else {
-        num = static_cast<u8>(raw_num);
+    if (is_malformed == false) {
+        reg.number = static_cast<u8>(raw_num);
     }
+
+    const bool is_thumb_supported = (reg.number < 8);
 
     constexpr bool is_invalid = false;
 
-    return REG { 
-        type, 
-        num, 
-        is_malformed,
-        is_invalid
-    };
+    return reg;
 }
 
 
-PSR matchers::cpsr_spsr(const llarm::string_view str) {
+PSR matchers::cpsr_spsr(const sv str) {
     PSR psr = {
         0 // flags
     };
@@ -99,7 +138,7 @@ PSR matchers::cpsr_spsr(const llarm::string_view str) {
         return psr;
     }
 
-    const llarm::string_view fields = str.substr(5);
+    const sv fields = str.substr(5);
     
     u8 sum = 0;
 
@@ -128,13 +167,14 @@ PSR matchers::cpsr_spsr(const llarm::string_view str) {
 }
 
 
-IMM matchers::immediate(llarm::string_view str) {
+IMM matchers::immediate(sv str) {
     IMM imm = {
         0, /* number */
         0, /* msb */
+        0, /* divisor_constraint */
+        false, // has_msb_range */
+        false, // is_rotateable */
         false, /* is_negative */
-        false, /* is_hex */
-        false, /* is_multiple_of_4 */
         false, /* is_malformed*/
         true /* is_invalid*/
     };
@@ -153,6 +193,7 @@ IMM matchers::immediate(llarm::string_view str) {
     }
 
     const bool has_hex_start = (str.at(0) == '0' && (str.at(1) == 'X'));
+    bool is_hex = false;
 
     if (has_hex_start) {
         str.remove_prefix(2); // remove the "0x"
@@ -161,7 +202,7 @@ IMM matchers::immediate(llarm::string_view str) {
             (str.size() > 2) && 
             (str.find_first_not_of("0123456789ABCDEF") == std::string::npos)
         ) {
-            imm.is_hex = true;
+            is_hex = true;
         } else {
             imm.is_malformed = true;
             return imm;
@@ -170,7 +211,7 @@ IMM matchers::immediate(llarm::string_view str) {
 
     u64 num = 0;
 
-    if (imm.is_hex) {
+    if (is_hex) {
         num = llarm::util::hex_to_i64(str);
     } else {
         for (const char c : str) {
@@ -204,9 +245,7 @@ IMM matchers::immediate(llarm::string_view str) {
         imm.msb = msb;
     }
 
-    if ((imm.number & 0b11) == 0) {
-        imm.is_multiple_of_4 = true;
-    }
+    
 
     imm.is_invalid = false;
 
@@ -214,36 +253,36 @@ IMM matchers::immediate(llarm::string_view str) {
 }
 
 
-token matchers::character(const llarm::string_view str) {
+token_enum matchers::character(const sv str) {
     if (str.size() != 1) {
-        return token::UNKNOWN;
+        return token_enum::UNKNOWN;
     }
 
     const char token = str.front();
 
     switch (token) {
-        case '{': return token::REG_LIST_START;
-        case '}': return token::REG_LIST_END;
-        case '[': return token::MEM_START;
-        case ']': return token::MEM_END;
-        case '*': return token::MUL_OP;
-        case '#': return token::HASHTAG;
-        case '^': return token::CARET;
-        case '!': return token::PRE_INDEX;
-        case '-': return token::MIN_OP;
+        case '{': return token_enum::REG_LIST_START;
+        case '}': return token_enum::REG_LIST_END;
+        case '[': return token_enum::MEM_START;
+        case ']': return token_enum::MEM_END;
+        case '*': return token_enum::MUL_OP;
+        case '#': return token_enum::HASHTAG;
+        case '^': return token_enum::CARET;
+        case '!': return token_enum::PRE_INDEX;
+        case '-': return token_enum::MIN_OP;
 
         // both are basically comment starters
-        case '@': return token::COMMENT;
-        case '<': return token::COMMENT; // gcc uses this convention like "MOV R0, #1 <some commentary>"
+        case '@': return token_enum::COMMENT;
+        case '<': return token_enum::COMMENT; // gcc uses this convention like "MOV R0, #1 <some commentary>"
     }
 
-    return token::UNKNOWN;
+    return token_enum::UNKNOWN;
 }
 
 
-token matchers::address_mode(const llarm::string_view str) {
+token_enum matchers::address_mode(const sv str) {
     if (str.size() != 3) {
-        return token::UNKNOWN;
+        return token_enum::UNKNOWN;
     }
 
     constexpr u32 LSL = ('L' << 16) | ('S' << 8) | 'L';
@@ -255,11 +294,11 @@ token matchers::address_mode(const llarm::string_view str) {
     const u32 key = (str.at(0) << 16) | (str.at(1) << 8) | str.at(2);
 
     switch (key) {
-        case LSL: return token::LSL;
-        case LSR: return token::LSR;
-        case ASR: return token::ASR;
-        case ROR: return token::ROR;
-        case RRX: return token::RRX;
-        default: return token::UNKNOWN;
+        case LSL: return token_enum::LSL;
+        case LSR: return token_enum::LSR;
+        case ASR: return token_enum::ASR;
+        case ROR: return token_enum::ROR;
+        case RRX: return token_enum::RRX;
+        default: return token_enum::UNKNOWN;
     }
 }

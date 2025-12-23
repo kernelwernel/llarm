@@ -2,18 +2,20 @@
 #include "../instruction_id.hpp"
 
 #include "../interpreter/interpreter.hpp"
+#include "llarm-asm/src/interpreter/tokens.hpp"
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 
 using namespace internal;
+using namespace interpreter;
+using enum token_enum;
 
 id::arm ident::string_arm::arm(const std::string &code) {
     const std::string assembly = llarm::util::to_upper(code);
 
-    const std::string raw_string = interpreter::fetch_instruction(assembly);
-    const llarm::string_view mnemonic(raw_string);
+    const sv mnemonic = interpreter::fetch_instruction(assembly);
 
-    const std::vector<llarm::string_view> candidates = fetch_candidates(mnemonic);
+    const std::vector<sv> candidates = fetch_candidates(mnemonic);
 
     for (const auto candidate : candidates) {
         auto it = arm_instructions.find(candidate);
@@ -60,12 +62,12 @@ id::arm ident::string_arm::arm(const std::string &code) {
 }
 
 
-std::vector<llarm::string_view> ident::string_arm::fetch_candidates(llarm::string_view mnemonic) {
-    std::vector<llarm::string_view> candidates = {};
+std::vector<sv> ident::string_arm::fetch_candidates(sv mnemonic) {
+    std::vector<sv> candidates = {};
 
     // "mnemonic.extra" convention, i.e. "b.eq" (gcc does this)
     const std::size_t dot_pos = mnemonic.find('.');
-    const bool has_dot = (dot_pos != llarm::string_view::npos);
+    const bool has_dot = (dot_pos != sv::npos);
     
     if (has_dot) {
         candidates.push_back(mnemonic.substr(0, dot_pos));
@@ -146,20 +148,18 @@ std::vector<llarm::string_view> ident::string_arm::fetch_candidates(llarm::strin
 
 
 id::arm ident::string_arm::MSR(const lexemes_t &lexemes) {
-    using namespace interpreter;
-
     // MSR_IMM
     if (
-        (has_matching_pattern({ CPSR_FIELD, HASHTAG, IMMED }, lexemes)) ||
-        (has_matching_pattern({ SPSR_FIELD, REG }, lexemes))
+        (verify_tokens({ PSR, HASHTAG, IMMED }, lexemes)) ||
+        (verify_tokens({ PSR, HASHTAG, IMMED }, lexemes))
     ) {
         return id::arm::MSR_IMM;
     }
 
     // MSR_REG
     if (
-        (has_matching_pattern({ CPSR_FIELD, HASHTAG, IMMED }, lexemes)) ||
-        (has_matching_pattern({ SPSR_FIELD, REG }, lexemes))
+        (verify_tokens({ PSR, REG }, lexemes)) ||
+        (verify_tokens({ PSR, REG }, lexemes))
     ) {
         return id::arm::MSR_REG;
     }
@@ -168,7 +168,7 @@ id::arm ident::string_arm::MSR(const lexemes_t &lexemes) {
 }
 
 
-id::arm ident::string_arm::SWPB(llarm::string_view mnemonic) {
+id::arm ident::string_arm::SWPB(sv mnemonic) {
     // no cond
     if (mnemonic == "SWPB") {
         return id::arm::SWPB;
@@ -188,7 +188,7 @@ id::arm ident::string_arm::SWPB(llarm::string_view mnemonic) {
 }
 
 
-id::arm ident::string_arm::LDR_family(llarm::string_view mnemonic) {
+id::arm ident::string_arm::LDR_family(sv mnemonic) {
     mnemonic.remove_prefix(3); // "LDR"
 
     const u16 potential_cond = (mnemonic.at(0) << 8) | mnemonic.at(1);
@@ -227,7 +227,7 @@ id::arm ident::string_arm::LDR_family(llarm::string_view mnemonic) {
 }
 
 
-id::arm ident::string_arm::STR_family(llarm::string_view mnemonic) {
+id::arm ident::string_arm::STR_family(sv mnemonic) {
     // the parameter name and instruction name have no relation just to be clear
 
     mnemonic.remove_prefix(3); // "STR"
@@ -261,16 +261,14 @@ id::arm ident::string_arm::STR_family(llarm::string_view mnemonic) {
 
 
 id::arm ident::string_arm::STM(const lexemes_t &lexemes) {
-    using namespace interpreter;
-
     // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
-    if (has_matching_pattern({ REG, PRE_INDEX, REG_LIST }, lexemes)) {
+    if (verify_tokens({ REG, PRE_INDEX, REG_LIST }, lexemes)) {
         return id::arm::STM1;
-    } else if (has_matching_pattern({ REG, REG_LIST }, lexemes)) {
+    } else if (verify_tokens({ REG, REG_LIST }, lexemes)) {
         return id::arm::STM1;
     }
 
-    if (has_matching_pattern({ REG, REG_LIST, CARET }, lexemes)) {
+    if (verify_tokens({ REG, REG_LIST, CARET }, lexemes)) {
         return id::arm::STM2;
     }
 
@@ -279,22 +277,27 @@ id::arm ident::string_arm::STM(const lexemes_t &lexemes) {
 
 
 id::arm ident::string_arm::LDM(const lexemes_t &lexemes) {
-    using namespace interpreter;
+    reg_list_settings settings{};
 
     // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
-    if (has_matching_pattern({ REG, PRE_INDEX, REG_LIST }, lexemes)) {
+    if (verify_tokens({ REG, PRE_INDEX, REG_LIST }, lexemes)) {
         return id::arm::LDM1;
-    } else if (has_matching_pattern({ REG, REG_LIST }, lexemes)) {
+    } else if (verify_tokens({ REG, REG_LIST }, lexemes)) {
         return id::arm::LDM1;
     }
 
-    if (has_matching_pattern({ REG, REG_LIST_NO_PC, CARET }, lexemes)) {
+    settings.is_r15_excluded = true;
+
+    if (verify_tokens({ REG, REG_LIST, CARET }, lexemes)) {
         return id::arm::LDM2;
     }
 
-    if (has_matching_pattern({ REG, PRE_INDEX, REG_LIST_WITH_PC, CARET }, lexemes)) {
+    settings.is_r15_excluded = false;
+    settings.must_include_r15 = true;
+
+    if (verify_tokens({ REG, PRE_INDEX, REG_LIST, CARET }, lexemes)) {
         return id::arm::LDM3;
-    } else if (has_matching_pattern({ REG, REG_LIST_WITH_PC, CARET }, lexemes)) {
+    } else if (verify_tokens({ REG, REG_LIST, CARET }, lexemes)) {
         return id::arm::LDM3;
     }
 
@@ -303,11 +306,9 @@ id::arm ident::string_arm::LDM(const lexemes_t &lexemes) {
 
 
 id::arm ident::string_arm::BLX(const lexemes_t &lexemes) {
-    using namespace interpreter;
-
-    if (has_matching_pattern({ CONST }, lexemes)) {
+    if (verify_tokens({ IMMED }, lexemes)) {
         return id::arm::BLX1;
-    } else if (has_matching_pattern({ REG }, lexemes)) {
+    } else if (verify_tokens({ REG }, lexemes)) {
         return id::arm::BLX2;
     }
 
@@ -315,14 +316,14 @@ id::arm ident::string_arm::BLX(const lexemes_t &lexemes) {
 }
 
 
-id::arm ident::string_arm::PSR_family(const llarm::string_view mnemonic) {
+id::arm ident::string_arm::PSR_family(const sv mnemonic) {
     if (mnemonic.size() == 6) {
         const u8 first_char = mnemonic.at(3);
         const u8 second_char = mnemonic.at(4);
 
         const u16 cond = (first_char << 8 | second_char);
         
-        if (interpreter::cond_match(cond) == false) {
+        if (cond_match(cond) == false) {
             return id::arm::UNDEFINED;
         }
     }

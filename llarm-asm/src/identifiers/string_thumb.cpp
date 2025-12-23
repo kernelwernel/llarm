@@ -7,12 +7,12 @@
 #include "shared/out.hpp"
 
 using namespace internal;
+using enum token_enum;
 
 id::thumb ident::string_thumb::thumb(const std::string &code) {
     const std::string instruction = llarm::util::to_upper(code);
     
-    const std::string raw_string = interpreter::fetch_instruction(instruction);
-    const llarm::string_view mnemonic(raw_string);
+    const sv mnemonic = interpreter::fetch_instruction(instruction);
 
     for (const auto &e : pure_thumb_instructions) {
         if (mnemonic == e.str) {
@@ -24,28 +24,29 @@ id::thumb ident::string_thumb::thumb(const std::string &code) {
     // be a variant (i.e ADD1, ADD2, etc) or it is an invalid
     // string. Categorisation happens after this stage.
 
-    const tokens_t tokens = interpreter::tokenize(instruction);
-    const lexemes_t lexemes = interpreter::lexer(tokens);
+    const lexemes_t lexemes = interpreter::analyze(code);
 
     for (const auto &inst : thumb_subinstructions) {
-        if (mnemonic == inst.str) {
-            switch (inst.id) {
-                case sub_inst::ADD: return ADD(lexemes);
-                case sub_inst::SUB: return SUB(lexemes);
-                case sub_inst::ASR: return ASR(lexemes);
-                case sub_inst::LSL: return LSL(lexemes);
-                case sub_inst::LSR: return LSR(lexemes);
-                case sub_inst::CMP: return CMP(lexemes);
-                case sub_inst::MOV: return MOV(lexemes);
-                case sub_inst::BLX: return BLX(lexemes);
-                case sub_inst::LDR: return LDR(lexemes);
-                case sub_inst::LDRB: return LDRB(lexemes);
-                case sub_inst::LDRH: return LDRH(lexemes);
-                case sub_inst::STR: return STR(lexemes);
-                case sub_inst::STRB: return STRB(lexemes);
-                case sub_inst::STRH: return STRH(lexemes);
-                default: break;
-            }
+        if (mnemonic != inst.str) {
+            continue;
+        }
+
+        switch (inst.id) {
+            case sub_inst::ADD: return ADD(lexemes);
+            case sub_inst::SUB: return SUB(lexemes);
+            case sub_inst::ASR: return ASR(lexemes);
+            case sub_inst::LSL: return LSL(lexemes);
+            case sub_inst::LSR: return LSR(lexemes);
+            case sub_inst::CMP: return CMP(lexemes);
+            case sub_inst::MOV: return MOV(lexemes);
+            case sub_inst::BLX: return BLX(lexemes);
+            case sub_inst::LDR: return LDR(lexemes);
+            case sub_inst::LDRB: return LDRB(lexemes);
+            case sub_inst::LDRH: return LDRH(lexemes);
+            case sub_inst::STR: return STR(lexemes);
+            case sub_inst::STRB: return STRB(lexemes);
+            case sub_inst::STRH: return STRH(lexemes);
+            default: break;
         }
     }
 
@@ -70,37 +71,37 @@ id::thumb ident::string_thumb::ADD(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // ADD1
-    if (has_matching_pattern({ REG_THUMB, REG_THUMB, HASHTAG, IMMED_3 }, lexemes)) {
+    if (verify_tokens({ REG, REG, HASHTAG, IMMED }, lexemes)) {
         return id::thumb::ADD1;
     }
 
     // ADD2
-    if (has_matching_pattern({ REG_THUMB, HASHTAG, IMMED_8 }, lexemes)) {
+    if (verify_tokens({ REG, HASHTAG, IMMED }, lexemes)) {
         return id::thumb::ADD2;
     }
 
     // ADD3
-    if (has_matching_pattern({ REG_THUMB, REG_THUMB, REG_THUMB }, lexemes)) {
+    if (verify_tokens({ REG, REG, REG }, lexemes)) {
         return id::thumb::ADD3;
     }
 
     // ADD4
-    if (has_matching_pattern({ REG, REG }, lexemes)) {
+    if (verify_tokens({ REG, REG }, lexemes)) {
         return id::thumb::ADD4;
     }
 
     // ADD5
-    if (has_matching_pattern({ REG_THUMB, REG_PC, HASHTAG, IMMED_8, MUL_OP, CONST_4 }, lexemes)) {
+    if (verify_tokens({ REG, IMMED, HASHTAG, IMMED, MUL_OP, IMMED }, lexemes)) {
         return id::thumb::ADD5;
     }
 
     // ADD6
-    if (has_matching_pattern({ REG_THUMB, REG_SP, HASHTAG, IMMED_8, MUL_OP, CONST_4 }, lexemes)) {
+    if (verify_tokens({ REG, IMMED, HASHTAG, IMMED, MUL_OP, IMMED }, lexemes)) {
         return id::thumb::ADD6;
     }
 
     // ADD7
-    if (has_matching_pattern({ REG_SP, HASHTAG, IMMED_7, MUL_OP, CONST_4 }, lexemes)) {
+    if (verify_tokens({ IMMED, HASHTAG, IMMED, MUL_OP, IMMED }, lexemes)) {
         return id::thumb::ADD7;
     }
 
@@ -112,22 +113,22 @@ id::thumb ident::string_thumb::SUB(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // SUB1
-    if (has_matching_pattern({ REG_THUMB, REG_THUMB, HASHTAG, IMMED_3 }, lexemes)) {
+    if (verify_tokens({ REG, REG, HASHTAG, IMMED }, lexemes)) {
         return id::thumb::SUB1;
     }
 
     // SUB2
-    if (has_matching_pattern({ REG_THUMB, HASHTAG, IMMED_8 }, lexemes)) {
+    if (verify_tokens({ REG, HASHTAG, IMMED }, lexemes)) {
         return id::thumb::SUB2;
     }
 
     // SUB3
-    if (has_matching_pattern({ REG_THUMB, REG_THUMB, REG_THUMB }, lexemes)) {
+    if (verify_tokens({ REG, REG, REG }, lexemes)) {
         return id::thumb::SUB3;
     }
 
     // SUB4
-    if (has_matching_pattern({ REG_SP, HASHTAG, IMMED_7, MUL_OP, CONST_4 }, lexemes)) {
+    if (verify_tokens({ IMMED, HASHTAG, IMMED, MUL_OP, IMMED }, lexemes)) {
         return id::thumb::SUB4;
     }
 
@@ -139,12 +140,12 @@ id::thumb ident::string_thumb::ASR(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // ASR1
-    if (has_matching_pattern({ REG_THUMB, REG_THUMB, HASHTAG, IMMED_5 }, lexemes)) {
+    if (verify_tokens({ REG, REG, HASHTAG, IMMED }, lexemes)) {
         return id::thumb::ASR1;
     }
 
     // ASR2
-    if (has_matching_pattern({ REG_THUMB, REG_THUMB }, lexemes)) {
+    if (verify_tokens({ REG, REG }, lexemes)) {
         return id::thumb::ASR2;
     }
 
@@ -156,12 +157,12 @@ id::thumb ident::string_thumb::LSL(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // LSL1
-    if (has_matching_pattern({ REG_THUMB, REG_THUMB, HASHTAG, IMMED_5 }, lexemes)) {
+    if (verify_tokens({ REG, REG, HASHTAG, IMMED }, lexemes)) {
         return id::thumb::LSL1;
     }
 
     // LSL2
-    if (has_matching_pattern({ REG_THUMB, REG_THUMB }, lexemes)) {
+    if (verify_tokens({ REG, REG }, lexemes)) {
         return id::thumb::LSL2;
     }
 
@@ -173,12 +174,12 @@ id::thumb ident::string_thumb::LSR(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // LSR1
-    if (has_matching_pattern({ REG_THUMB, REG_THUMB, HASHTAG, IMMED_5 }, lexemes)) {
+    if (verify_tokens({ REG, REG, HASHTAG, IMMED }, lexemes)) {
         return id::thumb::LSR1;
     }
 
     // LSR2
-    if (has_matching_pattern({ REG_THUMB, REG_THUMB }, lexemes)) {
+    if (verify_tokens({ REG, REG }, lexemes)) {
         return id::thumb::LSR2;
     }
 
@@ -190,17 +191,17 @@ id::thumb ident::string_thumb::CMP(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // CMP1
-    if (has_matching_pattern({ REG_THUMB, HASHTAG, IMMED_8 }, lexemes)) {
+    if (verify_tokens({ REG, HASHTAG, IMMED }, lexemes)) {
         return id::thumb::CMP1;
     }
 
     // CMP2
-    if (has_matching_pattern({ REG_THUMB, REG_THUMB }, lexemes)) {
+    if (verify_tokens({ REG, REG }, lexemes)) {
         return id::thumb::CMP2;
     }
 
     // CMP3
-    if (has_matching_pattern({ REG, REG }, lexemes)) {
+    if (verify_tokens({ REG, REG }, lexemes)) {
         return id::thumb::CMP3;
     }
 
@@ -212,17 +213,17 @@ id::thumb ident::string_thumb::MOV(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // MOV1
-    if (has_matching_pattern({ REG_THUMB, HASHTAG, IMMED_8 }, lexemes)) {
+    if (verify_tokens({ REG, HASHTAG, IMMED }, lexemes)) {
         return id::thumb::MOV1;
     }
 
     // MOV2
-    if (has_matching_pattern({ REG_THUMB, REG_THUMB }, lexemes)) {
+    if (verify_tokens({ REG, REG }, lexemes)) {
         return id::thumb::MOV2;
     }
 
     // MOV3
-    if (has_matching_pattern({ REG, REG }, lexemes)) {
+    if (verify_tokens({ REG, REG }, lexemes)) {
         return id::thumb::MOV3;
     }
 
@@ -234,12 +235,12 @@ id::thumb ident::string_thumb::BLX(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // BLX1
-    if (has_matching_pattern({ CONST }, lexemes)) {
+    if (verify_tokens({ IMMED }, lexemes)) {
         return id::thumb::BLX1;
     }
 
     // BLX2
-    if (has_matching_pattern({ REG }, lexemes)) {
+    if (verify_tokens({ REG }, lexemes)) {
         return id::thumb::BLX2;
     }
 
@@ -251,22 +252,22 @@ id::thumb ident::string_thumb::LDR(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // LDR1
-    if (has_matching_pattern({ REG_THUMB, MEM_START, REG_THUMB, HASHTAG, IMMED_5, MUL_OP, CONST_4, MEM_END }, lexemes)) {
+    if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
         return id::thumb::LDR1;
     }
 
     // LDR2
-    if (has_matching_pattern({ REG_THUMB, MEM_START, REG_THUMB, REG_THUMB, MEM_END }, lexemes)) {
+    if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
         return id::thumb::LDR2;
     }
 
     // LDR3
-    if (has_matching_pattern({ REG_THUMB, MEM_START, REG_PC, HASHTAG, IMMED_8, MUL_OP, CONST_4, MEM_END }, lexemes)) {
+    if (verify_tokens({ REG, MEM_START, IMMED, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
         return id::thumb::LDR3;
     }
 
     // LDR4
-    if (has_matching_pattern({ REG_THUMB, MEM_START, REG_SP, HASHTAG, IMMED_8, MUL_OP, CONST_4, MEM_END }, lexemes)) {
+    if (verify_tokens({ REG, MEM_START, IMMED, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
         return id::thumb::LDR4;
     }
 
@@ -278,12 +279,12 @@ id::thumb ident::string_thumb::LDRB(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // LDRB1
-    if (has_matching_pattern({ REG_THUMB, MEM_START, REG_THUMB, HASHTAG, IMMED_5, MEM_END }, lexemes)) {
+    if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MEM_END }, lexemes)) {
         return id::thumb::LDRB1;
     }
 
     // LDRB2
-    if (has_matching_pattern({ REG_THUMB, MEM_START, REG_THUMB, REG_THUMB, MEM_END }, lexemes)) {
+    if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
         return id::thumb::LDRB2;
     }
 
@@ -295,12 +296,12 @@ id::thumb ident::string_thumb::LDRH(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // LDRH1
-    if (has_matching_pattern({ REG_THUMB, MEM_START, REG_THUMB, HASHTAG, IMMED_5, MUL_OP, CONST_2, MEM_END }, lexemes)) {
+    if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
         return id::thumb::LDRH1;
     }
 
     // LDRH2
-    if (has_matching_pattern({ REG_THUMB, MEM_START, REG_THUMB, REG_THUMB, MEM_END }, lexemes)) {
+    if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
         return id::thumb::LDRH2;
     }
 
@@ -312,17 +313,17 @@ id::thumb ident::string_thumb::STR(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // STR1
-    if (has_matching_pattern({ REG_THUMB, MEM_START, REG_THUMB, HASHTAG, IMMED_5, MUL_OP, CONST_4, MEM_END }, lexemes)) {
+    if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
         return id::thumb::STR1;
     }
 
     // STR2
-    if (has_matching_pattern({ REG_THUMB, MEM_START, REG_THUMB, REG_THUMB, MEM_END }, lexemes)) {
+    if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
         return id::thumb::STR2;
     }
 
     // STR3
-    if (has_matching_pattern({ REG_THUMB, MEM_START, REG_SP, HASHTAG, IMMED_8, MUL_OP, CONST_4, MEM_END }, lexemes)) {
+    if (verify_tokens({ REG, MEM_START, IMMED, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
         return id::thumb::STR3;
     }
 
@@ -334,12 +335,12 @@ id::thumb ident::string_thumb::STRB(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // STRB1
-    if (has_matching_pattern({ REG_THUMB, MEM_START, REG_THUMB, HASHTAG, IMMED_5, MEM_END }, lexemes)) {
+    if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MEM_END }, lexemes)) {
         return id::thumb::STRB1;
     }
 
     // STRB2
-    if (has_matching_pattern({ REG_THUMB, MEM_START, REG_THUMB, REG_THUMB, MEM_END }, lexemes)) {
+    if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
         return id::thumb::STRB2;
     }
 
@@ -351,12 +352,12 @@ id::thumb ident::string_thumb::STRH(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // STRH1
-    if (has_matching_pattern({ REG_THUMB, MEM_START, REG_THUMB, HASHTAG, IMMED_5, MUL_OP, CONST_2, MEM_END }, lexemes)) {
+    if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
         return id::thumb::STRB1;
     }
 
     // STRH2
-    if (has_matching_pattern({ REG_THUMB, MEM_START, REG_THUMB, REG_THUMB, MEM_END }, lexemes)) {
+    if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
         return id::thumb::STRB2;
     }
 

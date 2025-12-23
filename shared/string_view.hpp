@@ -7,6 +7,4 @@
 // So to compensate, I've imported this header-only lib to make this
 // possible as it supports C++98. 
 
-namespace llarm {
-    using string_view = nonstd::string_view;
-}
+using sv = nonstd::string_view;

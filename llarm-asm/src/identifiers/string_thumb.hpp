@@ -10,12 +10,8 @@
 namespace internal::ident::string_thumb {
     using namespace internal;
 
-    using interpreter::tokens_t;
-    using interpreter::lexeme_struct;
-    using interpreter::lexemes_t;
-
     struct thumb_inst {
-        llarm::string_view str;
+        sv str;
         id::thumb id;
     };
 
@@ -63,7 +59,7 @@ namespace internal::ident::string_thumb {
     };
 
     struct subinst_struct {
-        llarm::string_view str;
+        sv str;
         sub_inst id;
     };
 

@@ -5,7 +5,7 @@
 #include "shared/out.hpp"
 
 
-lexemes_t lexer::analyze(const tokens_t &tokens) {
+lexemes_t lexer::lex(const raw_tokens_t &tokens) {
     lexemes_t lexeme_list{};
     lexeme_list.reserve(tokens.size());
 
@@ -49,45 +49,104 @@ lexemes_t lexer::analyze(const tokens_t &tokens) {
         llarm::out::error("Unidentifiable or invalid token \"", token, "\" in assembly string argument");
     }
 
-    reg_list_check(lexeme_list);
-
-    return lexeme_list;
-}
-
-
-void lexer::reg_list_check(lexemes_t &lexemes) {
-    u8 start_pos = 0;
-    u8 end_pos = 0;
+    // check for whether it could contain an option or reg list through brackets
+    u8 start_pos = 0; // "{"
+    u8 end_pos = 0; // "}"
 
     u8 pos = 0;
 
-    for (const lexeme &lexeme : lexemes) {
-        if (lexeme.token_type == token::REG_LIST_START) {
+    for (const lexeme &lexeme : lexeme_list) {
+        if (lexeme.token_type == token_enum::REG_LIST_START) {
             start_pos = pos;
+            continue;
         }
 
-        if (lexeme.token_type == token::REG_LIST_END) {
+        if (lexeme.token_type == token_enum::REG_LIST_END) {
             end_pos = pos;
             break;
         }
 
         pos++;
     }
-
-    // early return if there's no "{" and "}" tokens for a reg list 
+    
+    // early return if there's no "{" and "}" tokens for a reg list or option
     if (start_pos == 0 && end_pos == 0) {
-        return;
+        return lexeme_list;
     }
 
     if (end_pos >= start_pos) {
         llarm::out::error("Invalid register list argument to instruction, malformed \"{\" and \"}\" positions");
     }
 
-    // after this point, it's assumed this is a reg list. This is where the verification stage starts.
+    const u8 arg_count = (end_pos - start_pos) - 1;
 
+    if (arg_count == 1) {
+        option_check(lexeme_list, start_pos, end_pos);
+    } else {
+        const u8 pre_size = lexeme_list.size();
+    
+        reg_list_check(lexeme_list, start_pos, end_pos);
+    
+        const bool is_reg_list = (pre_size != lexeme_list.size()); 
+    
+        if (is_reg_list == false) {
+            llarm::out::error("Invalid arguments in brackets, only register lists and options are supported");   
+        }
+    }
+
+    return lexeme_list;
+}
+
+
+void lexer::option_check(lexemes_t &lexemes, const u8 start_pos, const u8 end_pos) {
+    const lexeme arg = lexemes.at(start_pos + 1);
+    
+    if (arg.token_type != token_enum::IMMED) {
+        return;
+    }
+    
+    // options can only be u8
+
+    bool is_malformed = false;
+
+    OPTION option = {
+        0, // number
+        false, // is_malformed
+        false // is_invalid
+    };
+
+    const IMM imm = arg.data.imm;
+
+    if (imm.is_malformed) {
+        option.is_malformed = true;
+    }
+
+    if (imm.is_invalid) {
+        option.is_invalid = true;
+    }
+
+    if (imm.number > 255) {
+        option.is_malformed = true;
+        option.number = imm.number;
+    }
+
+    lexeme lex = {
+        token_enum::OPTION, // token_type
+        option
+    };
+
+    lexemes.erase(lexemes.begin() + start_pos, lexemes.begin() + end_pos);
+    lexemes.insert(lexemes.begin() + start_pos, lex);
+}
+
+
+void lexer::reg_list_check(lexemes_t &lexemes, const u8 start_pos, const u8 end_pos) {
     REG_LIST reg_list = {
         reg_type::UNKNOWN, // type
         0, // reg_count
+        false, // is_r15_excluded
+        false, // must_have_r15
+        false, // is_thumb_supported
         false, // is_malformed
         true, // is_invalid
         false, // is_empty
@@ -106,7 +165,7 @@ void lexer::reg_list_check(lexemes_t &lexemes) {
     } else if (arg_count == 3) { // this could be a range based reglist, so for example "{ R0-R3 }"
         const u8 middle_index = start_pos + 2; // exact same as end_pos - 2
 
-        if (lexemes.at(middle_index).token_type == token::MIN_OP) {
+        if (lexemes.at(middle_index).token_type == token_enum::MIN_OP) {
             reg_list_range(lexemes, start_pos, end_pos);
             return;
         }
@@ -153,8 +212,7 @@ void lexer::reg_list_check(lexemes_t &lexemes) {
         if (
             (reg_entry.number != ++reg_minimum) || // order MUST be consecutive (1, 2, 3 etc)
             (reg_entry.type != reg_list_type) ||
-            (reg_entry.is_malformed) ||
-            (reg_entry.is_reg_vfp_special)
+            (reg_entry.is_malformed)
         ) {
             reg_list.is_malformed = true;
             reg_list_categorize(lexemes, reg_list, start_pos, end_pos);
@@ -164,6 +222,8 @@ void lexer::reg_list_check(lexemes_t &lexemes) {
         reg_list.reg_count++;
         llarm::util::modify_bit(reg_list.list, reg_entry.number, true);
     }
+
+    reg_list.is_thumb_supported = (reg_minimum <= 7);
 
     reg_list_categorize(lexemes, reg_list, start_pos, end_pos);
     return;
@@ -215,7 +275,7 @@ void reg_list_categorize(lexemes_t &lexemes, REG_LIST &reg_list, const u8 start_
     lexemes.erase(lexemes.begin() + start_pos, lexemes.begin() + end_pos);
 
     lexeme reg_list_lexeme = {
-        token::REG_LIST,
+        token_enum::REG_LIST,
         reg_list
     };
 
@@ -223,20 +283,24 @@ void reg_list_categorize(lexemes_t &lexemes, REG_LIST &reg_list, const u8 start_
 }
 
 
-bool lexer::reg_check(lexeme &lexeme, const llarm::string_view token) {
+bool lexer::reg_check(lexeme &lexeme, const sv token) {
     const REG reg = matchers::reg(token);
     
     if (reg.is_invalid) {
         return false;
     }
 
-    switch (reg.type) {
-        case reg_type::REGULAR: lexeme.token_type = token::REG; break;
-        case reg_type::SINGLE: lexeme.token_type = token::REG_SINGLE; break;
-        case reg_type::DOUBLE: lexeme.token_type = token::REG_DOUBLE; break;
-        case reg_type::COPROC: lexeme.token_type = token::REG_COPROC; break;
-        case reg_type::CR: lexeme.token_type = token::REG_CR; break;
-        default: lexeme.token_type = token::UNKNOWN; // this part shouldn't be reachable
+    //switch (reg.type) {
+    //    case reg_type::REGULAR: lexeme.token_type = token_enum::REG; break;
+    //    case reg_type::SINGLE: lexeme.token_type = token_enum::REG_SINGLE; break;
+    //    case reg_type::DOUBLE: lexeme.token_type = token_enum::REG_DOUBLE; break;
+    //    case reg_type::COPROC: lexeme.token_type = token_enum::REG_COPROC; break;
+    //    case reg_type::CR: lexeme.token_type = token_enum::REG_CR; break;
+    //    default: lexeme.token_type = token_enum::UNKNOWN; // this part shouldn't be reachable
+    //}
+
+    if (reg.type != reg_type::UNKNOWN) {
+        lexeme.token_type = token_enum::REG;
     }
 
     lexeme.data.reg = reg;
@@ -244,54 +308,36 @@ bool lexer::reg_check(lexeme &lexeme, const llarm::string_view token) {
 }
 
 
-bool lexer::psr_check(lexeme &lexeme, const llarm::string_view token) {
-    const PSR psr = matchers::cpsr_spsr(token);
+bool lexer::psr_check(lexeme &lexeme, const sv token) {
+    PSR psr = matchers::cpsr_spsr(token);
 
     if (psr.is_invalid()) {
         return false;
     }
 
-    const bool has_fields = (psr.has_C() + psr.has_F() + psr.has_S() + psr.has_X() != 0);
-
-    if (has_fields) {
-        if (psr.is_cpsr()) {
-            lexeme.token_type = token::CPSR;
-        } else if (psr.is_spsr()) {
-            lexeme.token_type = token::SPSR;
-        } else {
-            llarm::out::dev_error("Invalid PSR found for assembly interpreter (PSR fields)");
-        }
-    } else {
-        if (psr.is_cpsr()) {
-            lexeme.token_type = token::CPSR;
-        } else if (psr.is_spsr()) {
-            lexeme.token_type = token::SPSR;
-        } else {
-            llarm::out::dev_error("Invalid PSR found for assembly interpreter");
-        }
-    }
-
+    lexeme.token_type = token_enum::PSR;
     lexeme.data.psr = psr;
+
     return true;
 }
 
 
-bool lexer::imm_check(lexeme &lexeme, const llarm::string_view token) {
+bool lexer::imm_check(lexeme &lexeme, const sv token) {
     const IMM imm = matchers::immediate(token);
 
     if (imm.is_invalid) {
         return false;
     }
 
-    lexeme.token_type = token::IMMED;
+    lexeme.token_type = token_enum::IMMED;
     return true;
 }
 
 
-bool lexer::character_check(lexeme &lexeme, const llarm::string_view token) {
-    const enum token token_candidate = matchers::character(token);
+bool lexer::character_check(lexeme &lexeme, const sv token) {
+    const token_enum token_candidate = matchers::character(token);
 
-    if (token_candidate == token::UNKNOWN) {
+    if (token_candidate == token_enum::UNKNOWN) {
         return false;
     }
 
@@ -300,10 +346,10 @@ bool lexer::character_check(lexeme &lexeme, const llarm::string_view token) {
 }
 
 
-bool lexer::address_check(lexeme &lexeme, const llarm::string_view token) {
-    const enum token address_candidate = matchers::address_mode(token);
+bool lexer::address_check(lexeme &lexeme, const sv token) {
+    const token_enum address_candidate = matchers::address_mode(token);
 
-    if (address_candidate == token::UNKNOWN) {
+    if (address_candidate == token_enum::UNKNOWN) {
         return false;
     }
 

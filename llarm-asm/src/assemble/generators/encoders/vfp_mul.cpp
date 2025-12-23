@@ -55,7 +55,7 @@ u32 generators::vfp_mul_instructions(const id::arm id, const arguments &args) {
     };
 
     auto process_reglist = [](const u16 raw_reglist) -> reglist {
-        const u8 Dd = llarm::util::get_lsb_index(raw_reglist);
+        const u8 Dd = llarm::util::get_lsb(raw_reglist);
         const u8 offset = llarm::util::popcount(raw_reglist);
 
         return reglist { Dd, offset };

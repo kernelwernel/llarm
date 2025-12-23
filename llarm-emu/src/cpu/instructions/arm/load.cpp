@@ -115,9 +115,9 @@ void INSTRUCTIONS::arm::load::LDR(const u32 code) {
 
     switch (type) {
         case 0b00: value = data; break;
-        case 0b01: value = std::rotr(data, 8); break;
-        case 0b10: value = std::rotr(data, 16); break;
-        case 0b11: value = std::rotr(data, 24); break;
+        case 0b01: value = llarm::util::rotr(data, 8); break;
+        case 0b10: value = llarm::util::rotr(data, 16); break;
+        case 0b11: value = llarm::util::rotr(data, 24); break;
     }
 
     if (reg.fetch_reg_id(code, 12, 15) == id::reg::R15) {
@@ -277,9 +277,9 @@ void INSTRUCTIONS::arm::load::LDRT(const u32 code) {
 
     switch (type) {
         case 0b00: value = data; break;
-        case 0b01: value = std::rotr(data, 8); break;
-        case 0b10: value = std::rotr(data, 16); break;
-        case 0b11: value = std::rotr(data, 24); break;
+        case 0b01: value = llarm::util::rotr(data, 8); break;
+        case 0b10: value = llarm::util::rotr(data, 16); break;
+        case 0b11: value = llarm::util::rotr(data, 24); break;
     }
 
     reg.write(code, 12, 15, value);

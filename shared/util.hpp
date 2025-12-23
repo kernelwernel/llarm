@@ -36,7 +36,7 @@ namespace llarm::util {
     }
 
 
-    inline bool bit_fetch(const u32 input, const u8 index) {
+    inline constexpr bool bit_fetch(const u32 input, const u8 index) {
         return ((input >> index) & 1);
     }
 
@@ -47,24 +47,8 @@ namespace llarm::util {
     // version of it. The compiler should be able
     // to optimise this away with at least -O1:
     // https://godbolt.org/z/qEjaEz9zq
-    inline u8 popcount(const u32 integer) {
+    inline constexpr u8 popcount(const u32 integer) {
         return static_cast<u8>(std::bitset<32>(integer).count());
-    }
-
-
-    inline u8 get_lsb_index(u32 integer) {
-        if (integer == 0) { 
-            return 255;
-        }
-
-        u8 index = 0;
-    
-        while ((integer & 1) == 0) {
-            integer >>= 1;
-            ++index;
-        }
-
-        return index;
     }
 
 
@@ -95,6 +79,42 @@ namespace llarm::util {
         original |= (value & mask) << start;
     }
 
+    inline u32 rotr(u32 num, u8 rotate) {
+        rotate &= 31;
+        return (num >> rotate) | (num << (32 - rotate));
+    }
+
+    // this will generate a bsr instruction in x86, so it's portable and optimisation-friendly for compilers (https://godbolt.org/z/MxY16Ev69)
+    inline constexpr u8 get_msb(u32 num) {
+        if (num == 0) {
+            return 255;
+        }
+
+        u8 i = 0;
+
+        while (num >>= 1) {
+            ++i;
+        }
+
+        return i;
+    }
+
+    // same as above, but unlike above, i couldn't find a way to make it optimise the same way how __builtin_ctz(num) would
+    inline u8 get_lsb(u32 num) {
+        if (num == 0) {
+            return 255;
+        }
+
+        u8 index = 0;
+
+        while ((num & 1u) == 0) {
+            num >>= 1;
+            ++index;
+        }
+
+        return index;
+    }
+
     inline void to_lower(std::string& str) {
         for (char& c : str) {
             c = (c >= 'A' && c <= 'Z') ? (c | 0x20) : c;
@@ -112,7 +132,7 @@ namespace llarm::util {
     }
 
     // this assumes the str has already been checked beforehand
-    inline u32 str_to_u32(const llarm::string_view str) {
+    inline u32 str_to_u32(const sv str) {
         u32 num = 0;
 
         for (const unsigned char c : str) {
@@ -125,7 +145,7 @@ namespace llarm::util {
         return num;
     }
 
-    inline i64 hex_to_i64(const llarm::string_view str) {
+    inline i64 hex_to_i64(const sv str) {
         i64 num = 0;
 
         // convert hex to i32

@@ -5,9 +5,9 @@
 #include "shared/string_view.hpp"
 
 namespace matchers {
-    REG reg(const llarm::string_view str);
-    PSR cpsr_spsr(const llarm::string_view str);
-    IMM immediate(const llarm::string_view str);
-    token character(const llarm::string_view str);
-    token address_mode(const llarm::string_view str);
+    REG reg(sv str);
+    PSR cpsr_spsr(const sv str);
+    IMM immediate(const sv str);
+    token_enum character(const sv str);
+    token_enum address_mode(const sv str);
 }

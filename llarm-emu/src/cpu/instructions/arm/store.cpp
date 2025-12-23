@@ -215,7 +215,7 @@ void INSTRUCTIONS::arm::store::SWP(const u32 code) {
         return;
     }
 
-    const u32 temp = std::rotr(read_access.value, rotate);
+    const u32 temp = llarm::util::rotr(read_access.value, rotate);
     reg.write(code, 12, 15, temp);
 }
 

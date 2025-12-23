@@ -6,47 +6,24 @@
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 
-enum class token : u8 {
+// rhs = right hand side
+
+// the value 255 is designated as a wildcard during the interpreter's matching phase.
+static constexpr u8 WILDCARD = 255; 
+
+enum class token_enum : u8 {
     UNKNOWN,
-
-    REG, // R0~R15
-    REG_SINGLE, // S0~S31
-    REG_DOUBLE, // D0~D15
-    REG_COPROC, // P0~P15
-    REG_CR, // C0~C15
-
+    REG,
     REG_LIST,
-    REG_LIST_NO_PC,
-    REG_LIST_DOUBLE,
-    REG_LIST_SINGLE,
-    REG_LIST_START,
-    REG_LIST_END,
-    VFP_REG_SPECIAL, // FPSID, FPSCR, or FPEXC
-
-    // these are only meant for pattern matching, not used as an actual token for analysis
-    REG_LIST_WITH_PC,
-    REG_LIST_THUMB,
-    REG_LIST_THUMB_OPTIONAL_PC,
-    REG_LIST_THUMB_OPTIONAL_LR,
-    REG_PC, // R15
-    REG_SP, // R14
-    //DATA_PROCESSING_ADDRESS_MODE,
-    //LS_ADDRESS_MODE,
-    //LS_MISC_ADDRESS_MODE,
-    //LS_MUL_ADDRESS_MODE,
-    //LS_COPROC_ADDRESS_MODE,
-
+    REG_LIST_START, // "{"
+    REG_LIST_END, // "}"
     HASHTAG,
     IMMED,
-    OP,
     MUL_OP, // "*"
     MIN_OP, // "-"
-    CPSR_FIELD,
-    SPSR_FIELD,
-    CPSR,
-    SPSR,
-    MEM_START, // "{"
-    MEM_END, // "}"
+    PSR,
+    MEM_START, // "["
+    MEM_END, // "]"
     LSL,
     LSR,
     ASR,
@@ -56,8 +33,7 @@ enum class token : u8 {
     PRE_INDEX, // '!'
     CARET, // '^'
     COMMENT, // '@' and '<'
-    OPTION, // specific to address mode 5
-    MNEMONIC
+    OPTION // specific to address mode 5
 };
 
 enum class reg_type : u8 {
@@ -74,20 +50,66 @@ enum class reg_type : u8 {
 
 struct REG {
     reg_type type;
-    u8 number; // 0~31
-    bool is_reg_vfp_special;
+    u8 number; // 0~31, 255 = wildcard
+    bool is_thumb_supported;
     bool is_malformed;
     bool is_invalid;
+
+    constexpr bool operator==(const REG& rhs) const { // rhs = left hand side
+        if (is_invalid || is_malformed || rhs.is_invalid || rhs.is_malformed) {
+            return false;
+        }
+
+        u8 tmp_num = 0;
+
+        if (rhs.number == WILDCARD) {
+            tmp_num = WILDCARD;
+        } else {
+            tmp_num = number;
+        }
+
+        return (
+            type == rhs.type && 
+            tmp_num == rhs.number &&
+            is_thumb_supported == rhs.is_thumb_supported
+        );
+    }
 };
 
 struct IMM {
     i64 number;
     u8 msb; // most significant bit index, this is useful since there's a limit in some cases
+    u8 divisor_constraint; // some immeds can only be a multiple of that number, default is 1
+    bool has_msb_range; // means that the msb will be analysed instead of the number during comparison
+    bool is_rotateable; // important distinction for instructions with data processing address modes
     bool is_negative;
-    bool is_hex;
-    bool is_multiple_of_4; // important distinction in some instructions like FSTS
     bool is_malformed;
     bool is_invalid;
+
+    constexpr bool operator==(const IMM& rhs) const {
+        // the rhs is considered as the immed "matcher" that was
+        // pre-set for comparison, it's not the raw immed itself
+
+        if (is_invalid || is_malformed || rhs.is_invalid || rhs.is_malformed) {
+            return false;
+        }
+
+        // this will be optimised easily. Cases like 1, 2, and 4 will be provided and are 
+        // the only realistic setting for the divisor (https://godbolt.org/z/s7cdqzPa8)
+        if ((number % rhs.divisor_constraint) != 0) {
+            return false;
+        }
+
+        if (rhs.has_msb_range) {
+            return (msb <= rhs.msb);
+        }
+
+        if (is_rotateable != rhs.is_rotateable) {
+            return false;
+        }
+
+        return (number == rhs.number);
+    }
 };
 
 struct PSR {
@@ -122,21 +144,82 @@ struct PSR {
     void set_spsr(const bool value = true) { llarm::util::modify_bit(flags, IS_SPSR, value); }
     void set_malformed(const bool value = true) { llarm::util::modify_bit(flags, MALFORMED, value); }
     void set_invalid(const bool value = true) { llarm::util::modify_bit(flags, INVALID, value); }
+
+    constexpr bool operator==(const PSR& rhs) const {
+        if (is_invalid() || is_malformed() || rhs.is_invalid() || rhs.is_malformed()) {
+            return false;
+        }
+
+        const bool rhs_has_fields = ((rhs.has_C() + rhs.has_X() + rhs.has_S() + rhs.has_F()) != 0);
+        const bool lhs_has_fields = ((has_C() + has_X() + has_S() + has_F()) != 0);
+
+        if (rhs_has_fields != lhs_has_fields) {
+            return false;
+        }
+
+        return (
+            is_cpsr() == rhs.is_cpsr() &&
+            is_spsr() == rhs.is_spsr()
+        );
+    }
 };
 
 struct REG_LIST {
     reg_type type;
     u8 reg_count;
+    bool is_r15_excluded;
+    bool must_have_r15;
+    bool is_thumb_supported;
     bool is_malformed;
     bool is_invalid;
     bool is_empty;
     u32 list;
+
+    constexpr bool operator==(const REG_LIST& rhs) const {
+        if (is_invalid || is_malformed || rhs.is_invalid || rhs.is_malformed) {
+            return false;
+        }
+
+        if (type != rhs.type) {
+            return false;
+        }
+
+        const bool is_r15_set = llarm::util::bit_fetch(list, 15);
+
+        if ((must_have_r15 || rhs.must_have_r15) && (is_r15_set == false)) {
+            return false;
+        }
+
+        if ((is_r15_excluded || rhs.is_r15_excluded) && is_r15_set) {
+            return false;
+        }
+
+        if (is_empty != rhs.is_empty) {
+            return false;
+        }
+
+        if (is_thumb_supported != rhs.is_thumb_supported) {
+            return false;
+        }
+
+        return true;
+    }
 };
 
-using tokens_t = std::vector<llarm::string_view>;
+struct OPTION {
+    u8 number;
+    bool is_malformed;
+    bool is_invalid;
+
+    constexpr bool operator==(const OPTION& rhs) const {
+        return ((is_invalid || is_malformed || rhs.is_invalid || rhs.is_malformed) == false);
+    }
+};
+
+
+using raw_tokens_t = std::vector<sv>;
+using tokens_t = std::vector<token_enum>;
 
 namespace tokens {
-    // tokenization/lexing management 
-    tokens_t tokenize(const std::string &code);
-    std::string strip(std::string str);
+    raw_tokens_t tokenize(const sv code);
 }

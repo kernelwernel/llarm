@@ -369,7 +369,7 @@ void INSTRUCTIONS::thumb::logic::ROR(const u16 code) {
         reg.write(id::cpsr::C, llarm::util::bit_fetch(reg.read(Rd_id), 31));
     } else {
         reg.write(id::cpsr::C, llarm::util::bit_fetch(reg.read(Rd_id), (Rs_4_0 - 1)));
-        reg.write(Rd_id, std::rotr(reg.read(Rd_id), Rs_4_0));
+        reg.write(Rd_id, llarm::util::rotr(reg.read(Rd_id), Rs_4_0));
     }
 
     const u32 Rd = reg.read(Rd_id);

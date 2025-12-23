@@ -144,7 +144,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg(const u32 code) {
             if (shift_imm == 0) { // RRX
                 index = ((reg.read(id::cpsr::C) << 31) | (Rm >> 1));
             } else { // ROR
-                index = std::rotr(Rm, shift_imm);
+                index = llarm::util::rotr(Rm, shift_imm);
             }
             break;
     }
@@ -293,7 +293,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg_pre(const u32 code) {
             if (shift_imm == 0) { // RRX
                 index = ((reg.read(id::cpsr::C) << 31) | (Rm >> 1));
             } else { // ROR
-                index = std::rotr(Rm, shift_imm);
+                index = llarm::util::rotr(Rm, shift_imm);
             }
             break;
     }
@@ -439,7 +439,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg_post(const u32 code) {
             if (shift_imm == 0) { // RRX
                 index = ((reg.read(id::cpsr::C) << 31) | (Rm >> 1));
             } else { // ROR
-                index = std::rotr(Rm, shift_imm);
+                index = llarm::util::rotr(Rm, shift_imm);
             }
             break;
     }

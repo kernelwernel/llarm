@@ -181,7 +181,7 @@ namespace internal::util {
             if constexpr (std::is_arithmetic_v<std::decay_t<decltype(arg)>>) {
                 total_size += std::to_string(arg).size();
             } else {
-                total_size += llarm::string_view(arg).size();
+                total_size += sv(arg).size();
             }
         }(args), ...);
 

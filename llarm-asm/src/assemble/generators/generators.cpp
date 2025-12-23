@@ -1,4 +1,5 @@
 #include "generators.hpp"
+#include "../arguments.hpp"
 #include "shared/util.hpp"
 
 using namespace internal;
@@ -11,7 +12,7 @@ bool generators::is_imm_encodable(const u32 imm) {
 
     // try every possible rotation
     for (u8 rot = 0; rot < 32; rot += 2) {
-        const u32 rotated = std::rotr(imm, rot);
+        const u32 rotated = llarm::util::rotr(imm, rot);
 
         if ((rotated & 0xFFFFFF00) == 0) {
             return true;
@@ -24,7 +25,7 @@ bool generators::is_imm_encodable(const u32 imm) {
 
 void encode_imm(u32 &binary, const u32 immed) {
     for (u32 rot = 0; rot < 16; ++rot) {
-        u32 rotated = std::rotr(immed, rot * 2);
+        u32 rotated = llarm::util::rotr(immed, rot * 2);
         if ((rotated & 0xFFFFFF00) == 0) {
             llarm::util::swap_bits(binary, 8, 11, static_cast<u8>(rotated));
             llarm::util::swap_bits(binary, 0, 7, static_cast<u8>(immed));

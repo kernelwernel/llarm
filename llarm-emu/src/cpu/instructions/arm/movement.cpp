@@ -110,7 +110,7 @@ void INSTRUCTIONS::arm::movement::MSR_IMM(const u32 code) {
 
     const u8 imm_8 = llarm::util::bit_range<u8>(code, 0, 7);
     const u8 rotate_imm = llarm::util::bit_range<u8>(code, 8, 11);
-    operand = std::rotr(imm_8, (rotate_imm * 2)); 
+    operand = llarm::util::rotr(imm_8, (rotate_imm * 2)); 
 
     if (R == false) {
         const bool is_privileged = reg.is_privileged();

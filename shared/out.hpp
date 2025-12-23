@@ -5,7 +5,7 @@
 #include "string_view.hpp"
 
 namespace llarm::out {
-    constexpr llarm::string_view
+    constexpr sv
         black_bg = "\x1B[48;2;0;0;0m",
         bold     = "\033[1m",
         ansiexit = "\x1B[0m",
