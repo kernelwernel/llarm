@@ -297,7 +297,7 @@ shifter_enum ident::string_shifters::vfp_mul_instruction(const lexemes_t &lexeme
 
 shifter_enum ident::string_shifters::identify_shifter(const IR_arm_struct &IR) {
     const id::arm id = IR.id;
-    const lexemes_t lexemes = std::move(IR.lexemes);
+    const lexemes_t lexemes = std::move(IR.lexemes); // maybe the move is not necessary, but whatever
     const sv mnemonic = IR.mnemonic;
 
     switch (id) {
@@ -332,7 +332,7 @@ shifter_enum ident::string_shifters::identify_shifter(const IR_arm_struct &IR) {
         case id::arm::STRB: return ls_instruction(lexemes);
         case id::arm::STRBT: return ls_instruction(lexemes);
         case id::arm::STRT: return ls_instruction(lexemes);
-        case id::arm::PLD: return ls_instruction_PLD(lexemes); // exception to addressing mode 2 (ls)
+        case id::arm::PLD: return ls_instruction_PLD(lexemes); // exception to addressing mode 2 (LS)
         case id::arm::STRH: return ls_misc_instruction(lexemes);
         case id::arm::LDRH: return ls_misc_instruction(lexemes);
         case id::arm::LDRSB: return ls_misc_instruction(lexemes);
