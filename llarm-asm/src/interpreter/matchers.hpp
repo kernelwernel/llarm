@@ -10,4 +10,5 @@ namespace matchers {
     IMM immediate(const sv str);
     token_enum character(const sv str);
     token_enum address_mode(const sv str);
+    bool comment(const sv str);
 }

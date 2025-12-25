@@ -4,7 +4,7 @@
 #include "shared/out.hpp"
 
 // format: LDM|STM{<cond>}<addressing_mode> <Rn>{!}, <registers>{^}
-u32 generators::ls_mul_instruction(const id::arm id, const arguments &args) {
+u32 generators::ls_mul_instruction(const arm_id id, const arguments &args) {
     u32 binary = 0;
 
     llarm::util::modify_bit(binary, 27, true);
@@ -13,45 +13,45 @@ u32 generators::ls_mul_instruction(const id::arm id, const arguments &args) {
     llarm::util::swap_bits(binary, 16, 19, args.first_reg);
 
     switch (id) {
-        case id::arm::LDM1: 
+        case arm_id::LDM1: 
             llarm::util::modify_bit(binary, 20, true);
             break;
 
-        case id::arm::LDM2: 
+        case arm_id::LDM2: 
             llarm::util::modify_bit(binary, 22, true);
             llarm::util::modify_bit(binary, 20, true);
             break;
 
-        case id::arm::LDM3: 
+        case arm_id::LDM3: 
             llarm::util::modify_bit(binary, 22, true);
             llarm::util::modify_bit(binary, 20, true);
             llarm::util::modify_bit(binary, 15, true);
             break;
 
-        case id::arm::STM2: 
+        case arm_id::STM2: 
             llarm::util::modify_bit(binary, 22, true);
             break;
 
-        case id::arm::STM1: break; 
+        case arm_id::STM1: break; 
 
         default: llarm::out::dev_error("Invalid configuration to load/store multiple instruction pattern generation");
     }
 
     switch (args.shifter) {
-        case shifter_enum::LS_MUL_INC_BEFORE:
+        case shifter_id::LS_MUL_INC_BEFORE:
             llarm::util::modify_bit(binary, 24, true); 
             llarm::util::modify_bit(binary, 23, true); 
             break;
         
-        case shifter_enum::LS_MUL_DEC_BEFORE:
+        case shifter_id::LS_MUL_DEC_BEFORE:
             llarm::util::modify_bit(binary, 24, true); 
             break;
 
-        case shifter_enum::LS_MUL_INC_AFTER: 
+        case shifter_id::LS_MUL_INC_AFTER: 
             llarm::util::modify_bit(binary, 23, true); 
             break;
 
-        case shifter_enum::LS_MUL_DEC_AFTER: break;
+        case shifter_id::LS_MUL_DEC_AFTER: break;
 
         default: llarm::out::dev_error("Invalid shifter configuration to load/store multiple instruction pattern generation");
     }

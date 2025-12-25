@@ -18,8 +18,8 @@ lexemes_t lexer::lex(const raw_tokens_t &tokens) {
         // a bug or something else going on that shouldn't happen. This method is easier to debug,
         // on top of guaranteeing the lexeme variable NOT being overwritten in case of a bug.
 
-        // Additionally, the reg list check is not included here due to the multi-token nature of it.
-        // That is identified in the refining process at the end of this function.
+        // Additionally, the reg list and option check is not included here due to their multi-token nature.
+        // That is identified in the refining process at the later stage of this function.
 
         if (reg_check(lexeme, token)) {
             lexeme_list.push_back(lexeme);
@@ -44,6 +44,11 @@ lexemes_t lexer::lex(const raw_tokens_t &tokens) {
         if (address_check(lexeme, token)) {
             lexeme_list.push_back(lexeme);
             continue;
+        }
+
+        // end of instruction arguments, return earlier if a comment was found
+        if (comment_check(lexeme, token)) {
+            return lexeme_list;
         }
 
         llarm::out::error("Unidentifiable or invalid token \"", token, "\" in assembly string argument");
@@ -354,5 +359,17 @@ bool lexer::address_check(lexeme &lexeme, const sv token) {
     }
 
     lexeme.token_type = address_candidate;
+    return true;
+}
+
+
+bool lexer::comment_check(lexeme &lexeme, const sv token) {
+    const bool is_comment = matchers::comment(token);
+
+    if (is_comment) {
+        lexeme.token_type = token_enum::COMMENT;
+        return true;
+    }
+
     return true;
 }

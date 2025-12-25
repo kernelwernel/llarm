@@ -1,6 +1,7 @@
 #include "interpreter.hpp"
-#include "llarm-asm/src/interpreter/lexer.hpp"
-#include "llarm-asm/src/interpreter/tokens.hpp"
+#include "lexer.hpp"
+#include "tokens.hpp"
+#include "../id/cond_id.hpp"
 
 bool interpreter::verify_lexemes(const lexemes_t&& raw_pattern, const lexemes_t &match_pattern) {
     if (raw_pattern.size() != match_pattern.size()) {
@@ -39,12 +40,28 @@ bool interpreter::verify_lexemes(const lexemes_t&& raw_pattern, const lexemes_t 
 
 
 bool interpreter::verify_tokens(const std::vector<token_enum>&& raw_tokens, const lexemes_t &match_pattern) {
+    using enum token_enum;
+
     if (raw_tokens.size() != match_pattern.size()) {
         return false;
     }
 
     for (u8 i = 0; i < raw_tokens.size(); i++) {
-        if (raw_tokens.at(i) != match_pattern.at(i).token_type) {
+        const token_enum match = match_pattern.at(i).token_type;
+        const token_enum raw = raw_tokens.at(i);
+
+        if (match == SHIFT) {
+            switch (raw) {
+                case LSL:
+                case LSR:
+                case ASR:
+                case ROR:
+                case RRX: continue;
+                default: return false;
+            }
+        }
+
+        if (raw != match) {
             return false;
         }
     }
@@ -77,11 +94,16 @@ u16 interpreter::fetch_last_2_chars(const sv str) {
 
 
 bool interpreter::cond_match(const sv cond) {
-    return cond_match((cond.at(0) << 8) | (cond.at(1)));
+    return fetch_cond_id(cond) != cond_id::UNKNOWN;
 }
 
 
 bool interpreter::cond_match(const u16 cond) {
+    return fetch_cond_id(cond) != cond_id::UNKNOWN;
+}
+
+
+cond_id interpreter::fetch_cond_id(const u16 cond) {
     constexpr u16 EQ = ('E' << 8) | 'Q';
     constexpr u16 NE = ('N' << 8) | 'E';
     constexpr u16 CS = ('C' << 8) | 'S';
@@ -101,34 +123,41 @@ bool interpreter::cond_match(const u16 cond) {
     constexpr u16 AL = ('A' << 8) | 'L';
 
     switch (cond) {
-        case EQ: 
-        case NE: 
-        case CS: 
-        case HS: 
-        case CC: 
-        case LO: 
-        case MI: 
-        case PL: 
-        case VS: 
-        case VC: 
-        case HI: 
-        case LS: 
-        case GE: 
-        case LT: 
-        case GT: 
-        case LE: 
-        case AL: return true;
+        case EQ: return cond_id::EQ; 
+        case NE: return cond_id::NE; 
+        case CS: return cond_id::CS; 
+        case HS: return cond_id::HS; 
+        case CC: return cond_id::CC; 
+        case LO: return cond_id::LO; 
+        case MI: return cond_id::MI; 
+        case PL: return cond_id::PL; 
+        case VS: return cond_id::VS; 
+        case VC: return cond_id::VC; 
+        case HI: return cond_id::HI; 
+        case LS: return cond_id::LS; 
+        case GE: return cond_id::GE; 
+        case LT: return cond_id::LT; 
+        case GT: return cond_id::GT; 
+        case LE: return cond_id::LE; 
+        case AL: return cond_id::AL; 
+        default: return cond_id::UNKNOWN;
+    }
+}
+
+cond_id interpreter::fetch_cond_id(const sv cond) {
+    if (cond.size() == 0) {
+        return cond_id::NONE;
     }
 
-    return false;
+    return fetch_cond_id((cond.at(0) << 8) | (cond.at(1)));
 }
 
 
-lexeme interpreter::reg(const reg_type reg_type, const u8 reg_num, const bool is_thumb) {
+lexeme interpreter::reg(const reg_type reg_type, const u8 reg_num) {
     REG reg = {
         reg_type::REGULAR, // type
         reg_num, // number
-        is_thumb, // is_thumb_supported
+        false, // is_thumb_supported
         false, // is_malformed
         false // is_invalid
     };
@@ -141,6 +170,51 @@ lexeme interpreter::reg(const reg_type reg_type, const u8 reg_num, const bool is
     return lexeme;
 }
 
+
+lexeme interpreter::reg(const interpreter::special_reg special_reg) {
+    const u8 reg_num = [=]() -> u8 {
+        switch (special_reg) {
+            case special_reg::PC: return 15;
+            case special_reg::LR: return 14;
+            case special_reg::SP: return 13;
+            case special_reg::IP: return 12;
+            case special_reg::FP: return 11;
+        }
+    }();
+
+    REG reg = {
+        reg_type::REGULAR, // type
+        reg_num, // number
+        false, // is_thumb_supported
+        false, // is_malformed
+        false // is_invalid
+    };
+
+    lexeme lexeme = {
+        token_enum::REG, // token_type
+        reg // data
+    };
+
+    return lexeme;
+}
+
+
+lexeme interpreter::reg_thumb(const u8 reg_num) {
+    REG reg = {
+        reg_type::REGULAR, // type
+        reg_num, // number
+        true, // is_thumb_supported
+        false, // is_malformed
+        false // is_invalid
+    };
+
+    lexeme lexeme = {
+        token_enum::REG, // token_type
+        reg // data
+    };
+
+    return lexeme;
+}
 
 lexeme interpreter::psr(const bool psr_type, const bool has_fields) {
     PSR psr = {
@@ -186,17 +260,14 @@ lexeme interpreter::option(const u8 number) {
 lexeme interpreter::immed(const immed_settings &settings) {
     IMM imm = {
         0, // number
-        0, // msb
-        0, // divisor_constraint
-        false, // has_msb_range
+        settings.msb, // msb
+        settings.divisor, // divisor_constraint
+        settings.is_msb_rangable, // has_msb_comparison
+        false, // bool is_rotateable
         false, // is_negative
         false, // is_malformed
         false // is_invalid
     };
-
-    imm.msb = settings.msb;
-    imm.divisor_constraint = settings.divisor;
-    imm.has_msb_range = settings.is_msb_rangable;
 
     lexeme lexeme = {
         token_enum::IMMED, // token_type
@@ -210,17 +281,35 @@ lexeme interpreter::immed(const immed_settings &settings) {
 lexeme interpreter::immed(const u8 msb) {
     IMM imm = {
         0, // number
-        0, // msb
-        0, // divisor_constraint
-        false, // has_msb_range
+        msb, // msb
+        1, // divisor_constraint
+        true, // has_msb_comparison
+        false, // is_rotateable
         false, // is_negative
         false, // is_malformed
         false // is_invalid
     };
 
-    imm.msb = msb;
-    imm.divisor_constraint = 1;
-    imm.has_msb_range = true;
+    lexeme lexeme = {
+        token_enum::IMMED, // token_type
+        imm // data
+    };
+
+    return lexeme;
+}
+
+
+lexeme interpreter::immed(const u8 msb, const u8 multiplier) {
+    IMM imm = {
+        0, // number
+        msb, // msb
+        multiplier, // divisor_constraint
+        true, // has_msb_comparison
+        false, // is_rotateable
+        false, // is_negative
+        false, // is_malformed
+        false // is_invalid
+    };
 
     lexeme lexeme = {
         token_enum::IMMED, // token_type
@@ -233,20 +322,16 @@ lexeme interpreter::immed(const u8 msb) {
 
 lexeme interpreter::reg_list(const reg_list_settings &settings) {
     REG_LIST reg_list = {
-        reg_type::UNKNOWN, // type
+        settings.reg_list_type, // type
         0, // reg_count
-        false, // is_r15_excluded
-        false, // must_have_r15
+        settings.is_r15_excluded, // is_r15_excluded
+        settings.must_include_r15, // must_have_r15
+        settings.is_reg_list_thumb, // is_thumb_supported
         false, // is_malformed
         false, // is_invalid
         false, // is_empty
         0 // list
     };
-
-    reg_list.type = settings.reg_list_type;
-    reg_list.is_r15_excluded = settings.is_r15_excluded;
-    reg_list.must_have_r15 = settings.must_include_r15;
-    reg_list.is_thumb_supported = settings.is_reg_list_thumb;
 
     lexeme lexeme = {
         token_enum::IMMED, // token_type
@@ -257,10 +342,10 @@ lexeme interpreter::reg_list(const reg_list_settings &settings) {
 }
 
 
-//constexpr lexeme interpreter::token(const token_enum t) {
-//    constexpr lexeme lexeme = {
-//        token_enum::IMMED, // token_type
-//    };
-//
-//    return lexeme;
-//}
+lexeme interpreter::token(const token_enum t) {
+    lexeme lexeme = {
+        t, // token_type
+    };
+
+    return lexeme;
+}

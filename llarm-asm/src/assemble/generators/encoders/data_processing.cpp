@@ -4,17 +4,17 @@
 #include "shared/out.hpp"
 
 // format: <opcode>{<cond>}{S} <Rd>, <Rn>, <shifter_operand>
-u32 generators::data_instruction(const id::arm instruction, const arguments &args) {
+u32 generators::data_instruction(const arm_id instruction, const arguments &args) {
     u32 binary = 0;
 
     llarm::util::swap_bits(binary, 28, 31, args.cond);
 
     const bool is_26_bit_instruction = [=]() -> bool {
         switch (instruction) {
-            case id::arm::CMNP: 
-            case id::arm::CMPP: 
-            case id::arm::TEQP: 
-            case id::arm::TSTP: return true;   
+            case arm_id::CMNP: 
+            case arm_id::CMPP: 
+            case arm_id::TEQP: 
+            case arm_id::TSTP: return true;   
             default: return false;
         }
     }();
@@ -28,16 +28,16 @@ u32 generators::data_instruction(const id::arm instruction, const arguments &arg
         u8 opcode = 0;
 
         switch (instruction) {
-            case id::arm::CMNP: opcode = 0b11; break;
-            case id::arm::CMPP: opcode = 0b10; break;
-            case id::arm::TEQP: opcode = 0b01; break;
-            case id::arm::TSTP: opcode = 0b00; break;
+            case arm_id::CMNP: opcode = 0b11; break;
+            case arm_id::CMPP: opcode = 0b10; break;
+            case arm_id::TEQP: opcode = 0b01; break;
+            case arm_id::TSTP: opcode = 0b00; break;
             default: break; // impossible to be otherwise, but whatever
         }
 
         llarm::util::swap_bits(binary, 21, 22, opcode);
     } else {
-        if (args.has_S()) {
+        if (args.has_S) {
             llarm::util::modify_bit(binary, 20, true);
         }
 
@@ -48,43 +48,43 @@ u32 generators::data_instruction(const id::arm instruction, const arguments &arg
         // bits 26 and 27 are 0 for all instructions below, so they're ignored
 
         switch (instruction) {
-            case id::arm::ADC: opcode = 0b0101; break;
-            case id::arm::ADD: opcode = 0b0100; break;
-            case id::arm::AND: opcode = 0b0000; break;
-            case id::arm::BIC: opcode = 0b1110; break;
-            case id::arm::EOR: opcode = 0b0001; break;
-            case id::arm::ORR: opcode = 0b1100; break;
-            case id::arm::RSB: opcode = 0b0011; break;
-            case id::arm::SBC: opcode = 0b0110; break;
-            case id::arm::RSC: opcode = 0b0111; break;
-            case id::arm::SUB: opcode = 0b0010; break;
+            case arm_id::ADC: opcode = 0b0101; break;
+            case arm_id::ADD: opcode = 0b0100; break;
+            case arm_id::AND: opcode = 0b0000; break;
+            case arm_id::BIC: opcode = 0b1110; break;
+            case arm_id::EOR: opcode = 0b0001; break;
+            case arm_id::ORR: opcode = 0b1100; break;
+            case arm_id::RSB: opcode = 0b0011; break;
+            case arm_id::SBC: opcode = 0b0110; break;
+            case arm_id::RSC: opcode = 0b0111; break;
+            case arm_id::SUB: opcode = 0b0010; break;
 
-            case id::arm::TST: 
+            case arm_id::TST: 
                 opcode = 0b1000;
                 Rd_present = false;
                 break;
 
-            case id::arm::TEQ: 
+            case arm_id::TEQ: 
                 opcode = 0b1001;
                 Rd_present = false;
                 break;
 
-            case id::arm::CMP:
+            case arm_id::CMP:
                 opcode = 0b1010;
                 Rd_present = false;
                 break;
 
-            case id::arm::CMN:
+            case arm_id::CMN:
                 opcode = 0b1011;
                 Rd_present = false;
                 break;
 
-            case id::arm::MOV: 
+            case arm_id::MOV: 
                 opcode = 0b1101;
                 Rn_present = false;
                 break;
 
-            case id::arm::MVN: 
+            case arm_id::MVN: 
                 opcode = 0b1111;
                 Rn_present = false;
                 break;
@@ -110,21 +110,21 @@ u32 generators::data_instruction(const id::arm instruction, const arguments &arg
     };
 
     switch (args.shifter) {
-        case shifter_enum::DATA_REG: llarm::util::swap_bits(binary, 0, 3, args.third_reg); break;
-        case shifter_enum::DATA_RRX:
+        case shifter_id::DATA_REG: llarm::util::swap_bits(binary, 0, 3, args.third_reg); break;
+        case shifter_id::DATA_RRX:
             llarm::util::modify_bit(binary, 5, true);
             llarm::util::modify_bit(binary, 6, true);
             llarm::util::swap_bits(binary, 0, 3, args.third_reg);
             break;
 
-        case shifter_enum::DATA_IMM_LSL:
+        case shifter_id::DATA_IMM_LSL:
             check_immed(args.first_int);
         
             llarm::util::swap_bits(binary, 0, 3, args.third_reg);
             llarm::util::swap_bits(binary, 7, 11, static_cast<u8>(args.first_int));
             break;
 
-        case shifter_enum::DATA_IMM_LSR:
+        case shifter_id::DATA_IMM_LSR:
             check_immed(args.first_int);
 
             llarm::util::modify_bit(binary, 5, true);
@@ -132,7 +132,7 @@ u32 generators::data_instruction(const id::arm instruction, const arguments &arg
             llarm::util::swap_bits(binary, 7, 11, static_cast<u8>(args.first_int));
             break;
 
-        case shifter_enum::DATA_IMM_ASR:
+        case shifter_id::DATA_IMM_ASR:
             check_immed(args.first_int);
 
             llarm::util::modify_bit(binary, 6, true);
@@ -140,7 +140,7 @@ u32 generators::data_instruction(const id::arm instruction, const arguments &arg
             llarm::util::swap_bits(binary, 7, 11, static_cast<u8>(args.first_int));
             break;
 
-        case shifter_enum::DATA_IMM_ROR:
+        case shifter_id::DATA_IMM_ROR:
             check_immed(args.first_int);
 
             llarm::util::modify_bit(binary, 5, true);
@@ -149,27 +149,27 @@ u32 generators::data_instruction(const id::arm instruction, const arguments &arg
             llarm::util::swap_bits(binary, 7, 11, static_cast<u8>(args.first_int));
             break;
 
-        case shifter_enum::DATA_REG_LSL:
+        case shifter_id::DATA_REG_LSL:
             llarm::util::modify_bit(binary, 4, true);
             llarm::util::swap_bits(binary, 0, 3, static_cast<u8>(args.third_reg));
             llarm::util::swap_bits(binary, 8, 11, static_cast<u8>(args.fourth_reg));
             break;
 
-        case shifter_enum::DATA_REG_LSR:
+        case shifter_id::DATA_REG_LSR:
             llarm::util::modify_bit(binary, 4, true);
             llarm::util::modify_bit(binary, 5, true);
             llarm::util::swap_bits(binary, 0, 3, static_cast<u8>(args.third_reg));
             llarm::util::swap_bits(binary, 8, 11, static_cast<u8>(args.fourth_reg));
             break;
 
-        case shifter_enum::DATA_REG_ASR:
+        case shifter_id::DATA_REG_ASR:
             llarm::util::modify_bit(binary, 4, true);
             llarm::util::modify_bit(binary, 6, true);
             llarm::util::swap_bits(binary, 0, 3, static_cast<u8>(args.third_reg));
             llarm::util::swap_bits(binary, 8, 11, static_cast<u8>(args.fourth_reg));
             break;
 
-        case shifter_enum::DATA_REG_ROR:
+        case shifter_id::DATA_REG_ROR:
             llarm::util::modify_bit(binary, 4, true);
             llarm::util::modify_bit(binary, 5, true);
             llarm::util::modify_bit(binary, 6, true);
@@ -177,7 +177,7 @@ u32 generators::data_instruction(const id::arm instruction, const arguments &arg
             llarm::util::swap_bits(binary, 8, 11, static_cast<u8>(args.fourth_reg));
             break;
 
-        case shifter_enum::DATA_IMM: {
+        case shifter_id::DATA_IMM: {
             llarm::util::modify_bit(binary, 25, true); 
 
             const u32 immed = args.first_int;

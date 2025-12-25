@@ -5,7 +5,7 @@
 u32 generators::mul(const arguments &args) {
     u32 binary = 0;
 
-    if (args.has_S()) {
+    if (args.has_S) {
         llarm::util::modify_bit(binary, 20, true);
     }
 
@@ -58,7 +58,7 @@ u32 generators::mla(const arguments &args) {
     llarm::util::modify_bit(binary, 7, true);
     llarm::util::modify_bit(binary, 4, true);
 
-    if (args.has_S()) {
+    if (args.has_S) {
         llarm::util::modify_bit(binary, 20, true);
     }
 
@@ -77,7 +77,7 @@ u32 generators::mrs(const arguments &args) {
 
     llarm::util::modify_bit(binary, 24, true);
 
-    if (args.has_spsr()) {
+    if (args.has_spsr) {
         llarm::util::modify_bit(binary, 22, true);
     }
 
@@ -96,7 +96,7 @@ u32 generators::msr_imm(const arguments &args) {
     llarm::util::modify_bit(binary, 24, true);
     llarm::util::modify_bit(binary, 21, true);
 
-    if (args.has_spsr()) {
+    if (args.has_spsr) {
         llarm::util::modify_bit(binary, 22, true);
     }
 
@@ -116,7 +116,7 @@ u32 generators::msr_reg(const arguments &args) {
     llarm::util::modify_bit(binary, 24, true);
     llarm::util::modify_bit(binary, 21, true);
 
-    if (args.has_spsr()) {
+    if (args.has_spsr) {
         llarm::util::modify_bit(binary, 22, true);
     }
 

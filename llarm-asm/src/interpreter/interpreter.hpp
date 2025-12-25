@@ -2,6 +2,7 @@
 
 #include "tokens.hpp"
 #include "lexer.hpp"
+#include "../id/cond_id.hpp"
 
 #include "shared/string_view.hpp"
 
@@ -19,6 +20,8 @@ namespace interpreter {
     u16 fetch_last_2_chars(const sv str);
     bool cond_match(const sv cond);
     bool cond_match(const u16 cond);
+    cond_id fetch_cond_id(const u16 cond);
+    cond_id fetch_cond_id(const sv cond);
 
     // these functions are meant to be wrappers for the sake of not cluttering the argument list
     // when trying to make a comparison between the raw lexemes that were gathered from string analysis,
@@ -60,21 +63,25 @@ namespace interpreter {
         }
     };
 
+    enum class special_reg : u8 {
+        PC,
+        LR,
+        SP,
+        IP,
+        FP
+    };
+
     // this may be useful: https://stackoverflow.com/questions/30632442/c14-constexpr-union-conditional-initialization-in-constructor
 
-    lexeme reg(const reg_type reg_type = reg_type::REGULAR, const u8 reg_num = WILDCARD, const bool is_thumb = false);
+    lexeme reg(const reg_type reg_type = reg_type::REGULAR, const u8 reg_num = WILDCARD);
+    lexeme reg(const special_reg special_reg);
+    lexeme reg_thumb(const u8 reg_num = WILDCARD);
     lexeme psr(const bool psr_type, const bool has_fields);
     lexeme option(const u8 number);
     lexeme immed(const immed_settings &imm_settings = {});
     lexeme immed(const u8 msb);
+    lexeme immed(const u8 msb, const u8 multiplier);
     lexeme reg_list(const reg_list_settings &reg_list_settings = {});
-    //constexpr lexeme token(const token_enum t);
-
-    constexpr lexeme token(const token_enum t) {
-        constexpr lexeme lexeme = {
-            token_enum::IMMED, // token_type
-        };
-
-        return lexeme;
-    }
+    lexeme reg_list_thumb();
+    lexeme token(const token_enum t);
 }

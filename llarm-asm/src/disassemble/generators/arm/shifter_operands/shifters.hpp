@@ -15,14 +15,14 @@ namespace internal::shifters {
     std::string ls_coproc(const u32 code, const settings settings);
     std::string vfp_ls_mul(const u32 code, const settings settings);
 
-    shifter_enum identify_data_shifter(const u32 code);
-    shifter_enum identify_ls_shifter(const u32 code);
-    shifter_enum identify_ls_misc_shifter(const u32 code);
-    shifter_enum identify_ls_mul_shifter(const u32 code);
-    shifter_enum identify_ls_coproc_shifter(const u32 code);
-    shifter_enum identify_vfp_ls_mul_shifter(const u32 code);
+    shifter_id identify_data_shifter(const u32 code);
+    shifter_id identify_ls_shifter(const u32 code);
+    shifter_id identify_ls_misc_shifter(const u32 code);
+    shifter_id identify_ls_mul_shifter(const u32 code);
+    shifter_id identify_ls_coproc_shifter(const u32 code);
+    shifter_id identify_vfp_ls_mul_shifter(const u32 code);
 
-    std::string shifter_to_string(const shifter_enum shifter, const u32 code, const settings settings);
+    std::string shifter_to_string(const shifter_id shifter, const u32 code, const settings settings);
 
     // defined in modes/data.cpp
     std::string data_reg_pattern(const u32 code, const std::string &mode, const settings settings);

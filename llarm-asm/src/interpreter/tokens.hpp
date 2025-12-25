@@ -80,7 +80,7 @@ struct IMM {
     i64 number;
     u8 msb; // most significant bit index, this is useful since there's a limit in some cases
     u8 divisor_constraint; // some immeds can only be a multiple of that number, default is 1
-    bool has_msb_range; // means that the msb will be analysed instead of the number during comparison
+    bool has_msb_comparison; // means that the msb will be analysed instead of the number during comparison
     bool is_rotateable; // important distinction for instructions with data processing address modes
     bool is_negative;
     bool is_malformed;
@@ -100,7 +100,7 @@ struct IMM {
             return false;
         }
 
-        if (rhs.has_msb_range) {
+        if (rhs.has_msb_comparison) {
             return (msb <= rhs.msb);
         }
 

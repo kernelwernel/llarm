@@ -111,10 +111,10 @@ u32 generators::fmrx(const arguments &args) {
     u8 reg = 0;
 
     switch (args.vfp_special_reg) {
-        case vfp_special_regs::NONE: break;
-        case vfp_special_regs::FPSID: break; // set to 0 already
-        case vfp_special_regs::FPSCR: reg = 1; break;
-        case vfp_special_regs::FPEXC: reg = 0b1000; break;
+        case vfp_special_reg_enum::NONE: break;
+        case vfp_special_reg_enum::FPSID: break; // set to 0 already
+        case vfp_special_reg_enum::FPSCR: reg = 1; break;
+        case vfp_special_reg_enum::FPEXC: reg = 0b1000; break;
     }
 
     llarm::util::swap_bits(binary, 16, 19, reg);
@@ -148,10 +148,10 @@ u32 generators::fmxr(const arguments &args) {
     u8 reg = 0;
 
     switch (args.vfp_special_reg) {
-        case vfp_special_regs::NONE: break;
-        case vfp_special_regs::FPSID: break; // set to 0 already
-        case vfp_special_regs::FPSCR: reg = 1; break;
-        case vfp_special_regs::FPEXC: reg = 0b1000; break;
+        case vfp_special_reg_enum::NONE: break;
+        case vfp_special_reg_enum::FPSID: break; // set to 0 already
+        case vfp_special_reg_enum::FPSCR: reg = 1; break;
+        case vfp_special_reg_enum::FPEXC: reg = 0b1000; break;
     }
 
     llarm::util::swap_bits(binary, 16, 19, reg);

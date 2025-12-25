@@ -4,25 +4,25 @@
 #include "shared/out.hpp"
 
 // format: LDR|STR{<cond>}H|SH|SB|D <Rd>, <addressing_mode>
-u32 generators::ls_misc_instruction(const id::arm id, const arguments &args) {
+u32 generators::ls_misc_instruction(const arm_id id, const arguments &args) {
     u32 binary = 0;
     
     llarm::util::swap_bits(binary, 28, 31, args.cond);
     llarm::util::swap_bits(binary, 12, 15, args.first_reg);
 
     switch (id) {
-        case id::arm::STRH: llarm::util::swap_bits(binary, 4, 7, 0b1011); break;
-        case id::arm::STRD: llarm::util::swap_bits(binary, 4, 7, 0b1111); break;
-        case id::arm::LDRD: llarm::util::swap_bits(binary, 4, 7, 0b1101); break;
-        case id::arm::LDRH: 
+        case arm_id::STRH: llarm::util::swap_bits(binary, 4, 7, 0b1011); break;
+        case arm_id::STRD: llarm::util::swap_bits(binary, 4, 7, 0b1111); break;
+        case arm_id::LDRD: llarm::util::swap_bits(binary, 4, 7, 0b1101); break;
+        case arm_id::LDRH: 
             llarm::util::swap_bits(binary, 4, 7, 0b1011); 
             llarm::util::modify_bit(binary, 20, true);
             break;
-        case id::arm::LDRSB: 
+        case arm_id::LDRSB: 
             llarm::util::swap_bits(binary, 4, 7, 0b1101); 
             llarm::util::modify_bit(binary, 20, true);
             break;
-        case id::arm::LDRSH: 
+        case arm_id::LDRSH: 
             llarm::util::swap_bits(binary, 4, 7, 0b1111); 
             llarm::util::modify_bit(binary, 20, true);
             break;
@@ -39,44 +39,44 @@ u32 generators::ls_misc_instruction(const id::arm id, const arguments &args) {
         llarm::util::swap_bits(binary, 0, 3, immed_L);
     };
 
-    if (args.has_minus() == false) {
+    if (args.has_minus == false) {
         llarm::util::modify_bit(binary, 23, true);
     }
 
     llarm::util::swap_bits(binary, 16, 19, args.second_reg);
 
     switch (args.shifter) {
-        case shifter_enum::LS_MISC_IMM: {
+        case shifter_id::LS_MISC_IMM: {
             llarm::util::modify_bit(binary, 24, true);
             llarm::util::modify_bit(binary, 22, true);
             change_immed(args.first_int);
             break;
         }
 
-        case shifter_enum::LS_MISC_IMM_PRE:
+        case shifter_id::LS_MISC_IMM_PRE:
             llarm::util::modify_bit(binary, 24, true);
             llarm::util::modify_bit(binary, 22, true);
             llarm::util::modify_bit(binary, 21, true);
             change_immed(args.first_int);
             break;
 
-        case shifter_enum::LS_MISC_IMM_POST:
+        case shifter_id::LS_MISC_IMM_POST:
             llarm::util::modify_bit(binary, 22, true);
             change_immed(args.first_int);
             break;
 
-        case shifter_enum::LS_MISC_REG:
+        case shifter_id::LS_MISC_REG:
             llarm::util::modify_bit(binary, 24, true);
             llarm::util::swap_bits(binary, 0, 3, args.third_reg);
             break;
 
-        case shifter_enum::LS_MISC_REG_PRE:
+        case shifter_id::LS_MISC_REG_PRE:
             llarm::util::modify_bit(binary, 24, true);
             llarm::util::modify_bit(binary, 21, true);
             llarm::util::swap_bits(binary, 0, 3, args.third_reg);
             break;
 
-        case shifter_enum::LS_MISC_REG_POST:
+        case shifter_id::LS_MISC_REG_POST:
             llarm::util::swap_bits(binary, 0, 3, args.third_reg);
             break;
 

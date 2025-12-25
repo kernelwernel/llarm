@@ -12,14 +12,14 @@ using namespace internal;
 // be to identify an undefined or unknown instruction (me thinks)
 
 bool valid::u16_thumb::is_thumb_instruction_valid(const u16 code) {
-    const id::thumb id = ident::u16_thumb::thumb(code);
+    const thumb_id id = ident::u16_thumb::thumb(code);
     return is_thumb_instruction_valid(id);
 }
 
 
-bool valid::u16_thumb::is_thumb_instruction_valid(const id::thumb id) {
+bool valid::u16_thumb::is_thumb_instruction_valid(const thumb_id id) {
     return (
-        (id != id::thumb::UNDEFINED) &&
-        (id != id::thumb::UNKNOWN)
+        (id != thumb_id::UNDEFINED) &&
+        (id != thumb_id::UNKNOWN)
     );
 }

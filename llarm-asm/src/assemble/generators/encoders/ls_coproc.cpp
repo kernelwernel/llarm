@@ -4,7 +4,7 @@
 #include "shared/out.hpp"
 
 // format: <opcode>{<cond>}{L} <coproc>, <CRd>,<addressing_mode>
-u32 generators::ls_coproc_instruction(const id::arm id, const arguments &args) {
+u32 generators::ls_coproc_instruction(const arm_id id, const arguments &args) {
     u32 binary = 0;
 
     // all coprocessor instructions
@@ -23,18 +23,22 @@ u32 generators::ls_coproc_instruction(const id::arm id, const arguments &args) {
     constexpr u8 W = 21;
     constexpr u8 L = 20;
 
-    if (args.has_minus() == false) {
+    if (args.has_minus == false) {
         llarm::util::modify_bit(binary, U, true);
     }
 
     switch (id) {
-        case id::arm::LDC2:
-        case id::arm::LDC:
+        case arm_id::LDC2:
+        case arm_id::LDC:
+            if (args.has_L) {
+                llarm::util::modify_bit(binary, N, true);
+            }
+
             llarm::util::modify_bit(binary, L, true);
             // no break on purpose
 
-        case id::arm::STC2:
-        case id::arm::STC:
+        case arm_id::STC2:
+        case arm_id::STC:
             llarm::util::modify_bit(binary, 27, true);
             llarm::util::modify_bit(binary, 26, true);
             break;
@@ -43,22 +47,22 @@ u32 generators::ls_coproc_instruction(const id::arm id, const arguments &args) {
     }
 
     switch (args.shifter) {
-        case shifter_enum::LS_COPROC_IMM:
+        case shifter_id::LS_COPROC_IMM:
             llarm::util::swap_bits(binary, 0, 7, args.first_int);
             llarm::util::modify_bit(binary, P, true);
             break;
 
-        case shifter_enum::LS_COPROC_IMM_PRE:
+        case shifter_id::LS_COPROC_IMM_PRE:
             llarm::util::swap_bits(binary, 0, 7, args.first_int);
             llarm::util::modify_bit(binary, P, true);
             llarm::util::modify_bit(binary, W, true);
             break;
 
-        case shifter_enum::LS_COPROC_IMM_POST:
+        case shifter_id::LS_COPROC_IMM_POST:
             llarm::util::modify_bit(binary, W, true);
             break;
 
-        case shifter_enum::LS_COPROC_UNINDEXED: 
+        case shifter_id::LS_COPROC_UNINDEXED: 
             llarm::util::modify_bit(binary, U, true);
             break;
 

@@ -6,5 +6,5 @@ using namespace internal;
 
 namespace internal::valid::u16_thumb {
     bool is_thumb_instruction_valid(const u16 code); 
-    bool is_thumb_instruction_valid(const id::thumb id); 
+    bool is_thumb_instruction_valid(const thumb_id id); 
 }

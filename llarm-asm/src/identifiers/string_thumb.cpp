@@ -1,22 +1,23 @@
 #include "string_thumb.hpp"
 #include "../interpreter/interpreter.hpp"
-#include "../instruction_id.hpp"
+#include "../id/instruction_id.hpp"
 
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 #include "shared/out.hpp"
+#include "shared/string_view.hpp"
 
 using namespace internal;
 using enum token_enum;
 
-id::thumb ident::string_thumb::thumb(const std::string &code) {
+thumb_id ident::string_thumb::thumb(const std::string &code) {
     const std::string instruction = llarm::util::to_upper(code);
     
     const sv mnemonic = interpreter::fetch_instruction(instruction);
 
-    for (const auto &e : pure_thumb_instructions) {
-        if (mnemonic == e.str) {
-            return e.id;
+    for (const auto &inst : pure_thumb_instructions) {
+        if (mnemonic == inst.str) {
+            return inst.id;
         }
     }
 
@@ -59,306 +60,306 @@ id::thumb ident::string_thumb::thumb(const std::string &code) {
         const u16 cond_key = (mnemonic.at(1) << 8) | (mnemonic.at(2));
 
         if (interpreter::cond_match(cond_key)) {
-            return id::thumb::B1;
+            return thumb_id::B1;
         }
     }
 
-    return id::thumb::UNDEFINED;
+    return thumb_id::UNDEFINED;
 }
 
 
-id::thumb ident::string_thumb::ADD(const lexemes_t &lexemes) {
+thumb_id ident::string_thumb::ADD(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // ADD1
     if (verify_tokens({ REG, REG, HASHTAG, IMMED }, lexemes)) {
-        return id::thumb::ADD1;
+        return thumb_id::ADD1;
     }
 
     // ADD2
     if (verify_tokens({ REG, HASHTAG, IMMED }, lexemes)) {
-        return id::thumb::ADD2;
+        return thumb_id::ADD2;
     }
 
     // ADD3
     if (verify_tokens({ REG, REG, REG }, lexemes)) {
-        return id::thumb::ADD3;
+        return thumb_id::ADD3;
     }
 
     // ADD4
     if (verify_tokens({ REG, REG }, lexemes)) {
-        return id::thumb::ADD4;
+        return thumb_id::ADD4;
     }
 
     // ADD5
     if (verify_tokens({ REG, IMMED, HASHTAG, IMMED, MUL_OP, IMMED }, lexemes)) {
-        return id::thumb::ADD5;
+        return thumb_id::ADD5;
     }
 
     // ADD6
     if (verify_tokens({ REG, IMMED, HASHTAG, IMMED, MUL_OP, IMMED }, lexemes)) {
-        return id::thumb::ADD6;
+        return thumb_id::ADD6;
     }
 
     // ADD7
     if (verify_tokens({ IMMED, HASHTAG, IMMED, MUL_OP, IMMED }, lexemes)) {
-        return id::thumb::ADD7;
+        return thumb_id::ADD7;
     }
 
     llarm::out::error("Unknown ADD thumb instruction variant, cannot be identified");
 }
 
 
-id::thumb ident::string_thumb::SUB(const lexemes_t &lexemes) {
+thumb_id ident::string_thumb::SUB(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // SUB1
     if (verify_tokens({ REG, REG, HASHTAG, IMMED }, lexemes)) {
-        return id::thumb::SUB1;
+        return thumb_id::SUB1;
     }
 
     // SUB2
     if (verify_tokens({ REG, HASHTAG, IMMED }, lexemes)) {
-        return id::thumb::SUB2;
+        return thumb_id::SUB2;
     }
 
     // SUB3
     if (verify_tokens({ REG, REG, REG }, lexemes)) {
-        return id::thumb::SUB3;
+        return thumb_id::SUB3;
     }
 
     // SUB4
     if (verify_tokens({ IMMED, HASHTAG, IMMED, MUL_OP, IMMED }, lexemes)) {
-        return id::thumb::SUB4;
+        return thumb_id::SUB4;
     }
 
     llarm::out::error("Unknown SUB thumb instruction variant, cannot be identified");
 }
 
 
-id::thumb ident::string_thumb::ASR(const lexemes_t &lexemes) {
+thumb_id ident::string_thumb::ASR(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // ASR1
     if (verify_tokens({ REG, REG, HASHTAG, IMMED }, lexemes)) {
-        return id::thumb::ASR1;
+        return thumb_id::ASR1;
     }
 
     // ASR2
     if (verify_tokens({ REG, REG }, lexemes)) {
-        return id::thumb::ASR2;
+        return thumb_id::ASR2;
     }
 
     llarm::out::error("Unknown ASR thumb instruction variant, cannot be identified");
 }
 
 
-id::thumb ident::string_thumb::LSL(const lexemes_t &lexemes) {
+thumb_id ident::string_thumb::LSL(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // LSL1
     if (verify_tokens({ REG, REG, HASHTAG, IMMED }, lexemes)) {
-        return id::thumb::LSL1;
+        return thumb_id::LSL1;
     }
 
     // LSL2
     if (verify_tokens({ REG, REG }, lexemes)) {
-        return id::thumb::LSL2;
+        return thumb_id::LSL2;
     }
 
     llarm::out::error("Unknown LSL thumb instruction variant, cannot be identified");
 }
 
 
-id::thumb ident::string_thumb::LSR(const lexemes_t &lexemes) {
+thumb_id ident::string_thumb::LSR(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // LSR1
     if (verify_tokens({ REG, REG, HASHTAG, IMMED }, lexemes)) {
-        return id::thumb::LSR1;
+        return thumb_id::LSR1;
     }
 
     // LSR2
     if (verify_tokens({ REG, REG }, lexemes)) {
-        return id::thumb::LSR2;
+        return thumb_id::LSR2;
     }
 
     llarm::out::error("Unknown LSR thumb instruction variant, cannot be identified");
 }
 
 
-id::thumb ident::string_thumb::CMP(const lexemes_t &lexemes) {
+thumb_id ident::string_thumb::CMP(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // CMP1
     if (verify_tokens({ REG, HASHTAG, IMMED }, lexemes)) {
-        return id::thumb::CMP1;
+        return thumb_id::CMP1;
     }
 
     // CMP2
     if (verify_tokens({ REG, REG }, lexemes)) {
-        return id::thumb::CMP2;
+        return thumb_id::CMP2;
     }
 
     // CMP3
     if (verify_tokens({ REG, REG }, lexemes)) {
-        return id::thumb::CMP3;
+        return thumb_id::CMP3;
     }
 
     llarm::out::error("Unknown CMP thumb instruction variant, cannot be identified");
 }
 
 
-id::thumb ident::string_thumb::MOV(const lexemes_t &lexemes) {
+thumb_id ident::string_thumb::MOV(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // MOV1
     if (verify_tokens({ REG, HASHTAG, IMMED }, lexemes)) {
-        return id::thumb::MOV1;
+        return thumb_id::MOV1;
     }
 
     // MOV2
     if (verify_tokens({ REG, REG }, lexemes)) {
-        return id::thumb::MOV2;
+        return thumb_id::MOV2;
     }
 
     // MOV3
     if (verify_tokens({ REG, REG }, lexemes)) {
-        return id::thumb::MOV3;
+        return thumb_id::MOV3;
     }
 
     llarm::out::error("Unknown MOV thumb instruction variant, cannot be identified");
 }
 
 
-id::thumb ident::string_thumb::BLX(const lexemes_t &lexemes) {
+thumb_id ident::string_thumb::BLX(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // BLX1
     if (verify_tokens({ IMMED }, lexemes)) {
-        return id::thumb::BLX1;
+        return thumb_id::BLX1;
     }
 
     // BLX2
     if (verify_tokens({ REG }, lexemes)) {
-        return id::thumb::BLX2;
+        return thumb_id::BLX2;
     }
 
     llarm::out::error("Unknown BLX thumb instruction variant, cannot be identified");
 }
 
 
-id::thumb ident::string_thumb::LDR(const lexemes_t &lexemes) {
+thumb_id ident::string_thumb::LDR(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // LDR1
     if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
-        return id::thumb::LDR1;
+        return thumb_id::LDR1;
     }
 
     // LDR2
     if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
-        return id::thumb::LDR2;
+        return thumb_id::LDR2;
     }
 
     // LDR3
     if (verify_tokens({ REG, MEM_START, IMMED, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
-        return id::thumb::LDR3;
+        return thumb_id::LDR3;
     }
 
     // LDR4
     if (verify_tokens({ REG, MEM_START, IMMED, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
-        return id::thumb::LDR4;
+        return thumb_id::LDR4;
     }
 
     llarm::out::error("Unknown LDR thumb instruction variant, cannot be identified");
 }
 
 
-id::thumb ident::string_thumb::LDRB(const lexemes_t &lexemes) {
+thumb_id ident::string_thumb::LDRB(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // LDRB1
     if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MEM_END }, lexemes)) {
-        return id::thumb::LDRB1;
+        return thumb_id::LDRB1;
     }
 
     // LDRB2
     if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
-        return id::thumb::LDRB2;
+        return thumb_id::LDRB2;
     }
 
     llarm::out::error("Unknown LDRB thumb instruction variant, cannot be identified");
 }
 
 
-id::thumb ident::string_thumb::LDRH(const lexemes_t &lexemes) {
+thumb_id ident::string_thumb::LDRH(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // LDRH1
     if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
-        return id::thumb::LDRH1;
+        return thumb_id::LDRH1;
     }
 
     // LDRH2
     if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
-        return id::thumb::LDRH2;
+        return thumb_id::LDRH2;
     }
 
     llarm::out::error("Unknown LDRH thumb instruction variant, cannot be identified");
 }
 
 
-id::thumb ident::string_thumb::STR(const lexemes_t &lexemes) {
+thumb_id ident::string_thumb::STR(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // STR1
     if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
-        return id::thumb::STR1;
+        return thumb_id::STR1;
     }
 
     // STR2
     if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
-        return id::thumb::STR2;
+        return thumb_id::STR2;
     }
 
     // STR3
     if (verify_tokens({ REG, MEM_START, IMMED, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
-        return id::thumb::STR3;
+        return thumb_id::STR3;
     }
 
     llarm::out::error("Unknown STR thumb instruction variant, cannot be identified");
 }
 
 
-id::thumb ident::string_thumb::STRB(const lexemes_t &lexemes) {
+thumb_id ident::string_thumb::STRB(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // STRB1
     if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MEM_END }, lexemes)) {
-        return id::thumb::STRB1;
+        return thumb_id::STRB1;
     }
 
     // STRB2
     if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
-        return id::thumb::STRB2;
+        return thumb_id::STRB2;
     }
 
     llarm::out::error("Unknown STRB thumb instruction variant, cannot be identified");
 }
 
 
-id::thumb ident::string_thumb::STRH(const lexemes_t &lexemes) {
+thumb_id ident::string_thumb::STRH(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // STRH1
     if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
-        return id::thumb::STRB1;
+        return thumb_id::STRB1;
     }
 
     // STRH2
     if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
-        return id::thumb::STRB2;
+        return thumb_id::STRB2;
     }
 
     llarm::out::error("Unknown STRH thumb instruction variant, cannot be identified");

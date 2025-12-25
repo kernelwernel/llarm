@@ -25,8 +25,8 @@ namespace llarm {
         inline default_func default_settings = &internal::default_settings;
 
         // alternatives in case it's under C++17
-        using arm_id = internal::id::arm;
-        using thumb_id = internal::id::thumb;
+        using arm_id = internal::arm_id;
+        using thumb_id = internal::thumb_id;
 
         //enum class arm : internal::id::arm {};
         //enum class thumb : internal::id::thumb {};
@@ -82,7 +82,7 @@ namespace llarm {
             return internal::disassemble::thumb(code, PC, settings);
         }
 
-        inline u32 assemble_arm(const std::string code) {
+        inline u32 assemble_arm(const std::string &code) {
 
         }
 

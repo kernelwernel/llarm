@@ -59,6 +59,7 @@ namespace lexer {
     bool reg_list_check(lexeme &lexeme, const raw_tokens_t &list);
     bool character_check(lexeme &lexeme, const sv token);
     bool address_check(lexeme &lexeme, const sv token);
+    bool comment_check(lexeme &lexeme, const sv token);
     
     void option_check(lexemes_t &lexemes, const u8 start_pos, const u8 end_pos);
 

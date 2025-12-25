@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../instruction_id.hpp"
+#include "../../id/instruction_id.hpp"
 
 #include "shared/types.hpp"
 
@@ -12,11 +12,11 @@ namespace internal::generators {
     bool is_imm_encodable(const u32 imm);
     void encode_imm(u32 &binary, const u32 imm);
 
-    u32 data_instruction(const id::arm instruction, const arguments &arg);
-    u32 ls_instruction(const id::arm instruction, const arguments &arg);
-    u32 ls_misc_instruction(const id::arm instruction, const arguments &arg);
-    u32 ls_mul_instruction(const id::arm instruction, const arguments &arg);
-    u32 ls_coproc_instruction(const id::arm id, const arguments &arg);
+    u32 data_instruction(const arm_id instruction, const arguments &arg);
+    u32 ls_instruction(const arm_id instruction, const arguments &arg);
+    u32 ls_misc_instruction(const arm_id instruction, const arguments &arg);
+    u32 ls_mul_instruction(const arm_id instruction, const arguments &arg);
+    u32 ls_coproc_instruction(const arm_id id, const arguments &arg);
 
     // defined in encoders/special.cpp
     u32 mul(const arguments &arg);
@@ -41,20 +41,20 @@ namespace internal::generators {
     u32 mrrc(const arguments &args);
 
     // defined in encoders/special_grouping.cpp
-    u32 q_instructions(const id::arm id, const arguments &args);
-    u32 mul_instructions(const id::arm id, const arguments &args);
-    u32 dsp_mul_instructions(const id::arm id, const arguments &args);
+    u32 q_instructions(const arm_id id, const arguments &args);
+    u32 mul_instructions(const arm_id id, const arguments &args);
+    u32 dsp_mul_instructions(const arm_id id, const arguments &args);
 
     // defined in encoders/vfp.cpp
-    u32 vfp_Dd_Dm_instructions(const id::arm id, const arguments &args);
-    u32 vfp_Dd_Dn_Dm_instructions(const id::arm id, const arguments &args);
-    u32 vfp_Sd_Sm_instructions(const id::arm id, const arguments &args);
-    u32 vfp_Sd_Sn_Sm_instructions(const id::arm id, const arguments &args);
-    u32 vfp_Dd_Sm_instructions(const id::arm id, const arguments &args);
-    u32 vfp_Sd_Dm_instructions(const id::arm id, const arguments &args);
+    u32 vfp_Dd_Dm_instructions(const arm_id id, const arguments &args);
+    u32 vfp_Dd_Dn_Dm_instructions(const arm_id id, const arguments &args);
+    u32 vfp_Sd_Sm_instructions(const arm_id id, const arguments &args);
+    u32 vfp_Sd_Sn_Sm_instructions(const arm_id id, const arguments &args);
+    u32 vfp_Dd_Sm_instructions(const arm_id id, const arguments &args);
+    u32 vfp_Sd_Dm_instructions(const arm_id id, const arguments &args);
 
     // defined in encoders/vfp_mul.cpp
-    u32 vfp_mul_instructions(const id::arm id, const arguments &args);
+    u32 vfp_mul_instructions(const arm_id id, const arguments &args);
 
     // defined in vfp.cpp
     u32 fcmpezd(const arguments &args);
@@ -74,5 +74,5 @@ namespace internal::generators {
     u32 fmxr(const arguments &args);
     u32 fmstat(const arguments &args);
 
-    u32 arm(const id::arm id, const arguments &args);
+    u32 arm(const arm_id id, const arguments &args);
 }

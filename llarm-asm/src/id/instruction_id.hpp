@@ -3,9 +3,8 @@
 
 #include "shared/types.hpp"
 
-
-namespace internal::id {
-    enum class arm : u8 {
+namespace internal {
+    enum class arm_id : u8 {
         UNKNOWN,
         UNDEFINED,
         NOP,
@@ -175,7 +174,7 @@ namespace internal::id {
     };
 
 
-    enum class thumb : u8 {
+    enum class thumb_id : u8 {
         UNKNOWN,
         UNDEFINED,
         ADC,
@@ -245,7 +244,7 @@ namespace internal::id {
         STRH2
     };
 
-    enum class jazelle : u8 {
+    enum class jazelle_id : u8 {
         UNKNOWN = 0,
         AALOAD,
         AASTORE,

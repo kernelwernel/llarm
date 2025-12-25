@@ -2,7 +2,7 @@
 
 #include "shared/types.hpp"
 
-enum class shifter_enum : u8 {
+enum class shifter_id : u8 {
     UNKNOWN,
     NONE,
 

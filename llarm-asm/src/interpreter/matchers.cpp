@@ -171,8 +171,8 @@ IMM matchers::immediate(sv str) {
     IMM imm = {
         0, /* number */
         0, /* msb */
-        0, /* divisor_constraint */
-        false, // has_msb_range */
+        1, /* divisor_constraint */
+        false, // has_msb_comparison */
         false, // is_rotateable */
         false, /* is_negative */
         false, /* is_malformed*/
@@ -245,8 +245,6 @@ IMM matchers::immediate(sv str) {
         imm.msb = msb;
     }
 
-    
-
     imm.is_invalid = false;
 
     return imm;
@@ -270,10 +268,6 @@ token_enum matchers::character(const sv str) {
         case '^': return token_enum::CARET;
         case '!': return token_enum::PRE_INDEX;
         case '-': return token_enum::MIN_OP;
-
-        // both are basically comment starters
-        case '@': return token_enum::COMMENT;
-        case '<': return token_enum::COMMENT; // gcc uses this convention like "MOV R0, #1 <some commentary>"
     }
 
     return token_enum::UNKNOWN;
@@ -301,4 +295,14 @@ token_enum matchers::address_mode(const sv str) {
         case RRX: return token_enum::RRX;
         default: return token_enum::UNKNOWN;
     }
+}
+
+
+bool matchers::comment(const sv str) {
+    const unsigned char first_char = str.front();
+    
+    // gcc uses this convention like "MOV R0, #1 <some commentary>",
+    // and the standard comment starter is '@' 
+
+    return (first_char == '@' || first_char == '<');
 }

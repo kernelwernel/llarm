@@ -1,12 +1,12 @@
 #include "u32_arm.hpp"
-#include "../instruction_id.hpp"
+#include "../id/instruction_id.hpp"
 
 #include "shared/types.hpp"
 #include "shared/util.hpp"
 
 using namespace internal;
 
-id::arm ident::u32_arm::misc_instructions(const u32 code) {
+arm_id ident::u32_arm::misc_instructions(const u32 code) {
     const u8 second_half = llarm::util::bit_range<u8>(code, 20, 24);
     const u8 first_half = llarm::util::bit_range<u8>(code, 4, 7);
 
@@ -14,33 +14,33 @@ id::arm ident::u32_arm::misc_instructions(const u32 code) {
         case 0b0000:
             switch (second_half) {
                 case 0b10000: 
-                case 0b10100: return id::arm::MRS; 
+                case 0b10100: return arm_id::MRS; 
                 case 0b10010:
-                case 0b10110: return id::arm::MSR_REG;
+                case 0b10110: return arm_id::MSR_REG;
             }
             break;
 
         case 0b0001:
             if (second_half == 0b10110) {
-                return id::arm::CLZ;
+                return arm_id::CLZ;
             } else if (second_half == 0b10010) {
-                return id::arm::BX;
+                return arm_id::BX;
             }
             break;
             
 
         case 0b0011:
             if (second_half == 0b10010) {
-                return id::arm::BLX2;
+                return arm_id::BLX2;
             }
             break;
 
         case 0b0101:
             switch (second_half) {
-                case 0b10000: return id::arm::QADD;
-                case 0b10010: return id::arm::QSUB;
-                case 0b10100: return id::arm::QDADD;
-                case 0b10110: return id::arm::QDSUB;
+                case 0b10000: return arm_id::QADD;
+                case 0b10010: return arm_id::QSUB;
+                case 0b10100: return arm_id::QDADD;
+                case 0b10110: return arm_id::QDSUB;
             }
             break;
 
@@ -50,7 +50,7 @@ id::arm ident::u32_arm::misc_instructions(const u32 code) {
                 (second_half == 0b10010) && 
                 (llarm::util::bit_range(code, 28, 31) == 0b1110)
             ) {
-                return id::arm::BKPT;
+                return arm_id::BKPT;
             }
             break;
         
@@ -65,38 +65,38 @@ id::arm ident::u32_arm::misc_instructions(const u32 code) {
                 case 0b000100001010:
                 case 0b000100001100:
                 case 0b000100001110:
-                    return id::arm::SMLAXY;
+                    return arm_id::SMLAXY;
                 
                 case 0b000101001000:
                 case 0b000101001010:
                 case 0b000101001100:
                 case 0b000101001110:
-                    return id::arm::SMLALXY;
+                    return arm_id::SMLALXY;
                 
                 case 0b000100101000:
                 case 0b000100101100:
-                    return id::arm::SMLAWY;
+                    return arm_id::SMLAWY;
                 
                 case 0b000101101000:
                 case 0b000101101010:
                 case 0b000101101100:
                 case 0b000101101110:
-                    return id::arm::SMULXY;
+                    return arm_id::SMULXY;
                 
                 case 0b000100101010:
                 case 0b000100101110:
-                    return id::arm::SMULWY;
+                    return arm_id::SMULWY;
             }
     }
 
-    return id::arm::UNDEFINED;
+    return arm_id::UNDEFINED;
 }
 
 
 
 
 
-id::arm ident::u32_arm::multiply_extra_load_store(const u32 code) {
+arm_id ident::u32_arm::multiply_extra_load_store(const u32 code) {
     const u8 second_half = llarm::util::bit_range<u8>(code, 20, 24);
     const u8 first_half = llarm::util::bit_range<u8>(code, 4, 7);
 
@@ -105,54 +105,54 @@ id::arm ident::u32_arm::multiply_extra_load_store(const u32 code) {
         case 0b1001:
             switch (second_half) {
                 case 0b00000:
-                case 0b00001: return id::arm::MUL;
+                case 0b00001: return arm_id::MUL;
                 case 0b00010:
-                case 0b00011: return id::arm::MLA;
+                case 0b00011: return arm_id::MLA;
                 // this normally wouldn't be necessary but i'm designing it for 
                 // each possible case as a contiguous condition so that the 
                 // compiler can take advantage of page table lookup optimisations
                 case 0b00100: 
                 case 0b00101:
                 case 0b00110:
-                case 0b00111: return id::arm::UNDEFINED;
+                case 0b00111: return arm_id::UNDEFINED;
                 case 0b01000:
-                case 0b01001: return id::arm::UMULL;
+                case 0b01001: return arm_id::UMULL;
                 case 0b01010:
-                case 0b01011: return id::arm::UMLAL;
+                case 0b01011: return arm_id::UMLAL;
                 case 0b01100: 
-                case 0b01101: return id::arm::SMULL;
+                case 0b01101: return arm_id::SMULL;
                 case 0b01110:
-                case 0b01111: return id::arm::SMLAL;
-                case 0b10000: return id::arm::SWP;
-                case 0b10100: return id::arm::SWPB;
+                case 0b01111: return arm_id::SMLAL;
+                case 0b10000: return arm_id::SWP;
+                case 0b10100: return arm_id::SWPB;
             }
             break;
 
         // halfwords
         case 0b1011:
             if (llarm::util::bit_fetch(code, 20) == true) {
-                return id::arm::LDRH;
+                return arm_id::LDRH;
             } else {
-                return id::arm::STRH;
+                return arm_id::STRH;
             }
 
         case 0b1101:
             if (llarm::util::bit_fetch(code, 20) == true) {
-                return id::arm::LDRSB;
+                return arm_id::LDRSB;
             } else {
-                return id::arm::LDRD;
+                return arm_id::LDRD;
             }
 
         case 0b1111:
             if (llarm::util::bit_fetch(code, 20) == true) {
-                return id::arm::LDRSH;
+                return arm_id::LDRSH;
             }
     }
 
-    return id::arm::UNDEFINED;
+    return arm_id::UNDEFINED;
 }
 
-id::arm ident::u32_arm::unconditional(const u32 code) {
+arm_id ident::u32_arm::unconditional(const u32 code) {
     if (llarm::util::bit_fetch(code, 27) == false) {
         if (
             (llarm::util::bit_fetch(code, 26) == 1) &&
@@ -162,102 +162,102 @@ id::arm ident::u32_arm::unconditional(const u32 code) {
             (llarm::util::bit_fetch(code, 20) == 1) &&
             (llarm::util::bit_range(code, 12, 15) == 0b1111)
         ) {
-            return id::arm::PLD;
+            return arm_id::PLD;
         } else {
-            return id::arm::UNDEFINED;
+            return arm_id::UNDEFINED;
         }
     }
 
     switch (llarm::util::bit_range(code, 25, 26)) {
-        case 0b01: return id::arm::BLX1;
+        case 0b01: return arm_id::BLX1;
         case 0b10: 
             if (llarm::util::bit_fetch(code, 20) == 1) {
-                return id::arm::LDC2;
+                return arm_id::LDC2;
             } else {
-                return id::arm::STC2;
+                return arm_id::STC2;
             }
         
         case 0b11:
             if (llarm::util::bit_fetch(code, 24) == 1) {
-                return id::arm::UNDEFINED;
+                return arm_id::UNDEFINED;
             }
 
             if (llarm::util::bit_fetch(code, 4) == 0) {
-                return id::arm::CDP2;
+                return arm_id::CDP2;
             } 
 
             if (llarm::util::bit_fetch(code, 20) == 1) {
-                return id::arm::MRC2;
+                return arm_id::MRC2;
             } else {
-                return id::arm::MCR2;
+                return arm_id::MCR2;
             }
     }
 
-    return id::arm::UNDEFINED;
+    return arm_id::UNDEFINED;
 }
 
-id::arm ident::u32_arm::data_processing(const u32 code) {
+arm_id ident::u32_arm::data_processing(const u32 code) {
     switch (llarm::util::bit_range(code, 21, 24)) {
-        case 0b0000: return id::arm::AND; 
-        case 0b0001: return id::arm::EOR;
-        case 0b0010: return id::arm::SUB;
-        case 0b0011: return id::arm::RSB;
-        case 0b0100: return id::arm::ADD; 
-        case 0b0101: return id::arm::ADC; 
-        case 0b0110: return id::arm::SBC;
-        case 0b0111: return id::arm::RSC;
+        case 0b0000: return arm_id::AND; 
+        case 0b0001: return arm_id::EOR;
+        case 0b0010: return arm_id::SUB;
+        case 0b0011: return arm_id::RSB;
+        case 0b0100: return arm_id::ADD; 
+        case 0b0101: return arm_id::ADC; 
+        case 0b0110: return arm_id::SBC;
+        case 0b0111: return arm_id::RSC;
         case 0b1000: 
             if (llarm::util::bit_fetch(code, 20)) {
-                return id::arm::TST;
+                return arm_id::TST;
             } else if (llarm::util::bit_range(code, 12, 15) == 0b1111) {
-                return id::arm::TSTP;
+                return arm_id::TSTP;
             }
-            return id::arm::UNDEFINED;
+            return arm_id::UNDEFINED;
 
         case 0b1001: 
             if (llarm::util::bit_fetch(code, 20)) {
-                return id::arm::TEQ;
+                return arm_id::TEQ;
             } else if (llarm::util::bit_range(code, 12, 15) == 0b1111) {
-                return id::arm::TEQP;
+                return arm_id::TEQP;
             }
-            return id::arm::UNDEFINED;
+            return arm_id::UNDEFINED;
 
         case 0b1010: 
             if (llarm::util::bit_fetch(code, 20)) {
-                return id::arm::CMP;
+                return arm_id::CMP;
             } else if (llarm::util::bit_range(code, 12, 15) == 0b1111) {
-                return id::arm::CMPP;
+                return arm_id::CMPP;
             }
-            return id::arm::UNDEFINED;
+            return arm_id::UNDEFINED;
         
         case 0b1011: 
             if (llarm::util::bit_fetch(code, 20)) {
-                return id::arm::CMN;
+                return arm_id::CMN;
             } else if (llarm::util::bit_range(code, 12, 15) == 0b1111) {
-                return id::arm::CMNP;
+                return arm_id::CMNP;
             }
-            return id::arm::UNDEFINED;
+            return arm_id::UNDEFINED;
 
-        case 0b1100: return id::arm::ORR;
-        case 0b1101: return id::arm::MOV; 
-        case 0b1110: return id::arm::BIC;
-        case 0b1111: return id::arm::MVN;
-        default: return id::arm::UNDEFINED;
+        case 0b1100: return arm_id::ORR;
+        case 0b1101: return arm_id::MOV; 
+        case 0b1110: return arm_id::BIC;
+        case 0b1111: return arm_id::MVN;
+        default: return arm_id::UNDEFINED;
     }
 }
 
 
-id::arm ident::u32_arm::load_store(const u32 code) {
+arm_id ident::u32_arm::load_store(const u32 code) {
     const bool bit_22 = llarm::util::bit_fetch(code, 22);
     const bool bit_20 = llarm::util::bit_fetch(code, 20);
 
     const u8 bytecode = (static_cast<u8>(bit_22 << 1) | bit_20);
 
     switch (bytecode) {
-        case 0b00: return id::arm::STR;
-        case 0b01: return id::arm::LDR;
-        case 0b10: return id::arm::STRB;
-        case 0b11: return id::arm::LDRB;
+        case 0b00: return arm_id::STR;
+        case 0b01: return arm_id::LDR;
+        case 0b10: return arm_id::STRB;
+        case 0b11: return arm_id::LDRB;
     }
 
     const bool bit_24 = llarm::util::bit_fetch(code, 24);
@@ -266,18 +266,18 @@ id::arm ident::u32_arm::load_store(const u32 code) {
     const u8 bytecode2 = static_cast<u8>((bit_24 << 3) | (bit_22 << 2) | (bit_21 << 1) | bit_20);
 
     switch (bytecode2) {
-        case 0b0010: return id::arm::STRT;
-        case 0b0011: return id::arm::LDRT;
-        case 0b0110: return id::arm::STRBT;
-        case 0b0111: return id::arm::LDRBT;
+        case 0b0010: return arm_id::STRT;
+        case 0b0011: return arm_id::LDRT;
+        case 0b0110: return arm_id::STRBT;
+        case 0b0111: return arm_id::LDRBT;
     }
 
-    return id::arm::UNDEFINED;
+    return arm_id::UNDEFINED;
 }
 
 
 
-id::arm ident::u32_arm::vfp_single(const u32 code) {
+arm_id ident::u32_arm::vfp_single(const u32 code) {
     const bool bit_24 = llarm::util::bit_fetch(code, 24);
     const bool bit_23 = llarm::util::bit_fetch(code, 23);
     const bool bit_21 = llarm::util::bit_fetch(code, 21);
@@ -295,34 +295,34 @@ id::arm ident::u32_arm::vfp_single(const u32 code) {
     switch (bytecode) {
         case 0b01111100:
             if (middle_zone == 0b0101) {
-                return id::arm::FCMPEZS;
+                return arm_id::FCMPEZS;
             }
 
             [[fallthrough]]; // no break on purpose
         case 0b01111110: 
             switch (middle_zone) {
-                case 0b0100: return id::arm::FCMPES;
-                case 0b0000: return id::arm::FABSS;
-                case 0b1000: return id::arm::FSITOS;
-                case 0b1101: return id::arm::FTOSIS;
-                case 0b0001: return id::arm::FSQRTS;
-                case 0b1100: return id::arm::FTOUIS;
+                case 0b0100: return arm_id::FCMPES;
+                case 0b0000: return arm_id::FABSS;
+                case 0b1000: return arm_id::FSITOS;
+                case 0b1101: return arm_id::FTOSIS;
+                case 0b0001: return arm_id::FSQRTS;
+                case 0b1100: return arm_id::FTOUIS;
             }
             break;
         case 0b00110000:
         case 0b00110010:
         case 0b00111000:
-        case 0b00111010: return id::arm::FADDS;
+        case 0b00111010: return arm_id::FADDS;
         case 0b01110100:
         case 0b01110110: 
             switch (middle_zone) {
-                case 0b0100: return id::arm::FCMPS;
-                case 0b1000: return id::arm::FUITOS;
-                case 0b0101: return id::arm::FCMPZS;
-                case 0b1101: return id::arm::FTOSIS;
-                case 0b0000: return id::arm::FCPYS;
-                case 0b0001: return id::arm::FNEGS;
-                case 0b1100: return id::arm::FTOUIS;
+                case 0b0100: return arm_id::FCMPS;
+                case 0b1000: return arm_id::FUITOS;
+                case 0b0101: return arm_id::FCMPZS;
+                case 0b1101: return arm_id::FTOSIS;
+                case 0b0000: return arm_id::FCPYS;
+                case 0b0001: return arm_id::FNEGS;
+                case 0b1100: return arm_id::FTOUIS;
             }
             break;
 
@@ -330,36 +330,36 @@ id::arm ident::u32_arm::vfp_single(const u32 code) {
         case 0b01000010:
         case 0b01001000:
         case 0b01001010:
-            return id::arm::FDIVS;
+            return arm_id::FDIVS;
         
         case 0b00000000:
         case 0b00000010:
         case 0b00001000:
         case 0b00001010:
-            return id::arm::FMACS;
+            return arm_id::FMACS;
         
         case 0b00000100:
         case 0b00000110:
         case 0b00001100:
         case 0b00001110:
-            return id::arm::FNMACS;
+            return arm_id::FNMACS;
 
         case 0b00010100:
         case 0b00010110:
         case 0b00011100:
         case 0b00011110:
-            return id::arm::FNMSCS;
+            return arm_id::FNMSCS;
 
         case 0b00100100:
         case 0b00100110:
         case 0b00101100:
         case 0b00101110:
-            return id::arm::FNMULS;
+            return arm_id::FNMULS;
 
         case 0b00010001:
         case 0b00011001:
             if (llarm::util::bit_fetch(code, 22) == false) {
-                return id::arm::FMRS;
+                return arm_id::FMRS;
             }
             break;
         
@@ -369,9 +369,9 @@ id::arm ident::u32_arm::vfp_single(const u32 code) {
                     (llarm::util::bit_range(code, 12, 19) == 0b00011111) &&
                     (llarm::util::bit_fetch(code, 4))
                 ) {
-                    return id::arm::FMSTAT;
+                    return arm_id::FMSTAT;
                 } else {
-                    return id::arm::FMRX;
+                    return arm_id::FMRX;
                 }
             }
             break;
@@ -380,12 +380,12 @@ id::arm ident::u32_arm::vfp_single(const u32 code) {
         case 0b00010010:
         case 0b00011000:
         case 0b00011010:
-            return id::arm::FMSCS;
+            return arm_id::FMSCS;
         
         case 0b00000001:
         case 0b00001001:
             if (llarm::util::bit_fetch(code, 22) == true) {
-                return id::arm::FMSR;
+                return arm_id::FMSR;
             }
             break;
 
@@ -393,11 +393,11 @@ id::arm ident::u32_arm::vfp_single(const u32 code) {
         case 0b00100010:
         case 0b00101000:
         case 0b00101010:
-            return id::arm::FMULS;
+            return arm_id::FMULS;
 
         case 0b01100001:
             if (llarm::util::bit_fetch(code, 22) == true) {
-                return id::arm::FMXR;
+                return arm_id::FMXR;
             }
             break;
     
@@ -405,59 +405,59 @@ id::arm ident::u32_arm::vfp_single(const u32 code) {
         case 0b00110110:
         case 0b00111100:
         case 0b00111110:
-            return id::arm::FSUBS;
+            return arm_id::FSUBS;
     
     }
 
-    return id::arm::UNDEFINED;
+    return arm_id::UNDEFINED;
 }
 
 
-id::arm ident::u32_arm::vfp_double(const u32 code) {
+arm_id ident::u32_arm::vfp_double(const u32 code) {
     const u8 left = llarm::util::bit_range<u8>(code, 20, 23);
     const u8 right = llarm::util::bit_range<u8>(code, 4, 7);
 
     switch (left) {
         case 0b0000:
             if (right == 0b0000) {
-                return id::arm::FMACD;
+                return arm_id::FMACD;
             } else if (right == 0b0001) {
-                return id::arm::FMDLR;
+                return arm_id::FMDLR;
             } else if (right == 0b0100) {
-                return id::arm::FNMACD;
+                return arm_id::FNMACD;
             }
             break;
 
         case 0b1000:
             if (right == 0b0000) {
-                return id::arm::FDIVD;
+                return arm_id::FDIVD;
             }
             break;
         
         case 0b0010:
             if (right == 0b0000) {
-                return id::arm::FMULD;
+                return arm_id::FMULD;
             } else if (right == 0b0001) {
-                return id::arm::FMDHR;
+                return arm_id::FMDHR;
             } else if (right == 0b0100) {
-                return id::arm::FNMULD;
+                return arm_id::FNMULD;
             }
             break;
         
         case 0b0001:
             if (right == 0b0000) {
-                return id::arm::FMSCD;
+                return arm_id::FMSCD;
             } else if (right == 0b0001) {
-                return id::arm::FMRDL;
+                return arm_id::FMRDL;
             } else if (right == 0b0100) {
-                return id::arm::FNMSCD;
+                return arm_id::FNMSCD;
             }
 
             [[fallthrough]]; // no break on purpose
 
         case 0b1001:
             if (llarm::util::bit_range(code, 8, 11) == 0b1011) {
-                return id::arm::FLDD;
+                return arm_id::FLDD;
             }
             break;
 
@@ -466,48 +466,48 @@ id::arm ident::u32_arm::vfp_double(const u32 code) {
 
             if (right == 0b1100) {
                 switch (middle) {
-                    case 0b0000: return id::arm::FABSD;
-                    case 0b0001: return id::arm::FSQRTD;
-                    case 0b0100: return id::arm::FCMPED;
-                    case 0b0101: return id::arm::FCMPEZD;
+                    case 0b0000: return arm_id::FABSD;
+                    case 0b0001: return arm_id::FSQRTD;
+                    case 0b0100: return arm_id::FCMPED;
+                    case 0b0101: return arm_id::FCMPEZD;
                     case 0b0111: 
                         if (llarm::util::bit_range(code, 8, 11) == 0b1011) {
-                            return id::arm::FCVTSD;
+                            return arm_id::FCVTSD;
                         } else if (llarm::util::bit_range(code, 8, 11) == 0b1010) {
-                            return id::arm::FCVTDS;
+                            return arm_id::FCVTDS;
                         }
                         break;
-                    case 0b1000: return id::arm::FSITOD;
-                    case 0b1100: return id::arm::FTOUID;
-                    case 0b1101: return id::arm::FTOSID;
+                    case 0b1000: return arm_id::FSITOD;
+                    case 0b1100: return arm_id::FTOUID;
+                    case 0b1101: return arm_id::FTOSID;
                 }
                 break;
             }
             
             if (right == 0b1110) {
                 if (middle == 0b0111) {
-                    return id::arm::FCVTDS;
+                    return arm_id::FCVTDS;
                 } else if (middle == 0b1000) {
-                    return id::arm::FSITOD;
+                    return arm_id::FSITOD;
                 }
             }
 
             if (right == 0b0100) {
                 switch (middle) {
-                    case 0b0100: return id::arm::FCMPD;
-                    case 0b0101: return id::arm::FCMPZD;
-                    case 0b0000: return id::arm::FCPYD;
-                    case 0b0001: return id::arm::FNEGD;
-                    case 0b1101: return id::arm::FTOSID;
-                    case 0b1100: return id::arm::FTOUID;
-                    case 0b1000: return id::arm::FUITOD;
+                    case 0b0100: return arm_id::FCMPD;
+                    case 0b0101: return arm_id::FCMPZD;
+                    case 0b0000: return arm_id::FCPYD;
+                    case 0b0001: return arm_id::FNEGD;
+                    case 0b1101: return arm_id::FTOSID;
+                    case 0b1100: return arm_id::FTOUID;
+                    case 0b1000: return arm_id::FUITOD;
                 }
                 break;
             }
 
             if (right == 0b0110) {
                 if (middle == 0b1000) {
-                    return id::arm::FUITOD;
+                    return arm_id::FUITOD;
                 }
             }
             break;
@@ -515,11 +515,11 @@ id::arm ident::u32_arm::vfp_double(const u32 code) {
         
         case 0b0011:
         if (right == 0b0000) {
-            return id::arm::FADDD;
+            return arm_id::FADDD;
             } else if (right == 0b0001) {
-                return id::arm::FMRDH;
+                return arm_id::FMRDH;
             } else if (right == 0b0100) {
-                return id::arm::FSUBD;
+                return arm_id::FSUBD;
             }
             break;
         
@@ -528,33 +528,33 @@ id::arm ident::u32_arm::vfp_double(const u32 code) {
 
             if (right == 0b1100) {
                 if (middle == 0b0111) {
-                    return id::arm::FCVTSD;
+                    return arm_id::FCVTSD;
                 } else if (middle == 0b1101) {
-                    return id::arm::FTOSID;
+                    return arm_id::FTOSID;
                 } else if (middle == 0b1100) {
-                    return id::arm::FTOUID;
+                    return arm_id::FTOUID;
                 }
             } else if (right == 0b0100) {
                 if (middle == 0b1101) {
-                    return id::arm::FTOSID;
+                    return arm_id::FTOSID;
                 } else if (middle == 0b1100) {
-                    return id::arm::FTOUID;
+                    return arm_id::FTOUID;
                 }
             }
     }
 
-    return id::arm::UNDEFINED;
+    return arm_id::UNDEFINED;
 }
 
 
-id::arm ident::u32_arm::arm(const u32 code) {
+arm_id ident::u32_arm::arm(const u32 code) {
     // note: NOP is not handled because it's a pseudo 
     // instruction that's unique to this project. 
     
     if (llarm::util::bit_range(code, 28, 31) == 0b1111) {
-        const id::arm tmp = unconditional(code);
+        const arm_id tmp = unconditional(code);
 
-        if (tmp != id::arm::UNDEFINED) {
+        if (tmp != arm_id::UNDEFINED) {
             return tmp;
         }
     }
@@ -572,7 +572,7 @@ id::arm ident::u32_arm::arm(const u32 code) {
 
                 if (bit_7) {
                     if (!bit_20 && llarm::util::bit_range(code, 4, 7) == 0b1111) {
-                        return id::arm::STRD;
+                        return arm_id::STRD;
                     }
 
                     // multiplies, extra load/stores
@@ -607,9 +607,9 @@ id::arm ident::u32_arm::arm(const u32 code) {
             const u8 bytecode = static_cast<u8>((bit_24 << 3) | (bit_23 << 2) | (bit_21 << 1) | bit_20);
 
             if (bytecode == 0b1000) {
-                return id::arm::UNDEFINED;
+                return arm_id::UNDEFINED;
             } else if (bytecode == 0b1010) {
-                return id::arm::MSR_IMM;
+                return arm_id::MSR_IMM;
             }
 
             return data_processing(code);
@@ -623,7 +623,7 @@ id::arm ident::u32_arm::arm(const u32 code) {
         // complete
         case 0b011:
             if (llarm::util::bit_fetch(code, 4) == true) {
-                return id::arm::UNDEFINED;
+                return arm_id::UNDEFINED;
             }
 
             // load/store register offset
@@ -632,7 +632,7 @@ id::arm ident::u32_arm::arm(const u32 code) {
         // complete
         case 0b100: {
             if (llarm::util::bit_range(code, 31, 28) == 0b1111) {
-                return id::arm::UNDEFINED;
+                return arm_id::UNDEFINED;
             }
 
             // load/store multiple
@@ -641,26 +641,26 @@ id::arm ident::u32_arm::arm(const u32 code) {
             const bool bit_20 = llarm::util::bit_fetch(code, 20);
             
             if (!bit_22 && bit_20) {
-                return id::arm::LDM1;
+                return arm_id::LDM1;
             }
 
             if (!bit_22 && !bit_20) {
-                return id::arm::STM1;
+                return arm_id::STM1;
             }
 
             const bool bit_21 = llarm::util::bit_fetch(code, 21);
             const bool bit_15 = llarm::util::bit_fetch(code, 15);
 
             if (bit_22 && !bit_21 && !bit_20) {
-                return id::arm::STM2;
+                return arm_id::STM2;
             }
 
             if (bit_22 && !bit_21 && bit_20 && !bit_15) {
-                return id::arm::LDM2;
+                return arm_id::LDM2;
             }
 
             if (bit_22 && bit_20 && bit_15) {
-                return id::arm::LDM3;
+                return arm_id::LDM3;
             }
 
             break;
@@ -670,9 +670,9 @@ id::arm ident::u32_arm::arm(const u32 code) {
         case 0b101:
             // branch and branch with link
             if (llarm::util::bit_fetch(code, 24)) {
-                return id::arm::BL;
+                return arm_id::BL;
             } else {
-                return id::arm::B;
+                return arm_id::B;
             }
     
         // complete
@@ -682,7 +682,7 @@ id::arm ident::u32_arm::arm(const u32 code) {
 
             if (llarm::util::bit_fetch(code, 20) == 0) {
                 if (bytecode == 0b00100) {
-                    return id::arm::MCRR;
+                    return arm_id::MCRR;
                 } 
 
                 const u8 middle_right_zone = llarm::util::bit_range<u8>(code, 8, 11);
@@ -692,42 +692,42 @@ id::arm ident::u32_arm::arm(const u32 code) {
                         (llarm::util::bit_fetch(code, 21) == 0) &&
                         (llarm::util::bit_fetch(code, 20) == 0)
                     ) {
-                        return id::arm::FSTS;
+                        return arm_id::FSTS;
                     }
-                    return id::arm::FSTMS;
+                    return arm_id::FSTMS;
                 } else if (middle_right_zone == 0b1011) {
                     if (llarm::util::bit_fetch(code, 22) == 0) {
                         if (
                             (llarm::util::bit_fetch(code, 24)) &&
                             (llarm::util::bit_fetch(code, 21) == 0)
                         ) {
-                            return id::arm::FSTD;
+                            return arm_id::FSTD;
                         }
 
                         if (code & 1) {
-                            return id::arm::FSTMX;
+                            return arm_id::FSTMX;
                         } else {
-                            return id::arm::FSTMD;
+                            return arm_id::FSTMD;
                         }
                     }
                 }
 
-                return id::arm::STC;
+                return arm_id::STC;
             } else {
                 switch (bytecode) {
-                    case 0b00101: return id::arm::MRRC;
+                    case 0b00101: return arm_id::MRRC;
                     case 0b10001: 
                     case 0b10101: 
                     case 0b11001: 
                     case 0b11101: 
                         if (llarm::util::bit_range(code, 8, 11) == 0b1010) {
-                            return id::arm::FLDS;
+                            return arm_id::FLDS;
                         }
                 }
 
                 const u8 middle_right_zone = llarm::util::bit_range<u8>(code, 8, 11);
                 if (middle_right_zone == 0b1010) {
-                    return id::arm::FLDMS;
+                    return arm_id::FLDMS;
                 } else if (
                     (middle_right_zone == 0b1011) && 
                     (llarm::util::bit_fetch(code, 22) == false)
@@ -735,14 +735,14 @@ id::arm ident::u32_arm::arm(const u32 code) {
                     // odd offset = FLDMX
                     // even offset = FLDMD 
                     if (code & 1) {
-                        return id::arm::FLDMX;
+                        return arm_id::FLDMX;
                     } else {
-                        return id::arm::FLDMD;
+                        return arm_id::FLDMD;
                     }
 
                 }
 
-                return id::arm::LDC;
+                return arm_id::LDC;
             }
         }
         
@@ -751,16 +751,16 @@ id::arm ident::u32_arm::arm(const u32 code) {
         case 0b111: {
             if (llarm::util::bit_fetch(code, 24) == 1) {
                 if (llarm::util::bit_range(code, 31, 28) == 0b1111) {
-                    return id::arm::UNDEFINED;
+                    return arm_id::UNDEFINED;
                 } else {
-                    return id::arm::SWI;
+                    return arm_id::SWI;
                 }
             } else {
                 if (llarm::util::bit_fetch(code, 4) == 1) {
                     if (llarm::util::bit_fetch(code, 20) == 1) {
-                        return id::arm::MRC;
+                        return arm_id::MRC;
                     } else {
-                        return id::arm::MCR;
+                        return arm_id::MCR;
                     }
                 } else {
                     const u8 cp_num = llarm::util::bit_range<u8>(code, 8, 11);
@@ -770,11 +770,11 @@ id::arm ident::u32_arm::arm(const u32 code) {
                         return vfp_double(code);
                     }
                 
-                    return id::arm::CDP;
+                    return arm_id::CDP;
                 }
             }
         }
     }
 
-    return id::arm::UNDEFINED;
+    return arm_id::UNDEFINED;
 }
