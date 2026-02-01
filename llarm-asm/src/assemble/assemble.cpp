@@ -1,8 +1,7 @@
 #include "assemble.hpp"
 
-#include "arguments.hpp"
 #include "../interpreter/IR.hpp"
-#include "generators/generators.hpp"
+#include "arm/generators.hpp"
 #include "shared/types.hpp"
 
 #include <string>
@@ -20,12 +19,11 @@ u32 assemble::arm(const std::string &code, const u32 PC) {
 
 
 u32 assemble::arm(const IR_arm_struct &IR) {
-    const arguments args = args::IR_to_args(IR);
-    return generators::arm(IR.id, args);
+    return generators::arm(IR);
 }
 
 //
 //u16 assemble::thumb(const IR_thumb_struct &IR) {
-//    const arguments args = args::IR_to_args(IR);
+//    const operand_struct args = args::IR_to_args(IR);
 //    //return generators::thumb(IR.id, args);
 //}

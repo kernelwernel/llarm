@@ -1,13 +1,10 @@
 #pragma once
 
-#include "../interpreter/IR.hpp"
-#include "llarm-asm/src/interpreter/lexer.hpp"
-#include "shared/types.hpp"
-
 #include "../id/shifter_id.hpp"
 
-using enum token_enum;
-
+// the IR_struct.hpp and this file are not combined together due to dependency issues
+// down the line when an IR must be generated for an instruction. This separated format
+// may seem a bit clanky and unnecessary, but it works.
 
 enum class vfp_special_reg_enum : u8 {
     NONE,
@@ -16,7 +13,7 @@ enum class vfp_special_reg_enum : u8 {
     FPEXC
 };
 
-struct arguments {
+struct operand_struct {
     u32 first_int;
     u32 second_int;
     u32 third_int;
@@ -44,18 +41,3 @@ struct arguments {
     bool has_spsr;
     bool has_preindex;
 };
-
-
-namespace args {
-    arguments IR_to_args(const IR_arm_struct &IR);
-
-    void reg(u8 &reg_count, u8 &CR_reg_count, arguments &arg, const lexeme &lexeme);
-    void imm(u8 &int_count, arguments &arg, const lexeme &lexeme);
-    void psr(arguments &arg, const lexeme &lexeme);
-    void reg_list(arguments &arg, const lexeme &lexeme);
-
-
-    //arguments thumb_IR_to_args(const IR_thumb_struct &IR) {
-    //    
-    //}
-}

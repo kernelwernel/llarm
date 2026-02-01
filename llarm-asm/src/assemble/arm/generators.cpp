@@ -1,0 +1,189 @@
+#include "generators.hpp"
+#include "../../interpreter/IR_struct.hpp"
+#include "shared/util.hpp"
+
+using namespace internal;
+
+bool generators::is_imm_encodable(const u32 imm) {
+    // 1 byte immeds are always encodable
+    if ((imm & 0xFFFFFF00) == 0) {
+        return true;
+    }
+
+    // try every possible rotation
+    for (u8 rot = 0; rot < 32; rot += 2) {
+        const u32 rotated = llarm::util::rotr(imm, rot);
+
+        if ((rotated & 0xFFFFFF00) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+void encode_imm(u32 &binary, const u32 immed) {
+    for (u32 rot = 0; rot < 16; ++rot) {
+        u32 rotated = llarm::util::rotr(immed, rot * 2);
+        if ((rotated & 0xFFFFFF00) == 0) {
+            llarm::util::swap_bits(binary, 8, 11, static_cast<u8>(rotated));
+            llarm::util::swap_bits(binary, 0, 7, static_cast<u8>(immed));
+        }
+    }
+}
+
+
+u32 generators::arm(const IR_arm_struct &IR) {
+    const arm_id id = IR.mnemonic.id;
+    const operand_struct &operands = IR.operands;
+
+    switch (id) {
+        case arm_id::UNKNOWN: return 0;
+        case arm_id::UNDEFINED:  return 0;
+        case arm_id::NOP: return 0;
+        case arm_id::ADC: return data_instruction(id, operands);
+        case arm_id::ADD: return data_instruction(id, operands);
+        case arm_id::AND: return data_instruction(id, operands);
+        case arm_id::BIC: return data_instruction(id, operands);
+        case arm_id::CMN: return data_instruction(id, operands);
+        case arm_id::CMP: return data_instruction(id, operands);
+        case arm_id::EOR: return data_instruction(id, operands);
+        case arm_id::MOV: return data_instruction(id, operands);
+        case arm_id::MVN: return data_instruction(id, operands);
+        case arm_id::ORR: return data_instruction(id, operands);
+        case arm_id::RSB: return data_instruction(id, operands);
+        case arm_id::RSC: return data_instruction(id, operands);
+        case arm_id::SBC: return data_instruction(id, operands);
+        case arm_id::SUB: return data_instruction(id, operands);
+        case arm_id::TEQ: return data_instruction(id, operands);
+        case arm_id::TST: return data_instruction(id, operands);
+        case arm_id::CMNP: return data_instruction(id, operands);
+        case arm_id::CMPP: return data_instruction(id, operands);
+        case arm_id::TEQP: return data_instruction(id, operands);
+        case arm_id::TSTP: return data_instruction(id, operands);
+        case arm_id::LDR: return ls_instruction(id, operands);
+        case arm_id::STR: return ls_instruction(id, operands);
+        case arm_id::LDRB: return ls_instruction(id, operands);
+        case arm_id::LDRT: return ls_instruction(id, operands);
+        case arm_id::STRB: return ls_instruction(id, operands);
+        case arm_id::STRT: return ls_instruction(id, operands);
+        case arm_id::LDRBT: return ls_instruction(id, operands);
+        case arm_id::STRBT: return ls_instruction(id, operands);
+        case arm_id::PLD: return ls_instruction(id, operands);
+        case arm_id::STRH: return ls_misc_instruction(id, operands);
+        case arm_id::LDRH: return ls_misc_instruction(id, operands);
+        case arm_id::LDRSB: return ls_misc_instruction(id, operands);
+        case arm_id::LDRSH: return ls_misc_instruction(id, operands);
+        case arm_id::LDRD: return ls_misc_instruction(id, operands);
+        case arm_id::STRD: return ls_misc_instruction(id, operands);
+        case arm_id::LDM1: return ls_mul_instruction(id, operands);
+        case arm_id::LDM2: return ls_mul_instruction(id, operands);
+        case arm_id::LDM3: return ls_mul_instruction(id, operands);
+        case arm_id::STM1: return ls_mul_instruction(id, operands);
+        case arm_id::STM2: return ls_mul_instruction(id, operands);
+        case arm_id::LDC2: return ls_coproc_instruction(id, operands);
+        case arm_id::LDC: return ls_coproc_instruction(id, operands);
+        case arm_id::STC2: return ls_coproc_instruction(id, operands);
+        case arm_id::STC: return ls_coproc_instruction(id, operands);
+        case arm_id::B: return b(operands);
+        case arm_id::BL: return bl(operands);
+        case arm_id::CDP: return cdp(operands);
+        case arm_id::CDP2: return cdp(operands);
+        case arm_id::MCR: return mcr(operands);
+        case arm_id::MCR2: return mcr(operands);
+        case arm_id::MLA: return mla(operands);
+        case arm_id::MRC: return mrc(operands);
+        case arm_id::MRC2: return mrc(operands);
+        case arm_id::MRS: return mrs(operands);
+        case arm_id::MSR_IMM: return msr_imm(operands);
+        case arm_id::MSR_REG: return msr_reg(operands);
+        case arm_id::MUL: return mul(operands);
+        case arm_id::SWI: return swi(operands);
+        case arm_id::SWP: return swp(operands); 
+        case arm_id::SWPB: return swpb(operands);
+        case arm_id::BKPT: return bkpt(operands);
+        case arm_id::BLX1: return blx1(operands);
+        case arm_id::BLX2: return blx2(operands);
+        case arm_id::CLZ: return clz(operands);
+        case arm_id::BX: return bx(operands);
+        case arm_id::SMLAL: return mul_instructions(id, operands);
+        case arm_id::SMULL: return mul_instructions(id, operands);
+        case arm_id::UMLAL: return mul_instructions(id, operands);
+        case arm_id::UMULL: return mul_instructions(id, operands);
+        case arm_id::MCRR: return mcrr(operands);
+        case arm_id::MRRC: return mrrc(operands);
+        case arm_id::QADD: return q_instructions(id, operands);
+        case arm_id::QDADD: return q_instructions(id, operands);
+        case arm_id::QDSUB: return q_instructions(id, operands);
+        case arm_id::QSUB: return q_instructions(id, operands);
+        case arm_id::SMLAXY: return dsp_mul_instructions(id, operands);
+        case arm_id::SMLALXY: return dsp_mul_instructions(id, operands);
+        case arm_id::SMLAWY: return dsp_mul_instructions(id, operands);
+        case arm_id::SMULXY: return dsp_mul_instructions(id, operands);
+        case arm_id::SMULWY: return dsp_mul_instructions(id, operands);
+        case arm_id::FADDD: return vfp_Dd_Dn_Dm_instructions(id, operands);
+        case arm_id::FDIVD: return vfp_Dd_Dn_Dm_instructions(id, operands);
+        case arm_id::FMACD: return vfp_Dd_Dn_Dm_instructions(id, operands);
+        case arm_id::FMSCD: return vfp_Dd_Dn_Dm_instructions(id, operands);
+        case arm_id::FMULD: return vfp_Dd_Dn_Dm_instructions(id, operands);
+        case arm_id::FNMACD: return vfp_Dd_Dn_Dm_instructions(id, operands);
+        case arm_id::FNMSCD: return vfp_Dd_Dn_Dm_instructions(id, operands);
+        case arm_id::FNMULD: return vfp_Dd_Dn_Dm_instructions(id, operands);
+        case arm_id::FSUBD: return vfp_Dd_Dn_Dm_instructions(id, operands);
+        case arm_id::FADDS: return vfp_Sd_Sn_Sm_instructions(id, operands);
+        case arm_id::FDIVS: return vfp_Sd_Sn_Sm_instructions(id, operands);
+        case arm_id::FMACS: return vfp_Sd_Sn_Sm_instructions(id, operands);
+        case arm_id::FMSCS: return vfp_Sd_Sn_Sm_instructions(id, operands);
+        case arm_id::FMULS: return vfp_Sd_Sn_Sm_instructions(id, operands);
+        case arm_id::FNMACS: return vfp_Sd_Sn_Sm_instructions(id, operands);
+        case arm_id::FNMSCS: return vfp_Sd_Sn_Sm_instructions(id, operands);
+        case arm_id::FNMULS: return vfp_Sd_Sn_Sm_instructions(id, operands);
+        case arm_id::FSUBS: return vfp_Sd_Sn_Sm_instructions(id, operands);
+        case arm_id::FABSD:  return vfp_Dd_Dm_instructions(id, operands);
+        case arm_id::FCMPD:  return vfp_Dd_Dm_instructions(id, operands);
+        case arm_id::FCMPED: return vfp_Dd_Dm_instructions(id, operands);
+        case arm_id::FCPYD:  return vfp_Dd_Dm_instructions(id, operands);
+        case arm_id::FSQRTD: return vfp_Dd_Dm_instructions(id, operands);
+        case arm_id::FNEGD:  return vfp_Dd_Dm_instructions(id, operands);
+        case arm_id::FABSS: return vfp_Sd_Sm_instructions(id, operands);
+        case arm_id::FCMPES: return vfp_Sd_Sm_instructions(id, operands);
+        case arm_id::FCMPS: return vfp_Sd_Sm_instructions(id, operands);
+        case arm_id::FCPYS: return vfp_Sd_Sm_instructions(id, operands);
+        case arm_id::FNEGS: return vfp_Sd_Sm_instructions(id, operands);
+        case arm_id::FSITOS: return vfp_Sd_Sm_instructions(id, operands); 
+        case arm_id::FSQRTS: return vfp_Sd_Sm_instructions(id, operands);
+        case arm_id::FTOSIS: return vfp_Sd_Sm_instructions(id, operands);
+        case arm_id::FTOUIS: return vfp_Sd_Sm_instructions(id, operands);
+        case arm_id::FUITOS: return vfp_Sd_Sm_instructions(id, operands);
+        case arm_id::FCVTDS: return vfp_Dd_Sm_instructions(id, operands);
+        case arm_id::FSITOD: return vfp_Dd_Sm_instructions(id, operands);
+        case arm_id::FUITOD: return vfp_Dd_Sm_instructions(id, operands);
+        case arm_id::FCVTSD: return vfp_Sd_Dm_instructions(id, operands);
+        case arm_id::FTOSID: return vfp_Sd_Dm_instructions(id, operands);
+        case arm_id::FTOUID: return vfp_Sd_Dm_instructions(id, operands);
+        case arm_id::FLDMD: return vfp_mul_instructions(id, operands);
+        case arm_id::FLDMS: return vfp_mul_instructions(id, operands);
+        case arm_id::FLDMX: return vfp_mul_instructions(id, operands);
+        case arm_id::FLDD: return vfp_mul_instructions(id, operands); 
+        case arm_id::FLDS: return vfp_mul_instructions(id, operands); 
+        case arm_id::FSTD: return vfp_mul_instructions(id, operands); 
+        case arm_id::FSTMD: return vfp_mul_instructions(id, operands); 
+        case arm_id::FSTMS: return vfp_mul_instructions(id, operands); 
+        case arm_id::FSTMX: return vfp_mul_instructions(id, operands); 
+        case arm_id::FSTS: return vfp_mul_instructions(id, operands); 
+        case arm_id::FCMPEZD: return fcmpezd(operands);
+        case arm_id::FCMPZD: return fcmpzd(operands);
+        case arm_id::FCMPEZS: return fcmpezs(operands);
+        case arm_id::FCMPZS: return fcmpzs(operands);
+        case arm_id::FMDHR: return fmdhr(operands);
+        case arm_id::FMDLR: return fmdlr(operands);
+        case arm_id::FMRDH: return fmrdh(operands);
+        case arm_id::FMRDL: return fmrdl(operands);
+        case arm_id::FMRS: return fmrs(operands);
+        case arm_id::FMRX: return fmrx(operands);
+        case arm_id::FMSR: return fmsr(operands);
+        case arm_id::FMSTAT: return fmstat(operands);
+        case arm_id::FMXR: return fmxr(operands);
+    }
+}

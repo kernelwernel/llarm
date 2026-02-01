@@ -6,7 +6,6 @@
 #include "shared/out.hpp"
 
 using namespace internal;
-using namespace shared;
 
 
 std::string shifters::data(const u32 code, const settings settings) {
@@ -47,32 +46,32 @@ std::string shifters::vfp_ls_mul(const u32 code, const settings settings) {
 
 shifter_id shifters::identify_data_shifter(const u32 code) {
     if (
-        (util::bit_fetch(code, 27) != 0) ||
-        (util::bit_fetch(code, 26) != 0) 
+        (llarm::util::bit_fetch(code, 27) != 0) ||
+        (llarm::util::bit_fetch(code, 26) != 0) 
     ) {
         llarm::out::error("No known data addressing shifter has been found");
     }
 
     // 32-bit immediate
-    if (util::bit_fetch(code, 25) == 1) {
+    if (llarm::util::bit_fetch(code, 25) == 1) {
         return shifter_id::DATA_IMM;
     }
 
     // code[25] is known to be 0 after this point, so no check for that bit is required
 
     // rotate right with extend
-    if (util::bit_range(code, 4, 11) == 0b110) {
+    if (llarm::util::bit_range(code, 4, 11) == 0b110) {
         return shifter_id::DATA_RRX;
     }
 
     // register
-    if (util::bit_range(code, 4, 11) == 0) {
+    if (llarm::util::bit_range(code, 4, 11) == 0) {
         return shifter_id::DATA_REG;
     }
 
     // immediate shifts
-    if (util::bit_fetch(code, 4) == 0) {
-        const u8 mode_bits = util::bit_range<u8>(code, 4, 6);
+    if (llarm::util::bit_fetch(code, 4) == 0) {
+        const u8 mode_bits = llarm::util::bit_range<u8>(code, 4, 6);
 
         switch (mode_bits) {
             case 0b000: return shifter_id::DATA_IMM_LSL;
@@ -85,10 +84,10 @@ shifter_id shifters::identify_data_shifter(const u32 code) {
 
     // register shifts
     if (
-        (util::bit_fetch(code, 7) == 0) &&
-        (util::bit_fetch(code, 4) == 1)
+        (llarm::util::bit_fetch(code, 7) == 0) &&
+        (llarm::util::bit_fetch(code, 4) == 1)
     ) {
-        const u8 mode_bits = util::bit_range<u8>(code, 4, 7);
+        const u8 mode_bits = llarm::util::bit_range<u8>(code, 4, 7);
 
         switch (mode_bits) {
             case 0b0001: return shifter_id::DATA_REG_LSL;
@@ -105,17 +104,17 @@ shifter_id shifters::identify_data_shifter(const u32 code) {
 
 shifter_id shifters::identify_ls_shifter(const u32 code) {
     if (
-        (util::bit_fetch(code, 27) != 0) ||
-        (util::bit_fetch(code, 26) != 1)
+        (llarm::util::bit_fetch(code, 27) != 0) ||
+        (llarm::util::bit_fetch(code, 26) != 1)
     ) {
         llarm::out::error("No known load store addressing shifter has been found");
     }
 
-    const bool bit_24 = util::bit_fetch(code, 24);
-    const bool bit_21 = util::bit_fetch(code, 21);
+    const bool bit_24 = llarm::util::bit_fetch(code, 24);
+    const bool bit_21 = llarm::util::bit_fetch(code, 21);
 
     // immediate offset/index
-    if (util::bit_fetch(code, 25) == 0) {
+    if (llarm::util::bit_fetch(code, 25) == 0) {
         if (bit_24 && !bit_21) {
             return shifter_id::LS_IMM;
         }
@@ -133,7 +132,7 @@ shifter_id shifters::identify_ls_shifter(const u32 code) {
 
 
     // register offset/index
-    if (util::bit_range(code, 4, 11) == 0) {
+    if (llarm::util::bit_range(code, 4, 11) == 0) {
         if (bit_24 && !bit_21) {
             return shifter_id::LS_REG;
         }
@@ -150,16 +149,16 @@ shifter_id shifters::identify_ls_shifter(const u32 code) {
     }
 
 
-    u8 mode_bits = util::bit_range<u8>(code, 4, 6);
+    u8 mode_bits = llarm::util::bit_range<u8>(code, 4, 6);
     mode_bits |= (bit_21 << 3);
     mode_bits |= (bit_24 << 4);
 
-    if (util::bit_range(code, 7, 11) == 0) {
+    if (llarm::util::bit_range(code, 7, 11) == 0) {
         mode_bits |= (1 << 5);
     }
 
     // scaled register offset/index
-    if (util::bit_fetch(code, 4) == 0) {
+    if (llarm::util::bit_fetch(code, 4) == 0) {
         switch (mode_bits) {
             // 5th bit = whether code[11:7] is empty
             // 4th bit = code[24]
@@ -190,18 +189,18 @@ shifter_id shifters::identify_ls_shifter(const u32 code) {
 
 shifter_id shifters::identify_ls_misc_shifter(const u32 code) {
     if (
-        (util::bit_fetch(code, 7) != 1) ||
-        (util::bit_fetch(code, 4) != 1) ||
-        (util::bit_fetch(code, 27) != 0) ||
-        (util::bit_fetch(code, 26) != 0) ||
-        (util::bit_fetch(code, 25) != 0)
+        (llarm::util::bit_fetch(code, 7) != 1) ||
+        (llarm::util::bit_fetch(code, 4) != 1) ||
+        (llarm::util::bit_fetch(code, 27) != 0) ||
+        (llarm::util::bit_fetch(code, 26) != 0) ||
+        (llarm::util::bit_fetch(code, 25) != 0)
     ) {
         llarm::out::error("No known load store misc addressing shifter has been found");
     }
 
-    const bool bit_24 = util::bit_fetch(code, 24);
-    const bool bit_22 = util::bit_fetch(code, 22);
-    const bool bit_21 = util::bit_fetch(code, 21);
+    const bool bit_24 = llarm::util::bit_fetch(code, 24);
+    const bool bit_22 = llarm::util::bit_fetch(code, 22);
+    const bool bit_21 = llarm::util::bit_fetch(code, 21);
 
     const u8 mode_bits = static_cast<u8>((bit_24 << 2) | (bit_22 << 1) | bit_21); 
 
@@ -222,15 +221,15 @@ shifter_id shifters::identify_ls_misc_shifter(const u32 code) {
 
 shifter_id shifters::identify_ls_mul_shifter(const u32 code) {
     if (
-        (util::bit_fetch(code, 27) != 1) ||
-        (util::bit_fetch(code, 26) != 0) ||
-        (util::bit_fetch(code, 25) != 0)
+        (llarm::util::bit_fetch(code, 27) != 1) ||
+        (llarm::util::bit_fetch(code, 26) != 0) ||
+        (llarm::util::bit_fetch(code, 25) != 0)
     ) {
         llarm::out::error("1 No known load store multiple addressing shifter has been found");
     }
 
-    const bool bit_24 = util::bit_fetch(code, 24);
-    const bool bit_23 = util::bit_fetch(code, 23);
+    const bool bit_24 = llarm::util::bit_fetch(code, 24);
+    const bool bit_23 = llarm::util::bit_fetch(code, 23);
 
     const u8 mode_bits = static_cast<u8>((bit_24 << 1) | bit_23);
 
@@ -246,15 +245,15 @@ shifter_id shifters::identify_ls_mul_shifter(const u32 code) {
 
 shifter_id shifters::identify_ls_coproc_shifter(const u32 code) {
     if (
-        (util::bit_fetch(code, 27) != 1) ||
-        (util::bit_fetch(code, 26) != 1) ||
-        (util::bit_fetch(code, 25) != 0)
+        (llarm::util::bit_fetch(code, 27) != 1) ||
+        (llarm::util::bit_fetch(code, 26) != 1) ||
+        (llarm::util::bit_fetch(code, 25) != 0)
     ) {
         llarm::out::error("No known load store coprocessor addressing shifter has been found");
     }
 
-    const bool bit_24 = util::bit_fetch(code, 24);
-    const bool bit_21 = util::bit_fetch(code, 21);
+    const bool bit_24 = llarm::util::bit_fetch(code, 24);
+    const bool bit_21 = llarm::util::bit_fetch(code, 21);
 
     const u8 mode_bits = static_cast<u8>((bit_24 << 1) | bit_21);
 
@@ -270,16 +269,16 @@ shifter_id shifters::identify_ls_coproc_shifter(const u32 code) {
 
 shifter_id shifters::identify_vfp_ls_mul_shifter(const u32 code) {
     if (
-        (util::bit_fetch(code, 27) != 1) ||
-        (util::bit_fetch(code, 26) != 1) ||
-        (util::bit_fetch(code, 25) != 0)
+        (llarm::util::bit_fetch(code, 27) != 1) ||
+        (llarm::util::bit_fetch(code, 26) != 1) ||
+        (llarm::util::bit_fetch(code, 25) != 0)
     ) {
         llarm::out::error("No known VFP load store multiple addressing shifter has been found");
     }
 
-    const bool bit_24 = util::bit_fetch(code, 24);
-    const bool bit_23 = util::bit_fetch(code, 23);
-    const bool bit_21 = util::bit_fetch(code, 21);
+    const bool bit_24 = llarm::util::bit_fetch(code, 24);
+    const bool bit_23 = llarm::util::bit_fetch(code, 23);
+    const bool bit_21 = llarm::util::bit_fetch(code, 21);
 
     const u8 id = static_cast<u8>((bit_24 << 2) | (bit_23 << 1) | bit_21);
 
@@ -294,6 +293,7 @@ shifter_id shifters::identify_vfp_ls_mul_shifter(const u32 code) {
 
 std::string shifters::shifter_to_string(const shifter_id mode, const u32 code, const settings settings) {
     switch (mode) {
+        case shifter_id::UNKNOWN: llarm::out::dev_error("Invalid shifter for string conversion in disassembly");
         case shifter_id::DATA_IMM: return data_imm(code, settings);
         case shifter_id::DATA_IMM_LSL: return data_imm_pattern(code, "LSL", settings);
         case shifter_id::DATA_IMM_LSR: return data_imm_pattern(code, "LSR", settings);
@@ -343,5 +343,6 @@ std::string shifters::shifter_to_string(const shifter_id mode, const u32 code, c
         case shifter_id::VFP_LS_MUL_UNINDEXED: return "IA";
         case shifter_id::VFP_LS_MUL_INC: return "IA";
         case shifter_id::VFP_LS_MUL_DEC: return "DB";
+        default: return ""; // includes both NONE and the VFP shifters that don't have a string represented shifter
     }
 }

@@ -21,7 +21,7 @@ bool validation::string_arm::is_arm_instruction_valid(const std::string &code, c
 bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
     using namespace interpreter;
 
-    switch (IR.id) {
+    switch (IR.mnemonic.id) {
         case arm_id::UNKNOWN: return false;
         case arm_id::UNDEFINED: return false;
         case arm_id::NOP: return false;

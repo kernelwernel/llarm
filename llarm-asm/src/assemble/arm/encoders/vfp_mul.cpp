@@ -1,9 +1,8 @@
 #include "../generators.hpp"
-
 #include "shared/util.hpp"
 #include "shared/out.hpp"
 
-u32 generators::vfp_mul_instructions(const arm_id id, const arguments &args) {
+u32 generators::vfp_mul_instructions(const arm_id id, const operand_struct &args) {
     u32 binary = 0;
 
     u8 bits_11_8 = 0;

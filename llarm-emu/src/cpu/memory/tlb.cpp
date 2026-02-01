@@ -6,7 +6,6 @@
 #include "shared/out.hpp"
 
 #include <cmath>
-#include <chrono>
 
 void TLB::flush() {
     if (settings.tlb_type == id::tlb_type::UNIFIED) {
@@ -41,16 +40,8 @@ void TLB::invalidate(const u32 virtual_address, const id::tlb_type tlb_type) {
 void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, const u32 physical_address) {
     // random replacement strategy, i guess different strategies could be added in the future
 
-    // splitmix64 implementation
     auto generate_index = [this, tlb_type]() -> u16 {
-        u64 x = this->seed;
-
-        // these magic numbers are just hash values, look up these values for more details
-        x += 0x9e3779b97f4a7c15ULL;
-        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9ULL;
-        x = (x ^ (x >> 27)) * 0x94d049bb133111ebULL;
-        const u64 r = (x ^ (x >> 31));
-
+        const u64 r = random.generate();
         u16 tlb_size = 0;
 
         switch (tlb_type) {
@@ -59,7 +50,7 @@ void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, c
             case id::tlb_type::SEPARATE_INST: tlb_size = settings.inst_tlb_table_size; break;
             case id::tlb_type::SEPARATE_DATA: tlb_size = settings.data_tlb_table_size; break;
         }
-    
+
         const u32 range = tlb_size + 1;
 
         return static_cast<u16>(r % range);
@@ -244,7 +235,10 @@ void TLB::function(const u8 opcode_2, const u8 CRm, const u32 virtual_address) {
 }
 
 
-TLB::TLB(SETTINGS& settings) : settings(settings) {
+TLB::TLB(SETTINGS& settings) : 
+    settings(settings),
+    random(settings.tlb_seed)
+{
     unified_table.reserve(settings.unified_tlb_table_size);
     inst_table.reserve(settings.inst_tlb_table_size);
     data_table.reserve(settings.data_tlb_table_size);
@@ -259,19 +253,5 @@ TLB::TLB(SETTINGS& settings) : settings(settings) {
     } else if (settings.is_tlb_separate) {
         W_inst = static_cast<u32>(std::ceil(std::log2(settings.inst_tlb_table_size)));
         W_data = static_cast<u32>(std::ceil(std::log2(settings.data_tlb_table_size)));
-    }
-
-    // if the TLB seed has been set by the user already, use it. Otherwise, create our own
-    if (settings.tlb_seed != 0) {
-        seed = settings.tlb_seed;
-    } else {
-        // https://softwareengineering.stackexchange.com/questions/402542/where-do-magic-hashing-constants-like-0x9e3779b9-and-0x9e3779b1-come-from
-        constexpr u64 golden_ratio = 0x9e3779b97f4a7c15ULL;
-
-        static u64 counter = golden_ratio;
-        const u64 t = static_cast<u64>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-        counter += golden_ratio;
-    
-        seed = (t ^ counter);
     }
 }

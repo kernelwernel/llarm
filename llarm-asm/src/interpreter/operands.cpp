@@ -1,12 +1,10 @@
-#include "arguments.hpp"
+#include "operands.hpp"
 #include "llarm-asm/src/identifiers/string_shifters.hpp"
+#include "llarm-asm/src/interpreter/mnemonic.hpp"
 #include "shared/out.hpp"
-#include "shared/util.hpp"
 
-arguments args::IR_to_args(const IR_arm_struct &IR) {
-    const lexemes_t &lexemes = IR.lexemes;
-
-    arguments arg;
+operand_struct operands::lex_to_operands(const lexemes_t &lexemes, const mnemonic_struct &mnemonic) {
+    operand_struct arg;
 
     u8 reg_iteration = 1;
     u8 CR_reg_iteration = 1;
@@ -48,7 +46,7 @@ arguments args::IR_to_args(const IR_arm_struct &IR) {
     // this is where the mnemonic analysis will begin
 
     arg.cond = [&]() -> u8 {
-        switch (IR.mnemonic.cond_id) {
+        switch (mnemonic.cond_id) {
             case cond_id::UNKNOWN: llarm::out::dev_error("Invalid cond id value for IR argument translation");
             case cond_id::NONE: return 0b1111;
             case cond_id::EQ: return 0b0000;
@@ -73,20 +71,20 @@ arguments args::IR_to_args(const IR_arm_struct &IR) {
         // reference: A3-6
     }();
 
-    arg.has_S = IR.mnemonic.has_S;
-    arg.has_Z = IR.mnemonic.has_Z;
-    arg.has_L = IR.mnemonic.has_L;
-    arg.x_char = IR.mnemonic.x_char;
-    arg.y_char = IR.mnemonic.y_char;
+    arg.has_S = mnemonic.has_S;
+    arg.has_Z = mnemonic.has_Z;
+    arg.has_L = mnemonic.has_L;
+    arg.x_char = mnemonic.x_char;
+    arg.y_char = mnemonic.y_char;
 
     // finishing touches with shifter analysis (if there's any to begin with)
-    arg.shifter = ident::string_shifters::identify_shifter(IR);
+    arg.shifter = ident::string_shifters::identify_shifter(lexemes, mnemonic);
 
     return arg;
 }
 
 
-void args::reg(u8 &reg_iteration, u8 &CR_reg_iteration, arguments &arg, const lexeme &lexeme) {
+void operands::reg(u8 &reg_iteration, u8 &CR_reg_iteration, operand_struct &arg, const lexeme &lexeme) {
     using enum reg_type;
 
     // I wish the reg_iteration and CR_reg_iteration could be static variables here,
@@ -122,7 +120,7 @@ void args::reg(u8 &reg_iteration, u8 &CR_reg_iteration, arguments &arg, const le
 }
 
 
-void args::imm(u8 &int_iteration, arguments &arg, const lexeme &lexeme) {
+void operands::imm(u8 &int_iteration, operand_struct &arg, const lexeme &lexeme) {
     const i64 &number = [&]() -> i64 {
         if (lexeme.token_type == OPTION) {
             return lexeme.data.option.number;   
@@ -146,7 +144,7 @@ void args::imm(u8 &int_iteration, arguments &arg, const lexeme &lexeme) {
 }
 
 
-void args::psr(arguments &arg, const lexeme &lexeme) {
+void operands::psr(operand_struct &arg, const lexeme &lexeme) {
     arg.has_spsr = lexeme.data.psr.is_spsr();
 
     const bool C = lexeme.data.psr.has_C();
@@ -174,37 +172,6 @@ void args::psr(arguments &arg, const lexeme &lexeme) {
 }
 
 
-void args::reg_list(arguments &arg, const lexeme &lexeme) {
+void operands::reg_list(operand_struct &arg, const lexeme &lexeme) {
     arg.reg_list = lexeme.data.reg_list.list;
 }
-
-
-
-//struct arguments {
-//    ✅ u32 first_int;
-//    ✅ u32 second_int;
-//    ✅ u32 third_int;
-//    u32 PC;
-//    ✅ u32 reg_list;
-//    ✅ u8 cond;
-//    ✅ u8 PSR_field_mask;
-//    ✅ u8 first_reg;
-//    ✅ u8 second_reg;
-//    ✅ u8 third_reg;
-//    ✅ u8 fourth_reg;
-//    ✅ u8 coproc;
-//    ✅ u8 first_CR_reg;
-//    ✅ u8 second_CR_reg;
-//    ✅ u8 third_CR_reg;
-//    ✅ shifter_id shifter;
-//    ✅ vfp_special_reg_enum vfp_special_reg;
-//
-//    bool has_S;
-//    bool has_Z;
-//    bool has_L;
-//    ✅ bool has_minus;
-//    ✅ bool has_spsr;
-//    unsigned char x_char;
-//    unsigned char y_char;
-//    ✅ bool has_preindex;
-//};

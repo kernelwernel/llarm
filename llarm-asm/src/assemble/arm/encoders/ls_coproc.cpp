@@ -4,7 +4,7 @@
 #include "shared/out.hpp"
 
 // format: <opcode>{<cond>}{L} <coproc>, <CRd>,<addressing_mode>
-u32 generators::ls_coproc_instruction(const arm_id id, const arguments &args) {
+u32 generators::ls_coproc_instruction(const arm_id id, const operand_struct &args) {
     u32 binary = 0;
 
     // all coprocessor instructions
@@ -35,7 +35,7 @@ u32 generators::ls_coproc_instruction(const arm_id id, const arguments &args) {
             }
 
             llarm::util::modify_bit(binary, L, true);
-            // no break on purpose
+            [[fallthrough]]; // no break on purpose
 
         case arm_id::STC2:
         case arm_id::STC:

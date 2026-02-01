@@ -34,42 +34,24 @@ mnemonic_struct mnemonic::arm(const std::string &code) {
 
     if (mnemonic.starts_with("BLX")) {
         id = BLX(interpreter::analyze(assembly));
-        goto skip;
-    }
+    } else if (mnemonic.starts_with("MSR")) {
+        // since there's no viable instruction found, 
+        // the non-conventional ways will now be searched.
     
-    // since there's no viable instruction found, 
-    // the non-conventional ways will now be searched.
-
-    // MSR has 2 instruction types
-    if (mnemonic.starts_with("MSR")) {
+        // MSR has 2 instruction types
         id = MSR(interpreter::analyze(assembly));
-        goto skip;
-    }
-    
-    // SWPB has a cond between the P and B
-    if (mnemonic.starts_with("SWP")) {    
+    } else if (mnemonic.starts_with("SWP")) {    
+        // SWPB has a cond between the P and B
         id = SWPB(mnemonic);
-        goto skip;
-    }
-    
-    if (mnemonic.starts_with("STR")) {
+    } else if (mnemonic.starts_with("STR")) {
         id = STR_family(mnemonic);
-        goto skip;
-    }
-    
-    if (mnemonic.starts_with("LDR")) {
+    } else if (mnemonic.starts_with("LDR")) {
         id = LDR_family(mnemonic);
-        goto skip;
-    }
-    
-    // 26-bit PSR instructions
-    if (mnemonic.back() == 'P') {
+    } else if (mnemonic.back() == 'P') {
+        // 26-bit PSR instructions
         id = PSR_family(code);
-        goto skip;
     }
     
-    skip:
-
     if (id == arm_id::UNKNOWN) {
         return fetch_mnemonic_args(id, mnemonic);
     }
@@ -364,7 +346,7 @@ mnemonic_struct mnemonic::fetch_mnemonic_args(const arm_id id, sv mnemonic) {
     mnemonic_struct args{};
 
     args.instruction = mnemonic;
-    args.arm_id = id;
+    args.id = id;
 
     switch (id) {
         case arm_id::UNKNOWN: return args;
@@ -389,7 +371,7 @@ mnemonic_struct mnemonic::fetch_mnemonic_args(const arm_id id, sv mnemonic) {
         case arm_id::B: mnemonic.remove_prefix(1);
             args.cond_id = interpreter::fetch_cond_id(mnemonic);
             return args;
-            
+
         // <mnemonic>{<cond>}{S} format
         case arm_id::SMLAL:
         case arm_id::SMULL:
@@ -579,7 +561,6 @@ mnemonic_struct mnemonic::fetch_mnemonic_args(const arm_id id, sv mnemonic) {
             args.y_char = mnemonic.front();
             mnemonic.remove_prefix(1);
             args.cond_id = interpreter::fetch_cond_id(mnemonic);
-
             return args;
         
         case arm_id::SMULWY:

@@ -29,7 +29,7 @@ bool interpreter::verify_lexemes(const lexemes_t&& raw_pattern, const lexemes_t 
             // any important attributes associated. For example the "LSL" or "{" tokens are self explanatory.
             default: return true;
         }
-
+ 
         if (is_equivalent == false) {
             return false;
         }

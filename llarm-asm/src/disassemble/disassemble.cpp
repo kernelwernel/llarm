@@ -14,7 +14,7 @@
 using namespace internal;
 
 std::string disassemble::thumb_generate(const u16 code, const u32 PC, const settings settings) {
-    const thumb_id id = u16_thumb::thumb(code);
+    const thumb_id id = ident::u16_thumb::thumb(code);
 
     switch (id) {
         case thumb_id::ADC: return generators::thumb::math::ADC(code, settings);
@@ -89,7 +89,7 @@ std::string disassemble::thumb_generate(const u16 code, const u32 PC, const sett
 
 
 std::string disassemble::arm_generate(const u32 code, const u32 PC, const settings settings) {
-    const arm_id id = u32_arm::arm(code);
+    const arm_id id = ident::u32_arm::arm(code);
 
     switch (id) {
         case arm_id::ADC: return generators::arm::math::ADC(code, settings);

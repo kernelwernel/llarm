@@ -4,6 +4,7 @@
 #include "structures.hpp"
 
 #include "shared/types.hpp"
+#include "shared/random.hpp"
 
 #if (LLARM_LOW_MEMORY)
     #include <map>
@@ -11,15 +12,13 @@
     #include <unordered_map>
 #endif
 
-#include <random>
-
 
 struct TLB {
 private:
     SETTINGS& settings;
 
 private:
-    u64 seed;
+    llarm::random random;
 
     // https://quick-bench.com/q/bhDceFgnZ7D3qR3ZR2GdCjwlt8g
 #if (LLARM_LOW_MEMORY)

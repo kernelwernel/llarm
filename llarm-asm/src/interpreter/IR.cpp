@@ -1,15 +1,19 @@
 #include "IR.hpp"
-
-#include "../identifiers/string_arm.hpp"
-#include "../identifiers/string_thumb.hpp"
+#include "IR_struct.hpp"
+#include "operands.hpp"
+#include "mnemonic.hpp"
 
 using namespace internal;
 
 IR_arm_struct IR::generate(const std::string &code, const u32 PC) {
+    const lexemes_t& lexemes = interpreter::analyze(code);
+    const mnemonic_struct& mnemonic = mnemonic::arm(code);
+    const operand_struct& operands = operands::lex_to_operands(lexemes, mnemonic);
+
     return IR_arm_struct {
-        ident::string_arm::arm(code), // id
-        interpreter::analyze(code), // lexemes
-        mnemonic::arm(code),
+        lexemes,
+        mnemonic,
+        operands,
         PC
     };
 }

@@ -3,7 +3,8 @@
 #include "../id/shifter_id.hpp"
 
 #include "../interpreter/lexer.hpp"
-#include "../interpreter/IR.hpp"
+#include "../interpreter/IR_struct.hpp"
+#include "llarm-asm/src/interpreter/mnemonic.hpp"
 
 namespace internal::ident::string_shifters {
     shifter_id data_instruction(const lexemes_t &lexemes);
@@ -16,6 +17,7 @@ namespace internal::ident::string_shifters {
     // PLD has an exception to its addressing mode format
     shifter_id ls_instruction_PLD(const lexemes_t &lexemes);
 
+    shifter_id identify_shifter(const lexemes_t &lexemes, const mnemonic_struct &mnemonic);
     shifter_id identify_shifter(const IR_arm_struct &IR);
     shifter_id identify_shifter(const std::string &code);
 }

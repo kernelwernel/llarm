@@ -1,7 +1,8 @@
 #include "../generators.hpp"
 #include "shared/out.hpp"
+#include "shared/util.hpp"
 
-u32 generators::q_instructions(const arm_id id, const arguments &args) {
+u32 generators::q_instructions(const arm_id id, const operand_struct &args) {
     u32 binary = 0b0000'0001'0000'0000'0000'0000'0101'0000;
 
     llarm::util::swap_bits(binary, 28, 31, args.cond);
@@ -25,7 +26,7 @@ u32 generators::q_instructions(const arm_id id, const arguments &args) {
 }
 
 
-u32 generators::mul_instructions(const arm_id id, const arguments &args) {
+u32 generators::mul_instructions(const arm_id id, const operand_struct &args) {
     u32 binary = 0b0000'0000'1000'0000'0000'0000'1001'0000;
 
     if (args.has_S) {
@@ -54,7 +55,7 @@ u32 generators::mul_instructions(const arm_id id, const arguments &args) {
 }
 
 
-u32 generators::dsp_mul_instructions(const arm_id id, const arguments &args) {
+u32 generators::dsp_mul_instructions(const arm_id id, const operand_struct &args) {
     u32 binary = 0;
 
     llarm::util::modify_bit(binary, 7, true);

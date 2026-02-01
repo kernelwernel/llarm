@@ -6,6 +6,9 @@ def count_lines_in_directory(directory):
     allowed_extensions = ('.cpp', '.hpp')
     
     for root, _, files in os.walk(directory):
+        if directory == "lib":
+            continue
+
         for file in files:
             if file.lower().endswith(allowed_extensions):
                 filepath = os.path.join(root, file)

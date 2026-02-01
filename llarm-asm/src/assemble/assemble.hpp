@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string>
-#include "llarm-asm/src/interpreter/IR.hpp"
+#include "../interpreter/IR_struct.hpp"
 #include "shared/types.hpp"
+#include <string>
 
 namespace internal::assemble {
     u32 arm(const std::string &code, const u32 PC = 0);

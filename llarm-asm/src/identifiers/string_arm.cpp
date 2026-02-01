@@ -1,15 +1,12 @@
 #include "string_arm.hpp"
 #include "../id/instruction_id.hpp"
 
-#include "../interpreter/interpreter.hpp"
-#include "llarm-asm/src/interpreter/tokens.hpp"
+#include "llarm-asm/src/interpreter/IR.hpp"
 #include "shared/types.hpp"
-#include "shared/util.hpp"
 
 using namespace internal;
-using namespace interpreter;
-using enum token_enum;
 
-arm_id ident::string_arm::arm(const std::string &code) {
-
+arm_id ident::string_arm::arm(const std::string &code, const u32 PC) {
+    const IR_arm_struct IR = IR::generate(code, PC);
+    return IR.mnemonic.id;
 }

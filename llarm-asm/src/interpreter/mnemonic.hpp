@@ -11,7 +11,7 @@ using namespace internal;
 
 struct mnemonic_struct {
     sv instruction = "";
-    arm_id arm_id = arm_id::UNKNOWN;
+    arm_id id = arm_id::UNKNOWN;
     cond_id cond_id = cond_id::UNKNOWN;
     bool has_S = false;
     bool has_Z = false;

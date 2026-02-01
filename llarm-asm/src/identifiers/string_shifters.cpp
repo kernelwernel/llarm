@@ -6,6 +6,7 @@
 #include "../interpreter/interpreter.hpp"
 
 #include "../interpreter/tokens.hpp"
+#include "llarm-asm/src/interpreter/IR_struct.hpp"
 #include "shared/types.hpp"
 
 using namespace internal;
@@ -210,10 +211,10 @@ shifter_id ident::string_shifters::ls_misc_instruction(const lexemes_t &lexemes)
 
 
 shifter_id ident::string_shifters::ls_mul_instruction(const sv mnemonic) {
-    const unsigned char second_char = mnemonic[mnemonic.size() - 1];
-    const unsigned char first_char = mnemonic[mnemonic.size() - 2];
+    const char second_char = mnemonic[mnemonic.size() - 1];
+    const char first_char = mnemonic[mnemonic.size() - 2];
 
-    const u16 addressing_mode = (first_char << 8 | second_char);
+    const u16 addressing_mode = static_cast<u16>(first_char << 8 | second_char);
 
     constexpr u16 IA = ('I' << 8 | 'A');
     constexpr u16 IB = ('I' << 8 | 'B');
@@ -295,10 +296,9 @@ shifter_id ident::string_shifters::vfp_mul_instruction(const lexemes_t &lexemes,
 }
 
 
-shifter_id ident::string_shifters::identify_shifter(const IR_arm_struct &IR) {
-    const arm_id id = IR.id;
-    const lexemes_t &lexemes = IR.lexemes;
-    const sv mnemonic = IR.mnemonic.instruction;
+shifter_id ident::string_shifters::identify_shifter(const lexemes_t &lexemes, const mnemonic_struct &mnemonic) {
+    const arm_id id = mnemonic.id;
+    const sv instruction = mnemonic.instruction;
 
     switch (id) {
         case arm_id::UNKNOWN: return shifter_id::UNKNOWN;
@@ -339,21 +339,21 @@ shifter_id ident::string_shifters::identify_shifter(const IR_arm_struct &IR) {
         case arm_id::LDRSH: return ls_misc_instruction(lexemes);
         case arm_id::LDRD: return ls_misc_instruction(lexemes);
         case arm_id::STRD: return ls_misc_instruction(lexemes);
-        case arm_id::LDM1: return ls_mul_instruction(mnemonic);
-        case arm_id::LDM2: return ls_mul_instruction(mnemonic);
-        case arm_id::LDM3: return ls_mul_instruction(mnemonic);
-        case arm_id::STM1: return ls_mul_instruction(mnemonic); 
-        case arm_id::STM2: return ls_mul_instruction(mnemonic);
+        case arm_id::LDM1: return ls_mul_instruction(instruction);
+        case arm_id::LDM2: return ls_mul_instruction(instruction);
+        case arm_id::LDM3: return ls_mul_instruction(instruction);
+        case arm_id::STM1: return ls_mul_instruction(instruction); 
+        case arm_id::STM2: return ls_mul_instruction(instruction);
         case arm_id::STC: return ls_coproc_instruction(lexemes);
         case arm_id::STC2: return ls_coproc_instruction(lexemes);
         case arm_id::LDC: return ls_coproc_instruction(lexemes);
         case arm_id::LDC2: return ls_coproc_instruction(lexemes);
-        case arm_id::FLDMD: return vfp_mul_instruction(lexemes, mnemonic);
-        case arm_id::FLDMS: return vfp_mul_instruction(lexemes, mnemonic);
-        case arm_id::FLDMX: return vfp_mul_instruction(lexemes, mnemonic);
-        case arm_id::FSTMD: return vfp_mul_instruction(lexemes, mnemonic);
-        case arm_id::FSTMS: return vfp_mul_instruction(lexemes, mnemonic);
-        case arm_id::FSTMX: return vfp_mul_instruction(lexemes, mnemonic);
+        case arm_id::FLDMD: return vfp_mul_instruction(lexemes, instruction);
+        case arm_id::FLDMS: return vfp_mul_instruction(lexemes, instruction);
+        case arm_id::FLDMX: return vfp_mul_instruction(lexemes, instruction);
+        case arm_id::FSTMD: return vfp_mul_instruction(lexemes, instruction);
+        case arm_id::FSTMS: return vfp_mul_instruction(lexemes, instruction);
+        case arm_id::FSTMX: return vfp_mul_instruction(lexemes, instruction);
         case arm_id::FABSS: return shifter_id::VFP_SINGLE_MONADIC;
         case arm_id::FCPYS: return shifter_id::VFP_SINGLE_MONADIC;
         case arm_id::FNEGS: return shifter_id::VFP_SINGLE_MONADIC;
@@ -378,6 +378,10 @@ shifter_id ident::string_shifters::identify_shifter(const IR_arm_struct &IR) {
         case arm_id::FSTS: return shifter_id::VFP_LS_MUL_SPECIAL;
         default: return shifter_id::NONE;
     }
+}
+
+shifter_id ident::string_shifters::identify_shifter(const IR_arm_struct &IR) {
+    return identify_shifter(IR.lexemes, IR.mnemonic);
 }
 
 shifter_id ident::string_shifters::identify_shifter(const std::string &code) {

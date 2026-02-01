@@ -2,7 +2,7 @@
 #include "shared/util.hpp"
 
 
-u32 generators::mul(const arguments &args) {
+u32 generators::mul(const operand_struct &args) {
     u32 binary = 0;
 
     if (args.has_S) {
@@ -18,7 +18,7 @@ u32 generators::mul(const arguments &args) {
 }
 
 
-u32 generators::swp(const arguments &args) {
+u32 generators::swp(const operand_struct &args) {
     u32 binary = 0;
 
     llarm::util::modify_bit(binary, 24, true);
@@ -34,7 +34,7 @@ u32 generators::swp(const arguments &args) {
 }
 
 
-u32 generators::swpb(const arguments &args) {
+u32 generators::swpb(const operand_struct &args) {
     u32 binary = 0;
 
     llarm::util::modify_bit(binary, 24, true);
@@ -51,7 +51,7 @@ u32 generators::swpb(const arguments &args) {
 }
 
 
-u32 generators::mla(const arguments &args) {
+u32 generators::mla(const operand_struct &args) {
     u32 binary = 0;
 
     llarm::util::modify_bit(binary, 21, true);
@@ -72,7 +72,7 @@ u32 generators::mla(const arguments &args) {
 }
 
 
-u32 generators::mrs(const arguments &args) {
+u32 generators::mrs(const operand_struct &args) {
     u32 binary = 0;
 
     llarm::util::modify_bit(binary, 24, true);
@@ -89,7 +89,7 @@ u32 generators::mrs(const arguments &args) {
 }
 
 
-u32 generators::msr_imm(const arguments &args) {
+u32 generators::msr_imm(const operand_struct &args) {
     u32 binary = 0;
 
     llarm::util::modify_bit(binary, 25, true);
@@ -110,7 +110,7 @@ u32 generators::msr_imm(const arguments &args) {
 }
 
 
-u32 generators::msr_reg(const arguments &args) {
+u32 generators::msr_reg(const operand_struct &args) {
     u32 binary = 0;
 
     llarm::util::modify_bit(binary, 24, true);
@@ -129,7 +129,7 @@ u32 generators::msr_reg(const arguments &args) {
 }
 
 
-u32 generators::swi(const arguments &args) {
+u32 generators::swi(const operand_struct &args) {
     u32 binary = 0;
 
     llarm::util::swap_bits(binary, 28, 31, args.cond);
@@ -140,7 +140,7 @@ u32 generators::swi(const arguments &args) {
 }
 
 
-u32 generators::clz(const arguments &args) {
+u32 generators::clz(const operand_struct &args) {
     u32 binary = 0;
 
     llarm::util::modify_bit(binary, 24, true);
@@ -158,7 +158,7 @@ u32 generators::clz(const arguments &args) {
 }
 
 
-u32 generators::mcr(const arguments &args) {
+u32 generators::mcr(const operand_struct &args) {
     u32 binary = 0;
 
     llarm::util::modify_bit(binary, 27, true);
@@ -178,7 +178,7 @@ u32 generators::mcr(const arguments &args) {
 }
 
 
-u32 generators::mrc(const arguments &args) {
+u32 generators::mrc(const operand_struct &args) {
     u32 binary = mcr(args);
 
     llarm::util::modify_bit(binary, 20, true);
@@ -187,7 +187,7 @@ u32 generators::mrc(const arguments &args) {
 }
 
 
-u32 generators::cdp(const arguments &args) {
+u32 generators::cdp(const operand_struct &args) {
     u32 binary = 0;
 
     llarm::util::modify_bit(binary, 27, true);
@@ -206,13 +206,13 @@ u32 generators::cdp(const arguments &args) {
 }
 
 
-u32 generators::b(const arguments &args) {
+u32 generators::b(const operand_struct &args) {
     u32 binary = 0;
 
     llarm::util::modify_bit(binary, 27, true);
     llarm::util::modify_bit(binary, 25, true);
 
-    const i32 immed = args.first_int - (args.PC + 8);
+    const u32 immed = args.first_int - (args.PC + 8);
     const i32 offset = (immed >> 2);
     const u32 target = offset & 0x00FFFFFF;
 
@@ -222,7 +222,7 @@ u32 generators::b(const arguments &args) {
 }
 
 
-u32 generators::bl(const arguments &args) {
+u32 generators::bl(const operand_struct &args) {
     u32 binary = b(args);
 
     llarm::util::modify_bit(binary, 24, true);
@@ -231,7 +231,7 @@ u32 generators::bl(const arguments &args) {
 }
 
 
-u32 generators::bkpt(const arguments &args) {
+u32 generators::bkpt(const operand_struct &args) {
     u32 binary = 0b1110'0001'0010'0000'0000'0000'0111'0000;
 
     const u16 immed = args.first_int;
@@ -246,7 +246,7 @@ u32 generators::bkpt(const arguments &args) {
 }
 
 
-u32 generators::blx1(const arguments &args) {
+u32 generators::blx1(const operand_struct &args) {
     u32 binary = 0b1111'1010'0000'0000'0000'0000'0000'0000;
 
     const i32 offset = args.first_int - (args.PC + 8);
@@ -261,7 +261,7 @@ u32 generators::blx1(const arguments &args) {
 }
 
 
-u32 generators::blx2(const arguments &args) {
+u32 generators::blx2(const operand_struct &args) {
     u32 binary = bx(args);
 
     llarm::util::modify_bit(binary, 5, true);
@@ -270,7 +270,7 @@ u32 generators::blx2(const arguments &args) {
 }
 
 
-u32 generators::bx(const arguments &args) {
+u32 generators::bx(const operand_struct &args) {
     u32 binary = 0b0000'0001'0010'1111'1111'1111'0001'0000;
 
     llarm::util::swap_bits(binary, 28, 31, args.cond);
@@ -280,7 +280,7 @@ u32 generators::bx(const arguments &args) {
 }
 
 
-u32 generators::mcrr(const arguments &args) {
+u32 generators::mcrr(const operand_struct &args) {
     u32 binary = 0b0000'1100'0100'0000'0000'0000'0000'0000;
 
     llarm::util::swap_bits(binary, 28, 31, args.cond);
@@ -294,7 +294,7 @@ u32 generators::mcrr(const arguments &args) {
 }
 
 
-u32 generators::mrrc(const arguments &args) {
+u32 generators::mrrc(const operand_struct &args) {
     u32 binary = mcrr(args);
 
     llarm::util::modify_bit(binary, 20, true);

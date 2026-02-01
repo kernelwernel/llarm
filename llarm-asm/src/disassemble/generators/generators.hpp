@@ -73,6 +73,7 @@ namespace internal::generators {
             std::string TSTP(u32, settings);
             std::string SWI(u32, settings);
             std::string BKPT(u32, settings);
+            std::string PSR(u32, settings);
         }
 
         namespace load {

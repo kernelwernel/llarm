@@ -4,7 +4,7 @@
 #include "shared/out.hpp"
 
 // format: <opcode>{<cond>}{S} <Rd>, <Rn>, <shifter_operand>
-u32 generators::data_instruction(const arm_id instruction, const arguments &args) {
+u32 generators::data_instruction(const arm_id instruction, const operand_struct &args) {
     u32 binary = 0;
 
     llarm::util::swap_bits(binary, 28, 31, args.cond);

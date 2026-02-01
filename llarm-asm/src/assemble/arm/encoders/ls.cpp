@@ -4,7 +4,7 @@
 #include "shared/out.hpp"
 
 // format: LDR|STR{<cond>}{B}{T} <Rd>, <addressing_mode>
-u32 generators::ls_instruction(const arm_id id, const arguments &args) {
+u32 generators::ls_instruction(const arm_id id, const operand_struct &args) {
     u32 binary = 0;
 
     if (id == arm_id::PLD) {
@@ -178,9 +178,9 @@ u32 generators::ls_instruction(const arm_id id, const arguments &args) {
         case shifter_id::LS_SCALED_POST_ROR: 
             check_immed_range(args.first_int, 1, 31);
             llarm::util::swap_bits(binary, 7, 11, static_cast<u8>(args.first_int));
-            // no break on purpose
+            [[fallthrough]]; // no break on purpose
 
-        case shifter_id::LS_SCALED_RRX: 
+        case shifter_id::LS_SCALED_RRX:
         case shifter_id::LS_SCALED_PRE_RRX: 
         case shifter_id::LS_SCALED_POST_RRX: 
             llarm::util::modify_bit(binary, 5, true);
