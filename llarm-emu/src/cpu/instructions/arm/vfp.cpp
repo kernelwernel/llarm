@@ -3,8 +3,8 @@
 #include "../../vfp/utils.hpp"
 
 #include "llarm-emu/src/cpu/vfp/addressing_modes.hpp"
-#include "shared/types.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
 
 
 // TODO work on exceptions, this might take a while

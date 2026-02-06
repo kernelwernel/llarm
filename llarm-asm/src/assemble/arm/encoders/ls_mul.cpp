@@ -1,7 +1,7 @@
 #include "../generators.hpp"
 
-#include "shared/util.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/util.hpp>
+#include <llarm/shared/out.hpp>
 
 // format: LDM|STM{<cond>}<addressing_mode> <Rn>{!}, <registers>{^}
 u32 generators::ls_mul_instruction(const arm_id id, const operand_struct &args) {

@@ -3,8 +3,8 @@
 #include "../id/shifter_id.hpp"
 #include "../id/instruction_id.hpp"
 
-#include "shared/types.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
 
 using namespace internal;
 
@@ -18,7 +18,7 @@ shifter_id ident::u32_shifters::load_store(const u32 code) {
         return shifter_id::UNKNOWN;
     }
 
-    const u8 shift_type = (
+    const u8 shift_type = static_cast<u8>(
         (bit_fetch(code, 25) << 2) |
         (bit_fetch(code, 24) << 1) |
         (bit_fetch(code, 21))
@@ -136,7 +136,7 @@ shifter_id ident::u32_shifters::data_processing(const u32 code) {
             return shifter_id::DATA_REG;
         }
 
-        const u8 bytecode = ((bit_fetch(code, 6) << 1) | bit_fetch(code, 5));
+        const u8 bytecode = static_cast<u8>((bit_fetch(code, 6) << 1) | bit_fetch(code, 5));
         
         switch (bytecode) {
             case 0b00: return shifter_id::DATA_IMM_LSL;
@@ -153,7 +153,7 @@ shifter_id ident::u32_shifters::data_processing(const u32 code) {
         (bit_fetch(code, 7) == false) &&
         (bit_fetch(code, 4) == true)
     ) {
-        const u8 bytecode = ((bit_fetch(code, 6) << 1) | bit_fetch(code, 5));
+        const u8 bytecode = static_cast<u8>((bit_fetch(code, 6) << 1) | bit_fetch(code, 5));
 
         switch (bytecode) {
             case 0b00: return shifter_id::DATA_REG_LSL;
@@ -204,7 +204,7 @@ shifter_id ident::u32_shifters::load_store_misc(const u32 code) {
         return shifter_id::UNKNOWN;
     }
 
-    const u8 shift_type = ((bit_fetch(code, 24) << 2) | (bit_fetch(code, 22) << 1) | bit_fetch(code, 21));
+    const u8 shift_type = static_cast<u8>((bit_fetch(code, 24) << 2) | (bit_fetch(code, 22) << 1) | bit_fetch(code, 21));
 
     switch (shift_type) {
         case 0b110: return shifter_id::LS_MISC_IMM;
@@ -230,7 +230,7 @@ shifter_id ident::u32_shifters::load_store_coprocessor(const u32 code) {
         return shifter_id::UNKNOWN;
     }
 
-    const u8 shift_type = ((bit_fetch(code, 24) << 1) | (bit_fetch(code, 22)));
+    const u8 shift_type = static_cast<u8>((bit_fetch(code, 24) << 1) | (bit_fetch(code, 22)));
 
     switch (shift_type) {
         case 0b10: return shifter_id::LS_COPROC_IMM;
@@ -250,8 +250,8 @@ shifter_id ident::u32_shifters::vfp_single(const u32 code) {
     const bool D = llarm::util::bit_fetch(code, 22);
     const bool M = llarm::util::bit_fetch(code, 5);
 
-    const u8 d_num = ((Fd << 1) | D);
-    const u8 m_num = ((Fm << 1) | M);
+    const u8 d_num = static_cast<u8>((Fd << 1) | D);
+    const u8 m_num = static_cast<u8>((Fm << 1) | M);
 
     const u8 d_bank = llarm::util::bit_range<u8>(d_num, 3, 4);
     const u8 m_bank = llarm::util::bit_range<u8>(m_num, 3, 4);
@@ -275,8 +275,8 @@ shifter_id ident::u32_shifters::vfp_single_monadic(const u32 code) {
     const bool D = llarm::util::bit_fetch(code, 22);
     const bool M = llarm::util::bit_fetch(code, 5);
 
-    const u8 d_num = ((Fd << 1) | D);
-    const u8 m_num = ((Fm << 1) | M);
+    const u8 d_num = static_cast<u8>((Fd << 1) | D);
+    const u8 m_num = static_cast<u8>((Fm << 1) | M);
 
     const u8 d_bank = llarm::util::bit_range<u8>(d_num, 3, 4);
     const u8 m_bank = llarm::util::bit_range<u8>(m_num, 3, 4);

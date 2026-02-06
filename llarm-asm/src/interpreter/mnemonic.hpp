@@ -16,8 +16,8 @@ struct mnemonic_struct {
     bool has_S = false;
     bool has_Z = false;
     bool has_L = false;
-    unsigned char x_char = '\0';
-    unsigned char y_char = '\0';
+    char x_char = '\0';
+    char y_char = '\0';
 };
 
 namespace internal::mnemonic {

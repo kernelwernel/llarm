@@ -1,8 +1,8 @@
 #include "../../core/registers.hpp"
 #include "../instructions.hpp"
 
-#include "shared/types.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
 
 void INSTRUCTIONS::arm::misc::NOP(const u32 code) {
     return;

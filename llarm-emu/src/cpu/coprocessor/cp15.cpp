@@ -14,9 +14,9 @@
 
 #include "cp15.hpp"
 
-#include "shared/types.hpp"
-#include "shared/util.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
+#include <llarm/shared/out.hpp>
 
 id::cp15 CP15::identify_R6(const u8 CRm, const u8 opcode_2) {
     if (settings.is_mpu_enabled) {

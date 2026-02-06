@@ -6,7 +6,7 @@
 #include "generate.hpp"
 #include "patterns.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 #include <llarm-asm/llarm-asm.hpp>
 

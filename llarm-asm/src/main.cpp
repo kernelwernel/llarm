@@ -6,13 +6,11 @@
 #include <span>
 #include <algorithm>
 
-#include "shared/types.hpp"
-#include "shared/out.hpp"
-#include "shared/tools/metadata.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/out.hpp>
+#include <llarm/shared/metadata.hpp>
 
-#include "disassemble/disassemble.hpp"
-
-//#include "../llarm-asm.hpp"
+#include "../llarm-asm.hpp"
 
 //#include <llarm/llarm-asm.hpp>
 
@@ -61,7 +59,7 @@ Examples:
 int main(int argc, char* argv[]) {
 
     const u16 inst = 0b1110'0000'0000'0001;
-    std::cout << internal::disassemble::thumb(inst, 0x500) << "\n";
+    std::cout << llarm::as::disassemble_thumb(inst, 0x500) << "\n";
     //std::cout << internal::thumb_id_to_string(llarm::as::identify::thumb(inst)) << "\n";
     return 0;
 

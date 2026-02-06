@@ -1,10 +1,9 @@
 #pragma once
 
 #include "../id/shifter_id.hpp"
-
 #include "../interpreter/lexer.hpp"
 #include "../interpreter/IR_struct.hpp"
-#include "llarm-asm/src/interpreter/mnemonic.hpp"
+#include "../interpreter/mnemonic.hpp"
 
 namespace internal::ident::string_shifters {
     shifter_id data_instruction(const lexemes_t &lexemes);

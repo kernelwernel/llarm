@@ -2,7 +2,7 @@
 
 #include "../id/shifter_id.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 namespace internal::ident::u32_shifters {
     shifter_id load_store(const u32 code);

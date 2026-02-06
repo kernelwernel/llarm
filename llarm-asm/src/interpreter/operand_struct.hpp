@@ -31,8 +31,8 @@ struct operand_struct {
     u8 third_CR_reg;
     shifter_id shifter;
     vfp_special_reg_enum vfp_special_reg;
-    unsigned char x_char;
-    unsigned char y_char;
+    char x_char;
+    char y_char;
 
     bool has_S;
     bool has_Z;

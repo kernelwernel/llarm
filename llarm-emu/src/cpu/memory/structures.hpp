@@ -2,7 +2,7 @@
 
 #include "../../id.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 // this is the standard access structure that the MMU, MPU, and raw access types use. 
 // Think of it as a universal communication format for the purpose of uniformly giving 

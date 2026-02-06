@@ -3,9 +3,9 @@
 #include "../patterns/patterns.hpp"
 #include "shifter_operands/shifters.hpp"
 
-#include "shared/types.hpp"
-#include "shared/util.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
+#include <llarm/shared/out.hpp>
 
 #include <string>
 

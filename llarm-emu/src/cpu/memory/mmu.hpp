@@ -8,7 +8,7 @@
 #include "alignment.hpp"
 #include "structures.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 /**
  * SMALL LEXICON FOR ANYBODY READING THIS:

@@ -1,6 +1,6 @@
 #include "../generators.hpp"
-#include "shared/out.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/out.hpp>
+#include <llarm/shared/util.hpp>
 
 u32 generators::q_instructions(const arm_id id, const operand_struct &args) {
     u32 binary = 0b0000'0001'0000'0000'0000'0000'0101'0000;
@@ -74,7 +74,7 @@ u32 generators::dsp_mul_instructions(const arm_id id, const operand_struct &args
         case arm_id::SMLAXY: 
         case arm_id::SMLAWY: 
             llarm::util::swap_bits(binary, 12, 15, args.fourth_reg);
-            // no break on purpose
+            [[fallthrough]];
 
         case arm_id::SMULXY: 
         case arm_id::SMULWY: 

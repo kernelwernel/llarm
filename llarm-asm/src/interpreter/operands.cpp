@@ -1,7 +1,8 @@
 #include "operands.hpp"
-#include "llarm-asm/src/identifiers/string_shifters.hpp"
-#include "llarm-asm/src/interpreter/mnemonic.hpp"
-#include "shared/out.hpp"
+#include "../identifiers/string_shifters.hpp"
+#include "../interpreter/mnemonic.hpp"
+
+#include <llarm/shared/out.hpp>
 
 operand_struct operands::lex_to_operands(const lexemes_t &lexemes, const mnemonic_struct &mnemonic) {
     operand_struct arg;
@@ -121,13 +122,13 @@ void operands::reg(u8 &reg_iteration, u8 &CR_reg_iteration, operand_struct &arg,
 
 
 void operands::imm(u8 &int_iteration, operand_struct &arg, const lexeme &lexeme) {
-    const i64 &number = [&]() -> i64 {
+    const u32 number = [&]() -> u32 {
         if (lexeme.token_type == OPTION) {
-            return lexeme.data.option.number;   
+            return static_cast<u32>(lexeme.data.option.number);   
         }
 
         // this is most likely the case
-        return lexeme.data.imm.number;
+        return static_cast<u32>(lexeme.data.imm.number);
     }();
 
     switch (int_iteration) {

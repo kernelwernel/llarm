@@ -1,7 +1,7 @@
 #pragma once
 
 #include "tokens.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/out.hpp>
 
 #include <vector>
 

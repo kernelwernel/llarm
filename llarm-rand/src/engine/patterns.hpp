@@ -1,5 +1,5 @@
 #include "llarm-rand/src/params.hpp"
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 namespace patterns {
     u32 logic_arithmetic(const param_struct params);

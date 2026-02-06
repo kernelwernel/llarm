@@ -1,7 +1,7 @@
 #include "string_thumb.hpp"
 #include "../interpreter/interpreter.hpp"
-#include "llarm-asm/src/interpreter/IR.hpp"
-#include "llarm-asm/src/interpreter/tokens.hpp"
+#include "../interpreter/IR.hpp"
+#include "../interpreter/tokens.hpp"
 
 using namespace internal;
 using namespace interpreter;
@@ -84,10 +84,10 @@ bool validation::string_thumb::is_thumb_instruction_valid(const IR_thumb_struct 
         /* ✅ */ case thumb_id::BKPT: return verify_lexemes({ immed(8) }, lexemes);
         /* ✅ */ case thumb_id::SWI: return verify_lexemes({ immed(8) }, lexemes); // no hashtag for both BKPT and SWI
         case thumb_id::LDMIA: 
-        case thumb_id::STMIA: return verify_lexemes({ REG_THUMB, PRE_INDEX, REG_LIST_THUMB }, lexemes);
-        case thumb_id::BL: return verify_lexemes({ CONST }, lexemes);
+        case thumb_id::STMIA: return verify_lexemes({ reg_thumb(), token(PRE_INDEX), reg_list_thumb() }, lexemes);
+        case thumb_id::BL: return verify_lexemes({ immed(16) }, lexemes); // TODO TEMPORARY
         /* ✅ */ case thumb_id::BX: return verify_lexemes({ reg() }, lexemes); // R0~R15 is only supported here 
-        case thumb_id::POP: return verify_lexemes({ REG_LIST_THUMB_OPTIONAL_PC }, lexemes);
-        case thumb_id::PUSH: return verify_lexemes({ REG_LIST_THUMB_OPTIONAL_LR }, lexemes);
+        /* ✅ */ case thumb_id::POP: return verify_lexemes({ reg_list_thumb_optional_PC() }, lexemes);
+        /* ✅ */ case thumb_id::PUSH: return verify_lexemes({ reg_list_thumb_optional_LR() }, lexemes);
     }
 }

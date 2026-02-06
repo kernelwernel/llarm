@@ -6,9 +6,9 @@
 
 #include <vector>
 
-#include "shared/types.hpp"
-#include "shared/util.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
+#include <llarm/shared/out.hpp>
 
 
 single_encoding_struct VFP_ADDRESS_MODE::single_precision(const u32 code) {

@@ -2,9 +2,9 @@
 
 #include <vector>
 
-#include "shared/string_view.hpp"
-#include "shared/types.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/string_view.hpp>
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
 
 // rhs = right hand side
 
@@ -37,7 +37,7 @@ enum class token_enum : u8 {
 };
 
 enum class reg_type : u8 {
-    UNKNOWN,
+    UNKNOWN_REG, // there is a conflict with token_enum::UNKNOWN when doing "using enum reg_type", so this is a fix
     REGULAR,
     SINGLE,
     DOUBLE,
@@ -45,7 +45,8 @@ enum class reg_type : u8 {
     CR,
     FPSID,
     FPSCR,
-    FPEXC
+    FPEXC,
+    FP_WILDCARD
 };
 
 struct REG {
@@ -55,7 +56,7 @@ struct REG {
     bool is_malformed;
     bool is_invalid;
 
-    constexpr bool operator==(const REG& rhs) const { // rhs = left hand side
+    constexpr bool operator==(const REG& rhs) const {
         if (is_invalid || is_malformed || rhs.is_invalid || rhs.is_malformed) {
             return false;
         }
@@ -66,6 +67,14 @@ struct REG {
             tmp_num = WILDCARD;
         } else {
             tmp_num = number;
+        }
+
+        if (type == reg_type::FP_WILDCARD) {
+            return (
+                (rhs.type == reg_type::FPSID) ||
+                (rhs.type == reg_type::FPSCR) ||
+                (rhs.type == reg_type::FPEXC)
+            );
         }
 
         return (
@@ -170,6 +179,8 @@ struct REG_LIST {
     bool is_r15_excluded;
     bool must_have_r15;
     bool is_thumb_supported;
+    bool is_thumb_optional_pc;
+    bool is_thumb_optional_lr;
     bool is_malformed;
     bool is_invalid;
     bool is_empty;

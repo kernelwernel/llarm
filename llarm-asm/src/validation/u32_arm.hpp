@@ -1,7 +1,7 @@
 #include "../id/instruction_id.hpp"
 #include "../id/shifter_id.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 using namespace internal;
 

@@ -1,5 +1,5 @@
 #include "../generators.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/util.hpp>
 
 u32 generators::fcmpezd(const operand_struct &args) {
     u32 binary = fcmpzd(args);
@@ -33,7 +33,7 @@ u32 generators::fcmpzs(const operand_struct &args) {
     u32 binary = 0b0000'1110'1011'0101'0000'1010'0100'0000;
 
     const bool D = (args.first_reg & 1);
-    const u8 Fd = llarm::util::bit_range(args.first_reg, 1, 4);
+    const u8 Fd = llarm::util::bit_range<u8>(args.first_reg, 1, 4);
 
     llarm::util::swap_bits(binary, 28, 31, args.cond);
     llarm::util::swap_bits(binary, 12, 15, Fd);
@@ -93,7 +93,7 @@ u32 generators::fmrs(const operand_struct &args) {
     llarm::util::swap_bits(binary, 12, 15, args.first_reg);
 
     const bool N = (args.second_reg & 1);
-    const u8 Fn = llarm::util::bit_range(args.second_reg, 1, 4);
+    const u8 Fn = llarm::util::bit_range<u8>(args.second_reg, 1, 4);
 
     llarm::util::swap_bits(binary, 16, 19, Fn);
     llarm::util::modify_bit(binary, 7, N);
@@ -130,7 +130,7 @@ u32 generators::fmsr(const operand_struct &args) {
     llarm::util::swap_bits(binary, 12, 15, args.second_reg);
 
     const bool N = (args.first_reg & 1);
-    const u8 Fn = llarm::util::bit_range(args.first_reg, 1, 4);
+    const u8 Fn = llarm::util::bit_range<u8>(args.first_reg, 1, 4);
 
     llarm::util::swap_bits(binary, 16, 19, Fn);
     llarm::util::modify_bit(binary, 7, N);

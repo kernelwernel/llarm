@@ -1,7 +1,7 @@
 #include "../generators.hpp"
 
-#include "shared/util.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/util.hpp>
+#include <llarm/shared/out.hpp>
 
 // format: LDR|STR{<cond>}H|SH|SB|D <Rd>, <addressing_mode>
 u32 generators::ls_misc_instruction(const arm_id id, const operand_struct &args) {
@@ -31,7 +31,7 @@ u32 generators::ls_misc_instruction(const arm_id id, const operand_struct &args)
 
     // 4th and 7th bits are always 1, so they are ignored
 
-    auto change_immed = [&](const u8 offset_8) -> void {
+    auto change_immed = [&]() -> void {
         const u8 immed_H = llarm::util::bit_range<u8>(args.first_int, 4, 7);
         const u8 immed_L = llarm::util::bit_range<u8>(args.first_int, 0, 3);
         
@@ -49,7 +49,7 @@ u32 generators::ls_misc_instruction(const arm_id id, const operand_struct &args)
         case shifter_id::LS_MISC_IMM: {
             llarm::util::modify_bit(binary, 24, true);
             llarm::util::modify_bit(binary, 22, true);
-            change_immed(args.first_int);
+            change_immed();
             break;
         }
 
@@ -57,12 +57,12 @@ u32 generators::ls_misc_instruction(const arm_id id, const operand_struct &args)
             llarm::util::modify_bit(binary, 24, true);
             llarm::util::modify_bit(binary, 22, true);
             llarm::util::modify_bit(binary, 21, true);
-            change_immed(args.first_int);
+            change_immed();
             break;
 
         case shifter_id::LS_MISC_IMM_POST:
             llarm::util::modify_bit(binary, 22, true);
-            change_immed(args.first_int);
+            change_immed();
             break;
 
         case shifter_id::LS_MISC_REG:

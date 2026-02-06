@@ -1,14 +1,14 @@
 #include "matchers.hpp"
 #include "tokens.hpp"
 
-#include "shared/string_view.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/string_view.hpp>
+#include <llarm/shared/util.hpp>
 
 #include <cctype>
 
 REG matchers::reg(sv str) {
     REG reg = {
-        reg_type::UNKNOWN, // type
+        reg_type::UNKNOWN_REG, // type
         WILDCARD,  // number
         false, // is_thumb_supported
         false, // is_malformed
@@ -28,7 +28,7 @@ REG matchers::reg(sv str) {
     constexpr u16 IP = ('I' << 8) | 'P';
     constexpr u16 FP = ('F' << 8) | 'P';
 
-    const u16 key = str.at(0) << 8 | str.at(1);
+    const u16 key = static_cast<u8>(str.at(0) << 8 | str.at(1));
 
     switch (key) {
         case PC: reg.number = 15; break;
@@ -66,7 +66,7 @@ REG matchers::reg(sv str) {
                 reg.type = reg_type::FPEXC;
             }
 
-            if (reg.type != reg_type::UNKNOWN) {
+            if (reg.type != reg_type::UNKNOWN_REG) {
                 reg.number = WILDCARD;
                 reg.is_invalid = false;
                 return reg;
@@ -154,7 +154,7 @@ PSR matchers::cpsr_spsr(const sv str) {
         }
     }
 
-    const u8 field_bitset = llarm::util::bit_range<u8>(psr.flags, (u8)PSR::C, (u8)PSR::F);
+    const u8 field_bitset = llarm::util::bit_range<u8>(psr.flags, PSR::C, PSR::F);
     const u8 count = llarm::util::popcount(field_bitset);
 
     // check for duplicates
@@ -212,7 +212,7 @@ IMM matchers::immediate(sv str) {
     u64 num = 0;
 
     if (is_hex) {
-        num = llarm::util::hex_to_i64(str);
+        num = llarm::util::hex_to_u64(str);
     } else {
         for (const char c : str) {
             // verify if the int is valid
@@ -285,7 +285,7 @@ token_enum matchers::address_mode(const sv str) {
     constexpr u32 ROR = ('R' << 16) | ('O' << 8) | 'R';
     constexpr u32 RRX = ('R' << 16) | ('R' << 8) | 'X';
 
-    const u32 key = (str.at(0) << 16) | (str.at(1) << 8) | str.at(2);
+    const u32 key = static_cast<u32>((str.at(0) << 16) | (str.at(1) << 8) | str.at(2));
 
     switch (key) {
         case LSL: return token_enum::LSL;
@@ -299,7 +299,7 @@ token_enum matchers::address_mode(const sv str) {
 
 
 bool matchers::comment(const sv str) {
-    const unsigned char first_char = str.front();
+    const char first_char = str.front();
     
     // gcc uses this convention like "MOV R0, #1 <some commentary>",
     // and the standard comment starter is '@' 

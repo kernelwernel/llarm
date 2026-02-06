@@ -1,6 +1,6 @@
 #include "generators.hpp"
 #include "../../interpreter/IR_struct.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/util.hpp>
 
 using namespace internal;
 
@@ -23,8 +23,8 @@ bool generators::is_imm_encodable(const u32 imm) {
 }
 
 
-void encode_imm(u32 &binary, const u32 immed) {
-    for (u32 rot = 0; rot < 16; ++rot) {
+void generators::encode_imm(u32 &binary, const u32 immed) {
+    for (u8 rot = 0; rot < 16; ++rot) {
         u32 rotated = llarm::util::rotr(immed, rot * 2);
         if ((rotated & 0xFFFFFF00) == 0) {
             llarm::util::swap_bits(binary, 8, 11, static_cast<u8>(rotated));

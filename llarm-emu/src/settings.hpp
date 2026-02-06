@@ -4,7 +4,7 @@
 #include "constants.hpp"
 #include "utility.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 struct SETTINGS {
     bool is_thumb_enabled;

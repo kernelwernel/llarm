@@ -5,9 +5,9 @@
 
 #include <cmath>
 
-#include "shared/types.hpp"
-#include "shared/util.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
+#include <llarm/shared/out.hpp>
 
 
 void VFP_REG::write(const id::vfp_reg vfp_reg_id, const u64 value) {

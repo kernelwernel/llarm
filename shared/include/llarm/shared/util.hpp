@@ -1,7 +1,6 @@
 #pragma once
 
 #include "types.hpp"
-#include "string_view.hpp"
 
 #include <bitset>
 
@@ -35,7 +34,7 @@ namespace llarm::util {
             original &= ~(1U << index);
         }
     }
-    
+
     u32 bit_range(const u32 input, const u8 start, const u8 end);
 
     std::string to_upper(const std::string& str);
@@ -122,17 +121,17 @@ namespace llarm::util {
     }
 
 
-    constexpr i64 hex_to_i64(const sv str) {
-        i64 num = 0;
+    constexpr u64 hex_to_u64(const sv str) {
+        u64 num = 0;
 
         // convert hex to i32
         for (const char c : str) {
             num <<= 4; // multiply by 16
         
             if (c >= '0' && c <= '9') {
-                num += c - '0';
+                num += static_cast<u64>(c - '0');
             } else if (c >= 'A' && c <= 'F') {
-                num += c - 'A' + 10;
+                num += static_cast<u64>(c - 'A' + 10);
             }
         }
 

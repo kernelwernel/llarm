@@ -1,6 +1,6 @@
 #pragma once
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 struct settings_struct {
     bool fixed_register_choice; // every register will be set to R0

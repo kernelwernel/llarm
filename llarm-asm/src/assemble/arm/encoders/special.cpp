@@ -1,5 +1,5 @@
 #include "../generators.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/util.hpp>
 
 
 u32 generators::mul(const operand_struct &args) {
@@ -234,7 +234,7 @@ u32 generators::bl(const operand_struct &args) {
 u32 generators::bkpt(const operand_struct &args) {
     u32 binary = 0b1110'0001'0010'0000'0000'0000'0111'0000;
 
-    const u16 immed = args.first_int;
+    const u16 immed = static_cast<u16>(args.first_int);
 
     const u16 top_bits = llarm::util::bit_range<u16>(immed, 4, 16);
     const u8 bottom_bits = llarm::util::bit_range<u8>(immed, 0, 3);
@@ -249,9 +249,9 @@ u32 generators::bkpt(const operand_struct &args) {
 u32 generators::blx1(const operand_struct &args) {
     u32 binary = 0b1111'1010'0000'0000'0000'0000'0000'0000;
 
-    const i32 offset = args.first_int - (args.PC + 8);
+    const u32 offset = args.first_int - (args.PC + 8);
 
-    const i32 immed_24 = (offset >> 2) & 0x00FFFFFF;
+    const u32 immed_24 = (offset >> 2) & 0x00FFFFFF;
     const bool H = (offset >> 1) & 1;
 
     llarm::util::modify_bit(binary, 24, H);

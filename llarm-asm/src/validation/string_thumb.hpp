@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../interpreter/IR.hpp"
+#include "../interpreter/IR_struct.hpp"
 #include <string>
 
 using namespace internal;

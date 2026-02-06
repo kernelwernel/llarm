@@ -7,7 +7,7 @@
 
 #include "memory.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 
 void MEMORY::manage_abort(const id::aborts abort_code) {

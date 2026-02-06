@@ -2,8 +2,8 @@
 #include "patterns.hpp"
 #include "../random.hpp"
 
-#include "shared/types.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
 
 
 #include <llarm-asm/llarm-asm.hpp>

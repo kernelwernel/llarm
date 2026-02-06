@@ -3,8 +3,8 @@
 #include <vector>
 #include <fstream>
 
-#include "shared/types.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/out.hpp>
 
 
 std::vector<u8> fetch_binary(const std::string& filePath) {

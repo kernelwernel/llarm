@@ -3,8 +3,8 @@
 #include "../../settings.hpp"
 #include "structures.hpp"
 
-#include "shared/types.hpp"
-#include "shared/random.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/random.hpp>
 
 #if (LLARM_LOW_MEMORY)
     #include <map>

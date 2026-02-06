@@ -2,7 +2,7 @@
 
 #include "../id/instruction_id.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 namespace internal::ident::u32_arm {
     arm_id misc_instructions(const u32 code);

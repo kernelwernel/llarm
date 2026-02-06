@@ -1,7 +1,7 @@
 #include "tokens.hpp"
 
-#include "shared/string_view.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/string_view.hpp>
+#include <llarm/shared/out.hpp>
 
 raw_tokens_t tokens::tokenize(sv instruction) {
     if (instruction.empty()) {

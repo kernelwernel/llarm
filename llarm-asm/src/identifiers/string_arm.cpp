@@ -1,8 +1,8 @@
 #include "string_arm.hpp"
 #include "../id/instruction_id.hpp"
+#include "../interpreter/IR.hpp"
 
-#include "llarm-asm/src/interpreter/IR.hpp"
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 using namespace internal;
 

@@ -6,7 +6,7 @@
 #include "ram.hpp"
 #include "fcse.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 // memory protection unit
 struct MPU {

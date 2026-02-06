@@ -2,8 +2,8 @@
 
 #include "llarm-asm/llarm-asm.hpp"
 
-#include "shared/util.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/util.hpp>
+#include <llarm/shared/out.hpp>
 
 address_struct ADDRESSING_MODE::load_store_multiple(const u32 code) {
     using namespace llarm::util;

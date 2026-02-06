@@ -2,9 +2,9 @@
 
 #include "../../id/instruction_id.hpp"
 #include "../../interpreter/operand_struct.hpp"
+#include "../../interpreter/IR_struct.hpp"
 
-#include "llarm-asm/src/interpreter/IR_struct.hpp"
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 using namespace internal;
 

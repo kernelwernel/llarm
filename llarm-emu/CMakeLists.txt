@@ -9,6 +9,7 @@ project(
 
 
 find_package(llarm-asm CONFIG REQUIRED)
+find_package(llarm-shared CONFIG REQUIRED)
 
 
 # includes

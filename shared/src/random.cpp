@@ -1,4 +1,4 @@
-#include "random.hpp"
+#include "../include/llarm/shared/random.hpp"
 
 using namespace llarm;
 
@@ -43,5 +43,6 @@ u64 random::generate_range(const u64 start, const u64 end) {
 
     }
 
-    return static_cast<u16>(r % range);
+    //return static_cast<u16>(r % range);
+    return 0; // TODO FINISH THIS FUNCTION
 }

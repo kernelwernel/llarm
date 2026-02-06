@@ -15,7 +15,7 @@
 #include "../../settings.hpp"
 #include "../globals.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 
 struct COPROCESSOR {

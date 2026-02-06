@@ -2,9 +2,9 @@
 
 #include "llarm-asm/llarm-asm.hpp"
 
-#include "shared/types.hpp"
-#include "shared/util.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
+#include <llarm/shared/out.hpp>
 
 
 address_struct ADDRESSING_MODE::load_store_coprocessor(const u32 code) {

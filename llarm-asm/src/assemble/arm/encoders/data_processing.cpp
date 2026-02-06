@@ -1,7 +1,7 @@
 #include "../generators.hpp"
 
-#include "shared/util.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/util.hpp>
+#include <llarm/shared/out.hpp>
 
 // format: <opcode>{<cond>}{S} <Rd>, <Rn>, <shifter_operand>
 u32 generators::data_instruction(const arm_id instruction, const operand_struct &args) {

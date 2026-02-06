@@ -1,8 +1,8 @@
 #include "u32_arm.hpp"
 #include "../id/instruction_id.hpp"
 
-#include "shared/types.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
 
 using namespace internal;
 

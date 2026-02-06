@@ -2,7 +2,7 @@
 
 #include "../interpreter/IR.hpp"
 #include "arm/generators.hpp"
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 #include <string>
 

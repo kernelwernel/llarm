@@ -4,9 +4,9 @@
 
 #include <cmath>
 
-#include "shared/types.hpp"
-#include "shared/util.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
+#include <llarm/shared/out.hpp>
 
 
 bool OPERATION::carry_add(const u64 &sum) {

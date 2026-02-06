@@ -12,3 +12,10 @@ struct IR_arm_struct {
     operand_struct operands;
     u32 PC;
 };
+
+
+struct IR_thumb_struct {
+    thumb_id id;
+    lexemes_t lexemes;
+    sv mnemonic;
+};

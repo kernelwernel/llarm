@@ -4,8 +4,8 @@
 
 #include "fcse.hpp"
 
-#include "shared/types.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
 
 bool FCSE::is_fcse_enabled() {
     return (settings.is_fcse_enabled);

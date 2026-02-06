@@ -12,8 +12,8 @@
 
 #include "coprocessor.hpp"
 
-#include "shared/types.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/out.hpp>
 
 
 id::cp COPROCESSOR::fetch_cp_id(const u8 raw_cp_num) {

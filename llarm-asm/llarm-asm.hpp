@@ -1,12 +1,7 @@
 #pragma once
 
-//#include <llarm/internal/llarm-asm/src/identifiers/identifiers.hpp>
-//#include <llarm/internal/llarm-asm/src/opcodes/opcodes.hpp>
-//#include <llarm/internal/llarm-asm/src/instruction_id.hpp>
-//#include <llarm/internal/llarm-asm/src/instruction_table.hpp>
-
-#include "llarm-asm/src/assemble/assemble.hpp"
-#include "llarm-asm/src/settings.hpp"
+#include "src/assemble/assemble.hpp"
+#include "src/settings.hpp"
 #include "src/id/instruction_id.hpp"
 #include "src/identifiers/u32_shifters.hpp"
 #include "src/identifiers/u32_arm.hpp"

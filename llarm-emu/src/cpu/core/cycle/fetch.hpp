@@ -2,7 +2,7 @@
 
 #include "../../memory/memory.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 struct arm_fetch_struct {
     u32 code;

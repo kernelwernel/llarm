@@ -1,6 +1,6 @@
 #include "../generators.hpp"
-#include "shared/util.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/util.hpp>
+#include <llarm/shared/out.hpp>
 
 u32 generators::vfp_mul_instructions(const arm_id id, const operand_struct &args) {
     u32 binary = 0;
@@ -53,7 +53,7 @@ u32 generators::vfp_mul_instructions(const arm_id id, const operand_struct &args
         u8 offset;
     };
 
-    auto process_reglist = [](const u16 raw_reglist) -> reglist {
+    auto process_reglist = [](const u32 raw_reglist) -> reglist {
         const u8 Dd = llarm::util::get_lsb(raw_reglist);
         const u8 offset = llarm::util::popcount(raw_reglist);
 
@@ -65,7 +65,7 @@ u32 generators::vfp_mul_instructions(const arm_id id, const operand_struct &args
         case arm_id::FSTS: 
         case arm_id::FLDS: {
             const bool D = (args.first_reg & 1);
-            const u8 Fd = llarm::util::bit_range(args.first_reg, 1, 4);
+            const u8 Fd = llarm::util::bit_range<u8>(args.first_reg, 1, 4);
 
             llarm::util::swap_bits(binary, 12, 15, Fd);
             llarm::util::swap_bits(binary, 16, 19, args.second_reg);

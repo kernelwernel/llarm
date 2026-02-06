@@ -1,7 +1,7 @@
 #include "../../instructions/instructions.hpp"
 #include "../../core/registers.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 void INSTRUCTIONS::thumb::misc::NOP(const u16 code) {
     std::exit(0);

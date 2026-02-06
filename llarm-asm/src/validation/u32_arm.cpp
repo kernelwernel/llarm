@@ -4,8 +4,8 @@
 #include "../identifiers/u32_arm.hpp"
 #include "../identifiers/u32_shifters.hpp"
 
-#include "shared/util.hpp"
-#include "shared/types.hpp"
+#include <llarm/shared/util.hpp>
+#include <llarm/shared/types.hpp>
 
 using namespace internal;
 
@@ -35,13 +35,13 @@ bool u32_arm::check_PLD(const u32 code) {
 
 // offset must be at least 0 and be an even number, and must have a valid reglist config
 bool u32_arm::check_vfp_reglist(const u32 code, const arm_id id) {
-    const u8 offset = llarm::util::bit_range(code, 0, 7);
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
     if (offset == 0 || offset & 1) {
         return false;
     }
 
-    const u8 Dd = llarm::util::bit_range(code, 12, 15);
+    const u8 Dd = llarm::util::bit_range<u8>(code, 12, 15);
 
     switch (id) {
         case arm_id::FLDMD: 
@@ -64,7 +64,7 @@ bool u32_arm::check_vfp_reglist(const u32 code, const arm_id id) {
         case arm_id::FSTMS: {
             const bool D = (Dd & 1);
             const u8 Fd = llarm::util::bit_range<u8>(Dd, 1, 4);
-            const u8 Sd = ((Fd << 1) | D);
+            const u8 Sd = static_cast<u8>((Fd << 1) | D);
 
             if ((offset + Sd) > 31) {
                 return false;
@@ -80,7 +80,7 @@ bool u32_arm::check_vfp_reglist(const u32 code, const arm_id id) {
 
 
 bool u32_arm::check_move_system_reg(const u32 code) {
-    const u8 reg = llarm::util::bit_range(code, 16, 19);
+    const u8 reg = llarm::util::bit_range<u8>(code, 16, 19);
 
     switch (reg) {
         case 0b0000: // FPSID

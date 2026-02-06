@@ -1,8 +1,8 @@
 #include "lexer.hpp"
-#include "llarm-asm/src/interpreter/tokens.hpp"
+#include "tokens.hpp"
 #include "matchers.hpp"
 
-#include "shared/out.hpp"
+#include <llarm/shared/out.hpp>
 
 
 lexemes_t lexer::lex(const raw_tokens_t &tokens) {
@@ -88,7 +88,7 @@ lexemes_t lexer::lex(const raw_tokens_t &tokens) {
     if (arg_count == 1) {
         option_check(lexeme_list, start_pos, end_pos);
     } else {
-        const u8 pre_size = lexeme_list.size();
+        const u8 pre_size = static_cast<u8>(lexeme_list.size());
     
         reg_list_check(lexeme_list, start_pos, end_pos);
     
@@ -132,7 +132,6 @@ void lexer::option_check(lexemes_t &lexemes, const u8 start_pos, const u8 end_po
 
     if (imm.number > 255) {
         option.is_malformed = true;
-        option.number = imm.number;
     }
 
     lexeme lex = {
@@ -147,11 +146,13 @@ void lexer::option_check(lexemes_t &lexemes, const u8 start_pos, const u8 end_po
 
 void lexer::reg_list_check(lexemes_t &lexemes, const u8 start_pos, const u8 end_pos) {
     REG_LIST reg_list = {
-        reg_type::UNKNOWN, // type
+        reg_type::UNKNOWN_REG, // type
         0, // reg_count
         false, // is_r15_excluded
         false, // must_have_r15
         false, // is_thumb_supported
+        false, // is_thumb_optional_pc;
+        false, // is_thumb_optional_lr;
         false, // is_malformed
         true, // is_invalid
         false, // is_empty
@@ -202,10 +203,11 @@ void lexer::reg_list_check(lexemes_t &lexemes, const u8 start_pos, const u8 end_
             break;
 
         // invalid/malformed, these shouldn't be in the list
-        case reg_type::UNKNOWN:
+        case reg_type::UNKNOWN_REG:
         case reg_type::FPSID:
         case reg_type::FPSCR:
         case reg_type::FPEXC: 
+        case reg_type::FP_WILDCARD:
             llarm::out::error("Invalid register list argument for first element, make sure it's valid");
     }
 
@@ -245,8 +247,8 @@ void lexer::reg_list_range(lexemes_t &lexemes, const u8 start_pos, const u8 end_
     const bool reg_type_mismatch = (first_reg_type != second_reg_type); 
 
     const bool reg_type_unrecognised = (
-        (first_reg_type == reg_type::UNKNOWN) || 
-        (second_reg_type == reg_type::UNKNOWN)
+        (first_reg_type == reg_type::UNKNOWN_REG) || 
+        (second_reg_type == reg_type::UNKNOWN_REG)
     );
 
     const bool reg_num_malformed = (first_reg.number >= second_reg.number);
@@ -275,8 +277,7 @@ void lexer::reg_list_range(lexemes_t &lexemes, const u8 start_pos, const u8 end_
     return;
 }
 
-
-void reg_list_categorize(lexemes_t &lexemes, REG_LIST &reg_list, const u8 start_pos, const u8 end_pos) {
+void lexer::reg_list_categorize(lexemes_t &lexemes, REG_LIST &reg_list, const u8 start_pos, const u8 end_pos) {
     lexemes.erase(lexemes.begin() + start_pos, lexemes.begin() + end_pos);
 
     lexeme reg_list_lexeme = {
@@ -295,16 +296,7 @@ bool lexer::reg_check(lexeme &lexeme, const sv token) {
         return false;
     }
 
-    //switch (reg.type) {
-    //    case reg_type::REGULAR: lexeme.token_type = token_enum::REG; break;
-    //    case reg_type::SINGLE: lexeme.token_type = token_enum::REG_SINGLE; break;
-    //    case reg_type::DOUBLE: lexeme.token_type = token_enum::REG_DOUBLE; break;
-    //    case reg_type::COPROC: lexeme.token_type = token_enum::REG_COPROC; break;
-    //    case reg_type::CR: lexeme.token_type = token_enum::REG_CR; break;
-    //    default: lexeme.token_type = token_enum::UNKNOWN; // this part shouldn't be reachable
-    //}
-
-    if (reg.type != reg_type::UNKNOWN) {
+    if (reg.type != reg_type::UNKNOWN_REG) {
         lexeme.token_type = token_enum::REG;
     }
 

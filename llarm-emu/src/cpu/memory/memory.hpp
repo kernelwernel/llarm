@@ -8,7 +8,7 @@
 #include "fcse.hpp"
 #include "26_bit_arch.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 struct MEMORY {
 private:

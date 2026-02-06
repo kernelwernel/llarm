@@ -5,7 +5,7 @@
 #include "../memory/26_bit_arch.hpp"
 #include "../globals.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 struct REGISTERS {
 private:

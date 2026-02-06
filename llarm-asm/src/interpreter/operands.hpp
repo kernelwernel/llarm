@@ -4,7 +4,7 @@
 #include "mnemonic.hpp"
 #include "lexer.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 using enum token_enum;
 

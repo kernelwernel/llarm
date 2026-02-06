@@ -2,10 +2,10 @@
 #include "../interpreter/interpreter.hpp"
 #include "../id/instruction_id.hpp"
 
-#include "shared/types.hpp"
-#include "shared/util.hpp"
-#include "shared/out.hpp"
-#include "shared/string_view.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
+#include <llarm/shared/out.hpp>
+#include <llarm/shared/string_view.hpp>
 
 using namespace internal;
 using enum token_enum;
@@ -57,7 +57,7 @@ thumb_id ident::string_thumb::thumb(const std::string &code) {
 
     // B1
     if (mnemonic.front() == 'B' && mnemonic.size() == 3) { // +1 for B, +2 for cond
-        const u16 cond_key = (mnemonic.at(1) << 8) | (mnemonic.at(2));
+        const u16 cond_key = static_cast<u16>((mnemonic.at(1) << 8) | mnemonic.at(2));
 
         if (interpreter::cond_match(cond_key)) {
             return thumb_id::B1;

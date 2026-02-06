@@ -6,8 +6,8 @@
 #include <vector>
 #include <array>
 
-#include "shared/types.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/out.hpp>
 
 void RAM::write(const std::vector<u8> &data, const u32 address) {
     if (address + data.size() > ram.size()) {

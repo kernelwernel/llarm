@@ -1,9 +1,9 @@
 #include "../generators.hpp"
 #include "../util.hpp"
+#include "shifter_operands/shifters.hpp"
 
-#include "llarm-asm/src/disassemble/generators/arm/shifter_operands/shifters.hpp"
-#include "shared/types.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
 
 #include <string>
 

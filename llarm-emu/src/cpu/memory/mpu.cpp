@@ -2,12 +2,12 @@
 #include "../globals.hpp"
 #include "../coprocessor/coprocessor.hpp"
 #include "llarm-emu/src/id.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/out.hpp>
 #include "structures.hpp"
 
 #include "mpu.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 u64 MPU::get_size(const u8 raw_size_bits) {
     switch (raw_size_bits) {

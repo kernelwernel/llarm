@@ -3,8 +3,8 @@
 #include <cmath>
 #include <cstring>
 
-#include "shared/types.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
 
 
 double vfp_utils::u64_to_double(const u64 value) {

@@ -1,11 +1,11 @@
 #include "mnemonic.hpp"
 #include "../id/instruction_id.hpp"
-
+#include "../id/cond_id.hpp"
 #include "../interpreter/interpreter.hpp"
-#include "llarm-asm/src/id/cond_id.hpp"
-#include "llarm-asm/src/interpreter/tokens.hpp"
-#include "shared/types.hpp"
-#include "shared/util.hpp"
+#include "../interpreter/tokens.hpp"
+
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
 
 using namespace internal;
 using namespace interpreter;
@@ -192,7 +192,7 @@ arm_id mnemonic::SWPB(sv mnemonic) {
 arm_id mnemonic::LDR_family(sv mnemonic) {
     mnemonic.remove_prefix(3); // "LDR"
 
-    const u16 potential_cond = (mnemonic.at(0) << 8) | mnemonic.at(1);
+    const u16 potential_cond = static_cast<u16>((mnemonic.at(0) << 8) | mnemonic.at(1));
 
     if (interpreter::cond_match(potential_cond)) {
         mnemonic.remove_prefix(2); // remove cond
@@ -233,7 +233,7 @@ arm_id mnemonic::STR_family(sv mnemonic) {
 
     mnemonic.remove_prefix(3); // "STR"
 
-    const u16 potential_cond = (mnemonic.at(0) << 8) | mnemonic.at(1);
+    const u16 potential_cond = static_cast<u16>((mnemonic.at(0) << 8) | mnemonic.at(1));
 
     if (interpreter::cond_match(potential_cond)) {
         mnemonic.remove_prefix(2); // remove cond
@@ -278,7 +278,7 @@ arm_id mnemonic::STM(const lexemes_t &lexemes) {
 
 
 arm_id mnemonic::LDM(const lexemes_t &lexemes) {
-    reg_list_settings settings{};
+    reg_list_settings settings = {};
 
     // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
     if (verify_tokens({ REG, PRE_INDEX, REG_LIST }, lexemes)) {
@@ -321,10 +321,10 @@ arm_id mnemonic::PSR_family(const sv mnemonic_str) {
     mnemonic_struct m;
 
     if (mnemonic_str.size() == 6) {
-        const u8 first_char = mnemonic_str.at(3);
-        const u8 second_char = mnemonic_str.at(4);
+        const char first_char = mnemonic_str.at(3);
+        const char second_char = mnemonic_str.at(4);
 
-        const u16 cond = (first_char << 8 | second_char);
+        const u16 cond = static_cast<u16>((first_char << 8) | second_char);
    
         if (cond_match(cond) == false) {
             return arm_id::UNDEFINED;
@@ -366,8 +366,8 @@ mnemonic_struct mnemonic::fetch_mnemonic_args(const arm_id id, sv mnemonic) {
         // <mnemonic>{<cond>} format
         case arm_id::LDR:
         case arm_id::MCR:
-        case arm_id::MRC: mnemonic.remove_prefix(1); // no break on purpose
-        case arm_id::BL: mnemonic.remove_prefix(1); // same
+        case arm_id::MRC: mnemonic.remove_prefix(1); [[fallthrough]];
+        case arm_id::BL: mnemonic.remove_prefix(1); [[fallthrough]];
         case arm_id::B: mnemonic.remove_prefix(1);
             args.cond_id = interpreter::fetch_cond_id(mnemonic);
             return args;
@@ -376,7 +376,7 @@ mnemonic_struct mnemonic::fetch_mnemonic_args(const arm_id id, sv mnemonic) {
         case arm_id::SMLAL:
         case arm_id::SMULL:
         case arm_id::UMLAL:
-        case arm_id::UMULL: mnemonic.remove_prefix(2);
+        case arm_id::UMULL: mnemonic.remove_prefix(2); [[fallthrough]];
         case arm_id::ADC:
         case arm_id::ADD:
         case arm_id::AND:
@@ -408,7 +408,7 @@ mnemonic_struct mnemonic::fetch_mnemonic_args(const arm_id id, sv mnemonic) {
         case arm_id::FSTMS:
         case arm_id::FSTMX:
         case arm_id::FCMPEZS:
-        case arm_id::FCMPEZD: mnemonic.remove_prefix(1); // no break on purpose
+        case arm_id::FCMPEZD: mnemonic.remove_prefix(1); [[fallthrough]];
         case arm_id::FCMPES:
         case arm_id::FCMPZS:
         case arm_id::FMSTAT:
@@ -427,7 +427,7 @@ mnemonic_struct mnemonic::fetch_mnemonic_args(const arm_id id, sv mnemonic) {
         case arm_id::FNMULD:
         case arm_id::FSITOD:
         case arm_id::FSQRTD:
-        case arm_id::FUITOD: mnemonic.remove_prefix(1); // no break on purpose
+        case arm_id::FUITOD: mnemonic.remove_prefix(1); [[fallthrough]];
         case arm_id::FABSS:
         case arm_id::FADDS:
         case arm_id::FCMPS:
@@ -453,7 +453,7 @@ mnemonic_struct mnemonic::fetch_mnemonic_args(const arm_id id, sv mnemonic) {
         case arm_id::FNEGD:
         case arm_id::FSUBD: 
         case arm_id::QDADD:
-        case arm_id::QDSUB: mnemonic.remove_prefix(1); // no break on purpose
+        case arm_id::QDSUB: mnemonic.remove_prefix(1); [[fallthrough]];
         case arm_id::FLDS:
         case arm_id::FMRS:
         case arm_id::FMRX:
@@ -465,7 +465,7 @@ mnemonic_struct mnemonic::fetch_mnemonic_args(const arm_id id, sv mnemonic) {
         case arm_id::MCRR:
         case arm_id::MRRC:
         case arm_id::QADD:
-        case arm_id::QSUB: mnemonic.remove_prefix(1); // no break on purpose
+        case arm_id::QSUB: mnemonic.remove_prefix(1); [[fallthrough]];
         case arm_id::CDP:
         case arm_id::CLZ:
         case arm_id::CMN:
@@ -500,7 +500,7 @@ mnemonic_struct mnemonic::fetch_mnemonic_args(const arm_id id, sv mnemonic) {
         case arm_id::TSTP:
         case arm_id::STRD: // format STR{<cond>}D
         case arm_id::LDRD: // same as above
-        case arm_id::TST: mnemonic.remove_prefix(1); // no break on purpose
+        case arm_id::TST: mnemonic.remove_prefix(1); [[fallthrough]];
         case arm_id::BX: mnemonic.remove_prefix(2);
             args.cond_id = interpreter::fetch_cond_id(mnemonic);
             return args;
@@ -551,7 +551,7 @@ mnemonic_struct mnemonic::fetch_mnemonic_args(const arm_id id, sv mnemonic) {
             args.cond_id = interpreter::fetch_cond_id(mnemonic);
             return args;
 
-        case arm_id::SMLALXY: mnemonic.remove_prefix(1);
+        case arm_id::SMLALXY: mnemonic.remove_prefix(1); [[fallthrough]];
         case arm_id::SMLAXY:
         case arm_id::SMULXY:
             mnemonic.remove_prefix(4);

@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "../types.hpp"
+#include "types.hpp"
 
 namespace shared::spellcheck {
     // https://en.wikipedia.org/wiki/Wagner%E2%80%93Fischer_algorithm

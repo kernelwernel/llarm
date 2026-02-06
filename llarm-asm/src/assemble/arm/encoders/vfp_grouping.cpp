@@ -1,6 +1,6 @@
 #include "../generators.hpp"
-#include "shared/out.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/out.hpp>
+#include <llarm/shared/util.hpp>
 
 u32 generators::vfp_Dd_Dm_instructions(const arm_id id, const operand_struct &args) {
     u32 binary = [=]() -> u32 {
@@ -74,8 +74,8 @@ u32 generators::vfp_Sd_Sm_instructions(const arm_id id, const operand_struct &ar
     const bool D = (args.first_reg & 1);
     const bool M = (args.second_reg & 1);
 
-    const u8 Fd = llarm::util::bit_range(args.first_reg, 1, 4);
-    const u8 Fm = llarm::util::bit_range(args.second_reg, 1, 4);
+    const u8 Fd = llarm::util::bit_range<u8>(args.first_reg, 1, 4);
+    const u8 Fm = llarm::util::bit_range<u8>(args.second_reg, 1, 4);
 
     llarm::util::modify_bit(binary, 22, D);
     llarm::util::modify_bit(binary, 5, M);
@@ -109,9 +109,9 @@ u32 generators::vfp_Sd_Sn_Sm_instructions(const arm_id id, const operand_struct 
     const bool N = (args.second_reg & 1);
     const bool M = (args.third_reg & 1);
 
-    const u8 Fd = llarm::util::bit_range(args.first_reg, 1, 4);
-    const u8 Fn = llarm::util::bit_range(args.second_reg, 1, 4);
-    const u8 Fm = llarm::util::bit_range(args.third_reg, 1, 4);
+    const u8 Fd = llarm::util::bit_range<u8>(args.first_reg, 1, 4);
+    const u8 Fn = llarm::util::bit_range<u8>(args.second_reg, 1, 4);
+    const u8 Fm = llarm::util::bit_range<u8>(args.third_reg, 1, 4);
 
     llarm::util::modify_bit(binary, 22, D);
     llarm::util::modify_bit(binary, 7, N);
@@ -139,7 +139,7 @@ u32 generators::vfp_Dd_Sm_instructions(const arm_id id, const operand_struct &ar
 
     const bool M = (args.second_reg & 1);
 
-    const u8 Fm = llarm::util::bit_range(args.second_reg, 1, 4);
+    const u8 Fm = llarm::util::bit_range<u8>(args.second_reg, 1, 4);
 
     llarm::util::modify_bit(binary, 5, M);
 
@@ -170,7 +170,7 @@ u32 generators::vfp_Sd_Dm_instructions(const arm_id id, const operand_struct &ar
 
     const bool D = (args.first_reg & 1);
 
-    const u8 Fm = llarm::util::bit_range(args.first_reg, 1, 4);
+    const u8 Fm = llarm::util::bit_range<u8>(args.first_reg, 1, 4);
 
     llarm::util::modify_bit(binary, 22, D);
 

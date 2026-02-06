@@ -1,5 +1,5 @@
 #include "encoding_utils.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/util.hpp>
 
 bool is_imm_encodable(const u32 imm) {
     // 1 byte immeds are always encodable

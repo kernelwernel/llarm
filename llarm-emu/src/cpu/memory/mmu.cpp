@@ -3,13 +3,13 @@
 #include "../globals.hpp"
 #include "llarm-emu/src/id.hpp"
 #include "ram.hpp"
-#include "shared/out.hpp"
+#include <llarm/shared/out.hpp>
 #include "structures.hpp"
 
 #include "mmu.hpp"
 
-#include "shared/types.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
 
 /**
  * SMALL LEXICON FOR ANYBODY READING THIS:

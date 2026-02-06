@@ -1,13 +1,12 @@
 #include "string_shifters.hpp"
-#include "llarm-asm/src/interpreter/IR.hpp"
+#include "../interpreter/IR.hpp"
 #include "../id/shifter_id.hpp"
 #include "../id/instruction_id.hpp"
-
 #include "../interpreter/interpreter.hpp"
-
 #include "../interpreter/tokens.hpp"
-#include "llarm-asm/src/interpreter/IR_struct.hpp"
-#include "shared/types.hpp"
+#include "../interpreter/IR_struct.hpp"
+
+#include <llarm/shared/types.hpp>
 
 using namespace internal;
 using enum token_enum;

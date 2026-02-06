@@ -1,11 +1,5 @@
 # basic info
 cmake_minimum_required(VERSION 3.29 FATAL_ERROR)
-project(
-    llarm-asm
-    VERSION 0.1 
-    DESCRIPTION "ARM assembly and disassembly framework"
-    LANGUAGES CXX
-)
 
 
 # includes
@@ -18,6 +12,30 @@ include("../cmake/linker.cmake") # linker config
 include("../cmake/linker_flags.cmake") # linker flag config
 include("../cmake/clang_format.cmake") # clang-format
 include("../cmake/clang_tidy.cmake") # clang-tidy
+include("../cmake/dependencies.cmake") # dependency management
+
+
+# project details
+project(
+    llarm-asm
+    VERSION 0.1 
+    DESCRIPTION "ARM assembly and disassembly framework"
+    LANGUAGES CXX
+)
+
+
+# extra includes
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+
+# find or build llarm-shared
+add_dependency(
+    PACKAGE_NAME llarm-shared
+    SOURCE_DIR "../shared"
+    TARGET_NAME llarm-shared-lib
+    ALIAS_TARGET llarm::llarm-shared-lib
+)
 
 
 # targets
@@ -41,52 +59,62 @@ foreach(source IN LISTS ALL_SOURCES)
 endforeach()
 
 
-# to include shared/
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../)
-
-
 # library setup
-add_library(${TARGET_LIB} STATIC ${LIB_SOURCES})
+add_library(${TARGET_LIB} SHARED ${LIB_SOURCES})
 set_target_properties(${TARGET_LIB} PROPERTIES 
+    CXX_VISIBILITY_PRESET default
+    VISIBILITY_INLINES_HIDDEN NO
     OUTPUT_NAME "llarm-asm"
+    INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
 )
 
 
 # executable setup
 add_executable(${TARGET_BIN} "src/main.cpp")
-set_target_properties(${TARGET_BIN} PROPERTIES OUTPUT_NAME "llarm-asm")
-target_link_libraries(${TARGET_BIN} PRIVATE ${TARGET_LIB})
+set_target_properties(${TARGET_BIN} PROPERTIES
+    OUTPUT_NAME "llarm-asm"
+    INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
+    BUILD_RPATH "${CMAKE_BINARY_DIR}"
+)
 
 
-# executable installation
-install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION /usr/bin)
+# library linkage
+target_link_libraries(${TARGET_BIN}
+    PRIVATE
+    ${TARGET_LIB}
+    ${LLARM_SHARED_TARGET}
+)
+
+target_link_libraries(${TARGET_LIB}
+    PUBLIC
+    ${LLARM_SHARED_TARGET}
+)
 
 
-# library installation
-install(FILES llarm-asm.hpp DESTINATION /usr/include/llarm)
+# installations
+install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES llarm-asm.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/llarm)
 install(TARGETS ${TARGET_LIB}
     EXPORT llarm-asm-lib-targets
-    ARCHIVE DESTINATION /usr/lib
-    LIBRARY DESTINATION /usr/lib
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+install(EXPORT llarm-asm-lib-targets
+    FILE llarm-asm-config.cmake
+    NAMESPACE llarm::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/llarm-asm
+)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/llarm-asm-config-version.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/llarm-asm
 )
 
 
 # library export
-install(EXPORT llarm-asm-lib-targets
-    FILE llarm-asm-config.cmake
-    NAMESPACE llarm::
-    DESTINATION /usr/lib/cmake/llarm-asm
-)
-
-
-include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
     llarm-asm-config-version.cmake
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion
-)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/llarm-asm-config-version.cmake
-    DESTINATION /usr/lib/cmake/llarm-asm
 )
 
 

@@ -89,7 +89,7 @@ sv interpreter::fetch_instruction(const sv code) {
 
 u16 interpreter::fetch_last_2_chars(const sv str) {
     const sv sub = (str.substr(str.size() - 2));
-    return (sub.at(0) << 8) | sub.at(1);
+    return static_cast<u16>((sub.at(0) << 8) | sub.at(1));
 };
 
 
@@ -144,12 +144,13 @@ cond_id interpreter::fetch_cond_id(const u16 cond) {
     }
 }
 
+
 cond_id interpreter::fetch_cond_id(const sv cond) {
     if (cond.size() == 0) {
         return cond_id::NONE;
     }
 
-    return fetch_cond_id((cond.at(0) << 8) | (cond.at(1)));
+    return fetch_cond_id(static_cast<u16>((cond.at(0) << 8) | cond.at(1)));
 }
 
 
@@ -215,6 +216,7 @@ lexeme interpreter::reg_thumb(const u8 reg_num) {
 
     return lexeme;
 }
+
 
 lexeme interpreter::psr(const bool psr_type, const bool has_fields) {
     PSR psr = {
@@ -327,6 +329,8 @@ lexeme interpreter::reg_list(const reg_list_settings &settings) {
         settings.is_r15_excluded, // is_r15_excluded
         settings.must_include_r15, // must_have_r15
         settings.is_reg_list_thumb, // is_thumb_supported
+        settings.is_PC_optional, // is_thumb_optional_pc;
+        settings.is_LR_optional, // is_thumb_optional_lr;
         false, // is_malformed
         false, // is_invalid
         false, // is_empty
@@ -334,11 +338,109 @@ lexeme interpreter::reg_list(const reg_list_settings &settings) {
     };
 
     lexeme lexeme = {
-        token_enum::IMMED, // token_type
+        token_enum::REG_LIST, // token_type
         reg_list // data
     };
 
     return lexeme;
+}
+
+
+lexeme interpreter::reg_list_double() {
+    const reg_list_settings s = {
+        reg_type::DOUBLE,
+        false,
+        false,
+        false,
+        false,
+        false
+    };
+
+    return reg_list(s);
+}
+
+
+lexeme interpreter::reg_list_single() {
+    const reg_list_settings s = {
+        reg_type::SINGLE,
+        false,
+        false,
+        false,
+        false,
+        false
+    };
+
+    return reg_list(s);
+}
+
+
+lexeme interpreter::reg_list_thumb() {
+    const reg_list_settings s = {
+        reg_type::REGULAR,
+        false,
+        false,
+        true,
+        false,
+        false
+    };
+
+    return reg_list(s);
+}
+
+
+lexeme interpreter::reg_list_thumb_optional_PC() {
+    const reg_list_settings s = {
+        reg_type::REGULAR,
+        false,
+        false,
+        true,
+        true,
+        false
+    };
+
+    return reg_list(s);
+}
+
+
+lexeme interpreter::reg_list_thumb_optional_LR() {
+    const reg_list_settings s = {
+        reg_type::REGULAR,
+        false,
+        false,
+        true,
+        false,
+        true
+    };
+
+    return reg_list(s);
+}
+
+
+lexeme interpreter::reg_list_must_include_PC() {
+    const reg_list_settings s = {
+        reg_type::REGULAR,
+        false,
+        true,
+        false,
+        false,
+        false
+    };
+
+    return reg_list(s);
+}
+
+
+lexeme interpreter::reg_list_must_exclude_PC() {
+    const reg_list_settings s = {
+        reg_type::REGULAR,
+        true,
+        false,
+        false,
+        false,
+        false
+    };
+
+    return reg_list(s);
 }
 
 

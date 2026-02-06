@@ -2,8 +2,8 @@
 #include "../../id.hpp"
 #include "registers.hpp"
 
-#include "shared/out.hpp"
-#include "shared/util.hpp"
+#include <llarm/shared/out.hpp>
+#include <llarm/shared/util.hpp>
 
 // TODO SYSTEM MODE IS NOT SUPPORTED IN EARLIER VERSIONS
 id::mode REGISTERS::read_mode() {

@@ -9,7 +9,7 @@
 #include "llarm-emu/src/cpu/vfp/addressing_modes.hpp"
 #include "operation.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 struct INSTRUCTIONS {
 private:

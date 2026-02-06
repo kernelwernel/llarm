@@ -14,7 +14,7 @@
 #include "../globals.hpp"
 #include "../memory/tlb.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 /**
  * NOTE: 

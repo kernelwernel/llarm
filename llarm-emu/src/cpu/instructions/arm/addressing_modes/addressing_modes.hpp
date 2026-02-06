@@ -3,7 +3,7 @@
 #include "../../../core/registers.hpp"
 #include "../../operation.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 struct data_struct {
     u32 value;

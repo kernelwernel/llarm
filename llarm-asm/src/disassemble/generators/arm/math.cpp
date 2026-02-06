@@ -1,7 +1,7 @@
 #include "../generators.hpp"
 #include "../patterns/patterns.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 #include <string>
 

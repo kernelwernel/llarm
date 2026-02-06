@@ -9,13 +9,7 @@
 
 using namespace internal;
 
-//struct IR_thumb_struct {
-//    thumb_id id;
-//    lexemes_t lexemes;
-//    sv mnemonic;
-//};
-
 namespace IR {
     IR_arm_struct generate(const std::string &code, const u32 PC = 0);
-    //IR_thumb_struct generate_thumb(const std::string &code);
+    IR_thumb_struct generate_thumb(const std::string &code);
 }

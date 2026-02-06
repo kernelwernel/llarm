@@ -2,7 +2,7 @@
 
 #include "../id/instruction_id.hpp"
 
-#include "shared/types.hpp"
+#include <llarm/shared/types.hpp>
 
 namespace internal::ident::u16_thumb {
     thumb_id thumb(const u16 code);

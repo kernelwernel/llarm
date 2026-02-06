@@ -4,7 +4,7 @@
 #include "lexer.hpp"
 #include "../id/cond_id.hpp"
 
-#include "shared/string_view.hpp"
+#include <llarm/shared/string_view.hpp>
 
 
 namespace interpreter {
@@ -48,19 +48,12 @@ namespace interpreter {
     };
 
     struct reg_list_settings {
-        reg_type reg_list_type;
-        bool is_r15_excluded;
-        bool must_include_r15;
-        bool is_reg_list_thumb;
-
-        reg_list_settings() :
-            reg_list_type(reg_type::REGULAR), 
-            is_r15_excluded(false),
-            must_include_r15(false),
-            is_reg_list_thumb(false)
-        {
-
-        }
+        reg_type reg_list_type = reg_type::REGULAR;
+        bool is_r15_excluded = false;
+        bool must_include_r15 = false;
+        bool is_reg_list_thumb = false;
+        bool is_PC_optional = false;
+        bool is_LR_optional = false;
     };
 
     enum class special_reg : u8 {
@@ -76,12 +69,18 @@ namespace interpreter {
     lexeme reg(const reg_type reg_type = reg_type::REGULAR, const u8 reg_num = WILDCARD);
     lexeme reg(const special_reg special_reg);
     lexeme reg_thumb(const u8 reg_num = WILDCARD);
-    lexeme psr(const bool psr_type, const bool has_fields);
+    lexeme psr(const bool psr_type, const bool has_fields = false);
     lexeme option(const u8 number);
     lexeme immed(const immed_settings &imm_settings = {});
     lexeme immed(const u8 msb);
     lexeme immed(const u8 msb, const u8 multiplier);
-    lexeme reg_list(const reg_list_settings &reg_list_settings = {});
+    lexeme reg_list(const reg_list_settings &reg_list_settings);
+    lexeme reg_list_double();
+    lexeme reg_list_single();
     lexeme reg_list_thumb();
+    lexeme reg_list_thumb_optional_PC();
+    lexeme reg_list_thumb_optional_LR();
+    lexeme reg_list_must_include_PC();
+    lexeme reg_list_must_exclude_PC();
     lexeme token(const token_enum t);
 }
