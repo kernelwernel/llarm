@@ -1,7 +1,7 @@
 #include "encoding_utils.hpp"
 #include <llarm/shared/util.hpp>
 
-bool is_imm_encodable(const u32 imm) {
+bool encoders::is_imm_encodable(const u32 imm) {
     // 1 byte immeds are always encodable
     if ((imm & 0xFFFFFF00) == 0) {
         return true;

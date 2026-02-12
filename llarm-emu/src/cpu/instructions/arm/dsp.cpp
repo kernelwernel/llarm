@@ -18,7 +18,7 @@
  *       UNDEFINED
  */
 void INSTRUCTIONS::arm::dsp::LDRD(const u32 code) {
-    const u8 Rd_bits = llarm::util::bit_range(code, 12, 15);
+    const u8 Rd_bits = llarm::util::bit_range<u8>(code, 12, 15);
 
     // is even
     if (Rd_bits & 1) {
@@ -90,7 +90,7 @@ void INSTRUCTIONS::arm::dsp::QADD(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rn = reg.read(code, 16, 19);
 
-    reg.write(code, 12, 15, operation.signed_sat(Rm + Rn, 32));
+    reg.write(code, 12, 15, u32(operation.signed_sat(Rm + Rn, 32)));
     if (operation.signed_does_sat(Rm + Rn, 32)) {
         reg.write(id::cpsr::Q, true);
     }
@@ -108,9 +108,9 @@ void INSTRUCTIONS::arm::dsp::QDADD(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rn = reg.read(code, 16, 19);
 
-    const u32 result = (Rm + operation.signed_sat(Rn * 2, 32));
+    const u32 result = (Rm + u32(operation.signed_sat(Rn * 2, 32)));
 
-    reg.write(code, 12, 15, operation.signed_sat(result, 32));
+    reg.write(code, 12, 15, u32(operation.signed_sat(result, 32)));
 
     if (
         (operation.signed_does_sat(result, 32)) ||
@@ -132,9 +132,9 @@ void INSTRUCTIONS::arm::dsp::QDSUB(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rn = reg.read(code, 16, 19);
 
-    const u32 result = (Rm - operation.signed_sat(Rn * 2, 32));
+    const u32 result = (Rm - u32(operation.signed_sat(Rn * 2, 32)));
 
-    reg.write(code, 12, 15, operation.signed_sat(result, 32));
+    reg.write(code, 12, 15, u32(operation.signed_sat(result, 32)));
 
     if (
         (operation.signed_does_sat(result, 32)) ||
@@ -155,7 +155,7 @@ void INSTRUCTIONS::arm::dsp::QSUB(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rn = reg.read(code, 16, 19);
 
-    reg.write(code, 12, 15, operation.signed_sat(Rm - Rn, 32));
+    reg.write(code, 12, 15, u32(operation.signed_sat(Rm - Rn, 32)));
 
     if (operation.signed_does_sat(Rm - Rn, 32)) {
         reg.write(id::cpsr::Q, true);
@@ -187,8 +187,8 @@ void INSTRUCTIONS::arm::dsp::SMLAXY(const u32 code) {
     const bool X = llarm::util::bit_fetch(code, 5);
     const bool Y = llarm::util::bit_fetch(code, 6);
 
-    u32 operand1 = 0;
-    u32 operand2 = 0;
+    i32 operand1 = 0;
+    i32 operand2 = 0;
 
     if (X == false) {
         operand1 = operation.sign_extend(llarm::util::bit_range(Rm, 0, 15), 15);
@@ -235,8 +235,8 @@ void INSTRUCTIONS::arm::dsp::SMLALXY(const u32 code) {
     const bool X = llarm::util::bit_fetch(code, 5);
     const bool Y = llarm::util::bit_fetch(code, 6);
 
-    u32 operand1 = 0;
-    u32 operand2 = 0;    
+    i32 operand1 = 0;
+    i32 operand2 = 0;    
 
     if (X == false) {
         operand1 = operation.sign_extend(llarm::util::bit_range(Rm, 0, 15), 15);
@@ -328,8 +328,8 @@ void INSTRUCTIONS::arm::dsp::SMULXY(const u32 code) {
     const bool Y = llarm::util::bit_fetch(code, 6);
     const bool X = llarm::util::bit_fetch(code, 5);
 
-    u32 operand1 = 0;
-    u32 operand2 = 0;
+    i32 operand1 = 0;
+    i32 operand2 = 0;
 
     if (X == false) {
         operand1 = operation.sign_extend(llarm::util::bit_range(Rm, 0, 15), 15);
@@ -387,7 +387,7 @@ void INSTRUCTIONS::arm::dsp::SMULWY(const u32 code) {
  *       UNDEFINED
  */
 void INSTRUCTIONS::arm::dsp::STRD(const u32 code) {
-    const u8 Rd_bits = llarm::util::bit_range(code, 12, 15);
+    const u8 Rd_bits = llarm::util::bit_range<u8>(code, 12, 15);
 
     // is odd
     if (Rd_bits & 1) {

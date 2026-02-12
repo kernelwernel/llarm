@@ -4,7 +4,7 @@
 
 #include <llarm/shared/types.hpp>
 
-#include <llarm-asm/llarm-asm.hpp>
+#include <llarm/llarm-asm.hpp>
 
 
 struct random {

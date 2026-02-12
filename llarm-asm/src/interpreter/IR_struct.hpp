@@ -1,6 +1,7 @@
 #pragma once
 
 #include "lexer.hpp"
+#include "../id/shifter_id.hpp"
 #include "mnemonic.hpp"
 #include "operand_struct.hpp"
 
@@ -11,6 +12,7 @@ struct IR_arm_struct {
     mnemonic_struct mnemonic;
     operand_struct operands;
     u32 PC;
+    shifter_id shifter_id;
 };
 
 

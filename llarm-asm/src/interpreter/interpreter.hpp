@@ -74,6 +74,8 @@ namespace interpreter {
     lexeme immed(const immed_settings &imm_settings = {});
     lexeme immed(const u8 msb);
     lexeme immed(const u8 msb, const u8 multiplier);
+    lexeme immed_range(const u8 start_val, const u8 end_val);
+    lexeme immed_rotate(); // assumes immed is 8 bits and rotate_imm is 4 bits
     lexeme reg_list(const reg_list_settings &reg_list_settings);
     lexeme reg_list_double();
     lexeme reg_list_single();

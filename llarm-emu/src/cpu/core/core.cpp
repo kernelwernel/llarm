@@ -4,10 +4,10 @@
 
 #include <vector>
 
-#include <llarm-asm/llarm-asm.hpp>
+#include <llarm/llarm-asm.hpp>
 
 
-inline void CORE::arm_cycle(const llarm::as::settings &settings) {
+inline void CORE::arm_cycle(const llarm::as::settings &assembly_settings) {
     std::cout << ">>>>> PC: 0x" << std::hex << reg.read(id::reg::PC) << std::dec << "\n";
 
     const arm_fetch_struct arm_code_access = fetch.arm_fetch();
@@ -21,7 +21,7 @@ inline void CORE::arm_cycle(const llarm::as::settings &settings) {
     const arm_decode_struct instruction = decode.arm_decode(arm_code_access.code);
 
     std::cout << llarm::as::arm_id_to_string(instruction.id) << "\n";
-    std::cout << llarm::as::disassemble::arm(instruction.code, reg.read_PC(), settings) << "\n";
+    std::cout << llarm::as::disassemble_arm(instruction.code, reg.read_PC(), assembly_settings) << "\n";
 
     execute.arm_execute(instruction);
 
@@ -65,12 +65,12 @@ void CORE::initialise(const std::vector<u8> &binary) {
     }
 
     // temporary, for development purposes
-    const llarm::as::settings settings = { false, true, false, true, true };
+    const llarm::as::settings assembly_settings = { false, true, false, true, true, false };
 
     // instruction cycle 
     for (;;) {
         switch (globals.instruction_set) {
-            case id::instruction_sets::ARM: arm_cycle(settings); continue;
+            case id::instruction_sets::ARM: arm_cycle(assembly_settings); continue;
             case id::instruction_sets::THUMB: thumb_cycle(); continue;
         }
     }

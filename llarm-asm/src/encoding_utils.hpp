@@ -1,3 +1,5 @@
 #include <llarm/shared/types.hpp>
 
-bool is_imm_encodable(const u32 imm);
+namespace encoders {
+    bool is_imm_encodable(const u32 imm);
+}

@@ -4,7 +4,7 @@
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/metadata.hpp>
 
-#include <llarm-asm/llarm-asm.hpp>
+#include <llarm/llarm-asm.hpp>
 
 
 enum arg_enum : u8 {

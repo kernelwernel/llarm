@@ -2,10 +2,10 @@
 
 #include "../../vfp/utils.hpp"
 
-#include "llarm-emu/src/cpu/vfp/addressing_modes.hpp"
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
 
+#include <cmath>
 
 // TODO work on exceptions, this might take a while
 

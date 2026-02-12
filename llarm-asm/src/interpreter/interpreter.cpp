@@ -264,12 +264,15 @@ lexeme interpreter::immed(const immed_settings &settings) {
         0, // number
         settings.msb, // msb
         settings.divisor, // divisor_constraint
+        0, // start_value
+        0, // end_value
         settings.is_msb_rangable, // has_msb_comparison
-        false, // bool is_rotateable
+        false, // is_rotateable
         false, // is_negative
         false, // is_malformed
         false // is_invalid
     };
+
 
     lexeme lexeme = {
         token_enum::IMMED, // token_type
@@ -281,16 +284,9 @@ lexeme interpreter::immed(const immed_settings &settings) {
 
 
 lexeme interpreter::immed(const u8 msb) {
-    IMM imm = {
-        0, // number
-        msb, // msb
-        1, // divisor_constraint
-        true, // has_msb_comparison
-        false, // is_rotateable
-        false, // is_negative
-        false, // is_malformed
-        false // is_invalid
-    };
+    IMM imm = {};
+    imm.msb = msb;
+    imm.has_msb_comparison = true;
 
     lexeme lexeme = {
         token_enum::IMMED, // token_type
@@ -302,16 +298,37 @@ lexeme interpreter::immed(const u8 msb) {
 
 
 lexeme interpreter::immed(const u8 msb, const u8 multiplier) {
-    IMM imm = {
-        0, // number
-        msb, // msb
-        multiplier, // divisor_constraint
-        true, // has_msb_comparison
-        false, // is_rotateable
-        false, // is_negative
-        false, // is_malformed
-        false // is_invalid
+    IMM imm = {};
+    imm.msb = msb;
+    imm.divisor_constraint = multiplier;
+    imm.has_msb_comparison = true;
+
+    lexeme lexeme = {
+        token_enum::IMMED, // token_type
+        imm // data
     };
+
+    return lexeme;
+}
+
+
+lexeme interpreter::immed_range(const u8 start_val, const u8 end_val) {    
+    IMM imm = {};
+    imm.start_value = start_val;
+    imm.end_value = end_val;
+
+    lexeme lexeme = {
+        token_enum::IMMED, // token_type
+        imm // data
+    };
+
+    return lexeme;
+}
+
+
+lexeme interpreter::immed_rotate() {
+    IMM imm = {};
+    imm.is_rotateable = true;
 
     lexeme lexeme = {
         token_enum::IMMED, // token_type

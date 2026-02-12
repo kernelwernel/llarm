@@ -2,7 +2,7 @@
 
 #include "../coprocessor/coprocessor.hpp"
 #include "../globals.hpp"
-#include "llarm-emu/src/id.hpp"
+#include "../../id.hpp"
 #include "ram.hpp"
 #include "tlb.hpp"
 #include "alignment.hpp"

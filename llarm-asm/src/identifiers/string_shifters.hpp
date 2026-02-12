@@ -17,6 +17,6 @@ namespace internal::ident::string_shifters {
     shifter_id ls_instruction_PLD(const lexemes_t &lexemes);
 
     shifter_id identify_shifter(const lexemes_t &lexemes, const mnemonic_struct &mnemonic);
-    shifter_id identify_shifter(const IR_arm_struct &IR);
+    shifter_id identify_shifter(const IR_arm_struct &&IR);
     shifter_id identify_shifter(const std::string &code);
 }

@@ -1,20 +1,20 @@
 #include "addressing_modes.hpp"
 
-#include "llarm-asm/llarm-asm.hpp"
-
 #include <llarm/shared/util.hpp>
 #include <llarm/shared/out.hpp>
 
-address_struct ADDRESSING_MODE::load_store_multiple(const u32 code) {
-    using namespace llarm::util;
+#include <llarm/llarm-asm.hpp>
 
-    const shifter_enum shifter_id = llarm::as::identify::shifter(shift_category::LS_MUL, code);
+address_struct ADDRESSING_MODE::load_store_multiple(const u32 code) {
+    using namespace llarm::as;
+
+    const shifter_id shifter_id = identify_shifter(shifter_category::LS_MUL, code);
 
     switch (shifter_id) {
-        case shifter_enum::LS_MUL_INC_AFTER: return ls_mul_inc_after(code);
-        case shifter_enum::LS_MUL_INC_BEFORE: return ls_mul_inc_before(code);
-        case shifter_enum::LS_MUL_DEC_AFTER: return ls_mul_dec_after(code);
-        case shifter_enum::LS_MUL_DEC_BEFORE: return ls_mul_dec_before(code);
+        case shifter_id::LS_MUL_INC_AFTER: return ls_mul_inc_after(code);
+        case shifter_id::LS_MUL_INC_BEFORE: return ls_mul_inc_before(code);
+        case shifter_id::LS_MUL_DEC_AFTER: return ls_mul_dec_after(code);
+        case shifter_id::LS_MUL_DEC_BEFORE: return ls_mul_dec_before(code);
         default: llarm::out::error("Impossible identification of ARM load store multiple shifter");
     }
 }

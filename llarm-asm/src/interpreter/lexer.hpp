@@ -6,10 +6,10 @@
 #include <vector>
 
 
-// marking it as a union goes from 72 bytes to 40 bytes
 struct lexeme {
     token_enum token_type;
-
+    
+    // marking it as a union goes from 72 bytes to 40 bytes
     union {
         REG reg;
         PSR psr;

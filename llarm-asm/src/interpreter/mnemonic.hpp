@@ -2,10 +2,11 @@
 
 #include "../id/instruction_id.hpp"
 #include "../id/cond_id.hpp"
-#include "../interpreter/interpreter.hpp"
+#include "lexer.hpp"
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 using namespace internal;
 

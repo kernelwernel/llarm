@@ -9,7 +9,9 @@
 
 using namespace internal;
 
-bool u32_arm::check_shifter(const u32 code, const shifter_category category) {
+
+
+bool validation::u32_arm::check_shifter(const u32 code, const shifter_category category) {
     const shifter_id shifter = ident::u32_shifters::identify_shifter(category, code);
 
     return (shifter != shifter_id::UNKNOWN);
@@ -17,7 +19,7 @@ bool u32_arm::check_shifter(const u32 code, const shifter_category category) {
 
 
 // PLD instruction only has 3 LS shifters supported
-bool u32_arm::check_PLD(const u32 code) {
+bool validation::u32_arm::check_PLD(const u32 code) {
     const shifter_id shifter = ident::u32_shifters::identify_shifter(shifter_category::LS, code);
 
     switch (shifter) {
@@ -34,7 +36,7 @@ bool u32_arm::check_PLD(const u32 code) {
 
 
 // offset must be at least 0 and be an even number, and must have a valid reglist config
-bool u32_arm::check_vfp_reglist(const u32 code, const arm_id id) {
+bool validation::u32_arm::check_vfp_reglist(const u32 code, const arm_id id) {
     const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
     if (offset == 0 || offset & 1) {
@@ -79,7 +81,7 @@ bool u32_arm::check_vfp_reglist(const u32 code, const arm_id id) {
 };
 
 
-bool u32_arm::check_move_system_reg(const u32 code) {
+bool validation::u32_arm::check_move_system_reg(const u32 code) {
     const u8 reg = llarm::util::bit_range<u8>(code, 16, 19);
 
     switch (reg) {
@@ -92,7 +94,7 @@ bool u32_arm::check_move_system_reg(const u32 code) {
 };
 
 
-bool u32_arm::is_arm_instruction_valid(const u32 code) {
+bool validation::u32_arm::is_arm_instruction_valid(const u32 code) {
     const arm_id id = ident::u32_arm::arm(code);
 
     // TODO make check for branching isntructions like B, BL, BLX etc

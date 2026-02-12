@@ -5,7 +5,7 @@
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/out.hpp>
 
-#include <llarm-asm/llarm-asm.hpp>
+#include <llarm/llarm-asm.hpp>
 
 
 bool DECODE::has_condition_failed(const id::cond cond) {
@@ -13,8 +13,8 @@ bool DECODE::has_condition_failed(const id::cond cond) {
 }
 
 
-bool DECODE::is_arm_instruction_unsupported(const llarm::as::id::arm id) {
-    using namespace llarm;
+bool DECODE::is_arm_instruction_unsupported(const llarm::as::arm_id id) {
+    using namespace llarm::as;
 
     if (settings.is_arch_version_inst_check_enabled == false) {
         return false;
@@ -22,97 +22,100 @@ bool DECODE::is_arm_instruction_unsupported(const llarm::as::id::arm id) {
 
     const id::specific_arch instruction_arch_support = [=]() -> id::specific_arch {
         switch (id) {
-            case as::id::arm::UNKNOWN: llarm::out::warning("Unknown instruction check for ARM arch version support lookup");
-            case as::id::arm::UNDEFINED:
-            case as::id::arm::ADC:
-            case as::id::arm::ADD:
-            case as::id::arm::RSB:
-            case as::id::arm::BIC:
-            case as::id::arm::RSC:
-            case as::id::arm::SBC:
-            case as::id::arm::SUB:
-            case as::id::arm::CMN:
-            case as::id::arm::AND:
-            case as::id::arm::CMP:
-            case as::id::arm::EOR:
-            case as::id::arm::ORR:
-            case as::id::arm::TEQ:
-            case as::id::arm::TST:
-            case as::id::arm::MOV:
-            case as::id::arm::MVN:
-            case as::id::arm::B:
-            case as::id::arm::BL:
-            case as::id::arm::NOP:
-            case as::id::arm::CMNP:
-            case as::id::arm::CMPP:
-            case as::id::arm::TEQP:
-            case as::id::arm::TSTP:
-            case as::id::arm::SWI:
-            case as::id::arm::LDM1:
-            case as::id::arm::LDM2:
-            case as::id::arm::LDM3:
-            case as::id::arm::LDR:
-            case as::id::arm::LDRB:
-            case as::id::arm::LDRBT:
-            case as::id::arm::LDRT:
-            case as::id::arm::STM1: 
-            case as::id::arm::STM2: 
-            case as::id::arm::STR: 
-            case as::id::arm::STRB: 
-            case as::id::arm::STRBT:
-            case as::id::arm::STRT: return id::specific_arch::ARMv1;
+            case arm_id::UNKNOWN: 
+                llarm::out::warning("Unknown instruction check for ARM arch version support lookup");
+                [[fallthrough]];
+    
+            case arm_id::UNDEFINED:
+            case arm_id::ADC:
+            case arm_id::ADD:
+            case arm_id::RSB:
+            case arm_id::BIC:
+            case arm_id::RSC:
+            case arm_id::SBC:
+            case arm_id::SUB:
+            case arm_id::CMN:
+            case arm_id::AND:
+            case arm_id::CMP:
+            case arm_id::EOR:
+            case arm_id::ORR:
+            case arm_id::TEQ:
+            case arm_id::TST:
+            case arm_id::MOV:
+            case arm_id::MVN:
+            case arm_id::B:
+            case arm_id::BL:
+            case arm_id::NOP:
+            case arm_id::CMNP:
+            case arm_id::CMPP:
+            case arm_id::TEQP:
+            case arm_id::TSTP:
+            case arm_id::SWI:
+            case arm_id::LDM1:
+            case arm_id::LDM2:
+            case arm_id::LDM3:
+            case arm_id::LDR:
+            case arm_id::LDRB:
+            case arm_id::LDRBT:
+            case arm_id::LDRT:
+            case arm_id::STM1: 
+            case arm_id::STM2: 
+            case arm_id::STR: 
+            case arm_id::STRB: 
+            case arm_id::STRBT:
+            case arm_id::STRT: return id::specific_arch::ARMv1;
             
             // ARMv2
-            case as::id::arm::CDP:
-            case as::id::arm::LDC:
-            case as::id::arm::MCR:
-            case as::id::arm::MRC:
-            case as::id::arm::STC:
-            case as::id::arm::MLA:
-            case as::id::arm::MUL:
-            case as::id::arm::SWP: return id::specific_arch::ARMv2;
-            case as::id::arm::SWPB: return id::specific_arch::ARMv2a;
+            case arm_id::CDP:
+            case arm_id::LDC:
+            case arm_id::MCR:
+            case arm_id::MRC:
+            case arm_id::STC:
+            case arm_id::MLA:
+            case arm_id::MUL:
+            case arm_id::SWP: return id::specific_arch::ARMv2;
+            case arm_id::SWPB: return id::specific_arch::ARMv2a;
             
             // ARMv3
-            case as::id::arm::MRS:
-            case as::id::arm::MSR_IMM:
-            case as::id::arm::MSR_REG: return id::specific_arch::ARMv3;
+            case arm_id::MRS:
+            case arm_id::MSR_IMM:
+            case arm_id::MSR_REG: return id::specific_arch::ARMv3;
             
             // ARMv4
-            case as::id::arm::LDRH:
-            case as::id::arm::LDRSB:
-            case as::id::arm::LDRSH:
-            case as::id::arm::STRH: return id::specific_arch::ARMv4;
-            case as::id::arm::BX: return id::specific_arch::ARMv4T;
+            case arm_id::LDRH:
+            case arm_id::LDRSB:
+            case arm_id::LDRSH:
+            case arm_id::STRH: return id::specific_arch::ARMv4;
+            case arm_id::BX: return id::specific_arch::ARMv4T;
             
             // ARMv5
-            case as::id::arm::BKPT:
-            case as::id::arm::BLX1:
-            case as::id::arm::BLX2:
-            case as::id::arm::CLZ:
-            case as::id::arm::CDP2:
-            case as::id::arm::LDC2:
-            case as::id::arm::MCR2:
-            case as::id::arm::MRC2:
-            case as::id::arm::STC2: return id::specific_arch::ARMv5;
+            case arm_id::BKPT:
+            case arm_id::BLX1:
+            case arm_id::BLX2:
+            case arm_id::CLZ:
+            case arm_id::CDP2:
+            case arm_id::LDC2:
+            case arm_id::MCR2:
+            case arm_id::MRC2:
+            case arm_id::STC2: return id::specific_arch::ARMv5;
 
             // ARMv5TE: 
-            case as::id::arm::MCRR:
-            case as::id::arm::MRRC:
-            case as::id::arm::PLD:
-            case as::id::arm::STRD:
-            case as::id::arm::LDRD: return id::specific_arch::ARMv5TE;
+            case arm_id::MCRR:
+            case arm_id::MRRC:
+            case arm_id::PLD:
+            case arm_id::STRD:
+            case arm_id::LDRD: return id::specific_arch::ARMv5TE;
 
             // ARMv5TExP:
-            case as::id::arm::QADD:
-            case as::id::arm::QDADD:
-            case as::id::arm::QDSUB:
-            case as::id::arm::QSUB:
-            case as::id::arm::SMLAXY:
-            case as::id::arm::SMLALXY:
-            case as::id::arm::SMLAWY:
-            case as::id::arm::SMULXY:
-            case as::id::arm::SMULWY: return id::specific_arch::ARMv5TExP;
+            case arm_id::QADD:
+            case arm_id::QDADD:
+            case arm_id::QDSUB:
+            case arm_id::QSUB:
+            case arm_id::SMLAXY:
+            case arm_id::SMLALXY:
+            case arm_id::SMLAWY:
+            case arm_id::SMULXY:
+            case arm_id::SMULWY: return id::specific_arch::ARMv5TExP;
             default: return id::specific_arch::UNKNOWN;
         }
     }();
@@ -120,10 +123,10 @@ bool DECODE::is_arm_instruction_unsupported(const llarm::as::id::arm id) {
     if (instruction_arch_support == id::specific_arch::UNKNOWN) {
         switch (id) {
             // long multiplications
-            case as::id::arm::SMLAL: 
-            case as::id::arm::SMULL: 
-            case as::id::arm::UMLAL: 
-            case as::id::arm::UMULL:
+            case arm_id::SMLAL: 
+            case arm_id::SMULL: 
+            case arm_id::UMLAL: 
+            case arm_id::UMULL:
                 return (
                     (settings.specific_arch != id::specific_arch::ARMv3M) &&
                     (settings.specific_arch != id::specific_arch::ARMv4) &&
@@ -136,74 +139,75 @@ bool DECODE::is_arm_instruction_unsupported(const llarm::as::id::arm id) {
                 );
 
             // single precision VFP
-            case as::id::arm::FABSS:
-            case as::id::arm::FADDS:
-            case as::id::arm::FCMPES:
-            case as::id::arm::FCMPEZS:
-            case as::id::arm::FCMPS:
-            case as::id::arm::FCMPZS:
-            case as::id::arm::FCPYS:
-            case as::id::arm::FDIVS:
-            case as::id::arm::FLDMS:
-            case as::id::arm::FLDMX:
-            case as::id::arm::FLDS:
-            case as::id::arm::FMACS:
-            case as::id::arm::FMRS:
-            case as::id::arm::FMRX:
-            case as::id::arm::FMSCS:
-            case as::id::arm::FMSR:
-            case as::id::arm::FMSTAT:
-            case as::id::arm::FMULS:
-            case as::id::arm::FMXR:
-            case as::id::arm::FNEGS:
-            case as::id::arm::FNMACS:
-            case as::id::arm::FNMSCS:
-            case as::id::arm::FNMULS:
-            case as::id::arm::FSITOS:
-            case as::id::arm::FSQRTS:
-            case as::id::arm::FSTMS:
-            case as::id::arm::FSTMX:
-            case as::id::arm::FSTS:
-            case as::id::arm::FSUBS:
-            case as::id::arm::FTOSIS:
-            case as::id::arm::FTOUIS:
-            case as::id::arm::FUITOS:
+            case arm_id::FABSS:
+            case arm_id::FADDS:
+            case arm_id::FCMPES:
+            case arm_id::FCMPEZS:
+            case arm_id::FCMPS:
+            case arm_id::FCMPZS:
+            case arm_id::FCPYS:
+            case arm_id::FDIVS:
+            case arm_id::FLDMS:
+            case arm_id::FLDMX:
+            case arm_id::FLDS:
+            case arm_id::FMACS:
+            case arm_id::FMRS:
+            case arm_id::FMRX:
+            case arm_id::FMSCS:
+            case arm_id::FMSR:
+            case arm_id::FMSTAT:
+            case arm_id::FMULS:
+            case arm_id::FMXR:
+            case arm_id::FNEGS:
+            case arm_id::FNMACS:
+            case arm_id::FNMSCS:
+            case arm_id::FNMULS:
+            case arm_id::FSITOS:
+            case arm_id::FSQRTS:
+            case arm_id::FSTMS:
+            case arm_id::FSTMX:
+            case arm_id::FSTS:
+            case arm_id::FSUBS:
+            case arm_id::FTOSIS:
+            case arm_id::FTOUIS:
+            case arm_id::FUITOS:
                 if (settings.is_vfp_single_precision_enabled == false) {
                     return true;
                 }
+                [[fallthrough]];
 
             // double precision VFP
-            case as::id::arm::FABSD:
-            case as::id::arm::FADDD:
-            case as::id::arm::FCMPD:
-            case as::id::arm::FCMPED:
-            case as::id::arm::FCMPEZD:
-            case as::id::arm::FCMPZD:
-            case as::id::arm::FCPYD:
-            case as::id::arm::FCVTDS:
-            case as::id::arm::FCVTSD:
-            case as::id::arm::FDIVD:
-            case as::id::arm::FLDD:
-            case as::id::arm::FLDMD:
-            case as::id::arm::FMACD:
-            case as::id::arm::FMDHR:
-            case as::id::arm::FMDLR:
-            case as::id::arm::FMRDL:
-            case as::id::arm::FMRDH:
-            case as::id::arm::FMSCD:
-            case as::id::arm::FMULD:
-            case as::id::arm::FNEGD:
-            case as::id::arm::FNMACD:
-            case as::id::arm::FNMSCD:
-            case as::id::arm::FNMULD:
-            case as::id::arm::FSITOD:
-            case as::id::arm::FSQRTD:
-            case as::id::arm::FSTD:
-            case as::id::arm::FSTMD:
-            case as::id::arm::FSUBD:
-            case as::id::arm::FTOSID:
-            case as::id::arm::FTOUID:
-            case as::id::arm::FUITOD: 
+            case arm_id::FABSD:
+            case arm_id::FADDD:
+            case arm_id::FCMPD:
+            case arm_id::FCMPED:
+            case arm_id::FCMPEZD:
+            case arm_id::FCMPZD:
+            case arm_id::FCPYD:
+            case arm_id::FCVTDS:
+            case arm_id::FCVTSD:
+            case arm_id::FDIVD:
+            case arm_id::FLDD:
+            case arm_id::FLDMD:
+            case arm_id::FMACD:
+            case arm_id::FMDHR:
+            case arm_id::FMDLR:
+            case arm_id::FMRDL:
+            case arm_id::FMRDH:
+            case arm_id::FMSCD:
+            case arm_id::FMULD:
+            case arm_id::FNEGD:
+            case arm_id::FNMACD:
+            case arm_id::FNMSCD:
+            case arm_id::FNMULD:
+            case arm_id::FSITOD:
+            case arm_id::FSQRTD:
+            case arm_id::FSTD:
+            case arm_id::FSTMD:
+            case arm_id::FSUBD:
+            case arm_id::FTOSID:
+            case arm_id::FTOUID:
+            case arm_id::FUITOD: 
                 // ARMv5
                 if (settings.is_vfp_double_precision_enabled == false || settings.is_vfp_enabled == false) {
                     return true;
@@ -225,7 +229,7 @@ bool DECODE::is_arm_instruction_unsupported(const llarm::as::id::arm id) {
 }
 
 
-bool DECODE::is_thumb_instruction_unsupported(const llarm::as::id::thumb id) {
+bool DECODE::is_thumb_instruction_unsupported(const llarm::as::thumb_id id) {
     using namespace llarm; // for llarm::as
 
     if (settings.is_arch_version_inst_check_enabled == false) {
@@ -239,9 +243,9 @@ bool DECODE::is_thumb_instruction_unsupported(const llarm::as::id::thumb id) {
     if (settings.thumb_version == id::thumb_version::THUMB1) {
         // these are all thumb-2 instructions
         switch (id) {
-            case as::id::thumb::BKPT: 
-            case as::id::thumb::BLX1: 
-            case as::id::thumb::BLX2: return true;
+            case as::thumb_id::BKPT: 
+            case as::thumb_id::BLX1: 
+            case as::thumb_id::BLX2: return true;
             default: return false;
         }
     }
@@ -257,16 +261,16 @@ arm_decode_struct DECODE::arm_decode(const u32 code) {
 
     if (has_condition_failed(cond)) {
         return arm_decode_struct {
-            as::id::arm::NOP, // id
+            arm_id::NOP, // id
             code // code
         };
     }
 
-    const as::id::arm id = as::identify::arm(code);
+    const arm_id id = as::identify_arm(code);
 
     if (is_arm_instruction_unsupported(id)) {
         return arm_decode_struct {
-            as::id::arm::UNDEFINED, // id
+            arm_id::UNDEFINED, // id
             code // code
         };
     }
@@ -280,11 +284,11 @@ arm_decode_struct DECODE::arm_decode(const u32 code) {
 
 thumb_decode_struct DECODE::thumb_decode(const u16 raw_code) {
     using namespace llarm; // for llarm::ass
-    const as::id::thumb id = as::identify::thumb(raw_code);
+    const as::thumb_id id = as::identify_thumb(raw_code);
 
     if (is_thumb_instruction_unsupported(id)) {
         return thumb_decode_struct {
-            as::id::thumb::UNDEFINED, // id
+            as::thumb_id::UNDEFINED, // id
             raw_code // code
         };
     }

@@ -29,7 +29,7 @@ void MEMORY::manage_abort(const id::aborts abort_code) {
 }
 
 
-mem_write_struct MEMORY::write(const u64 &value, u32 address, const u8 access_size) {
+mem_write_struct MEMORY::write(const u64 value, u32 address, const u8 access_size) {
     if (arch_26.is_26_arch_backwards_compatible()) {
         if (
             (arch_26.is_26_arch_address()) && 

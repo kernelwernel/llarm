@@ -5,8 +5,8 @@
 #include "../memory/memory.hpp"
 #include "../vfp/registers.hpp"
 #include "arm/addressing_modes/addressing_modes.hpp"
-#include "llarm-emu/src/cpu/vfp/exception.hpp"
-#include "llarm-emu/src/cpu/vfp/addressing_modes.hpp"
+#include "../vfp/exception.hpp"
+#include "../vfp/addressing_modes.hpp"
 #include "operation.hpp"
 
 #include <llarm/shared/types.hpp>

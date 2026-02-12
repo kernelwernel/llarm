@@ -19,7 +19,6 @@
 #include "cycle/execute.hpp"
 #include "registers.hpp"
 
-
 #include <llarm/shared/types.hpp>
 
 struct CORE {
@@ -31,10 +30,10 @@ private:
     CP15 cp15;
     VFP_REG vfp_reg;
     VFP_EXCEPTION vfp_exception;
-    VFP_ADDRESS_MODE vfp_addressing_mode;
     COPROCESSOR coprocessor;
     ARCH_26 arch_26;
     REGISTERS reg;
+    VFP_ADDRESS_MODE vfp_addressing_mode;
     EXCEPTION exception;
 
     // memory modules

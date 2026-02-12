@@ -5,7 +5,7 @@
 #include <bitset>
 
 namespace llarm::util {
-    template <typename T, typename M>
+    template <typename T = u32, typename M>
     inline T bit_range(const M input, const u8 start, const u8 end) {
         if (start >= end) [[unlikely]] {
             // TODO: think of an error
@@ -15,7 +15,7 @@ namespace llarm::util {
         return static_cast<T>((input >> start) & mask);
     }
 
-    template <typename T, std::size_t N>
+    template <typename T = u32, std::size_t N>
     inline T bit_range(const std::bitset<N> &input, const u8 start, const u8 end) {
         const u32 range = input.to_ulong();
         return bit_range<T>(range, start, end);
@@ -35,15 +35,29 @@ namespace llarm::util {
         }
     }
 
-    u32 bit_range(const u32 input, const u8 start, const u8 end);
 
-    std::string to_upper(const std::string& str);
+    inline std::string to_upper(const std::string& str) {
+        std::string tmp = str;
 
-    void to_lower(std::string& str);
+        for (char& c : tmp) {
+            c = (c >= 'a' && c <= 'z') ? (c & ~0x20) : c;
+        }
+
+        return tmp;
+    }
+
+
+    inline void to_lower(std::string& str) {
+        for (char& c : str) {
+            c = (c >= 'A' && c <= 'Z') ? (c | 0x20) : c;
+        }
+    }
+
 
     constexpr bool bit_fetch(const u32 input, const u8 index) {
         return ((input >> index) & 1);
     }
+
 
     // util::popcount only works for C++20, while
     // built-in functions are compiler-specific,
@@ -55,6 +69,7 @@ namespace llarm::util {
     constexpr u8 popcount(const u32 integer) {
         return static_cast<u8>(std::bitset<32>(integer).count());
     }
+
 
     constexpr void swap_bits(u32 &original, const u8 start, const u8 end, const u32 value) {
         if (start >= 32 || end >= 32 || start >= end) {
@@ -69,10 +84,12 @@ namespace llarm::util {
         original |= (value & mask) << start;
     }
 
+
     constexpr u32 rotr(u32 num, u8 rotate) {
         rotate &= 31;
         return (num >> rotate) | (num << (32 - rotate));
     }
+
 
     // this will generate a bsr instruction in x86, so it's portable and optimisation-friendly for compilers (https://godbolt.org/z/MxY16Ev69)
     constexpr u8 get_msb(u32 num) {
@@ -88,6 +105,7 @@ namespace llarm::util {
 
         return i;
     }
+
 
     // same as above, but unlike above, i couldn't find a way to make it optimise the same way how __builtin_ctz(num) would
     constexpr u8 get_lsb(u32 num) {

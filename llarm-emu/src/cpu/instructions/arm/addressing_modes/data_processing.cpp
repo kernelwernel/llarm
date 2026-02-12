@@ -1,6 +1,6 @@
 #include "addressing_modes.hpp"
 
-#include "llarm-asm/llarm-asm.hpp"
+#include "llarm/llarm-asm.hpp"
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
 #include <llarm/shared/out.hpp>
@@ -211,7 +211,7 @@ data_struct ADDRESSING_MODE::data_process_logical_shift_left_register(const u32 
         data.carry = reg.read(id::cpsr::C);
     } else if (Rs_bits < 32) {
         data.value = (Rm << Rs_bits);
-        data.carry = (llarm::util::bit_fetch(Rm, (32 - Rs_bits))); // what the fuck?
+        data.carry = (llarm::util::bit_fetch(Rm, u8(32 - Rs_bits))); // what the fuck?
     } else if (Rs_bits == 32) {
         data.value = 0;
         data.carry = (Rm & 1);
@@ -252,7 +252,7 @@ data_struct ADDRESSING_MODE::data_process_logical_shift_right_register(const u32
         data.carry = reg.read(id::cpsr::C);
     } else if (Rs_bits < 32) {
         data.value = (Rm >> Rs_bits);
-        data.carry = (llarm::util::bit_fetch(Rm, (Rs_bits - 1)));
+        data.carry = (llarm::util::bit_fetch(Rm, u8(Rs_bits - 1)));
     } else if (Rs_bits == 32) {
         data.value = 0;
         data.carry = (llarm::util::bit_fetch(Rm, 31));
@@ -292,22 +292,22 @@ data_struct ADDRESSING_MODE::data_process_arithmetic_shift_right_register(const 
 
     const u32 Rs = reg.read(code, 8, 11);
     const u32 Rm = reg.read(code, 0, 3);
-    const u32 Rs_bits = llarm::util::bit_range(Rs, 0, 7);
+    const u8 Rs_bits = llarm::util::bit_range<u8>(Rs, 0, 7);
     
     if (Rs_bits == 0) {
         data.value = Rm;
         data.carry = reg.read(id::cpsr::C);
     } else if (Rs_bits < 32) {
         data.value = operation.arithmetic_shift_right(Rm, Rs_bits);
-        data.carry = (llarm::util::bit_fetch(Rm, (Rs_bits - 1)));
+        data.carry = (llarm::util::bit_fetch(Rm, Rs_bits - 1));
     } else {
         if ((llarm::util::bit_fetch(Rm, 31)) == 0) {
             data.value = 0;
-            data.carry = (llarm::util::bit_fetch(Rm, (31)));
         } else {
             data.value = 0xFFFFFFFF;
-            data.carry = (llarm::util::bit_fetch(Rm, (31)));
         }
+
+        data.carry = llarm::util::bit_fetch(Rm, 31);
     }
 
     return data;
@@ -335,7 +335,7 @@ data_struct ADDRESSING_MODE::data_process_rotate_right_register(const u32 code) 
     const u32 Rs = reg.read(code, 8, 11);
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rs_bits = llarm::util::bit_range(Rs, 0, 7);
-    const u32 Rs_bits_4 = llarm::util::bit_range(Rs, 0, 4);
+    const u8 Rs_bits_4 = llarm::util::bit_range<u8>(Rs, 0, 4);
 
     if (Rs_bits == 0) {
         data.value = Rm;
@@ -365,7 +365,7 @@ data_struct ADDRESSING_MODE::data_process_rotate_right_extend(const u32 code) {
 
     const u32 Rm = reg.read(code, 0, 3);
 
-    data.value = ((reg.read(id::cpsr::C) << 31) | (Rm >> 1));
+    data.value = (u32(reg.read(id::cpsr::C) << 31) | (Rm >> 1));
     data.carry = (Rm & 1);
 
     return data;
@@ -373,22 +373,22 @@ data_struct ADDRESSING_MODE::data_process_rotate_right_extend(const u32 code) {
 
 
 data_struct ADDRESSING_MODE::data_processing(const u32 code) {
-    using namespace llarm::util;
+    using namespace llarm::as;
 
-    const shifter_enum shifter_id = llarm::as::identify::shifter(shifter_category::DATA, code);
+    const shifter_id shifter_id = llarm::as::identify_shifter(shifter_category::DATA, code);
 
     switch (shifter_id) {
-        case shifter_enum::DATA_IMM: return data_process_immediate_mode(code);
-        case shifter_enum::DATA_RRX: return data_process_rotate_right_extend(code);
-        case shifter_enum::DATA_REG: return data_process_register(code);
-        case shifter_enum::DATA_IMM_LSL: return data_process_logical_shift_left_immediate(code);
-        case shifter_enum::DATA_IMM_LSR: return data_process_logical_shift_right_immediate(code);
-        case shifter_enum::DATA_IMM_ASR: return data_process_arithmetic_shift_right_immediate(code);
-        case shifter_enum::DATA_IMM_ROR: return data_process_rotate_right_immediate(code);
-        case shifter_enum::DATA_REG_LSL: return data_process_logical_shift_left_register(code);
-        case shifter_enum::DATA_REG_LSR: return data_process_logical_shift_right_register(code);
-        case shifter_enum::DATA_REG_ASR: return data_process_arithmetic_shift_right_register(code);
-        case shifter_enum::DATA_REG_ROR: return data_process_rotate_right_register(code);
+        case shifter_id::DATA_IMM: return data_process_immediate_mode(code);
+        case shifter_id::DATA_RRX: return data_process_rotate_right_extend(code);
+        case shifter_id::DATA_REG: return data_process_register(code);
+        case shifter_id::DATA_IMM_LSL: return data_process_logical_shift_left_immediate(code);
+        case shifter_id::DATA_IMM_LSR: return data_process_logical_shift_right_immediate(code);
+        case shifter_id::DATA_IMM_ASR: return data_process_arithmetic_shift_right_immediate(code);
+        case shifter_id::DATA_IMM_ROR: return data_process_rotate_right_immediate(code);
+        case shifter_id::DATA_REG_LSL: return data_process_logical_shift_left_register(code);
+        case shifter_id::DATA_REG_LSR: return data_process_logical_shift_right_register(code);
+        case shifter_id::DATA_REG_ASR: return data_process_arithmetic_shift_right_register(code);
+        case shifter_id::DATA_REG_ROR: return data_process_rotate_right_register(code);
         default: llarm::out::error("Impossible identification of ARM data processing shifter");
     }
 }

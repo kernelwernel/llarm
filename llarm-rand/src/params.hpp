@@ -2,7 +2,7 @@
 
 #include <llarm/shared/types.hpp>
 
-#include <llarm-asm/llarm-asm.hpp>
+#include <llarm/llarm-asm.hpp>
 
 struct param_struct {
     u8 cond;

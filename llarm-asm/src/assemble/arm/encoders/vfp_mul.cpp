@@ -48,6 +48,9 @@ u32 generators::vfp_mul_instructions(const arm_id id, const operand_struct &args
         default: llarm::out::dev_error("Invalid configuration to vfp load/store instruction pattern generation");
     }
 
+    llarm::util::swap_bits(binary, 20, 27, bits_27_20);
+    llarm::util::swap_bits(binary, 8, 11, bits_11_8);
+
     struct reglist {
         u8 Dd;
         u8 offset;

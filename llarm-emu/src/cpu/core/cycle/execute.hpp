@@ -2,10 +2,7 @@
 
 #include "decode.hpp"
 #include "../../instructions/instructions.hpp"
-
-#include "llarm-emu/src/cpu/exception.hpp"
-
-#include <llarm-asm/llarm-asm.hpp>
+#include "../../exception.hpp"
 
 struct EXECUTE {
 private:

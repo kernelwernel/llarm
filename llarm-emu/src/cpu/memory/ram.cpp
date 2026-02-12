@@ -18,7 +18,7 @@ void RAM::write(const std::vector<u8> &data, const u32 address) {
 }
 
 
-void RAM::write(const u64 &value, const u32 address, const u8 access_size) {
+void RAM::write(const u64 value, const u32 address, const u8 access_size) {
     switch (access_size) {
         case 1: ram.at(address) = value; return;
         case 2: 

@@ -6,7 +6,7 @@
 #include <llarm/shared/util.hpp>
 
 
-#include <llarm-asm/llarm-asm.hpp>
+#include <llarm/llarm-asm.hpp>
 
 
 u32 patterns::logic_arithmetic(const param_struct params) {

@@ -379,7 +379,7 @@ shifter_id ident::string_shifters::identify_shifter(const lexemes_t &lexemes, co
     }
 }
 
-shifter_id ident::string_shifters::identify_shifter(const IR_arm_struct &IR) {
+shifter_id ident::string_shifters::identify_shifter(const IR_arm_struct &&IR) {
     return identify_shifter(IR.lexemes, IR.mnemonic);
 }
 

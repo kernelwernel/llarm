@@ -35,7 +35,7 @@ public:
         std::move(data.cbegin(), data.cend(), ram.begin() + address);
     }
 
-    void write(const u64 &value, const u32 address, const u8 access_size);
+    void write(const u64 value, const u32 address, const u8 access_size);
 
     std::vector<u8> vector_read(const u32 start, const u32 end);
 

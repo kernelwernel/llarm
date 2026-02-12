@@ -84,7 +84,9 @@ void REGISTERS::write(const id::cpsr cpsr_macro, const u8 value) {
                     case constants::mode::UNDEFINED:
                     case constants::mode::FIQ:
                     case constants::mode::IRQ:
-                    case constants::mode::SYSTEM: llarm::out::warning("No 32-bit mode switch from 26-bit architecture is valid, the mode bits will be treated in 26-bit mode which may be unpredictable");   
+                    case constants::mode::SYSTEM: 
+                        llarm::out::warning("No 32-bit mode switch from 26-bit architecture is valid, the mode bits will be treated in 26-bit mode which may be unpredictable"); 
+                        break;   
                     default: break;
                 }
 
@@ -130,7 +132,7 @@ void REGISTERS::write(const id::cpsr cpsr_macro, const u8 value) {
 
 
 void REGISTERS::write(const u32 code, const u8 start, const u8 end, const u32 value) {
-    const id::reg id = fetch_reg_id(llarm::util::bit_range(code, start, end));
+    const id::reg id = fetch_reg_id(llarm::util::bit_range<u8>(code, start, end));
     write(id, value);
 }
 
@@ -184,6 +186,8 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
             if (settings.arch < id::arch::ARMv4) {
                 llarm::out::error("system mode is only supported from ARMv4 onwards");
             }
+            [[fallthrough]];
+    
         case id::mode::USER:
         case id::mode::USER_26:
             switch (register_id) {
@@ -346,6 +350,8 @@ u32 REGISTERS::read(const id::reg register_id) {
             if (settings.arch < id::arch::ARMv4) {
                 llarm::out::error("TODO"); // maybe add a warning/error, idk
             }
+            [[fallthrough]];
+
         case id::mode::USER:
         case id::mode::USER_26:
             switch (register_id) {
@@ -434,7 +440,7 @@ u32 REGISTERS::read(const id::reg register_id) {
             break;
     }
 
-    llarm::out::error("Couldn't read register in read() = ", (int)register_id);
+    llarm::out::error("Couldn't read register in read() = ", u32(register_id));
 };
 
 

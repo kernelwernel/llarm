@@ -3,20 +3,18 @@
 #include "../interpreter/interpreter.hpp"
 #include "../interpreter/IR.hpp"
 #include "../interpreter/tokens.hpp"
+#include "../id/shifter_id.hpp"
+#include "../id/instruction_id.hpp"
 
 using namespace internal;
 
-// binary arm instructions don't really have much of a way to "fail",
-// even "faulty" arguments are encoded in ways where it can't be considered
-// as an error. So the only real failure for a thumb instruction would
-// be to identify an undefined or unknown instruction (me thinks)
 
 bool validation::string_arm::is_arm_instruction_valid(const std::string &code, const u32 PC) {
     return is_arm_instruction_valid(IR::generate(code, PC));
 }
 
 
-bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
+bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &&IR) {
     using namespace interpreter;
     using enum token_enum;
     using enum reg_type;
@@ -25,33 +23,31 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
 
     switch (IR.mnemonic.id) {
         case arm_id::UNKNOWN: return false;
-/* TODO */        case arm_id::UNDEFINED: return false;
-/* TODO */        case arm_id::NOP: return false;
-/* TODO */
-/* TODO */        // TODO COMPLETE ALL THE SHIFTERS
-/* TODO */
-/* TODO */        // addressing mode 1: data processing
-/* TODO */        case arm_id::ADC: 
-/* TODO */        case arm_id::ADD:
-/* TODO */        case arm_id::RSB:
-/* TODO */        case arm_id::BIC:
-/* TODO */        case arm_id::SUB:
-/* TODO */        case arm_id::CMN: // TODO, FUCK THIS INSTRUCTION
-/* TODO */        case arm_id::AND:
-/* TODO */        case arm_id::CMP:
-/* TODO */        case arm_id::RSC:
-/* TODO */        case arm_id::SBC:
-/* TODO */        case arm_id::EOR:
-/* TODO */        case arm_id::ORR:
-/* TODO */        case arm_id::TEQ:
-/* TODO */        case arm_id::TST:
-/* TODO */        case arm_id::MOV:
-/* TODO */        case arm_id::MVN:
-/* TODO */        case arm_id::CMNP:
-/* TODO */        case arm_id::CMPP:
-/* TODO */        case arm_id::TEQP:
-/* TODO */        case arm_id::TSTP:
-/* TODO */
+        case arm_id::UNDEFINED: return false;
+        case arm_id::NOP: return false;
+
+        // addressing mode 1: data processing
+        case arm_id::ADC: 
+        case arm_id::ADD:
+        case arm_id::RSB:
+        case arm_id::BIC:
+        case arm_id::SUB:
+        case arm_id::CMN:
+        case arm_id::AND:
+        case arm_id::CMP:
+        case arm_id::RSC:
+        case arm_id::SBC:
+        case arm_id::EOR:
+        case arm_id::ORR:
+        case arm_id::TEQ:
+        case arm_id::TST:
+        case arm_id::MOV:
+        case arm_id::MVN:
+        case arm_id::CMNP:
+        case arm_id::CMPP:
+        case arm_id::TEQP:
+        case arm_id::TSTP: return is_data_processing_valid(lexemes, IR.shifter_id, IR.mnemonic.id);
+
 /* TODO */        // addressing mode 2: load store
 /* TODO */        case arm_id::LDR:
 /* TODO */        case arm_id::LDRB:
@@ -61,7 +57,7 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
 /* TODO */        case arm_id::STRB: 
 /* TODO */        case arm_id::STRBT:
 /* TODO */        case arm_id::STRT:
-/* TODO */        
+/* TODO */
 /* TODO */        // addressing mode 3: load store misc
 /* TODO */        case arm_id::STRH:
 /* TODO */        case arm_id::LDRH:
@@ -81,10 +77,10 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
 /* TODO */        case arm_id::STC: 
 /* TODO */        case arm_id::STC2: 
 /* TODO */        case arm_id::LDC: 
-/* TODO */        case arm_id::LDC2: return (ident::string_shifters::identify_shifter(IR) != shifter_id::UNKNOWN);
+/* TODO */        case arm_id::LDC2:
 
-        case arm_id::B:
-        case arm_id::BL: //return verify_lexemes({ CONST }, lexemes);
+/* TODO */        case arm_id::B:
+/* TODO */        case arm_id::BL: //return verify_lexemes({ CONST }, lexemes);
         case arm_id::SWI: return verify_lexemes({ immed(24) }, lexemes);
 
         case arm_id::MCR2: 
@@ -116,13 +112,13 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
         case arm_id::SMLALXY:
         case arm_id::SMLAWY:
         case arm_id::UMULL: return verify_lexemes({ reg(), reg(), reg(), reg() }, lexemes);
-        
+
         case arm_id::MRS: 
             return (
                 (verify_lexemes({ reg(), psr(CPSR) }, lexemes)) ||
                 (verify_lexemes({ reg(), psr(SPSR) }, lexemes))
             );
-            
+
         case arm_id::MSR_IMM: // both these instructions are already verified in the identification process
         case arm_id::MSR_REG: return true; 
         case arm_id::BKPT: return verify_lexemes({ immed(16) }, lexemes);
@@ -232,5 +228,76 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
                 (verify_lexemes({ reg(DOUBLE), token(MEM_START), reg(), token(MEM_END) }, lexemes)) ||
                 (verify_lexemes({ reg(DOUBLE), token(MEM_START), reg(), token(HASHTAG), immed(7, 4), token(MEM_END) }, lexemes))
             );
+    }
+}
+
+
+bool validation::string_arm::is_data_processing_valid(lexemes_t lexemes, const shifter_id shifter_id, const arm_id id) {
+    using namespace interpreter;
+    using enum token_enum;
+
+    // this is because CMN is an exception where it has 1 register instead of the usual 2 for this addressing mode
+    const u8 removal_count = (id == arm_id::CMN ? 1 : 2);
+    lexemes.erase(lexemes.begin(), lexemes.begin() + removal_count);
+
+    // lexemes should remove the first non-addressing mode registers, it's easier to analyse this way
+    
+    switch (shifter_id) {
+        case shifter_id::DATA_IMM: return verify_lexemes({ token(HASHTAG), immed_rotate() }, lexemes);
+        case shifter_id::DATA_RRX: return verify_lexemes({ reg(), token(RRX) }, lexemes);
+        case shifter_id::DATA_REG: return verify_lexemes({ reg() }, lexemes);
+        case shifter_id::DATA_IMM_LSL: return verify_lexemes({ reg(), token(LSL), token(HASHTAG), immed_range(0, 31) }, lexemes);
+        case shifter_id::DATA_IMM_LSR: return verify_lexemes({ reg(), token(LSR), token(HASHTAG), immed_range(1, 32) }, lexemes);
+        case shifter_id::DATA_IMM_ASR: return verify_lexemes({ reg(), token(ASR), token(HASHTAG), immed_range(1, 32) }, lexemes);
+        case shifter_id::DATA_IMM_ROR: return verify_lexemes({ reg(), token(ROR), token(HASHTAG), immed_range(1, 31) }, lexemes);
+        case shifter_id::DATA_REG_LSL: return verify_lexemes({ reg(), token(LSL), reg() }, lexemes);
+        case shifter_id::DATA_REG_LSR: return verify_lexemes({ reg(), token(LSR), reg() }, lexemes);
+        case shifter_id::DATA_REG_ASR: return verify_lexemes({ reg(), token(ASR), reg() }, lexemes);
+        case shifter_id::DATA_REG_ROR: return verify_lexemes({ reg(), token(ROR), reg() }, lexemes);
+        default: return false;
+    }
+}
+
+
+bool validation::string_arm::is_ls_valid(const lexemes_t &lexemes, const shifter_id shifter_id, const arm_id id) {
+    using namespace interpreter;
+    using enum token_enum;
+
+    if (id == arm_id::PLD) {
+        switch (shifter_id) {
+            case shifter_id::LS_IMM:
+            case shifter_id::LS_REG:
+            case shifter_id::LS_SCALED_LSL:
+            case shifter_id::LS_SCALED_LSR:
+            case shifter_id::LS_SCALED_ASR:
+            case shifter_id::LS_SCALED_ROR:
+            case shifter_id::LS_SCALED_RRX: break;
+            default: return false;
+        }
+    }
+
+    switch (shifter_id) {
+        case shifter_id::LS_IMM: return verify_lexemes({ reg(), token(MEM_START), reg(), token(HASHTAG), immed(11), token(MEM_END) }, lexemes);
+        case shifter_id::LS_IMM_PRE: return verify_lexemes({ reg(), token(MEM_START), reg(), token(HASHTAG), immed(11), token(MEM_END), token(PRE_INDEX) }, lexemes);
+        case shifter_id::LS_IMM_POST: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), token(HASHTAG), immed(11) }, lexemes);
+        case shifter_id::LS_REG: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_REG_PRE: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_REG_POST: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_SCALED_LSL: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_SCALED_LSR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_SCALED_ASR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_SCALED_ROR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_SCALED_RRX: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_SCALED_PRE_LSL: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_SCALED_PRE_LSR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_SCALED_PRE_ASR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_SCALED_PRE_ROR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_SCALED_PRE_RRX: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_SCALED_POST_LSL: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_SCALED_POST_LSR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_SCALED_POST_ASR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_SCALED_POST_ROR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_SCALED_POST_RRX: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        default: return false;
     }
 }

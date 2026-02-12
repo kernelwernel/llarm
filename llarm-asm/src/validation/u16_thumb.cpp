@@ -11,13 +11,13 @@ using namespace internal;
 // as an error. So the only real failure for a thumb instruction would
 // be to identify an undefined or unknown instruction (me thinks)
 
-bool valid::u16_thumb::is_thumb_instruction_valid(const u16 code) {
+bool validation::u16_thumb::is_thumb_instruction_valid(const u16 code) {
     const thumb_id id = ident::u16_thumb::thumb(code);
     return is_thumb_instruction_valid(id);
 }
 
 
-bool valid::u16_thumb::is_thumb_instruction_valid(const thumb_id id) {
+bool validation::u16_thumb::is_thumb_instruction_valid(const thumb_id id) {
     return (
         (id != thumb_id::UNDEFINED) &&
         (id != thumb_id::UNKNOWN)

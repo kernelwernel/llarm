@@ -86,9 +86,11 @@ struct REG {
 };
 
 struct IMM {
-    i64 number;
+    u64 number;
     u8 msb; // most significant bit index, this is useful since there's a limit in some cases
     u8 divisor_constraint; // some immeds can only be a multiple of that number, default is 1
+    u8 start_value;
+    u8 end_value;
     bool has_msb_comparison; // means that the msb will be analysed instead of the number during comparison
     bool is_rotateable; // important distinction for instructions with data processing address modes
     bool is_negative;
@@ -103,10 +105,16 @@ struct IMM {
             return false;
         }
 
+        if (start_value != 0 || end_value != 0) {
+            return (rhs.number >= start_value && rhs.number <= end_value);
+        }
+
         // this will be optimised easily. Cases like 1, 2, and 4 will be provided and are 
         // the only realistic setting for the divisor (https://godbolt.org/z/s7cdqzPa8)
-        if ((number % rhs.divisor_constraint) != 0) {
-            return false;
+        if (divisor_constraint != 1 && divisor_constraint != 0) {
+            if ((number % rhs.divisor_constraint) != 0) {
+                return false;
+            }
         }
 
         if (rhs.has_msb_comparison) {
@@ -117,8 +125,53 @@ struct IMM {
             return false;
         }
 
+        if (is_negative != rhs.is_negative) {
+            return false;
+        }
+
         return (number == rhs.number);
     }
+
+//    constexpr IMM() : 
+//        number(0), 
+//        msb(0), 
+//        divisor_constraint(1), 
+//        start_value(0),
+//        end_value(0),
+//        has_msb_comparison(false),
+//        is_rotateable(false),
+//        is_negative(false),
+//        is_malformed(false),
+//        is_invalid(false)
+//    {
+//
+//    }
+
+//    constexpr IMM(    
+//        const u64 number,
+//        const u8 msb,
+//        const u8 divisor_constraint,
+//        const u8 start_value,
+//        const u8 end_value,
+//        const bool has_msb_comparison,
+//        const bool is_rotateable,
+//        const bool is_negative,
+//        const bool is_malformed,
+//        const bool is_invalid
+//    ) : 
+//        number(number), 
+//        msb(msb), 
+//        divisor_constraint(divisor_constraint), 
+//        start_value(start_value),
+//        end_value(end_value),
+//        has_msb_comparison(has_msb_comparison),
+//        is_rotateable(is_rotateable),
+//        is_negative(is_negative),
+//        is_malformed(is_malformed),
+//        is_invalid(is_invalid)
+//    {
+//
+//    }
 };
 
 struct PSR {

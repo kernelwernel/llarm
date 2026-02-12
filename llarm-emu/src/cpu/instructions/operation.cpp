@@ -9,7 +9,7 @@
 #include <llarm/shared/out.hpp>
 
 
-bool OPERATION::carry_add(const u64 &sum) {
+bool OPERATION::carry_add(const u64 sum) {
     constexpr u64 max = ((1ULL << 32) - 1);
     return (sum > max);
 }
@@ -187,7 +187,7 @@ std::vector<id::reg> OPERATION::register_list(const u16 reg_list) {
     subtraction which occurred earlier in the pseudo-code.
     The addition or subtraction is not repeated
 
-    bool overflow_sub(const u64 &sum) {
+    bool overflow_sub(const u64 sum) {
     
     }
 */

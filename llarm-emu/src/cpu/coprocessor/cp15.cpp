@@ -441,16 +441,16 @@ u32 CP15::read(const id::cp15 reg) {
         case id::cp15::R9_CACHE_L: // TODO
         case id::cp15::R10: return R10;
         case id::cp15::R10_MMU: return R10;
-        case id::cp15::R10_MMU_BASE: return llarm::util::bit_range(R10, (32 - tlb.W_unified), 31);
-        case id::cp15::R10_MMU_VICTIM: return llarm::util::bit_range(R10, (32 - (2 * tlb.W_unified)), (31 - tlb.W_unified));
+        case id::cp15::R10_MMU_BASE: return llarm::util::bit_range(R10, u8(32 - tlb.W_unified), 31);
+        case id::cp15::R10_MMU_VICTIM: return llarm::util::bit_range(R10, u8(32 - (2 * tlb.W_unified)), u8(31 - tlb.W_unified));
         case id::cp15::R10_MMU_P: return (R10 & 1);
         case id::cp15::R10_MMU_INST: return R10_INST;
-        case id::cp15::R10_MMU_INST_BASE: return llarm::util::bit_range(R10_INST, (32 - tlb.W_inst), 31);
-        case id::cp15::R10_MMU_INST_VICTIM: return llarm::util::bit_range(R10_INST, (32 - (2 * tlb.W_inst)), (31 - tlb.W_inst));
+        case id::cp15::R10_MMU_INST_BASE: return llarm::util::bit_range(R10_INST, u8(32 - tlb.W_inst), 31);
+        case id::cp15::R10_MMU_INST_VICTIM: return llarm::util::bit_range(R10_INST, u8(32 - (2 * tlb.W_inst)), u8(31 - tlb.W_inst));
         case id::cp15::R10_MMU_INST_P: return (R10_INST & 1);
         case id::cp15::R10_MMU_DATA: return R10_DATA;
-        case id::cp15::R10_MMU_DATA_BASE: return llarm::util::bit_range(R10_DATA, (32 - tlb.W_data), 31);
-        case id::cp15::R10_MMU_DATA_VICTIM: return llarm::util::bit_range(R10_DATA, (32 - (2 * tlb.W_data)), (31 - tlb.W_data)); 
+        case id::cp15::R10_MMU_DATA_BASE: return llarm::util::bit_range(R10_DATA, u8(32 - tlb.W_data), 31);
+        case id::cp15::R10_MMU_DATA_VICTIM: return llarm::util::bit_range(R10_DATA, u8(32 - (2 * tlb.W_data)), u8(31 - tlb.W_data)); 
         case id::cp15::R10_MMU_DATA_P: return (R10_DATA & 1);
         case id::cp15::R10_PU: return R10;
         case id::cp15::R11: return R11;
@@ -857,7 +857,8 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
         case id::cp15::R6_PU_INST_6:
         case id::cp15::R6_PU_INST_7:
             globals.mpu_inst_address_change = true;
-        
+            [[fallthrough]];
+            
         case id::cp15::R6_PU_DATA_0_BASE_ADDRESS:
         case id::cp15::R6_PU_DATA_1_BASE_ADDRESS:
         case id::cp15::R6_PU_DATA_2_BASE_ADDRESS:
@@ -894,6 +895,7 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             // but this is fine as it'll use an if else block in the order
             // that would work for this circumstance in the mpu.cpp file
             globals.mpu_data_address_change = true;
+            [[fallthrough]];
 
         case id::cp15::R6_PU_0_BASE_ADDRESS:
         case id::cp15::R6_PU_1_BASE_ADDRESS:
@@ -1041,16 +1043,16 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
         case id::cp15::R9_CACHE_L: // TODO
         case id::cp15::R10: R10 = value; return;
         case id::cp15::R10_MMU: R10 = value; return;
-        case id::cp15::R10_MMU_BASE: llarm::util::swap_bits(R10, (32 - tlb.W_unified), 31, value); return;
-        case id::cp15::R10_MMU_VICTIM: llarm::util::swap_bits(R10, (32 - (2 * tlb.W_unified)), (31 - tlb.W_unified), value); return;
+        case id::cp15::R10_MMU_BASE: llarm::util::swap_bits(R10, u8(32 - tlb.W_unified), 31, value); return;
+        case id::cp15::R10_MMU_VICTIM: llarm::util::swap_bits(R10, u8(32 - (2 * tlb.W_unified)), u8(31 - tlb.W_unified), value); return;
         case id::cp15::R10_MMU_P: llarm::util::modify_bit(R10, 0, value); return;
         case id::cp15::R10_MMU_INST: R10_INST = value; return;
-        case id::cp15::R10_MMU_INST_BASE: llarm::util::swap_bits(R10_INST, (32 - tlb.W_inst), 31, value); return;
-        case id::cp15::R10_MMU_INST_VICTIM: llarm::util::swap_bits(R10_INST, (32 - (2 * tlb.W_inst)), (31 - tlb.W_data), value); return;
+        case id::cp15::R10_MMU_INST_BASE: llarm::util::swap_bits(R10_INST, u8(32 - tlb.W_inst), 31, value); return;
+        case id::cp15::R10_MMU_INST_VICTIM: llarm::util::swap_bits(R10_INST, u8(32 - (2 * tlb.W_inst)), u8(31 - tlb.W_data), value); return;
         case id::cp15::R10_MMU_INST_P: llarm::util::modify_bit(R10_INST, 0, value); return;
         case id::cp15::R10_MMU_DATA: R10_DATA = value; return;
-        case id::cp15::R10_MMU_DATA_BASE: llarm::util::swap_bits(R10_DATA, (32 - tlb.W_data), 31, value); return;
-        case id::cp15::R10_MMU_DATA_VICTIM: llarm::util::swap_bits(R10_DATA, (32 - (2 * tlb.W_data)), (31 - tlb.W_data), value); return;
+        case id::cp15::R10_MMU_DATA_BASE: llarm::util::swap_bits(R10_DATA, u8(32 - tlb.W_data), 31, value); return;
+        case id::cp15::R10_MMU_DATA_VICTIM: llarm::util::swap_bits(R10_DATA, u8(32 - (2 * tlb.W_data)), u8(31 - tlb.W_data), value); return;
         case id::cp15::R10_MMU_DATA_P: llarm::util::modify_bit(R10_DATA, 0, value); return;
         case id::cp15::R10_PU: R10 = value; return;
         case id::cp15::R11: R11 = value; return;
@@ -1107,7 +1109,7 @@ void CP15::setup_R0_processor_id() {
     } else {
         // https://developer.arm.com/documentation/ddi0406/b/Appendices/ARMv4-and-ARMv5-Differences/System-Control-coprocessor--CP15--support/c0--ID-support?lang=en#CHDGAGJH
 
-        const u8 upper_ppn = settings.ppn;
+        const u8 upper_ppn = static_cast<u8>(settings.ppn);
     
         if (arm7) {
             // variant (ARM7 specific)

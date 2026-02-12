@@ -1,22 +1,22 @@
 #include "addressing_modes.hpp"
 
-#include "llarm-asm/llarm-asm.hpp"
-
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
 #include <llarm/shared/out.hpp>
 
+#include <llarm/llarm-asm.hpp>
+
 
 address_struct ADDRESSING_MODE::load_store_coprocessor(const u32 code) {
-    using namespace llarm::util;
+    using namespace llarm::as;
     
-    const shifter_enum shifter_id = llarm::as::identify::shifter(shift_category::LS_COPROC, code);
+    const shifter_id shifter_id = llarm::as::identify_shifter(shifter_category::LS_COPROC, code);
 
     switch (shifter_id) {
-        case shifter_enum::LS_COPROC_IMM: return ls_coproc_imm(code);
-        case shifter_enum::LS_COPROC_IMM_PRE: return ls_coproc_imm_pre(code);
-        case shifter_enum::LS_COPROC_IMM_POST: return ls_coproc_imm_post(code);
-        case shifter_enum::LS_COPROC_UNINDEXED: return ls_coproc_unindexed(code);
+        case shifter_id::LS_COPROC_IMM: return ls_coproc_imm(code);
+        case shifter_id::LS_COPROC_IMM_PRE: return ls_coproc_imm_pre(code);
+        case shifter_id::LS_COPROC_IMM_POST: return ls_coproc_imm_post(code);
+        case shifter_id::LS_COPROC_UNINDEXED: return ls_coproc_unindexed(code);
         default: llarm::out::error("Impossible identification of ARM load store coprocessor shifter");
     }
 }
@@ -48,7 +48,7 @@ address_struct ADDRESSING_MODE::ls_coproc_imm(const u32 code) {
     }
 
     const u32 start_address = address;
-    const u8 cp_num = llarm::util::bit_range(code, 8, 11);
+    const u8 cp_num = llarm::util::bit_range<u8>(code, 8, 11);
 
     // ???? TODO
 
@@ -74,7 +74,7 @@ address_struct ADDRESSING_MODE::ls_coproc_imm(const u32 code) {
  */
 address_struct ADDRESSING_MODE::ls_coproc_imm_pre(const u32 code) {
     const bool U = llarm::util::bit_fetch(code, 23);
-    const u8 offset_8 = llarm::util::bit_range(code, 0, 7);
+    const u8 offset_8 = llarm::util::bit_range<u8>(code, 0, 7);
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
 
     if (U == true) {

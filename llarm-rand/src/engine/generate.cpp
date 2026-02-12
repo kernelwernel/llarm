@@ -8,7 +8,7 @@
 
 #include <llarm/shared/types.hpp>
 
-#include <llarm-asm/llarm-asm.hpp>
+#include <llarm/llarm-asm.hpp>
 
 param_struct generate::make_params(const settings_struct settings) {
     const u8 cond = [&]() -> u8 {

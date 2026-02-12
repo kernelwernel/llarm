@@ -6,6 +6,8 @@
 // down the line when an IR must be generated for an instruction. This separated format
 // may seem a bit clanky and unnecessary, but it works.
 
+using namespace internal;
+
 enum class vfp_special_reg_enum : u8 {
     NONE,
     FPSID,

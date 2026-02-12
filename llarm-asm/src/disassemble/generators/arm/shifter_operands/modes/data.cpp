@@ -13,6 +13,7 @@ std::string shifters::data_imm(const u32 code, const settings settings) {
     const u8 rotate_imm = llarm::util::bit_range<u8>(code, 8, 11);
     const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
     return util::make_string("#", util::hex(llarm::util::rotr(immed_8, (rotate_imm * 2)), settings));
+    // TODO, LSR has 32 when the value is 0 (A5-11)
 }
 
 

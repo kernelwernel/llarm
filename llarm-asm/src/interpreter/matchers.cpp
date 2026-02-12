@@ -1,5 +1,6 @@
 #include "matchers.hpp"
 #include "tokens.hpp"
+#include "../encoding_utils.hpp"
 
 #include <llarm/shared/string_view.hpp>
 #include <llarm/shared/util.hpp>
@@ -172,6 +173,8 @@ IMM matchers::immediate(sv str) {
         0, /* number */
         0, /* msb */
         1, /* divisor_constraint */
+        0, /* start_value (only used for comparison, ignored) */
+        0, /* end_value (same) */
         false, // has_msb_comparison */
         false, // is_rotateable */
         false, /* is_negative */
@@ -231,7 +234,7 @@ IMM matchers::immediate(sv str) {
     }
 
     if (is_negative) {
-        imm.number = -static_cast<i32>(num);
+        imm.number = num;
     } else {
         u8 msb = 31;
         
@@ -240,9 +243,13 @@ IMM matchers::immediate(sv str) {
                 break;
             }
         }
-        
-        imm.number = static_cast<i32>(num);
+
+        imm.number = num;
         imm.msb = msb;
+    }
+
+    if (encoders::is_imm_encodable(static_cast<u32>(imm.number))) {
+        imm.is_rotateable = true;
     }
 
     imm.is_invalid = false;

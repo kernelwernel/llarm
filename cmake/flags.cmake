@@ -87,8 +87,19 @@ set(LINUX_EMBEDDED_CXX_FLAGS
 set(LINUX_DEBUG_CXX_FLAGS
     -g
     -O0
+    -Werror
+    -Wall
+    -Wextra
+    -Wshadow
+    -Wunused
     #-fsanitize=address,undefined,nullability
-    -Wno-return-type # for prototyping purposes
+
+    # for prototyping purposes, should be removed one day
+    -Wno-return-type
+    -Wno-unused-parameter
+    -Wno-unused-private-field
+    -Wno-unused-variable
+    -Wno-unused-function
 )
 
 

@@ -1,22 +1,22 @@
 #include "addressing_modes.hpp"
 
-#include "llarm-asm/llarm-asm.hpp"
-
 #include <llarm/shared/util.hpp>
 #include <llarm/shared/out.hpp>
 
-u32 ADDRESSING_MODE::load_store_misc(const u32 code) {
-    using namespace llarm::util;
+#include <llarm/llarm-asm.hpp>
 
-    const shifter_enum shifter_id = llarm::as::identify::shifter(shift_category::LS_MISC, code);
+u32 ADDRESSING_MODE::load_store_misc(const u32 code) {
+    using namespace llarm::as;
+
+    const shifter_id shifter_id = llarm::as::identify_shifter(shifter_category::LS_MISC, code);
 
     switch (shifter_id) {
-        case shifter_enum::LS_MISC_IMM: return ls_misc_imm(code);
-        case shifter_enum::LS_MISC_REG: return ls_misc_reg(code);
-        case shifter_enum::LS_MISC_IMM_PRE: return ls_misc_imm_pre(code);
-        case shifter_enum::LS_MISC_IMM_POST: return ls_misc_imm_post(code);
-        case shifter_enum::LS_MISC_REG_PRE: return ls_misc_reg_pre(code);
-        case shifter_enum::LS_MISC_REG_POST: return ls_misc_reg_post(code);
+        case shifter_id::LS_MISC_IMM: return ls_misc_imm(code);
+        case shifter_id::LS_MISC_REG: return ls_misc_reg(code);
+        case shifter_id::LS_MISC_IMM_PRE: return ls_misc_imm_pre(code);
+        case shifter_id::LS_MISC_IMM_POST: return ls_misc_imm_post(code);
+        case shifter_id::LS_MISC_REG_PRE: return ls_misc_reg_pre(code);
+        case shifter_id::LS_MISC_REG_POST: return ls_misc_reg_post(code);
         default: llarm::out::error("Impossible identification of ARM load store misc shifter");
     }
 }
@@ -33,7 +33,7 @@ u32 ADDRESSING_MODE::ls_misc_imm(const u32 code) {
     const u8 immedH = llarm::util::bit_range<u8>(code, 8, 11);
     const u8 immedL = llarm::util::bit_range<u8>(code, 0, 3);
 
-    const u8 offset_8 = (immedH << 4) | immedL;
+    const u8 offset_8 = static_cast<u8>((immedH << 4) | immedL);
 
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
 
@@ -76,7 +76,7 @@ u32 ADDRESSING_MODE::ls_misc_imm_pre(const u32 code) {
     const u8 immedH = llarm::util::bit_range<u8>(code, 8, 11);
     const u8 immedL = llarm::util::bit_range<u8>(code, 0, 3);
 
-    const u8 offset_8 = (immedH << 4) | immedL;
+    const u8 offset_8 = static_cast<u8>((immedH << 4) | immedL);
 
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
 
@@ -146,7 +146,7 @@ u32 ADDRESSING_MODE::ls_misc_imm_post(const u32 code) {
         const u8 immedH = llarm::util::bit_range<u8>(code, 8, 11);
         const u8 immedL = llarm::util::bit_range<u8>(code, 0, 3);
         
-        const u8 offset_8 = (immedH << 4) | immedL;
+        const u8 offset_8 = static_cast<u8>((immedH << 4) | immedL);
 
         if (llarm::util::bit_fetch(code, 23)) {
             reg.write(Rn_id, (Rn + offset_8));

@@ -11,7 +11,7 @@ namespace internal {
     };
 
 
-    inline settings default_settings() {
+    inline settings default_dis_settings() {
         return settings { true, true, true, false, true, false };
     }
 }

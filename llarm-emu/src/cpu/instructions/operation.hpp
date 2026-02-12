@@ -8,7 +8,7 @@
 
 struct OPERATION {
 public:
-    bool carry_add(const u64&);
+    bool carry_add(const u64);
     bool carry_add(const u32, const u32);
     bool carry_add(const u32, const u32, const u32);
 
@@ -49,7 +49,7 @@ public:
     subtraction which occurred earlier in the pseudo-code.
     The addition or subtraction is not repeated
 
-    bool overflow_sub(const u64 &sum) {
+    bool overflow_sub(const u64 sum) {
     
     }
 */
