@@ -36,7 +36,15 @@ bool vfp_utils::is_signaling_nan(const float value) {
         return false;
     }
 
-    return (llarm::util::bit_fetch(value, 22) == false); // is not quiet
+    return (llarm::util::bit_fetch(vfp_utils::single_to_u32(value), 22) == false); // is not quiet
+}
+
+bool vfp_utils::is_signaling_nan(const double value) {
+    if (std::isnan(value) == false) {
+        return false;
+    }
+
+    return (llarm::util::bit_fetch(vfp_utils::double_to_u64(value), 51) == false); // is not quiet
 }
 
 bool vfp_utils::is_quiet_nan(const float value) {
@@ -44,5 +52,5 @@ bool vfp_utils::is_quiet_nan(const float value) {
         return false;
     }
 
-    return llarm::util::bit_fetch(value, 22); // is quiet
+    return llarm::util::bit_fetch(vfp_utils::single_to_u32(value), 22); // is quiet
 }

@@ -60,6 +60,10 @@ endforeach()
 
 
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+
+
 # clang-format
 #clangformat_setup(${ALL_SOURCES})
 

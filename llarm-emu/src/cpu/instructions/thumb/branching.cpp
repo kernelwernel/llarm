@@ -9,12 +9,12 @@
  *   PC = PC + (SignExtend(signed_immed_8) << 1)
  */
 void INSTRUCTIONS::thumb::branching::B1(const u16 code) {
-    const i8 signed_immed_8 = llarm::util::bit_range<i8>(code, 0, 7);
+    const u8 signed_immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     const id::cond cond = reg.fetch_cond_id(llarm::util::bit_range<u8>(code, 8, 11));
 
     if (reg.is_cond_valid(cond)) {
-        reg.write(id::reg::PC, (reg.read(id::reg::PC) + (operation.sign_extend(signed_immed_8, 7) << 1)));
+        reg.write(id::reg::PC, (reg.read(id::reg::PC) + u32(operation.sign_extend(signed_immed_8, 7) << 1)));
     }
 }
 
@@ -23,9 +23,9 @@ void INSTRUCTIONS::thumb::branching::B1(const u16 code) {
  * PC = PC + (SignExtend(signed_immed_11) << 1)
  */
 void INSTRUCTIONS::thumb::branching::B2(const u16 code) {
-    const i16 signed_immed_10 = llarm::util::bit_range<i16>(code, 0, 10);
+    const u16 signed_immed_10 = llarm::util::bit_range<u16>(code, 0, 10);
 
-    reg.write(id::reg::PC, (reg.read(id::reg::PC) + ((static_cast<i32>(signed_immed_10)) << 1)));
+    reg.write(id::reg::PC, u32(reg.read(id::reg::PC) + u32((signed_immed_10) << 1)));
 }
 
 
@@ -47,12 +47,12 @@ void INSTRUCTIONS::thumb::branching::BL(const u16 code) {
     const u32 next_instruction_address = reg.read(id::reg::PC) + 2;
 
     if (H == 0b10) {
-        reg.write(id::reg::LR, (reg.read(id::reg::PC) + (operation.sign_extend(offset_11, 10) << 12)));
+        reg.write(id::reg::LR, (reg.read(id::reg::PC) + u32(operation.sign_extend(offset_11, 10) << 12)));
     } else if (H == 0b11) {
-        reg.write(id::reg::PC, (reg.read(id::reg::LR) + (offset_11 << 1)));
+        reg.write(id::reg::PC, (reg.read(id::reg::LR) + u32(offset_11 << 1)));
         reg.write(id::reg::LR, ((next_instruction_address + 2) | 1));
     } else if (H == 0b01) {
-        reg.write(id::reg::PC, ((reg.read(id::reg::LR) + (offset_11 << 1)) & 0xFFFFFFFC));
+        reg.write(id::reg::PC, ((reg.read(id::reg::LR) + u32(offset_11 << 1)) & 0xFFFFFFFC));
         reg.write(id::reg::LR, (next_instruction_address | 1));
         reg.write(id::cpsr::T, false);
     }
@@ -77,12 +77,12 @@ void INSTRUCTIONS::thumb::branching::BLX1(const u16 code) {
     const u32 next_instruction_address = reg.read(id::reg::PC) + 2;
 
     if (H == 0b10) {
-        reg.write(id::reg::LR, (reg.read(id::reg::PC) + (operation.sign_extend(offset_11, 10) << 12)));
+        reg.write(id::reg::LR, (reg.read(id::reg::PC) + u32(operation.sign_extend(offset_11, 10) << 12)));
     } else if (H == 0b11) {
-        reg.write(id::reg::PC, (reg.read(id::reg::LR) + (offset_11 << 1)));
+        reg.write(id::reg::PC, (reg.read(id::reg::LR) + u32(offset_11 << 1)));
         reg.write(id::reg::LR, ((next_instruction_address + 2) | 1));
     } else if (H == 0b01) {
-        reg.write(id::reg::PC, ((reg.read(id::reg::LR) + (offset_11 << 1)) & 0xFFFFFFFC));
+        reg.write(id::reg::PC, ((reg.read(id::reg::LR) + u32(offset_11 << 1)) & 0xFFFFFFFC));
         reg.write(id::reg::LR, (next_instruction_address | 1));
         reg.write(id::cpsr::T, false);
     }

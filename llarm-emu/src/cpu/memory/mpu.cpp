@@ -74,14 +74,14 @@ id::aborts MPU::is_access_valid(const u32 address, const u8 access_size, const i
                 region_inst_5_start = coprocessor.read(id::cp15::R6_PU_INST_5_BASE_ADDRESS);
                 region_inst_6_start = coprocessor.read(id::cp15::R6_PU_INST_6_BASE_ADDRESS);
                 region_inst_7_start = coprocessor.read(id::cp15::R6_PU_INST_7_BASE_ADDRESS);
-                region_inst_0_end = region_inst_0_start + get_size(coprocessor.read(id::cp15::R6_PU_INST_0_SIZE));
-                region_inst_1_end = region_inst_1_start + get_size(coprocessor.read(id::cp15::R6_PU_INST_1_SIZE));
-                region_inst_2_end = region_inst_2_start + get_size(coprocessor.read(id::cp15::R6_PU_INST_2_SIZE));
-                region_inst_3_end = region_inst_3_start + get_size(coprocessor.read(id::cp15::R6_PU_INST_3_SIZE));
-                region_inst_4_end = region_inst_4_start + get_size(coprocessor.read(id::cp15::R6_PU_INST_4_SIZE));
-                region_inst_5_end = region_inst_5_start + get_size(coprocessor.read(id::cp15::R6_PU_INST_5_SIZE));
-                region_inst_6_end = region_inst_6_start + get_size(coprocessor.read(id::cp15::R6_PU_INST_6_SIZE));
-                region_inst_7_end = region_inst_7_start + get_size(coprocessor.read(id::cp15::R6_PU_INST_7_SIZE));
+                region_inst_0_end = region_inst_0_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_INST_0_SIZE))));
+                region_inst_1_end = region_inst_1_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_INST_1_SIZE))));
+                region_inst_2_end = region_inst_2_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_INST_2_SIZE))));
+                region_inst_3_end = region_inst_3_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_INST_3_SIZE))));
+                region_inst_4_end = region_inst_4_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_INST_4_SIZE))));
+                region_inst_5_end = region_inst_5_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_INST_5_SIZE))));
+                region_inst_6_end = region_inst_6_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_INST_6_SIZE))));
+                region_inst_7_end = region_inst_7_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_INST_7_SIZE))));
                 region_inst_0_enabled = coprocessor.read(id::cp15::R6_PU_INST_0_E);
                 region_inst_1_enabled = coprocessor.read(id::cp15::R6_PU_INST_1_E);
                 region_inst_2_enabled = coprocessor.read(id::cp15::R6_PU_INST_2_E);
@@ -99,14 +99,14 @@ id::aborts MPU::is_access_valid(const u32 address, const u8 access_size, const i
                 region_data_5_start = coprocessor.read(id::cp15::R6_PU_DATA_5_BASE_ADDRESS);
                 region_data_6_start = coprocessor.read(id::cp15::R6_PU_DATA_6_BASE_ADDRESS);
                 region_data_7_start = coprocessor.read(id::cp15::R6_PU_DATA_7_BASE_ADDRESS);
-                region_data_0_end = region_data_0_start + get_size(coprocessor.read(id::cp15::R6_PU_DATA_0_SIZE));
-                region_data_1_end = region_data_1_start + get_size(coprocessor.read(id::cp15::R6_PU_DATA_1_SIZE));
-                region_data_2_end = region_data_2_start + get_size(coprocessor.read(id::cp15::R6_PU_DATA_2_SIZE));
-                region_data_3_end = region_data_3_start + get_size(coprocessor.read(id::cp15::R6_PU_DATA_3_SIZE));
-                region_data_4_end = region_data_4_start + get_size(coprocessor.read(id::cp15::R6_PU_DATA_4_SIZE));
-                region_data_5_end = region_data_5_start + get_size(coprocessor.read(id::cp15::R6_PU_DATA_5_SIZE));
-                region_data_6_end = region_data_6_start + get_size(coprocessor.read(id::cp15::R6_PU_DATA_6_SIZE));
-                region_data_7_end = region_data_7_start + get_size(coprocessor.read(id::cp15::R6_PU_DATA_7_SIZE));
+                region_data_0_end = region_data_0_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_DATA_0_SIZE))));
+                region_data_1_end = region_data_1_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_DATA_1_SIZE))));
+                region_data_2_end = region_data_2_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_DATA_2_SIZE))));
+                region_data_3_end = region_data_3_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_DATA_3_SIZE))));
+                region_data_4_end = region_data_4_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_DATA_4_SIZE))));
+                region_data_5_end = region_data_5_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_DATA_5_SIZE))));
+                region_data_6_end = region_data_6_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_DATA_6_SIZE))));
+                region_data_7_end = region_data_7_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_DATA_7_SIZE))));
                 region_data_0_enabled = coprocessor.read(id::cp15::R6_PU_DATA_0_E);
                 region_data_1_enabled = coprocessor.read(id::cp15::R6_PU_DATA_1_E);
                 region_data_2_enabled = coprocessor.read(id::cp15::R6_PU_DATA_2_E);
@@ -125,14 +125,14 @@ id::aborts MPU::is_access_valid(const u32 address, const u8 access_size, const i
             region_5_start = coprocessor.read(id::cp15::R6_PU_5_BASE_ADDRESS);
             region_6_start = coprocessor.read(id::cp15::R6_PU_6_BASE_ADDRESS);
             region_7_start = coprocessor.read(id::cp15::R6_PU_7_BASE_ADDRESS);
-            region_0_end = region_0_start + get_size(coprocessor.read(id::cp15::R6_PU_0_SIZE));
-            region_1_end = region_1_start + get_size(coprocessor.read(id::cp15::R6_PU_1_SIZE));
-            region_2_end = region_2_start + get_size(coprocessor.read(id::cp15::R6_PU_2_SIZE));
-            region_3_end = region_3_start + get_size(coprocessor.read(id::cp15::R6_PU_3_SIZE));
-            region_4_end = region_4_start + get_size(coprocessor.read(id::cp15::R6_PU_4_SIZE));
-            region_5_end = region_5_start + get_size(coprocessor.read(id::cp15::R6_PU_5_SIZE));
-            region_6_end = region_6_start + get_size(coprocessor.read(id::cp15::R6_PU_6_SIZE));
-            region_7_end = region_7_start + get_size(coprocessor.read(id::cp15::R6_PU_7_SIZE));
+            region_0_end = region_0_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_0_SIZE))));
+            region_1_end = region_1_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_1_SIZE))));
+            region_2_end = region_2_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_2_SIZE))));
+            region_3_end = region_3_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_3_SIZE))));
+            region_4_end = region_4_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_4_SIZE))));
+            region_5_end = region_5_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_5_SIZE))));
+            region_6_end = region_6_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_6_SIZE))));
+            region_7_end = region_7_start + static_cast<u32>(get_size(static_cast<u8>(coprocessor.read(id::cp15::R6_PU_7_SIZE))));
             region_0_enabled = coprocessor.read(id::cp15::R6_PU_0_E);
             region_1_enabled = coprocessor.read(id::cp15::R6_PU_1_E);
             region_2_enabled = coprocessor.read(id::cp15::R6_PU_2_E);
@@ -191,7 +191,7 @@ id::aborts MPU::is_access_valid(const u32 address, const u8 access_size, const i
         }
     }
 
-    const u8 AP_bits = coprocessor.read(AP_region_id);
+    const u8 AP_bits = static_cast<u8>(coprocessor.read(AP_region_id));
     const id::access_perm AP_id = get_access_perm(AP_bits);
 
     switch (AP_id) {
@@ -216,7 +216,10 @@ id::aborts MPU::is_access_valid(const u32 address, const u8 access_size, const i
             }
             break;
 
-        case id::access_perm::UNPREDICTABLE: llarm::out::unpredictable("MPU access perm is unpredictable");
+        case id::access_perm::UNPREDICTABLE: 
+            llarm::out::unpredictable("MPU access perm is unpredictable");
+            [[fallthrough]];
+
         case id::access_perm::NO_ACCESS: 
             if (access_type == id::access_type::INSTRUCTION_FETCH) {
                 return id::aborts::PREFETCH_ABORT;
@@ -230,7 +233,7 @@ id::aborts MPU::is_access_valid(const u32 address, const u8 access_size, const i
 }
 
 
-mem_write_struct MPU::write(const u32 address, const u32 value, const u8 access_size) {
+mem_write_struct MPU::write(const u32 address, const u64 value, const u8 access_size) {
     const id::aborts abort_code = is_access_valid(address, access_size, id::access_type::WRITE);
 
     const bool access_has_failed = (abort_code != id::aborts::NO_ABORT);

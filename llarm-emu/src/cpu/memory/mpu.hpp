@@ -102,7 +102,7 @@ public:
     
     id::aborts is_access_valid(const u32 address, const u8 access_size, const id::access_type access_type);
 
-    mem_write_struct write(const u32 address, const u32 value, const u8 access_size);
+    mem_write_struct write(const u32 address, const u64 value, const u8 access_size);
 
     mem_read_struct read(const u32 address, const u8 access_size);
 

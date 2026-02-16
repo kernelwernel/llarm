@@ -28,8 +28,9 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
 
-# targets
+# targets and variables
 set(TARGET_LIB "llarm-shared-lib")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
 # source code collection

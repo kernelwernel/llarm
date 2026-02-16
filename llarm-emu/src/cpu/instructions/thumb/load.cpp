@@ -36,7 +36,7 @@ void INSTRUCTIONS::thumb::load::LDMIA(const u16 code) {
             return;
         }
 
-        reg.write(reg_id, access.value);
+        reg.write(reg_id, static_cast<u32>(access.value));
 
         address += 4;
     }
@@ -79,7 +79,7 @@ void INSTRUCTIONS::thumb::load::LDR1(const u16 code) {
         return;
     }
 
-    reg.write(Rd_id, access.value);
+    reg.write(Rd_id, static_cast<u32>(access.value));
 }
 
 
@@ -111,7 +111,7 @@ void INSTRUCTIONS::thumb::load::LDR2(const u16 code) {
         return;
     }
 
-    reg.write(Rd_id, access.value);
+    reg.write(Rd_id, static_cast<u32>(access.value));
 }
 
 
@@ -133,7 +133,7 @@ void INSTRUCTIONS::thumb::load::LDR3(const u16 code) {
         return;
     }
 
-    reg.write(Rd_id, access.value);
+    reg.write(Rd_id, static_cast<u32>(access.value));
 }
 
 
@@ -164,7 +164,7 @@ void INSTRUCTIONS::thumb::load::LDR4(const u16 code) {
         return;
     }
 
-    reg.write(Rd_id, access.value);
+    reg.write(Rd_id, static_cast<u32>(access.value));
 }
 
 
@@ -186,7 +186,7 @@ void INSTRUCTIONS::thumb::load::LDRB1(const u16 code) {
         return;
     }
 
-    reg.write(Rd_id, access.value);
+    reg.write(Rd_id, static_cast<u32>(access.value));
 }
 
 
@@ -208,7 +208,7 @@ void INSTRUCTIONS::thumb::load::LDRB2(const u16 code) {
         return;
     }
 
-    reg.write(Rd_id, access.value);
+    reg.write(Rd_id, static_cast<u32>(access.value));
 }
 
 
@@ -240,7 +240,7 @@ void INSTRUCTIONS::thumb::load::LDRH1(const u16 code) {
         return;
     }
 
-    reg.write(Rd_id, access.value);
+    reg.write(Rd_id, static_cast<u32>(access.value));
 }
 
 
@@ -272,7 +272,7 @@ void INSTRUCTIONS::thumb::load::LDRH2(const u16 code) {
         return;
     }
 
-    reg.write(Rd_id, access.value);
+    reg.write(Rd_id, static_cast<u32>(access.value));
 }
 
 
@@ -294,7 +294,7 @@ void INSTRUCTIONS::thumb::load::LDRSB(const u16 code) {
         return;
     }
 
-    reg.write(Rd_id, operation.sign_extend(access.value));
+    reg.write(Rd_id, u32(operation.sign_extend(static_cast<u32>(access.value))));
 }
 
 
@@ -326,7 +326,7 @@ void INSTRUCTIONS::thumb::load::LDRSH(const u16 code) {
         return;
     }
 
-    reg.write(Rd_id, operation.sign_extend(access.value));
+    reg.write(Rd_id, u32(operation.sign_extend(static_cast<u32>(access.value))));
 }
 
 
@@ -371,7 +371,7 @@ void INSTRUCTIONS::thumb::load::POP(const u16 code) {
             return;
         }
 
-        reg.write(reg_id, access.value);
+        reg.write(reg_id, static_cast<u32>(access.value));
         address += 4;
     }
 
@@ -383,7 +383,7 @@ void INSTRUCTIONS::thumb::load::POP(const u16 code) {
             return;
         }
 
-        const u32 value = access.value;
+        const u32 value = static_cast<u32>(access.value);
 
         reg.write(id::reg::PC, value & 0xFFFFFFFE);
 

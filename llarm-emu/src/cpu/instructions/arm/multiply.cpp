@@ -108,13 +108,13 @@ void INSTRUCTIONS::arm::multiply::SMULL(const u32 code) {
     const i64 result = (Rm * Rs);
 
     const u32 RdLo = llarm::util::bit_range(result, 0, 31);
-    const i32 RdHi = llarm::util::bit_range(result, 32, 63);
+    const i32 RdHi = llarm::util::bit_range<i32>(result, 32, 63);
     
     reg.write(code, 12, 15, RdLo);
-    reg.write(code, 16, 19, RdHi);
+    reg.write(code, 16, 19, static_cast<u32>(RdHi));
 
     if (llarm::util::bit_fetch(code, 20)) {
-        reg.write(id::cpsr::N, (llarm::util::bit_fetch(RdHi, 31)));
+        reg.write(id::cpsr::N, (llarm::util::bit_fetch(static_cast<u32>(RdHi), 31)));
         reg.write(id::cpsr::Z, ((RdHi == 0) && (RdLo == 0)));
     }
 }

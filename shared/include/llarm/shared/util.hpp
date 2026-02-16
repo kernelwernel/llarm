@@ -54,7 +54,7 @@ namespace llarm::util {
     }
 
 
-    constexpr bool bit_fetch(const u32 input, const u8 index) {
+    constexpr bool bit_fetch(const u64 input, const u8 index) {
         return ((input >> index) & 1);
     }
 

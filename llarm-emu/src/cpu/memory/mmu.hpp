@@ -27,7 +27,7 @@ private:
 
 private:
     id::first_level get_first_level_id(const u32 entry);
-    id::second_level get_second_level_id(const u8 entry);
+    id::second_level get_second_level_id(const u32 entry);
     
     u32 first_level_fetch(const u32 key);
     u32 second_level_fetch(const u32 key, const id::first_level first_level_type);

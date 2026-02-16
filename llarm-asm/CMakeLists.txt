@@ -38,10 +38,10 @@ add_dependency(
 )
 
 
-# targets
+# targets and variables
 set(TARGET_BIN "llarm-asm-bin")
 set(TARGET_LIB "llarm-asm-lib")
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # general
 file(GLOB_RECURSE ALL_SOURCES CONFIGURE_DEPENDS "src/*.cpp")

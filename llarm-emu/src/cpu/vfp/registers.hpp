@@ -35,15 +35,20 @@ private:
 
 public:
     void write(const id::vfp_reg vfp_reg_id, const u64 value);
-    void write_single(const u32 code, const u8 start, const u8 end, const u64 value, const u8 bottom_bit);
+    void write_single(const u32 code, const u8 start, const u8 end, const u32 value, const u8 bottom_bit);
     void write_double(const u32 code, const u8 start, const u8 end, const u64 value);
+    void write_single(const u32 code, const u8 start, const u8 end, const float value, const u8 bottom_bit);
+    void write_double(const u32 code, const u8 start, const u8 end, const double value);
+    void write_double(const id::vfp_reg vfp_reg_id, const double value);
+    void write_single(const id::vfp_reg vfp_reg_id, const float value);
+
     u64 read(const id::vfp_reg vfp_reg_id);
     u32 read_single(const u32 code, const u8 start, const u8 end, const u8 bottom_bit);
     u64 read_double(const u32 code, const u8 start, const u8 end);
     double read_double_IEEE(const u32 code, const u8 start, const u8 end);
     float read_single_IEEE(const u32 code, const u8 start, const u8 end, const u8 bottom_bit);
-    double read_double_IEEE(const id::vfp_reg vfp_reg_id);
-    float read_single_IEEE(const id::vfp_reg vfp_reg_id);
+    double read_double(const id::vfp_reg vfp_reg_id);
+    float read_single(const id::vfp_reg vfp_reg_id);
 
     id::vfp_reg fetch_single_reg_id(const u8 reg_bits);
     id::vfp_reg fetch_double_reg_id(const u8 reg_bits);

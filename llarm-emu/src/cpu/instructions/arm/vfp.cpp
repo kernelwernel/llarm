@@ -8,6 +8,7 @@
 #include <cmath>
 
 // TODO work on exceptions, this might take a while
+// TODO finish all VFP instructions
 
 /**
  * if ConditionPassed(cond) then
@@ -18,9 +19,9 @@ void INSTRUCTIONS::arm::vfp::FABSD(const u32 code) {
     const double_encoding_struct encoding = vfp_addressing_mode.double_precision_monadic(code);
 
     for (const auto regs : encoding.vec_regs) {
-        const double Dm = vfp_reg.read(regs.Dm_id);
+        const double Dm = vfp_reg.read_double(regs.Dm_id);
         
-        vfp_reg.write(regs.Dd_id, std::abs(Dm));
+        vfp_reg.write_double(regs.Dd_id, std::abs(Dm));
     }
 }
 
@@ -34,9 +35,9 @@ void INSTRUCTIONS::arm::vfp::FABSS(const u32 code) {
     const single_encoding_struct encoding = vfp_addressing_mode.single_precision_monadic(code);
 
     for (const auto regs : encoding.vec_regs) {
-        const double Sm = vfp_reg.read(regs.Sm_id);
-        
-        vfp_reg.write(regs.Sd_id, std::abs(Sm));
+        const double Sm = vfp_reg.read_double(regs.Sm_id);
+
+        vfp_reg.write_double(regs.Sd_id, std::abs(Sm));
     }
 }
 
@@ -51,7 +52,7 @@ void INSTRUCTIONS::arm::vfp::FADDD(const u32 code) {
     const double_encoding_struct encoding = vfp_addressing_mode.double_precision(code);
 
     for (const auto regs : encoding.vec_regs) {
-        const double result = (vfp_reg.read_single_IEEE(regs.Dn_id) + vfp_reg.read_single_IEEE(regs.Dm_id));
+        const double result = (vfp_reg.read_double(regs.Dn_id) + vfp_reg.read_double(regs.Dm_id));
 
         vfp_reg.write(regs.Dd_id, vfp_utils::double_to_u64(result)); 
     }
@@ -68,7 +69,7 @@ void INSTRUCTIONS::arm::vfp::FADDS(const u32 code) {
     const single_encoding_struct encoding = vfp_addressing_mode.single_precision(code);
 
     for (const auto regs : encoding.vec_regs) {
-        const float result = (vfp_reg.read_single_IEEE(regs.Sn_id) + vfp_reg.read_single_IEEE(regs.Sm_id));
+        const float result = (vfp_reg.read_single(regs.Sn_id) + vfp_reg.read_single(regs.Sm_id));
 
         vfp_reg.write(regs.Sd_id, vfp_utils::single_to_u32(result)); 
     }
@@ -195,9 +196,9 @@ void INSTRUCTIONS::arm::vfp::FCMPEZS(const u32 code) {
         return;
     }
 
-    vfp_reg.write(id::vfp_reg::FPSCR_N, (Sd < 0.0));
-    vfp_reg.write(id::vfp_reg::FPSCR_Z, (Sd == 0.0));
-    vfp_reg.write(id::vfp_reg::FPSCR_C, !(Sd < 0.0));
+    vfp_reg.write(id::vfp_reg::FPSCR_N, (Sd < 0.0f));
+    vfp_reg.write(id::vfp_reg::FPSCR_Z, (Sd == 0.0f));
+    vfp_reg.write(id::vfp_reg::FPSCR_C, !(Sd < 0.0f));
     vfp_reg.write(id::vfp_reg::FPSCR_V, is_Sd_nan);
 }
 
@@ -268,9 +269,9 @@ void INSTRUCTIONS::arm::vfp::FCMPZS(const u32 code) {
         return;
     }
 
-    vfp_reg.write(id::vfp_reg::FPSCR_N, (Sd < 0.0));
-    vfp_reg.write(id::vfp_reg::FPSCR_Z, (Sd == 0.0));
-    vfp_reg.write(id::vfp_reg::FPSCR_C, !(Sd < 0.0));
+    vfp_reg.write(id::vfp_reg::FPSCR_N, (Sd < 0.0f));
+    vfp_reg.write(id::vfp_reg::FPSCR_Z, (Sd == 0.0f));
+    vfp_reg.write(id::vfp_reg::FPSCR_C, !(Sd < 0.0f));
     vfp_reg.write(id::vfp_reg::FPSCR_V, std::isnan(Sd));
 }
 
@@ -322,7 +323,7 @@ void INSTRUCTIONS::arm::vfp::FCVTDS(const u32 code) {
      */
     const double d = static_cast<double>(Sm);
 
-    const u64 ret = vfp_utils::double_to_u64(Sm);
+    const u64 ret = vfp_utils::double_to_u64(d);
     vfp_reg.write_double(code, 12, 15, ret);
 }
 
@@ -336,8 +337,8 @@ void INSTRUCTIONS::arm::vfp::FCVTSD(const u32 code) {
     const double Dm = vfp_reg.read_double_IEEE(code, 0, 3);
 
     const float f = static_cast<float>(Dm);
-    const u32 ret = vfp_utils::single_to_u32(Dm);
-    vfp_reg.write_single(code, 12, 15, 22, ret);
+    const u32 ret = vfp_utils::single_to_u32(f);
+    vfp_reg.write_single(code, 12, 15, ret, 22);
 }
 
 
@@ -351,12 +352,12 @@ void INSTRUCTIONS::arm::vfp::FDIVD(const u32 code) {
     const double_encoding_struct encoding = vfp_addressing_mode.double_precision(code);
 
     for (const auto regs : encoding.vec_regs) {
-        const double Dm = vfp_reg.read(regs.Dm_id);
-        const double Dn = vfp_reg.read(regs.Dn_id);
+        const double Dm = vfp_reg.read_double(regs.Dm_id);
+        const double Dn = vfp_reg.read_double(regs.Dn_id);
 
         const double result  = Dn / Dm; 
 
-        vfp_reg.write(regs.Dd_id, result);
+        vfp_reg.write_double(regs.Dd_id, result);
     }
 }
 
@@ -371,12 +372,12 @@ void INSTRUCTIONS::arm::vfp::FDIVS(const u32 code) {
     const single_encoding_struct encoding = vfp_addressing_mode.single_precision(code);
 
     for (const auto regs : encoding.vec_regs) {
-        const float Sm = vfp_reg.read(regs.Sm_id);
-        const float Sn = vfp_reg.read(regs.Sn_id);
+        const float Sm = vfp_reg.read_single(regs.Sm_id);
+        const float Sn = vfp_reg.read_single(regs.Sn_id);
 
         const float result  = Sn / Sm;
 
-        vfp_reg.write(regs.Sd_id, result);
+        vfp_reg.write_single(regs.Sd_id, result);
     }
 }
 
@@ -396,7 +397,7 @@ void INSTRUCTIONS::arm::vfp::FLDD(const u32 code) {
     u32 address = 0;
 
     const u32 Rn = reg.read(code, 16, 19);
-    const u8 offset = llarm::util::bit_range(code, 0, 7);
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
     if (llarm::util::bit_fetch(code, 23) == 1) {
         address = Rn + offset * 4;
@@ -446,10 +447,10 @@ void INSTRUCTIONS::arm::vfp::FLDMD(const u32 code) {
     const vfp_address_struct addresses = vfp_addressing_mode.vfp_load_multiple(code);
 
     u32 address = addresses.start;
-    const u8 offset = llarm::util::bit_range(code, 0, 7);
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
     const u8 cond = (offset - 2) / 2;
 
-    const u8 d = llarm::util::bit_range(code, 12, 15);
+    const u8 d = llarm::util::bit_range<u8>(code, 12, 15);
 
     for (u8 i = 0; i < cond; i++) {
         const mem_read_struct access = memory.read(address, 4);
@@ -466,7 +467,7 @@ void INSTRUCTIONS::arm::vfp::FLDMD(const u32 code) {
             return;
         }
 
-        u32 value = 0;
+        u64 value = 0;
 
         // is big endian
         if (coprocessor.read(id::cp15::R1_B)) {
@@ -570,7 +571,7 @@ void INSTRUCTIONS::arm::vfp::FLDS(const u32 code) {
     u32 address = 0;
 
     const u32 Rn = reg.read(code, 16, 19);
-    const u8 offset = llarm::util::bit_range(code, 0, 7);
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
     if (U == 1) {
         address = Rn + offset * 4;
@@ -585,7 +586,7 @@ void INSTRUCTIONS::arm::vfp::FLDS(const u32 code) {
         return;
     }
 
-    vfp_reg.write_single(code, 12, 15, access.value, 22);
+    vfp_reg.write_single(code, 12, 15, static_cast<u32>(access.value), 22);
 }
 
 
@@ -663,7 +664,7 @@ void INSTRUCTIONS::arm::vfp::FMRS(const u32 code) {
  *    Rd = reg
  */
 void INSTRUCTIONS::arm::vfp::FMRX(const u32 code) {
-    const u8 reg_id = llarm::util::bit_range(code, 16, 19);
+    const u8 reg_id = llarm::util::bit_range<u8>(code, 16, 19);
 
     id::vfp_reg id = id::vfp_reg::UNKNOWN;
 
@@ -676,7 +677,7 @@ void INSTRUCTIONS::arm::vfp::FMRX(const u32 code) {
             id = id::vfp_reg::FPSCR;
     }
 
-    reg.write(code, 12, 15, vfp_reg.read(id));
+    reg.write(code, 12, 15, static_cast<u32>(vfp_reg.read(id)));
 } 
 
 
@@ -709,10 +710,10 @@ void INSTRUCTIONS::arm::vfp::FMSR(const u32 code) {
  *    CPSR V Flag = FPSCR V Flag
  */
 void INSTRUCTIONS::arm::vfp::FMSTAT(const u32 code) {
-    reg.write(id::cpsr::N, vfp_reg.read(id::vfp_reg::FPSCR_N));
-    reg.write(id::cpsr::Z, vfp_reg.read(id::vfp_reg::FPSCR_Z));
-    reg.write(id::cpsr::C, vfp_reg.read(id::vfp_reg::FPSCR_C));
-    reg.write(id::cpsr::V, vfp_reg.read(id::vfp_reg::FPSCR_V));
+    reg.write(id::cpsr::N, static_cast<u8>(vfp_reg.read(id::vfp_reg::FPSCR_N)));
+    reg.write(id::cpsr::Z, static_cast<u8>(vfp_reg.read(id::vfp_reg::FPSCR_Z)));
+    reg.write(id::cpsr::C, static_cast<u8>(vfp_reg.read(id::vfp_reg::FPSCR_C)));
+    reg.write(id::cpsr::V, static_cast<u8>(vfp_reg.read(id::vfp_reg::FPSCR_V)));
 }
 
 
@@ -732,7 +733,7 @@ void INSTRUCTIONS::arm::vfp::FMULS(const u32 code) {
  *    reg = Rd
  */
 void INSTRUCTIONS::arm::vfp::FMXR(const u32 code) {
-    const u8 reg_id = llarm::util::bit_range(code, 16, 19);
+    const u8 reg_id = llarm::util::bit_range<u8>(code, 16, 19);
 
     id::vfp_reg id = id::vfp_reg::UNKNOWN;
 
@@ -828,7 +829,7 @@ void INSTRUCTIONS::arm::vfp::FSQRTS(const u32 code) {
 void INSTRUCTIONS::arm::vfp::FSTD(const u32 code) {
     u32 address = 0;
     const u32 Rn = reg.read(code, 16, 19);
-    const u8 offset = llarm::util::bit_range(code, 0, 7);
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
     if (llarm::util::bit_fetch(code, 23)) {
         address = Rn + offset * 4;

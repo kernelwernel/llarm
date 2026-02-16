@@ -190,7 +190,7 @@ void INSTRUCTIONS::thumb::store::STRH1(const u16 code) {
     u16 value = 0;
 
     if ((address & 0b11) == 0) {
-        value = llarm::util::bit_range(Rd, 0, 15);
+        value = llarm::util::bit_range<u16>(Rd, 0, 15);
     } else {
         llarm::out::unpredictable("unpredictable STRH1 memory write data alignment");
     }
@@ -220,7 +220,7 @@ void INSTRUCTIONS::thumb::store::STRH2(const u16 code) {
     u16 value = 0;
 
     if ((address & 0b11) == 0) {
-        value = llarm::util::bit_range(Rd, 0, 15);
+        value = llarm::util::bit_range<u16>(Rd, 0, 15);
     } else {
         llarm::out::unpredictable("unpredictable STRH2 memory write data alignment");
     }

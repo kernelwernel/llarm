@@ -20,9 +20,9 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision(const u32 code) {
     const bool N = llarm::util::bit_fetch(code, 7);
     const bool M = llarm::util::bit_fetch(code, 5);
 
-    const u8 d_num = ((Fd << 1) | D);
-    const u8 n_num = ((Fn << 1) | N);
-    const u8 m_num = ((Fm << 1) | M);
+    const u8 d_num = static_cast<u8>((Fd << 1) | D);
+    const u8 n_num = static_cast<u8>((Fn << 1) | N);
+    const u8 m_num = static_cast<u8>((Fm << 1) | M);
 
     const u8 d_bank = llarm::util::bit_range<u8>(d_num, 3, 4);
 
@@ -86,8 +86,8 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision(const u32 code) {
 
         for (u8 i = 0; i < vec_len - 1; i++) {
             single_reg_struct regs = {
-                /* Sd */ vfp_reg.fetch_single_reg_id((d_bank << 3) | d_index),
-                /* Sn */ vfp_reg.fetch_single_reg_id((n_bank << 3) | n_index),
+                /* Sd */ vfp_reg.fetch_single_reg_id(static_cast<u8>(d_bank << 3) | d_index),
+                /* Sn */ vfp_reg.fetch_single_reg_id(static_cast<u8>(n_bank << 3) | n_index),
                 /* Sm */ Sm_id
             };
 
@@ -137,9 +137,9 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision(const u32 code) {
 
     for (u8 i = 0; i < vec_len - 1; i++) {
         single_reg_struct regs = {
-            /* Sd */ vfp_reg.fetch_single_reg_id((d_bank << 3) | d_index),
-            /* Sn */ vfp_reg.fetch_single_reg_id((n_bank << 3) | n_index),
-            /* Sm */ vfp_reg.fetch_single_reg_id((m_bank << 3) | m_index)
+            /* Sd */ vfp_reg.fetch_single_reg_id(static_cast<u8>(d_bank << 3) | d_index),
+            /* Sn */ vfp_reg.fetch_single_reg_id(static_cast<u8>(n_bank << 3) | n_index),
+            /* Sm */ vfp_reg.fetch_single_reg_id(static_cast<u8>(m_bank << 3) | m_index)
         };
 
         d_index += stride;
@@ -177,8 +177,8 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision_monadic(const u32 code
     const bool D = llarm::util::bit_fetch(code, 22);
     const bool M = llarm::util::bit_fetch(code, 5);
 
-    const u8 d_num = ((Fd << 1) | D);
-    const u8 m_num = ((Fm << 1) | M);
+    const u8 d_num = static_cast<u8>((Fd << 1) | D);
+    const u8 m_num = static_cast<u8>((Fm << 1) | M);
 
     const u8 d_bank = llarm::util::bit_range<u8>(d_num, 3, 4);
     
@@ -230,7 +230,7 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision_monadic(const u32 code
 
         for (u8 i = 0; i < vec_len - 1; i++) {
             single_reg_struct regs = {
-                /* Sd */ vfp_reg.fetch_single_reg_id((d_bank << 3) | d_index),
+                /* Sd */ vfp_reg.fetch_single_reg_id(static_cast<u8>(d_bank << 3) | d_index),
                 /* Sn */ id::vfp_reg::UNKNOWN,
                 /* Sm */ Sm_id
             };
@@ -272,9 +272,9 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision_monadic(const u32 code
 
     for (u8 i = 0; i < vec_len - 1; i++) {
         single_reg_struct regs = {
-            /* Sd */ vfp_reg.fetch_single_reg_id((d_bank << 3) | d_index),
+            /* Sd */ vfp_reg.fetch_single_reg_id(static_cast<u8>(d_bank << 3) | d_index),
             /* Sn */ id::vfp_reg::UNKNOWN,
-            /* Sm */ vfp_reg.fetch_single_reg_id((m_bank << 3) | m_index),
+            /* Sm */ vfp_reg.fetch_single_reg_id(static_cast<u8>(m_bank << 3) | m_index),
         };
 
         d_index += stride;
@@ -361,8 +361,8 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision(const u32 code) {
 
         for (u8 i = 0; i < vec_len - 1; i++) {
             double_reg_struct regs = {
-                /* Dd */ vfp_reg.fetch_double_reg_id((d_bank << 2) | d_index),
-                /* Dn */ vfp_reg.fetch_double_reg_id((n_bank << 2) | n_index),
+                /* Dd */ vfp_reg.fetch_double_reg_id(static_cast<u8>(d_bank << 2) | d_index),
+                /* Dn */ vfp_reg.fetch_double_reg_id(static_cast<u8>(n_bank << 2) | n_index),
                 /* Dm */ Dm_id
             };
 
@@ -412,9 +412,9 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision(const u32 code) {
 
     for (u8 i = 0; i < vec_len - 1; i++) {
         double_reg_struct regs = {
-            /* Dd */ vfp_reg.fetch_double_reg_id((d_bank << 2) | d_index),
-            /* Dn */ vfp_reg.fetch_double_reg_id((n_bank << 2) | n_index),
-            /* Dm */ vfp_reg.fetch_double_reg_id((m_bank << 2) | m_index),
+            /* Dd */ vfp_reg.fetch_double_reg_id(static_cast<u8>(d_bank << 2) | d_index),
+            /* Dn */ vfp_reg.fetch_double_reg_id(static_cast<u8>(n_bank << 2) | n_index),
+            /* Dm */ vfp_reg.fetch_double_reg_id(static_cast<u8>(m_bank << 2) | m_index),
         };
 
         d_index += stride;
@@ -503,7 +503,7 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision_monadic(const u32 code
 
         for (u8 i = 0; i < vec_len - 1; i++) {
             double_reg_struct regs = {
-                /* Dd */ vfp_reg.fetch_double_reg_id((d_bank << 2) | d_index),
+                /* Dd */ vfp_reg.fetch_double_reg_id(static_cast<u8>(d_bank << 2) | d_index),
                 /* Dn */ id::vfp_reg::UNKNOWN,
                 /* Dm */ Dm_id
             };
@@ -544,9 +544,9 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision_monadic(const u32 code
 
     for (u8 i = 0; i < vec_len - 1; i++) {
         double_reg_struct regs = {
-            /* Dd */ vfp_reg.fetch_double_reg_id((d_bank << 2) | d_index),
+            /* Dd */ vfp_reg.fetch_double_reg_id(static_cast<u8>(d_bank << 2) | d_index),
             /* Dn */ id::vfp_reg::UNKNOWN,
-            /* Dm */ vfp_reg.fetch_double_reg_id((m_bank << 2) | m_index),
+            /* Dm */ vfp_reg.fetch_double_reg_id(static_cast<u8>(m_bank << 2) | m_index),
         };
 
         d_index += stride;

@@ -17,8 +17,10 @@ inline void CORE::arm_cycle(const llarm::as::settings &assembly_settings) {
     }
 
     std::cout << "0x" << std::hex << arm_code_access.code << std::dec << "\n";
+    current_arm_code = arm_code_access.code;
     
     const arm_decode_struct instruction = decode.arm_decode(arm_code_access.code);
+    current_arm_id = instruction.id;
 
     std::cout << llarm::as::arm_id_to_string(instruction.id) << "\n";
     std::cout << llarm::as::disassemble_arm(instruction.code, reg.read_PC(), assembly_settings) << "\n";

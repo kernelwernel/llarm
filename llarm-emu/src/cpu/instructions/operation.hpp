@@ -16,13 +16,13 @@ public:
     bool borrow_sub(const u32, const u32);
     bool borrow_sub(const u32, const u32, const u32);
 
-    bool overflow_add(const i32, const i32);
-    bool overflow_add(const i32, const i32, const i32);
-    bool overflow_sub(const i32, const i32);
-    bool overflow_sub(const i32, const i32, const i32);
+    bool overflow_add(const u32, const u32, const u32);
+    bool overflow_add(const u32, const u32);
+    bool overflow_sub(const u32, const u32);
+    bool overflow_sub(const u32, const u32, const u32);
 
-    bool signed_overflow_sub(const u32, const u32);
-    bool signed_overflow_add(const u32, const u32);
+    bool signed_overflow_sub(const i32, const i32);
+    bool signed_overflow_add(const i32, const i32);
 
     i32 sign_extend(const u32 value, const u8 sign_index = 31);
     i32 signed_sat(const u32 x, const u32 n);

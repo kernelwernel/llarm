@@ -73,33 +73,33 @@ void VFP_REG::write(const id::vfp_reg vfp_reg_id, const u64 value) {
         case id::vfp_reg::D14: D14 = value; return; 
         case id::vfp_reg::D15: D15 = value; return; 
         case id::vfp_reg::FPSID: FPSID = static_cast<u32>(value); return;
-        case id::vfp_reg::FPSID_IMPLEMENTOR: llarm::util::swap_bits(FPSID, 24, 31, value); return;
-        case id::vfp_reg::FPSID_SW: llarm::util::modify_bit(FPSID, 23, value); return;
-        case id::vfp_reg::FPSID_FORMAT: llarm::util::swap_bits(FPSID, 21, 22, value); return;
-        case id::vfp_reg::FPSID_SNG: llarm::util::modify_bit(FPSID, 20, value); return;
-        case id::vfp_reg::FPSID_ARCH: llarm::util::swap_bits(FPSID, 16, 19, value); return;
-        case id::vfp_reg::FPSID_PART_NUM: llarm::util::swap_bits(FPSID, 8, 15, value); return;
-        case id::vfp_reg::FPSID_VARIANT: llarm::util::swap_bits(FPSID, 4, 7, value); return;
-        case id::vfp_reg::FPSID_REVISION: llarm::util::swap_bits(FPSID, 0, 3, value); return;
+        case id::vfp_reg::FPSID_IMPLEMENTOR: llarm::util::swap_bits(FPSID, 24, 31, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSID_SW: llarm::util::modify_bit(FPSID, 23, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSID_FORMAT: llarm::util::swap_bits(FPSID, 21, 22, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSID_SNG: llarm::util::modify_bit(FPSID, 20, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSID_ARCH: llarm::util::swap_bits(FPSID, 16, 19, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSID_PART_NUM: llarm::util::swap_bits(FPSID, 8, 15, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSID_VARIANT: llarm::util::swap_bits(FPSID, 4, 7, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSID_REVISION: llarm::util::swap_bits(FPSID, 0, 3, static_cast<u32>(value)); return;
         case id::vfp_reg::FPSCR: FPSCR = static_cast<u32>(value); return;
-        case id::vfp_reg::FPSCR_N: llarm::util::modify_bit(FPSCR, 31, value); return;
-        case id::vfp_reg::FPSCR_Z: llarm::util::modify_bit(FPSCR, 30, value); return;
-        case id::vfp_reg::FPSCR_C: llarm::util::modify_bit(FPSCR, 29, value); return;
-        case id::vfp_reg::FPSCR_V: llarm::util::modify_bit(FPSCR, 28, value); return;
-        case id::vfp_reg::FPSCR_FZ: llarm::util::modify_bit(FPSCR, 24, value); return;
-        case id::vfp_reg::FPSCR_RMODE: llarm::util::swap_bits(FPSID, 22, 23, value); return;
-        case id::vfp_reg::FPSCR_STRIDE: llarm::util::swap_bits(FPSID, 20, 21, value); return;
-        case id::vfp_reg::FPSCR_LEN: llarm::util::swap_bits(FPSID, 16, 18, value); return;
-        case id::vfp_reg::FPSCR_IXE: llarm::util::modify_bit(FPSCR, 12, value); return;
-        case id::vfp_reg::FPSCR_UFE: llarm::util::modify_bit(FPSCR, 11, value); return;
-        case id::vfp_reg::FPSCR_OFE: llarm::util::modify_bit(FPSCR, 10, value); return;
-        case id::vfp_reg::FPSCR_DZE: llarm::util::modify_bit(FPSCR, 9, value); return;
-        case id::vfp_reg::FPSCR_IOE: llarm::util::modify_bit(FPSCR, 8, value); return;
-        case id::vfp_reg::FPSCR_IXC: llarm::util::modify_bit(FPSCR, 4, value); return;
-        case id::vfp_reg::FPSCR_UFC: llarm::util::modify_bit(FPSCR, 3, value); return;
-        case id::vfp_reg::FPSCR_OFC: llarm::util::modify_bit(FPSCR, 2, value); return;
-        case id::vfp_reg::FPSCR_DZC: llarm::util::modify_bit(FPSCR, 1, value); return;
-        case id::vfp_reg::FPSCR_IOC: llarm::util::modify_bit(FPSCR, 0, value); return;
+        case id::vfp_reg::FPSCR_N: llarm::util::modify_bit(FPSCR, 31, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_Z: llarm::util::modify_bit(FPSCR, 30, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_C: llarm::util::modify_bit(FPSCR, 29, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_V: llarm::util::modify_bit(FPSCR, 28, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_FZ: llarm::util::modify_bit(FPSCR, 24, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_RMODE: llarm::util::swap_bits(FPSID, 22, 23, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_STRIDE: llarm::util::swap_bits(FPSID, 20, 21, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_LEN: llarm::util::swap_bits(FPSID, 16, 18, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_IXE: llarm::util::modify_bit(FPSCR, 12, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_UFE: llarm::util::modify_bit(FPSCR, 11, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_OFE: llarm::util::modify_bit(FPSCR, 10, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_DZE: llarm::util::modify_bit(FPSCR, 9, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_IOE: llarm::util::modify_bit(FPSCR, 8, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_IXC: llarm::util::modify_bit(FPSCR, 4, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_UFC: llarm::util::modify_bit(FPSCR, 3, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_OFC: llarm::util::modify_bit(FPSCR, 2, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_DZC: llarm::util::modify_bit(FPSCR, 1, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_IOC: llarm::util::modify_bit(FPSCR, 0, static_cast<u32>(value)); return;
         case id::vfp_reg::FPEXC: FPEXC = static_cast<u32>(value); return;
         case id::vfp_reg::FPEXC_EX: llarm::util::modify_bit(FPEXC, 31, value); return;
         case id::vfp_reg::FPEXC_EN: llarm::util::modify_bit(FPEXC, 30, value); return;
@@ -195,28 +195,48 @@ u64 VFP_REG::read(const id::vfp_reg vfp_reg_id) {
     }
 }
 
-
 void VFP_REG::write_double(const u32 code, const u8 start, const u8 end, const u64 value) {
-    const u8 reg_bits = llarm::util::bit_range(code, start, end);
+    const u8 reg_bits = llarm::util::bit_range<u8>(code, start, end);
     const id::vfp_reg id = fetch_double_reg_id(reg_bits);
     write(id, value);
 }
 
 
-void VFP_REG::write_single(const u32 code, const u8 start, const u8 end, const u64 value, const u8 bottom_bit) {
+void VFP_REG::write_single(const u32 code, const u8 start, const u8 end, const u32 value, const u8 bottom_bit) {
     const bool bottom = llarm::util::bit_fetch(code, bottom_bit);
-    const u8 reg_bits = (llarm::util::bit_range(code, start, end) << 1) | bottom;
+    const u8 reg_bits = static_cast<u8>(llarm::util::bit_range(code, start, end) << 1) | bottom;
 
     const id::vfp_reg id = fetch_single_reg_id(reg_bits);
     write(id, value);
 }
 
 
+void VFP_REG::write_double(const u32 code, const u8 start, const u8 end, const double value) {
+    write_double(code, start, end, vfp_utils::double_to_u64(value));
+}
+
+
+void VFP_REG::write_single(const u32 code, const u8 start, const u8 end, const float value, const u8 bottom_bit) {
+    write_single(code, start, end, vfp_utils::single_to_u32(value), bottom_bit);
+}
+
+
+void VFP_REG::write_double(const id::vfp_reg vfp_reg_id, const double value) {
+    write(vfp_reg_id, vfp_utils::double_to_u64(value));
+}
+
+
+void VFP_REG::write_single(const id::vfp_reg vfp_reg_id, const float value) {
+    write(vfp_reg_id, vfp_utils::single_to_u32(value));
+}
+
+
 u64 VFP_REG::read_double(const u32 code, const u8 start, const u8 end) {
-    const u8 reg_bits = llarm::util::bit_range(code, start, end);
+    const u8 reg_bits = llarm::util::bit_range<u8>(code, start, end);
     const id::vfp_reg id = fetch_double_reg_id(reg_bits);
     return read(id);
 }
+
 
 double VFP_REG::read_double_IEEE(const u32 code, const u8 start, const u8 end) {
     const u64 raw_bytes = read_double(code, start, end);
@@ -226,7 +246,7 @@ double VFP_REG::read_double_IEEE(const u32 code, const u8 start, const u8 end) {
 
 u32 VFP_REG::read_single(const u32 code, const u8 start, const u8 end, const u8 bottom_bit) {
     const bool bottom = llarm::util::bit_fetch(code, bottom_bit);
-    const u8 reg_bits = (llarm::util::bit_range(code, start, end) << 1) | bottom;
+    const u8 reg_bits = static_cast<u8>(llarm::util::bit_range(code, start, end) << 1) | bottom;
     
     const id::vfp_reg id = fetch_single_reg_id(reg_bits);
     return static_cast<u32>(read(id));
@@ -239,14 +259,14 @@ float VFP_REG::read_single_IEEE(const u32 code, const u8 start, const u8 end, co
 }
 
 
-double VFP_REG::read_double_IEEE(const id::vfp_reg vfp_reg_id) {
+double VFP_REG::read_double(const id::vfp_reg vfp_reg_id) {
     const u64 raw_bytes = read(vfp_reg_id);
     return vfp_utils::u64_to_double(raw_bytes);
 }
 
 
-float VFP_REG::read_single_IEEE(const id::vfp_reg vfp_reg_id) {
-    const u32 raw_bytes = read(vfp_reg_id);
+float VFP_REG::read_single(const id::vfp_reg vfp_reg_id) {
+    const u32 raw_bytes = static_cast<u32>(read(vfp_reg_id));
     return vfp_utils::u32_to_single(raw_bytes);
 }
 
@@ -376,19 +396,19 @@ id::vfp_reg VFP_REG::fetch_double_reg_id(const u8 reg_bits) {
 
 
 id::vfp_reg VFP_REG::fetch_single_reg_id(const u32 code, const u8 start, const u8 end) {
-    const u8 reg_bits = llarm::util::bit_range(code, start, end);
+    const u8 reg_bits = llarm::util::bit_range<u8>(code, start, end);
     return fetch_single_reg_id(reg_bits);
 }
 
 
 id::vfp_reg VFP_REG::fetch_double_reg_id(const u32 code, const u8 start, const u8 end) {
-    const u8 reg_bits = llarm::util::bit_range(code, start, end);
+    const u8 reg_bits = llarm::util::bit_range<u8>(code, start, end);
     return fetch_double_reg_id(reg_bits);
 }
 
 
 u8 VFP_REG::fetch_vec_len() {
-    return llarm::util::bit_range(FPSCR, 16, 18);
+    return llarm::util::bit_range<u8>(FPSCR, 16, 18);
 }
 
 

@@ -18,7 +18,7 @@ void INSTRUCTIONS::arm::store::STM1(const u32 code) {
 
     u32 address = addresses.start;
 
-    const u16 list = llarm::util::bit_range(code, 0, 15);
+    const u16 list = llarm::util::bit_range<u16>(code, 0, 15);
 
     std::vector<id::reg> reg_list = operation.register_list(list);
 
@@ -51,7 +51,7 @@ void INSTRUCTIONS::arm::store::STM2(const u32 code) {
 
     u32 address = addresses.start;
 
-    const u16 list = llarm::util::bit_range(code, 0, 15);
+    const u16 list = llarm::util::bit_range<u16>(code, 0, 15);
 
     std::vector<id::reg> reg_list = operation.register_list(list);
 
@@ -95,7 +95,7 @@ void INSTRUCTIONS::arm::store::STRB(const u32 code) {
     const u32 address = address_mode.load_store(code); 
 
     const u32 Rd = reg.read(code, 12, 15);
-    const u8 value = llarm::util::bit_range(Rd, 0, 7);
+    const u8 value = llarm::util::bit_range<u8>(Rd, 0, 7);
 
     const mem_write_struct access = memory.write(value, address, 1);
 
@@ -114,7 +114,7 @@ void INSTRUCTIONS::arm::store::STRBT(const u32 code) {
     const u32 address = address_mode.load_store(code); 
 
     const u32 Rd = reg.read(code, 12, 15);
-    const u8 value = llarm::util::bit_range(Rd, 0, 7);
+    const u8 value = llarm::util::bit_range<u8>(Rd, 0, 7);
 
     const mem_write_struct access = memory.write(value, address, 1);
 
@@ -188,7 +188,7 @@ void INSTRUCTIONS::arm::store::STRT(const u32 code) {
 void INSTRUCTIONS::arm::store::SWP(const u32 code) {
     const u32 Rn = reg.read(code, 16, 19);
 
-    const u8 type = llarm::util::bit_range(Rn, 0, 1);
+    const u8 type = llarm::util::bit_range<u8>(Rn, 0, 1);
 
     u8 rotate = 0;
 
@@ -215,7 +215,7 @@ void INSTRUCTIONS::arm::store::SWP(const u32 code) {
         return;
     }
 
-    const u32 temp = llarm::util::rotr(read_access.value, rotate);
+    const u32 temp = llarm::util::rotr(static_cast<u32>(read_access.value), rotate);
     reg.write(code, 12, 15, temp);
 }
 
@@ -235,10 +235,10 @@ void INSTRUCTIONS::arm::store::SWPB(const u32 code) {
         return;
     }
 
-    const u32 temp = read_access.value;
+    const u32 temp = static_cast<u32>(read_access.value);
 
     const u32 Rm = reg.read(code, 0, 3);
-    const u8 value = llarm::util::bit_range(Rm, 0, 7);
+    const u8 value = llarm::util::bit_range<u8>(Rm, 0, 7);
 
     const mem_write_struct write_access = memory.write(value, Rn, 1);
 

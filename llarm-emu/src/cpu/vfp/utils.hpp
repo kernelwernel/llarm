@@ -10,5 +10,6 @@ namespace vfp_utils {
     u32 single_to_u32(const float value);
 
     bool is_signaling_nan(const float value);
+    bool is_signaling_nan(const double value);
     bool is_quiet_nan(const float value);
 };

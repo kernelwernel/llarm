@@ -39,26 +39,34 @@ bool OPERATION::borrow_sub(const u32 p1, const u32 p2, const u32 p3) {
     return (((p1 - p2) - p3) < 0);
 }
 
-bool OPERATION::overflow_add(const i32 a, const i32 b) {
-    const i32 result = a + b;
-    return (a > 0 && b > 0 && result < 0);
+bool OPERATION::overflow_add(const u32 a, const u32 b) {
+    const i32 a_sign = static_cast<i32>(a);
+    const i32 b_sign = static_cast<i32>(b);
+
+    const i32 result = a_sign + b_sign;
+    return (a_sign > 0 && b_sign > 0 && result < 0);
 }
 
-bool OPERATION::overflow_add(const i32 a, const i32 b, const i32 c) {
-    const i32 intermediate_result = a + b;
+
+bool OPERATION::overflow_add(const u32 a, const u32 b, const u32 c) {
+    const i32 a_sign = static_cast<i32>(a);
+    const i32 b_sign = static_cast<i32>(b);
+    const i32 c_sign = static_cast<i32>(c);
+
+    const i32 intermediate_result = a_sign + b_sign;
 
     if (
-        (a > 0 && b > 0 && intermediate_result < 0) || 
-        (a < 0 && b < 0 && intermediate_result > 0)
+        (a_sign > 0 && b_sign > 0 && intermediate_result < 0) || 
+        (a_sign < 0 && b_sign < 0 && intermediate_result > 0)
     ) {
         return true;
     }
 
-    const i32 final_result = intermediate_result + c;
+    const i32 final_result = intermediate_result + c_sign;
 
     if (
-        (intermediate_result > 0 && c > 0 && final_result < 0) || 
-        (intermediate_result < 0 && c < 0 && final_result > 0)
+        (intermediate_result > 0 && c_sign > 0 && final_result < 0) || 
+        (intermediate_result < 0 && c_sign < 0 && final_result > 0)
     ) {
         return true;
     }
@@ -66,37 +74,46 @@ bool OPERATION::overflow_add(const i32 a, const i32 b, const i32 c) {
     return false;
 }
 
+
 // Subtraction causes an overflow if the operands have different signs, 
 // and the first operand and the result have different signs.
 // TODO: double check if this works manually
-bool OPERATION::overflow_sub(const i32 a, const i32 b) {
-    const bool sign = (a & (1 << 31)) ^ (b & (1 << 31));
-    const i32 result = a - b;
-    return (sign && (a & (1 << 31)) ^ (result & (1 << 31)));
+bool OPERATION::overflow_sub(const u32 a, const u32 b) {
+    const i32 a_sign = static_cast<i32>(a);
+    const i32 b_sign = static_cast<i32>(b);
+
+    const bool sign = (a_sign & (1 << 31)) ^ (b_sign & (1 << 31));
+    const i32 result = a_sign - b_sign;
+    return (sign && (a_sign & (1 << 31)) ^ (result & (1 << 31)));
 }
 
 
 // Subtraction causes an overflow if the operands have different signs, 
 // and the first operand and the result have different signs.
 // TODO: double check if this works manually
-bool OPERATION::overflow_sub(const i32 a, const i32 b, const i32 c) {
-    const bool sign = ((a & (1 << 31)) ^ (b & (1 << 31))) ^ (c & (1 << 31));
-    const i32 result = a - b - c;
-    return (sign && (a & (1 << 31)) ^ (result & (1 << 31)));
+bool OPERATION::overflow_sub(const u32 a, const u32 b, const u32 c) {
+    const i32 a_sign = static_cast<i32>(a);
+    const i32 b_sign = static_cast<i32>(b);
+    const i32 c_sign = static_cast<i32>(c);
+
+    const bool sign = ((a_sign & (1 << 31)) ^ (b_sign & (1 << 31))) ^ (c_sign & (1 << 31));
+    const i32 result = a_sign - b_sign - c_sign;
+    return (sign && (a_sign & (1 << 31)) ^ (result & (1 << 31)));
 }
 
 
-bool OPERATION::signed_overflow_sub(const u32 a, const u32 b) {
+bool OPERATION::signed_overflow_sub(const i32 a, const i32 b) {
     return false; // TODO
 }
 
-bool OPERATION::signed_overflow_add(const u32 a, const u32 b) {
+
+bool OPERATION::signed_overflow_add(const i32 a, const i32 b) {
     return false; // TODO
 }
 
 
 bool OPERATION::arithmetic_shift_right(u32 num, const u8 shift) {
-    const u32 sign = num & (1 << 31);
+    const u32 sign = num & (1U << 31);
     num >>= shift;
     num |= sign;
     return num;
@@ -117,14 +134,16 @@ i32 OPERATION::sign_extend(const u32 value, const u8 sign_index) {
 
 // source: Glossary-XII
 i32 OPERATION::signed_sat(const u32 x, const u32 n) {
-    const i32 neg_range = std::pow(-2, n - 1);
-    const i32 pos_range = std::pow(2, n - 1) - 1;
+    const i32 x_sign = static_cast<i32>(x);
 
-    if (x < neg_range) {
+    const i32 neg_range = -static_cast<i32>(1ULL << (n - 1)); // basically -2^(n - 1)
+    const i32 pos_range = static_cast<i32>(1ULL << (n - 1)) - 1; // 2^(n - 1) - 1
+
+    if (x_sign < neg_range) {
         return neg_range;
-    } else if (neg_range <= x && x <= pos_range) {
-        return x;
-    } else if (x > pos_range) {
+    } else if (neg_range <= x_sign && x_sign <= pos_range) {
+        return x_sign;
+    } else if (x_sign > pos_range) {
         return pos_range;
     }
 
@@ -134,10 +153,12 @@ i32 OPERATION::signed_sat(const u32 x, const u32 n) {
 
 // source: Glossary-XII
 bool OPERATION::signed_does_sat(const u32 x, const u32 n) {
-    const i32 neg_range = std::pow(-2, n - 1);
-    const i32 pos_range = std::pow(2, n - 1) - 1;
+    const i32 x_sign = static_cast<i32>(x);
 
-    return (!(neg_range <= x && x <= pos_range));
+    const i32 neg_range = -static_cast<i32>(1ULL << (n - 1)); // basically -2^(n - 1)
+    const i32 pos_range = static_cast<i32>(1ULL << (n - 1)) - 1; // 2^(n - 1) - 1
+
+    return (!(neg_range <= x_sign && x_sign <= pos_range));
 }
 
 

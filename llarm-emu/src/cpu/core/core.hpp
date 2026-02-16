@@ -19,6 +19,7 @@
 #include "cycle/execute.hpp"
 #include "registers.hpp"
 
+#include <llarm/llarm-asm.hpp>
 #include <llarm/shared/types.hpp>
 
 struct CORE {
@@ -59,6 +60,11 @@ public:
 
     void arm_cycle(const llarm::as::settings &settings);
     void thumb_cycle();
+
+public:
+    // for end-user library access purposes
+    llarm::as::arm_id current_arm_id;
+    u32 current_arm_code;
 
 public:
     CORE(const std::vector<u8> &binary) :

@@ -29,7 +29,7 @@ id::first_level MMU::get_first_level_id(const u32 entry) {
 }
 
 
-id::second_level MMU::get_second_level_id(const u8 entry) {
+id::second_level MMU::get_second_level_id(const u32 entry) {
     switch (entry & 0b11) {
         case 0b00: return id::second_level::FAULT;
         case 0b01: return id::second_level::LARGE;
@@ -44,22 +44,22 @@ id::access_domain MMU::fetch_domain(const u8 raw_domain_bits) {
     u8 cp_domain_bits = 0;
 
     switch (raw_domain_bits) {
-        case 0:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D0);  break;
-        case 1:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D1);  break;
-        case 2:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D2);  break;
-        case 3:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D3);  break;
-        case 4:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D4);  break;
-        case 5:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D5);  break;
-        case 6:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D6);  break;
-        case 7:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D7);  break;
-        case 8:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D8);  break;
-        case 9:  cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D9);  break;
-        case 10: cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D10); break;
-        case 11: cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D11); break;
-        case 12: cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D12); break;
-        case 13: cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D13); break;
-        case 14: cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D14); break;
-        case 15: cp_domain_bits = coprocessor.read(id::cp15::R3_MMU_D15); break;
+        case 0:  cp_domain_bits = static_cast<u8>(coprocessor.read(id::cp15::R3_MMU_D0));  break;
+        case 1:  cp_domain_bits = static_cast<u8>(coprocessor.read(id::cp15::R3_MMU_D1));  break;
+        case 2:  cp_domain_bits = static_cast<u8>(coprocessor.read(id::cp15::R3_MMU_D2));  break;
+        case 3:  cp_domain_bits = static_cast<u8>(coprocessor.read(id::cp15::R3_MMU_D3));  break;
+        case 4:  cp_domain_bits = static_cast<u8>(coprocessor.read(id::cp15::R3_MMU_D4));  break;
+        case 5:  cp_domain_bits = static_cast<u8>(coprocessor.read(id::cp15::R3_MMU_D5));  break;
+        case 6:  cp_domain_bits = static_cast<u8>(coprocessor.read(id::cp15::R3_MMU_D6));  break;
+        case 7:  cp_domain_bits = static_cast<u8>(coprocessor.read(id::cp15::R3_MMU_D7));  break;
+        case 8:  cp_domain_bits = static_cast<u8>(coprocessor.read(id::cp15::R3_MMU_D8));  break;
+        case 9:  cp_domain_bits = static_cast<u8>(coprocessor.read(id::cp15::R3_MMU_D9));  break;
+        case 10: cp_domain_bits = static_cast<u8>(coprocessor.read(id::cp15::R3_MMU_D10)); break;
+        case 11: cp_domain_bits = static_cast<u8>(coprocessor.read(id::cp15::R3_MMU_D11)); break;
+        case 12: cp_domain_bits = static_cast<u8>(coprocessor.read(id::cp15::R3_MMU_D12)); break;
+        case 13: cp_domain_bits = static_cast<u8>(coprocessor.read(id::cp15::R3_MMU_D13)); break;
+        case 14: cp_domain_bits = static_cast<u8>(coprocessor.read(id::cp15::R3_MMU_D14)); break;
+        case 15: cp_domain_bits = static_cast<u8>(coprocessor.read(id::cp15::R3_MMU_D15)); break;
     }
 
     switch (cp_domain_bits) {
@@ -74,20 +74,20 @@ id::access_domain MMU::fetch_domain(const u8 raw_domain_bits) {
 
 u8 MMU::fetch_subpage_AP(const u8 subpage, const u32 entry) {
     switch (subpage) {
-        case 0: return llarm::util::bit_range(entry, 4, 5);
-        case 1: return llarm::util::bit_range(entry, 6, 7);
-        case 2: return llarm::util::bit_range(entry, 8, 9);
-        case 3: return llarm::util::bit_range(entry, 10, 11);
+        case 0: return llarm::util::bit_range<u8>(entry, 4, 5);
+        case 1: return llarm::util::bit_range<u8>(entry, 6, 7);
+        case 2: return llarm::util::bit_range<u8>(entry, 8, 9);
+        case 3: return llarm::util::bit_range<u8>(entry, 10, 11);
         default: llarm::out::dev_error("Failure to deduce subpage index for page descriptor"); 
     }
 }
 
 
 translation_struct MMU::first_section(const u32 entry, const u32 address, const u8 access_size, const id::access_type access_type) {
-    const u8 domain_bits = llarm::util::bit_range(entry, 5, 8);
+    const u8 domain_bits = llarm::util::bit_range<u8>(entry, 5, 8);
     const id::access_domain domain = fetch_domain(domain_bits);
 
-    const u8 AP = llarm::util::bit_range(entry, 10, 11);
+    const u8 AP = llarm::util::bit_range<u8>(entry, 10, 11);
 
     const id::aborts abort_code = check_block_access(AP, access_type, domain, id::memory_type::SECTION);
 
@@ -122,11 +122,11 @@ translation_struct MMU::first_section(const u32 entry, const u32 address, const 
 u32 MMU::first_coarse(const u32 entry, const u32 address) {
     const u32 page_table_base_address = llarm::util::bit_range(entry, 10, 31);
 
-    const u8 second_level_index = llarm::util::bit_range(address, 12, 19);
+    const u8 second_level_index = llarm::util::bit_range<u8>(address, 12, 19);
     
     const u32 second_level_descriptor_address = (
         (page_table_base_address << 10) |
-        (second_level_index << 2)
+        (static_cast<u32>(second_level_index) << 2)
     );
 
     return second_level_descriptor_address;
@@ -137,11 +137,11 @@ u32 MMU::first_coarse(const u32 entry, const u32 address) {
 u32 MMU::first_fine(const u32 entry, const u32 address) {
     const u32 page_table_base_address = llarm::util::bit_range(entry, 12, 31);
 
-    const u8 second_level_index = llarm::util::bit_range(address, 10, 19);
+    const u8 second_level_index = llarm::util::bit_range<u8>(address, 10, 19);
     
     const u32 second_level_descriptor_address = (
         (page_table_base_address << 12) |
-        (second_level_index << 2)
+        (u32(second_level_index) << 2)
     );
 
     return second_level_descriptor_address;
@@ -168,7 +168,7 @@ bool MMU::is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type)
         // all of those to a concatenated u8 byte. Not only because that's faster
         // and switch-friendly, but also because it's much easier to handle that way.
         // the full table is situated in B3-16 which should make more sense to you.
-        const u8 bytecode = (
+        const u8 bytecode = static_cast<u8>(
             !privileged | // is user
             (privileged << 1) | // is privileged
             (R << 2) |
@@ -203,7 +203,7 @@ bool MMU::is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type)
             default:
                 // this section is the same as above, but without the S and R bits 
                 // because they're irrelevant after this point when AP != 0b00
-                const u8 access_bytecode = (
+                const u8 access_bytecode = static_cast<u8>(
                     !privileged |
                     (privileged << 1) |
                     (raw_AP_bits << 2)
@@ -267,7 +267,10 @@ id::aborts MMU::check_block_access(
             return id::aborts::NO_ABORT;
         }
 
-        case id::access_domain::RESERVED: llarm::out::unpredictable("Reserved access domain encountered, defaulting to no access");
+        case id::access_domain::RESERVED: 
+            llarm::out::unpredictable("Reserved access domain encountered, defaulting to no access");
+            [[fallthrough]];
+        
         case id::access_domain::NO_ACCESS: {
             // section
             if (section_access) {
@@ -288,7 +291,7 @@ translation_struct MMU::second_large(
     const id::access_type access_type, 
     const u8 domain_bits
 ) {
-    const u16 page_index = llarm::util::bit_range(address, 0, 15);
+    const u16 page_index = llarm::util::bit_range<u16>(address, 0, 15);
     
     // the subpages are 1KB each
     const u8 subpage_index = (page_index / util::get_kb(16));
@@ -348,7 +351,7 @@ translation_struct MMU::second_small(
     const id::access_type access_type, 
     const u8 domain_bits
 ) {
-    const u16 page_index = llarm::util::bit_range(address, 0, 11);
+    const u16 page_index = llarm::util::bit_range<u16>(address, 0, 11);
     
     // the subpages are 1KB each
     const u8 subpage_index = (page_index / util::get_kb(1));
@@ -410,7 +413,7 @@ translation_struct MMU::second_tiny(
     const id::access_type access_type, 
     const u8 domain_bits
 ) {
-    const u8 AP = llarm::util::bit_range(entry, 4, 5);
+    const u8 AP = llarm::util::bit_range<u8>(entry, 4, 5);
 
     const id::access_domain domain = fetch_domain(domain_bits);
     const id::aborts abort_code = check_block_access(AP, access_type, domain, id::memory_type::PAGE);
@@ -431,7 +434,7 @@ translation_struct MMU::second_tiny(
 
     const u32 tiny_page_base_address = llarm::util::bit_range(entry, 10, 31);
     
-    const u16 page_index = llarm::util::bit_range(address, 0, 9);
+    const u16 page_index = llarm::util::bit_range<u16>(address, 0, 9);
     const u32 physical_address = ((tiny_page_base_address << 10) | page_index);
 
     return translation_struct {
@@ -470,7 +473,7 @@ translation_struct MMU::page_walk(const u32 address, const id::access_type acces
 
     const u32 first_level_descriptor_address = ((translation_base << 14) | (table_index << 2));
 
-    const u32 first_level_descriptor = ram.read(first_level_descriptor_address, 4);
+    const u32 first_level_descriptor = static_cast<u32>(ram.read(first_level_descriptor_address, 4));
 
     // TODO EXTERNAL ABORT MANAGEMENT HERE
 
@@ -491,11 +494,11 @@ translation_struct MMU::page_walk(const u32 address, const id::access_type acces
             };
     };
 
-    const u32 second_level_descriptor = ram.read(second_key, 4);
+    const u32 second_level_descriptor = static_cast<u32>(ram.read(second_key, 4));
 
     const id::second_level entry_id = get_second_level_id(second_level_descriptor);
 
-    const u8 domain_bits = llarm::util::bit_range(first_level_descriptor, 5, 8);
+    const u8 domain_bits = llarm::util::bit_range<u8>(first_level_descriptor, 5, 8);
 
     switch (entry_id) {
         case id::second_level::LARGE: return second_large(second_level_descriptor, address, access_size, access_type, domain_bits);

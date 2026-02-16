@@ -46,7 +46,7 @@ void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
             return;
         }
 
-        reg.write(reg_id, access.value);
+        reg.write(reg_id, llarm::util::bit_range<u32>(access.value, 0, 31));
         address += 4;
     }
 
@@ -58,7 +58,7 @@ void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
             return;
         }
 
-        const u32 value = access.value;
+        const u32 value = llarm::util::bit_range<u32>(access.value, 0, 31);
 
         if (settings.arch >= id::arch::ARMv5) {
             reg.write(id::reg::PC, (value & 0xFFFFFFFE));
@@ -100,7 +100,7 @@ void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
 void INSTRUCTIONS::arm::load::LDR(const u32 code) {
     const u32 address = address_mode.load_store(code);
 
-    const u8 type = llarm::util::bit_range(address, 0, 1);
+    const u8 type = llarm::util::bit_range<u8>(address, 0, 1);
 
     const mem_read_struct access = memory.read(address, 4);
     
@@ -109,7 +109,7 @@ void INSTRUCTIONS::arm::load::LDR(const u32 code) {
         return;
     }
 
-    const u32 data = access.value;
+    const u32 data = llarm::util::bit_range<u32>(access.value, 0, 31);
 
     u32 value = 0;
 
@@ -147,7 +147,7 @@ void INSTRUCTIONS::arm::load::LDRB(const u32 code) {
         return;
     }
 
-    reg.write(code, 12, 15, access.value);
+    reg.write(code, 12, 15, llarm::util::bit_range<u32>(access.value, 0, 7));
 }
 
 
@@ -165,7 +165,7 @@ void INSTRUCTIONS::arm::load::LDRBT(const u32 code) {
         return;
     }
 
-    reg.write(code, 12, 15, access.value);
+    reg.write(code, 12, 15, llarm::util::bit_range<u32>(access.value, 0, 31));
 }
 
 
@@ -190,7 +190,7 @@ void INSTRUCTIONS::arm::load::LDRH(const u32 code) {
             return;
         }
 
-        data = access.value;
+        data = llarm::util::bit_range<u16>(access.value, 0, 15);
     } else {
         llarm::out::unpredictable("LDRH data assignment");
     }
@@ -214,7 +214,9 @@ void INSTRUCTIONS::arm::load::LDRSB(const u32 code) {
         return;
     }
 
-    reg.write(code, 12, 15, (operation.sign_extend(access.value, 7)));
+    const u8 value = llarm::util::bit_range<u8>(access.value, 0, 7);
+
+    reg.write(code, 12, 15, static_cast<u32>(operation.sign_extend(value, 7)));
 }
 
 
@@ -229,7 +231,7 @@ void INSTRUCTIONS::arm::load::LDRSB(const u32 code) {
 void INSTRUCTIONS::arm::load::LDRSH(const u32 code) {
     const u32 address = address_mode.load_store_misc(code);
 
-    u32 data = 0;
+    u16 data = 0;
 
     if ((address & 1) == 0) {
         const mem_read_struct access = memory.read(address, 2);
@@ -239,12 +241,12 @@ void INSTRUCTIONS::arm::load::LDRSH(const u32 code) {
             return;
         }
 
-        data = access.value;
+        data = llarm::util::bit_range<u16>(access.value, 0, 15);
     } else {
         llarm::out::unpredictable("LDRSH data assignment");
     }
 
-    reg.write(code, 12, 15, (operation.sign_extend(data, 15)));
+    reg.write(code, 12, 15, static_cast<u32>(operation.sign_extend(data, 15)));
 }
 
 
@@ -269,11 +271,11 @@ void INSTRUCTIONS::arm::load::LDRT(const u32 code) {
         return;
     }
 
-    const u32 data = access.value;
+    const u32 data = llarm::util::bit_range(access.value, 0, 31);
 
     u32 value = 0;
 
-    const u8 type = llarm::util::bit_range(address, 0, 1);
+    const u8 type = llarm::util::bit_range<u8>(address, 0, 1);
 
     switch (type) {
         case 0b00: value = data; break;
@@ -300,7 +302,7 @@ void INSTRUCTIONS::arm::load::LDM2(const u32 code) {
 
     u32 address = addresses.start;
 
-    const u16 list = llarm::util::bit_range(code, 0, 14);
+    const u16 list = llarm::util::bit_range<u16>(code, 0, 14);
 
     std::vector<id::reg> reg_list = operation.register_list(list);
 
@@ -312,7 +314,7 @@ void INSTRUCTIONS::arm::load::LDM2(const u32 code) {
             return;
         }
     
-        reg.write(reg_id, access.value);
+        reg.write(reg_id, llarm::util::bit_range(access.value, 0, 31));
         address += 4;
     }
 
@@ -347,7 +349,7 @@ void INSTRUCTIONS::arm::load::LDM3(const u32 code) {
 
     u32 address = addresses.start;
 
-    const u16 list = llarm::util::bit_range(code, 0, 14);
+    const u16 list = llarm::util::bit_range<u16>(code, 0, 14);
 
     std::vector<id::reg> reg_list = operation.register_list(list);
 
@@ -359,7 +361,7 @@ void INSTRUCTIONS::arm::load::LDM3(const u32 code) {
             return;
         }
     
-        reg.write(reg_id, access.value);
+        reg.write(reg_id, llarm::util::bit_range(access.value, 0, 31));
         address += 4;
     }
 
@@ -372,7 +374,7 @@ void INSTRUCTIONS::arm::load::LDM3(const u32 code) {
         return;
     }
 
-    const u32 value = access.value;
+    const u32 value = llarm::util::bit_range(access.value, 0, 31);
 
     if (
         (settings.specific_arch >= id::specific_arch::ARMv4T) &&

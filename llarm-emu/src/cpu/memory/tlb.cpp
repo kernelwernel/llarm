@@ -195,7 +195,7 @@ bool TLB::is_type_invalid(const id::tlb_type tlb_type) {
 // might look noobish calling a function as "function", 
 // but this is what the ARM docs call it (see page B3-26)
 void TLB::function(const u8 opcode_2, const u8 CRm, const u32 virtual_address) {
-    const u8 bytecode = ((opcode_2 << 3) | CRm);
+    const u8 bytecode = static_cast<u8>((opcode_2 << 3) | CRm);
 
     switch (bytecode) {
         // invalidate entire unified TLB or both instruction and data TLBs
