@@ -27,8 +27,7 @@ public:
 
     mem_read_struct read(
         u32 address, 
-        u8 access_size,
-        const id::access_type type = id::access_type::READ
+        u8 access_size
     );
 
     void reset();

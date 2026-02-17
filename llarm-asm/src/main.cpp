@@ -10,9 +10,7 @@
 #include <llarm/shared/out.hpp>
 #include <llarm/shared/metadata.hpp>
 
-#include "../llarm-asm.hpp"
-
-//#include <llarm/llarm-asm.hpp>
+#include <llarm/llarm-asm.hpp>
 
 
 enum arg_enum : u8 {

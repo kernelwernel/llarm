@@ -23,7 +23,7 @@
 #include <llarm/shared/types.hpp>
 
 struct CORE {
-private:
+public:
     // essential modules
     SETTINGS settings;
     GLOBALS globals;
@@ -58,6 +58,7 @@ private:
 public:
     void initialise(const std::vector<u8> &binary);
 
+    void arm_cycle_headless(const llarm::as::settings &assembly_settings);
     void arm_cycle(const llarm::as::settings &settings);
     void thumb_cycle();
 
@@ -65,6 +66,7 @@ public:
     // for end-user library access purposes
     llarm::as::arm_id current_arm_id;
     u32 current_arm_code;
+    bool continue_cycle;
 
 public:
     CORE(const std::vector<u8> &binary) :

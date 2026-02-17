@@ -16,7 +16,7 @@ namespace llarm::emu {
     private:
         CORE internal_core;
 
-        static inline std::vector<u8> load_binary(const std::filesystem::path file_path) {
+        static inline std::vector<u8> load_binary(const std::filesystem::path &file_path) {
             std::ifstream file(file_path, std::ios::binary | std::ios::ate);
 
             if (!file) {
@@ -26,42 +26,46 @@ namespace llarm::emu {
             std::size_t file_size = static_cast<std::size_t>(file.tellg());
             file.seekg(0);
 
-            std::vector<u8> buffer(file_size);
+            std::vector<u8> data(file_size);
 
-            if (!file.read(reinterpret_cast<char*>(buffer.data()), static_cast<std::streamsize>(file_size))) {
+            if (!file.read(reinterpret_cast<char*>(data.data()), static_cast<std::streamsize>(file_size))) {
                 llarm::out::error("Failed to read file");
             }
 
-            return buffer; // Return the vector containing the binary data
+            return data;
         }
 
     public:
         inline u32 read_reg(const reg id) {
-
+            return internal_core.reg.read(id);
         }
 
-        inline void write_reg() {
-
+        inline void write_reg(const reg id, const u32 data) {
+            internal_core.reg.write(id, data);
         }
 
-        inline void write_physical_mem() {
-
+        template <typename T>
+        inline T read_physical_mem(const u32 address) {
+            return static_cast<T>(internal_core.ram.read(address, sizeof(T)));
         }
 
-        inline void read_physical_mem() {
-
+        template <typename T>
+        inline void write_physical_mem(const u32 address, const u64 value) {
+            internal_core.ram.write(value, address, sizeof(T));
         }
 
-        inline void write_virtual_mem() {
-
+        template <typename T>
+        inline T read_virtual_mem(const u32 address) {
+            return static_cast<T>(internal_core.memory.read(address, sizeof(T)));
         }
 
-        inline void read_virtual_mem() {
-
+        template <typename T>
+        inline void write_virtual_mem(const u32 address, const u64 value) {
+            internal_core.memory.write(value, address, sizeof(T));
         }
 
-        void next_instruction() {
-
+        inline void next_instruction() {
+            internal_core.continue_cycle = true;
         }
 
         core_blockstep(const std::filesystem::path& binary) 

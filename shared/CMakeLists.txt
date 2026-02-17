@@ -14,6 +14,11 @@ include("../cmake/clang_format.cmake") # clang-format
 include("../cmake/clang_tidy.cmake") # clang-tidy
 
 
+# targets and variables
+set(TARGET_LIB "llarm-shared-lib")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+
 # project details
 project(
     llarm-shared
@@ -26,11 +31,6 @@ project(
 # extra includes
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
-
-
-# targets and variables
-set(TARGET_LIB "llarm-shared-lib")
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
 # source code collection

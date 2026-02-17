@@ -7,7 +7,24 @@
 #include <llarm/llarm-asm.hpp>
 
 
+inline void CORE::arm_cycle_headless(const llarm::as::settings &assembly_settings) {
+    const arm_fetch_struct arm_code_access = fetch.arm_fetch();
+
+    if (arm_code_access.has_failed) {
+        return;
+    }
+
+    const arm_decode_struct instruction = decode.arm_decode(arm_code_access.code);
+
+    execute.arm_execute(instruction);
+
+    reg.arm_increment_PC();
+}
+
+
 inline void CORE::arm_cycle(const llarm::as::settings &assembly_settings) {
+    continue_cycle = false;
+
     std::cout << ">>>>> PC: 0x" << std::hex << reg.read(id::reg::PC) << std::dec << "\n";
 
     const arm_fetch_struct arm_code_access = fetch.arm_fetch();
@@ -27,9 +44,13 @@ inline void CORE::arm_cycle(const llarm::as::settings &assembly_settings) {
 
     execute.arm_execute(instruction);
 
-    reg.arm_increment_PC();
+    while (true) {
+        if (continue_cycle == true) {
+            break;
+        }
+    }
 
-    util::dev::pause();
+    reg.arm_increment_PC();
 }
 
 
@@ -49,7 +70,6 @@ inline void CORE::thumb_cycle() {
 
 
 void CORE::initialise(const std::vector<u8> &binary) {
-
     // core reset, setup, and boot
     reg.reset();
     coprocessor.force_write(id::cp15::R1_M, false); // disable MMU/MPU
@@ -70,7 +90,7 @@ void CORE::initialise(const std::vector<u8> &binary) {
     const llarm::as::settings assembly_settings = { false, true, false, true, true, false };
 
     // instruction cycle 
-    for (;;) {
+    while (true) {
         switch (globals.instruction_set) {
             case id::instruction_sets::ARM: arm_cycle(assembly_settings); continue;
             case id::instruction_sets::THUMB: thumb_cycle(); continue;

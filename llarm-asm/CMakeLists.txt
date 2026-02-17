@@ -15,6 +15,12 @@ include("../cmake/clang_tidy.cmake")
 include("../cmake/dependencies.cmake")
 
 
+# targets and variables
+set(TARGET_BIN "llarm-asm-bin")
+set(TARGET_LIB "llarm-asm-lib")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+
 # project details
 project(
     llarm-asm
@@ -38,12 +44,7 @@ add_dependency(
 )
 
 
-# targets and variables
-set(TARGET_BIN "llarm-asm-bin")
-set(TARGET_LIB "llarm-asm-lib")
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# general
+# source code generation
 file(GLOB_RECURSE ALL_SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 set(LIB_SOURCES ${ALL_SOURCES})
 set(EXCLUDE_PATTERNS
@@ -68,10 +69,17 @@ set_target_properties(${TARGET_LIB} PROPERTIES
     INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
 )
 
+#target_include_directories(${TARGET_LIB}
+#    PUBLIC
+#        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+#        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/llarm/asm>
+#)
+
+
 target_include_directories(${TARGET_LIB}
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/llarm/asm>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 
@@ -123,7 +131,7 @@ write_basic_package_version_file(
 
 # installations
 install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(FILES llarm-asm.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/llarm)
+install(FILES llarm/llarm-asm.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/llarm)
 install(DIRECTORY src/
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/llarm/asm/src
     FILES_MATCHING PATTERN "*.hpp"

@@ -66,8 +66,7 @@ mem_write_struct MEMORY::write(const u64 value, u32 address, const u8 access_siz
 
 mem_read_struct MEMORY::read(
     u32 address, 
-    const u8 access_size,
-    const id::access_type type
+    const u8 access_size
 ) {
     if (arch_26.is_26_arch_backwards_compatible()) {
         if (

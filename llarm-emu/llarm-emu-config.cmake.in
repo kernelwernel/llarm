@@ -1,0 +1,12 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+# Automatically find our dependencies
+find_dependency(llarm-shared @PROJECT_VERSION@ REQUIRED)
+find_dependency(llarm-asm @PROJECT_VERSION@ REQUIRED)
+
+# Include our targets
+include("${CMAKE_CURRENT_LIST_DIR}/llarm-emu-targets.cmake")
+
+check_required_components(llarm-emu)
