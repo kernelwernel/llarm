@@ -54,7 +54,7 @@ namespace llarm::util {
     }
 
 
-    constexpr bool bit_fetch(const u64 input, const u8 index) {
+    inline constexpr bool bit_fetch(const u64 input, const u8 index) {
         return ((input >> index) & 1);
     }
 
@@ -66,12 +66,12 @@ namespace llarm::util {
     // version of it. The compiler should be able
     // to optimise this away with at least -O1:
     // https://godbolt.org/z/qEjaEz9zq
-    constexpr u8 popcount(const u32 integer) {
+    inline constexpr u8 popcount(const u32 integer) {
         return static_cast<u8>(std::bitset<32>(integer).count());
     }
 
 
-    constexpr void swap_bits(u32 &original, const u8 start, const u8 end, const u32 value) {
+    inline constexpr void swap_bits(u32 &original, const u8 start, const u8 end, const u32 value) {
         if (start >= 32 || end >= 32 || start >= end) {
             //llarm::out::dev_error("util::swap_bits has impossible arguments");
             // TODO think of an error 
@@ -85,14 +85,28 @@ namespace llarm::util {
     }
 
 
-    constexpr u32 rotr(u32 num, u8 rotate) {
+    inline constexpr void swap_bits(u16 &original, const u8 start, const u8 end, const u32 value) {
+        if (start >= 32 || end >= 32 || start >= end) {
+            //llarm::out::dev_error("util::swap_bits has impossible arguments");
+            // TODO think of an error 
+            return;
+        }
+
+        const u8 num_bits = end - start + 1;
+        const u32 mask = (1 << num_bits) - 1;
+        original &= ~(mask << start);
+        original |= (value & mask) << start;
+    }
+
+
+    inline constexpr u32 rotr(u32 num, u8 rotate) {
         rotate &= 31;
         return (num >> rotate) | (num << (32 - rotate));
     }
 
 
     // this will generate a bsr instruction in x86, so it's portable and optimisation-friendly for compilers (https://godbolt.org/z/MxY16Ev69)
-    constexpr u8 get_msb(u32 num) {
+    inline constexpr u8 get_msb(u32 num) {
         if (num == 0) {
             return 255;
         }
@@ -108,7 +122,7 @@ namespace llarm::util {
 
 
     // same as above, but unlike above, i couldn't find a way to make it optimise the same way how __builtin_ctz(num) would
-    constexpr u8 get_lsb(u32 num) {
+    inline constexpr u8 get_lsb(u32 num) {
         if (num == 0) {
             return 255;
         }
@@ -125,7 +139,7 @@ namespace llarm::util {
 
 
     // this assumes the str has already been checked beforehand
-    constexpr u32 str_to_u32(const sv str) {
+    inline constexpr u32 str_to_u32(const sv str) {
         u32 num = 0;
 
         for (const char c : str) {
@@ -139,7 +153,7 @@ namespace llarm::util {
     }
 
 
-    constexpr u64 hex_to_u64(const sv str) {
+    inline constexpr u64 hex_to_u64(const sv str) {
         u64 num = 0;
 
         // convert hex to i32

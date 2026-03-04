@@ -10,7 +10,7 @@
 
 using namespace internal;
 
-struct mnemonic_struct {
+struct mnemonic_struct_arm {
     sv instruction = "";
     arm_id id = arm_id::UNKNOWN;
     cond_id cond_id = cond_id::UNKNOWN;
@@ -21,7 +21,8 @@ struct mnemonic_struct {
     char y_char = '\0';
 };
 
-namespace internal::mnemonic {
+
+namespace internal::mnemonic_arm {
     const std::unordered_map<sv, arm_id> arm_instructions = {
         { "ADC", arm_id::ADC },
         { "ADD", arm_id::ADD },
@@ -162,9 +163,10 @@ namespace internal::mnemonic {
     };
 
     std::vector<sv> fetch_candidates(sv mnemonic);
-    mnemonic_struct fetch_mnemonic_args(const arm_id id, sv mnemonic);
-
-    mnemonic_struct arm(const std::string &code);
+    mnemonic_struct_arm fetch_mnemonic_args(const arm_id id, sv mnemonic);
+    arm_id fetch_arm_id(const std::string &code, const sv mnemonic, const sv assembly);
+  
+    mnemonic_struct_arm arm(const std::string &code);
 
     arm_id MSR(const lexemes_t &lexemes);
     arm_id SWPB(const sv mnemonic);

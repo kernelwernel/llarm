@@ -1,4 +1,4 @@
-#include "mnemonic.hpp"
+#include "mnemonic_arm.hpp"
 #include "../id/instruction_id.hpp"
 #include "../id/cond_id.hpp"
 #include "../interpreter/interpreter.hpp"
@@ -11,19 +11,28 @@ using namespace internal;
 using namespace interpreter;
 using enum token_enum;
 
-mnemonic_struct mnemonic::arm(const std::string &code) {
+mnemonic_struct_arm mnemonic_arm::arm(const std::string &code) {
     const std::string assembly = llarm::util::to_upper(code);
-
     const sv mnemonic = interpreter::fetch_instruction(assembly);
 
+    const arm_id id = fetch_arm_id(code, mnemonic, assembly);
+
+    if (id != arm_id::UNKNOWN) {
+        return fetch_mnemonic_args(id, mnemonic);
+    }
+
+    // invalid, this is the same as an undefined exception
+    return mnemonic_struct_arm{};
+}
+
+arm_id mnemonic_arm::fetch_arm_id(const std::string &code, const sv mnemonic, const sv assembly) {
     const std::vector<sv> candidates = fetch_candidates(mnemonic);
 
     for (const auto candidate : candidates) {
         auto it = arm_instructions.find(candidate);
     
         if (it != arm_instructions.end()) {
-            const arm_id id = it->second;
-            return fetch_mnemonic_args(id, mnemonic);
+            return it->second;
         }
     }
 
@@ -52,16 +61,11 @@ mnemonic_struct mnemonic::arm(const std::string &code) {
         id = PSR_family(code);
     }
     
-    if (id == arm_id::UNKNOWN) {
-        return fetch_mnemonic_args(id, mnemonic);
-    }
-
-    // invalid, this is the same as an  undefined exception
-    return mnemonic_struct{};
+    return id;
 }
 
 
-std::vector<sv> mnemonic::fetch_candidates(sv mnemonic) {
+std::vector<sv> mnemonic_arm::fetch_candidates(sv mnemonic) {
     std::vector<sv> candidates = {};
 
     // "mnemonic.extra" convention, i.e. "b.eq" (gcc does this)
@@ -148,7 +152,7 @@ std::vector<sv> mnemonic::fetch_candidates(sv mnemonic) {
 }
 
 
-arm_id mnemonic::MSR(const lexemes_t &lexemes) {
+arm_id mnemonic_arm::MSR(const lexemes_t &lexemes) {
     // MSR_IMM
     if (
         (verify_tokens({ PSR, HASHTAG, IMMED }, lexemes)) ||
@@ -169,7 +173,7 @@ arm_id mnemonic::MSR(const lexemes_t &lexemes) {
 }
 
 
-arm_id mnemonic::SWPB(sv mnemonic) {
+arm_id mnemonic_arm::SWPB(sv mnemonic) {
     // no cond
     if (mnemonic == "SWPB") {
         return arm_id::SWPB;
@@ -189,7 +193,7 @@ arm_id mnemonic::SWPB(sv mnemonic) {
 }
 
 
-arm_id mnemonic::LDR_family(sv mnemonic) {
+arm_id mnemonic_arm::LDR_family(sv mnemonic) {
     mnemonic.remove_prefix(3); // "LDR"
 
     const u16 potential_cond = static_cast<u16>((mnemonic.at(0) << 8) | mnemonic.at(1));
@@ -228,7 +232,7 @@ arm_id mnemonic::LDR_family(sv mnemonic) {
 }
 
 
-arm_id mnemonic::STR_family(sv mnemonic) {
+arm_id mnemonic_arm::STR_family(sv mnemonic) {
     // the parameter name and instruction name have no relation just to be clear
 
     mnemonic.remove_prefix(3); // "STR"
@@ -261,7 +265,7 @@ arm_id mnemonic::STR_family(sv mnemonic) {
 }
 
 
-arm_id mnemonic::STM(const lexemes_t &lexemes) {
+arm_id mnemonic_arm::STM(const lexemes_t &lexemes) {
     // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
     if (verify_tokens({ REG, PRE_INDEX, REG_LIST }, lexemes)) {
         return arm_id::STM1;
@@ -277,7 +281,7 @@ arm_id mnemonic::STM(const lexemes_t &lexemes) {
 }
 
 
-arm_id mnemonic::LDM(const lexemes_t &lexemes) {
+arm_id mnemonic_arm::LDM(const lexemes_t &lexemes) {
     reg_list_settings settings = {};
 
     // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
@@ -306,7 +310,7 @@ arm_id mnemonic::LDM(const lexemes_t &lexemes) {
 }
 
 
-arm_id mnemonic::BLX(const lexemes_t &lexemes) {
+arm_id mnemonic_arm::BLX(const lexemes_t &lexemes) {
     if (verify_tokens({ IMMED }, lexemes)) {
         return arm_id::BLX1;
     } else if (verify_tokens({ REG }, lexemes)) {
@@ -317,8 +321,8 @@ arm_id mnemonic::BLX(const lexemes_t &lexemes) {
 }
 
 
-arm_id mnemonic::PSR_family(const sv mnemonic_str) {
-    mnemonic_struct m;
+arm_id mnemonic_arm::PSR_family(const sv mnemonic_str) {
+    mnemonic_struct_arm m;
 
     if (mnemonic_str.size() == 6) {
         const char first_char = mnemonic_str.at(3);
@@ -342,8 +346,8 @@ arm_id mnemonic::PSR_family(const sv mnemonic_str) {
 }
 
 
-mnemonic_struct mnemonic::fetch_mnemonic_args(const arm_id id, sv mnemonic) {
-    mnemonic_struct args{};
+mnemonic_struct_arm mnemonic_arm::fetch_mnemonic_args(const arm_id id, sv mnemonic) {
+    mnemonic_struct_arm args{};
 
     args.instruction = mnemonic;
     args.id = id;

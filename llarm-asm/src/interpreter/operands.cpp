@@ -1,10 +1,11 @@
 #include "operands.hpp"
 #include "../identifiers/string_shifters.hpp"
-#include "../interpreter/mnemonic.hpp"
+#include "../interpreter/mnemonic_arm.hpp"
+#include "../interpreter/lexer.hpp"
 
 #include <llarm/shared/out.hpp>
 
-operand_struct operands::lex_to_operands(const lexemes_t &lexemes, const mnemonic_struct &mnemonic) {
+operand_struct operands::lex_to_operands_arm(const lexemes_t &lexemes, const mnemonic_struct_arm &mnemonic) {
     operand_struct arg;
 
     u8 reg_iteration = 1;
@@ -82,6 +83,10 @@ operand_struct operands::lex_to_operands(const lexemes_t &lexemes, const mnemoni
     arg.shifter = ident::string_shifters::identify_shifter(lexemes, mnemonic);
 
     return arg;
+}
+
+operand_struct operands::lex_to_operands_thumb(const lexemes_t &lexemes, const mnemonic_struct_thumb &mnemonic) {
+    d
 }
 
 

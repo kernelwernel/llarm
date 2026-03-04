@@ -1,4 +1,6 @@
 #include "../generators.hpp"
+#include "../../../encoding_utils.hpp"
+
 #include <llarm/shared/util.hpp>
 
 
@@ -104,7 +106,7 @@ u32 generators::msr_imm(const operand_struct &args) {
     llarm::util::swap_bits(binary, 16, 19, args.PSR_field_mask);
     llarm::util::swap_bits(binary, 12, 15, 0b1111);
 
-    encode_imm(binary, args.first_int);
+    encoders::encode_imm(binary, args.first_int);
 
     return binary;
 }

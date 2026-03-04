@@ -9,9 +9,6 @@
 using namespace internal;
 
 namespace internal::generators {
-    bool is_imm_encodable(const u32 imm);
-    void encode_imm(u32 &binary, const u32 imm);
-
     u32 data_instruction(const arm_id instruction, const operand_struct &arg);
     u32 ls_instruction(const arm_id instruction, const operand_struct &arg);
     u32 ls_misc_instruction(const arm_id instruction, const operand_struct &arg);

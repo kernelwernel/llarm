@@ -1,4 +1,5 @@
 #include "../generators.hpp"
+#include "../../../encoding_utils.hpp"
 
 #include <llarm/shared/util.hpp>
 #include <llarm/shared/out.hpp>
@@ -182,11 +183,11 @@ u32 generators::data_instruction(const arm_id instruction, const operand_struct 
 
             const u32 immed = args.first_int;
 
-            if (is_imm_encodable(immed) == false) {
+            if (encoders::is_imm_encodable(immed) == false) {
                 llarm::out::dev_error("Unencodable immediate argument to data instruction pattern generation");
             }
 
-            encode_imm(binary, immed);
+            encoders::encode_imm(binary, immed);
 
             break;
         }
