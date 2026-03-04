@@ -35,7 +35,7 @@ using namespace internal;
  * 
  * reference: A7-40
  */
-std::string generators::thumb::load::LDMIA(const u16 code, const settings settings) {
+std::string generators::thumb::load::LDMIA(const u32 code, const settings settings) {
     const std::string Rn = util::reg_string(code, 8, 10, settings);
 
     const u8 list = llarm::util::bit_range<u8>(code, 0, 7);
@@ -55,7 +55,7 @@ std::string generators::thumb::load::LDMIA(const u16 code, const settings settin
  *
  * reference: A7-42
  */
-std::string generators::thumb::load::LDR1(const u16 code, const settings settings) {
+std::string generators::thumb::load::LDR1(const u32 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
 
@@ -77,7 +77,7 @@ std::string generators::thumb::load::LDR1(const u16 code, const settings setting
  *
  * reference: A7-44
  */
-std::string generators::thumb::load::LDR2(const u16 code, const settings settings) {
+std::string generators::thumb::load::LDR2(const u32 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
     const std::string Rm = util::reg_string(code, 6, 8, settings);
@@ -98,7 +98,7 @@ std::string generators::thumb::load::LDR2(const u16 code, const settings setting
  *
  * reference: A7-46
  */
-std::string generators::thumb::load::LDR3(const u16 code, const settings settings) {
+std::string generators::thumb::load::LDR3(const u32 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 8, 10, settings);
 
     const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
@@ -118,7 +118,7 @@ std::string generators::thumb::load::LDR3(const u16 code, const settings setting
  *
  * reference: A7-46
  */
-std::string generators::thumb::load::LDR4(const u16 code, const settings settings) {
+std::string generators::thumb::load::LDR4(const u32 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 8, 10, settings);
 
     const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
@@ -138,7 +138,7 @@ std::string generators::thumb::load::LDR4(const u16 code, const settings setting
  *
  * reference: A7-50
  */
-std::string generators::thumb::load::LDRB1(const u16 code, const settings settings) {
+std::string generators::thumb::load::LDRB1(const u32 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
 
@@ -159,7 +159,7 @@ std::string generators::thumb::load::LDRB1(const u16 code, const settings settin
  *
  * reference: A7-51
  */
-std::string generators::thumb::load::LDRB2(const u16 code, const settings settings) {
+std::string generators::thumb::load::LDRB2(const u32 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
     const std::string Rm = util::reg_string(code, 6, 8, settings);
@@ -179,7 +179,7 @@ std::string generators::thumb::load::LDRB2(const u16 code, const settings settin
  *
  * reference: A7-52
  */
-std::string generators::thumb::load::LDRH1(const u16 code, const settings settings) {
+std::string generators::thumb::load::LDRH1(const u32 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
 
@@ -201,7 +201,7 @@ std::string generators::thumb::load::LDRH1(const u16 code, const settings settin
  *
  * reference: A7-54
  */
-std::string generators::thumb::load::LDRH2(const u16 code, const settings settings) {
+std::string generators::thumb::load::LDRH2(const u32 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
     const std::string Rm = util::reg_string(code, 6, 8, settings);
@@ -221,7 +221,7 @@ std::string generators::thumb::load::LDRH2(const u16 code, const settings settin
  *
  * reference: A7-56
  */
-std::string generators::thumb::load::LDRSB(const u16 code, const settings settings) {
+std::string generators::thumb::load::LDRSB(const u32 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
     const std::string Rm = util::reg_string(code, 6, 8, settings);
@@ -241,7 +241,7 @@ std::string generators::thumb::load::LDRSB(const u16 code, const settings settin
  *
  * reference: A7-57
  */
-std::string generators::thumb::load::LDRSH(const u16 code, const settings settings) {
+std::string generators::thumb::load::LDRSH(const u32 code, const settings settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
     const std::string Rm = util::reg_string(code, 6, 8, settings);
@@ -281,7 +281,7 @@ std::string generators::thumb::load::LDRSH(const u16 code, const settings settin
  *
  * reference: A7-75
  */
-std::string generators::thumb::load::POP(const u16 code, const settings settings) {
+std::string generators::thumb::load::POP(const u32 code, const settings settings) {
     const u8 list = llarm::util::bit_range<u8>(code, 0, 7);
 
     const bool R = (llarm::util::bit_fetch(code, 8));

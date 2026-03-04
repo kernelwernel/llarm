@@ -25,7 +25,7 @@ using namespace internal;
  * 
  * reference: A7-18
  */
-std::string generators::thumb::branching::B1(const u16 code, const u32 PC, const settings settings) {
+std::string generators::thumb::branching::B1(const u32 code, const u32 PC, const settings settings) {
     const u8 cond = llarm::util::bit_range<u8>(code, 8, 11);
 
     const u8 signed_immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
@@ -53,7 +53,7 @@ std::string generators::thumb::branching::B1(const u16 code, const u32 PC, const
  * 
  * reference: A7-20
  */
-std::string generators::thumb::branching::B2(const u16 code, const u32 PC, const settings settings) {
+std::string generators::thumb::branching::B2(const u32 code, const u32 PC, const settings settings) {
     const u16 signed_immed_11 = llarm::util::bit_range<u16>(code, 0, 10);
 
     const u32 sign_extend = static_cast<u32>(signed_immed_11 << 1);
@@ -63,57 +63,6 @@ std::string generators::thumb::branching::B2(const u16 code, const u32 PC, const
         "B2 #", util::hex(target_address, settings)
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// https://stackoverflow.com/questions/70749497/how-arm-thumb-instruction-sets-blx-instruction-support-4mb-range
-
-// BL (H == 10 and H == 11 forms) is in all T variants.
-// BLX (H == 01 form) is in T variants of version 5 and above
-
 
 
 /** 
@@ -132,55 +81,44 @@ std::string generators::thumb::branching::B2(const u16 code, const u32 PC, const
  * 
  * reference: A7-26
  */
-std::string generators::thumb::branching::BL_BLX1(const u16 code, const u32 PC, const settings settings) {
-//    const u16 offset_11 = llarm::util::bit_range<u16>(code, 0, 10);
+std::string generators::thumb::branching::BL_BLX1(const u32 code, const u32 PC, const settings settings) {
+    const u16 first  = static_cast<u16>(code >> 16);
+    const u16 second = static_cast<u16>(code & 0xFFFF);
 
-    const u8 H = llarm::util::bit_range<u8>(code, 11, 12);
+    const u8 H_first  = llarm::util::bit_range<u8>(first,  11, 12);
+    const u8 H_second = llarm::util::bit_range<u8>(second, 11, 12);
 
-    const bool BL = (H == 0b10 || H == 0b11);
-    const bool BLX1 = (H == 0b01);
+    // validate we have the correct pair
+    if (H_first != 0b10) {
+        llarm::out::error("H value of first halfword of BL/BLX1 must be valid");
+    }
 
-//    u32 extend = static_cast<u32>(offset_11); // 2
-//    extend <<= 12; // 1
-//
-//    extend = extend + 4 + PC; // 3
+    const bool is_BLX1 = (H_second == 0b01);
+    const bool is_BL   = (H_second == 0b11);
 
-    // 4?
+    if (!is_BL && !is_BLX1) {
+        llarm::out::error("H value of second halfword of BL/BLX1 must hve a valid value");
+    }
 
-// TODO
+    // extract both offset_11 fields
+    const u32 offset_high = llarm::util::bit_range<u32>(first,  0, 10);  // offset[22:12]
+    const u32 offset_low  = llarm::util::bit_range<u32>(second, 0, 10);  // offset[11:1]
 
-   // if (BL) {
-   //     return util::make_string("BL ");
-   // } 
-   // 
-   // if (BLX1) {
-   //     return util::make_string("BLX ");
-   // }
-    
-    llarm::out::error("todo");
+    // reconstruct the full offset
+    const u32 raw_offset = (offset_high << 12) | (offset_low << 1);
+
+    // sign extend from bit 22
+    const i32 offset = (raw_offset & (1 << 22))
+        ? static_cast<i32>(raw_offset | 0xFF800000)
+        : static_cast<i32>(raw_offset);
+
+    // base address is PC of first instruction + 4
+    const u32 base_address = PC + 4;
+    const u32 target_address = static_cast<u32>(static_cast<i32>(base_address) + offset);
+
+    const std::string mnemonic = is_BLX1 ? "BLX" : "BL";
+    return mnemonic + " #" + util::hex(target_address, settings);
 }
-
-
-// "\xf7\xff\xff\xfe" = 
-// 111 10 111 1111 1111
-// 111 11 111 1111 1110
-
-// BL #1   F7FF   FFFE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /** 
@@ -191,7 +129,7 @@ std::string generators::thumb::branching::BL_BLX1(const u16 code, const u32 PC, 
  * 
  * reference: A7-32
  */
-std::string generators::thumb::branching::BX(const u16 code, const settings settings) {
+std::string generators::thumb::branching::BX(const u32 code, const settings settings) {
     const std::string Rm = util::reg_string(code, 3, 6, settings); // H2 included
 
     return util::make_string(
@@ -209,7 +147,7 @@ std::string generators::thumb::branching::BX(const u16 code, const settings sett
  * 
  * reference: A7-30
  */
-std::string generators::thumb::branching::BLX2(const u16 code, const settings settings) {
+std::string generators::thumb::branching::BLX2(const u32 code, const settings settings) {
     const std::string Rm = util::reg_string(code, 3, 6, settings); // H2 included
 
     return util::make_string(

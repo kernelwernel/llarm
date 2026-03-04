@@ -19,11 +19,11 @@ u32 assemble::arm(const IR_arm_struct &IR) {
 }
 
 
-u16 assemble::thumb(const std::string &code, const u32 PC) {
+u32 assemble::thumb(const std::string &code, const u32 PC) {
     return thumb(IR::generate_thumb(code, PC));
 }
 
 
-u16 assemble::thumb(const IR_thumb_struct &IR) {
+u32 assemble::thumb(const IR_thumb_struct &IR) {
     return generators::thumb(IR);
 }

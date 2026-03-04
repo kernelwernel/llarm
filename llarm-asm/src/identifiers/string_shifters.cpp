@@ -295,7 +295,7 @@ shifter_id ident::string_shifters::vfp_mul_instruction(const lexemes_t &lexemes,
 }
 
 
-shifter_id ident::string_shifters::identify_shifter(const lexemes_t &lexemes, const mnemonic_struct &mnemonic) {
+shifter_id ident::string_shifters::identify_shifter(const lexemes_t &lexemes, const mnemonic_struct_arm &mnemonic) {
     const arm_id id = mnemonic.id;
     const sv instruction = mnemonic.instruction;
 

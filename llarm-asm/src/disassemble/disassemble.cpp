@@ -13,7 +13,7 @@
 
 using namespace internal;
 
-std::string disassemble::thumb_generate(const u16 code, const u32 PC, const settings settings) {
+std::string disassemble::thumb_generate(const u32 code, const u32 PC, const settings settings) {
     const thumb_id id = ident::u16_thumb::thumb(code);
 
     switch (id) {
@@ -54,8 +54,8 @@ std::string disassemble::thumb_generate(const u16 code, const u32 PC, const sett
         case thumb_id::MVN: return generators::thumb::movement::MVN(code, settings);
         case thumb_id::B1: return generators::thumb::branching::B1(code, PC, settings);
         case thumb_id::B2: return generators::thumb::branching::B2(code, PC, settings);
-        case thumb_id::BL: // TODO
-        case thumb_id::BLX1: // TODO
+        case thumb_id::BL: return generators::thumb::branching::BL_BLX1(code, PC, settings);
+        case thumb_id::BLX1: return generators::thumb::branching::BL_BLX1(code, PC, settings);
         case thumb_id::BLX2: return generators::thumb::branching::BLX2(code, settings);
         case thumb_id::BX: return generators::thumb::branching::BX(code, settings);
         case thumb_id::BKPT: return generators::thumb::misc::BKPT(code, settings);
@@ -98,12 +98,12 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
         case arm_id::B: return generators::arm::branching::B(code, PC, settings); 
         case arm_id::BL: return generators::arm::branching::BL(code, PC, settings); 
         case arm_id::BIC: return generators::arm::logic::BIC(code, settings); 
-        case arm_id::CDP2: 
+        case arm_id::CDP2: return generators::arm::coprocessor::CDP(code, settings);
         case arm_id::CDP: return generators::arm::coprocessor::CDP(code, settings);
         case arm_id::CMN: return generators::arm::logic::CMN(code, settings);
         case arm_id::CMP: return generators::arm::logic::CMP(code, settings);
         case arm_id::EOR: return generators::arm::logic::EOR(code, settings);
-        case arm_id::LDC2:
+        case arm_id::LDC2: return generators::arm::coprocessor::LDC(code, settings);
         case arm_id::LDC: return generators::arm::coprocessor::LDC(code, settings);
         case arm_id::LDM1: return generators::arm::load::LDM1(code, settings);
         case arm_id::LDM2: return generators::arm::load::LDM2(code, settings);
@@ -112,11 +112,11 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
         case arm_id::LDRB: return generators::arm::load::LDRB(code, settings);
         case arm_id::LDRBT: return generators::arm::load::LDRBT(code, settings);
         case arm_id::LDRT: return generators::arm::load::LDRT(code, settings);
-        case arm_id::MCR2: 
+        case arm_id::MCR2: return generators::arm::coprocessor::MCR(code, settings);
         case arm_id::MCR: return generators::arm::coprocessor::MCR(code, settings);
         case arm_id::MLA: return generators::arm::multiply::MLA(code, settings);
         case arm_id::MOV: return generators::arm::movement::MOV(code, settings);
-        case arm_id::MRC2: 
+        case arm_id::MRC2: return generators::arm::coprocessor::MRC(code, settings);
         case arm_id::MRC: return generators::arm::coprocessor::MRC(code, settings);
         case arm_id::MRS: return generators::arm::movement::MRS(code, settings);
         case arm_id::MSR_IMM: return generators::arm::movement::MSR_IMM(code, settings);
@@ -127,7 +127,7 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
         case arm_id::RSB: return generators::arm::math::RSB(code, settings);
         case arm_id::RSC: return generators::arm::math::RSC(code, settings);
         case arm_id::SBC: return generators::arm::math::SBC(code, settings);
-        case arm_id::STC2: 
+        case arm_id::STC2: return generators::arm::coprocessor::STC(code, settings);
         case arm_id::STC: return generators::arm::coprocessor::STC(code, settings);
         case arm_id::STM1: return generators::arm::store::STM1(code, settings);
         case arm_id::STM2: return generators::arm::store::STM2(code, settings);
@@ -253,7 +253,7 @@ std::string disassemble::arm(const u32 code, const u32 PC, const settings settin
 }
 
 
-std::string disassemble::thumb(const u16 code, const u32 PC, const settings settings) {
+std::string disassemble::thumb(const u32 code, const u32 PC, const settings settings) {
     std::string instruction = thumb_generate(code, PC, settings);
 
     if (settings.capitals == false) {

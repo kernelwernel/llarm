@@ -1,4 +1,5 @@
 #include "generators.hpp"
+#include <llarm/shared/out.hpp>
 #include <llarm/shared/util.hpp>
 
 using namespace internal;
@@ -150,24 +151,63 @@ u16 generators::B2(const operand_struct& operands, const u32 PC) {
     const u32 base_address = PC + 4;
     
     const i32 byte_offset = static_cast<i32>(target_address - base_address);
-    
-    if (byte_offset < -2048 || byte_offset > 2046) {
-        // TODO: Error - offset out of range
-    }
 
     if ((byte_offset & 1) != 0) {
-        // TODO: Error - unaligned target
+        llarm::out::error("B2 thumb instruction byte offset is not aligned");
     }
-    
+
+    if (byte_offset < -2048 || byte_offset > 2046) {
+        llarm::out::error("B2 thumb instruction byte offset is out of range");
+    }
+
     const i16 signed_immed_11 = static_cast<i16>(byte_offset / 2);
-    
     llarm::util::swap_bits(binary, 0, 10, static_cast<u16>(signed_immed_11) & 0x7FF);
-    
+
     return binary;
 }
 
 
-u16 generators::thumb(const IR_thumb_struct& IR) {
+u32 generators::BL_BLX1(const operand_struct& operands, const u32 PC, const thumb_id id) {
+    const u32 target_address = [&]() -> u32 {
+        u32 addr = operands.first_int;
+        // BLX: force bit[1] of target to match bit[1] of base address
+        if (id == thumb_id::BLX1) {
+            const u32 base_address = PC + 4;
+            addr = (addr & ~0b10U) | (base_address & 0b10);
+        }
+        return addr;
+    }();
+
+    const u32 base_address = PC + 4;
+    const i32 offset = static_cast<i32>(target_address - base_address);
+
+    // range check: -2^22 <= offset <= +2^22 - 2
+    if (offset < -(1 << 22) || offset > (1 << 22) - 2) {
+        llarm::out::dev_error("BL/BLX1 thumb instruction byte offset is out of range");
+    }
+
+    if ((offset & 1) != 0) {
+        llarm::out::dev_error("BL/BLX1 thumb instruction byte offset is not aligned");
+    }
+
+    // first halfword: H=10, upper offset bits [22:12]
+    u16 first = 0b1111'0000'0000'0000;  // H=10, shared between BL and BLX1
+    llarm::util::swap_bits(first, 0, 10, (static_cast<u32>(offset) >> 12) & 0x7FF);
+
+    // second halfword: H=11 for BL, H=01 for BLX1, lower offset bits [11:1]
+    u16 second = [&]() -> u16 {
+        if (id == thumb_id::BL)   return 0b1111'1000'0000'0000;  // H=11
+        if (id == thumb_id::BLX1) return 0b1110'1000'0000'0000;  // H=01
+        llarm::out::dev_error("Invalid instruction id in BL_BLX1");
+    }();
+
+    llarm::util::swap_bits(second, 0, 10, (static_cast<u32>(offset) >> 1) & 0x7FF);
+
+    return static_cast<u32>((first << 16) | second);
+}
+
+
+u32 generators::thumb(const IR_thumb_struct& IR) {
     const thumb_id id = IR.mnemonic.id;
     const operand_struct &operands = IR.operands;
     
@@ -220,8 +260,6 @@ u16 generators::thumb(const IR_thumb_struct& IR) {
         case thumb_id::PUSH: return reglist(0b1011'0100'0000'0000, operands);
         case thumb_id::ADD3: return Rd_Rn_Rm(0b0001'1000'0000'0000, operands);
         case thumb_id::SUB3: return Rd_Rn_Rm(0b0001'1010'0000'0000, operands);
-        case thumb_id::BLX2: return Rm_special(0b0100'0111'1000'0000, operands);
-        case thumb_id::BX: return Rm_special(0b0100'0111'0000'0000, operands);
         case thumb_id::LDMIA: return Rn_preindex_reglist(0b1100'1000'0000'0000, operands);
         case thumb_id::STMIA: return Rn_preindex_reglist(0b1100'0000'0000'0000, operands);
         case thumb_id::LDR1: return Rd_Rn_imm5_4(0b0110'1000'0000'0000, operands);
@@ -241,19 +279,10 @@ u16 generators::thumb(const IR_thumb_struct& IR) {
         case thumb_id::ADD7: return SP_imm7_4(0b1011'0000'0000'0000, operands);
         case thumb_id::SUB4: return SP_imm7_4(0b1011'0000'1000'0000, operands);
         case thumb_id::B1: return B1(operands, IR.PC);
-        case thumb_id::B2: // TODO
-        case thumb_id::BL: // TODO
-        case thumb_id::BLX1: // TODO
+        case thumb_id::B2: return B2(operands, IR.PC);
+        case thumb_id::BL: return BL_BLX1(operands, IR.PC, id);
+        case thumb_id::BLX1: return BL_BLX1(operands, IR.PC, id);
+        case thumb_id::BLX2: return Rm_special(0b0100'0111'1000'0000, operands);
+        case thumb_id::BX: return Rm_special(0b0100'0111'0000'0000, operands);
     }
 }
-
-/** 
-- cond target_address
-B1
-
-- target_address
-B2
-BL
-BLX
-
-*/

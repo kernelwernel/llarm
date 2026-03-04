@@ -8,7 +8,7 @@
 
 using namespace internal;
 
-thumb_id ident::u16_thumb::thumb(const u16 code) {
+thumb_id ident::u16_thumb::thumb(const u32 code) {
     const u8 bytecode = llarm::util::bit_range<u8>(code, 13, 15);
 
     switch (bytecode) {
@@ -29,7 +29,7 @@ thumb_id ident::u16_thumb::thumb(const u16 code) {
 // shift by immediate
 // add/subtract register
 // add/subtract immediate
-thumb_id ident::u16_thumb::bits_000(const u16 code) {
+thumb_id ident::u16_thumb::bits_000(const u32 code) {
     switch (llarm::util::bit_range(code, 11, 12)) { 
         case 0b00: return thumb_id::LSL1;
         case 0b01: return thumb_id::LSR1;
@@ -52,7 +52,7 @@ thumb_id ident::u16_thumb::bits_000(const u16 code) {
 
 
 // add/subtract/compare/move immediate
-thumb_id ident::u16_thumb::bits_001(const u16 code) {
+thumb_id ident::u16_thumb::bits_001(const u32 code) {
     switch (llarm::util::bit_range(code, 11, 12)) {
         case 0b10: return thumb_id::ADD2;
         case 0b01: return thumb_id::CMP1;
@@ -69,7 +69,7 @@ thumb_id ident::u16_thumb::bits_001(const u16 code) {
 // branch/exchange instruction set
 // load from literal pool
 // load/store register offset
-thumb_id ident::u16_thumb::bits_010(const u16 code) {
+thumb_id ident::u16_thumb::bits_010(const u32 code) {
     if (llarm::util::bit_range(code, 11, 12) == 0b01) {
         return thumb_id::LDR3;
     }
@@ -125,7 +125,7 @@ thumb_id ident::u16_thumb::bits_010(const u16 code) {
 
 
 // load/store word/byte immediate offset
-thumb_id ident::u16_thumb::bits_011(const u16 code) {
+thumb_id ident::u16_thumb::bits_011(const u32 code) {
     switch (llarm::util::bit_range(code, 11, 12)) {
         case 0b00: return thumb_id::STR1;
         case 0b01: return thumb_id::LDR1;
@@ -139,7 +139,7 @@ thumb_id ident::u16_thumb::bits_011(const u16 code) {
 
 // load/store halfword immediate offset
 // load/store to/from stack
-thumb_id ident::u16_thumb::bits_100(const u16 code) {
+thumb_id ident::u16_thumb::bits_100(const u32 code) {
     switch (llarm::util::bit_range(code, 11, 12)) {
         case 0b00: return thumb_id::STRH1;
         case 0b01: return thumb_id::LDRH1;
@@ -153,7 +153,7 @@ thumb_id ident::u16_thumb::bits_100(const u16 code) {
 
 // add to SP or PC
 // misc
-thumb_id ident::u16_thumb::bits_101(const u16 code) {
+thumb_id ident::u16_thumb::bits_101(const u32 code) {
     switch (llarm::util::bit_range(code, 11, 12)) {
         case 0b00: return thumb_id::ADD5;
         case 0b01: return thumb_id::ADD6;
@@ -192,7 +192,7 @@ thumb_id ident::u16_thumb::bits_101(const u16 code) {
 // load/store multiple
 // conditional branch
 // software interrupt
-thumb_id ident::u16_thumb::bits_110(const u16 code) {
+thumb_id ident::u16_thumb::bits_110(const u32 code) {
     switch (llarm::util::bit_range(code, 11, 12)) {
         case 0b00: return thumb_id::STMIA;
         case 0b01: return thumb_id::LDMIA;
@@ -213,7 +213,7 @@ thumb_id ident::u16_thumb::bits_110(const u16 code) {
 // BLX suffix
 // BL/BLX prefix
 // BL suffix
-thumb_id ident::u16_thumb::bits_111(const u16 code) {
+thumb_id ident::u16_thumb::bits_111(const u32 code) {
     switch (llarm::util::bit_range(code, 11, 12)) {
         case 0b00: return thumb_id::B2;
         case 0b01: return thumb_id::BLX1;

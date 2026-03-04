@@ -23,6 +23,7 @@ namespace internal::generators {
 
     u16 B1(const operand_struct& operands, const u32 PC);
     u16 B2(const operand_struct& operands, const u32 PC);
+    u32 BL_BLX1(const operand_struct& operands, const u32 PC, const thumb_id id);
 
-    u16 thumb(const IR_thumb_struct& IR);
+    u32 thumb(const IR_thumb_struct& IR);
 }

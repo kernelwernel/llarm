@@ -188,90 +188,90 @@ namespace internal::generators {
 
     namespace thumb {
         namespace math {
-            std::string ADC(u16, settings); 
-            std::string ADD1(u16, settings);
-            std::string ADD2(u16, settings);
-            std::string ADD3(u16, settings);
-            std::string ADD4(u16, settings);
-            std::string ADD5(u16, settings);
-            std::string ADD6(u16, settings);
-            std::string ADD7(u16, settings);
-            std::string SBC(u16, settings);
-            std::string SUB1(u16, settings);
-            std::string SUB2(u16, settings);
-            std::string SUB3(u16, settings);
-            std::string SUB4(u16, settings);
-            std::string MUL(u16, settings);
+            std::string ADC(u32, settings); 
+            std::string ADD1(u32, settings);
+            std::string ADD2(u32, settings);
+            std::string ADD3(u32, settings);
+            std::string ADD4(u32, settings);
+            std::string ADD5(u32, settings);
+            std::string ADD6(u32, settings);
+            std::string ADD7(u32, settings);
+            std::string SBC(u32, settings);
+            std::string SUB1(u32, settings);
+            std::string SUB2(u32, settings);
+            std::string SUB3(u32, settings);
+            std::string SUB4(u32, settings);
+            std::string MUL(u32, settings);
         }
 
         namespace logic {
-            std::string AND(u16, settings);
-            std::string ASR1(u16, settings);
-            std::string ASR2(u16, settings);
-            std::string BIC(u16, settings);
-            std::string EOR(u16, settings);
-            std::string LSL1(u16, settings);
-            std::string LSL2(u16, settings);
-            std::string LSR1(u16, settings);
-            std::string LSR2(u16, settings);
-            std::string NEG(u16, settings);
-            std::string ORR(u16, settings);
-            std::string ROR(u16, settings);
-            std::string TST(u16, settings);
+            std::string AND(u32, settings);
+            std::string ASR1(u32, settings);
+            std::string ASR2(u32, settings);
+            std::string BIC(u32, settings);
+            std::string EOR(u32, settings);
+            std::string LSL1(u32, settings);
+            std::string LSL2(u32, settings);
+            std::string LSR1(u32, settings);
+            std::string LSR2(u32, settings);
+            std::string NEG(u32, settings);
+            std::string ORR(u32, settings);
+            std::string ROR(u32, settings);
+            std::string TST(u32, settings);
         }
 
         namespace comparison {
-            std::string CMN(u16, settings);
-            std::string CMP1(u16, settings);
-            std::string CMP2(u16, settings);
-            std::string CMP3(u16, settings);
+            std::string CMN(u32, settings);
+            std::string CMP1(u32, settings);
+            std::string CMP2(u32, settings);
+            std::string CMP3(u32, settings);
         }
 
         namespace movement {
-            std::string MOV1(u16, settings);
-            std::string MOV2(u16, settings);
-            std::string MOV3(u16, settings);
-            std::string MVN(u16, settings);
+            std::string MOV1(u32, settings);
+            std::string MOV2(u32, settings);
+            std::string MOV3(u32, settings);
+            std::string MVN(u32, settings);
         }
 
         namespace branching {
-            std::string B1(u16, u32 PC, settings);
-            std::string B2(u16, u32 PC, settings);
-            std::string BX(u16, settings);
-            std::string BL_BLX1(u16, u32 PC, settings);
-            std::string BLX2(u16, settings);
+            std::string B1(u32, u32 PC, settings);
+            std::string B2(u32, u32 PC, settings);
+            std::string BX(u32, settings);
+            std::string BL_BLX1(u32, u32 PC, settings);
+            std::string BLX2(u32, settings);
         }
 
         namespace misc {
-            std::string SWI(u16, settings);
-            std::string BKPT(u16, settings);
+            std::string SWI(u32, settings);
+            std::string BKPT(u32, settings);
         }
 
         namespace load {
-            std::string LDMIA(u16, settings);
-            std::string LDR1(u16, settings);
-            std::string LDR2(u16, settings);
-            std::string LDR3(u16, settings);
-            std::string LDR4(u16, settings);
-            std::string LDRB1(u16, settings);
-            std::string LDRB2(u16, settings);
-            std::string LDRH1(u16, settings);
-            std::string LDRH2(u16, settings);
-            std::string LDRSB(u16, settings);
-            std::string LDRSH(u16, settings);
-            std::string POP(u16, settings);
+            std::string LDMIA(u32, settings);
+            std::string LDR1(u32, settings);
+            std::string LDR2(u32, settings);
+            std::string LDR3(u32, settings);
+            std::string LDR4(u32, settings);
+            std::string LDRB1(u32, settings);
+            std::string LDRB2(u32, settings);
+            std::string LDRH1(u32, settings);
+            std::string LDRH2(u32, settings);
+            std::string LDRSB(u32, settings);
+            std::string LDRSH(u32, settings);
+            std::string POP(u32, settings);
         }
 
         namespace store {
-            std::string STMIA(u16, settings);
-            std::string STR1(u16, settings);
-            std::string STR2(u16, settings);
-            std::string STR3(u16, settings);
-            std::string STRB1(u16, settings);
-            std::string STRB2(u16, settings);
-            std::string STRH1(u16, settings);
-            std::string STRH2(u16, settings);
-            std::string PUSH(u16, settings);
+            std::string STMIA(u32, settings);
+            std::string STR1(u32, settings);
+            std::string STR2(u32, settings);
+            std::string STR3(u32, settings);
+            std::string STRB1(u32, settings);
+            std::string STRB2(u32, settings);
+            std::string STRH1(u32, settings);
+            std::string STRH2(u32, settings);
+            std::string PUSH(u32, settings);
         }
     }
 }
