@@ -21,7 +21,7 @@ bool validation::string_thumb::is_thumb_instruction_valid(const std::string &cod
 bool validation::string_thumb::is_thumb_instruction_valid(const IR_thumb_struct &IR) {
     const lexemes_t &lexemes = IR.lexemes;
 
-    switch (IR.id) {
+    switch (IR.mnemonic.id) {
         /* ✅ */ case thumb_id::UNKNOWN: return false;
         /* ✅ */ case thumb_id::UNDEFINED: return false;
         /* ✅ */ case thumb_id::NOP: return false;    

@@ -46,7 +46,7 @@ set(CLANG_CXX_FLAGS
 
 
 set(LINUX_EXTRA_CXX_FLAGS
-    -fcolor-diagnostics
+    #-fcolor-diagnostics
 )
 
 

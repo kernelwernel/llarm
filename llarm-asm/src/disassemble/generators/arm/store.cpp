@@ -194,7 +194,9 @@ std::string generators::arm::store::STRH(const u32 code, const settings settings
 
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
-    return util::make_string("STR", util::cond(code, settings), "H ", Rd, ", ", addressing_mode);
+    const bool suf = settings.cond_always_suffix;
+
+    return util::make_string("STR", (suf ? "H" : ""), util::cond(code, settings), (suf ? " " : "H "), Rd, ", ", addressing_mode);
 }
 
 

@@ -23,8 +23,8 @@ u8 shared::spellcheck::wagner_fischer(
     std::vector<u8> curr_row(a_length + 1);
     std::vector<u8> prev_row(a_length + 1);
 
-    curr_row.resize(std::max(a_length, b_length));
-    prev_row.resize(std::max(a_length, b_length));
+    curr_row.reserve(std::max(a_length, b_length));
+    prev_row.reserve(std::max(a_length, b_length));
 
     for (u8 j = 0; j <= a_length; ++j) {
         prev_row[j] = j;

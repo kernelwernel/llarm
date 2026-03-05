@@ -16,7 +16,9 @@ std::string generators::arm::dsp::LDRD(const u32 code, const settings settings) 
 
     const std::string addressing_mode = shifters::ls_misc(code, settings);
 
-    return util::make_string("LDR", util::cond(code, settings), "D ", Rd, ", ", addressing_mode);
+    const bool suf = settings.cond_always_suffix;
+
+    return util::make_string("LDR", (suf ? "D" : ""), util::cond(code, settings), (suf ? " ": "D "), Rd, ", ", addressing_mode);
 }
 
 

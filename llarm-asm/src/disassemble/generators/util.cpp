@@ -155,8 +155,8 @@ std::string util::reg_id_to_string(const util::reg_id id, const settings setting
         case reg_id::R6: return "R6";
         case reg_id::R7: return "R7";
         case reg_id::R8: return "R8";
-        case reg_id::R9: return "R9";
-        case reg_id::R10: return "R10";
+        case reg_id::R9: return (settings.register_alias ? "SB" : "R9");
+        case reg_id::R10: return (settings.register_alias ? "SL" : "R10");
         case reg_id::R11: return (settings.register_alias ? "FP" : "R11");
         case reg_id::R12: return (settings.register_alias ? "IP" : "R12");
         case reg_id::R13: return (settings.register_alias ? "SP" : "R13");
@@ -396,7 +396,7 @@ std::string util::vfp_register_list(const u8 first_reg, const u8 offset, const s
     const u8 reg_count = (offset >> (prefix == util::prefix::S ? 0 : 1));
     
     std::vector<u8> reg_nums;
-    reg_nums.resize(reg_count);
+    reg_nums.reserve(reg_count);
     
     for (u8 i = first_reg; i < offset; i++) {
         reg_nums.push_back(i);

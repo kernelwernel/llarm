@@ -1,5 +1,4 @@
 #include "shifters.hpp"
-#include "../../../../identifiers/u32_arm.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
@@ -214,7 +213,7 @@ shifter_id shifters::identify_ls_misc_shifter(const u32 code) {
         case 0b100: return shifter_id::LS_MISC_REG;
         case 0b101: return shifter_id::LS_MISC_REG_PRE;
         case 0b000: return shifter_id::LS_MISC_REG_POST;
-        default: llarm::out::error("No known load store misc addressing shifter has been found");
+        default: llarm::out::error("No known load store misc addressing shifter mode bits has been found");
     }
 }
 

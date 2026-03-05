@@ -8,10 +8,11 @@ namespace internal {
         bool simplify;
         bool remove_nulls;
         bool gcc_convention;
+        bool cond_always_suffix;
     };
 
 
     inline settings default_dis_settings() {
-        return settings { true, true, true, false, true, false };
+        return settings { true, true, true, false, true, false, true };
     }
 }

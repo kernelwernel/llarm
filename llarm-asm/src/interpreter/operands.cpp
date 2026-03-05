@@ -2,22 +2,24 @@
 #include "../identifiers/string_shifters.hpp"
 #include "../interpreter/mnemonic_arm.hpp"
 #include "../interpreter/lexer.hpp"
+#include "src/id/cond_id.hpp"
+#include "src/interpreter/operand_struct.hpp"
 
 #include <llarm/shared/out.hpp>
 
-operand_struct operands::lex_to_operands_arm(const lexemes_t &lexemes, const mnemonic_struct_arm &mnemonic) {
+operand_struct operands::lex_to_operands(const lexemes_t &lexemes, const cond_id cond_id) {
     operand_struct arg;
-
+    
     u8 reg_iteration = 1;
     u8 CR_reg_iteration = 1;
     u8 int_iteration = 1;
-
+    
     // it should be noted that all instructions that contain things like reglists, and PSRs 
     // only have those argument types appear once, unlike immeds or regs. That's why they 
     // don't have an iteration mechanism where repeating argument types are organised in 
     // enumerated orders (first, second, third, etc...). So if a reglist appears, it's 
     // guaranteed that it won't appear again.
-
+    
     for (const auto &lexeme : lexemes) {
         switch (lexeme.token_type) {
             case UNKNOWN: llarm::out::dev_error("Invalid lexeme for converting IR to assembly");
@@ -45,10 +47,8 @@ operand_struct operands::lex_to_operands_arm(const lexemes_t &lexemes, const mne
         }
     }
 
-    // this is where the mnemonic analysis will begin
-
-    arg.cond = [&]() -> u8 {
-        switch (mnemonic.cond_id) {
+    arg.cond = [=]() -> u8 {
+        switch (cond_id) {
             case cond_id::UNKNOWN: llarm::out::dev_error("Invalid cond id value for IR argument translation");
             case cond_id::NONE: return 0b1111;
             case cond_id::EQ: return 0b0000;
@@ -69,9 +69,16 @@ operand_struct operands::lex_to_operands_arm(const lexemes_t &lexemes, const mne
             case cond_id::LE: return 0b1101;
             case cond_id::AL: return 0b1110;
         }
-
+    
         // reference: A3-6
     }();
+
+    return arg;
+}
+
+
+operand_struct operands::lex_to_operands_arm(const lexemes_t &lexemes, const mnemonic_struct_arm &mnemonic) {
+    operand_struct arg = lex_to_operands(lexemes, mnemonic.cond_id);
 
     arg.has_S = mnemonic.has_S;
     arg.has_Z = mnemonic.has_Z;
@@ -85,8 +92,10 @@ operand_struct operands::lex_to_operands_arm(const lexemes_t &lexemes, const mne
     return arg;
 }
 
+
+// thumb doesn't need extra shifter/encoding stuff in their instructions unlike arm, so we're skipping unecessary stuff
 operand_struct operands::lex_to_operands_thumb(const lexemes_t &lexemes, const mnemonic_struct_thumb &mnemonic) {
-    d
+    return lex_to_operands(lexemes, mnemonic.cond_id);
 }
 
 

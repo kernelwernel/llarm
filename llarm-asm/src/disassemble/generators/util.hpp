@@ -185,7 +185,7 @@ namespace internal::util {
             }
         }(args), ...);
 
-        result.resize(total_size);
+        result.reserve(total_size);
 
         // append all arguments
         (append_arg(result, std::forward<Args>(args)), ...);

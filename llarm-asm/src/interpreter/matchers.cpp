@@ -24,10 +24,10 @@ REG matchers::reg(sv str) {
     constexpr u16 PC = ('P' << 8) | 'C';
     constexpr u16 LR = ('L' << 8) | 'R';
     constexpr u16 SP = ('S' << 8) | 'P';
-
-    // not sure if these 2 are even officially used, but i'll add them anyway
     constexpr u16 IP = ('I' << 8) | 'P';
     constexpr u16 FP = ('F' << 8) | 'P';
+    constexpr u16 SL = ('S' << 8) | 'L';
+    constexpr u16 SB = ('S' << 8) | 'B';
 
     const u16 key = static_cast<u8>(str.at(0) << 8 | str.at(1));
 
@@ -37,6 +37,8 @@ REG matchers::reg(sv str) {
         case SP: reg.number = 13; break;
         case IP: reg.number = 12; break;
         case FP: reg.number = 11; break;
+        case SL: reg.number = 10; break;
+        case SB: reg.number = 9; break;
     }
 
     const bool valid_register_found = (reg.number != WILDCARD);

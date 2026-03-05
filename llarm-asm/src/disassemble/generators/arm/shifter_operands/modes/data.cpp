@@ -37,7 +37,12 @@ std::string shifters::data_reg_pattern(const u32 code, const std::string &mode, 
 
 
 std::string shifters::data_imm_pattern(const u32 code, const std::string &mode, const settings settings) {
-    const u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
+    u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
+
+    if (shift_imm == 0) {
+        shift_imm = 32;
+    }
+
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     return util::make_string(Rm, ", ", mode, " #", shift_imm);
 }
