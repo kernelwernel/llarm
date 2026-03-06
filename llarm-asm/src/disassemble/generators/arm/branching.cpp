@@ -29,7 +29,7 @@ using namespace internal;
  *
  * reference: A4-10
  */
-std::string generators::arm::branching::B(const u32 code, const u32 PC, const settings settings) {
+std::string generators::arm::branching::B(const u32 code, const u32 PC, const settings& settings) {
     const u32 signed_immed_24 = llarm::util::bit_range(code, 0, 23);
 
     const u32 target_address = util::thumb_sign_extend(signed_immed_24, 23, PC);
@@ -39,7 +39,7 @@ std::string generators::arm::branching::B(const u32 code, const u32 PC, const se
 
 
 // basically the same as B above
-std::string generators::arm::branching::BL(const u32 code, const u32 PC, const settings settings) {
+std::string generators::arm::branching::BL(const u32 code, const u32 PC, const settings& settings) {
     const u32 signed_immed_24 = llarm::util::bit_range(code, 0, 23);
 
     const u32 target_address = util::thumb_sign_extend(signed_immed_24, 23, PC);
@@ -58,7 +58,7 @@ std::string generators::arm::branching::BL(const u32 code, const u32 PC, const s
  * 
  * reference: A4-19
  */
-std::string generators::arm::branching::BX(const u32 code, const settings settings) {
+std::string generators::arm::branching::BX(const u32 code, const settings& settings) {
     const std::string Rm = util::reg_string(code, 0, 3, settings);
 
     return util::make_string("BX", util::cond(code, settings), " ", Rm);
@@ -81,7 +81,7 @@ std::string generators::arm::branching::BX(const u32 code, const settings settin
  *
  * reference: A4-16
  */
-std::string generators::arm::branching::BLX1(const u32 code, const u32 PC, const settings settings) {
+std::string generators::arm::branching::BLX1(const u32 code, const u32 PC, const settings& settings) {
     const u32 signed_immed_24 = llarm::util::bit_range(code, 0, 23);
 
     const u32 target_address = util::thumb_sign_extend(signed_immed_24, 23, PC);
@@ -101,7 +101,7 @@ std::string generators::arm::branching::BLX1(const u32 code, const u32 PC, const
  * 
  * reference: A4-18
  */
-std::string generators::arm::branching::BLX2(const u32 code, const settings settings) {
+std::string generators::arm::branching::BLX2(const u32 code, const settings& settings) {
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     return util::make_string("BLX", util::cond(code, settings), " ", Rm);
 }

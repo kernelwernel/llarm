@@ -63,8 +63,8 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &&IR) 
 /* TODO */        case arm_id::LDRH:
 /* TODO */        case arm_id::LDRSB:
 /* TODO */        case arm_id::LDRSH:
-/* TODO */        case arm_id::STRD:
-/* TODO */        case arm_id::LDRD:
+/* TODO */        case arm_id::STRD: // WARNING: both are <Rd>, <Rd + 1> instead of just <Rd>
+/* TODO */        case arm_id::LDRD: // WARNING: both are <Rd>, <Rd + 1> instead of just <Rd>
 /* TODO */
 /* TODO */        // addressing mode 4: load store multiple
 /* TODO */        case arm_id::LDM1:

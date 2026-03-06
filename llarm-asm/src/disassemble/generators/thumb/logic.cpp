@@ -17,7 +17,7 @@ using namespace internal;
  * 
  * reference: A7-13
  */
-std::string generators::thumb::logic::AND(const u32 code, const settings settings) {
+std::string generators::thumb::logic::AND(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rm = util::reg_string(code, 3, 5, settings);
 
@@ -37,7 +37,7 @@ std::string generators::thumb::logic::AND(const u32 code, const settings setting
  * 
  * reference: A7-14
  */
-std::string generators::thumb::logic::ASR1(const u32 code, const settings settings) {
+std::string generators::thumb::logic::ASR1(const u32 code, const settings& settings) {
     const u8 immed_5 = llarm::util::bit_range<u8>(code, 6, 10);
 
     const std::string Rd = util::reg_string(code, 0, 2, settings);
@@ -57,7 +57,7 @@ std::string generators::thumb::logic::ASR1(const u32 code, const settings settin
  * 
  * reference: A7-16
  */
-std::string generators::thumb::logic::ASR2(const u32 code, const settings settings) {
+std::string generators::thumb::logic::ASR2(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rs = util::reg_string(code, 3, 5, settings);
 
@@ -75,7 +75,7 @@ std::string generators::thumb::logic::ASR2(const u32 code, const settings settin
  * 
  * reference: A7-22
  */
-std::string generators::thumb::logic::BIC(const u32 code, const settings settings) {
+std::string generators::thumb::logic::BIC(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rm = util::reg_string(code, 3, 5, settings);
 
@@ -93,7 +93,7 @@ std::string generators::thumb::logic::BIC(const u32 code, const settings setting
  * 
  * reference: A7-39
  */
-std::string generators::thumb::logic::EOR(const u32 code, const settings settings) {
+std::string generators::thumb::logic::EOR(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rm = util::reg_string(code, 3, 5, settings);
 
@@ -112,7 +112,7 @@ std::string generators::thumb::logic::EOR(const u32 code, const settings setting
  * 
  * reference: A7-59
  */
-std::string generators::thumb::logic::LSL1(const u32 code, const settings settings) {
+std::string generators::thumb::logic::LSL1(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rm = util::reg_string(code, 3, 5, settings);
 
@@ -133,7 +133,7 @@ std::string generators::thumb::logic::LSL1(const u32 code, const settings settin
  * 
  * reference: A7-60
  */
-std::string generators::thumb::logic::LSL2(const u32 code, const settings settings) {
+std::string generators::thumb::logic::LSL2(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rs = util::reg_string(code, 3, 5, settings);
 
@@ -153,7 +153,7 @@ std::string generators::thumb::logic::LSL2(const u32 code, const settings settin
  * 
  * reference: A7-62
  */
-std::string generators::thumb::logic::LSR1(const u32 code, const settings settings) {
+std::string generators::thumb::logic::LSR1(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rm = util::reg_string(code, 3, 5, settings);
 
@@ -173,7 +173,7 @@ std::string generators::thumb::logic::LSR1(const u32 code, const settings settin
  *
  * reference: A7-64
  */
-std::string generators::thumb::logic::LSR2(const u32 code, const settings settings) {
+std::string generators::thumb::logic::LSR2(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rs = util::reg_string(code, 3, 5, settings);
 
@@ -191,7 +191,7 @@ std::string generators::thumb::logic::LSR2(const u32 code, const settings settin
  *
  * reference: A7-73
  */
-std::string generators::thumb::logic::NEG(const u32 code, const settings settings) {
+std::string generators::thumb::logic::NEG(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rm = util::reg_string(code, 3, 5, settings);
 
@@ -210,7 +210,7 @@ std::string generators::thumb::logic::NEG(const u32 code, const settings setting
  *
  * reference: A7-74
  */
-std::string generators::thumb::logic::ORR(const u32 code, const settings settings) {
+std::string generators::thumb::logic::ORR(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rm = util::reg_string(code, 3, 5, settings);
 
@@ -229,7 +229,7 @@ std::string generators::thumb::logic::ORR(const u32 code, const settings setting
  *
  * reference: A7-80
  */
-std::string generators::thumb::logic::ROR(const u32 code, const settings settings) {
+std::string generators::thumb::logic::ROR(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rs = util::reg_string(code, 3, 5, settings);
 
@@ -247,7 +247,7 @@ std::string generators::thumb::logic::ROR(const u32 code, const settings setting
  *
  * reference: A7-103
  */
-std::string generators::thumb::logic::TST(const u32 code, const settings settings) {
+std::string generators::thumb::logic::TST(const u32 code, const settings& settings) {
     const std::string Rn = util::reg_string(code, 0, 2, settings);
     const std::string Rm = util::reg_string(code, 3, 5, settings);
 

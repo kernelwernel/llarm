@@ -2,6 +2,7 @@
 #include "../util.hpp"
 #include "shifter_operands/shifters.hpp"
 #include "../patterns/patterns.hpp"
+#include "../../disassemble.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
@@ -11,18 +12,45 @@
 using namespace internal;
 
 
-std::string generators::arm::dsp::LDRD(const u32 code, const settings settings) {
-    const std::string Rd = util::reg_string(code, 12, 15, settings);
+std::string generators::arm::dsp::LDRD(const u32 code, const settings& settings) {
+    const util::reg_id Rd_id = util::identify_reg(code, 12, 15);
+
+    const bool is_Rd_odd = ((static_cast<u8>(Rd_id) & 1) == true);
+
+    if (is_Rd_odd && settings.strict_compliance) {
+        return UNDEFINED;
+    }
+
+    if (Rd_id == util::reg_id::R15) {
+        return ERROR;
+    }
 
     const std::string addressing_mode = shifters::ls_misc(code, settings);
 
+    if (addressing_mode == ERROR) {
+        return ERROR;
+    }
+
     const bool suf = settings.cond_always_suffix;
 
-    return util::make_string("LDR", (suf ? "D" : ""), util::cond(code, settings), (suf ? " ": "D "), Rd, ", ", addressing_mode);
+    const std::string Rd = util::reg_id_to_string(Rd_id, settings);
+
+    const std::string Rn = [=]() -> std::string {
+        if (settings.explicit_operands == false) {
+            return "";
+        }
+
+        // this is really stupid
+        const util::reg_id Rn_id = static_cast<util::reg_id>(static_cast<u8>(Rd_id) + 1); 
+
+        return util::reg_id_to_string(Rn_id, settings);
+    }();
+
+    return util::make_string("LDR", (suf ? "D" : ""), util::cond(code, settings), (suf ? " ": "D "), Rd, ", ", Rn, (Rn == "" ? "" : ", "), addressing_mode);
 }
 
 
-std::string generators::arm::dsp::MCRR(const u32 code, const settings settings) {
+std::string generators::arm::dsp::MCRR(const u32 code, const settings& settings) {
     const std::string coproc = util::reg_string(code, 8, 11, settings, util::prefix::P);
 
     const std::string Rd = util::reg_string(code, 12, 15, settings);
@@ -35,7 +63,7 @@ std::string generators::arm::dsp::MCRR(const u32 code, const settings settings) 
 }
 
 
-std::string generators::arm::dsp::MRRC(const u32 code, const settings settings) {
+std::string generators::arm::dsp::MRRC(const u32 code, const settings& settings) {
     const std::string coproc = util::reg_string(code, 8, 11, settings, util::prefix::P);
 
     const std::string Rd = util::reg_string(code, 12, 15, settings);
@@ -48,33 +76,33 @@ std::string generators::arm::dsp::MRRC(const u32 code, const settings settings) 
 }
 
 
-std::string generators::arm::dsp::PLD(const u32 code, const settings settings) {
+std::string generators::arm::dsp::PLD(const u32 code, const settings& settings) {
     const std::string addressing_mode = shifters::ls(code, settings);
     return util::make_string("PLD ", addressing_mode);
 }
 
 
-std::string generators::arm::dsp::QADD(const u32 code, const settings settings) {
+std::string generators::arm::dsp::QADD(const u32 code, const settings& settings) {
     return patterns::dsp_Rd_Rm_Rn(code, "QADD", settings);
 }
 
 
-std::string generators::arm::dsp::QDADD(const u32 code, const settings settings) {
+std::string generators::arm::dsp::QDADD(const u32 code, const settings& settings) {
     return patterns::dsp_Rd_Rm_Rn(code, "QDADD", settings);
 }
 
 
-std::string generators::arm::dsp::QDSUB(const u32 code, const settings settings) {
+std::string generators::arm::dsp::QDSUB(const u32 code, const settings& settings) {
     return patterns::dsp_Rd_Rm_Rn(code, "QDSUB", settings);
 }
 
 
-std::string generators::arm::dsp::QSUB(const u32 code, const settings settings) {
+std::string generators::arm::dsp::QSUB(const u32 code, const settings& settings) {
     return patterns::dsp_Rd_Rm_Rn(code, "QSUB", settings);
 }
 
 
-std::string generators::arm::dsp::SMLAXY(const u32 code, const settings settings) {
+std::string generators::arm::dsp::SMLAXY(const u32 code, const settings& settings) {
     const char x = (llarm::util::bit_fetch(code, 5) ? 'T' : 'B');
     const char y = (llarm::util::bit_fetch(code, 6) ? 'T' : 'B');
 
@@ -87,7 +115,7 @@ std::string generators::arm::dsp::SMLAXY(const u32 code, const settings settings
 }
 
 
-std::string generators::arm::dsp::SMLALXY(const u32 code, const settings settings) {
+std::string generators::arm::dsp::SMLALXY(const u32 code, const settings& settings) {
     const char x = (llarm::util::bit_fetch(code, 5) ? 'T' : 'B');
     const char y = (llarm::util::bit_fetch(code, 6) ? 'T' : 'B');
 
@@ -100,7 +128,7 @@ std::string generators::arm::dsp::SMLALXY(const u32 code, const settings setting
 }
 
 
-std::string generators::arm::dsp::SMLAWY(const u32 code, const settings settings) {
+std::string generators::arm::dsp::SMLAWY(const u32 code, const settings& settings) {
     const char y = (llarm::util::bit_fetch(code, 6) ? 'T' : 'B');
 
     const std::string Rd = util::reg_string(code, 16, 19, settings);
@@ -112,7 +140,7 @@ std::string generators::arm::dsp::SMLAWY(const u32 code, const settings settings
 }
 
 
-std::string generators::arm::dsp::SMULXY(const u32 code, const settings settings) {
+std::string generators::arm::dsp::SMULXY(const u32 code, const settings& settings) {
     const char x = (llarm::util::bit_fetch(code, 5) ? 'T' : 'B');
     const char y = (llarm::util::bit_fetch(code, 6) ? 'T' : 'B');
 
@@ -124,7 +152,7 @@ std::string generators::arm::dsp::SMULXY(const u32 code, const settings settings
 }
 
 
-std::string generators::arm::dsp::SMULWY(const u32 code, const settings settings) {
+std::string generators::arm::dsp::SMULWY(const u32 code, const settings& settings) {
     const char y = (llarm::util::bit_fetch(code, 6) ? 'T' : 'B');
 
     const std::string Rd = util::reg_string(code, 16, 19, settings);
@@ -135,11 +163,37 @@ std::string generators::arm::dsp::SMULWY(const u32 code, const settings settings
 }
 
 
-std::string generators::arm::dsp::STRD(const u32 code, const settings settings) {
-    const std::string Rd = util::reg_string(code, 12, 15, settings);
-    const std::string Rn = util::reg_string(code, 16, 19, settings);
+std::string generators::arm::dsp::STRD(const u32 code, const settings& settings) {
+    const util::reg_id Rd_id = util::identify_reg(code, 12, 15);
+    const std::string Rd = util::reg_id_to_string(Rd_id, settings);
+
+    const bool is_Rd_odd = ((static_cast<u8>(Rd_id) & 1) == true);
+
+    if (is_Rd_odd && settings.strict_compliance) {
+        return UNDEFINED;
+    }
+
+    if (Rd_id == util::reg_id::R15) {
+        return ERROR;
+    }
 
     const std::string addressing_mode = shifters::ls_misc(code, settings);
 
-    return util::make_string("STR", util::cond(code, settings), "D ", Rd, ", ", addressing_mode);
+    if (addressing_mode == ERROR) {
+        return ERROR;
+    }
+
+    const std::string Rn = [=]() -> std::string {
+        if (settings.explicit_operands == false) {
+            return "";
+        }
+
+        const util::reg_id Rn_id = static_cast<util::reg_id>(static_cast<u8>(Rd_id) + 1); 
+        
+        return util::reg_id_to_string(Rn_id, settings);
+    }();
+
+    const bool suf = settings.cond_always_suffix;
+
+    return util::make_string("STR", (suf ? "D" : ""), util::cond(code, settings), (suf ? " " : "D "), Rd, ", ", Rn, (Rn == "" ? "" : ", "), addressing_mode);
 }

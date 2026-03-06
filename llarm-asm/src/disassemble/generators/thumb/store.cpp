@@ -39,7 +39,7 @@ using namespace internal;
  * 
  * reference: A7-84
  */
-std::string generators::thumb::store::STMIA(const u32 code, const settings settings) {
+std::string generators::thumb::store::STMIA(const u32 code, const settings& settings) {
     const std::string Rn = util::reg_string(code, 8, 10, settings);
 
     const u8 list = llarm::util::bit_range<u8>(code, 0, 7);
@@ -59,7 +59,7 @@ std::string generators::thumb::store::STMIA(const u32 code, const settings setti
  * 
  * reference: A7-86
  */
-std::string generators::thumb::store::STR1(const u32 code, const settings settings) {
+std::string generators::thumb::store::STR1(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
 
@@ -80,7 +80,7 @@ std::string generators::thumb::store::STR1(const u32 code, const settings settin
  * 
  * reference: A7-88
  */
-std::string generators::thumb::store::STR2(const u32 code, const settings settings) {
+std::string generators::thumb::store::STR2(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
     const std::string Rm = util::reg_string(code, 6, 8, settings);
@@ -100,7 +100,7 @@ std::string generators::thumb::store::STR2(const u32 code, const settings settin
  * 
  * reference: A7-90
  */
-std::string generators::thumb::store::STR3(const u32 code, const settings settings) {
+std::string generators::thumb::store::STR3(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 8, 10, settings);
 
     const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
@@ -120,7 +120,7 @@ std::string generators::thumb::store::STR3(const u32 code, const settings settin
  * 
  * reference: A7-92
  */
-std::string generators::thumb::store::STRB1(const u32 code, const settings settings) {
+std::string generators::thumb::store::STRB1(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
 
@@ -141,7 +141,7 @@ std::string generators::thumb::store::STRB1(const u32 code, const settings setti
  * 
  * reference: A7-93
  */
-std::string generators::thumb::store::STRB2(const u32 code, const settings settings) {
+std::string generators::thumb::store::STRB2(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
     const std::string Rm = util::reg_string(code, 6, 8, settings);
@@ -161,7 +161,7 @@ std::string generators::thumb::store::STRB2(const u32 code, const settings setti
  * 
  * reference: A7-94
  */
-std::string generators::thumb::store::STRH1(const u32 code, const settings settings) {
+std::string generators::thumb::store::STRH1(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
 
@@ -182,7 +182,7 @@ std::string generators::thumb::store::STRH1(const u32 code, const settings setti
  * 
  * reference: A7-95
  */
-std::string generators::thumb::store::STRH2(const u32 code, const settings settings) {
+std::string generators::thumb::store::STRH2(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 0, 2, settings);
     const std::string Rn = util::reg_string(code, 3, 5, settings);
     const std::string Rm = util::reg_string(code, 6, 8, settings);
@@ -221,7 +221,7 @@ std::string generators::thumb::store::STRH2(const u32 code, const settings setti
  * 
  * reference: A7-78
  */
-std::string generators::thumb::store::PUSH(const u32 code, const settings settings) {
+std::string generators::thumb::store::PUSH(const u32 code, const settings& settings) {
     const u8 list = llarm::util::bit_range<u8>(code, 0, 7);
 
     const bool R = (llarm::util::bit_fetch(code, 8));

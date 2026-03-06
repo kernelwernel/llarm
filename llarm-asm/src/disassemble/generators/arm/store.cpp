@@ -1,6 +1,7 @@
 #include "../generators.hpp"
 #include "../util.hpp"
 #include "shifter_operands/shifters.hpp"
+#include "../../disassemble.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
@@ -38,7 +39,7 @@ using namespace internal;
  *
  * reference: A4-84
  */
-std::string generators::arm::store::STM1(const u32 code, const settings settings) {
+std::string generators::arm::store::STM1(const u32 code, const settings& settings) {
     const u16 register_list = llarm::util::bit_range<u16>(code, 0, 15);
     
     const std::string Rn = util::reg_string(code, 16, 19, settings);
@@ -74,7 +75,7 @@ std::string generators::arm::store::STM1(const u32 code, const settings settings
  *             DEFINED. For more details, see Reading the program counter on page A2-7.
  * ^           For an STM instruction, indicates that User mode registers are to be stored.
  */
-std::string generators::arm::store::STM2(const u32 code, const settings settings) {
+std::string generators::arm::store::STM2(const u32 code, const settings& settings) {
     return STM1(code, settings) + "^";
 }
 
@@ -96,7 +97,7 @@ std::string generators::arm::store::STM2(const u32 code, const settings settings
  * 
  * reference: A4-88
  */
-std::string generators::arm::store::STR(const u32 code, const settings settings) {
+std::string generators::arm::store::STR(const u32 code, const settings& settings) {
     const u16 register_list = llarm::util::bit_range<u16>(code, 0, 15);
 
     const std::string Rd = util::reg_string(code, 12, 15, settings);
@@ -123,7 +124,7 @@ std::string generators::arm::store::STR(const u32 code, const settings settings)
  *
  * reference: A4-90
  */
-std::string generators::arm::store::STRB(const u32 code, const settings settings) {
+std::string generators::arm::store::STRB(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
     const std::string addressing_mode = shifters::ls(code, settings);
@@ -151,7 +152,7 @@ std::string generators::arm::store::STRB(const u32 code, const settings settings
  *
  * reference: A4-92
 */
-std::string generators::arm::store::STRBT(const u32 code, const settings settings) {
+std::string generators::arm::store::STRBT(const u32 code, const settings& settings) {
     const shifter_id mode_id = shifters::identify_ls_shifter(code);
     
     switch (mode_id) {
@@ -189,8 +190,12 @@ std::string generators::arm::store::STRBT(const u32 code, const settings setting
  * 
  * reference: A4-94
  */
-std::string generators::arm::store::STRH(const u32 code, const settings settings) {
+std::string generators::arm::store::STRH(const u32 code, const settings& settings) {
     const std::string addressing_mode = shifters::ls_misc(code, settings);
+
+    if (addressing_mode == ERROR) {
+        return ERROR;
+    }
 
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
@@ -220,7 +225,7 @@ std::string generators::arm::store::STRH(const u32 code, const settings settings
  *
  * reference: A4-96
  */
-std::string generators::arm::store::STRT(const u32 code, const settings settings) {
+std::string generators::arm::store::STRT(const u32 code, const settings& settings) {
     const shifter_id mode_id = shifters::identify_ls_shifter(code);
 
     switch (mode_id) {
@@ -253,7 +258,7 @@ std::string generators::arm::store::STRT(const u32 code, const settings settings
  * 
  * reference: A4-102
  */
-std::string generators::arm::store::SWP(const u32 code, const settings settings) {
+std::string generators::arm::store::SWP(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 12, 15, settings);
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     const std::string Rn = util::reg_string(code, 16, 19, settings);
@@ -273,10 +278,12 @@ std::string generators::arm::store::SWP(const u32 code, const settings settings)
  *
  * reference: A4-104
  */
-std::string generators::arm::store::SWPB(const u32 code, const settings settings) {
+std::string generators::arm::store::SWPB(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 12, 15, settings);
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     const std::string Rn = util::reg_string(code, 16, 19, settings);
 
-    return util::make_string("SWP", util::cond(code, settings), "B ", Rd, ", ", Rm, ", [", Rn, "]");
+    const bool suf = settings.cond_always_suffix;
+
+    return util::make_string("SWP", (suf ? "B" : ""), util::cond(code, settings), (suf ? " " : "B "), Rd, ", ", Rm, ", [", Rn, "]");
 }

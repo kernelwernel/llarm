@@ -25,7 +25,7 @@ using namespace internal;
  * 
  * reference: A7-18
  */
-std::string generators::thumb::branching::B1(const u32 code, const u32 PC, const settings settings) {
+std::string generators::thumb::branching::B1(const u32 code, const u32 PC, const settings& settings) {
     const u8 cond = llarm::util::bit_range<u8>(code, 8, 11);
 
     const u8 signed_immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
@@ -53,7 +53,7 @@ std::string generators::thumb::branching::B1(const u32 code, const u32 PC, const
  * 
  * reference: A7-20
  */
-std::string generators::thumb::branching::B2(const u32 code, const u32 PC, const settings settings) {
+std::string generators::thumb::branching::B2(const u32 code, const u32 PC, const settings& settings) {
     const u16 signed_immed_11 = llarm::util::bit_range<u16>(code, 0, 10);
 
     const u32 sign_extend = static_cast<u32>(signed_immed_11 << 1);
@@ -81,7 +81,7 @@ std::string generators::thumb::branching::B2(const u32 code, const u32 PC, const
  * 
  * reference: A7-26
  */
-std::string generators::thumb::branching::BL_BLX1(const u32 code, const u32 PC, const settings settings) {
+std::string generators::thumb::branching::BL_BLX1(const u32 code, const u32 PC, const settings& settings) {
     const u16 first  = static_cast<u16>(code >> 16);
     const u16 second = static_cast<u16>(code & 0xFFFF);
 
@@ -129,7 +129,7 @@ std::string generators::thumb::branching::BL_BLX1(const u32 code, const u32 PC, 
  * 
  * reference: A7-32
  */
-std::string generators::thumb::branching::BX(const u32 code, const settings settings) {
+std::string generators::thumb::branching::BX(const u32 code, const settings& settings) {
     const std::string Rm = util::reg_string(code, 3, 6, settings); // H2 included
 
     return util::make_string(
@@ -147,7 +147,7 @@ std::string generators::thumb::branching::BX(const u32 code, const settings sett
  * 
  * reference: A7-30
  */
-std::string generators::thumb::branching::BLX2(const u32 code, const settings settings) {
+std::string generators::thumb::branching::BLX2(const u32 code, const settings& settings) {
     const std::string Rm = util::reg_string(code, 3, 6, settings); // H2 included
 
     return util::make_string(

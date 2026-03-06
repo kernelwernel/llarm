@@ -1,4 +1,5 @@
 #include "shifters.hpp"
+#include "../../../disassemble.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
@@ -7,37 +8,42 @@
 using namespace internal;
 
 
-std::string shifters::data(const u32 code, const settings settings) {
+std::string shifters::data(const u32 code, const settings& settings) {
     const shifter_id id = identify_data_shifter(code);
     return shifter_to_string(id, code, settings);
 }
 
 
-std::string shifters::ls(const u32 code, const settings settings) {
+std::string shifters::data(const u32 code, const shifter_id id, const settings& settings) {
+    return shifter_to_string(id, code, settings);
+}
+
+
+std::string shifters::ls(const u32 code, const settings& settings) {
     const shifter_id id = identify_ls_shifter(code);
     return shifter_to_string(id, code, settings);
 }
 
 
-std::string shifters::ls_misc(const u32 code, const settings settings) {
+std::string shifters::ls_misc(const u32 code, const settings& settings) {
     const shifter_id id = identify_ls_misc_shifter(code);
     return shifter_to_string(id, code, settings);
 }
 
 
-std::string shifters::ls_mul(const u32 code, const settings settings) {
+std::string shifters::ls_mul(const u32 code, const settings& settings) {
     const shifter_id id = identify_ls_mul_shifter(code);
     return shifter_to_string(id, code, settings);
 }
 
 
-std::string shifters::ls_coproc(const u32 code, const settings settings) {
+std::string shifters::ls_coproc(const u32 code, const settings& settings) {
     const shifter_id id = identify_ls_coproc_shifter(code);
     return shifter_to_string(id, code, settings);
 }
 
 
-std::string shifters::vfp_ls_mul(const u32 code, const settings settings) {
+std::string shifters::vfp_ls_mul(const u32 code, const settings& settings) {
     const shifter_id id = identify_ls_mul_shifter(code);
     return shifter_to_string(id, code, settings);
 }
@@ -213,7 +219,7 @@ shifter_id shifters::identify_ls_misc_shifter(const u32 code) {
         case 0b100: return shifter_id::LS_MISC_REG;
         case 0b101: return shifter_id::LS_MISC_REG_PRE;
         case 0b000: return shifter_id::LS_MISC_REG_POST;
-        default: llarm::out::error("No known load store misc addressing shifter mode bits has been found");
+        default: return shifter_id::UNKNOWN; //llarm::out::error("No known load store misc addressing shifter mode bits have been found");
     }
 }
 
@@ -290,9 +296,9 @@ shifter_id shifters::identify_vfp_ls_mul_shifter(const u32 code) {
 }
 
 
-std::string shifters::shifter_to_string(const shifter_id mode, const u32 code, const settings settings) {
+std::string shifters::shifter_to_string(const shifter_id mode, const u32 code, const settings& settings) {
     switch (mode) {
-        case shifter_id::UNKNOWN: llarm::out::dev_error("Invalid shifter for string conversion in disassembly");
+        case shifter_id::UNKNOWN: return ERROR;
         case shifter_id::DATA_IMM: return data_imm(code, settings);
         case shifter_id::DATA_IMM_LSL: return data_imm_pattern(code, "LSL", settings);
         case shifter_id::DATA_IMM_LSR: return data_imm_pattern(code, "LSR", settings);
@@ -304,7 +310,7 @@ std::string shifters::shifter_to_string(const shifter_id mode, const u32 code, c
         case shifter_id::DATA_REG_ASR: return data_reg_pattern(code, "ASR", settings);
         case shifter_id::DATA_REG_ROR: return data_reg_pattern(code, "ROR", settings);
         case shifter_id::DATA_RRX: return data_rrx(code, settings);
-        case shifter_id::LS_IMM: return ls_imm(code, settings);
+        case shifter_id::LS_IMM: return ls_imm(code, settings, settings.remove_nulls);
         case shifter_id::LS_IMM_PRE: return ls_imm_pre(code, settings);
         case shifter_id::LS_IMM_POST: return ls_imm_post(code, settings);
         case shifter_id::LS_REG: return ls_reg(code, settings);
@@ -325,7 +331,7 @@ std::string shifters::shifter_to_string(const shifter_id mode, const u32 code, c
         case shifter_id::LS_SCALED_POST_ASR: return ls_reg_scaled_post(code, "ASR", settings);
         case shifter_id::LS_SCALED_POST_ROR: return ls_reg_scaled_post(code, "ROR", settings);
         case shifter_id::LS_SCALED_POST_RRX: return ls_reg_scaled_post_rrx(code, settings);
-        case shifter_id::LS_MISC_IMM: return ls_misc_imm(code, settings);
+        case shifter_id::LS_MISC_IMM: return ls_misc_imm(code, settings, settings.remove_nulls);
         case shifter_id::LS_MISC_IMM_PRE: return ls_misc_imm_pre(code, settings);
         case shifter_id::LS_MISC_IMM_POST: return ls_misc_imm_post(code, settings);
         case shifter_id::LS_MISC_REG: return ls_misc_reg(code, settings);

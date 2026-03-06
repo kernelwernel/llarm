@@ -39,8 +39,8 @@ using namespace internal;
  * 
  * reference: A4-56
  */ 
-std::string generators::arm::movement::MOV(const u32 code, const settings settings) {
-    return patterns::S_Rd_data(code, "MOV", settings);
+std::string generators::arm::movement::MOV(const u32 code, const settings& settings) {
+    return patterns::S_Rd_data(code, "MOV", settings, true);
 }
 
 
@@ -71,7 +71,7 @@ std::string generators::arm::movement::MOV(const u32 code, const settings settin
  * 
  * reference: A4-68
  */
-std::string generators::arm::movement::MVN(const u32 code, const settings settings) {
+std::string generators::arm::movement::MVN(const u32 code, const settings& settings) {
     return patterns::S_Rd_data(code, "MVN", settings);
 }
 
@@ -87,7 +87,7 @@ std::string generators::arm::movement::MVN(const u32 code, const settings settin
  * 
  * reference: A4-60
  */ 
-std::string generators::arm::movement::MRS(const u32 code, const settings settings) {
+std::string generators::arm::movement::MRS(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 12, 15, settings);
     const bool R = (llarm::util::bit_fetch(code, 22));
 
@@ -119,7 +119,7 @@ std::string generators::arm::movement::MRS(const u32 code, const settings settin
  * 
  * reference: A4-62
  */
-std::string generators::arm::movement::MSR_IMM(const u32 code, const settings settings) {
+std::string generators::arm::movement::MSR_IMM(const u32 code, const settings& settings) {
     const std::string immediate_str = shifters::shifter_to_string(shifter_id::DATA_IMM, code, settings);
 
     const std::string fields = patterns::psr_fields(code);
@@ -149,7 +149,7 @@ std::string generators::arm::movement::MSR_IMM(const u32 code, const settings se
  * 
  * reference: A4-62
  */
-std::string generators::arm::movement::MSR_REG(const u32 code, const settings settings) {
+std::string generators::arm::movement::MSR_REG(const u32 code, const settings& settings) {
     const std::string Rm = util::reg_string(code, 0, 3, settings);
 
     const std::string fields = patterns::psr_fields(code);

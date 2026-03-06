@@ -12,266 +12,266 @@
 namespace internal::generators {
     namespace arm {
         namespace math {
-            std::string ADC(u32, settings);
-            std::string ADD(u32, settings);
-            std::string RSB(u32, settings);
-            std::string RSC(u32, settings);
-            std::string SBC(u32, settings);
-            std::string SUB(u32, settings);
+            std::string ADC(const u32 code, const settings& settings);
+            std::string ADD(const u32 code, const settings& settings);
+            std::string RSB(const u32 code, const settings& settings);
+            std::string RSC(const u32 code, const settings& settings);
+            std::string SBC(const u32 code, const settings& settings);
+            std::string SUB(const u32 code, const settings& settings);
         }
 
         namespace logic {
-            std::string CMN(u32, settings);
-            std::string AND(u32, settings);
-            std::string BIC(u32, settings);
-            std::string CMP(u32, settings);
-            std::string CLZ(u32, settings);
-            std::string EOR(u32, settings);
-            std::string ORR(u32, settings);
-            std::string TEQ(u32, settings);
-            std::string TST(u32, settings);
+            std::string CMN(const u32 code, const settings& settings);
+            std::string AND(const u32 code, const settings& settings);
+            std::string BIC(const u32 code, const settings& settings);
+            std::string CMP(const u32 code, const settings& settings);
+            std::string CLZ(const u32 code, const settings& settings);
+            std::string EOR(const u32 code, const settings& settings);
+            std::string ORR(const u32 code, const settings& settings);
+            std::string TEQ(const u32 code, const settings& settings);
+            std::string TST(const u32 code, const settings& settings);
         }
 
         namespace movement {
-            std::string MOV(u32, settings);
-            std::string MVN(u32, settings);
-            std::string MRS(u32, settings);
-            std::string MSR_IMM(u32, settings);
-            std::string MSR_REG(u32, settings);
+            std::string MOV(const u32 code, const settings& settings);
+            std::string MVN(const u32 code, const settings& settings);
+            std::string MRS(const u32 code, const settings& settings);
+            std::string MSR_IMM(const u32 code, const settings& settings);
+            std::string MSR_REG(const u32 code, const settings& settings);
         }
 
         namespace multiply {
-            std::string MLA(u32, settings);
-            std::string MUL(u32, settings);
-            std::string SMLAL(u32, settings);
-            std::string SMULL(u32, settings);
-            std::string UMLAL(u32, settings);
-            std::string UMULL(u32, settings);
+            std::string MLA(const u32 code, const settings& settings);
+            std::string MUL(const u32 code, const settings& settings);
+            std::string SMLAL(const u32 code, const settings& settings);
+            std::string SMULL(const u32 code, const settings& settings);
+            std::string UMLAL(const u32 code, const settings& settings);
+            std::string UMULL(const u32 code, const settings& settings);
         }
 
         namespace branching {
-            std::string B(u32, u32 PC, settings);
-            std::string BL(u32, u32 PC, settings);
-            std::string BX(u32, settings);
-            std::string BLX1(u32, u32 PC, settings);
-            std::string BLX2(u32, settings);
+            std::string B(const u32 code, const u32 PC, const settings& settings);
+            std::string BL(const u32 code, const u32 PC, const settings& settings);
+            std::string BX(const u32 code, const settings& settings);
+            std::string BLX1(const u32 code, const u32 PC, const settings& settings);
+            std::string BLX2(const u32 code, const settings& settings);
         }
 
         namespace coprocessor {
-            std::string CDP(u32, settings);
-            std::string LDC(u32, settings);
-            std::string MCR(u32, settings);
-            std::string MRC(u32, settings);
-            std::string STC(u32, settings);
+            std::string CDP(const u32 code, const settings& settings);
+            std::string LDC(const u32 code, const settings& settings);
+            std::string MCR(const u32 code, const settings& settings);
+            std::string MRC(const u32 code, const settings& settings);
+            std::string STC(const u32 code, const settings& settings);
         }
 
         namespace misc {
             std::string NOP();
-            std::string CMNP(u32, settings);
-            std::string CMPP(u32, settings);
-            std::string TEQP(u32, settings);
-            std::string TSTP(u32, settings);
-            std::string SWI(u32, settings);
-            std::string BKPT(u32, settings);
-            std::string PSR(u32, settings);
+            std::string CMNP(const u32 code, const settings& settings);
+            std::string CMPP(const u32 code, const settings& settings);
+            std::string TEQP(const u32 code, const settings& settings);
+            std::string TSTP(const u32 code, const settings& settings);
+            std::string SWI(const u32 code, const settings& settings);
+            std::string BKPT(const u32 code, const settings& settings);
+            std::string PSR(const u32 code, const settings& settings);
         }
 
         namespace load {
-            std::string LDM1(u32, settings);
-            std::string LDM2(u32, settings);
-            std::string LDM3(u32, settings);
-            std::string LDR(u32, settings);
-            std::string LDRB(u32, settings);
-            std::string LDRBT(u32, settings);
-            std::string LDRH(u32, settings);
-            std::string LDRSB(u32, settings);
-            std::string LDRSH(u32, settings);
-            std::string LDRT(u32, settings);
+            std::string LDM1(const u32 code, const settings& settings);
+            std::string LDM2(const u32 code, const settings& settings);
+            std::string LDM3(const u32 code, const settings& settings);
+            std::string LDR(const u32 code, const settings& settings);
+            std::string LDRB(const u32 code, const settings& settings);
+            std::string LDRBT(const u32 code, const settings& settings);
+            std::string LDRH(const u32 code, const settings& settings);
+            std::string LDRSB(const u32 code, const settings& settings);
+            std::string LDRSH(const u32 code, const settings& settings);
+            std::string LDRT(const u32 code, const settings& settings);
         }
 
         namespace store {
-            std::string STM1(u32, settings);
-            std::string STM2(u32, settings);
-            std::string STR(u32, settings);
-            std::string STRB(u32, settings);
-            std::string STRBT(u32, settings);
-            std::string STRH(u32, settings);
-            std::string STRT(u32, settings);
-            std::string SWP(u32, settings);
-            std::string SWPB(u32, settings);
+            std::string STM1(const u32 code, const settings& settings);
+            std::string STM2(const u32 code, const settings& settings);
+            std::string STR(const u32 code, const settings& settings);
+            std::string STRB(const u32 code, const settings& settings);
+            std::string STRBT(const u32 code, const settings& settings);
+            std::string STRH(const u32 code, const settings& settings);
+            std::string STRT(const u32 code, const settings& settings);
+            std::string SWP(const u32 code, const settings& settings);
+            std::string SWPB(const u32 code, const settings& settings);
         }
 
         namespace dsp {
-            std::string LDRD(u32, settings);
-            std::string MCRR(u32, settings);
-            std::string MRRC(u32, settings);
-            std::string PLD(u32, settings);
-            std::string QADD(u32, settings);
-            std::string QDADD(u32, settings);
-            std::string QDSUB(u32, settings);
-            std::string QSUB(u32, settings);
-            std::string SMLAXY(u32, settings);
-            std::string SMLALXY(u32, settings);
-            std::string SMLAWY(u32, settings);
-            std::string SMULXY(u32, settings);
-            std::string SMULWY(u32, settings);
-            std::string STRD(u32, settings);
+            std::string LDRD(const u32 code, const settings& settings);
+            std::string MCRR(const u32 code, const settings& settings);
+            std::string MRRC(const u32 code, const settings& settings);
+            std::string PLD(const u32 code, const settings& settings);
+            std::string QADD(const u32 code, const settings& settings);
+            std::string QDADD(const u32 code, const settings& settings);
+            std::string QDSUB(const u32 code, const settings& settings);
+            std::string QSUB(const u32 code, const settings& settings);
+            std::string SMLAXY(const u32 code, const settings& settings);
+            std::string SMLALXY(const u32 code, const settings& settings);
+            std::string SMLAWY(const u32 code, const settings& settings);
+            std::string SMULXY(const u32 code, const settings& settings);
+            std::string SMULWY(const u32 code, const settings& settings);
+            std::string STRD(const u32 code, const settings& settings);
         }
 
         namespace vfp {
-            std::string FABSD(u32, settings);
-            std::string FABSS(u32, settings);
-            std::string FADDD(u32, settings);
-            std::string FADDS(u32, settings);
-            std::string FCMPD(u32, settings);
-            std::string FCMPED(u32, settings);
-            std::string FCMPES(u32, settings);
-            std::string FCMPEZD(u32, settings);
-            std::string FCMPEZS(u32, settings);
-            std::string FCMPS(u32, settings);
-            std::string FCMPZD(u32, settings);
-            std::string FCMPZS(u32, settings);
-            std::string FCPYD(u32, settings);
-            std::string FCPYS(u32, settings);
-            std::string FCVTDS(u32, settings);
-            std::string FCVTSD(u32, settings);
-            std::string FDIVD(u32, settings);
-            std::string FDIVS(u32, settings);
-            std::string FLDD(u32, settings);
-            std::string FLDMD(u32, settings);
-            std::string FLDMS(u32, settings);
-            std::string FLDMX(u32, settings);
-            std::string FLDS(u32, settings);
-            std::string FMACD(u32, settings);
-            std::string FMACS(u32, settings);
-            std::string FMDHR(u32, settings);
-            std::string FMDLR(u32, settings);
-            std::string FMRDH(u32, settings);
-            std::string FMRDL(u32, settings);
-            std::string FMRS(u32, settings);
-            std::string FMRX(u32, settings);
-            std::string FMSCD(u32, settings);
-            std::string FMSCS(u32, settings);
-            std::string FMSR(u32, settings);
-            std::string FMSTAT(u32, settings);
-            std::string FMULD(u32, settings);
-            std::string FMULS(u32, settings);
-            std::string FMXR(u32, settings);
-            std::string FNEGD(u32, settings);
-            std::string FNEGS(u32, settings);
-            std::string FNMACD(u32, settings);
-            std::string FNMACS(u32, settings);
-            std::string FNMSCD(u32, settings);
-            std::string FNMSCS(u32, settings);
-            std::string FNMULD(u32, settings);
-            std::string FNMULS(u32, settings);
-            std::string FSITOD(u32, settings);
-            std::string FSITOS(u32, settings);
-            std::string FSQRTD(u32, settings);
-            std::string FSQRTS(u32, settings);
-            std::string FSTD(u32, settings);
-            std::string FSTMD(u32, settings);
-            std::string FSTMS(u32, settings);
-            std::string FSTMX(u32, settings);
-            std::string FSTS(u32, settings);
-            std::string FSUBD(u32, settings);
-            std::string FSUBS(u32, settings);
-            std::string FTOSID(u32, settings);
-            std::string FTOSIS(u32, settings);
-            std::string FTOUID(u32, settings);
-            std::string FTOUIS(u32, settings);
-            std::string FUITOD(u32, settings);
-            std::string FUITOS(u32, settings);
+            std::string FABSD(const u32 code, const settings& settings);
+            std::string FABSS(const u32 code, const settings& settings);
+            std::string FADDD(const u32 code, const settings& settings);
+            std::string FADDS(const u32 code, const settings& settings);
+            std::string FCMPD(const u32 code, const settings& settings);
+            std::string FCMPED(const u32 code, const settings& settings);
+            std::string FCMPES(const u32 code, const settings& settings);
+            std::string FCMPEZD(const u32 code, const settings& settings);
+            std::string FCMPEZS(const u32 code, const settings& settings);
+            std::string FCMPS(const u32 code, const settings& settings);
+            std::string FCMPZD(const u32 code, const settings& settings);
+            std::string FCMPZS(const u32 code, const settings& settings);
+            std::string FCPYD(const u32 code, const settings& settings);
+            std::string FCPYS(const u32 code, const settings& settings);
+            std::string FCVTDS(const u32 code, const settings& settings);
+            std::string FCVTSD(const u32 code, const settings& settings);
+            std::string FDIVD(const u32 code, const settings& settings);
+            std::string FDIVS(const u32 code, const settings& settings);
+            std::string FLDD(const u32 code, const settings& settings);
+            std::string FLDMD(const u32 code, const settings& settings);
+            std::string FLDMS(const u32 code, const settings& settings);
+            std::string FLDMX(const u32 code, const settings& settings);
+            std::string FLDS(const u32 code, const settings& settings);
+            std::string FMACD(const u32 code, const settings& settings);
+            std::string FMACS(const u32 code, const settings& settings);
+            std::string FMDHR(const u32 code, const settings& settings);
+            std::string FMDLR(const u32 code, const settings& settings);
+            std::string FMRDH(const u32 code, const settings& settings);
+            std::string FMRDL(const u32 code, const settings& settings);
+            std::string FMRS(const u32 code, const settings& settings);
+            std::string FMRX(const u32 code, const settings& settings);
+            std::string FMSCD(const u32 code, const settings& settings);
+            std::string FMSCS(const u32 code, const settings& settings);
+            std::string FMSR(const u32 code, const settings& settings);
+            std::string FMSTAT(const u32 code, const settings& settings);
+            std::string FMULD(const u32 code, const settings& settings);
+            std::string FMULS(const u32 code, const settings& settings);
+            std::string FMXR(const u32 code, const settings& settings);
+            std::string FNEGD(const u32 code, const settings& settings);
+            std::string FNEGS(const u32 code, const settings& settings);
+            std::string FNMACD(const u32 code, const settings& settings);
+            std::string FNMACS(const u32 code, const settings& settings);
+            std::string FNMSCD(const u32 code, const settings& settings);
+            std::string FNMSCS(const u32 code, const settings& settings);
+            std::string FNMULD(const u32 code, const settings& settings);
+            std::string FNMULS(const u32 code, const settings& settings);
+            std::string FSITOD(const u32 code, const settings& settings);
+            std::string FSITOS(const u32 code, const settings& settings);
+            std::string FSQRTD(const u32 code, const settings& settings);
+            std::string FSQRTS(const u32 code, const settings& settings);
+            std::string FSTD(const u32 code, const settings& settings);
+            std::string FSTMD(const u32 code, const settings& settings);
+            std::string FSTMS(const u32 code, const settings& settings);
+            std::string FSTMX(const u32 code, const settings& settings);
+            std::string FSTS(const u32 code, const settings& settings);
+            std::string FSUBD(const u32 code, const settings& settings);
+            std::string FSUBS(const u32 code, const settings& settings);
+            std::string FTOSID(const u32 code, const settings& settings);
+            std::string FTOSIS(const u32 code, const settings& settings);
+            std::string FTOUID(const u32 code, const settings& settings);
+            std::string FTOUIS(const u32 code, const settings& settings);
+            std::string FUITOD(const u32 code, const settings& settings);
+            std::string FUITOS(const u32 code, const settings& settings);
         }
     }
 
 
     namespace thumb {
         namespace math {
-            std::string ADC(u32, settings); 
-            std::string ADD1(u32, settings);
-            std::string ADD2(u32, settings);
-            std::string ADD3(u32, settings);
-            std::string ADD4(u32, settings);
-            std::string ADD5(u32, settings);
-            std::string ADD6(u32, settings);
-            std::string ADD7(u32, settings);
-            std::string SBC(u32, settings);
-            std::string SUB1(u32, settings);
-            std::string SUB2(u32, settings);
-            std::string SUB3(u32, settings);
-            std::string SUB4(u32, settings);
-            std::string MUL(u32, settings);
+            std::string ADC(const u32 code, const settings& settings); 
+            std::string ADD1(const u32 code, const settings& settings);
+            std::string ADD2(const u32 code, const settings& settings);
+            std::string ADD3(const u32 code, const settings& settings);
+            std::string ADD4(const u32 code, const settings& settings);
+            std::string ADD5(const u32 code, const settings& settings);
+            std::string ADD6(const u32 code, const settings& settings);
+            std::string ADD7(const u32 code, const settings& settings);
+            std::string SBC(const u32 code, const settings& settings);
+            std::string SUB1(const u32 code, const settings& settings);
+            std::string SUB2(const u32 code, const settings& settings);
+            std::string SUB3(const u32 code, const settings& settings);
+            std::string SUB4(const u32 code, const settings& settings);
+            std::string MUL(const u32 code, const settings& settings);
         }
 
         namespace logic {
-            std::string AND(u32, settings);
-            std::string ASR1(u32, settings);
-            std::string ASR2(u32, settings);
-            std::string BIC(u32, settings);
-            std::string EOR(u32, settings);
-            std::string LSL1(u32, settings);
-            std::string LSL2(u32, settings);
-            std::string LSR1(u32, settings);
-            std::string LSR2(u32, settings);
-            std::string NEG(u32, settings);
-            std::string ORR(u32, settings);
-            std::string ROR(u32, settings);
-            std::string TST(u32, settings);
+            std::string AND(const u32 code, const settings& settings);
+            std::string ASR1(const u32 code, const settings& settings);
+            std::string ASR2(const u32 code, const settings& settings);
+            std::string BIC(const u32 code, const settings& settings);
+            std::string EOR(const u32 code, const settings& settings);
+            std::string LSL1(const u32 code, const settings& settings);
+            std::string LSL2(const u32 code, const settings& settings);
+            std::string LSR1(const u32 code, const settings& settings);
+            std::string LSR2(const u32 code, const settings& settings);
+            std::string NEG(const u32 code, const settings& settings);
+            std::string ORR(const u32 code, const settings& settings);
+            std::string ROR(const u32 code, const settings& settings);
+            std::string TST(const u32 code, const settings& settings);
         }
 
         namespace comparison {
-            std::string CMN(u32, settings);
-            std::string CMP1(u32, settings);
-            std::string CMP2(u32, settings);
-            std::string CMP3(u32, settings);
+            std::string CMN(const u32 code, const settings& settings);
+            std::string CMP1(const u32 code, const settings& settings);
+            std::string CMP2(const u32 code, const settings& settings);
+            std::string CMP3(const u32 code, const settings& settings);
         }
 
         namespace movement {
-            std::string MOV1(u32, settings);
-            std::string MOV2(u32, settings);
-            std::string MOV3(u32, settings);
-            std::string MVN(u32, settings);
+            std::string MOV1(const u32 code, const settings& settings);
+            std::string MOV2(const u32 code, const settings& settings);
+            std::string MOV3(const u32 code, const settings& settings);
+            std::string MVN(const u32 code, const settings& settings);
         }
 
         namespace branching {
-            std::string B1(u32, u32 PC, settings);
-            std::string B2(u32, u32 PC, settings);
-            std::string BX(u32, settings);
-            std::string BL_BLX1(u32, u32 PC, settings);
-            std::string BLX2(u32, settings);
+            std::string B1(const u32 code, const u32 PC, const settings& settings);
+            std::string B2(const u32 code, const u32 PC, const settings& settings);
+            std::string BX(const u32 code, const settings& settings);
+            std::string BL_BLX1(const u32 code, const u32 PC, const settings& settings);
+            std::string BLX2(const u32 code, const settings& settings);
         }
 
         namespace misc {
-            std::string SWI(u32, settings);
-            std::string BKPT(u32, settings);
+            std::string SWI(const u32 code, const settings& settings);
+            std::string BKPT(const u32 code, const settings& settings);
         }
 
         namespace load {
-            std::string LDMIA(u32, settings);
-            std::string LDR1(u32, settings);
-            std::string LDR2(u32, settings);
-            std::string LDR3(u32, settings);
-            std::string LDR4(u32, settings);
-            std::string LDRB1(u32, settings);
-            std::string LDRB2(u32, settings);
-            std::string LDRH1(u32, settings);
-            std::string LDRH2(u32, settings);
-            std::string LDRSB(u32, settings);
-            std::string LDRSH(u32, settings);
-            std::string POP(u32, settings);
+            std::string LDMIA(const u32 code, const settings& settings);
+            std::string LDR1(const u32 code, const settings& settings);
+            std::string LDR2(const u32 code, const settings& settings);
+            std::string LDR3(const u32 code, const settings& settings);
+            std::string LDR4(const u32 code, const settings& settings);
+            std::string LDRB1(const u32 code, const settings& settings);
+            std::string LDRB2(const u32 code, const settings& settings);
+            std::string LDRH1(const u32 code, const settings& settings);
+            std::string LDRH2(const u32 code, const settings& settings);
+            std::string LDRSB(const u32 code, const settings& settings);
+            std::string LDRSH(const u32 code, const settings& settings);
+            std::string POP(const u32 code, const settings& settings);
         }
 
         namespace store {
-            std::string STMIA(u32, settings);
-            std::string STR1(u32, settings);
-            std::string STR2(u32, settings);
-            std::string STR3(u32, settings);
-            std::string STRB1(u32, settings);
-            std::string STRB2(u32, settings);
-            std::string STRH1(u32, settings);
-            std::string STRH2(u32, settings);
-            std::string PUSH(u32, settings);
+            std::string STMIA(const u32 code, const settings& settings);
+            std::string STR1(const u32 code, const settings& settings);
+            std::string STR2(const u32 code, const settings& settings);
+            std::string STR3(const u32 code, const settings& settings);
+            std::string STRB1(const u32 code, const settings& settings);
+            std::string STRB2(const u32 code, const settings& settings);
+            std::string STRH1(const u32 code, const settings& settings);
+            std::string STRH2(const u32 code, const settings& settings);
+            std::string PUSH(const u32 code, const settings& settings);
         }
     }
 }

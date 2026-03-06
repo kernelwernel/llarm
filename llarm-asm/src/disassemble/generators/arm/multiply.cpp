@@ -26,7 +26,7 @@ using namespace internal;
 
  * reference: A4-54
  */
-std::string generators::arm::multiply::MLA(const u32 code, const settings settings) {
+std::string generators::arm::multiply::MLA(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 16, 19, settings);
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     const std::string Rs = util::reg_string(code, 8, 11, settings);
@@ -34,7 +34,9 @@ std::string generators::arm::multiply::MLA(const u32 code, const settings settin
 
     const char* S = (llarm::util::bit_fetch(code, 20) ? "S" : "");
 
-    return util::make_string("MLA", util::cond(code, settings), S, " ", Rd, ", ", Rm, ", ", Rs, ", ", Rn);
+    const bool suf = settings.cond_always_suffix;
+
+    return util::make_string("MLA", (suf ? S : ""), util::cond(code, settings), (suf ? "" : S), " ", Rd, ", ", Rm, ", ", Rs, ", ", Rn);
 }
 
 
@@ -53,14 +55,16 @@ std::string generators::arm::multiply::MLA(const u32 code, const settings settin
  *
  * reference: A4-66
  */
-std::string generators::arm::multiply::MUL(const u32 code, const settings settings) {
+std::string generators::arm::multiply::MUL(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 16, 19, settings);
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     const std::string Rs = util::reg_string(code, 8, 11, settings);
 
     const char* S = (llarm::util::bit_fetch(code, 20) ? "S" : "");
 
-    return util::make_string("MUL", util::cond(code, settings), S, " ", Rd, ", ", Rm, ", ", Rs);
+    const bool suf = settings.cond_always_suffix;
+
+    return util::make_string("MUL", (suf ? S : ""), util::cond(code, settings), (suf ? "" : S), " ", Rd, ", ", Rm, ", ", Rs);
 }
 
 
@@ -82,7 +86,7 @@ std::string generators::arm::multiply::MUL(const u32 code, const settings settin
  * 
  * reference: A4-78
  */
-std::string generators::arm::multiply::SMLAL(const u32 code, const settings settings) {
+std::string generators::arm::multiply::SMLAL(const u32 code, const settings& settings) {
     return patterns::mul_Hi_Lo(code, "SMLAL", settings);
 }
 
@@ -104,7 +108,7 @@ std::string generators::arm::multiply::SMLAL(const u32 code, const settings sett
  *
  * reference: A4-80
  */
-std::string generators::arm::multiply::SMULL(const u32 code, const settings settings) {
+std::string generators::arm::multiply::SMULL(const u32 code, const settings& settings) {
     return patterns::mul_Hi_Lo(code, "SMULL", settings);
 }
 
@@ -127,7 +131,7 @@ std::string generators::arm::multiply::SMULL(const u32 code, const settings sett
  * 
  * reference: A4-109
  */
-std::string generators::arm::multiply::UMLAL(const u32 code, const settings settings) {
+std::string generators::arm::multiply::UMLAL(const u32 code, const settings& settings) {
     return patterns::mul_Hi_Lo(code, "UMLAL", settings);
 }
 
@@ -148,6 +152,6 @@ std::string generators::arm::multiply::UMLAL(const u32 code, const settings sett
  *
  * reference: A4-111
  */
-std::string generators::arm::multiply::UMULL(const u32 code, const settings settings) {
+std::string generators::arm::multiply::UMULL(const u32 code, const settings& settings) {
     return patterns::mul_Hi_Lo(code, "UMULL", settings);
 }

@@ -37,7 +37,7 @@ using namespace internal;
  * 
  * reference: A4-20
  */
-std::string generators::arm::coprocessor::CDP(const u32 code, const settings settings) {
+std::string generators::arm::coprocessor::CDP(const u32 code, const settings& settings) {
     const u8 cond = llarm::util::bit_range<u8>(code, 28, 31);
     const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond, settings));
 
@@ -79,7 +79,7 @@ std::string generators::arm::coprocessor::CDP(const u32 code, const settings set
  * 
  * reference: A4-28
  */
-std::string generators::arm::coprocessor::LDC(const u32 code, const settings settings) {
+std::string generators::arm::coprocessor::LDC(const u32 code, const settings& settings) {
     const u8 cond = llarm::util::bit_range<u8>(code, 28, 31);
     const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond, settings));
 
@@ -116,7 +116,7 @@ std::string generators::arm::coprocessor::LDC(const u32 code, const settings set
  * 
  * reference: A4-52
  */
-std::string generators::arm::coprocessor::MCR(const u32 code, const settings settings) {
+std::string generators::arm::coprocessor::MCR(const u32 code, const settings& settings) {
     const u8 cond = llarm::util::bit_range<u8>(code, 28, 31);
     const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond, settings));
 
@@ -155,7 +155,7 @@ std::string generators::arm::coprocessor::MCR(const u32 code, const settings set
  * 
  * reference: A4-58
  */
-std::string generators::arm::coprocessor::MRC(const u32 code, const settings settings) {
+std::string generators::arm::coprocessor::MRC(const u32 code, const settings& settings) {
     const u8 cond = llarm::util::bit_range<u8>(code, 28, 31);
     const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond, settings));
 
@@ -197,7 +197,7 @@ std::string generators::arm::coprocessor::MRC(const u32 code, const settings set
  * 
  * reference: A4-82
  */
-std::string generators::arm::coprocessor::STC(const u32 code, const settings settings) {
+std::string generators::arm::coprocessor::STC(const u32 code, const settings& settings) {
     const u8 cond = llarm::util::bit_range<u8>(code, 28, 31);
     const std::string suffix = ((cond == 0b1111) ? "2" : util::raw_cond(cond, settings));
 

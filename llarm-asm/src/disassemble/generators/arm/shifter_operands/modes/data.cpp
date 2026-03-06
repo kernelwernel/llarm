@@ -9,34 +9,37 @@
 using namespace internal;
 
 // reference: A5-6
-std::string shifters::data_imm(const u32 code, const settings settings) {
+std::string shifters::data_imm(const u32 code, const settings& settings) {
     const u8 rotate_imm = llarm::util::bit_range<u8>(code, 8, 11);
     const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
-    return util::make_string("#", util::hex(llarm::util::rotr(immed_8, (rotate_imm * 2)), settings));
+    const std::string rotate_str = ((settings.explicit_rotation) ? std::to_string(rotate_imm * 2) : "");
+    return util::make_string(
+        "#", util::hex(llarm::util::rotr(immed_8, (rotate_imm * 2)), settings), (rotate_str.empty() ? "": ", #"), rotate_str
+    );
     // TODO, LSR has 32 when the value is 0 (A5-11)
 }
 
 
 // reference: A5-8
-std::string shifters::data_reg(const u32 code, const settings settings) {
+std::string shifters::data_reg(const u32 code, const settings& settings) {
     return util::reg_string(code, 0, 3, settings);
 }
 
 
 // reference: A5-17
-std::string shifters::data_rrx(const u32 code, const settings settings) {
+std::string shifters::data_rrx(const u32 code, const settings& settings) {
     return util::make_string(util::reg_string(code, 0, 3, settings), ", RRX");
 }
 
 
-std::string shifters::data_reg_pattern(const u32 code, const std::string &mode, const settings settings) {
+std::string shifters::data_reg_pattern(const u32 code, const std::string &mode, const settings& settings) {
     const std::string Rs = util::reg_string(code, 8, 11, settings);
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     return util::make_string(Rm, ", ", mode, " ", Rs);
 }
 
 
-std::string shifters::data_imm_pattern(const u32 code, const std::string &mode, const settings settings) {
+std::string shifters::data_imm_pattern(const u32 code, const std::string &mode, const settings& settings) {
     u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
 
     if (shift_imm == 0) {

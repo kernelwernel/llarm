@@ -39,7 +39,7 @@ using namespace internal;
  * 
  * reference: A4-30
  */
-std::string generators::arm::load::LDM1(const u32 code, const settings settings) {
+std::string generators::arm::load::LDM1(const u32 code, const settings& settings) {
     const u16 register_list = llarm::util::bit_range<u16>(code, 0, 15);
 
     const std::string Rn = util::reg_string(code, 16, 19, settings); 
@@ -82,7 +82,7 @@ std::string generators::arm::load::LDM1(const u32 code, const settings settings)
  * 
  * reference: A4-32
  */
-std::string generators::arm::load::LDM2(const u32 code, const settings settings) {
+std::string generators::arm::load::LDM2(const u32 code, const settings& settings) {
     const u16 register_list = llarm::util::bit_range<u16>(code, 0, 14);
     
     const std::string Rn = util::reg_string(code, 16, 19, settings);
@@ -127,7 +127,7 @@ std::string generators::arm::load::LDM2(const u32 code, const settings settings)
  * 
  * reference: A4-34
  */
-std::string generators::arm::load::LDM3(const u32 code, const settings settings) {
+std::string generators::arm::load::LDM3(const u32 code, const settings& settings) {
     const u16 register_list = llarm::util::bit_range<u16>(code, 0, 14);
 
     const std::string Rn = util::reg_string(code, 16, 19, settings);
@@ -157,7 +157,7 @@ std::string generators::arm::load::LDM3(const u32 code, const settings settings)
  * 
  * reference: A4-37
  */
-std::string generators::arm::load::LDR(const u32 code, const settings settings) {
+std::string generators::arm::load::LDR(const u32 code, const settings& settings) {
     const std::string addressing_mode = shifters::ls(code, settings);
 
     const std::string Rd = util::reg_string(code, 12, 15, settings);
@@ -182,7 +182,7 @@ std::string generators::arm::load::LDR(const u32 code, const settings settings) 
  *
  * reference: A4-40
  */
-std::string generators::arm::load::LDRB(const u32 code, const settings settings) {
+std::string generators::arm::load::LDRB(const u32 code, const settings& settings) {
     const std::string addressing_mode = shifters::ls(code, settings);
 
     const std::string Rd = util::reg_string(code, 12, 15, settings);
@@ -211,7 +211,7 @@ std::string generators::arm::load::LDRB(const u32 code, const settings settings)
  * 
  * reference: A4-42
  */
-std::string generators::arm::load::LDRBT(const u32 code, const settings settings) {
+std::string generators::arm::load::LDRBT(const u32 code, const settings& settings) {
     const shifter_id mode_id = shifters::identify_ls_shifter(code);
     
     switch (mode_id) {
@@ -249,12 +249,14 @@ std::string generators::arm::load::LDRBT(const u32 code, const settings settings
  * 
  * reference: A4-44
  */
-std::string generators::arm::load::LDRH(const u32 code, const settings settings) {
+std::string generators::arm::load::LDRH(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
     const std::string addressing_mode = shifters::ls_misc(code, settings);
 
-    return util::make_string("LDR", util::cond(code, settings), "H ", Rd, ", ", addressing_mode);
+    const bool suf = settings.cond_always_suffix;
+
+    return util::make_string("LDR", (suf ? "H" : ""), util::cond(code, settings), (suf ? " " : "H "), Rd, ", ", addressing_mode);
 }
 
 
@@ -274,12 +276,14 @@ std::string generators::arm::load::LDRH(const u32 code, const settings settings)
  *
  * reference: A4-46
  */
-std::string generators::arm::load::LDRSB(const u32 code, const settings settings) {
+std::string generators::arm::load::LDRSB(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
     const std::string addressing_mode = shifters::ls_misc(code, settings);
 
-    return util::make_string("LDR", util::cond(code, settings), "SB ", Rd, ", ", addressing_mode);
+    const bool suf = settings.cond_always_suffix;
+
+    return util::make_string("LDR", (suf ? "SB" : ""), util::cond(code, settings), (suf ? " " : "SB "), Rd, ", ", addressing_mode);
 }
 
 
@@ -299,12 +303,14 @@ std::string generators::arm::load::LDRSB(const u32 code, const settings settings
  * 
  * reference: A4-48
  */
-std::string generators::arm::load::LDRSH(const u32 code, const settings settings) {
+std::string generators::arm::load::LDRSH(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
     const std::string addressing_mode = shifters::ls_misc(code, settings);
 
-    return util::make_string("LDR", util::cond(code, settings), "SH ", Rd, ", ", addressing_mode);
+    const bool suf = settings.cond_always_suffix;
+
+    return util::make_string("LDR", (suf ? "SH" : ""), util::cond(code, settings), (suf ? " " : "SH "), Rd, ", ", addressing_mode);
 }
 
 
@@ -328,7 +334,7 @@ std::string generators::arm::load::LDRSH(const u32 code, const settings settings
  * 
  * reference: A4-50
  */
-std::string generators::arm::load::LDRT(const u32 code, const settings settings) {
+std::string generators::arm::load::LDRT(const u32 code, const settings& settings) {
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
     const shifter_id mode_id = shifters::identify_ls_shifter(code);

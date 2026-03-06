@@ -156,7 +156,10 @@ namespace internal::util {
     // i'm deeply sorry to whoever is reading this absolute mess, same for the function below.
     template<typename T>
     void append_arg(std::string& result, T&& arg) {
-        if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
+        // char is treated as an arithmetic int without this check
+        if constexpr (std::is_same_v<std::decay_t<T>, char>) {
+            result += arg;
+        } else if constexpr (std::is_arithmetic_v<std::decay_t<T>>) {
             // handle numbers
             result += std::to_string(std::forward<T>(arg));
         } else {
@@ -178,7 +181,9 @@ namespace internal::util {
 
         size_t total_size = 0;
         ([&](auto&& arg) {
-            if constexpr (std::is_arithmetic_v<std::decay_t<decltype(arg)>>) {
+            if constexpr (std::is_same_v<std::decay_t<decltype(arg)>, char>) {
+                total_size += 1;
+            } else if constexpr (std::is_arithmetic_v<std::decay_t<decltype(arg)>>) {
                 total_size += std::to_string(arg).size();
             } else {
                 total_size += sv(arg).size();

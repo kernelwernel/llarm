@@ -1,4 +1,5 @@
 #include "patterns.hpp"
+#include "../../disassemble.hpp"
 #include "../arm/shifter_operands/shifters.hpp"
 
 #include <llarm/shared/types.hpp>
@@ -11,7 +12,7 @@
 using namespace internal;
 
 
-std::string patterns::S_Rd_Rn_data(const u32 code, const std::string &instruction, const settings settings) {
+std::string patterns::S_Rd_Rn_data(const u32 code, const std::string &instruction, const settings& settings) {
     const std::string shifter_operand = shifters::data(code, settings);
 
     const std::string Rd = util::reg_string(code, 12, 15, settings);
@@ -19,13 +20,15 @@ std::string patterns::S_Rd_Rn_data(const u32 code, const std::string &instructio
 
     const char* S = (llarm::util::bit_fetch(code, 20) ? "S" : "");
 
+    const bool suf = settings.cond_always_suffix;
+
     return util::make_string(
-        instruction, util::cond(code, settings), S, " ", Rd, ", ", Rn, ", ", shifter_operand
+        instruction, (suf ? S : ""), util::cond(code, settings), (suf ? "" : S), " ", Rd, ", ", Rn, ", ", shifter_operand
     );
 }
 
 
-std::string patterns::Rn_data(const u32 code, const std::string &instruction, const settings settings) {
+std::string patterns::Rn_data(const u32 code, const std::string &instruction, const settings& settings) {
     const std::string shifter_operand = shifters::data(code, settings);
 
     const std::string Rn = util::reg_string(code, 16, 19, settings);
@@ -36,15 +39,64 @@ std::string patterns::Rn_data(const u32 code, const std::string &instruction, co
 }
 
 
-std::string patterns::S_Rd_data(const u32 code, const std::string &instruction, const settings settings) {
-    const std::string shifter_operand = shifters::data(code, settings);
-
+std::string patterns::S_Rd_data(const u32 code, const std::string &instruction, const settings& settings, const bool aliasing) {
+    const shifter_id shift_id = shifters::identify_data_shifter(code);
+    
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
+    if (settings.equivalent_alias && aliasing) {
+        const char* alias_inst = "";
+        
+        bool is_reg = false;
+        bool is_imm = false;
+
+        switch (shift_id) {
+            case shifter_id::DATA_REG_LSL: alias_inst = "LSL"; is_reg = true; break;
+            case shifter_id::DATA_REG_LSR: alias_inst = "LSR"; is_reg = true; break;
+            case shifter_id::DATA_REG_ASR: alias_inst = "ASR"; is_reg = true; break;
+            case shifter_id::DATA_REG_ROR: alias_inst = "ROR"; is_reg = true; break;
+            case shifter_id::DATA_IMM_LSR: alias_inst = "LSR"; is_imm = true; break;
+            case shifter_id::DATA_IMM_LSL: alias_inst = "LSL"; is_imm = true; break;
+            case shifter_id::DATA_IMM_ASR: alias_inst = "ASR"; is_imm = true; break;
+            case shifter_id::DATA_IMM_ROR: alias_inst = "ROR"; is_imm = true; break;
+            case shifter_id::DATA_RRX: alias_inst = "RRX"; break;
+            default: alias_inst = ERROR;
+        }
+
+        if (alias_inst != ERROR) {
+            const std::string second = util::reg_string(code, 0, 3, settings);;
+            std::string third = "";
+
+            if (is_reg) {
+                third = util::reg_string(code, 8, 11, settings);
+            } else if (is_imm) {
+                u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11); 
+
+                if (shift_imm == 0) {
+                    shift_imm = 32;
+                }
+
+                if (settings.hex) {
+                    third += "#";
+                    third += util::hex(shift_imm, settings);
+                } else {
+                    third += std::to_string(shift_imm);
+                }
+            }
+
+            return util::make_string(
+                alias_inst, util::cond(code, settings), " ", Rd, ", ", second, (third.empty() ? "" : ", "), third
+            );
+        }
+    }
+
+    const std::string shifter_operand = shifters::data(code, shift_id, settings);
+
     const char* S = (llarm::util::bit_fetch(code, 20) ? "S" : "");
+    const bool suf = settings.cond_always_suffix;
 
     return util::make_string(
-        instruction, util::cond(code, settings), S, " ", Rd, ", ", shifter_operand
+        instruction, (suf ? S : ""), util::cond(code, settings), (suf ? "" : S), " ", Rd, ", ", shifter_operand
     );
 }
 
@@ -72,7 +124,7 @@ std::string patterns::psr_fields(const u32 code) {
 }
 
 
-std::string patterns::mul_Hi_Lo(const u32 code, const std::string &instruction, const settings settings) {
+std::string patterns::mul_Hi_Lo(const u32 code, const std::string &instruction, const settings& settings) {
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     const std::string Rs = util::reg_string(code, 8, 11, settings);
     const std::string RdHi = util::reg_string(code, 16, 19, settings);
@@ -80,15 +132,17 @@ std::string patterns::mul_Hi_Lo(const u32 code, const std::string &instruction, 
 
     const char* S = (llarm::util::bit_fetch(code, 20) ? "S" : "");
 
+    const bool suf = settings.cond_always_suffix;
+
     return util::make_string(
-        instruction, util::cond(code, settings), S, " ", RdLo, ", ", RdHi, ", ", Rm, ", ", Rs
+        instruction, (suf ? S : ""), util::cond(code, settings), (suf ? "" : S), " ", RdLo, ", ", RdHi, ", ", Rm, ", ", Rs
     );
 }
 
 
 
 
-std::string patterns::dsp_Rd_Rm_Rn(const u32 code, const std::string &instruction, const settings settings) {
+std::string patterns::dsp_Rd_Rm_Rn(const u32 code, const std::string &instruction, const settings& settings) {
     const std::string Rd = util::reg_string(code, 12, 15, settings);
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     const std::string Rn = util::reg_string(code, 16, 19, settings);
@@ -98,7 +152,7 @@ std::string patterns::dsp_Rd_Rm_Rn(const u32 code, const std::string &instructio
     );
 }
 
-std::string patterns::vfp_Dd_Dm(const u32 code, const std::string &instruction, const settings settings) {
+std::string patterns::vfp_Dd_Dm(const u32 code, const std::string &instruction, const settings& settings) {
     const std::string Dd = util::reg_string(code, 12, 15, settings, util::prefix::D);
     const std::string Dm = util::reg_string(code, 0, 3, settings, util::prefix::D);
 
@@ -108,7 +162,7 @@ std::string patterns::vfp_Dd_Dm(const u32 code, const std::string &instruction, 
 }
 
 
-std::string patterns::vfp_Dd_Dn_Dm(const u32 code, const std::string &instruction, const settings settings) {
+std::string patterns::vfp_Dd_Dn_Dm(const u32 code, const std::string &instruction, const settings& settings) {
     const std::string Dd = util::reg_string(code, 12, 15, settings, util::prefix::D);
     const std::string Dn = util::reg_string(code, 16, 19, settings, util::prefix::D);
     const std::string Dm = util::reg_string(code, 0, 3, settings, util::prefix::D);
@@ -119,7 +173,7 @@ std::string patterns::vfp_Dd_Dn_Dm(const u32 code, const std::string &instructio
 }
 
 
-std::string patterns::vfp_Sd_Sm(const u32 code, const std::string &instruction, const settings settings) {
+std::string patterns::vfp_Sd_Sm(const u32 code, const std::string &instruction, const settings& settings) {
     const bool D = (llarm::util::bit_fetch(code, 22));
     const bool M = (llarm::util::bit_fetch(code, 5));
 
@@ -132,7 +186,7 @@ std::string patterns::vfp_Sd_Sm(const u32 code, const std::string &instruction, 
 }
 
 
-std::string patterns::vfp_Sd_Sm_Z(const u32 code, const std::string &semi_instruction, const settings settings) {
+std::string patterns::vfp_Sd_Sm_Z(const u32 code, const std::string &semi_instruction, const settings& settings) {
     const bool D = (llarm::util::bit_fetch(code, 22));
     const bool M = (llarm::util::bit_fetch(code, 5));
 
@@ -151,7 +205,7 @@ std::string patterns::vfp_Sd_Sm_Z(const u32 code, const std::string &semi_instru
 }
 
 
-std::string patterns::vfp_Sd_Dm_Z(const u32 code, const std::string &semi_instruction, const settings settings) {
+std::string patterns::vfp_Sd_Dm_Z(const u32 code, const std::string &semi_instruction, const settings& settings) {
     const bool D = (llarm::util::bit_fetch(code, 22));
    
     const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D, settings);
@@ -169,11 +223,11 @@ std::string patterns::vfp_Sd_Dm_Z(const u32 code, const std::string &semi_instru
 }
 
 
-std::string patterns::vfp_Sd_Sn_Sm(const u32 code, const std::string &instruction, const settings settings) {
+std::string patterns::vfp_Sd_Sn_Sm(const u32 code, const std::string &instruction, const settings& settings) {
     const bool D = (llarm::util::bit_fetch(code, 22));
     const bool N = (llarm::util::bit_fetch(code, 7));
     const bool M = (llarm::util::bit_fetch(code, 5));
-   
+
     const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D, settings);
     const std::string Sn = util::vfp_reg_string_bits(code, 16, 19, N, settings);
     const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M, settings);
@@ -184,7 +238,7 @@ std::string patterns::vfp_Sd_Sn_Sm(const u32 code, const std::string &instructio
 }
 
 
-std::string patterns::vfp_Dd_Sm(const u32 code, const std::string &instruction, const settings settings) {
+std::string patterns::vfp_Dd_Sm(const u32 code, const std::string &instruction, const settings& settings) {
     const bool M = (llarm::util::bit_fetch(code, 5));
    
     const std::string Sm = util::vfp_reg_string_bits(code, 0, 3, M, settings);
@@ -196,7 +250,7 @@ std::string patterns::vfp_Dd_Sm(const u32 code, const std::string &instruction, 
 }
 
 
-std::string patterns::vfp_Rd_Dn(const u32 code, const std::string &instruction, const settings settings) {
+std::string patterns::vfp_Rd_Dn(const u32 code, const std::string &instruction, const settings& settings) {
     const std::string Rd = util::reg_string(code, 12, 15, settings, util::prefix::R);
     const std::string Dn = util::reg_string(code, 16, 19, settings, util::prefix::D);
 
@@ -206,7 +260,7 @@ std::string patterns::vfp_Rd_Dn(const u32 code, const std::string &instruction, 
 }
 
 
-std::string patterns::vfp_Dn_Rd(const u32 code, const std::string &instruction, const settings settings) {
+std::string patterns::vfp_Dn_Rd(const u32 code, const std::string &instruction, const settings& settings) {
     const std::string Rd = util::reg_string(code, 12, 15, settings, util::prefix::R);
     const std::string Dn = util::reg_string(code, 16, 19, settings, util::prefix::D);
 
@@ -216,7 +270,7 @@ std::string patterns::vfp_Dn_Rd(const u32 code, const std::string &instruction, 
 }
 
 
-std::string patterns::vfp_Sd(const u32 code, const std::string &instruction, const settings settings) {
+std::string patterns::vfp_Sd(const u32 code, const std::string &instruction, const settings& settings) {
     const bool D = (llarm::util::bit_fetch(code, 22));
 
     const std::string Sd = util::vfp_reg_string_bits(code, 12, 15, D, settings);
@@ -227,7 +281,7 @@ std::string patterns::vfp_Sd(const u32 code, const std::string &instruction, con
 }
 
 
-std::string patterns::vfp_Dd(const u32 code, const std::string &instruction, const settings settings) {
+std::string patterns::vfp_Dd(const u32 code, const std::string &instruction, const settings& settings) {
     const std::string Dd = util::reg_string(code, 12, 15, settings, util::prefix::D);
 
     return util::make_string(

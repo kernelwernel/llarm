@@ -16,13 +16,16 @@ include("../../cmake/dependencies.cmake")
 
 
 # targets and variables
-set(TARGET "disassembly-test")
+set(TARGET_ARM "disassembly-test-arm")
+set(TARGET_THUMB "disassembly-test-thumb")
+set(TARGET_BENCH_ARM "disassembly-bench-arm")
+set(TARGET_CAP "capstone-test")
 
 # project details
 project(
     disassembly-test
     VERSION 0.1 
-    DESCRIPTION "Disassembly test for llarm-asm"
+    DESCRIPTION "ARM and thumb disassembly test fuzzing for llarm-asm"
     LANGUAGES CXX
 )
 
@@ -50,34 +53,27 @@ add_dependency(
 
 
 # source code generation
-file(GLOB_RECURSE ALL_SOURCES CONFIGURE_DEPENDS "*.cpp")
-set(LIB_SOURCES ${ALL_SOURCES})
-foreach(source IN LISTS ALL_SOURCES)
-    if(source MATCHES "${pattern}")
-        list(REMOVE_ITEM LIB_SOURCES "${source}")
-        break()
-    endif()
-endforeach()
-
+file(GLOB_RECURSE ALL_SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 
 
 # executable setup
-add_executable(${TARGET} "arm_disassembly.cpp")
-#set_target_properties(${TARGET} PROPERTIES
-#    OUTPUT_NAME "llarm-asm"
-#    INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
-#    BUILD_RPATH "${CMAKE_BINARY_DIR}"
-#)
-
+add_executable(${TARGET_ARM} "src/arm_disassembly.cpp")
+add_executable(${TARGET_THUMB} "src/thumb_disassembly.cpp")
+add_executable(${TARGET_BENCH_ARM} "src/arm_benchmark.cpp")
+add_executable(${TARGET_CAP} "src/capstone.cpp")
 
 # library linkage
-target_link_libraries(${TARGET}
-    PRIVATE
-        ${LLARM_ASM_TARGET}
-        capstone
-)
-
+target_link_libraries(${TARGET_ARM} PRIVATE ${LLARM_ASM_TARGET} capstone)
+target_link_libraries(${TARGET_THUMB} PRIVATE ${LLARM_ASM_TARGET} capstone)
+target_link_libraries(${TARGET_BENCH_ARM} PRIVATE ${LLARM_ASM_TARGET} capstone)
+target_link_libraries(${TARGET_CAP} PRIVATE ${LLARM_ASM_TARGET} capstone)
 
 # configure the target flags
-configure_target_flags(${TARGET})
-configure_linker_flags(${TARGET})
+configure_target_flags(${TARGET_ARM})
+configure_linker_flags(${TARGET_ARM})
+configure_target_flags(${TARGET_THUMB})
+configure_linker_flags(${TARGET_THUMB})
+configure_target_flags(${TARGET_BENCH_ARM})
+configure_linker_flags(${TARGET_BENCH_ARM})
+configure_target_flags(${TARGET_CAP})
+configure_linker_flags(${TARGET_CAP})

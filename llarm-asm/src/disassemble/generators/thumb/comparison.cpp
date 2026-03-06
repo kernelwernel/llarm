@@ -16,7 +16,7 @@ using namespace internal;
  * 
  * reference: A7-34
  */
-std::string generators::thumb::comparison::CMN(const u32 code, const settings settings) {
+std::string generators::thumb::comparison::CMN(const u32 code, const settings& settings) {
     const std::string Rn = util::reg_string(code, 0, 2, settings);
     const std::string Rm = util::reg_string(code, 3, 5, settings);
 
@@ -34,7 +34,7 @@ std::string generators::thumb::comparison::CMN(const u32 code, const settings se
  * 
  * reference: A7-35
  */
-std::string generators::thumb::comparison::CMP1(const u32 code, const settings settings) {
+std::string generators::thumb::comparison::CMP1(const u32 code, const settings& settings) {
     const std::string Rn = util::reg_string(code, 8, 10, settings);
 
     const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
@@ -53,7 +53,7 @@ std::string generators::thumb::comparison::CMP1(const u32 code, const settings s
  * 
  * reference: A7-36
  */
-std::string generators::thumb::comparison::CMP2(const u32 code, const settings settings) {
+std::string generators::thumb::comparison::CMP2(const u32 code, const settings& settings) {
     const std::string Rn = util::reg_string(code, 0, 2, settings);
     const std::string Rm = util::reg_string(code, 3, 5, settings);
 
@@ -73,7 +73,7 @@ std::string generators::thumb::comparison::CMP2(const u32 code, const settings s
  * 
  * reference: A7-37
  */
-std::string generators::thumb::comparison::CMP3(const u32 code, const settings settings) {
+std::string generators::thumb::comparison::CMP3(const u32 code, const settings& settings) {
     const bool H1 = (llarm::util::bit_fetch(code, 7));
     const bool H2 = (llarm::util::bit_fetch(code, 6));
 
