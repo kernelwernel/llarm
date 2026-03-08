@@ -9,16 +9,16 @@
 using namespace internal;
 
 
-std::string shifters::ls_misc_imm(const u32 code, const settings& settings, const bool omit_nulls) {
+std::string shifters::ls_misc_imm(const u32 code, const settings& settings) {
     const u8 immedH = llarm::util::bit_range<u8>(code, 8, 11);
     const u8 immedL = llarm::util::bit_range<u8>(code, 0, 3);
     const u8 offset_8 = static_cast<u8>((immedH << 4) | immedL);
     const std::string Rn = util::reg_string(code, 16, 19, settings);
     
-    if ((offset_8 == 0) && omit_nulls) {
+    if ((offset_8 == 0) && settings.remove_nulls) {
         return util::make_string("[", Rn, "]");
     }
-    
+
     const char* op = ((llarm::util::bit_fetch(code, 23) == 0) ? "-" : "");
 
     return util::make_string("[", Rn, ", #", op, util::hex(offset_8, settings), "]");
@@ -26,7 +26,7 @@ std::string shifters::ls_misc_imm(const u32 code, const settings& settings, cons
 
 
 std::string shifters::ls_misc_imm_pre(const u32 code, const settings& settings) {
-    return (ls_misc_imm(code, settings, false) + "!");
+    return (ls_misc_imm(code, settings) + "!");
 }
 
 
@@ -69,4 +69,3 @@ std::string shifters::ls_misc_reg_post(const u32 code, const settings& settings)
 
     return util::make_string("[", Rn, "], ", op, Rm);
 }
-

@@ -75,29 +75,29 @@ public:
     bool is_exception();
     bool current_mode_has_SPSR();
     
-    id::reg fetch_reg_id(const u8);
-    id::reg fetch_reg_id(const u32, const u8, const u8);
-    id::reg thumb_fetch_reg_id(const u16, const u8, const u8);
+    id::reg fetch_reg_id(const u8 reg_bits);
+    id::reg fetch_reg_id(const u32 code, const u8 start, const u8 end);
+    id::reg thumb_fetch_reg_id(const u32 code, const u8 start, const u8 end);
 
-    id::cond fetch_cond_id(const u8);
-    id::cond fetch_cond_id(const u32);
+    id::cond fetch_cond_id(const u8 cond_bits);
+    id::cond fetch_cond_id(const u32 code);
 
-    bool is_cond_valid(const id::cond);
-    bool is_cond_valid(const u32);
+    bool is_cond_valid(const id::cond cond_id);
+    bool is_cond_valid(const u32 code);
 
-    void write(const id::cpsr, const u8);
+    void write(const id::cpsr cpsr_id, const u8 cpsr_value);
     void write(const id::reg reg_id);
     void write(const id::reg, const id::reg);
     void write(const id::reg, const u32);
     void write(const u32 code, const u8 start, const u8 end, const u32 value);
     void write(const u8 reg_bits, const u32 value);
 
-    u8 read(const id::cpsr);
-    u32 read(const id::reg);
-    u32 read(const u32, const u8, const u8);
-    u32 read(const u8);
+    u8 read(const id::cpsr cpsr_id);
+    u32 read(const id::reg reg_id);
+    u32 read(const u32 code, const u8 start, const u8 end);
+    u32 read(const u8 reg_bits);
 
-    void switch_mode(const id::mode mode);
+    void switch_mode(const id::mode mode_id);
     id::mode read_mode();
     
     u32 read_PC();
@@ -106,9 +106,9 @@ public:
     void thumb_increment_PC();
     void arm_increment_PC();
 
-    void access_check(const id::reg);
+    void access_check(const id::reg reg_id);
 
-    id::mode fetch_mode_id(const u8);
+    id::mode fetch_mode_id(const u8 mode_bits);
 
     void reset();
 

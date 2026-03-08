@@ -9,11 +9,11 @@
 using namespace internal;
 
 
-std::string shifters::ls_imm(const u32 code, const settings& settings, const bool omit_nulls) {
+std::string shifters::ls_imm(const u32 code, const settings& settings) {
     const std::string Rn = util::reg_string(code, 16, 19, settings);
     const u16 offset_12 = llarm::util::bit_range<u16>(code, 0, 11);
 
-    if ((offset_12 == 0) && omit_nulls) {
+    if ((offset_12 == 0) && settings.remove_nulls) {
         return util::make_string("[", Rn, "]");   
     }
 
@@ -24,7 +24,7 @@ std::string shifters::ls_imm(const u32 code, const settings& settings, const boo
 
 
 std::string shifters::ls_imm_pre(const u32 code, const settings& settings) {
-    return (ls_imm(code, settings, settings.remove_nulls) + "!");
+    return (ls_imm(code, settings) + "!");
 }
 
 

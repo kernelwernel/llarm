@@ -1,4 +1,5 @@
 #include "core.hpp"
+#include "src/settings.hpp"
 
 #include <llarm/shared/types.hpp>
 
@@ -87,7 +88,7 @@ void CORE::initialise(const std::vector<u8> &binary) {
     }
 
     // temporary, for development purposes
-    const llarm::as::settings assembly_settings = { false, true, false, true, true, false };
+    const llarm::as::settings assembly_settings = default_dis_settings();
 
     // instruction cycle 
     while (true) {

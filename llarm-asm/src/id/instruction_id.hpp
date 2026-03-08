@@ -215,6 +215,7 @@ namespace internal {
         B2,
         BL,
         BLX1,
+        BL_BLX1_PREFIX,
         BLX2,
         BX,
         NOP,

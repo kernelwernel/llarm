@@ -188,7 +188,7 @@ namespace internal::generators {
 
     namespace thumb {
         namespace math {
-            std::string ADC(const u32 code, const settings& settings); 
+            std::string ADC(const u32 code, const settings& settings);
             std::string ADD1(const u32 code, const settings& settings);
             std::string ADD2(const u32 code, const settings& settings);
             std::string ADD3(const u32 code, const settings& settings);

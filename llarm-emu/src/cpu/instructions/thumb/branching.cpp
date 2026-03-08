@@ -60,6 +60,21 @@ void INSTRUCTIONS::thumb::branching::BL(const u16 code) {
 
 
 /*
+ * LR = PC + (SignExtend(offset_11) << 12)
+ *
+ * NOTE: this is not a real instruction. It's more as a functional layer
+ *       to make the whole BL/BLX1 instruction work since they're divided
+ *       into 2 u16 operations instead of a single one. This manages the
+ *       first halfword of the operation.
+ */
+void INSTRUCTIONS::thumb::branching::BL_BLX1_PREFIX(const u16 code) {
+    const u16 offset_11 = llarm::util::bit_range<u16>(code, 0, 10);
+
+    reg.write(id::reg::LR, (reg.read(id::reg::PC) + u32(operation.sign_extend(offset_11, 10) << 12)));
+}
+
+
+/*
  * if H == 10 then
  *   LR = PC + (SignExtend(offset_11) << 12)
  * else if H == 11 then

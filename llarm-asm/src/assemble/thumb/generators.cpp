@@ -1,6 +1,7 @@
 #include "generators.hpp"
 #include <llarm/shared/out.hpp>
 #include <llarm/shared/util.hpp>
+#include <llarm/shared/types.hpp>
 
 using namespace internal;
 
@@ -282,6 +283,7 @@ u32 generators::thumb(const IR_thumb_struct& IR) {
         case thumb_id::B2: return B2(operands, IR.PC);
         case thumb_id::BL: return BL_BLX1(operands, IR.PC, id);
         case thumb_id::BLX1: return BL_BLX1(operands, IR.PC, id);
+        case thumb_id::BL_BLX1_PREFIX: return BL_BLX1(operands, IR.PC, id);
         case thumb_id::BLX2: return Rm_special(0b0100'0111'1000'0000, operands);
         case thumb_id::BX: return Rm_special(0b0100'0111'0000'0000, operands);
     }

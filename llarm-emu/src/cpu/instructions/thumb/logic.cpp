@@ -1,8 +1,6 @@
 #include "../../core/registers.hpp"
 #include "../instructions.hpp"
 
-#include <bit>
-
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
 

@@ -61,10 +61,11 @@ bool validation::string_thumb::is_thumb_instruction_valid(const IR_thumb_struct 
         /* ✅ */ case thumb_id::ADD2: return verify_lexemes({ reg_thumb(), token(HASHTAG), immed(8) }, lexemes);
         /* ✅ */ case thumb_id::CMP1: return verify_lexemes({ reg_thumb(), token(HASHTAG), immed(8) }, lexemes);
         /* ✅ */ case thumb_id::MOV1: return verify_lexemes({ reg_thumb(), token(HASHTAG), immed(8) }, lexemes);
-        case thumb_id::B1:
-        case thumb_id::B2:
-        case thumb_id::BLX1:
-        case thumb_id::BLX2:
+        /* TODO */ case thumb_id::B1:
+        /* TODO */ case thumb_id::B2:
+        /* TODO */ case thumb_id::BLX1:
+        /* TODO */ case thumb_id::BL_BLX1_PREFIX: 
+        /* TODO */ case thumb_id::BLX2:
         /* ✅ */ case thumb_id::LDR1: return verify_lexemes({ reg_thumb(), token(MEM_START), reg_thumb(), token(HASHTAG), immed(5, 4), token(MEM_END) }, lexemes); 
         /* ✅ */ case thumb_id::LDR3: return verify_lexemes({ reg_thumb(), token(MEM_START), reg(PC), token(HASHTAG), immed(8, 4), token(MEM_END) }, lexemes);
         /* ✅ */ case thumb_id::LDR4: return verify_lexemes({ reg_thumb(), token(MEM_START), reg(SP), token(HASHTAG), immed(8, 4), token(MEM_END) }, lexemes); 
@@ -83,9 +84,9 @@ bool validation::string_thumb::is_thumb_instruction_valid(const IR_thumb_struct 
         /* ✅ */ case thumb_id::STRH1: return verify_lexemes({ reg_thumb(), token(MEM_START), reg_thumb(), token(HASHTAG), immed(5, 2), token(MEM_END) }, lexemes); 
         /* ✅ */ case thumb_id::BKPT: return verify_lexemes({ immed(8) }, lexemes);
         /* ✅ */ case thumb_id::SWI: return verify_lexemes({ immed(8) }, lexemes); // no hashtag for both BKPT and SWI
-        case thumb_id::LDMIA: 
-        case thumb_id::STMIA: return verify_lexemes({ reg_thumb(), token(PRE_INDEX), reg_list_thumb() }, lexemes);
-        case thumb_id::BL: return verify_lexemes({ immed(16) }, lexemes); // TODO TEMPORARY
+        /* TODO */ case thumb_id::LDMIA: 
+        /* TODO */ case thumb_id::STMIA: return verify_lexemes({ reg_thumb(), token(PRE_INDEX), reg_list_thumb() }, lexemes);
+        /* TODO */ case thumb_id::BL: return verify_lexemes({ immed(16) }, lexemes); // TODO TEMPORARY
         /* ✅ */ case thumb_id::BX: return verify_lexemes({ reg() }, lexemes); // R0~R15 is only supported here 
         /* ✅ */ case thumb_id::POP: return verify_lexemes({ reg_list_thumb_optional_PC() }, lexemes);
         /* ✅ */ case thumb_id::PUSH: return verify_lexemes({ reg_list_thumb_optional_LR() }, lexemes);

@@ -310,7 +310,7 @@ std::string shifters::shifter_to_string(const shifter_id mode, const u32 code, c
         case shifter_id::DATA_REG_ASR: return data_reg_pattern(code, "ASR", settings);
         case shifter_id::DATA_REG_ROR: return data_reg_pattern(code, "ROR", settings);
         case shifter_id::DATA_RRX: return data_rrx(code, settings);
-        case shifter_id::LS_IMM: return ls_imm(code, settings, settings.remove_nulls);
+        case shifter_id::LS_IMM: return ls_imm(code, settings);
         case shifter_id::LS_IMM_PRE: return ls_imm_pre(code, settings);
         case shifter_id::LS_IMM_POST: return ls_imm_post(code, settings);
         case shifter_id::LS_REG: return ls_reg(code, settings);
@@ -331,7 +331,7 @@ std::string shifters::shifter_to_string(const shifter_id mode, const u32 code, c
         case shifter_id::LS_SCALED_POST_ASR: return ls_reg_scaled_post(code, "ASR", settings);
         case shifter_id::LS_SCALED_POST_ROR: return ls_reg_scaled_post(code, "ROR", settings);
         case shifter_id::LS_SCALED_POST_RRX: return ls_reg_scaled_post_rrx(code, settings);
-        case shifter_id::LS_MISC_IMM: return ls_misc_imm(code, settings, settings.remove_nulls);
+        case shifter_id::LS_MISC_IMM: return ls_misc_imm(code, settings);
         case shifter_id::LS_MISC_IMM_PRE: return ls_misc_imm_pre(code, settings);
         case shifter_id::LS_MISC_IMM_POST: return ls_misc_imm_post(code, settings);
         case shifter_id::LS_MISC_REG: return ls_misc_reg(code, settings);

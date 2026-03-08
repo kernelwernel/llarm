@@ -35,9 +35,9 @@ void EXECUTE::arm_execute(const arm_decode_struct &decode) {
         case arm_id::B: instructions.arm.branching.B(code); return;
         case arm_id::BL: instructions.arm.branching.BL(code); return;
         case arm_id::NOP: instructions.arm.misc.NOP(code); return;
-        case arm_id::CMNP: 
-        case arm_id::CMPP: 
-        case arm_id::TEQP: 
+        case arm_id::CMNP: instructions.arm.misc.PSR(code); return;
+        case arm_id::CMPP: instructions.arm.misc.PSR(code); return;
+        case arm_id::TEQP: instructions.arm.misc.PSR(code); return;
         case arm_id::TSTP: instructions.arm.misc.PSR(code); return;
         case arm_id::SWI: instructions.arm.misc.SWI(code); return;
         case arm_id::LDM1: instructions.arm.load.LDM1(code); return;
@@ -211,6 +211,7 @@ void EXECUTE::thumb_execute(const thumb_decode_struct &instruction) {
         case thumb_id::B2: instructions.thumb.branching.B2(code); return;
         case thumb_id::BL: instructions.thumb.branching.BL(code); return;
         case thumb_id::BLX1: instructions.thumb.branching.BLX1(code); return;
+        case thumb_id::BL_BLX1_PREFIX: instructions.thumb.branching.BL_BLX1_PREFIX(code); return;
         case thumb_id::BLX2: instructions.thumb.branching.BLX2(code); return;
         case thumb_id::BX: instructions.thumb.branching.BX(code); return;
         case thumb_id::NOP: instructions.thumb.misc.NOP(code); return;

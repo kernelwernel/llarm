@@ -12,11 +12,34 @@ using namespace internal;
 std::string shifters::data_imm(const u32 code, const settings& settings) {
     const u8 rotate_imm = llarm::util::bit_range<u8>(code, 8, 11);
     const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
-    const std::string rotate_str = ((settings.explicit_rotation) ? std::to_string(rotate_imm * 2) : "");
-    return util::make_string(
-        "#", util::hex(llarm::util::rotr(immed_8, (rotate_imm * 2)), settings), (rotate_str.empty() ? "": ", #"), rotate_str
-    );
-    // TODO, LSR has 32 when the value is 0 (A5-11)
+
+    const u8 rotate_count = rotate_imm * 2;
+ 
+//    const std::string rotate_str = [&]() -> std::string {
+//        if ((settings.remove_nulls && rotate_count == 0) || settings.explicit_rotation == false) {
+//            return "";
+//        }
+//        return util::make_string(", #", rotate_count);
+//    }();
+//
+//    return util::make_string(
+//        "#", util::hex(llarm::util::rotr(immed_8, rotate_count), settings), rotate_str
+//    );
+
+
+    const u32 immed_32 = static_cast<u32>(immed_8);
+    const u32 rotated  = rotate_count == 0 ? immed_32 : (immed_32 >> rotate_count) | (immed_32 << (32 - rotate_count));
+
+    if (rotate_count == 0 || rotated <= 0xFF) {
+        // fits in 8 bits, show raw fields
+        if (rotate_count == 0) {
+            return util::make_string("#", util::hex(immed_8, settings));
+        }
+        return util::make_string("#", immed_8, ", #", rotate_count);
+    } else {
+        // doesn't fit in 8 bits, show rotated value
+        return util::make_string("#", util::hex(rotated, settings));
+    }
 }
 
 

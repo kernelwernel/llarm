@@ -56,6 +56,7 @@ std::string disassemble::thumb_generate(const u32 code, const u32 PC, const sett
         case thumb_id::B2: return generators::thumb::branching::B2(code, PC, settings);
         case thumb_id::BL: return generators::thumb::branching::BL_BLX1(code, PC, settings);
         case thumb_id::BLX1: return generators::thumb::branching::BL_BLX1(code, PC, settings);
+        case thumb_id::BL_BLX1_PREFIX: return ERROR;
         case thumb_id::BLX2: return generators::thumb::branching::BLX2(code, settings);
         case thumb_id::BX: return generators::thumb::branching::BX(code, settings);
         case thumb_id::BKPT: return generators::thumb::misc::BKPT(code, settings);
@@ -308,6 +309,7 @@ std::string disassemble::thumb_id_to_string(const thumb_id id) {
         case thumb_id::B2: return "B2";
         case thumb_id::BL: return "BL";
         case thumb_id::BLX1: return "BLX1";
+        case thumb_id::BL_BLX1_PREFIX: return "BL/BLX1";
         case thumb_id::BLX2: return "BLX2";
         case thumb_id::BX: return "BX";
         case thumb_id::NOP: return "NOP";

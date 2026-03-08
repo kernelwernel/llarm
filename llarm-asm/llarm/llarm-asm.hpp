@@ -104,4 +104,12 @@ namespace llarm::as {
     inline bool is_thumb_instruction_valid(const std::string &code) {
         return internal::validation::string_thumb::is_thumb_instruction_valid(code);
     }
+
+    inline std::string arm_id_to_string(const arm_id id) {
+        return internal::disassemble::arm_id_to_string(id);
+    }
+
+    inline std::string thumb_id_to_string(const thumb_id id) {
+        return internal::disassemble::thumb_id_to_string(id);
+    }
 }

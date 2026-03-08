@@ -116,8 +116,7 @@ std::string generators::thumb::branching::BL_BLX1(const u32 code, const u32 PC, 
     const u32 base_address = PC + 4;
     const u32 target_address = static_cast<u32>(static_cast<i32>(base_address) + offset);
 
-    const std::string mnemonic = is_BLX1 ? "BLX" : "BL";
-    return mnemonic + " #" + util::hex(target_address, settings);
+    return util::make_string((is_BLX1 ? "BLX" : "BL"), " #", util::hex(target_address, settings));
 }
 
 

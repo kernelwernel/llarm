@@ -35,7 +35,7 @@ namespace internal::shifters {
     std::string data_rrx(const u32 code, const settings& settings);
 
     // defined in modes/ls.cpp
-    std::string ls_imm(const u32 code, const settings& settings, const bool omit_nulls);
+    std::string ls_imm(const u32 code, const settings& settings);
     std::string ls_imm_pre(const u32 code, const settings& settings);
     std::string ls_imm_post(const u32 code, const settings& settings);
     std::string ls_reg(const u32 code, const settings& settings);
@@ -49,7 +49,7 @@ namespace internal::shifters {
     std::string ls_reg_scaled_post_rrx(const u32 code, const settings& settings);
 
     // defined in modes/ls_misc.cpp
-    std::string ls_misc_imm(const u32 code, const settings& settings, const bool omit_nulls);
+    std::string ls_misc_imm(const u32 code, const settings& settings);
     std::string ls_misc_imm_pre(const u32 code, const settings& settings);
     std::string ls_misc_imm_post(const u32 code, const settings& settings);
     std::string ls_misc_reg(const u32 code, const settings& settings);

@@ -1,6 +1,7 @@
 
 #include "constants.hpp"
 #include "disassembler.hpp"
+#include "src/id/shifter_id.hpp"
 #include <llarm/llarm-asm.hpp>
 #include <llarm/shared/types.hpp>
 
@@ -136,7 +137,7 @@ int main(int argc, char* argv[]) {
     settings.cond_always_suffix = true;
     settings.explicit_operands = true;
     settings.strict_compliance = false;
-    settings.hex = true;
+    settings.hex = true; 
     settings.equivalent_alias = true;
     settings.remove_nulls = true;
     settings.explicit_rotation = true;
@@ -172,6 +173,31 @@ int main(int argc, char* argv[]) {
         "asreq", // SBO
         "rrxeq", // SBO
         "roreq" // SBO
+    };
+
+    // capstone can have very inconsistent encoding conventions to the point it's better to skin them entirely.
+    // Both isntructions in LLARM and capstone are correct and equivalent, just the encoding is different.
+    std::vector<const char*> addressing_mode_exception = {
+        "strh",
+        "ldrd",
+        "strd",
+        "ldrh",
+        "ldrsb",
+        "ldrsh",
+        "and",
+        "eor",
+        "sub",
+        "rsb",
+        "add",
+        "adc",
+        "sbc",
+        "rsc",
+        "tst",
+        "teq",
+        "cmp",
+        "cmn",
+        "orr",
+        "bic"
     };
 
     if (argc == 2) {
@@ -228,6 +254,29 @@ int main(int argc, char* argv[]) {
             if (llarm_disassembly.starts_with(inst) || capstone_disassembly.starts_with(inst)) {
                 skip_check = true;
             }
+        }
+
+        using enum llarm::as::shifter_id;
+
+        switch (llarm::as::identify_shifter(binary)) {
+            case DATA_IMM:
+            case LS_MISC_IMM:
+            case LS_MISC_IMM_POST:
+            case LS_MISC_IMM_PRE : {
+                bool should_continue = false;
+                for (const auto& inst : addressing_mode_exception) {
+                    if (llarm_disassembly.starts_with(inst)) {
+                        should_continue = true;
+                    }
+                }
+
+                if (should_continue) {
+                    binary++;
+                    continue;
+                }
+                break;
+            }
+            default: break;
         }
         
         if (skip_check) {

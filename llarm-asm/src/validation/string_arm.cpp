@@ -14,7 +14,7 @@ bool validation::string_arm::is_arm_instruction_valid(const std::string &code, c
 }
 
 
-bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &&IR) {
+bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
     using namespace interpreter;
     using enum token_enum;
     using enum reg_type;
@@ -53,8 +53,8 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &&IR) 
 /* TODO */        case arm_id::LDRB:
 /* TODO */        case arm_id::LDRBT:
 /* TODO */        case arm_id::LDRT:
-/* TODO */        case arm_id::STR: 
-/* TODO */        case arm_id::STRB: 
+/* TODO */        case arm_id::STR:
+/* TODO */        case arm_id::STRB:
 /* TODO */        case arm_id::STRBT:
 /* TODO */        case arm_id::STRT:
 /* TODO */

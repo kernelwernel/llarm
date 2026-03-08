@@ -217,7 +217,7 @@ thumb_id ident::u16_thumb::bits_111(const u32 code) {
     switch (llarm::util::bit_range(code, 11, 12)) {
         case 0b00: return thumb_id::B2;
         case 0b01: return thumb_id::BLX1;
-        case 0b10: // TODO IDK WHAT THE FUCK THIS IS SUPPOSED TO MEAN (A7-26)
+        case 0b10: return thumb_id::BL_BLX1_PREFIX;
         case 0b11: return thumb_id::BL;
     }
 
