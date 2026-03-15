@@ -3,12 +3,12 @@
 #include "tokens.hpp"
 #include "../id/cond_id.hpp"
 
-bool interpreter::verify_lexemes(const lexemes_t&& raw_pattern, const lexemes_t &match_pattern) {
+bool interpreter::verify_lexemes(const lexemes_t& raw_pattern, const lexemes_t& match_pattern) {
     if (raw_pattern.size() != match_pattern.size()) {
         return false;
     }
 
-    for (u8 i = 0; i < raw_pattern.size(); i++) {
+    for (size_t i = 0; i < raw_pattern.size(); i++) {
         const lexeme raw = raw_pattern.at(i);
         const lexeme match = match_pattern.at(i);
 
@@ -24,10 +24,23 @@ bool interpreter::verify_lexemes(const lexemes_t&& raw_pattern, const lexemes_t 
             case token_enum::OPTION: is_equivalent = (raw.data.option == match.data.option); break;
             case token_enum::REG_LIST: is_equivalent = (raw.data.reg_list == match.data.reg_list); break;
             case token_enum::IMMED: is_equivalent = (raw.data.imm == match.data.imm); break;
-
-            // this is because anything other than the above are just simple tokens that don't have 
-            // any important attributes associated. For example the "LSL" or "{" tokens are self explanatory.
-            default: return true;
+            case token_enum::REG_LIST_START:
+            case token_enum::REG_LIST_END:
+            case token_enum::HASHTAG:
+            case token_enum::MUL_OP:
+            case token_enum::MIN_OP:
+            case token_enum::MEM_START:
+            case token_enum::MEM_END:
+            case token_enum::LSL:
+            case token_enum::LSR:
+            case token_enum::ASR:
+            case token_enum::ROR:
+            case token_enum::RRX:
+            case token_enum::SHIFT:
+            case token_enum::PRE_INDEX:
+            case token_enum::CARET:
+            case token_enum::COMMENT: return true; // these tokens don't have complex components to check if they're valid or not
+            case token_enum::UNKNOWN: return false;
         }
  
         if (is_equivalent == false) {
@@ -39,14 +52,14 @@ bool interpreter::verify_lexemes(const lexemes_t&& raw_pattern, const lexemes_t 
 }
 
 
-bool interpreter::verify_tokens(const std::vector<token_enum>&& raw_tokens, const lexemes_t &match_pattern) {
+bool interpreter::verify_tokens(const tokens_t& raw_tokens, const lexemes_t& match_pattern) {
     using enum token_enum;
 
     if (raw_tokens.size() != match_pattern.size()) {
         return false;
     }
 
-    for (u8 i = 0; i < raw_tokens.size(); i++) {
+    for (size_t i = 0; i < raw_tokens.size(); i++) {
         const token_enum match = match_pattern.at(i).token_type;
         const token_enum raw = raw_tokens.at(i);
 

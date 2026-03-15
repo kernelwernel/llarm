@@ -10,11 +10,18 @@
 **LLARM** (Low Level ARM) is an infrastructure toolchain for the ARM architecture that provides libraries and/or tools for:
  - full system, CPU, and core emulation (`llarm-emu`)
  - instruction assembly, disassembly, identification, and validation (`llarm-asm`)
- - instruction documentation lookups (`llarm-inst`)
  - fetching ARM CPU information (`llarm-cpu`)
+ - instruction documentation lookups (`llarm-inst`)
  - heat and power efficiency simulation (`llarm-sim`)
  - random ARM binary/assembly generation for sampling and stress-testing (`llarm-rand`)
  - and many other sub-projects are planned or currently in development
+
+- - -
+
+
+## Roadmap
+
+![](assets/roadmap/llarm_roadmap.png)
 
 - - -
 

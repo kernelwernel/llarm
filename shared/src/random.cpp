@@ -3,14 +3,11 @@
 using namespace llarm;
 
 random::random(const u64 seed_arg) {
-    // custom seed set by the user
-    if (seed_arg != 0) {
-        seed = seed_arg;
-        return;
-    }
 
-    // generate our own seed if none was manually set after this point 
+}
 
+
+u64 random::generate_seed() {
     // https://softwareengineering.stackexchange.com/questions/402542/where-do-magic-hashing-constants-like-0x9e3779b9-and-0x9e3779b1-come-from
 
     u64 counter = golden_ratio;
@@ -18,7 +15,7 @@ random::random(const u64 seed_arg) {
 
     counter += golden_ratio;
 
-    seed = (time ^ counter);
+    return (time ^ counter);
 }
 
 

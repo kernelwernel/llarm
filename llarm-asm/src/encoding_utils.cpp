@@ -29,3 +29,9 @@ void encoders::encode_imm(u32 &binary, const u32 immed) {
         }
     }
 }
+
+
+bool encoders::is_branch_target_valid(const u32 PC, const u32 target_address) {
+    const i64 offset = static_cast<i64>(target_address) - (static_cast<i64>(PC) + 8);
+    return !(offset & 0x3) && offset >= -33554432 && offset <= 33554428;
+}

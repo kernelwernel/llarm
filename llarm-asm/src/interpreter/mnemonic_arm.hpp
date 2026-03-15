@@ -178,5 +178,3 @@ namespace internal::mnemonic_arm {
     arm_id LDM(const lexemes_t &lexemes);
     arm_id BLX(const lexemes_t &lexemes);
 }
-
-// TODO: work on the +/- thing before an immediate

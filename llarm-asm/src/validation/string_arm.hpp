@@ -9,4 +9,8 @@ namespace internal::validation::string_arm {
 
     bool is_data_processing_valid(lexemes_t lexemes, const shifter_id shifter_id, const arm_id id);
     bool is_ls_valid(const lexemes_t &lexemes, const shifter_id shifter_id, const arm_id id);
+    bool is_ls_misc_valid(lexemes_t lexemes, const shifter_id shifter_id, const arm_id id);
+    bool is_ls_coproc_valid(const lexemes_t &lexemes, const shifter_id shifter_id, const arm_id id);
+
+    bool is_B_BL_valid(const lexemes_t& lexemes, const u32 PC);
 }

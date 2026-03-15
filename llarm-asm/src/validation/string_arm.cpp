@@ -5,6 +5,8 @@
 #include "../interpreter/tokens.hpp"
 #include "../id/shifter_id.hpp"
 #include "../id/instruction_id.hpp"
+#include "../encoding_utils.hpp"
+#include "src/interpreter/IR_struct.hpp"
 
 using namespace internal;
 
@@ -48,39 +50,62 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
         case arm_id::TEQP:
         case arm_id::TSTP: return is_data_processing_valid(lexemes, IR.shifter_id, IR.mnemonic.id);
 
-/* TODO */        // addressing mode 2: load store
-/* TODO */        case arm_id::LDR:
-/* TODO */        case arm_id::LDRB:
-/* TODO */        case arm_id::LDRBT:
-/* TODO */        case arm_id::LDRT:
-/* TODO */        case arm_id::STR:
-/* TODO */        case arm_id::STRB:
-/* TODO */        case arm_id::STRBT:
-/* TODO */        case arm_id::STRT:
-/* TODO */
-/* TODO */        // addressing mode 3: load store misc
-/* TODO */        case arm_id::STRH:
-/* TODO */        case arm_id::LDRH:
-/* TODO */        case arm_id::LDRSB:
-/* TODO */        case arm_id::LDRSH:
-/* TODO */        case arm_id::STRD: // WARNING: both are <Rd>, <Rd + 1> instead of just <Rd>
-/* TODO */        case arm_id::LDRD: // WARNING: both are <Rd>, <Rd + 1> instead of just <Rd>
-/* TODO */
-/* TODO */        // addressing mode 4: load store multiple
-/* TODO */        case arm_id::LDM1:
-/* TODO */        case arm_id::LDM2:
-/* TODO */        case arm_id::LDM3:
-/* TODO */        case arm_id::STM1: 
-/* TODO */        case arm_id::STM2: 
-/* TODO */
-/* TODO */        // addressing mode 5: load store coprocessor
-/* TODO */        case arm_id::STC: 
-/* TODO */        case arm_id::STC2: 
-/* TODO */        case arm_id::LDC: 
-/* TODO */        case arm_id::LDC2:
+        // addressing mode 2: load store
+        case arm_id::LDR:
+        case arm_id::LDRB:
+        case arm_id::LDRBT:
+        case arm_id::LDRT:
+        case arm_id::STR:
+        case arm_id::STRB:
+        case arm_id::STRBT:
+        case arm_id::STRT: return is_ls_valid(lexemes, IR.shifter_id, IR.mnemonic.id);
 
-/* TODO */        case arm_id::B:
-/* TODO */        case arm_id::BL: //return verify_lexemes({ CONST }, lexemes);
+        // addressing mode 3: load store misc
+        case arm_id::STRH:
+        case arm_id::LDRH:
+        case arm_id::LDRSB:
+        case arm_id::LDRSH:
+        case arm_id::STRD:
+        case arm_id::LDRD: return is_ls_misc_valid(lexemes, IR.shifter_id, IR.mnemonic.id);
+
+        // addressing mode 4: load store multiple
+        case arm_id::STM1: 
+        case arm_id::LDM1: return (
+            verify_lexemes({ reg(), reg_list()}, lexemes) ||
+            verify_lexemes({ reg(), token(PRE_INDEX), reg_list() }, lexemes)
+        );
+        case arm_id::LDM2: return verify_lexemes({ reg(), reg_list_must_exclude_PC(), token(CARET) }, lexemes);
+        case arm_id::LDM3: return (
+            verify_lexemes({ reg(), reg_list_must_include_PC(), token(CARET) }, lexemes) ||
+            verify_lexemes({ reg(), token(PRE_INDEX), reg_list_must_include_PC(), token(CARET) }, lexemes)
+        );
+        case arm_id::STM2: return verify_lexemes({ reg(), reg_list(), token(CARET) }, lexemes);
+
+        // addressing mode 5: load store coprocessor
+        case arm_id::STC:
+        case arm_id::STC2:
+        case arm_id::LDC:
+        case arm_id::LDC2: return is_ls_coproc_valid(lexemes, IR.shifter_id, IR.mnemonic.id);
+
+        case arm_id::B:
+        case arm_id::BL: return is_B_BL_valid(lexemes, IR.PC);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         case arm_id::SWI: return verify_lexemes({ immed(24) }, lexemes);
 
         case arm_id::MCR2: 
@@ -280,24 +305,84 @@ bool validation::string_arm::is_ls_valid(const lexemes_t &lexemes, const shifter
         case shifter_id::LS_IMM: return verify_lexemes({ reg(), token(MEM_START), reg(), token(HASHTAG), immed(11), token(MEM_END) }, lexemes);
         case shifter_id::LS_IMM_PRE: return verify_lexemes({ reg(), token(MEM_START), reg(), token(HASHTAG), immed(11), token(MEM_END), token(PRE_INDEX) }, lexemes);
         case shifter_id::LS_IMM_POST: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), token(HASHTAG), immed(11) }, lexemes);
-        case shifter_id::LS_REG: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_REG_PRE: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_REG_POST: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_SCALED_LSL: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_SCALED_LSR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_SCALED_ASR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_SCALED_ROR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_SCALED_RRX: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_SCALED_PRE_LSL: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_SCALED_PRE_LSR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_SCALED_PRE_ASR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_SCALED_PRE_ROR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_SCALED_PRE_RRX: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_SCALED_POST_LSL: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_SCALED_POST_LSR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_SCALED_POST_ASR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_SCALED_POST_ROR: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
-        case shifter_id::LS_SCALED_POST_RRX: return verify_lexemes({ reg(), token(MEM_START), reg(),  }, lexemes);
+        case shifter_id::LS_REG: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(MEM_END) }, lexemes);
+        case shifter_id::LS_REG_PRE: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(MEM_END), token(PRE_INDEX) }, lexemes);
+        case shifter_id::LS_REG_POST: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), reg() }, lexemes);
+        case shifter_id::LS_SCALED_LSL: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(LSL), token(HASHTAG), immed_range(0, 31), token(MEM_END) }, lexemes);
+        case shifter_id::LS_SCALED_LSR: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(LSR), token(HASHTAG), immed_range(1, 32), token(MEM_END) }, lexemes);
+        case shifter_id::LS_SCALED_ASR: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(ASR), token(HASHTAG), immed_range(1, 32), token(MEM_END) }, lexemes);
+        case shifter_id::LS_SCALED_ROR: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(ROR), token(HASHTAG), immed_range(1, 31), token(MEM_END) }, lexemes);
+        case shifter_id::LS_SCALED_RRX: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(RRX), token(MEM_END) }, lexemes);
+        case shifter_id::LS_SCALED_PRE_LSL: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(LSL), token(HASHTAG), immed_range(0, 31), token(MEM_END), token(PRE_INDEX) }, lexemes);
+        case shifter_id::LS_SCALED_PRE_LSR: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(LSR), token(HASHTAG), immed_range(1, 32), token(MEM_END), token(PRE_INDEX) }, lexemes);
+        case shifter_id::LS_SCALED_PRE_ASR: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(ASR), token(HASHTAG), immed_range(1, 32), token(MEM_END), token(PRE_INDEX) }, lexemes);
+        case shifter_id::LS_SCALED_PRE_ROR: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(ROR), token(HASHTAG), immed_range(1, 31), token(MEM_END), token(PRE_INDEX) }, lexemes);
+        case shifter_id::LS_SCALED_PRE_RRX: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(RRX), token(MEM_END), token(PRE_INDEX) }, lexemes);
+        case shifter_id::LS_SCALED_POST_LSL: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), reg(), token(HASHTAG), immed_range(0, 31) }, lexemes);
+        case shifter_id::LS_SCALED_POST_LSR: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), reg(), token(HASHTAG), immed_range(1, 32) }, lexemes);
+        case shifter_id::LS_SCALED_POST_ASR: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), reg(), token(HASHTAG), immed_range(1, 32) }, lexemes);
+        case shifter_id::LS_SCALED_POST_ROR: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), reg(), token(HASHTAG), immed_range(1, 31) }, lexemes);
+        case shifter_id::LS_SCALED_POST_RRX: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), reg(), token(RRX) }, lexemes);
         default: return false;
     }
+}
+
+
+bool validation::string_arm::is_ls_misc_valid(lexemes_t lexemes, const shifter_id shifter_id, const arm_id id) {
+    using namespace interpreter;
+    using enum token_enum;
+
+    // LDRD and STRD are both supposed to be structured like LDR|STR{<cond>}H|SH|SB|D <Rd>, <addressing_mode>
+    // but Rd is followed by Rd + 1. So it becomes R0, R1, <addressing_mode> instead of just R0, <addressing_mode>
+    if (id == arm_id::STRD || id == arm_id::LDRD) {
+        if (
+            (lexemes.at(0).token_type != token_enum::REG) ||
+            (lexemes.at(1).token_type != token_enum::REG)
+        ) {
+            return false;
+        }
+
+        const u8 first_reg = lexemes.at(0).data.reg.number;
+        const u8 second_reg = lexemes.at(1).data.reg.number;
+
+        if (first_reg != second_reg + 1) {
+            return false;
+        }
+
+        lexemes.erase(lexemes.begin(), lexemes.begin() + 1);
+    }
+
+    switch (shifter_id) {
+        case shifter_id::LS_MISC_IMM: return verify_lexemes({ reg(), token(MEM_START), reg(), token(HASHTAG), immed(7), token(MEM_END) }, lexemes);
+        case shifter_id::LS_MISC_IMM_PRE: return verify_lexemes({ reg(), token(MEM_START), reg(), token(HASHTAG), immed(7), token(MEM_END), token(PRE_INDEX) }, lexemes);
+        case shifter_id::LS_MISC_IMM_POST: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), token(HASHTAG), immed(7) }, lexemes);
+        case shifter_id::LS_MISC_REG: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(MEM_END) }, lexemes);
+        case shifter_id::LS_MISC_REG_PRE: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(MEM_END), token(PRE_INDEX) }, lexemes);
+        case shifter_id::LS_MISC_REG_POST: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), reg() }, lexemes);
+        default: return false;
+    }
+}
+
+
+bool validation::string_arm::is_ls_coproc_valid(const lexemes_t& lexemes, const shifter_id shifter_id, const arm_id id) {
+    using namespace interpreter;
+    using enum token_enum;
+
+    switch (shifter_id) {
+        case shifter_id::LS_COPROC_IMM: return verify_lexemes({ reg(reg_type::COPROC), reg(reg_type::CR), token(MEM_START), reg(), token(HASHTAG), immed(7, 4), token(MEM_END) }, lexemes);
+        case shifter_id::LS_COPROC_IMM_PRE: return verify_lexemes({ reg(reg_type::COPROC), reg(reg_type::CR), token(MEM_START), reg(), token(HASHTAG), immed(7, 4), token(MEM_END), token(PRE_INDEX) }, lexemes);
+        case shifter_id::LS_COPROC_IMM_POST: return verify_lexemes({ reg(reg_type::COPROC), reg(reg_type::CR), token(MEM_START), reg(), token(MEM_END), token(HASHTAG), immed(7, 4)}, lexemes);
+        case shifter_id::LS_COPROC_UNINDEXED: return verify_lexemes({ reg(reg_type::COPROC), reg(reg_type::CR), token(MEM_START), reg(), option() }, lexemes);
+        default: return false;
+    }
+}
+
+
+bool validation::string_arm::is_B_BL_valid(const lexemes_t& lexemes, const u32 PC) {
+    if (lexemes.at(0).token_type != token_enum::IMMED) {
+        return false;
+    }
+
+    const u32 address = static_cast<u32>(lexemes.at(0).data.imm.number);
+    return encoders::is_branch_target_valid(PC, address);
 }

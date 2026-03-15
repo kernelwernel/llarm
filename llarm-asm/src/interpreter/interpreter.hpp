@@ -9,11 +9,11 @@
 
 namespace interpreter {
     // specifically for validation
-    bool verify_lexemes(const lexemes_t&& raw_pattern, const lexemes_t &match_pattern);
+    bool verify_lexemes(const lexemes_t& raw_pattern, const lexemes_t &match_pattern);
 
     // specifically for identification, it's basically a cheaper version of verify_lexemes() 
     // but for token placements instead of a thorough analysis of lexemes
-    bool verify_tokens(const tokens_t&& tokens, const lexemes_t &match_pattern);
+    bool verify_tokens(const tokens_t& tokens, const lexemes_t &match_pattern);
 
     lexemes_t analyze(const sv instruction);
     sv fetch_instruction(const sv instruction);
@@ -70,13 +70,13 @@ namespace interpreter {
     lexeme reg(const special_reg special_reg);
     lexeme reg_thumb(const u8 reg_num = WILDCARD);
     lexeme psr(const bool psr_type, const bool has_fields = false);
-    lexeme option(const u8 number);
+    lexeme option(const u8 number = 0);
     lexeme immed(const immed_settings &imm_settings = {});
     lexeme immed(const u8 msb);
     lexeme immed(const u8 msb, const u8 multiplier);
     lexeme immed_range(const u8 start_val, const u8 end_val);
     lexeme immed_rotate(); // assumes immed is 8 bits and rotate_imm is 4 bits
-    lexeme reg_list(const reg_list_settings &reg_list_settings);
+    lexeme reg_list(const reg_list_settings &reg_list_settings = {});
     lexeme reg_list_double();
     lexeme reg_list_single();
     lexeme reg_list_thumb();

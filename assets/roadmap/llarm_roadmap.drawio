@@ -1,0 +1,133 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0" version="29.6.1">
+  <diagram name="Page-1" id="vd27VnRxTMPMCAIc7cgx">
+    <mxGraphModel dx="-320" dy="479" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2ruZrwj2Axgjb19F1pPn-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E5E5E575;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="570" width="870" x="860" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--43" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="210" width="140" x="880" y="910" as="geometry" />
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D3FA6A;strokeColor=#36393d;" value="testing phase" vertex="1">
+          <mxGeometry height="30" width="120" x="890" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#3FF7DC;strokeColor=#000000;" value="completed" vertex="1">
+          <mxGeometry height="30" width="120" x="890" y="1080" as="geometry" />
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FAEEAE;strokeColor=#36393d;" value="in progress" vertex="1">
+          <mxGeometry height="30" width="120" x="890" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--13" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=light-dark(#CAC8C8,transparent);fontColor=light-dark(#000000, #c1c1c1);strokeColor=#000000;gradientColor=none;" value="planned idea" vertex="1">
+          <mxGeometry height="30" width="120" x="890" y="920" as="geometry" />
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--19" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D3FA6A;strokeColor=#000000;" value="&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;llarm-asm&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;&lt;br&gt;&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;assembly, disassembly,&amp;nbsp; identification, validation" vertex="1">
+          <mxGeometry height="90" width="150" x="1225" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--34" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F8ADAA;strokeColor=#000000;gradientColor=none;" value="early development" vertex="1">
+          <mxGeometry height="30" width="120" x="890" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--38" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="keE6CP2fWxsbIICl772--47" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="1465" y="710" />
+            </Array>
+            <mxPoint x="1300" y="710" as="sourcePoint" />
+            <mxPoint x="1460" y="740" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--39" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=none;labelBorderColor=light-dark(#ffffff, #ededed);" target="keE6CP2fWxsbIICl772--49" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="1635" y="710" />
+            </Array>
+            <mxPoint x="1450" y="710" as="sourcePoint" />
+            <mxPoint x="1620" y="750.0000000000002" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--40" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="keE6CP2fWxsbIICl772--50" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="1135" y="710" />
+            </Array>
+            <mxPoint x="1300" y="710" as="sourcePoint" />
+            <mxPoint x="1130" y="740.0000000000002" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--41" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="keE6CP2fWxsbIICl772--52" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="965" y="710" />
+            </Array>
+            <mxPoint x="1170" y="710" as="sourcePoint" />
+            <mxPoint x="990" y="740.0000000000002" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2ruZrwj2Axgjb19F1pPn-1" edge="1" parent="1" source="keE6CP2fWxsbIICl772--44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="keE6CP2fWxsbIICl772--54">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--44" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAEEAE;strokeColor=#000000;" value="&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;llarm-emu&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;&lt;br&gt;&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;ARM emulation and monitoring framework&amp;nbsp;" vertex="1">
+          <mxGeometry height="90" width="150" x="1225" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--46" edge="1" parent="1" source="keE6CP2fWxsbIICl772--19" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="keE6CP2fWxsbIICl772--44" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="1310" y="800" as="sourcePoint" />
+            <mxPoint x="1360" y="750" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--47" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8ADAA;strokeColor=#000000;" value="&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;llarm-inst&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;&lt;br&gt;&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;ARM instruction documentation lookup tool" vertex="1">
+          <mxGeometry height="90" width="150" x="1390" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--49" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CAC8C8;strokeColor=#000000;" value="&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;llarm-llvm&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;&lt;br&gt;&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;ARM assembly lifter to LLVM IR" vertex="1">
+          <mxGeometry height="90" width="150" x="1560" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--50" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8ADAA;strokeColor=#000000;" value="&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;llarm-rand&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;&lt;br&gt;&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;Random ARM instruction generator for stress-testing&amp;nbsp;" vertex="1">
+          <mxGeometry height="90" width="150" x="1060" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--52" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CAC8C8;strokeColor=#000000;" value="&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;llarm-bin&lt;br&gt;&lt;br&gt;&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;ARM binary analysis and statistics tool&amp;nbsp;" vertex="1">
+          <mxGeometry height="90" width="150" x="890" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--53" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CAC8C8;strokeColor=#000000;" value="&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;llarm-perf&lt;br&gt;&lt;br&gt;&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;ARM binary performance analysis and graphing tool&amp;nbsp;" vertex="1">
+          <mxGeometry height="90" width="150" x="1060" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--54" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CAC8C8;strokeColor=#000000;" value="&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;llarm-sim&lt;br&gt;&lt;br&gt;&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;ARM binary power and heat efficiency simulator" vertex="1">
+          <mxGeometry height="90" width="150" x="1225" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="keE6CP2fWxsbIICl772--55" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CAC8C8;strokeColor=#000000;" value="&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;llarm-hv&lt;br&gt;&lt;br&gt;&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;ARMv7 hardware hypervisor library" vertex="1">
+          <mxGeometry height="90" width="150" x="1390" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="fAA3ls6qxLtgzUl3bTtn-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CAC8C8;strokeColor=#000000;" value="&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;llarm-vm&lt;br&gt;&lt;br&gt;&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;ARM system VM and full virtualization&amp;nbsp;&amp;nbsp;" vertex="1">
+          <mxGeometry height="90" width="150" x="1390" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="2ruZrwj2Axgjb19F1pPn-2" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="keE6CP2fWxsbIICl772--53" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="1135" y="870" />
+            </Array>
+            <mxPoint x="1300" y="870" as="sourcePoint" />
+            <mxPoint x="1390" y="740" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2ruZrwj2Axgjb19F1pPn-3" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;labelBorderColor=#FFFFFF;spacingTop=0;" target="keE6CP2fWxsbIICl772--55" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="1465" y="870" />
+            </Array>
+            <mxPoint x="1300" y="870" as="sourcePoint" />
+            <mxPoint x="1380" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2ruZrwj2Axgjb19F1pPn-4" edge="1" parent="1" source="keE6CP2fWxsbIICl772--55" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="fAA3ls6qxLtgzUl3bTtn-1" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="1330" y="1120" as="sourcePoint" />
+            <mxPoint x="1380" y="1070" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2ruZrwj2Axgjb19F1pPn-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8ADAA;strokeColor=#000000;" value="&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;llarm-cpu&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;&lt;u&gt;&lt;br&gt;&lt;/u&gt;&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;ARM CPU information fetching framework" vertex="1">
+          <mxGeometry height="90" width="150" x="1400" y="590" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
