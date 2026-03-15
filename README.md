@@ -1,11 +1,18 @@
 <div align="center">
 
-<h1>LLARM<h1>
+
+<h1>LLARM</h1>
 <br>
-<img src="assets/logo/dog.png" height="250" title="LLARM">
-<br>
-<small>Artwork by <a href="https://t04st3r.carrd.co/">t04st3r</a></small>
+<div style="position: relative; display: inline-block;">
+    <img src="assets/logo/dog.png" height="250" title="LLARM">
+    <small style="position: absolute; bottom: 8px; left: 270px; font-size: 13px; white-space: nowrap;">
+        Artwork by <a href="https://t04st3r.carrd.co/">t04st3r</a>
+    </small>
 </div>
+<br>
+<br>
+</div>
+
 
 **LLARM** (Low Level ARM) is an infrastructure toolchain for the ARM architecture that provides libraries and/or tools for:
  - full system, CPU, and core emulation (`llarm-emu`)
@@ -21,7 +28,10 @@
 
 ## Roadmap
 
-![](assets/roadmap/llarm_roadmap.png)
+<br>
+<img align="center" src="assets/roadmap/llarm_roadmap.png" title="LLARM roadmap">
+<br>
+
 
 - - -
 
