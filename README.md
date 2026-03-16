@@ -5,7 +5,7 @@
 <br>
 <div style="position: relative; display: inline-block;">
     <img src="assets/logo/dog.png" height="250" title="LLARM">
-    <small style="position: absolute; bottom: 8px; left: 270px; font-size: 13px; white-space: nowrap;">
+    <small style="position: absolute; bottom: 1px; left: 270px; font-size: 13px; white-space: nowrap;">
         Artwork by <a href="https://t04st3r.carrd.co/">t04st3r</a>
     </small>
 </div>
@@ -29,7 +29,7 @@
 ## Roadmap
 
 <br>
-<img align="center" src="assets/roadmap/llarm_roadmap.png" title="LLARM roadmap">
+<img align="center" src="assets/roadmap/l2.png" title="LLARM roadmap">
 <br>
 
 

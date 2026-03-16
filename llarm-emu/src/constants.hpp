@@ -18,6 +18,7 @@ namespace constants {
         constexpr u8 SYSTEM = 0b11111;
     }
 
+    // sources for some of them: https://github.com/torvalds/linux/blob/619f0b6fad524f08d493a98d55bac9ab8895e3a6/arch/arm64/include/asm/cputype.h#L63
     namespace implementor {
         /* A */ constexpr u8 ARM = 0x41;
         /* B */ constexpr u8 BRCM = 0x42;
@@ -37,6 +38,8 @@ namespace constants {
         /* a */ constexpr u8 APPLE = 0x61;
         /* f */ constexpr u8 FARADAY = 0x66;
         /* À */ constexpr u8 AMPERE = 0xc0;
+        /* H */ constexpr u8 HISI = 0x48;
+        /* m */ constexpr u8 MICROSOFT = 0x6D;
     }
 
     enum cond : u8 {

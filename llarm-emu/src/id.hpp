@@ -878,6 +878,8 @@ namespace id {
         APPLE,
         FARADAY,
         AMPERE,
-        LLARM // custom
+        LLARM, // custom
+        HISI,
+        MICROSOFT
     };
 }

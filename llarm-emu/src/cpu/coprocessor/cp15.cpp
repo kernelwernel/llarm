@@ -1158,23 +1158,25 @@ void CP15::setup_R0_processor_id() {
         // source: https://developer.arm.com/documentation/ddi0406/b/System-Level-Architecture/Virtual-Memory-System-Architecture--VMSA-/CP15-registers-for-a-VMSA-implementation/c0--Main-ID-Register--MIDR-?lang=en
         //         https://github.com/NetBSD/src/blob/461e4391743c2e1fdff97bb2b351cfb1a5fd083a/sys/arch/arm/include/cputypes.h#L48
         switch (settings.implementor) {
-            case id::implementor::ARM:      force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::ARM /* A */); break;
-            case id::implementor::BRCM:     force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::BRCM /* B */); break;
-            case id::implementor::DEC:      force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::DEC /* D */); break;
-            case id::implementor::MOTOROLA: force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::MOTOROLA /* M */); break;
-            case id::implementor::QUALCOMM: force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::QUALCOMM /* Q */); break;
-            case id::implementor::MARVELL:  force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::MARVELL /* V */); break;
-            case id::implementor::INTEL:    force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::INTEL /* i */); break;
-            case id::implementor::CAVIUM:   force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::CAVIUM /* C */); break;
-            case id::implementor::FUJITSU:  force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::FUJITSU /* F */); break;
-            case id::implementor::INFINEON: force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::INFINEON /* I */); break;
-            case id::implementor::NVIDIA:   force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::NVIDIA /* N */); break;
-            case id::implementor::APM:      force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::APM /* P */); break;
-            case id::implementor::SAMSUNG:  force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::SAMSUNG /* S */); break;
-            case id::implementor::TI:       force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::TI /* T */); break;
-            case id::implementor::APPLE:    force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::APPLE /* a */); break;
-            case id::implementor::FARADAY:  force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::FARADAY /* f */); break;
-            case id::implementor::AMPERE:   force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::AMPERE /* À */); break;
+            case id::implementor::ARM:       force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::ARM /* A */); break;
+            case id::implementor::BRCM:      force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::BRCM /* B */); break;
+            case id::implementor::DEC:       force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::DEC /* D */); break;
+            case id::implementor::MOTOROLA:  force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::MOTOROLA /* M */); break;
+            case id::implementor::QUALCOMM:  force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::QUALCOMM /* Q */); break;
+            case id::implementor::MARVELL:   force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::MARVELL /* V */); break;
+            case id::implementor::INTEL:     force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::INTEL /* i */); break;
+            case id::implementor::CAVIUM:    force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::CAVIUM /* C */); break;
+            case id::implementor::FUJITSU:   force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::FUJITSU /* F */); break;
+            case id::implementor::INFINEON:  force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::INFINEON /* I */); break;
+            case id::implementor::NVIDIA:    force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::NVIDIA /* N */); break;
+            case id::implementor::APM:       force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::APM /* P */); break;
+            case id::implementor::SAMSUNG:   force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::SAMSUNG /* S */); break;
+            case id::implementor::TI:        force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::TI /* T */); break;
+            case id::implementor::APPLE:     force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::APPLE /* a */); break;
+            case id::implementor::FARADAY:   force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::FARADAY /* f */); break;
+            case id::implementor::AMPERE:    force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::AMPERE /* À */); break;
+            case id::implementor::HISI:      force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::HISI /* H */); break;
+            case id::implementor::MICROSOFT: force_write(id::cp15::R0_ID_IMPLEMENTOR, constants::implementor::MICROSOFT /* m */); break;
             case id::implementor::LLARM:    
                 u8 implementor_code = 0;
 
