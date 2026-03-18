@@ -259,7 +259,7 @@ std::string util::reg_list(const u16 list, const settings settings, const reg_id
 
     std::string tmp(
         4 + // for the "{  }"
-        (count * 4) - 1, // for the "Ri, " which is 4 characters, and - 1 for the trailing comma that shouldn't be there
+        static_cast<u32>(count * 4) - 1, // for the "Ri, " which is 4 characters, and - 1 for the trailing comma that shouldn't be there
         '\0'
     );
 
@@ -402,7 +402,7 @@ std::string util::vfp_register_list(const u8 first_reg, const u8 offset, const s
         reg_nums.push_back(i);
     }
 
-    std::string tmp(((reg_count) * 5) + 4, '\0'); // just an approximation, not exact but it should do the job 
+    std::string tmp(static_cast<u32>((reg_count) * 5) + 4, '\0'); // just an approximation, not exact but it should do the job 
     
     tmp += "{ ";
     
@@ -482,7 +482,7 @@ std::string util::hex(const u32 integer, const settings settings) {
 
 u32 util::thumb_sign_extend(u32 value, const u8 sign_index, const u32 PC) {
     const u32 sign_mask = (1 << sign_index);
-    const u32 bit_mask = (1 << (sign_index + 1)) - 1;
+    const u32 bit_mask = static_cast<u32>(1 << (sign_index + 1)) - 1;
 
     value &= bit_mask;
 

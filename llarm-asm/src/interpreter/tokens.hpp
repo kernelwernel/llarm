@@ -207,7 +207,7 @@ struct PSR {
     void set_malformed(const bool value = true) { llarm::util::modify_bit(flags, MALFORMED, value); }
     void set_invalid(const bool value = true) { llarm::util::modify_bit(flags, INVALID, value); }
 
-    constexpr bool operator==(const PSR& rhs) const {
+    bool operator==(const PSR& rhs) const {
         if (is_invalid() || is_malformed() || rhs.is_invalid() || rhs.is_malformed()) {
             return false;
         }

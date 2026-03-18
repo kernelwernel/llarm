@@ -114,7 +114,8 @@ notes:
 - install flamegraph and measure the difference between the std::map<key, std::function> thingy and the switch
 - in the future, make a more "memory friendly" option such as making an inner virtual memory system for the memory 
   by using std::vector instead of std::array for the RAM, and using std::vector instead of std::unordered_map for the TLB lookup
-
+- use a better alternative to std::unordered_map that's faster (https://martin.ankerl.com/2022/08/27/hashmap-bench-01/)
+- remove the model of minimal types being used for local variables and function parameters, this has almost no benefit on performance. Use a u32 instead of a u8.
 
 - TODO MAKE THE LIBRARY A SHARED OBJECT NOT A STATIC LIBRARY (IMPORTANT)
 - implement LLARM_LOW_MEMORY preprocessor argument

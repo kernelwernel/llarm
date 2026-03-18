@@ -11,8 +11,8 @@ using namespace internal;
 
 struct mnemonic_struct_thumb {
     sv instruction = "";
-    thumb_id id = thumb_id::UNKNOWN;
-    cond_id cond_id = cond_id::UNKNOWN; // specifically for B1 instruction
+    enum thumb_id id = thumb_id::UNKNOWN;
+    enum cond_id cond_id = cond_id::UNKNOWN; // specifically for B1 instruction
 };
 
 

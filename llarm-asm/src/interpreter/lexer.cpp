@@ -83,7 +83,7 @@ lexemes_t lexer::lex(const raw_tokens_t &tokens) {
         llarm::out::error("Invalid register list argument to instruction, malformed \"{\" and \"}\" positions");
     }
 
-    const u8 arg_count = (end_pos - start_pos) - 1;
+    const u8 arg_count = static_cast<u8>(end_pos - start_pos) - 1;
 
     if (arg_count == 1) {
         option_check(lexeme_list, start_pos, end_pos);
@@ -159,7 +159,7 @@ void lexer::reg_list_check(lexemes_t &lexemes, const u8 start_pos, const u8 end_
         0 // list
     };
 
-    const u8 arg_count = (end_pos - start_pos) - 1;
+    const u8 arg_count = static_cast<u8>(end_pos - start_pos) - 1;
 
     // check the difference between the start and end indexes to see if it's empty
     if (arg_count == 0) {

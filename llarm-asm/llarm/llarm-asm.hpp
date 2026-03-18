@@ -72,17 +72,17 @@ namespace llarm::as {
     inline std::string disassemble_arm(
         const u32 code, 
         const u32 PC = 0, 
-        const settings settings = default_settings()
+        const settings config = default_settings()
     ) {
-        return internal::disassemble::arm(code, PC, settings);
+        return internal::disassemble::arm(code, PC, config);
     }
 
     inline std::string disassemble_thumb(
         const u16 code,
         const u32 PC = 0,
-        const settings settings = default_settings()
+        const settings config = default_settings()
     ) {
-        return internal::disassemble::thumb(code, PC, settings);
+        return internal::disassemble::thumb(code, PC, config);
     }
 
     inline u32 assemble_arm(const std::string &code, const u32 PC = 0) {

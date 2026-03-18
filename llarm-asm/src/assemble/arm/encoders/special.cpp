@@ -215,7 +215,7 @@ u32 generators::b(const operand_struct &args) {
     llarm::util::modify_bit(binary, 25, true);
 
     const u32 immed = args.first_int - (args.PC + 8);
-    const i32 offset = (immed >> 2);
+    const i32 offset = static_cast<i32>(immed >> 2);
     const u32 target = offset & 0x00FFFFFF;
 
     llarm::util::swap_bits(binary, 0, 23, target);

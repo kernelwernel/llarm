@@ -448,7 +448,7 @@ void INSTRUCTIONS::arm::vfp::FLDMD(const u32 code) {
 
     u32 address = addresses.start;
     const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
-    const u8 cond = (offset - 2) / 2;
+    const u8 cond = static_cast<u8>(offset - 2) >> 1; // div by 2
 
     const u8 d = llarm::util::bit_range<u8>(code, 12, 15);
 

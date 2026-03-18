@@ -13,7 +13,7 @@ struct IR_arm_struct {
     mnemonic_struct_arm mnemonic;
     operand_struct operands;
     u32 PC;
-    shifter_id shifter_id;
+    enum shifter_id shifter_id;
 };
 
 

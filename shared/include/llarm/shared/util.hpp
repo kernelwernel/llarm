@@ -31,7 +31,7 @@ namespace llarm::util {
         if (value) {
             original |= (1U << index);
         } else {
-            original &= ~(1U << index);
+            original &= static_cast<T>(~(1U << index));
         }
     }
 
@@ -66,7 +66,7 @@ namespace llarm::util {
     // version of it. The compiler should be able
     // to optimise this away with at least -O1:
     // https://godbolt.org/z/qEjaEz9zq
-    inline constexpr u8 popcount(const u32 integer) {
+    inline u8 popcount(const u32 integer) {
         return static_cast<u8>(std::bitset<32>(integer).count());
     }
 
@@ -78,8 +78,8 @@ namespace llarm::util {
             return;
         }
 
-        const u8 num_bits = end - start + 1;
-        const u32 mask = (1 << num_bits) - 1;
+        const u8 num_bits = static_cast<u8>(end - start + 1);
+        const u32 mask = static_cast<u32>(1 << num_bits) - 1;
         original &= ~(mask << start);
         original |= (value & mask) << start;
     }
@@ -92,10 +92,10 @@ namespace llarm::util {
             return;
         }
 
-        const u8 num_bits = end - start + 1;
-        const u32 mask = (1 << num_bits) - 1;
-        original &= ~(mask << start);
-        original |= (value & mask) << start;
+        const u8 num_bits = static_cast<u8>(end - start + 1);
+        const u32 mask = static_cast<u32>(1 << num_bits) - 1;
+        original &= static_cast<u16>(~(mask << start));
+        original |= static_cast<u16>((value & mask) << start);
     }
 
 

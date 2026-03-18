@@ -42,6 +42,7 @@ set(CLANG_CXX_FLAGS
     -Wdouble-promotion
     -Wformat=2
     -Wimplicit-fallthrough
+    -Wnrvo
 )
 
 
@@ -59,6 +60,7 @@ set(GCC_CXX_FLAGS
     -Wuseless-cast
     -Wsuggest-override
     -Wnrvo
+    -Wno-shadow
 )
 
 
@@ -90,14 +92,12 @@ set(LINUX_DEBUG_CXX_FLAGS
     -Werror
     -Wall
     -Wextra
-    -Wshadow
     -Wunused
     #-fsanitize=address,undefined,nullability
 
     # for prototyping purposes, should be removed one day
     -Wno-return-type
     -Wno-unused-parameter
-    -Wno-unused-private-field
     -Wno-unused-variable
     -Wno-unused-function
 )

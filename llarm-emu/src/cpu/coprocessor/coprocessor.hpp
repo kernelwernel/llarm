@@ -26,7 +26,7 @@ private:
 
 public:
     id::cp fetch_cp_id(const u8 raw_cp_num);
-    
+
     void write(
         const id::cp15 cp15_id, 
         const u32 value,

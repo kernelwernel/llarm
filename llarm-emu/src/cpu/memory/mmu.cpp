@@ -169,7 +169,7 @@ bool MMU::is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type)
         // and switch-friendly, but also because it's much easier to handle that way.
         // the full table is situated in B3-16 which should make more sense to you.
         const u8 bytecode = static_cast<u8>(
-            !privileged | // is user
+            (!privileged) | // is user
             (privileged << 1) | // is privileged
             (R << 2) |
             (S << 3) |
@@ -204,7 +204,7 @@ bool MMU::is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type)
                 // this section is the same as above, but without the S and R bits 
                 // because they're irrelevant after this point when AP != 0b00
                 const u8 access_bytecode = static_cast<u8>(
-                    !privileged |
+                    (!privileged) |
                     (privileged << 1) |
                     (raw_AP_bits << 2)
                 );
@@ -294,7 +294,7 @@ translation_struct MMU::second_large(
     const u16 page_index = llarm::util::bit_range<u16>(address, 0, 15);
     
     // the subpages are 1KB each
-    const u8 subpage_index = (page_index / util::get_kb(16));
+    const u8 subpage_index = static_cast<u8>(page_index / util::get_kb(16));
     
     const u8 AP = subpage_index;
     const id::access_domain domain = fetch_domain(domain_bits);
@@ -354,7 +354,7 @@ translation_struct MMU::second_small(
     const u16 page_index = llarm::util::bit_range<u16>(address, 0, 11);
     
     // the subpages are 1KB each
-    const u8 subpage_index = (page_index / util::get_kb(1));
+    const u8 subpage_index = static_cast<u8>(page_index / util::get_kb(1));
     
     const u8 AP = subpage_index;
     const id::access_domain domain = fetch_domain(domain_bits);

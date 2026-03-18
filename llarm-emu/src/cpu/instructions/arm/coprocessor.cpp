@@ -95,7 +95,8 @@ void INSTRUCTIONS::arm::coproc::MRC(const u32 code) {
  *     assert address == end_address
  */
 void INSTRUCTIONS::arm::coproc::STC(const u32 code) {
-    const address_struct addresses = address_mode.load_store_coprocessor(code);
+    //const address_struct addresses = address_mode.load_store_coprocessor(code);
+    // TODO
 }
 
 

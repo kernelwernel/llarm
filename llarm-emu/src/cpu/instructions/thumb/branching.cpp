@@ -25,7 +25,7 @@ void INSTRUCTIONS::thumb::branching::B1(const u16 code) {
 void INSTRUCTIONS::thumb::branching::B2(const u16 code) {
     const u16 signed_immed_10 = llarm::util::bit_range<u16>(code, 0, 10);
 
-    reg.write(id::reg::PC, u32(reg.read(id::reg::PC) + u32((signed_immed_10) << 1)));
+    reg.write(id::reg::PC, reg.read(id::reg::PC) + u32((signed_immed_10) << 1));
 }
 
 

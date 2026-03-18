@@ -357,7 +357,7 @@ void INSTRUCTIONS::thumb::load::POP(const u16 code) {
     const u32 SP = reg.read(id::reg::SP);
 
     const u32 start_address = SP;
-    const u32 end_address = SP + (4 * (R + llarm::util::popcount(register_list)));
+    const u32 end_address = SP + static_cast<u32>(4 * (R + llarm::util::popcount(register_list)));
 
     u32 address = start_address;
 

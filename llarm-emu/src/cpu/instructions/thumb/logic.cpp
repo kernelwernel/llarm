@@ -279,7 +279,7 @@ void INSTRUCTIONS::thumb::logic::LSR2(const u16 code) {
     if ((Rs & 0xFF) == 0) {
 
     } else if ((Rs & 0xFF) < 32) {
-        reg.write(id::cpsr::C, llarm::util::bit_fetch(reg.read(Rd_id), ((Rs & 0xFF) - 1)));
+        reg.write(id::cpsr::C, llarm::util::bit_fetch(reg.read(Rd_id), static_cast<u8>((Rs & 0xFF) - 1)));
         reg.write(Rd_id, (reg.read(Rd_id) >> (Rs & 0xFF)));
     } else if ((Rs & 0xFF) == 32) {
         reg.write(id::cpsr::C, llarm::util::bit_fetch(reg.read(Rd_id), 31));

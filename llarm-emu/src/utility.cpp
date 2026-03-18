@@ -27,8 +27,8 @@ void util::swap_bits_vfp(u64 &original, const u8 start, const u8 end, const u32 
         return;
     }
 
-    const u8 num_bits = end - start + 1;
-    const u32 mask = (1 << num_bits) - 1;
+    const u8 num_bits = static_cast<u8>(end - start + 1);
+    const u32 mask = static_cast<u8>((1 << num_bits) - 1);
     original &= ~(mask << start);
     original |= (value & mask) << start;
 }

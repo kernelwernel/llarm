@@ -56,7 +56,7 @@ void INSTRUCTIONS::thumb::movement::MOV3(const u16 code) {
     const bool H1 = llarm::util::bit_fetch(code, 7);
     // const bool H2 = llarm::util::bit_fetch(code, 6); H2 isn't really needed
 
-    Rd_id_bits += (H1 * 8);
+    Rd_id_bits += static_cast<u8>(H1 * 8);
     const id::reg Rd_id = reg.fetch_reg_id(Rd_id_bits);
 
     reg.write(Rd_id, Rm);

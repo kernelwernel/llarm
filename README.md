@@ -1,17 +1,12 @@
+<h1 align="center">LLARM</h1>
+
 <div align="center">
-
-
-<h1>LLARM</h1>
-<br>
-<div style="position: relative; display: inline-block;">
-    <img align="center" src="assets/logo/dog.png" height="250" title="LLARM">
-    <small style="position: absolute; bottom: 1px; left: 270px; font-size: 11px; white-space: nowrap;">
-        Artwork by <a href="https://t04st3r.carrd.co/">t04st3r</a>
-    </small>
+  <img src="assets/logo/dog.png" height="250" title="LLARM">
+  <br>
+  <small>Artwork by <a href="https://t04st3r.carrd.co/">t04st3r</a></small>
 </div>
 <br>
 <br>
-</div>
 
 
 **LLARM** (Low Level ARM) is an infrastructure toolchain for the ARM architecture that provides libraries and/or tools for:
@@ -26,7 +21,7 @@
 - - -
 
 
-## Roadmap
+## Current development roadmap
 
 <br>
 <img align="center" src="assets/roadmap/llarm_roadmap.png" title="LLARM roadmap">
@@ -41,9 +36,4 @@
 >
 > My ambition is to expand it into something much bigger than it already is. The reason why I'm sharing this colossal project now is because I wanted to publish the progress I've made so far, and maybe get feedback from people to determine what could be better. But for the moment, this is only the beginning. 
 > 
-> My objective is to provide a completely new framework to work with the ARM architecture, with goals to have it become a suitable industry standard candidate for many low-level embedded development requirements out there. Think of it as LLVM but for ARM instead of compilers.
-
-<br>
-
-# Current development roadmap 
-TODO
+> My objective is to provide a completely new framework to work with the ARM architecture, with goals to have it become a practical solution for many low-level embedded development requirements out there. Think of it as LLVM but for ARM instead of compilers.

@@ -22,7 +22,7 @@ void INSTRUCTIONS::thumb::math::ADC(const u16 code) {
 
     const u64 result = (Rd + Rm + c_flag);
 
-    reg.write(Rd_id, (result & (std::numeric_limits<u32>::max()))); // basically the same as static_cast<u32>
+    reg.write(Rd_id, static_cast<u32>(result & (std::numeric_limits<u32>::max()))); // basically the same as static_cast<u32>
 
     reg.write(id::cpsr::N, llarm::util::bit_fetch(reg.read(Rd_id), 31));
     reg.write(id::cpsr::Z, (reg.read(Rd_id) == 0));
@@ -111,8 +111,8 @@ void INSTRUCTIONS::thumb::math::ADD4(const u16 code) {
     const bool H2 = llarm::util::bit_fetch(code, 6);
 
     // branchless version of "if H1/H2 is true, add 8" 
-    Rd_bits = Rd_bits + (8 * H1);
-    Rm_bits = Rm_bits + (8 * H2);
+    Rd_bits = Rd_bits + static_cast<u8>(8 * H1);
+    Rm_bits = Rm_bits + static_cast<u8>(8 * H2);
 
     const id::reg Rd_id = reg.fetch_reg_id(Rd_bits);
     const id::reg Rm_id = reg.fetch_reg_id(Rm_bits);

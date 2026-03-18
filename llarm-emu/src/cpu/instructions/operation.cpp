@@ -34,7 +34,7 @@ bool OPERATION::borrow_sub(const u32 p1, const u32 p2) {
 
 // CHECK IF THIS WORKS
 bool OPERATION::borrow_sub(const u32 p1, const u32 p2, const u32 p3) {
-    return (((p1 - p2) - p3) < 0);
+    return (p1 < p2) || (p1 - p2 < p3);
 }
 
 bool OPERATION::overflow_add(const u32 a, const u32 b) {

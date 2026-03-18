@@ -77,8 +77,8 @@ void INSTRUCTIONS::thumb::compare::CMP3(const u16 code) {
     const bool H2 = llarm::util::bit_fetch(code, 6);
     const bool H1 = llarm::util::bit_fetch(code, 7);
 
-    Rn_bits += (8 * H1);
-    Rm_bits += (8 * H2);
+    Rn_bits += static_cast<u8>(8 * H1);
+    Rm_bits += static_cast<u8>(8 * H2);
 
     const id::reg Rn_id = reg.fetch_reg_id(Rn_bits);
     const id::reg Rm_id = reg.fetch_reg_id(Rm_bits);

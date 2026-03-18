@@ -32,7 +32,7 @@ address_struct ADDRESSING_MODE::ls_mul_inc_after(const u32 code) {
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
 
     const u32 start_address = reg.read(Rn_id);
-    const u32 end_address = ((llarm::util::popcount(list) * 4) - 4);
+    const u32 end_address = static_cast<u32>((llarm::util::popcount(list) * 4) - 4);
 
     if (reg.is_cond_valid(code) && llarm::util::bit_fetch(code, 21)) {
         reg.write(Rn_id, (reg.read(Rn_id) + (llarm::util::popcount(list) * 4)));
@@ -81,7 +81,7 @@ address_struct ADDRESSING_MODE::ls_mul_dec_after(const u32 code) {
 
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
 
-    const u32 start_address = reg.read(Rn_id) - ((llarm::util::popcount(list) * 4) + 4);
+    const u32 start_address = reg.read(Rn_id) - static_cast<u32>((llarm::util::popcount(list) * 4) + 4);
     const u32 end_address = reg.read(Rn_id);
 
     if (reg.is_cond_valid(code) && llarm::util::bit_fetch(code, 21)) {

@@ -282,8 +282,6 @@ arm_id mnemonic_arm::STM(const lexemes_t &lexemes) {
 
 
 arm_id mnemonic_arm::LDM(const lexemes_t &lexemes) {
-    reg_list_settings settings = {};
-
     // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
     if (verify_tokens({ REG, PRE_INDEX, REG_LIST }, lexemes)) {
         return arm_id::LDM1;
@@ -291,14 +289,9 @@ arm_id mnemonic_arm::LDM(const lexemes_t &lexemes) {
         return arm_id::LDM1;
     }
 
-    settings.is_r15_excluded = true;
-
     if (verify_tokens({ REG, REG_LIST, CARET }, lexemes)) {
         return arm_id::LDM2;
     }
-
-    settings.is_r15_excluded = false;
-    settings.must_include_r15 = true;
 
     if (verify_tokens({ REG, PRE_INDEX, REG_LIST, CARET }, lexemes)) {
         return arm_id::LDM3;

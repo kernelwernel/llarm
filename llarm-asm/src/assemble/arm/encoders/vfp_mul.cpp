@@ -138,7 +138,7 @@ u32 generators::vfp_mul_instructions(const arm_id id, const operand_struct &args
                 llarm::util::swap_bits(binary, 12, 15, Fd);
                 llarm::util::swap_bits(binary, 0, 7, data.offset);
             } else if (id == arm_id::FSTMX || id == arm_id::FLDMX) {
-                llarm::util::swap_bits(binary, 0, 7, (data.offset * 2) + 1);
+                llarm::util::swap_bits(binary, 0, 7, static_cast<u32>(data.offset * 2) + 1);
                 llarm::util::swap_bits(binary, 12, 15, data.Dd);
             } else if (id == arm_id::FSTMD || id == arm_id::FLDMD) {
                 llarm::util::swap_bits(binary, 0, 7, (data.offset * 2));

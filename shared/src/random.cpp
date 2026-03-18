@@ -1,6 +1,9 @@
 #include "../include/llarm/shared/random.hpp"
 
+#include <chrono>
+
 using namespace llarm;
+
 
 random::random(const u64 seed_arg) {
 

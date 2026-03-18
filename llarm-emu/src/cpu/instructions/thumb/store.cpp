@@ -253,7 +253,7 @@ void INSTRUCTIONS::thumb::store::PUSH(const u16 code) {
 
     const u32 SP = reg.read(id::reg::SP);
 
-    const u32 start_address = (SP - (4 * (R + llarm::util::popcount(register_list))));
+    const u32 start_address = (SP - static_cast<u32>(4 * (R + llarm::util::popcount(register_list))));
     const u32 end_address = (SP - 4);
 
     u32 address = start_address;
@@ -286,5 +286,5 @@ void INSTRUCTIONS::thumb::store::PUSH(const u16 code) {
         llarm::out::dev_error("assertation failed in thumb PUSH instruction");
     }
 
-    reg.write(id::reg::SP, (SP - (4 * (R + llarm::util::popcount(register_list)))));
+    reg.write(id::reg::SP, (SP - static_cast<u32>(4 * (R + llarm::util::popcount(register_list)))));
 }

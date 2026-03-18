@@ -9,11 +9,11 @@
 
 namespace interpreter {
     // specifically for validation
-    bool verify_lexemes(const lexemes_t& raw_pattern, const lexemes_t &match_pattern);
+    bool verify_lexemes(const lexemes_t& raw_pattern, const lexemes_t& match_pattern);
 
     // specifically for identification, it's basically a cheaper version of verify_lexemes() 
     // but for token placements instead of a thorough analysis of lexemes
-    bool verify_tokens(const tokens_t& tokens, const lexemes_t &match_pattern);
+    bool verify_tokens(const tokens_t& tokens, const lexemes_t& match_pattern);
 
     lexemes_t analyze(const sv instruction);
     sv fetch_instruction(const sv instruction);
