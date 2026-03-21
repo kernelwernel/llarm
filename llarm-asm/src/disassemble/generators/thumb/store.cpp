@@ -187,8 +187,6 @@ std::string generators::thumb::store::STRH2(const u32 code, const settings& sett
     const std::string Rn = util::reg_string(code, 3, 5, settings);
     const std::string Rm = util::reg_string(code, 6, 8, settings);
 
-    const u8 lol = 0;
-
     return util::make_string(
         "STRH ", Rd, ", [", Rn, ", ", Rm, "]"
     );

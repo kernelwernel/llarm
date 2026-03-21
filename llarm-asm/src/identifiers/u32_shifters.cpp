@@ -295,7 +295,7 @@ shifter_id ident::u32_shifters::vfp_single_monadic(const u32 code) {
 
 shifter_id ident::u32_shifters::vfp_double(const u32 code) {
     const u8 Dd = llarm::util::bit_range<u8>(code, 12, 15);
-    const u8 Dn = llarm::util::bit_range<u8>(code, 16, 19);
+    //const u8 Dn = llarm::util::bit_range<u8>(code, 16, 19);
     const u8 Dm = llarm::util::bit_range<u8>(code, 0, 3);
 
     const u8 d_bank = llarm::util::bit_range<u8>(Dd, 2, 3);

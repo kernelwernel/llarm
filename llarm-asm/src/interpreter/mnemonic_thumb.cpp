@@ -19,10 +19,10 @@ using enum token_enum;
 
 
 mnemonic_struct_thumb mnemonic_thumb::thumb(const std::string &code) {
-    const std::string assembly = llarm::util::to_upper(code);
+    const std::string& assembly = llarm::util::to_upper(code);
     const sv mnemonic = interpreter::fetch_instruction(assembly);
 
-    const thumb_id id = fetch_thumb_id(code, mnemonic, assembly);
+    const thumb_id id = fetch_thumb_id(code, mnemonic);
     const cond_id cond_id = (id == thumb_id::B1 ? fetch_B1_cond_id(mnemonic) : cond_id::NONE);
 
     return mnemonic_struct_thumb {
@@ -32,7 +32,7 @@ mnemonic_struct_thumb mnemonic_thumb::thumb(const std::string &code) {
     };
 }
 
-thumb_id mnemonic_thumb::fetch_thumb_id(const sv code, const sv mnemonic, const sv assembly) {
+thumb_id mnemonic_thumb::fetch_thumb_id(const sv code, const sv mnemonic) {
     for (const auto &inst : pure_thumb_instructions) {
         if (mnemonic == inst.str) {
             return inst.id;

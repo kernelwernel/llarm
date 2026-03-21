@@ -57,7 +57,7 @@ void INSTRUCTIONS::arm::dsp::LDRD(const u32 code) {
 /**
  * 
  */
-void INSTRUCTIONS::arm::dsp::MCRR(const u32 code) {
+void INSTRUCTIONS::arm::dsp::MCRR(/*const u32 code*/) {
     // TODO
 }
 
@@ -65,7 +65,7 @@ void INSTRUCTIONS::arm::dsp::MCRR(const u32 code) {
 /**
  * 
  */
-void INSTRUCTIONS::arm::dsp::MRRC(const u32 code) {
+void INSTRUCTIONS::arm::dsp::MRRC(/*const u32 code*/) {
     // TODO
 }
 
@@ -75,7 +75,7 @@ void INSTRUCTIONS::arm::dsp::MRRC(const u32 code) {
  * // appropriate, the memory system is signalled that memory accesses
  * // to the specified address are likely in the near future.
  */
-void INSTRUCTIONS::arm::dsp::PLD(const u32 code) {
+void INSTRUCTIONS::arm::dsp::PLD(/*const u32 code*/) {
     return; // TODO, this might change 
 }
 
@@ -282,7 +282,6 @@ void INSTRUCTIONS::arm::dsp::SMLAWY(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rs = reg.read(code, 8, 11);
     const u32 Rn = reg.read(code, 12, 15);
-    const u32 Rd = reg.read(code, 16, 19);
 
     const bool Y = llarm::util::bit_fetch(code, 6);
 
@@ -323,7 +322,6 @@ void INSTRUCTIONS::arm::dsp::SMLAWY(const u32 code) {
 void INSTRUCTIONS::arm::dsp::SMULXY(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rs = reg.read(code, 8, 11);
-    const u32 Rd = reg.read(code, 16, 19);
 
     const bool Y = llarm::util::bit_fetch(code, 6);
     const bool X = llarm::util::bit_fetch(code, 5);
@@ -358,7 +356,6 @@ void INSTRUCTIONS::arm::dsp::SMULXY(const u32 code) {
 void INSTRUCTIONS::arm::dsp::SMULWY(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rs = reg.read(code, 8, 11);
-    const u32 Rd = reg.read(code, 16, 19);
 
     const bool Y = llarm::util::bit_fetch(code, 6);
 

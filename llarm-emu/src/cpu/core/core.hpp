@@ -58,7 +58,7 @@ public:
 public:
     void initialise(const std::vector<u8> &binary);
 
-    void arm_cycle_headless(const llarm::as::settings &assembly_settings);
+    void arm_cycle_headless();
     void arm_cycle(const llarm::as::settings &settings);
     void thumb_cycle();
 

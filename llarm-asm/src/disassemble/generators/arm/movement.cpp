@@ -124,7 +124,6 @@ std::string generators::arm::movement::MSR_IMM(const u32 code, const settings& s
 
     const std::string fields = patterns::psr_fields(code);
 
-    size_t pos = 0;
     const u32 immediate = llarm::util::str_to_u32(immediate_str);
 
     return util::make_string("MSR", util::cond(code, settings), fields, ", #", util::hex(immediate, settings));

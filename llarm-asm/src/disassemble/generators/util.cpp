@@ -446,7 +446,6 @@ std::string util::hex(const u32 integer, const settings settings) {
         };
 
         u32 x = integer;
-        int i = 3;
         const char* lut = digits.data();
         std::string s(8, '\0');
 

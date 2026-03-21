@@ -6,7 +6,7 @@ using namespace llarm;
 
 
 random::random(const u64 seed_arg) {
-
+    (void)seed_arg; // temporary
 }
 
 
@@ -42,6 +42,10 @@ u64 random::generate_range(const u64 start, const u64 end) {
     for (u8 i = 0; i < 64; i++) {
 
     }
+
+    (void)start;
+    (void)end;
+    (void)x;
 
     //return static_cast<u16>(r % range);
     return 0; // TODO FINISH THIS FUNCTION

@@ -104,8 +104,8 @@ public:
             void B(const u32 code); // TODO
             void BL(const u32 code); // TODO
             void BX(const u32 code); // TODO
-            void BLX1(const u32 code); // TODO
-            void BLX2(const u32 code); // TODO
+            void BLX1(/*const u32 code*/); // TODO
+            void BLX2(/*const u32 code*/); // TODO
         } branching;
 
         struct coproc {
@@ -121,16 +121,16 @@ public:
                 COPROCESSOR& coprocessor
             ) : reg(reg), operation(operation), address_mode(address_mode), coprocessor(coprocessor) {}
     
-            void CDP(const u32 code); // TODO
-            void LDC(const u32 code); // TODO
+            void CDP(/*const u32 code*/); // TODO
+            void LDC(/*const u32 code*/); // TODO
             void MCR(const u32 code); // TODO
             void MRC(const u32 code); // TODO
-            void STC(const u32 code); // TODO
-            void CDP2(const u32 code); // TODO
-            void LDC2(const u32 code); // TODO
+            void STC(/*const u32 code*/); // TODO
+            void CDP2(/*const u32 code*/); // TODO
+            void LDC2(/*const u32 code*/); // TODO
             void MCR2(const u32 code); // TODO
             void MRC2(const u32 code); // TODO
-            void STC2(const u32 code); // TODO
+            void STC2(/*const u32 code*/); // TODO
         } coproc;
 
         struct misc {
@@ -235,9 +235,9 @@ public:
             }
     
             void LDRD(const u32 code); // TODO
-            void MCRR(const u32 code); // TODO
-            void MRRC(const u32 code); // TODO
-            void PLD(const u32 code); // TODO
+            void MCRR(/*const u32 code*/); // TODO
+            void MRRC(/*const u32 code*/); // TODO
+            void PLD(/*const u32 code*/); // TODO
             void QADD(const u32 code); // TODO
             void QDADD(const u32 code); // TODO
             void QDSUB(const u32 code); // TODO

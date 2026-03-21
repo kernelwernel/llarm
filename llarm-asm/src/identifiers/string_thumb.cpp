@@ -15,5 +15,5 @@ thumb_id ident::string_thumb::thumb(const std::string &code) {
     const std::string& assembly = llarm::util::to_upper(code);
     const sv mnemonic = interpreter::fetch_instruction(assembly);
 
-    return mnemonic_thumb::fetch_thumb_id(code, mnemonic, assembly);
+    return mnemonic_thumb::fetch_thumb_id(code, mnemonic);
 }

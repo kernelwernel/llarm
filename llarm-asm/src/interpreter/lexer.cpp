@@ -112,8 +112,6 @@ void lexer::option_check(lexemes_t &lexemes, const u8 start_pos, const u8 end_po
     
     // options can only be u8
 
-    bool is_malformed = false;
-
     OPTION option = {
         0, // number
         false, // is_malformed

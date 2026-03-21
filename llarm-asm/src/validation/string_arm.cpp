@@ -85,7 +85,7 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
         case arm_id::STC:
         case arm_id::STC2:
         case arm_id::LDC:
-        case arm_id::LDC2: return is_ls_coproc_valid(lexemes, IR.shifter_id, IR.mnemonic.id);
+        case arm_id::LDC2: return is_ls_coproc_valid(lexemes, IR.shifter_id);
 
         case arm_id::B:
         case arm_id::BL: return is_B_BL_valid(lexemes, IR.PC);
@@ -364,7 +364,7 @@ bool validation::string_arm::is_ls_misc_valid(lexemes_t lexemes, const shifter_i
 }
 
 
-bool validation::string_arm::is_ls_coproc_valid(const lexemes_t& lexemes, const shifter_id shifter_id, const arm_id id) {
+bool validation::string_arm::is_ls_coproc_valid(const lexemes_t& lexemes, const shifter_id shifter_id) {
     using namespace interpreter;
     using enum token_enum;
 

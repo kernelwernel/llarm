@@ -472,13 +472,13 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision_monadic(const u32 code
         };
     }
 
-    const u8 Dn = llarm::util::bit_range<u8>(code, 16, 19);
+    //const u8 Dn = llarm::util::bit_range<u8>(code, 16, 19);
 
-    const u8 n_bank = llarm::util::bit_range<u8>(Dn, 2, 3);
+    //const u8 n_bank = llarm::util::bit_range<u8>(Dn, 2, 3);
     const u8 m_bank = llarm::util::bit_range<u8>(Dm, 2, 3);
 
     u8 d_index = llarm::util::bit_range<u8>(Dd, 0, 1);
-    u8 n_index = llarm::util::bit_range<u8>(Dn, 0, 1);
+    //u8 n_index = llarm::util::bit_range<u8>(Dn, 0, 1);
     u8 m_index = llarm::util::bit_range<u8>(Dm, 0, 1);
 
     const u8 vec_len = static_cast<u8>(vfp_reg.read(id::vfp_reg::FPSCR_LEN));

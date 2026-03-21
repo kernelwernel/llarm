@@ -50,11 +50,11 @@ void INSTRUCTIONS::arm::branching::BX(const u32 code) {
 }
 
 
-void INSTRUCTIONS::arm::branching::BLX1(const u32 code) {
+void INSTRUCTIONS::arm::branching::BLX1(/* const u32 code */) {
     // TODO
 }
 
 
-void INSTRUCTIONS::arm::branching::BLX2(const u32 code) {
+void INSTRUCTIONS::arm::branching::BLX2(/* const u32 code */) {
     // TODO
 }

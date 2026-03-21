@@ -74,8 +74,10 @@ set(LINUX_RELEASE_CXX_FLAGS
     -Wall
     -Werror
     -Wextra
-    -Wshadow
+    #-Wshadow
     -Wunused
+    -Wno-unused-private-field # TEMPORARY
+    -Wno-unused-parameter # TEMPORARY
 )
 
 

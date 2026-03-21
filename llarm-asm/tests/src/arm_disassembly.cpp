@@ -123,6 +123,8 @@ std::string fetch_shifter(const u32 code) {
         case shifter_id::VFP_LS_MUL_DEC: return "VFP_LS_MUL_DEC";
         case shifter_id::VFP_LS_MUL_SPECIAL: return "VFP_LS_MUL_SPECIAL";
     }
+
+    return "UNKNOWN";
 }
 
 

@@ -89,7 +89,7 @@ namespace internal::mnemonic_thumb {
         { "STRH", sub_inst::STRH }
     }};
 
-    thumb_id fetch_thumb_id(const sv code, const sv mnemonic, const sv instruction);
+    thumb_id fetch_thumb_id(const sv code, const sv mnemonic);
     cond_id fetch_B1_cond_id(sv mnemonic);
 
     mnemonic_struct_thumb thumb(const std::string& code);

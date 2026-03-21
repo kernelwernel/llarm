@@ -100,9 +100,9 @@ REG matchers::reg(sv str) {
         reg.number = static_cast<u8>(raw_num);
     }
 
-    const bool is_thumb_supported = (reg.number < 8);
-
-    constexpr bool is_invalid = false;
+    reg.is_thumb_supported = (reg.number < 8);
+    reg.is_malformed = is_malformed;
+    reg.is_invalid = false;
 
     return reg;
 }
@@ -142,8 +142,6 @@ PSR matchers::cpsr_spsr(const sv str) {
     }
 
     const sv fields = str.substr(5);
-    
-    u8 sum = 0;
 
     for (u8 i = 0; i < fields.size(); i++) {
         switch (fields.at(i)) {

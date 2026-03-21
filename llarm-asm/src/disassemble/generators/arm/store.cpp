@@ -98,8 +98,6 @@ std::string generators::arm::store::STM2(const u32 code, const settings& setting
  * reference: A4-88
  */
 std::string generators::arm::store::STR(const u32 code, const settings& settings) {
-    const u16 register_list = llarm::util::bit_range<u16>(code, 0, 15);
-
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
     const std::string addressing_mode = shifters::ls(code, settings);

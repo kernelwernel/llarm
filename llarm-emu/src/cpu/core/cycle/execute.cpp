@@ -53,11 +53,11 @@ void EXECUTE::arm_execute(const arm_decode_struct &decode) {
         case arm_id::STRB: instructions.arm.store.STRB(code); return; 
         case arm_id::STRBT: instructions.arm.store.STRBT(code); return;
         case arm_id::STRT: instructions.arm.store.STRT(code); return; 
-        case arm_id::CDP: instructions.arm.coproc.CDP(code); return;
-        case arm_id::LDC: instructions.arm.coproc.LDC(code); return;
+        case arm_id::CDP: instructions.arm.coproc.CDP(/*code*/); return; // TODO
+        case arm_id::LDC: instructions.arm.coproc.LDC(/*code*/); return; // TODO
         case arm_id::MCR: instructions.arm.coproc.MCR(code); return;
         case arm_id::MRC: instructions.arm.coproc.MRC(code); return;
-        case arm_id::STC: instructions.arm.coproc.STC(code); return;
+        case arm_id::STC: instructions.arm.coproc.STC(/*code*/); return; // TODO
         case arm_id::SWP: instructions.arm.store.SWP(code); return;
         case arm_id::SWPB: instructions.arm.store.SWPB(code); return;
         case arm_id::MLA: instructions.arm.multiply.MLA(code); return;
@@ -75,17 +75,17 @@ void EXECUTE::arm_execute(const arm_decode_struct &decode) {
         case arm_id::STRH: instructions.arm.store.STRH(code); return;
         case arm_id::BX: instructions.arm.branching.BX(code); return;
         case arm_id::BKPT: instructions.arm.misc.BKPT(code); return;
-        case arm_id::BLX1: instructions.arm.branching.BLX1(code); return;
-        case arm_id::BLX2: instructions.arm.branching.BLX2(code); return;
+        case arm_id::BLX1: instructions.arm.branching.BLX1(/*code*/); return; // TODO
+        case arm_id::BLX2: instructions.arm.branching.BLX2(/*code*/); return; // TODO
         case arm_id::CLZ: instructions.arm.logic.CLZ(code); return;
-        case arm_id::CDP2: instructions.arm.coproc.CDP2(code); return;
-        case arm_id::LDC2: instructions.arm.coproc.LDC2(code); return;
+        case arm_id::CDP2: instructions.arm.coproc.CDP2(/*code*/); return; // TODO
+        case arm_id::LDC2: instructions.arm.coproc.LDC2(/*code*/); return; // TODO
         case arm_id::MCR2: instructions.arm.coproc.MCR2(code); return;
         case arm_id::MRC2: instructions.arm.coproc.MRC2(code); return;
-        case arm_id::STC2: instructions.arm.coproc.STC2(code); return;
-        case arm_id::MCRR: instructions.arm.dsp.MCRR(code); return;
-        case arm_id::MRRC: instructions.arm.dsp.MRRC(code); return;
-        case arm_id::PLD: instructions.arm.dsp.PLD(code); return;
+        case arm_id::STC2: instructions.arm.coproc.STC2(/*code*/); return; // TODO
+        case arm_id::MCRR: instructions.arm.dsp.MCRR(/*code*/); return; // TODO
+        case arm_id::MRRC: instructions.arm.dsp.MRRC(/*code*/); return; // TODO
+        case arm_id::PLD: instructions.arm.dsp.PLD(/*code*/); return; // TODO
         case arm_id::STRD: instructions.arm.dsp.STRD(code); return;
         case arm_id::LDRD: instructions.arm.dsp.LDRD(code); return;
         case arm_id::QADD: instructions.arm.dsp.QADD(code); return;
@@ -169,7 +169,7 @@ void EXECUTE::thumb_execute(const thumb_decode_struct &instruction) {
     const u16 code = instruction.code;
     const thumb_id id = instruction.id;
 
-    switch (instruction.id) {
+    switch (id) {
         case thumb_id::UNKNOWN: llarm::out::dev_error("Unknown instruction for thumb instruction execution");
         case thumb_id::UNDEFINED: exception.undefined(); return;
         case thumb_id::ADC: instructions.thumb.math.ADC(code); return;

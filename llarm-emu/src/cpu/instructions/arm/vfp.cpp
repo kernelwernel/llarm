@@ -537,7 +537,7 @@ void INSTRUCTIONS::arm::vfp::FLDMS(const u32 code) {
 void INSTRUCTIONS::arm::vfp::FLDMX(const u32 code) {
     const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
-    const u8 d = llarm::util::bit_range<u8>(code, 12, 15);
+    //const u8 d = llarm::util::bit_range<u8>(code, 12, 15);
 
     const vfp_address_struct addresses = vfp_addressing_mode.vfp_load_multiple(code);
 

@@ -64,8 +64,6 @@ void INSTRUCTIONS::thumb::load::LDR1(const u16 code) {
 
     const u32 address = (Rn + (immed_5 * 4));
 
-    u32 value = 0;
-
     if ((address & 0b11) != 0b00) {
         llarm::out::unpredictable("unpredictable alignment in LDR1 instruction");
         reg.write(Rd_id, 0);

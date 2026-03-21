@@ -74,7 +74,7 @@ u32 generators::vfp_mul_instructions(const arm_id id, const operand_struct &args
             llarm::util::swap_bits(binary, 16, 19, args.second_reg);
             llarm::util::swap_bits(binary, 0, 7, args.first_int);
 
-            llarm::util::modify_bit(binary, 22, true);
+            llarm::util::modify_bit(binary, 22, D);
 
             if (args.has_minus) {
                 llarm::util::modify_bit(binary, 23, true);
@@ -133,7 +133,7 @@ u32 generators::vfp_mul_instructions(const arm_id id, const operand_struct &args
             if (id == arm_id::FSTMS || id == arm_id::FLDMS) {
                 const bool D = (data.Dd & 1);
                 const u8 Fd = llarm::util::bit_range<u8>(data.Dd, 1, 4);
-                
+
                 llarm::util::modify_bit(binary, 22, D);
                 llarm::util::swap_bits(binary, 12, 15, Fd);
                 llarm::util::swap_bits(binary, 0, 7, data.offset);

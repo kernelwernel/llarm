@@ -15,8 +15,8 @@ address_struct ADDRESSING_MODE::load_store_coprocessor(const u32 code) {
     switch (shifter_id) {
         case shifter_id::LS_COPROC_IMM: return ls_coproc_imm(code);
         case shifter_id::LS_COPROC_IMM_PRE: return ls_coproc_imm_pre(code);
-        case shifter_id::LS_COPROC_IMM_POST: return ls_coproc_imm_post(code);
-        case shifter_id::LS_COPROC_UNINDEXED: return ls_coproc_unindexed(code);
+        case shifter_id::LS_COPROC_IMM_POST: return ls_coproc_imm_post(/* code */); // TODO uncomment these when they are implemented
+        case shifter_id::LS_COPROC_UNINDEXED: return ls_coproc_unindexed(/* code */); // TODO uncomment these when they are implemented
         default: llarm::out::error("Impossible identification of ARM load store coprocessor shifter");
     }
 }
@@ -48,7 +48,7 @@ address_struct ADDRESSING_MODE::ls_coproc_imm(const u32 code) {
     }
 
     const u32 start_address = address;
-    const u8 cp_num = llarm::util::bit_range<u8>(code, 8, 11);
+    //const u8 cp_num = llarm::util::bit_range<u8>(code, 8, 11);
 
     // ???? TODO
 
@@ -84,17 +84,36 @@ address_struct ADDRESSING_MODE::ls_coproc_imm_pre(const u32 code) {
     }
 
     const u32 start_address = reg.read(Rn_id);
-    u32 address = start_address;
+    //u32 address = start_address;
 
-    
+    // TODO
+
+    // temporary
+    return address_struct {
+        start_address,
+        0
+    };    
 }
 
 
-address_struct ADDRESSING_MODE::ls_coproc_imm_post(const u32 code) {
+address_struct ADDRESSING_MODE::ls_coproc_imm_post(/*const u32 code*/) {
 // TODO
+
+
+    // temporary
+    return address_struct {
+        0,
+        0
+    };
 }
 
 
-address_struct ADDRESSING_MODE::ls_coproc_unindexed(const u32 code) {
+address_struct ADDRESSING_MODE::ls_coproc_unindexed(/*const u32 code*/) {
 // TODO
+
+    // temporary
+    return address_struct {
+        0,
+        0
+    };
 }

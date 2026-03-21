@@ -43,6 +43,26 @@ set(CAPSTONE_BUILD_CSTOOL OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(capstone)
 
 
+FetchContent_Declare(
+    nyxstone
+    GIT_REPOSITORY https://github.com/emproof-com/nyxstone.git
+    GIT_TAG        main
+)
+FetchContent_MakeAvailable(nyxstone)
+
+
+
+# patch nyxstone's broken include paths
+set_target_properties(nyxstone PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES ""
+)
+target_include_directories(nyxstone PUBLIC
+    $<BUILD_INTERFACE:${nyxstone_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${nyxstone_SOURCE_DIR}/vendor>
+)
+
+
+
 # find or build llarm-asm
 add_dependency(
     PACKAGE_NAME llarm-asm
@@ -55,18 +75,24 @@ add_dependency(
 # source code generation
 file(GLOB_RECURSE ALL_SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 
-
 # executable setup
 add_executable(${TARGET_ARM} "src/arm_disassembly.cpp")
 add_executable(${TARGET_THUMB} "src/thumb_disassembly.cpp")
 add_executable(${TARGET_BENCH_ARM} "src/arm_benchmark.cpp")
 add_executable(${TARGET_CAP} "src/capstone.cpp")
 
+
+target_include_directories(${TARGET_BENCH_ARM} SYSTEM PRIVATE nyxstone/include)
+
+
 # library linkage
 target_link_libraries(${TARGET_ARM} PRIVATE ${LLARM_ASM_TARGET} capstone)
 target_link_libraries(${TARGET_THUMB} PRIVATE ${LLARM_ASM_TARGET} capstone)
 target_link_libraries(${TARGET_BENCH_ARM} PRIVATE ${LLARM_ASM_TARGET} capstone)
 target_link_libraries(${TARGET_CAP} PRIVATE ${LLARM_ASM_TARGET} capstone)
+target_link_libraries(${TARGET_BENCH_ARM} PRIVATE ${LLARM_ASM_TARGET} nyxstone::nyxstone)
+
+
 
 # configure the target flags
 configure_target_flags(${TARGET_ARM})

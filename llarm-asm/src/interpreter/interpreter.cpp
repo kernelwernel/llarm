@@ -169,7 +169,7 @@ cond_id interpreter::fetch_cond_id(const sv cond) {
 
 lexeme interpreter::reg(const reg_type reg_type, const u8 reg_num) {
     REG reg = {
-        reg_type::REGULAR, // type
+        reg_type, // type
         reg_num, // number
         false, // is_thumb_supported
         false, // is_malformed

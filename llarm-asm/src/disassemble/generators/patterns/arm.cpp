@@ -103,10 +103,10 @@ std::string patterns::S_Rd_data(const u32 code, const std::string &instruction, 
 
 std::string patterns::psr_fields(const u32 code) {
     const bool R = (llarm::util::bit_fetch(code, 22));
-
-    const char* PSR = (R ? "SPSR" : "CPSR");
-
+    
     std::string fields(5, '\0');
+
+    fields += (R ? "SPSR" : "CPSR");
 
     const u8 field_mask = llarm::util::bit_range<u8>(code, 16, 19);
 

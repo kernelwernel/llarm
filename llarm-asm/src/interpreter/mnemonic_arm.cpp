@@ -315,8 +315,6 @@ arm_id mnemonic_arm::BLX(const lexemes_t &lexemes) {
 
 
 arm_id mnemonic_arm::PSR_family(const sv mnemonic_str) {
-    mnemonic_struct_arm m;
-
     if (mnemonic_str.size() == 6) {
         const char first_char = mnemonic_str.at(3);
         const char second_char = mnemonic_str.at(4);

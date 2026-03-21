@@ -8,7 +8,7 @@
 #include <llarm/llarm-asm.hpp>
 
 
-inline void CORE::arm_cycle_headless(const llarm::as::settings &assembly_settings) {
+inline void CORE::arm_cycle_headless() {
     const arm_fetch_struct arm_code_access = fetch.arm_fetch();
 
     if (arm_code_access.has_failed) {

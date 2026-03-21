@@ -43,7 +43,7 @@ void COPROCESSOR::write(
     const u8 cp_id_bits, 
     const u8 CRn, 
     const u8 CRm,
-    const u8 opcode_1, 
+    //const u8 opcode_1, 
     const u8 opcode_2,
     const u64 value, 
     const bool is_forced
@@ -83,7 +83,7 @@ u32 COPROCESSOR::read(
     const u8 cp_id_bits,
     const u8 CRn,
     const u8 CRm,
-    const u8 opcode_1, 
+    //const u8 opcode_1, 
     const u8 opcode_2
 ) {
     const id::cp cp_id = fetch_cp_id(cp_id_bits);
