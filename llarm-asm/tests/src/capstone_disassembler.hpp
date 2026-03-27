@@ -29,3 +29,21 @@ inline std::string capstone_arm_disassembler(const u32 binary) {
     cs_close(&handle);
     return result;
 }
+
+inline std::string capstone_thumb_disassembler(const u32 binary) {
+    csh handle;
+    cs_open(CS_ARCH_ARM, CS_MODE_THUMB, &handle);
+    const u8 bytes[2] = {
+        static_cast<u8>(binary & 0xFF),
+        static_cast<u8>((binary >> 8) & 0xFF)
+    };
+    cs_insn* insn;
+    const size_t count = cs_disasm(handle, bytes, sizeof(bytes), PC, 1, &insn);
+    std::string result = "error";
+    if (count > 0) {
+        result = std::string(insn[0].mnemonic) + " " + std::string(insn[0].op_str);
+        cs_free(insn, count);
+    }
+    cs_close(&handle);
+    return result;
+}

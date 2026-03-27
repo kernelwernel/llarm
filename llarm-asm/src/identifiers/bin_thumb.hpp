@@ -4,7 +4,7 @@
 
 #include <llarm/shared/types.hpp>
 
-namespace internal::ident::u16_thumb {
+namespace internal::ident::bin_thumb {
     thumb_id thumb(const u32 code);
 
     thumb_id bits_000(const u32 code);

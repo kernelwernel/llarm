@@ -22,7 +22,7 @@ std::string generators::thumb::misc::BKPT(const u32 code, const settings& settin
     const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     return util::make_string(
-        "BKPT ", util::hex(immed_8, settings)
+        "BKPT #", util::hex(immed_8, settings)
     );
 }
 

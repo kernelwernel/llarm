@@ -61,6 +61,7 @@ set(GCC_CXX_FLAGS
     -Wsuggest-override
     -Wnrvo
     -Wno-shadow
+    -Wno-error=return-type # GCC doesn't propagate [[noreturn]] through template instantiations
 )
 
 
@@ -78,6 +79,7 @@ set(LINUX_RELEASE_CXX_FLAGS
     -Wunused
     -Wno-unused-private-field # TEMPORARY
     -Wno-unused-parameter # TEMPORARY
+    -Wno-return-type
 )
 
 

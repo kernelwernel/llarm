@@ -105,7 +105,7 @@ std::string generators::thumb::math::ADD4(const u32 code, const settings& settin
     const std::string Rm = util::reg_string_bits(code, 3, 5, H2, settings);
 
     return util::make_string(
-        "ADD4 ", Rd, ", ", Rm
+        "ADD ", Rd, ", ", Rm
     );
 }
          
@@ -125,7 +125,7 @@ std::string generators::thumb::math::ADD5(const u32 code, const settings& settin
     const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     return util::make_string(
-        "ADD ", Rd, ", PC, #", util::hex(immed_8, settings), " * 4"
+        "ADD ", Rd, ", PC, #", util::hex(immed_8, settings)
     );
 }
 
@@ -145,7 +145,7 @@ std::string generators::thumb::math::ADD6(const u32 code, const settings& settin
     const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     return util::make_string(
-        "ADD ", Rd, ", SP, #", util::hex(immed_8, settings), " * 4"
+        "ADD ", Rd, ", SP, #", util::hex(immed_8 * 4, settings)
     );
 }
 
@@ -162,7 +162,7 @@ std::string generators::thumb::math::ADD7(const u32 code, const settings& settin
     const u8 immed_7 = llarm::util::bit_range<u8>(code, 0, 6);
 
     return util::make_string(
-        "ADD SP, #", util::hex(immed_7, settings), " * 4"
+        "ADD SP, #", util::hex(immed_7 * 4, settings)
     );
 }
 
@@ -257,7 +257,7 @@ std::string generators::thumb::math::SUB4(const u32 code, const settings& settin
     const u8 immed_7 = llarm::util::bit_range<u8>(code, 0, 6);
 
     return util::make_string(
-        "SUB SP, #", util::hex(immed_7, settings), " * 4"
+        "SUB SP, #", util::hex(immed_7 * 4, settings)
     );
 }
 

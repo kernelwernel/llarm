@@ -155,13 +155,52 @@ std::string util::reg_id_to_string(const util::reg_id id, const settings setting
         case reg_id::R6: return "R6";
         case reg_id::R7: return "R7";
         case reg_id::R8: return "R8";
-        case reg_id::R9: return (settings.register_alias ? "SB" : "R9");
-        case reg_id::R10: return (settings.register_alias ? "SL" : "R10");
-        case reg_id::R11: return (settings.register_alias ? "FP" : "R11");
-        case reg_id::R12: return (settings.register_alias ? "IP" : "R12");
-        case reg_id::R13: return (settings.register_alias ? "SP" : "R13");
-        case reg_id::R14: return (settings.register_alias ? "LR" : "R14");
-        case reg_id::R15: return (settings.register_alias ? "PC" : "R15");
+
+        // ternaries can be used here, but they're not as ideal: 
+        // https://quick-bench.com/q/tL6LBrSQ4uO6rIgK-jd0a0DRR3A
+
+        case reg_id::R9: 
+            if (settings.register_alias) { 
+                return "SB"; 
+            } else { 
+                return "R9";
+            };
+        case reg_id::R10: 
+            if (settings.register_alias) {
+                return "SL";
+            } else {
+                return "R10";
+            }
+        case reg_id::R11: 
+            if (settings.register_alias) {
+                return "FP";
+            } else {
+                return "R11";
+            }
+        case reg_id::R12: 
+            if (settings.register_alias) {
+                return "IP";
+            } else {
+                return "R12";
+            }
+        case reg_id::R13: 
+            if (settings.register_alias) {
+                return "SP";
+            } else {
+                return "R13";
+            }
+        case reg_id::R14: 
+            if (settings.register_alias) {
+                return "LR";
+            } else {
+                return "R14";
+            }
+        case reg_id::R15: 
+            if (settings.register_alias) {
+                return "PC";
+            } else {
+                return "R15";
+            }
         case reg_id::S0: return "S0";
         case reg_id::S1: return "S1";
         case reg_id::S2: return "S2";
@@ -254,52 +293,55 @@ std::string util::reg_string(const u32 code, const u8 start, const u8 end, const
 }
 
 
-std::string util::reg_list(const u16 list, const settings settings, const reg_id extra) {
-    const u8 count = llarm::util::popcount(list);
-
-    std::string tmp(
-        4 + // for the "{  }"
-        static_cast<u32>(count * 4) - 1, // for the "Ri, " which is 4 characters, and - 1 for the trailing comma that shouldn't be there
-        '\0'
-    );
-
-    std::vector<reg_id> reg_id_list = {};
-    reg_id_list.reserve(16);
-
-    for (u8 i = 0; i < (sizeof(list) * 8); i++) {
-        if (llarm::util::bit_fetch(list, i) == 1) {
-            reg_id_list.push_back(identify_reg(i));
-        }
-    }
-
-    std::vector<std::string> registers = {};
-    registers.reserve(16);
-
-    
-    for (const auto id : reg_id_list) {
-        registers.push_back(reg_id_to_string(id, settings)); // bug is here
-    }
-
-    if (registers.empty()) {
-        llarm::out::unpredictable("Empty register set for register list addressing mode");
-    }
-
-    tmp += "{ ";
-
-    for (std::size_t i = 0; i < registers.size(); ++i) {
-        if (i != 0) {
-            tmp += ", ";
-        }
-
-        tmp += registers.at(i);
-    }
-
+std::string util::reg_list(u16 list, const settings settings, const reg_id extra) {
     if (extra != reg_id::NULL_REG) {
-        tmp += ", ";
-        tmp += reg_id_to_string(extra, settings);
+        // -1 because 0 is NULL_REG, 1 is R0, 2 is R1 and so on
+        llarm::util::modify_bit(list, static_cast<u8>(extra) - 1, true);
     }
 
-    tmp += " }";
+    std::string tmp = "";
+
+    if (list != 0 || extra != reg_id::NULL_REG) {
+        std::vector<reg_id> reg_id_list = {};
+        reg_id_list.reserve(16);
+
+        for (u8 i = 0; i < (sizeof(list) * 8); i++) {
+            if (llarm::util::bit_fetch(list, i) == 1) {
+                reg_id_list.push_back(identify_reg(i));
+            }
+        }
+
+        std::vector<std::string> registers = {};
+        registers.reserve(16);
+
+        for (const auto id : reg_id_list) {
+            registers.push_back(reg_id_to_string(id, settings));
+        }
+
+        if (registers.empty()) {
+            llarm::out::unpredictable("Empty register set for register list addressing mode");
+        }
+
+        if (settings.extra_space) {
+            tmp += "{ ";
+        } else {
+            tmp += "{";
+        }
+
+        for (std::size_t i = 0; i < registers.size(); ++i) {
+            if (i != 0) {
+                tmp += ", ";
+            }
+
+            tmp += registers.at(i);
+        }
+
+        if (settings.extra_space) {
+            tmp += " }";
+        } else {
+            tmp += "}";
+        }
+    }
 
     return tmp;
 }

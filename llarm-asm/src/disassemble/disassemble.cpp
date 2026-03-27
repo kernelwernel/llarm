@@ -1,6 +1,6 @@
 #include "disassemble.hpp"
-#include "../identifiers/u16_thumb.hpp"
-#include "../identifiers/u32_arm.hpp"
+#include "../identifiers/bin_thumb.hpp"
+#include "../identifiers/bin_arm.hpp"
 #include "../id/instruction_id.hpp"
 #include "generators/generators.hpp"
 #include "../settings.hpp"
@@ -14,7 +14,7 @@
 using namespace internal;
 
 std::string disassemble::thumb_generate(const u32 code, const u32 PC, const settings settings) {
-    const thumb_id id = ident::u16_thumb::thumb(code);
+    const thumb_id id = ident::bin_thumb::thumb(code);
 
     switch (id) {
         case thumb_id::ADC: return generators::thumb::math::ADC(code, settings);
@@ -82,7 +82,7 @@ std::string disassemble::thumb_generate(const u32 code, const u32 PC, const sett
         case thumb_id::STRB2: return generators::thumb::store::STRB2(code, settings);
         case thumb_id::STRH1: return generators::thumb::store::STRH1(code, settings);
         case thumb_id::STRH2: return generators::thumb::store::STRH2(code, settings);
-        case thumb_id::UNDEFINED: llarm::out::error("Undefined instruction encountered for thumb disassembly");
+        case thumb_id::UNDEFINED: return UNDEFINED;
         case thumb_id::UNKNOWN: llarm::out::error("Unknown instruction encountered for disassembly");
         case thumb_id::NOP: llarm::out::error("NOP instruction encountered for thumb disassembly");
     }
@@ -90,7 +90,7 @@ std::string disassemble::thumb_generate(const u32 code, const u32 PC, const sett
 
 
 std::string disassemble::arm_generate(const u32 code, const u32 PC, const settings settings) {
-    const arm_id id = ident::u32_arm::arm(code);
+    const arm_id id = ident::bin_arm::arm(code);
 
     switch (id) {
         case arm_id::ADC: return generators::arm::math::ADC(code, settings);

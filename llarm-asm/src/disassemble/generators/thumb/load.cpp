@@ -1,5 +1,6 @@
 #include "../generators.hpp"
 #include "../util.hpp"
+#include "../../disassemble.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
@@ -36,9 +37,13 @@ using namespace internal;
  * reference: A7-40
  */
 std::string generators::thumb::load::LDMIA(const u32 code, const settings& settings) {
-    const std::string Rn = util::reg_string(code, 8, 10, settings);
-
     const u8 list = llarm::util::bit_range<u8>(code, 0, 7);
+
+    if (list == 0) {
+        return ERROR;
+    }
+
+    const std::string Rn = util::reg_string(code, 8, 10, settings);
 
     return util::make_string(
         "LDMIA ", Rn, "!, ", util::reg_list(list, settings)
@@ -104,7 +109,7 @@ std::string generators::thumb::load::LDR3(const u32 code, const settings& settin
     const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     return util::make_string(
-        "LDR ", Rd, ", [PC, #", util::hex(immed_8, settings), " * 4]"
+        "LDR ", Rd, ", [PC, #", util::hex(immed_8 * 4, settings), "]"
     );
 }
 
@@ -124,7 +129,7 @@ std::string generators::thumb::load::LDR4(const u32 code, const settings& settin
     const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
 
     return util::make_string(
-        "LDR ", Rd, ", [SP, #", util::hex(immed_8, settings), " * 4]"
+        "LDR ", Rd, ", [SP, #", util::hex(immed_8 * 4, settings), "]"
     );
 }
 
@@ -186,7 +191,7 @@ std::string generators::thumb::load::LDRH1(const u32 code, const settings& setti
     const u8 immed_5 = llarm::util::bit_range<u8>(code, 6, 10);
 
     return util::make_string(
-        "LDRH ", Rd, ", [", Rn, ", #", util::hex(immed_5, settings), " * 2]"
+        "LDRH ", Rd, ", [", Rn, ", #", util::hex(immed_5 * 2, settings), "]"
     );
 }
 
@@ -285,6 +290,10 @@ std::string generators::thumb::load::POP(const u32 code, const settings& setting
     const u8 list = llarm::util::bit_range<u8>(code, 0, 7);
 
     const bool R = (llarm::util::bit_fetch(code, 8));
+
+    if (list == 0 && R == false) {
+        return ERROR;
+    }
 
     const util::reg_id extra_reg = (R ? util::reg_id::R15 : util::reg_id::NULL_REG);
 

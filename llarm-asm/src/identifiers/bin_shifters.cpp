@@ -1,5 +1,5 @@
-#include "u32_shifters.hpp"
-#include "u32_arm.hpp"
+#include "bin_shifters.hpp"
+#include "bin_arm.hpp"
 #include "../id/shifter_id.hpp"
 #include "../id/instruction_id.hpp"
 
@@ -8,7 +8,7 @@
 
 using namespace internal;
 
-shifter_id ident::u32_shifters::load_store(const u32 code) {
+shifter_id ident::bin_shifters::load_store(const u32 code) {
     using namespace llarm::util;
 
     if (
@@ -95,7 +95,7 @@ shifter_id ident::u32_shifters::load_store(const u32 code) {
 }
 
 
-shifter_id ident::u32_shifters::data_processing(const u32 code) {
+shifter_id ident::bin_shifters::data_processing(const u32 code) {
     using namespace llarm::util;
 
     if ((bit_fetch(code, 27) != false) || (bit_fetch(code, 26) != false)) {
@@ -167,7 +167,7 @@ shifter_id ident::u32_shifters::data_processing(const u32 code) {
 }
 
 
-shifter_id ident::u32_shifters::load_store_multiple(const u32 code) {
+shifter_id ident::bin_shifters::load_store_multiple(const u32 code) {
     using namespace llarm::util;
 
     if (
@@ -191,7 +191,7 @@ shifter_id ident::u32_shifters::load_store_multiple(const u32 code) {
 }
 
 
-shifter_id ident::u32_shifters::load_store_misc(const u32 code) {
+shifter_id ident::bin_shifters::load_store_misc(const u32 code) {
     using namespace llarm::util;
 
     if (
@@ -219,7 +219,7 @@ shifter_id ident::u32_shifters::load_store_misc(const u32 code) {
 }
 
 
-shifter_id ident::u32_shifters::load_store_coprocessor(const u32 code) {
+shifter_id ident::bin_shifters::load_store_coprocessor(const u32 code) {
     using namespace llarm::util;
 
     if (
@@ -243,7 +243,7 @@ shifter_id ident::u32_shifters::load_store_coprocessor(const u32 code) {
 }
 
 
-shifter_id ident::u32_shifters::vfp_single(const u32 code) {
+shifter_id ident::bin_shifters::vfp_single(const u32 code) {
     const u8 Fd = llarm::util::bit_range<u8>(code, 12, 15);
     const u8 Fm = llarm::util::bit_range<u8>(code, 0, 3);
 
@@ -268,7 +268,7 @@ shifter_id ident::u32_shifters::vfp_single(const u32 code) {
 }
 
 
-shifter_id ident::u32_shifters::vfp_single_monadic(const u32 code) {
+shifter_id ident::bin_shifters::vfp_single_monadic(const u32 code) {
     const u8 Fd = llarm::util::bit_range<u8>(code, 12, 15);
     const u8 Fm = llarm::util::bit_range<u8>(code, 0, 3);
 
@@ -293,7 +293,7 @@ shifter_id ident::u32_shifters::vfp_single_monadic(const u32 code) {
 }
 
 
-shifter_id ident::u32_shifters::vfp_double(const u32 code) {
+shifter_id ident::bin_shifters::vfp_double(const u32 code) {
     const u8 Dd = llarm::util::bit_range<u8>(code, 12, 15);
     //const u8 Dn = llarm::util::bit_range<u8>(code, 16, 19);
     const u8 Dm = llarm::util::bit_range<u8>(code, 0, 3);
@@ -313,7 +313,7 @@ shifter_id ident::u32_shifters::vfp_double(const u32 code) {
 }
 
 
-shifter_id ident::u32_shifters::vfp_double_monadic(const u32 code) {
+shifter_id ident::bin_shifters::vfp_double_monadic(const u32 code) {
     const u8 Dd = llarm::util::bit_range<u8>(code, 12, 15);
     const u8 Dm = llarm::util::bit_range<u8>(code, 0, 3);
 
@@ -332,7 +332,7 @@ shifter_id ident::u32_shifters::vfp_double_monadic(const u32 code) {
 }
 
 
-shifter_id ident::u32_shifters::vfp_ls_multiple(const u32 code) {
+shifter_id ident::bin_shifters::vfp_ls_multiple(const u32 code) {
     const u8 bits_23_27 = llarm::util::bit_range<u8>(code, 23, 27);
     const bool bit_21 = llarm::util::bit_fetch(code, 21);
     
@@ -356,8 +356,8 @@ shifter_id ident::u32_shifters::vfp_ls_multiple(const u32 code) {
 }
 
 
-shifter_id ident::u32_shifters::identify_shifter(const u32 code) {
-    const arm_id instruction = ident::u32_arm::arm(code);
+shifter_id ident::bin_shifters::identify_shifter(const u32 code) {
+    const arm_id instruction = ident::bin_arm::arm(code);
 
     switch (instruction) {
         case arm_id::ADC:
@@ -412,7 +412,7 @@ shifter_id ident::u32_shifters::identify_shifter(const u32 code) {
 
 
 // same as the function above but this acts more as a shortcut based on info that's already known
-shifter_id ident::u32_shifters::identify_shifter(const shifter_category shift_category, const u32 code) {
+shifter_id ident::bin_shifters::identify_shifter(const shifter_category shift_category, const u32 code) {
     switch (shift_category) {
         case shifter_category::DATA: return data_processing(code);
         case shifter_category::LS: return load_store(code);
@@ -426,4 +426,85 @@ shifter_id ident::u32_shifters::identify_shifter(const shifter_category shift_ca
         case shifter_category::VFP_LS_MUL: return vfp_ls_multiple(code);
         default: return shifter_id::UNKNOWN;
     }
+}
+
+
+std::string ident::bin_shifters::code_to_shifter_string(const u32 code) {
+    return shifter_id_to_string(identify_shifter(code));
+}
+
+std::string ident::bin_shifters::shifter_id_to_string(const shifter_id id) {
+    switch (id) {
+        case shifter_id::UNKNOWN: return "UNKNOWN";
+        case shifter_id::NONE: return "NONE";
+        case shifter_id::DATA_IMM: return "DATA_IMM";
+        case shifter_id::DATA_RRX: return "DATA_RRX";
+        case shifter_id::DATA_REG: return "DATA_REG";
+        case shifter_id::DATA_IMM_LSL: return "DATA_IMM_LSL";
+        case shifter_id::DATA_IMM_LSR: return "DATA_IMM_LSR";
+        case shifter_id::DATA_IMM_ASR: return "DATA_IMM_ASR";
+        case shifter_id::DATA_IMM_ROR: return "DATA_IMM_ROR";
+        case shifter_id::DATA_REG_LSL: return "DATA_REG_LSL";
+        case shifter_id::DATA_REG_LSR: return "DATA_REG_LSR";
+        case shifter_id::DATA_REG_ASR: return "DATA_REG_ASR";
+        case shifter_id::DATA_REG_ROR: return "DATA_REG_ROR";
+        case shifter_id::LS_IMM: return "LS_IMM";
+        case shifter_id::LS_IMM_PRE: return "LS_IMM_PRE";
+        case shifter_id::LS_IMM_POST: return "LS_IMM_POST";
+        case shifter_id::LS_REG: return "LS_REG";
+        case shifter_id::LS_REG_PRE: return "LS_REG_PRE";
+        case shifter_id::LS_REG_POST: return "LS_REG_POST";
+        case shifter_id::LS_SCALED_LSL: return "LS_SCALED_LSL";
+        case shifter_id::LS_SCALED_LSR: return "LS_SCALED_LSR";
+        case shifter_id::LS_SCALED_ASR: return "LS_SCALED_ASR";
+        case shifter_id::LS_SCALED_ROR: return "LS_SCALED_ROR";
+        case shifter_id::LS_SCALED_RRX: return "LS_SCALED_RRX";
+        case shifter_id::LS_SCALED_PRE_LSL: return "LS_SCALED_PRE_LSL";
+        case shifter_id::LS_SCALED_PRE_LSR: return "LS_SCALED_PRE_LSR";
+        case shifter_id::LS_SCALED_PRE_ASR: return "LS_SCALED_PRE_ASR";
+        case shifter_id::LS_SCALED_PRE_ROR: return "LS_SCALED_PRE_ROR";
+        case shifter_id::LS_SCALED_PRE_RRX: return "LS_SCALED_PRE_RRX";
+        case shifter_id::LS_SCALED_POST_LSL: return "LS_SCALED_POST_LSL";
+        case shifter_id::LS_SCALED_POST_LSR: return "LS_SCALED_POST_LSR";
+        case shifter_id::LS_SCALED_POST_ASR: return "LS_SCALED_POST_ASR";
+        case shifter_id::LS_SCALED_POST_ROR: return "LS_SCALED_POST_ROR";
+        case shifter_id::LS_SCALED_POST_RRX: return "LS_SCALED_POST_RRX";
+        case shifter_id::LS_MISC_IMM: return "LS_MISC_IMM";
+        case shifter_id::LS_MISC_IMM_PRE: return "LS_MISC_IMM_PRE";
+        case shifter_id::LS_MISC_IMM_POST: return "LS_MISC_IMM_POST";
+        case shifter_id::LS_MISC_REG: return "LS_MISC_REG";
+        case shifter_id::LS_MISC_REG_PRE: return "LS_MISC_REG_PRE";
+        case shifter_id::LS_MISC_REG_POST: return "LS_MISC_REG_POST";
+        case shifter_id::LS_MUL_INC_AFTER: return "LS_MUL_INC_AFTER";
+        case shifter_id::LS_MUL_INC_BEFORE: return "LS_MUL_INC_BEFORE";
+        case shifter_id::LS_MUL_DEC_AFTER: return "LS_MUL_DEC_AFTER";
+        case shifter_id::LS_MUL_DEC_BEFORE: return "LS_MUL_DEC_BEFORE";
+        case shifter_id::LS_COPROC_IMM: return "LS_COPROC_IMM";
+        case shifter_id::LS_COPROC_IMM_PRE: return "LS_COPROC_IMM_PRE";
+        case shifter_id::LS_COPROC_IMM_POST: return "LS_COPROC_IMM_POST";
+        case shifter_id::LS_COPROC_UNINDEXED: return "LS_COPROC_UNINDEXED";
+        case shifter_id::VFP_SINGLE: return "VFP_SINGLE";
+        case shifter_id::VFP_SINGLE_SCALAR: return "VFP_SINGLE_SCALAR";
+        case shifter_id::VFP_SINGLE_MIXED: return "VFP_SINGLE_MIXED";
+        case shifter_id::VFP_SINGLE_VECTOR: return "VFP_SINGLE_VECTOR";
+        case shifter_id::VFP_SINGLE_MONADIC: return "VFP_SINGLE_MONADIC";
+        case shifter_id::VFP_SINGLE_MONADIC_SCALAR_TO_SCALAR: return "VFP_SINGLE_MONADIC_SCALAR_TO_SCALAR";
+        case shifter_id::VFP_SINGLE_MONADIC_SCALAR_TO_VECTOR: return "VFP_SINGLE_MONADIC_SCALAR_TO_VECTOR";
+        case shifter_id::VFP_SINGLE_MONADIC_VECTOR_TO_VECTOR: return "VFP_SINGLE_MONADIC_VECTOR_TO_VECTOR";
+        case shifter_id::VFP_DOUBLE: return "VFP_DOUBLE";
+        case shifter_id::VFP_DOUBLE_SCALAR: return "VFP_DOUBLE_SCALAR";
+        case shifter_id::VFP_DOUBLE_MIXED: return "VFP_DOUBLE_MIXED";
+        case shifter_id::VFP_DOUBLE_VECTOR: return "VFP_DOUBLE_VECTOR";
+        case shifter_id::VFP_DOUBLE_MONADIC: return "VFP_DOUBLE_MONADIC";
+        case shifter_id::VFP_DOUBLE_MONADIC_SCALAR_TO_SCALAR: return "VFP_DOUBLE_MONADIC_SCALAR_TO_SCALAR";
+        case shifter_id::VFP_DOUBLE_MONADIC_SCALAR_TO_VECTOR: return "VFP_DOUBLE_MONADIC_SCALAR_TO_VECTOR";
+        case shifter_id::VFP_DOUBLE_MONADIC_VECTOR_TO_VECTOR: return "VFP_DOUBLE_MONADIC_VECTOR_TO_VECTOR";
+        case shifter_id::VFP_LS_MUL: return "VFP_LS_MUL";
+        case shifter_id::VFP_LS_MUL_UNINDEXED: return "VFP_LS_MUL_UNINDEXED";
+        case shifter_id::VFP_LS_MUL_INC: return "VFP_LS_MUL_INC";
+        case shifter_id::VFP_LS_MUL_DEC: return "VFP_LS_MUL_DEC";
+        case shifter_id::VFP_LS_MUL_SPECIAL: return "VFP_LS_MUL_SPECIAL";
+    }
+
+    return "UNKNOWN";
 }

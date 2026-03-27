@@ -13,9 +13,10 @@ namespace internal {
         bool strict_compliance;
         bool equivalent_alias;
         bool explicit_rotation;
+        bool extra_space;
     };
 
     inline settings default_dis_settings() {
-        return settings { true, true, true, false, true, false, true, true, true, true, false };
+        return settings { true, true, true, false, true, false, true, true, true, true, false, false };
     }
 }

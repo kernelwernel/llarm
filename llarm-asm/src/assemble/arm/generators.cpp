@@ -157,4 +157,6 @@ u32 generators::arm(const IR_arm_struct &IR) {
         case arm_id::FMSTAT: return fmstat(operands);
         case arm_id::FMXR: return fmxr(operands);
     }
+
+    return 0;
 }

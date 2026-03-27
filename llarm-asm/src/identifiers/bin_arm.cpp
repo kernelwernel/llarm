@@ -1,4 +1,4 @@
-#include "u32_arm.hpp"
+#include "bin_arm.hpp"
 #include "../id/instruction_id.hpp"
 
 #include <llarm/shared/types.hpp>
@@ -6,7 +6,7 @@
 
 using namespace internal;
 
-arm_id ident::u32_arm::misc_instructions(const u32 code) {
+arm_id ident::bin_arm::misc_instructions(const u32 code) {
     const u8 second_half = llarm::util::bit_range<u8>(code, 20, 24);
     const u8 first_half = llarm::util::bit_range<u8>(code, 4, 7);
 
@@ -96,7 +96,7 @@ arm_id ident::u32_arm::misc_instructions(const u32 code) {
 
 
 
-arm_id ident::u32_arm::multiply_extra_load_store(const u32 code) {
+arm_id ident::bin_arm::multiply_extra_load_store(const u32 code) {
     const u8 second_half = llarm::util::bit_range<u8>(code, 20, 24);
     const u8 first_half = llarm::util::bit_range<u8>(code, 4, 7);
 
@@ -152,7 +152,7 @@ arm_id ident::u32_arm::multiply_extra_load_store(const u32 code) {
     return arm_id::UNDEFINED;
 }
 
-arm_id ident::u32_arm::unconditional(const u32 code) {
+arm_id ident::bin_arm::unconditional(const u32 code) {
     if (llarm::util::bit_fetch(code, 27) == false) {
         if (
             (llarm::util::bit_fetch(code, 26) == 1) &&
@@ -196,7 +196,7 @@ arm_id ident::u32_arm::unconditional(const u32 code) {
     return arm_id::UNDEFINED;
 }
 
-arm_id ident::u32_arm::data_processing(const u32 code) {
+arm_id ident::bin_arm::data_processing(const u32 code) {
     switch (llarm::util::bit_range(code, 21, 24)) {
         case 0b0000: return arm_id::AND; 
         case 0b0001: return arm_id::EOR;
@@ -247,7 +247,7 @@ arm_id ident::u32_arm::data_processing(const u32 code) {
 }
 
 
-arm_id ident::u32_arm::load_store(const u32 code) {
+arm_id ident::bin_arm::load_store(const u32 code) {
     const bool bit_22 = llarm::util::bit_fetch(code, 22);
     const bool bit_20 = llarm::util::bit_fetch(code, 20);
 
@@ -277,7 +277,7 @@ arm_id ident::u32_arm::load_store(const u32 code) {
 
 
 
-arm_id ident::u32_arm::vfp_single(const u32 code) {
+arm_id ident::bin_arm::vfp_single(const u32 code) {
     const bool bit_24 = llarm::util::bit_fetch(code, 24);
     const bool bit_23 = llarm::util::bit_fetch(code, 23);
     const bool bit_21 = llarm::util::bit_fetch(code, 21);
@@ -413,7 +413,7 @@ arm_id ident::u32_arm::vfp_single(const u32 code) {
 }
 
 
-arm_id ident::u32_arm::vfp_double(const u32 code) {
+arm_id ident::bin_arm::vfp_double(const u32 code) {
     const u8 left = llarm::util::bit_range<u8>(code, 20, 23);
     const u8 right = llarm::util::bit_range<u8>(code, 4, 7);
 
@@ -547,7 +547,7 @@ arm_id ident::u32_arm::vfp_double(const u32 code) {
 }
 
 
-arm_id ident::u32_arm::arm(const u32 code) {
+arm_id ident::bin_arm::arm(const u32 code) {
     // note: NOP is not handled because it's a pseudo 
     // instruction that's unique to this project. 
     

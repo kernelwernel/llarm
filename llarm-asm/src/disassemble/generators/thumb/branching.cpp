@@ -150,6 +150,6 @@ std::string generators::thumb::branching::BLX2(const u32 code, const settings& s
     const std::string Rm = util::reg_string(code, 3, 6, settings); // H2 included
 
     return util::make_string(
-        "BLX2 ", Rm
+        "BLX ", Rm
     );
 }

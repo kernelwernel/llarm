@@ -4,7 +4,7 @@
 
 #include <llarm/shared/types.hpp>
 
-namespace internal::ident::u32_arm {
+namespace internal::ident::bin_arm {
     arm_id misc_instructions(const u32 code);
     arm_id multiply_extra_load_store(const u32 code);
     arm_id unconditional(const u32 code);

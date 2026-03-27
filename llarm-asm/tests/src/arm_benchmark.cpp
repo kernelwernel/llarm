@@ -1,7 +1,7 @@
 #include <chrono>
 #include <iostream>
 #include "constants.hpp"
-#include "disassembler.hpp"
+#include "capstone_disassembler.hpp"
 #include "nyxstone.h"
 #include <llarm/shared/types.hpp>
 #include <llarm/llarm-asm.hpp>

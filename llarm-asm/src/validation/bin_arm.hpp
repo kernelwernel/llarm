@@ -3,7 +3,7 @@
 
 #include <llarm/shared/types.hpp>
 
-namespace internal::validation::u32_arm {
+namespace internal::validation::bin_arm {
     bool check_shifter(const u32 code,const shifter_category category);
     bool check_PLD(const u32 code);
     bool check_vfp_reglist(const u32 code, const arm_id id);

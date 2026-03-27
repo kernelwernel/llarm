@@ -1,8 +1,8 @@
 
-#include "u32_arm.hpp"
+#include "bin_arm.hpp"
 #include "../id/shifter_id.hpp"
-#include "../identifiers/u32_arm.hpp"
-#include "../identifiers/u32_shifters.hpp"
+#include "../identifiers/bin_arm.hpp"
+#include "../identifiers/bin_shifters.hpp"
 
 #include <llarm/shared/util.hpp>
 #include <llarm/shared/types.hpp>
@@ -11,16 +11,16 @@ using namespace internal;
 
 
 
-bool validation::u32_arm::check_shifter(const u32 code, const shifter_category category) {
-    const shifter_id shifter = ident::u32_shifters::identify_shifter(category, code);
+bool validation::bin_arm::check_shifter(const u32 code, const shifter_category category) {
+    const shifter_id shifter = ident::bin_shifters::identify_shifter(category, code);
 
     return (shifter != shifter_id::UNKNOWN);
 };
 
 
 // PLD instruction only has 3 LS shifters supported
-bool validation::u32_arm::check_PLD(const u32 code) {
-    const shifter_id shifter = ident::u32_shifters::identify_shifter(shifter_category::LS, code);
+bool validation::bin_arm::check_PLD(const u32 code) {
+    const shifter_id shifter = ident::bin_shifters::identify_shifter(shifter_category::LS, code);
 
     switch (shifter) {
         case shifter_id::LS_IMM: 
@@ -36,7 +36,7 @@ bool validation::u32_arm::check_PLD(const u32 code) {
 
 
 // offset must be at least 0 and be an even number, and must have a valid reglist config
-bool validation::u32_arm::check_vfp_reglist(const u32 code, const arm_id id) {
+bool validation::bin_arm::check_vfp_reglist(const u32 code, const arm_id id) {
     const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
     if (offset == 0 || offset & 1) {
@@ -81,7 +81,7 @@ bool validation::u32_arm::check_vfp_reglist(const u32 code, const arm_id id) {
 };
 
 
-bool validation::u32_arm::check_move_system_reg(const u32 code) {
+bool validation::bin_arm::check_move_system_reg(const u32 code) {
     const u8 reg = llarm::util::bit_range<u8>(code, 16, 19);
 
     switch (reg) {
@@ -94,8 +94,8 @@ bool validation::u32_arm::check_move_system_reg(const u32 code) {
 };
 
 
-bool validation::u32_arm::is_arm_instruction_valid(const u32 code) {
-    const arm_id id = ident::u32_arm::arm(code);
+bool validation::bin_arm::is_arm_instruction_valid(const u32 code) {
+    const arm_id id = ident::bin_arm::arm(code);
 
     switch (id) {
         case arm_id::UNKNOWN: return false;

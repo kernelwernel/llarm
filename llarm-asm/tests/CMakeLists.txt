@@ -48,6 +48,7 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/emproof-com/nyxstone.git
     GIT_TAG        main
 )
+set(ENV{NYXSTONE_LLVM_PREFIX} "/usr/lib/llvm18")
 FetchContent_MakeAvailable(nyxstone)
 
 
