@@ -36,6 +36,25 @@ u64 random::generate() {
 }
 
 
+bool random::generate_bit() {
+    if (bit_cache_count == 0) {
+        bit_cache = generate();
+        bit_cache_count = 64;
+    }
+    return (bit_cache >> --bit_cache_count) & 1;
+}
+
+
+u64 random::generate_index_range(const u32 start, const u32 end) {
+    if (start >= end) {
+        throw std::invalid_argument("start index cannot be higher or equal to the end index");
+    }
+
+    const u64 mask = (1ULL << (end - start + 1)) - 1;
+    return ((generate() >> start) & mask);
+}
+
+
 u64 random::generate_range(const u64 start, const u64 end) {
     const u64 x = generate();
 

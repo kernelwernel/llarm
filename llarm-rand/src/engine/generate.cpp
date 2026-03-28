@@ -1,16 +1,17 @@
 #include "generate.hpp"
 #include "../params.hpp"
 #include "../settings.hpp"
-#include "../random.hpp"
 
 #include "generate.hpp"
+#include "llarm/shared/util.hpp"
 #include "patterns.hpp"
 
 #include <llarm/shared/types.hpp>
+#include <llarm/shared/random.hpp>
 
 #include <llarm/llarm-asm.hpp>
 
-param_struct generate::make_params(const settings_struct settings) {
+param_struct generate::make_params(const settings_struct settings, llarm::random& rand) {
     const u8 cond = [&]() -> u8 {
         if (settings.no_cond_limitation) {
             return 0;
@@ -19,11 +20,11 @@ param_struct generate::make_params(const settings_struct settings) {
                 cond_switch_count++;
                 return current_cond;
             } else {
-                current_cond = random::generate<u8>(28, 31);
+                current_cond = static_cast<u8>(rand.generate_index_range(28, 31));
                 return current_cond;
             }
         } else if (settings.random_conds) {
-            return random::generate<u8>(28, 31);
+            return static_cast<u8>(rand.generate_index_range(28, 31));
         }
 
         return 0;
@@ -39,14 +40,20 @@ param_struct generate::make_params(const settings_struct settings) {
 u32 generate::make_instruction(const settings_struct settings) {
     using namespace llarm::as; // for llarm::as
 
-    const u8 begin = static_cast<u8>(id::arm::ADC);
-    const u8 end = static_cast<u8>(id::arm::FUITOD);
+    llarm::random rand;
 
-    const u8 random_num = random::generate<u8>(begin, end);
+    if (settings.randomised_bin) {
+        return llarm::util::bit_range(rand.generate(), 0, 31);
+    }
 
-    const id::arm id = static_cast<id::arm>(random_num);
+    const u8 begin = static_cast<u8>(arm_id::ADC);
+    const u8 end = static_cast<u8>(arm_id::FUITOD);
 
-    const param_struct params = make_params(settings);
+    const u8 random_id = static_cast<u8>(rand.generate_range(begin, end));
+
+    const arm_id id = static_cast<arm_id>(random_id);
+
+    const param_struct params = make_params(settings, rand);
 
    // B
    // BL
@@ -67,150 +74,154 @@ u32 generate::make_instruction(const settings_struct settings) {
 
 
     switch (id) {
-        case id::arm::UNKNOWN: return 0;
-        case id::arm::UNDEFINED: return 0;
-        case id::arm::ADC: return patterns::logic_arithmetic(params);
-        case id::arm::ADD: return patterns::logic_arithmetic(params);
-        case id::arm::RSB: return patterns::logic_arithmetic(params);
-        case id::arm::BIC: return patterns::logic_arithmetic(params);
-        case id::arm::RSC: return patterns::logic_arithmetic(params);
-        case id::arm::SBC: return patterns::logic_arithmetic(params);
-        case id::arm::SUB: return patterns::logic_arithmetic(params);
-        case id::arm::CMN:
-        case id::arm::AND: return patterns::logic_arithmetic(params);
-        case id::arm::CMP: 
-        case id::arm::EOR: return patterns::logic_arithmetic(params);
-        case id::arm::ORR: return patterns::logic_arithmetic(params);
-        case id::arm::TEQ:
-        case id::arm::TST:
-        case id::arm::MOV:
-        case id::arm::MVN:
-        case id::arm::B:
-        case id::arm::BL:
-        case id::arm::NOP:
-        case id::arm::PSR:
-        case id::arm::SWI:
-        case id::arm::LDM1:
-        case id::arm::LDM2:
-        case id::arm::LDM3:
-        case id::arm::LDR:
-        case id::arm::LDRB:
-        case id::arm::LDRBT:
-        case id::arm::LDRT:
-        case id::arm::STM1: 
-        case id::arm::STM2: 
-        case id::arm::STR: 
-        case id::arm::STRB: 
-        case id::arm::STRBT:
-        case id::arm::STRT: 
-        case id::arm::CDP:
-        case id::arm::LDC:
-        case id::arm::MCR:
-        case id::arm::MRC:
-        case id::arm::STC:
-        case id::arm::SWP:
-        case id::arm::SWPB:
-        case id::arm::MLA:
-        case id::arm::MUL:
-        case id::arm::SMLAL:
-        case id::arm::SMULL:
-        case id::arm::UMLAL:
-        case id::arm::UMULL:
-        case id::arm::MRS:
-        case id::arm::MSR_IMM:
-        case id::arm::MSR_REG:
-        case id::arm::LDRH:
-        case id::arm::LDRSB:
-        case id::arm::LDRSH:
-        case id::arm::STRH:
-        case id::arm::BX:
-        case id::arm::BKPT:
-        case id::arm::BLX1:
-        case id::arm::BLX2:
-        case id::arm::CLZ:
-        case id::arm::CDP2:
-        case id::arm::LDC2:
-        case id::arm::MCR2:
-        case id::arm::MRC2:
-        case id::arm::STC2:
-        case id::arm::MCRR:
-        case id::arm::MRRC:
-        case id::arm::PLD:
-        case id::arm::STRD:
-        case id::arm::LDRD:
-        case id::arm::QADD:
-        case id::arm::QDADD:
-        case id::arm::QDSUB:
-        case id::arm::QSUB:
-        case id::arm::SMLAXY:
-        case id::arm::SMLALXY:
-        case id::arm::SMLAWY:
-        case id::arm::SMULXY:
-        case id::arm::SMULWY:
-        case id::arm::FABSS:
-        case id::arm::FADDS:
-        case id::arm::FCMPES:
-        case id::arm::FCMPEZS:
-        case id::arm::FCMPS:
-        case id::arm::FCMPZS:
-        case id::arm::FCPYS:
-        case id::arm::FDIVS:
-        case id::arm::FLDMS:
-        case id::arm::FLDMX:
-        case id::arm::FLDS:
-        case id::arm::FMACS:
-        case id::arm::FMRS:
-        case id::arm::FMRX:
-        case id::arm::FMSCS:
-        case id::arm::FMSR:
-        case id::arm::FMSTAT:
-        case id::arm::FMULS:
-        case id::arm::FMXR:
-        case id::arm::FNEGS:
-        case id::arm::FNMACS:
-        case id::arm::FNMSCS:
-        case id::arm::FNMULS:
-        case id::arm::FSITOS:
-        case id::arm::FSQRTS:
-        case id::arm::FSTMS:
-        case id::arm::FSTMX:
-        case id::arm::FSTS:
-        case id::arm::FSUBS:
-        case id::arm::FTOSIS:
-        case id::arm::FTOUIS:
-        case id::arm::FUITOS:
-        case id::arm::FABSD:
-        case id::arm::FADDD:
-        case id::arm::FCMPD:
-        case id::arm::FCMPED:
-        case id::arm::FCMPEZD:
-        case id::arm::FCMPZD:
-        case id::arm::FCPYD:
-        case id::arm::FCVTDS:
-        case id::arm::FCVTSD:
-        case id::arm::FDIVD:
-        case id::arm::FLDD:
-        case id::arm::FLDMD:
-        case id::arm::FMACD:
-        case id::arm::FMDHR:
-        case id::arm::FMDLR:
-        case id::arm::FMRDL:
-        case id::arm::FMRDH:
-        case id::arm::FMSCD:
-        case id::arm::FMULD:
-        case id::arm::FNEGD:
-        case id::arm::FNMACD:
-        case id::arm::FNMSCD:
-        case id::arm::FNMULD:
-        case id::arm::FSITOD:
-        case id::arm::FSQRTD:
-        case id::arm::FSTD:
-        case id::arm::FSTMD:
-        case id::arm::FSUBD:
-        case id::arm::FTOSID:
-        case id::arm::FTOUID:
-        case id::arm::FUITOD: return 0; // tmp
-    }
+        case arm_id::UNKNOWN: return 0;
+        case arm_id::UNDEFINED: return 0;
+        case arm_id::ADC: return patterns::logic_arithmetic(params);
+        case arm_id::ADD: return patterns::logic_arithmetic(params);
+        case arm_id::RSB: return patterns::logic_arithmetic(params);
+        case arm_id::BIC: return patterns::logic_arithmetic(params);
+        case arm_id::RSC: return patterns::logic_arithmetic(params);
+        case arm_id::SBC: return patterns::logic_arithmetic(params);
+        case arm_id::SUB: return patterns::logic_arithmetic(params);
+        case arm_id::CMN:
+        case arm_id::AND: return patterns::logic_arithmetic(params);
+        case arm_id::CMP: 
+        case arm_id::EOR: return patterns::logic_arithmetic(params);
+        case arm_id::ORR: return patterns::logic_arithmetic(params);
+        case arm_id::TEQ:
+        case arm_id::TST:
+        case arm_id::MOV:
+        case arm_id::MVN:
+        case arm_id::CMNP:
+        case arm_id::CMPP:
+        case arm_id::TEQP:
+        case arm_id::TSTP:
+        case arm_id::B:
+        case arm_id::BL:
+        case arm_id::NOP:
+        case arm_id::SWI:
+        case arm_id::LDM1:
+        case arm_id::LDM2:
+        case arm_id::LDM3:
+        case arm_id::LDR:
+        case arm_id::LDRB:
+        case arm_id::LDRBT:
+        case arm_id::LDRT:
+        case arm_id::STM1: 
+        case arm_id::STM2: 
+        case arm_id::STR: 
+        case arm_id::STRB: 
+        case arm_id::STRBT:
+        case arm_id::STRT: 
+        case arm_id::CDP:
+        case arm_id::LDC:
+        case arm_id::MCR:
+        case arm_id::MRC:
+        case arm_id::STC:
+        case arm_id::SWP:
+        case arm_id::SWPB:
+        case arm_id::MLA:
+        case arm_id::MUL:
+        case arm_id::SMLAL:
+        case arm_id::SMULL:
+        case arm_id::UMLAL:
+        case arm_id::UMULL:
+        case arm_id::MRS:
+        case arm_id::MSR_IMM:
+        case arm_id::MSR_REG:
+        case arm_id::LDRH:
+        case arm_id::LDRSB:
+        case arm_id::LDRSH:
+        case arm_id::STRH:
+        case arm_id::BX:
+        case arm_id::BKPT:
+        case arm_id::BLX1:
+        case arm_id::BLX2:
+        case arm_id::CLZ:
+        case arm_id::CDP2:
+        case arm_id::LDC2:
+        case arm_id::MCR2:
+        case arm_id::MRC2:
+        case arm_id::STC2:
+        case arm_id::MCRR:
+        case arm_id::MRRC:
+        case arm_id::PLD:
+        case arm_id::STRD:
+        case arm_id::LDRD:
+        case arm_id::QADD:
+        case arm_id::QDADD:
+        case arm_id::QDSUB:
+        case arm_id::QSUB:
+        case arm_id::SMLAXY:
+        case arm_id::SMLALXY:
+        case arm_id::SMLAWY:
+        case arm_id::SMULXY:
+        case arm_id::SMULWY:
+        case arm_id::FABSS:
+        case arm_id::FADDS:
+        case arm_id::FCMPES:
+        case arm_id::FCMPEZS:
+        case arm_id::FCMPS:
+        case arm_id::FCMPZS:
+        case arm_id::FCPYS:
+        case arm_id::FDIVS:
+        case arm_id::FLDMS:
+        case arm_id::FLDMX:
+        case arm_id::FLDS:
+        case arm_id::FMACS:
+        case arm_id::FMRS:
+        case arm_id::FMRX:
+        case arm_id::FMSCS:
+        case arm_id::FMSR:
+        case arm_id::FMSTAT:
+        case arm_id::FMULS:
+        case arm_id::FMXR:
+        case arm_id::FNEGS:
+        case arm_id::FNMACS:
+        case arm_id::FNMSCS:
+        case arm_id::FNMULS:
+        case arm_id::FSITOS:
+        case arm_id::FSQRTS:
+        case arm_id::FSTMS:
+        case arm_id::FSTMX:
+        case arm_id::FSTS:
+        case arm_id::FSUBS:
+        case arm_id::FTOSIS:
+        case arm_id::FTOUIS:
+        case arm_id::FUITOS:
+        case arm_id::FABSD:
+        case arm_id::FADDD:
+        case arm_id::FCMPD:
+        case arm_id::FCMPED:
+        case arm_id::FCMPEZD:
+        case arm_id::FCMPZD:
+        case arm_id::FCPYD:
+        case arm_id::FCVTDS:
+        case arm_id::FCVTSD:
+        case arm_id::FDIVD:
+        case arm_id::FLDD:
+        case arm_id::FLDMD:
+        case arm_id::FMACD:
+        case arm_id::FMDHR:
+        case arm_id::FMDLR:
+        case arm_id::FMRDL:
+        case arm_id::FMRDH:
+        case arm_id::FMSCD:
+        case arm_id::FMULD:
+        case arm_id::FNEGD:
+        case arm_id::FNMACD:
+        case arm_id::FNMSCD:
+        case arm_id::FNMULD:
+        case arm_id::FSITOD:
+        case arm_id::FSQRTD:
+        case arm_id::FSTD:
+        case arm_id::FSTMD:
+        case arm_id::FSUBD:
+        case arm_id::FTOSID:
+        case arm_id::FTOUID:
+        case arm_id::FUITOD: return 0; // tmp
+                break;
+        }
 }
 
 

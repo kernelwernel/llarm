@@ -1,4 +1,5 @@
-#include "llarm-rand/src/params.hpp"
+#include "../params.hpp"
+
 #include <llarm/shared/types.hpp>
 
 namespace patterns {

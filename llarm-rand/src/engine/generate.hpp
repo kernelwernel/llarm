@@ -4,6 +4,7 @@
 #include "../settings.hpp"
 
 #include <llarm/shared/types.hpp>
+#include <llarm/shared/random.hpp>
 
 #include <vector>
 
@@ -17,7 +18,7 @@ private:
     u8 cond_switch_count;
 
 public:
-    param_struct make_params(const settings_struct settings);
+    param_struct make_params(const settings_struct settings, llarm::random& rand);
     u32 make_instruction(const settings_struct settings);
     std::vector<u32> make_blueprint();
 

@@ -3,6 +3,7 @@
 #include <llarm/shared/types.hpp>
 
 struct settings_struct {
+    bool randomised_bin;
     bool fixed_register_choice; // every register will be set to R0
     bool random_register_choice; 
 

@@ -9,13 +9,15 @@ namespace llarm::metadata {
     static constinit const char* LLARM_EMU_VER = "0.1";
     static constinit const char* LLARM_ASM_VER = "0.1";
     static constinit const char* LLARM_INST_VER = "0.1";
+    static constinit const char* LLARM_CPU_VER = "0.1";
 
     // release dates
     static constinit const char* LLARM_EMU_DATE = "00/00/00"; // TODO
     static constinit const char* LLARM_ASM_DATE = "00/00/00"; // TODO
     static constinit const char* LLARM_INST_DATE = "00/00/00"; // TODO
+    static constinit const char* LLARM_CPU_DATE = "00/00/00"; // TODO
 
-    // overall CHARM framework details
+    // overall LLARM framework details
     static constinit const char* LLARM_VER = "0.1";
     static constinit const char* LLARM_DATE = "00/00/00"; // TODO
 
