@@ -6,46 +6,34 @@
 #include <vector>
 
 
+union lexeme_data {
+    REG reg;
+    PSR psr;
+    IMM imm;
+    REG_LIST reg_list;
+    OPTION option;
+
+    constexpr lexeme_data() : reg{} {}
+    constexpr lexeme_data(REG r) : reg(r) {}
+    constexpr lexeme_data(PSR p) : psr(p) {}
+    constexpr lexeme_data(IMM i) : imm(i) {}
+    constexpr lexeme_data(REG_LIST r) : reg_list(r) {}
+    constexpr lexeme_data(OPTION o) : option(o) {}
+};
+
 struct lexeme {
     token_enum token_type;
-    
+
     // marking it as a union goes from 72 bytes to 40 bytes
-    union {
-        REG reg;
-        PSR psr;
-        IMM imm;
-        REG_LIST reg_list; 
-        OPTION option;
-    } data;
+    lexeme_data data;
 
-    constexpr lexeme(token_enum t, REG &reg) : token_type(t) {
-        data.reg = reg;
-    }
-
-    constexpr lexeme(token_enum t, PSR &psr) : token_type(t) {
-        data.psr = psr;
-    }
-
-    constexpr lexeme(token_enum t, IMM &imm) : token_type(t) {
-        data.imm = imm;
-    }
-
-    constexpr lexeme(token_enum t, REG_LIST &reg_list) : token_type(t) {
-        data.reg_list = reg_list;
-    }
-
-    constexpr lexeme(token_enum t, OPTION &option) : token_type(t) {
-        data.option = option;
-    }
-
-    constexpr lexeme(token_enum t) : token_type(t) {
-
-    }
-
-    constexpr lexeme() : token_type(token_enum::UNKNOWN) {
-        data.reg = REG{};  // Zero-initialize first member
-    }
-    
+    constexpr lexeme(token_enum t, REG r) : token_type(t), data(r) {}
+    constexpr lexeme(token_enum t, PSR p) : token_type(t), data(p) {}
+    constexpr lexeme(token_enum t, IMM i) : token_type(t), data(i) {}
+    constexpr lexeme(token_enum t, REG_LIST r) : token_type(t), data(r) {}
+    constexpr lexeme(token_enum t, OPTION o) : token_type(t), data(o) {}
+    constexpr lexeme(token_enum t) : token_type(t), data()  {}
+    constexpr lexeme() : token_type(token_enum::UNKNOWN), data() {}
 };
 
 using lexemes_t = std::vector<lexeme>;

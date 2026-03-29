@@ -27,7 +27,7 @@ mnemonic_struct_thumb mnemonic_thumb::thumb(const std::string &code) {
 
     return mnemonic_struct_thumb {
         mnemonic,
-        id, 
+        id,
         cond_id
     };
 }
@@ -94,37 +94,37 @@ thumb_id mnemonic_thumb::ADD(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // ADD1
-    if (verify_tokens({ REG, REG, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, HASHTAG, IMMED), lexemes)) {
         return thumb_id::ADD1;
     }
 
     // ADD2
-    if (verify_tokens({ REG, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, HASHTAG, IMMED), lexemes)) {
         return thumb_id::ADD2;
     }
 
     // ADD3
-    if (verify_tokens({ REG, REG, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, REG), lexemes)) {
         return thumb_id::ADD3;
     }
 
     // ADD4
-    if (verify_tokens({ REG, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG), lexemes)) {
         return thumb_id::ADD4;
     }
 
     // ADD5
-    if (verify_tokens({ REG, IMMED, HASHTAG, IMMED, MUL_OP, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, IMMED, HASHTAG, IMMED, MUL_OP, IMMED), lexemes)) {
         return thumb_id::ADD5;
     }
 
     // ADD6
-    if (verify_tokens({ REG, IMMED, HASHTAG, IMMED, MUL_OP, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, IMMED, HASHTAG, IMMED, MUL_OP, IMMED), lexemes)) {
         return thumb_id::ADD6;
     }
 
     // ADD7
-    if (verify_tokens({ IMMED, HASHTAG, IMMED, MUL_OP, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(IMMED, HASHTAG, IMMED, MUL_OP, IMMED), lexemes)) {
         return thumb_id::ADD7;
     }
 
@@ -136,22 +136,22 @@ thumb_id mnemonic_thumb::SUB(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // SUB1
-    if (verify_tokens({ REG, REG, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, HASHTAG, IMMED), lexemes)) {
         return thumb_id::SUB1;
     }
 
     // SUB2
-    if (verify_tokens({ REG, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, HASHTAG, IMMED), lexemes)) {
         return thumb_id::SUB2;
     }
 
     // SUB3
-    if (verify_tokens({ REG, REG, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, REG), lexemes)) {
         return thumb_id::SUB3;
     }
 
     // SUB4
-    if (verify_tokens({ IMMED, HASHTAG, IMMED, MUL_OP, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(IMMED, HASHTAG, IMMED, MUL_OP, IMMED), lexemes)) {
         return thumb_id::SUB4;
     }
 
@@ -163,12 +163,12 @@ thumb_id mnemonic_thumb::ASR(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // ASR1
-    if (verify_tokens({ REG, REG, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, HASHTAG, IMMED), lexemes)) {
         return thumb_id::ASR1;
     }
 
     // ASR2
-    if (verify_tokens({ REG, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG), lexemes)) {
         return thumb_id::ASR2;
     }
 
@@ -180,12 +180,12 @@ thumb_id mnemonic_thumb::LSL(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // LSL1
-    if (verify_tokens({ REG, REG, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, HASHTAG, IMMED), lexemes)) {
         return thumb_id::LSL1;
     }
 
     // LSL2
-    if (verify_tokens({ REG, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG), lexemes)) {
         return thumb_id::LSL2;
     }
 
@@ -197,12 +197,12 @@ thumb_id mnemonic_thumb::LSR(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // LSR1
-    if (verify_tokens({ REG, REG, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, HASHTAG, IMMED), lexemes)) {
         return thumb_id::LSR1;
     }
 
     // LSR2
-    if (verify_tokens({ REG, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG), lexemes)) {
         return thumb_id::LSR2;
     }
 
@@ -214,17 +214,17 @@ thumb_id mnemonic_thumb::CMP(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // CMP1
-    if (verify_tokens({ REG, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, HASHTAG, IMMED), lexemes)) {
         return thumb_id::CMP1;
     }
 
     // CMP2
-    if (verify_tokens({ REG, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG), lexemes)) {
         return thumb_id::CMP2;
     }
 
     // CMP3
-    if (verify_tokens({ REG, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG), lexemes)) {
         return thumb_id::CMP3;
     }
 
@@ -236,17 +236,17 @@ thumb_id mnemonic_thumb::MOV(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // MOV1
-    if (verify_tokens({ REG, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, HASHTAG, IMMED), lexemes)) {
         return thumb_id::MOV1;
     }
 
     // MOV2
-    if (verify_tokens({ REG, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG), lexemes)) {
         return thumb_id::MOV2;
     }
 
     // MOV3
-    if (verify_tokens({ REG, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG), lexemes)) {
         return thumb_id::MOV3;
     }
 
@@ -258,12 +258,12 @@ thumb_id mnemonic_thumb::BLX(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // BLX1
-    if (verify_tokens({ IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(IMMED), lexemes)) {
         return thumb_id::BLX1;
     }
 
     // BLX2
-    if (verify_tokens({ REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG), lexemes)) {
         return thumb_id::BLX2;
     }
 
@@ -275,22 +275,22 @@ thumb_id mnemonic_thumb::LDR(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // LDR1
-    if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END), lexemes)) {
         return thumb_id::LDR1;
     }
 
     // LDR2
-    if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, REG, MEM_END), lexemes)) {
         return thumb_id::LDR2;
     }
 
     // LDR3
-    if (verify_tokens({ REG, MEM_START, IMMED, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, IMMED, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END), lexemes)) {
         return thumb_id::LDR3;
     }
 
     // LDR4
-    if (verify_tokens({ REG, MEM_START, IMMED, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, IMMED, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END), lexemes)) {
         return thumb_id::LDR4;
     }
 
@@ -302,12 +302,12 @@ thumb_id mnemonic_thumb::LDRB(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // LDRB1
-    if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, HASHTAG, IMMED, MEM_END), lexemes)) {
         return thumb_id::LDRB1;
     }
 
     // LDRB2
-    if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, REG, MEM_END), lexemes)) {
         return thumb_id::LDRB2;
     }
 
@@ -319,12 +319,12 @@ thumb_id mnemonic_thumb::LDRH(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // LDRH1
-    if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END), lexemes)) {
         return thumb_id::LDRH1;
     }
 
     // LDRH2
-    if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, REG, MEM_END), lexemes)) {
         return thumb_id::LDRH2;
     }
 
@@ -336,17 +336,17 @@ thumb_id mnemonic_thumb::STR(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // STR1
-    if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END), lexemes)) {
         return thumb_id::STR1;
     }
 
     // STR2
-    if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, REG, MEM_END), lexemes)) {
         return thumb_id::STR2;
     }
 
     // STR3
-    if (verify_tokens({ REG, MEM_START, IMMED, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, IMMED, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END), lexemes)) {
         return thumb_id::STR3;
     }
 
@@ -358,12 +358,12 @@ thumb_id mnemonic_thumb::STRB(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // STRB1
-    if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, HASHTAG, IMMED, MEM_END), lexemes)) {
         return thumb_id::STRB1;
     }
 
     // STRB2
-    if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, REG, MEM_END), lexemes)) {
         return thumb_id::STRB2;
     }
 
@@ -375,12 +375,12 @@ thumb_id mnemonic_thumb::STRH(const lexemes_t &lexemes) {
     using namespace interpreter;
 
     // STRH1
-    if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END), lexemes)) {
         return thumb_id::STRB1;
     }
 
     // STRH2
-    if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, REG, MEM_END), lexemes)) {
         return thumb_id::STRB2;
     }
 

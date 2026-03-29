@@ -22,7 +22,7 @@ namespace llarm::util {
     }
     
     template<typename T = u32>
-    inline void modify_bit(T &original, const u8 index, const bool value) {
+    inline constexpr void modify_bit(T &original, const u8 index, const bool value) {
         if (index > (sizeof(T) * 8) - 1) {
             //llarm::out::dev_error("Index for modify_bit() must be between 0 and 31");
             // TODO think of an error

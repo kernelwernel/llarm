@@ -222,12 +222,11 @@ enum implementor {
     IMPL_LLARM // custom
 };
 
-
+#if !defined(is_x86)
 static uint32_t llarm_cpu_fetch_bits(const uint32_t value, const uint8_t start, const uint8_t end) {
     return (value >> end) & ((1U << (start - end + 1)) - 1);
 }
-
-
+#endif
 
 #ifdef LLARM_CPU_TEST_MIDR
 static uint32_t _llarm_test_midr_val = 0;

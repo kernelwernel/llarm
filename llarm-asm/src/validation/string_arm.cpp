@@ -71,15 +71,15 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
         // addressing mode 4: load store multiple
         case arm_id::STM1: 
         case arm_id::LDM1: return (
-            verify_lexemes({ reg(), reg_list()}, lexemes) ||
-            verify_lexemes({ reg(), token(PRE_INDEX), reg_list() }, lexemes)
+            verify_lexemes(make_lexemes(reg(), reg_list()), lexemes) ||
+            verify_lexemes(make_lexemes(reg(), token(PRE_INDEX), reg_list()), lexemes)
         );
-        case arm_id::LDM2: return verify_lexemes({ reg(), reg_list_must_exclude_PC(), token(CARET) }, lexemes);
+        case arm_id::LDM2: return verify_lexemes(make_lexemes(reg(), reg_list_must_exclude_PC(), token(CARET)), lexemes);
         case arm_id::LDM3: return (
-            verify_lexemes({ reg(), reg_list_must_include_PC(), token(CARET) }, lexemes) ||
-            verify_lexemes({ reg(), token(PRE_INDEX), reg_list_must_include_PC(), token(CARET) }, lexemes)
+            verify_lexemes(make_lexemes(reg(), reg_list_must_include_PC(), token(CARET)), lexemes) ||
+            verify_lexemes(make_lexemes(reg(), token(PRE_INDEX), reg_list_must_include_PC(), token(CARET)), lexemes)
         );
-        case arm_id::STM2: return verify_lexemes({ reg(), reg_list(), token(CARET) }, lexemes);
+        case arm_id::STM2: return verify_lexemes(make_lexemes(reg(), reg_list(), token(CARET)), lexemes);
 
         // addressing mode 5: load store coprocessor
         case arm_id::STC:
@@ -106,20 +106,20 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
 
 
 
-        case arm_id::SWI: return verify_lexemes({ immed(24) }, lexemes);
+        case arm_id::SWI: return verify_lexemes(make_lexemes(immed(24)), lexemes);
 
         case arm_id::MCR2: 
         case arm_id::MCR: 
         case arm_id::MRC2:
         case arm_id::MRC:
             return (
-                (verify_lexemes({ reg(COPROC), immed(2), reg(), reg(CR), reg(CR), immed(2) }, lexemes)) || 
-                (verify_lexemes({ reg(COPROC), immed(2), reg(), reg(CR), reg(CR) }, lexemes))
+                (verify_lexemes(make_lexemes(reg(COPROC), immed(2), reg(), reg(CR), reg(CR), immed(2)), lexemes)) || 
+                (verify_lexemes(make_lexemes(reg(COPROC), immed(2), reg(), reg(CR), reg(CR)), lexemes))
             );
 
         case arm_id::SWP:
         case arm_id::SWPB:
-            return ((verify_lexemes({ reg(), reg(), token(MEM_START), reg(), token(MEM_END) }, lexemes)));
+            return ((verify_lexemes(make_lexemes(reg(), reg(), token(MEM_START), reg(), token(MEM_END)), lexemes)));
 
         case arm_id::QADD:
         case arm_id::QDADD:
@@ -127,7 +127,7 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
         case arm_id::QSUB:
         case arm_id::SMULXY:
         case arm_id::SMULWY:
-        case arm_id::MUL: return verify_lexemes({ reg(), reg(), reg() }, lexemes);
+        case arm_id::MUL: return verify_lexemes(make_lexemes(reg(), reg(), reg()), lexemes);
 
         case arm_id::MLA:
         case arm_id::SMLAL:
@@ -136,25 +136,25 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
         case arm_id::SMLAXY:
         case arm_id::SMLALXY:
         case arm_id::SMLAWY:
-        case arm_id::UMULL: return verify_lexemes({ reg(), reg(), reg(), reg() }, lexemes);
+        case arm_id::UMULL: return verify_lexemes(make_lexemes(reg(), reg(), reg(), reg()), lexemes);
 
         case arm_id::MRS: 
             return (
-                (verify_lexemes({ reg(), psr(CPSR) }, lexemes)) ||
-                (verify_lexemes({ reg(), psr(SPSR) }, lexemes))
+                (verify_lexemes(make_lexemes(reg(), psr(CPSR)), lexemes)) ||
+                (verify_lexemes(make_lexemes(reg(), psr(SPSR)), lexemes))
             );
 
         case arm_id::MSR_IMM: // both these instructions are already verified in the identification process
         case arm_id::MSR_REG: return true; 
-        case arm_id::BKPT: return verify_lexemes({ immed(16) }, lexemes);
+        case arm_id::BKPT: return verify_lexemes(make_lexemes(immed(16)), lexemes);
         case arm_id::BLX1:
-        case arm_id::BX: return verify_lexemes({ reg() }, lexemes);
-        case arm_id::BLX2: return verify_lexemes({ reg() }, lexemes);
-        case arm_id::CLZ: return verify_lexemes({ reg(), reg() }, lexemes);
+        case arm_id::BX: return verify_lexemes(make_lexemes(reg()), lexemes);
+        case arm_id::BLX2: return verify_lexemes(make_lexemes(reg()), lexemes);
+        case arm_id::CLZ: return verify_lexemes(make_lexemes(reg(), reg()), lexemes);
         case arm_id::CDP2:
-        case arm_id::CDP: return verify_lexemes({ reg(COPROC), immed(2), reg(CR), reg(CR), reg(CR), immed(2) }, lexemes);
+        case arm_id::CDP: return verify_lexemes(make_lexemes(reg(COPROC), immed(2), reg(CR), reg(CR), reg(CR), immed(2)), lexemes);
         case arm_id::MCRR:
-        case arm_id::MRRC: return verify_lexemes({ reg(COPROC), immed(3), reg(), reg(), reg(CR) }, lexemes);
+        case arm_id::MRRC: return verify_lexemes(make_lexemes(reg(COPROC), immed(3), reg(), reg(), reg(CR)), lexemes);
         
         case arm_id::PLD: return (ident::string_shifters::identify_shifter(lexemes, IR.mnemonic) != shifter_id::UNKNOWN);
 
@@ -166,7 +166,7 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
         case arm_id::FNMACD: 
         case arm_id::FNMSCD: 
         case arm_id::FNMULD: 
-        case arm_id::FSUBD: return verify_lexemes({ reg(DOUBLE), reg(DOUBLE), reg(DOUBLE) }, lexemes);
+        case arm_id::FSUBD: return verify_lexemes(make_lexemes(reg(DOUBLE), reg(DOUBLE), reg(DOUBLE)), lexemes);
         
         case arm_id::FTOSIS: 
         case arm_id::FTOUIS: 
@@ -177,14 +177,14 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
         case arm_id::FCPYS: 
         case arm_id::FCMPS: 
         case arm_id::FABSS: 
-        case arm_id::FCMPES: return verify_lexemes({ reg(SINGLE), reg(SINGLE) }, lexemes);
+        case arm_id::FCMPES: return verify_lexemes(make_lexemes(reg(SINGLE), reg(SINGLE)), lexemes);
         
         case arm_id::FABSD: 
         case arm_id::FCMPD: 
         case arm_id::FCMPED: 
         case arm_id::FCPYD: 
         case arm_id::FNEGD: 
-        case arm_id::FSQRTD: return verify_lexemes({ reg(DOUBLE), reg(DOUBLE) }, lexemes);
+        case arm_id::FSQRTD: return verify_lexemes(make_lexemes(reg(DOUBLE), reg(DOUBLE)), lexemes);
         
         case arm_id::FADDS:
         case arm_id::FDIVS:
@@ -194,44 +194,44 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
         case arm_id::FNMACS:
         case arm_id::FNMSCS:
         case arm_id::FNMULS:
-        case arm_id::FSUBS: return verify_lexemes({ reg(SINGLE), reg(SINGLE), reg(SINGLE) }, lexemes);
+        case arm_id::FSUBS: return verify_lexemes(make_lexemes(reg(SINGLE), reg(SINGLE), reg(SINGLE)), lexemes);
         
         case arm_id::FTOSID:
         case arm_id::FCVTSD:
-        case arm_id::FTOUID: return verify_lexemes({ reg(SINGLE), reg(DOUBLE) }, lexemes);
+        case arm_id::FTOUID: return verify_lexemes(make_lexemes(reg(SINGLE), reg(DOUBLE)), lexemes);
         
         case arm_id::FCVTDS:
         case arm_id::FUITOD:
-        case arm_id::FSITOD: return verify_lexemes({ reg(DOUBLE), reg(SINGLE) }, lexemes);
+        case arm_id::FSITOD: return verify_lexemes(make_lexemes(reg(DOUBLE), reg(SINGLE)), lexemes);
 
         case arm_id::FCMPEZS:
-        case arm_id::FCMPZS: return verify_lexemes({ reg(SINGLE) }, lexemes);
+        case arm_id::FCMPZS: return verify_lexemes(make_lexemes(reg(SINGLE)), lexemes);
 
         case arm_id::FCMPEZD:
-        case arm_id::FCMPZD: return verify_lexemes({ reg(DOUBLE) }, lexemes);
+        case arm_id::FCMPZD: return verify_lexemes(make_lexemes(reg(DOUBLE)), lexemes);
 
         case arm_id::FLDMS:
             return (
-                (verify_lexemes({ reg(), token(PRE_INDEX), reg_list_single() }, lexemes)) ||
-                (verify_lexemes({ reg(), reg_list_single() }, lexemes))
+                (verify_lexemes(make_lexemes(reg(), token(PRE_INDEX), reg_list_single()), lexemes)) ||
+                (verify_lexemes(make_lexemes(reg(), reg_list_single()), lexemes))
             );
         
-        case arm_id::FMRS: return verify_lexemes({ reg(), reg(SINGLE) }, lexemes);
-        case arm_id::FMRX: return verify_lexemes({ reg(), reg(FP_WILDCARD) }, lexemes);
-        case arm_id::FMSR: return verify_lexemes({ reg(SINGLE), reg() }, lexemes);
+        case arm_id::FMRS: return verify_lexemes(make_lexemes(reg(), reg(SINGLE)), lexemes);
+        case arm_id::FMRX: return verify_lexemes(make_lexemes(reg(), reg(FP_WILDCARD)), lexemes);
+        case arm_id::FMSR: return verify_lexemes(make_lexemes(reg(SINGLE), reg()), lexemes);
         case arm_id::FMSTAT: return true; // no arguments, so no room for errors
-        case arm_id::FMXR: return verify_lexemes({ reg(FP_WILDCARD), reg() }, lexemes);
+        case arm_id::FMXR: return verify_lexemes(make_lexemes(reg(FP_WILDCARD), reg()), lexemes);
         case arm_id::FSTMS:
             return (
-                (verify_lexemes({ reg(), token(PRE_INDEX), reg_list_single() }, lexemes)) ||
-                (verify_lexemes({ reg(), reg_list_single() }, lexemes))
+                (verify_lexemes(make_lexemes(reg(), token(PRE_INDEX), reg_list_single()), lexemes)) ||
+                (verify_lexemes(make_lexemes(reg(), reg_list_single()), lexemes))
             );
 
         case arm_id::FLDS:
         case arm_id::FSTS: 
             return (
-                (verify_lexemes({ reg(SINGLE), token(MEM_START), reg(), token(MEM_END) }, lexemes)) ||
-                (verify_lexemes({ reg(SINGLE), token(MEM_START), reg(), token(HASHTAG), immed(7, 4), token(MEM_END) }, lexemes))
+                (verify_lexemes(make_lexemes(reg(SINGLE), token(MEM_START), reg(), token(MEM_END)), lexemes)) ||
+                (verify_lexemes(make_lexemes(reg(SINGLE), token(MEM_START), reg(), token(HASHTAG), immed(7, 4), token(MEM_END)), lexemes))
             );
 
         case arm_id::FLDMD: 
@@ -239,19 +239,19 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
         case arm_id::FLDMX:
         case arm_id::FSTMD: 
             return (
-                (verify_lexemes({ reg(), token(PRE_INDEX), reg_list_double() }, lexemes)) ||
-                (verify_lexemes({ reg(), reg_list_double() }, lexemes))
+                (verify_lexemes(make_lexemes(reg(), token(PRE_INDEX), reg_list_double()), lexemes)) ||
+                (verify_lexemes(make_lexemes(reg(), reg_list_double()), lexemes))
             );
             
-        case arm_id::FMDHR: return verify_lexemes({ reg(DOUBLE), reg() }, lexemes);
-        case arm_id::FMDLR: return verify_lexemes({ reg(DOUBLE), reg() }, lexemes);
-        case arm_id::FMRDL: return verify_lexemes({ reg(), reg(DOUBLE) }, lexemes);
-        case arm_id::FMRDH: return verify_lexemes({ reg(), reg(DOUBLE) }, lexemes);
+        case arm_id::FMDHR: return verify_lexemes(make_lexemes(reg(DOUBLE), reg()), lexemes);
+        case arm_id::FMDLR: return verify_lexemes(make_lexemes(reg(DOUBLE), reg()), lexemes);
+        case arm_id::FMRDL: return verify_lexemes(make_lexemes(reg(), reg(DOUBLE)), lexemes);
+        case arm_id::FMRDH: return verify_lexemes(make_lexemes(reg(), reg(DOUBLE)), lexemes);
         case arm_id::FSTD: 
         case arm_id::FLDD: 
             return (
-                (verify_lexemes({ reg(DOUBLE), token(MEM_START), reg(), token(MEM_END) }, lexemes)) ||
-                (verify_lexemes({ reg(DOUBLE), token(MEM_START), reg(), token(HASHTAG), immed(7, 4), token(MEM_END) }, lexemes))
+                (verify_lexemes(make_lexemes(reg(DOUBLE), token(MEM_START), reg(), token(MEM_END)), lexemes)) ||
+                (verify_lexemes(make_lexemes(reg(DOUBLE), token(MEM_START), reg(), token(HASHTAG), immed(7, 4), token(MEM_END)), lexemes))
             );
     }
 }
@@ -268,17 +268,17 @@ bool validation::string_arm::is_data_processing_valid(lexemes_t lexemes, const s
     // lexemes should remove the first non-addressing mode registers, it's easier to analyse this way
     
     switch (shifter_id) {
-        case shifter_id::DATA_IMM: return verify_lexemes({ token(HASHTAG), immed_rotate() }, lexemes);
-        case shifter_id::DATA_RRX: return verify_lexemes({ reg(), token(RRX) }, lexemes);
-        case shifter_id::DATA_REG: return verify_lexemes({ reg() }, lexemes);
-        case shifter_id::DATA_IMM_LSL: return verify_lexemes({ reg(), token(LSL), token(HASHTAG), immed_range(0, 31) }, lexemes);
-        case shifter_id::DATA_IMM_LSR: return verify_lexemes({ reg(), token(LSR), token(HASHTAG), immed_range(1, 32) }, lexemes);
-        case shifter_id::DATA_IMM_ASR: return verify_lexemes({ reg(), token(ASR), token(HASHTAG), immed_range(1, 32) }, lexemes);
-        case shifter_id::DATA_IMM_ROR: return verify_lexemes({ reg(), token(ROR), token(HASHTAG), immed_range(1, 31) }, lexemes);
-        case shifter_id::DATA_REG_LSL: return verify_lexemes({ reg(), token(LSL), reg() }, lexemes);
-        case shifter_id::DATA_REG_LSR: return verify_lexemes({ reg(), token(LSR), reg() }, lexemes);
-        case shifter_id::DATA_REG_ASR: return verify_lexemes({ reg(), token(ASR), reg() }, lexemes);
-        case shifter_id::DATA_REG_ROR: return verify_lexemes({ reg(), token(ROR), reg() }, lexemes);
+        case shifter_id::DATA_IMM: return verify_lexemes(make_lexemes(token(HASHTAG), immed_rotate()), lexemes);
+        case shifter_id::DATA_RRX: return verify_lexemes(make_lexemes(reg(), token(RRX)), lexemes);
+        case shifter_id::DATA_REG: return verify_lexemes(make_lexemes(reg()), lexemes);
+        case shifter_id::DATA_IMM_LSL: return verify_lexemes(make_lexemes(reg(), token(LSL), token(HASHTAG), immed_range(0, 31)), lexemes);
+        case shifter_id::DATA_IMM_LSR: return verify_lexemes(make_lexemes(reg(), token(LSR), token(HASHTAG), immed_range(1, 32)), lexemes);
+        case shifter_id::DATA_IMM_ASR: return verify_lexemes(make_lexemes(reg(), token(ASR), token(HASHTAG), immed_range(1, 32)), lexemes);
+        case shifter_id::DATA_IMM_ROR: return verify_lexemes(make_lexemes(reg(), token(ROR), token(HASHTAG), immed_range(1, 31)), lexemes);
+        case shifter_id::DATA_REG_LSL: return verify_lexemes(make_lexemes(reg(), token(LSL), reg()), lexemes);
+        case shifter_id::DATA_REG_LSR: return verify_lexemes(make_lexemes(reg(), token(LSR), reg()), lexemes);
+        case shifter_id::DATA_REG_ASR: return verify_lexemes(make_lexemes(reg(), token(ASR), reg()), lexemes);
+        case shifter_id::DATA_REG_ROR: return verify_lexemes(make_lexemes(reg(), token(ROR), reg()), lexemes);
         default: return false;
     }
 }
@@ -302,27 +302,27 @@ bool validation::string_arm::is_ls_valid(const lexemes_t &lexemes, const shifter
     }
 
     switch (shifter_id) {
-        case shifter_id::LS_IMM: return verify_lexemes({ reg(), token(MEM_START), reg(), token(HASHTAG), immed(11), token(MEM_END) }, lexemes);
-        case shifter_id::LS_IMM_PRE: return verify_lexemes({ reg(), token(MEM_START), reg(), token(HASHTAG), immed(11), token(MEM_END), token(PRE_INDEX) }, lexemes);
-        case shifter_id::LS_IMM_POST: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), token(HASHTAG), immed(11) }, lexemes);
-        case shifter_id::LS_REG: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(MEM_END) }, lexemes);
-        case shifter_id::LS_REG_PRE: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(MEM_END), token(PRE_INDEX) }, lexemes);
-        case shifter_id::LS_REG_POST: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), reg() }, lexemes);
-        case shifter_id::LS_SCALED_LSL: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(LSL), token(HASHTAG), immed_range(0, 31), token(MEM_END) }, lexemes);
-        case shifter_id::LS_SCALED_LSR: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(LSR), token(HASHTAG), immed_range(1, 32), token(MEM_END) }, lexemes);
-        case shifter_id::LS_SCALED_ASR: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(ASR), token(HASHTAG), immed_range(1, 32), token(MEM_END) }, lexemes);
-        case shifter_id::LS_SCALED_ROR: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(ROR), token(HASHTAG), immed_range(1, 31), token(MEM_END) }, lexemes);
-        case shifter_id::LS_SCALED_RRX: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(RRX), token(MEM_END) }, lexemes);
-        case shifter_id::LS_SCALED_PRE_LSL: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(LSL), token(HASHTAG), immed_range(0, 31), token(MEM_END), token(PRE_INDEX) }, lexemes);
-        case shifter_id::LS_SCALED_PRE_LSR: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(LSR), token(HASHTAG), immed_range(1, 32), token(MEM_END), token(PRE_INDEX) }, lexemes);
-        case shifter_id::LS_SCALED_PRE_ASR: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(ASR), token(HASHTAG), immed_range(1, 32), token(MEM_END), token(PRE_INDEX) }, lexemes);
-        case shifter_id::LS_SCALED_PRE_ROR: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(ROR), token(HASHTAG), immed_range(1, 31), token(MEM_END), token(PRE_INDEX) }, lexemes);
-        case shifter_id::LS_SCALED_PRE_RRX: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(RRX), token(MEM_END), token(PRE_INDEX) }, lexemes);
-        case shifter_id::LS_SCALED_POST_LSL: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), reg(), token(HASHTAG), immed_range(0, 31) }, lexemes);
-        case shifter_id::LS_SCALED_POST_LSR: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), reg(), token(HASHTAG), immed_range(1, 32) }, lexemes);
-        case shifter_id::LS_SCALED_POST_ASR: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), reg(), token(HASHTAG), immed_range(1, 32) }, lexemes);
-        case shifter_id::LS_SCALED_POST_ROR: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), reg(), token(HASHTAG), immed_range(1, 31) }, lexemes);
-        case shifter_id::LS_SCALED_POST_RRX: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), reg(), token(RRX) }, lexemes);
+        case shifter_id::LS_IMM: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), token(HASHTAG), immed(11), token(MEM_END)), lexemes);
+        case shifter_id::LS_IMM_PRE: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), token(HASHTAG), immed(11), token(MEM_END), token(PRE_INDEX)), lexemes);
+        case shifter_id::LS_IMM_POST: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), token(MEM_END), token(HASHTAG), immed(11)), lexemes);
+        case shifter_id::LS_REG: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), reg(), token(MEM_END)), lexemes);
+        case shifter_id::LS_REG_PRE: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), reg(), token(MEM_END), token(PRE_INDEX)), lexemes);
+        case shifter_id::LS_REG_POST: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), token(MEM_END), reg()), lexemes);
+        case shifter_id::LS_SCALED_LSL: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), reg(), token(LSL), token(HASHTAG), immed_range(0, 31), token(MEM_END)), lexemes);
+        case shifter_id::LS_SCALED_LSR: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), reg(), token(LSR), token(HASHTAG), immed_range(1, 32), token(MEM_END)), lexemes);
+        case shifter_id::LS_SCALED_ASR: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), reg(), token(ASR), token(HASHTAG), immed_range(1, 32), token(MEM_END)), lexemes);
+        case shifter_id::LS_SCALED_ROR: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), reg(), token(ROR), token(HASHTAG), immed_range(1, 31), token(MEM_END)), lexemes);
+        case shifter_id::LS_SCALED_RRX: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), reg(), token(RRX), token(MEM_END)), lexemes);
+        case shifter_id::LS_SCALED_PRE_LSL: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), reg(), token(LSL), token(HASHTAG), immed_range(0, 31), token(MEM_END), token(PRE_INDEX)), lexemes);
+        case shifter_id::LS_SCALED_PRE_LSR: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), reg(), token(LSR), token(HASHTAG), immed_range(1, 32), token(MEM_END), token(PRE_INDEX)), lexemes);
+        case shifter_id::LS_SCALED_PRE_ASR: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), reg(), token(ASR), token(HASHTAG), immed_range(1, 32), token(MEM_END), token(PRE_INDEX)), lexemes);
+        case shifter_id::LS_SCALED_PRE_ROR: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), reg(), token(ROR), token(HASHTAG), immed_range(1, 31), token(MEM_END), token(PRE_INDEX)), lexemes);
+        case shifter_id::LS_SCALED_PRE_RRX: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), reg(), token(RRX), token(MEM_END), token(PRE_INDEX)), lexemes);
+        case shifter_id::LS_SCALED_POST_LSL: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), token(MEM_END), reg(), token(HASHTAG), immed_range(0, 31)), lexemes);
+        case shifter_id::LS_SCALED_POST_LSR: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), token(MEM_END), reg(), token(HASHTAG), immed_range(1, 32)), lexemes);
+        case shifter_id::LS_SCALED_POST_ASR: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), token(MEM_END), reg(), token(HASHTAG), immed_range(1, 32)), lexemes);
+        case shifter_id::LS_SCALED_POST_ROR: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), token(MEM_END), reg(), token(HASHTAG), immed_range(1, 31)), lexemes);
+        case shifter_id::LS_SCALED_POST_RRX: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), token(MEM_END), reg(), token(RRX)), lexemes);
         default: return false;
     }
 }
@@ -353,12 +353,12 @@ bool validation::string_arm::is_ls_misc_valid(lexemes_t lexemes, const shifter_i
     }
 
     switch (shifter_id) {
-        case shifter_id::LS_MISC_IMM: return verify_lexemes({ reg(), token(MEM_START), reg(), token(HASHTAG), immed(7), token(MEM_END) }, lexemes);
-        case shifter_id::LS_MISC_IMM_PRE: return verify_lexemes({ reg(), token(MEM_START), reg(), token(HASHTAG), immed(7), token(MEM_END), token(PRE_INDEX) }, lexemes);
-        case shifter_id::LS_MISC_IMM_POST: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), token(HASHTAG), immed(7) }, lexemes);
-        case shifter_id::LS_MISC_REG: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(MEM_END) }, lexemes);
-        case shifter_id::LS_MISC_REG_PRE: return verify_lexemes({ reg(), token(MEM_START), reg(), reg(), token(MEM_END), token(PRE_INDEX) }, lexemes);
-        case shifter_id::LS_MISC_REG_POST: return verify_lexemes({ reg(), token(MEM_START), reg(), token(MEM_END), reg() }, lexemes);
+        case shifter_id::LS_MISC_IMM: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), token(HASHTAG), immed(7), token(MEM_END)), lexemes);
+        case shifter_id::LS_MISC_IMM_PRE: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), token(HASHTAG), immed(7), token(MEM_END), token(PRE_INDEX)), lexemes);
+        case shifter_id::LS_MISC_IMM_POST: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), token(MEM_END), token(HASHTAG), immed(7)), lexemes);
+        case shifter_id::LS_MISC_REG: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), reg(), token(MEM_END)), lexemes);
+        case shifter_id::LS_MISC_REG_PRE: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), reg(), token(MEM_END), token(PRE_INDEX)), lexemes);
+        case shifter_id::LS_MISC_REG_POST: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), token(MEM_END), reg()), lexemes);
         default: return false;
     }
 }
@@ -369,10 +369,10 @@ bool validation::string_arm::is_ls_coproc_valid(const lexemes_t& lexemes, const 
     using enum token_enum;
 
     switch (shifter_id) {
-        case shifter_id::LS_COPROC_IMM: return verify_lexemes({ reg(reg_type::COPROC), reg(reg_type::CR), token(MEM_START), reg(), token(HASHTAG), immed(7, 4), token(MEM_END) }, lexemes);
-        case shifter_id::LS_COPROC_IMM_PRE: return verify_lexemes({ reg(reg_type::COPROC), reg(reg_type::CR), token(MEM_START), reg(), token(HASHTAG), immed(7, 4), token(MEM_END), token(PRE_INDEX) }, lexemes);
-        case shifter_id::LS_COPROC_IMM_POST: return verify_lexemes({ reg(reg_type::COPROC), reg(reg_type::CR), token(MEM_START), reg(), token(MEM_END), token(HASHTAG), immed(7, 4)}, lexemes);
-        case shifter_id::LS_COPROC_UNINDEXED: return verify_lexemes({ reg(reg_type::COPROC), reg(reg_type::CR), token(MEM_START), reg(), option() }, lexemes);
+        case shifter_id::LS_COPROC_IMM: return verify_lexemes(make_lexemes(reg(reg_type::COPROC), reg(reg_type::CR), token(MEM_START), reg(), token(HASHTAG), immed(7, 4), token(MEM_END)), lexemes);
+        case shifter_id::LS_COPROC_IMM_PRE: return verify_lexemes(make_lexemes(reg(reg_type::COPROC), reg(reg_type::CR), token(MEM_START), reg(), token(HASHTAG), immed(7, 4), token(MEM_END), token(PRE_INDEX)), lexemes);
+        case shifter_id::LS_COPROC_IMM_POST: return verify_lexemes(make_lexemes(reg(reg_type::COPROC), reg(reg_type::CR), token(MEM_START), reg(), token(MEM_END), token(HASHTAG), immed(7, 4)), lexemes);
+        case shifter_id::LS_COPROC_UNINDEXED: return verify_lexemes(make_lexemes(reg(reg_type::COPROC), reg(reg_type::CR), token(MEM_START), reg(), option()), lexemes);
         default: return false;
     }
 }

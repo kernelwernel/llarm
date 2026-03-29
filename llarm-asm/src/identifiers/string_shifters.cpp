@@ -14,52 +14,52 @@ using enum token_enum;
 shifter_id ident::string_shifters::data_instruction(const lexemes_t &lexemes) {
     using namespace interpreter;
 
-    if (verify_tokens({ REG, REG, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, HASHTAG, IMMED), lexemes)) {
         return shifter_id::DATA_IMM;
     }
 
     // alternative to the above, this is for exclusively setting the rotation value
-    if (verify_tokens({ REG, REG, HASHTAG, IMMED, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, HASHTAG, IMMED, IMMED), lexemes)) {
         return shifter_id::DATA_IMM;
     }
 
-    if (verify_tokens({ REG, REG, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, REG), lexemes)) {
         return shifter_id::DATA_REG;
     }
 
-    if (verify_tokens({ REG, REG, REG, LSL, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, REG, LSL, HASHTAG, IMMED), lexemes)) {
         return shifter_id::DATA_IMM_LSL;
     }
 
-    if (verify_tokens({ REG, REG, REG, LSL, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, REG, LSL, REG), lexemes)) {
         return shifter_id::DATA_REG_LSL;
     }
 
-    if (verify_tokens({ REG, REG, REG, LSR, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, REG, LSR, HASHTAG, IMMED), lexemes)) {
         return shifter_id::DATA_IMM_LSR;
     }
 
-    if (verify_tokens({ REG, REG, REG, LSR, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, REG, LSR, REG), lexemes)) {
         return shifter_id::DATA_REG_LSR;
     }
     
-    if (verify_tokens({ REG, REG, REG, ASR, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, REG, ASR, HASHTAG, IMMED), lexemes)) {
         return shifter_id::DATA_IMM_ASR;
     }
 
-    if (verify_tokens({ REG, REG, REG, ASR, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, REG, ASR, REG), lexemes)) {
         return shifter_id::DATA_REG_ASR;
     }
 
-    if (verify_tokens({ REG, REG, REG, ROR, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, REG, ROR, HASHTAG, IMMED), lexemes)) {
         return shifter_id::DATA_IMM_ROR;
     }
 
-    if (verify_tokens({ REG, REG, REG, ROR, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, REG, ROR, REG), lexemes)) {
         return shifter_id::DATA_REG_ROR;
     }
 
-    if (verify_tokens({ REG, REG, REG, RRX }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, REG, RRX), lexemes)) {
         return shifter_id::DATA_RRX;
     }
 
@@ -71,15 +71,15 @@ shifter_id ident::string_shifters::data_instruction(const lexemes_t &lexemes) {
 shifter_id ident::string_shifters::ls_instruction_PLD(const lexemes_t &lexemes) {
     using namespace interpreter;
 
-    if (verify_tokens({ MEM_START, REG, HASHTAG, HASHTAG, IMMED, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(MEM_START, REG, HASHTAG, HASHTAG, IMMED, MEM_END), lexemes)) {
         return shifter_id::LS_IMM;
     }
 
-    if (verify_tokens({ MEM_START, REG, REG, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(MEM_START, REG, REG, MEM_END), lexemes)) {
         return shifter_id::LS_REG;
     }
 
-    if (verify_tokens({ MEM_START, REG, REG, SHIFT, HASHTAG, IMMED, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(MEM_START, REG, REG, SHIFT, HASHTAG, IMMED, MEM_END), lexemes)) {
         const token_enum shift = lexemes.at(4).token_type;
 
         switch (shift) {
@@ -91,7 +91,7 @@ shifter_id ident::string_shifters::ls_instruction_PLD(const lexemes_t &lexemes) 
         }
     }
 
-    if (verify_tokens({ MEM_START, REG, REG, RRX, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(MEM_START, REG, REG, RRX, MEM_END), lexemes)) {
         return shifter_id::LS_SCALED_RRX;
     }
 
@@ -102,15 +102,15 @@ shifter_id ident::string_shifters::ls_instruction_PLD(const lexemes_t &lexemes) 
 shifter_id ident::string_shifters::ls_instruction(const lexemes_t &lexemes) {
     using namespace interpreter;
 
-    if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, HASHTAG, IMMED, MEM_END), lexemes)) {
         return shifter_id::LS_IMM;
     }
 
-    if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, REG, MEM_END), lexemes)) {
         return shifter_id::LS_REG;
     }
 
-    if (verify_tokens({ REG, MEM_START, REG, REG, SHIFT, HASHTAG, IMMED, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, REG, SHIFT, HASHTAG, IMMED, MEM_END), lexemes)) {
         const token_enum shift = lexemes.at(5).token_type;
 
         switch (shift) {
@@ -122,19 +122,19 @@ shifter_id ident::string_shifters::ls_instruction(const lexemes_t &lexemes) {
         }
     }
 
-    if (verify_tokens({ REG, MEM_START, REG, REG, RRX, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, REG, RRX, MEM_END), lexemes)) {
         return shifter_id::LS_SCALED_RRX;
     }
 
-    if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MEM_END, PRE_INDEX }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, HASHTAG, IMMED, MEM_END, PRE_INDEX), lexemes)) {
         return shifter_id::LS_IMM_PRE;
     }
 
-    if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END, PRE_INDEX }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, REG, MEM_END, PRE_INDEX), lexemes)) {
         return shifter_id::LS_REG_PRE;
     }
 
-    if (verify_tokens({ REG, MEM_START, REG, REG, SHIFT, HASHTAG, IMMED, MEM_END, PRE_INDEX }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, REG, SHIFT, HASHTAG, IMMED, MEM_END, PRE_INDEX), lexemes)) {
         const token_enum shift = lexemes.at(5).token_type;
 
         switch (shift) {
@@ -146,19 +146,19 @@ shifter_id ident::string_shifters::ls_instruction(const lexemes_t &lexemes) {
         }
     }
 
-    if (verify_tokens({ REG, MEM_START, REG, REG, RRX, MEM_END, PRE_INDEX }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, REG, RRX, MEM_END, PRE_INDEX), lexemes)) {
         return shifter_id::LS_SCALED_PRE_RRX;
     }
 
-    if (verify_tokens({ REG, MEM_START, REG, MEM_END, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, MEM_END, HASHTAG, IMMED), lexemes)) {
         return shifter_id::LS_IMM_POST;
     }
 
-    if (verify_tokens({ REG, MEM_START, REG, MEM_END, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, MEM_END, REG), lexemes)) {
         return shifter_id::LS_REG_POST;
     }
 
-    if (verify_tokens({ REG, MEM_START, REG, MEM_END, REG, SHIFT, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, MEM_END, REG, SHIFT, HASHTAG, IMMED), lexemes)) {
         const token_enum shift = lexemes.at(6).token_type;
 
         switch (shift) {
@@ -170,7 +170,7 @@ shifter_id ident::string_shifters::ls_instruction(const lexemes_t &lexemes) {
         }
     }
 
-    if (verify_tokens({ REG, MEM_START, REG, MEM_END, REG, RRX }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, MEM_END, REG, RRX), lexemes)) {
         return shifter_id::LS_SCALED_POST_RRX;
     }
 
@@ -181,27 +181,27 @@ shifter_id ident::string_shifters::ls_instruction(const lexemes_t &lexemes) {
 shifter_id ident::string_shifters::ls_misc_instruction(const lexemes_t &lexemes) {
     using namespace interpreter;
 
-    if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, HASHTAG, IMMED, MEM_END), lexemes)) {
         return shifter_id::LS_MISC_IMM;
     }
 
-    if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, REG, MEM_END), lexemes)) {
         return shifter_id::LS_MISC_REG;
     }
 
-    if (verify_tokens({ REG, MEM_START, REG, HASHTAG, IMMED, MEM_END, PRE_INDEX }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, HASHTAG, IMMED, MEM_END, PRE_INDEX), lexemes)) {
         return shifter_id::LS_MISC_IMM_PRE;
     }
 
-    if (verify_tokens({ REG, MEM_START, REG, REG, MEM_END, PRE_INDEX }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, REG, MEM_END, PRE_INDEX), lexemes)) {
         return shifter_id::LS_MISC_REG_PRE;
     }
 
-    if (verify_tokens({ REG, MEM_START, REG, MEM_END, HASHTAG, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, MEM_END, HASHTAG, IMMED), lexemes)) {
         return shifter_id::LS_MISC_IMM_POST;
     }
 
-    if (verify_tokens({ REG, MEM_START, REG, MEM_END, REG }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, MEM_START, REG, MEM_END, REG), lexemes)) {
         return shifter_id::LS_MISC_REG_POST;
     }
 
@@ -234,19 +234,19 @@ shifter_id ident::string_shifters::ls_mul_instruction(const sv mnemonic) {
 shifter_id ident::string_shifters::ls_coproc_instruction(const lexemes_t &lexemes) {
     using namespace interpreter;
 
-    if (verify_tokens({ REG, REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END), lexemes)) {
         return shifter_id::LS_COPROC_IMM;
     }
 
-    if (verify_tokens({ REG, REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END, PRE_INDEX }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END, PRE_INDEX), lexemes)) {
         return shifter_id::LS_COPROC_IMM_PRE;
     }
 
-    if (verify_tokens({ REG, REG, MEM_START, REG, MEM_END, HASHTAG, IMMED, MUL_OP, IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, MEM_START, REG, MEM_END, HASHTAG, IMMED, MUL_OP, IMMED), lexemes)) {
         return shifter_id::LS_COPROC_IMM_POST;
     }
 
-    if (verify_tokens({ REG, REG, MEM_START, REG, MEM_END, OPTION }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG, MEM_START, REG, MEM_END, OPTION), lexemes)) {
         return shifter_id::LS_COPROC_UNINDEXED;
     }
 
@@ -276,17 +276,17 @@ shifter_id ident::string_shifters::vfp_mul_instruction(const lexemes_t &lexemes,
     constexpr u16 DB = ('D' << 8 | 'B');
 
     if (addressing_mode == DB) {
-        if (verify_tokens({ REG, PRE_INDEX, REG_LIST }, lexemes)) {
+        if (verify_tokens(make_tokens(REG, PRE_INDEX, REG_LIST), lexemes)) {
             return shifter_id::VFP_LS_MUL_DEC;
         }
     }
 
     if (addressing_mode == IA) {
-        if (verify_tokens({ REG, PRE_INDEX, REG_LIST }, lexemes)) {
+        if (verify_tokens(make_tokens(REG, PRE_INDEX, REG_LIST), lexemes)) {
             return shifter_id::VFP_LS_MUL_INC;
         }
 
-        if (verify_tokens({ REG, REG_LIST }, lexemes)) {
+        if (verify_tokens(make_tokens(REG, REG_LIST), lexemes)) {
             return shifter_id::VFP_LS_MUL_UNINDEXED;
         }
     }

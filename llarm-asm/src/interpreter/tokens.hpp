@@ -198,14 +198,14 @@ struct PSR {
     bool is_malformed() const { return llarm::util::bit_fetch(flags, MALFORMED); }
     bool is_invalid() const { return llarm::util::bit_fetch(flags, INVALID); }
 
-    void set_C(const bool value = true) { llarm::util::modify_bit(flags, C, value); }
-    void set_X(const bool value = true) { llarm::util::modify_bit(flags, X, value); }
-    void set_S(const bool value = true) { llarm::util::modify_bit(flags, S, value); }
-    void set_F(const bool value = true) { llarm::util::modify_bit(flags, F, value); }
-    void set_cpsr(const bool value = true) { llarm::util::modify_bit(flags, IS_CPSR, value); }
-    void set_spsr(const bool value = true) { llarm::util::modify_bit(flags, IS_SPSR, value); }
-    void set_malformed(const bool value = true) { llarm::util::modify_bit(flags, MALFORMED, value); }
-    void set_invalid(const bool value = true) { llarm::util::modify_bit(flags, INVALID, value); }
+    constexpr void set_C(const bool value = true) { llarm::util::modify_bit(flags, C, value); }
+    constexpr void set_X(const bool value = true) { llarm::util::modify_bit(flags, X, value); }
+    constexpr void set_S(const bool value = true) { llarm::util::modify_bit(flags, S, value); }
+    constexpr void set_F(const bool value = true) { llarm::util::modify_bit(flags, F, value); }
+    constexpr void set_cpsr(const bool value = true) { llarm::util::modify_bit(flags, IS_CPSR, value); }
+    constexpr void set_spsr(const bool value = true) { llarm::util::modify_bit(flags, IS_SPSR, value); }
+    constexpr void set_malformed(const bool value = true) { llarm::util::modify_bit(flags, MALFORMED, value); }
+    constexpr void set_invalid(const bool value = true) { llarm::util::modify_bit(flags, INVALID, value); }
 
     bool operator==(const PSR& rhs) const {
         if (is_invalid() || is_malformed() || rhs.is_invalid() || rhs.is_malformed()) {
@@ -282,7 +282,6 @@ struct OPTION {
 
 
 using raw_tokens_t = std::vector<sv>;
-using tokens_t = std::vector<token_enum>;
 
 namespace tokens {
     raw_tokens_t tokenize(const sv code);

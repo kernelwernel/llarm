@@ -155,16 +155,16 @@ std::vector<sv> mnemonic_arm::fetch_candidates(sv mnemonic) {
 arm_id mnemonic_arm::MSR(const lexemes_t &lexemes) {
     // MSR_IMM
     if (
-        (verify_tokens({ PSR, HASHTAG, IMMED }, lexemes)) ||
-        (verify_tokens({ PSR, HASHTAG, IMMED }, lexemes))
+        (verify_tokens(make_tokens(PSR, HASHTAG, IMMED), lexemes)) ||
+        (verify_tokens(make_tokens(PSR, HASHTAG, IMMED), lexemes))
     ) {
         return arm_id::MSR_IMM;
     }
 
     // MSR_REG
     if (
-        (verify_tokens({ PSR, REG }, lexemes)) ||
-        (verify_tokens({ PSR, REG }, lexemes))
+        (verify_tokens(make_tokens(PSR, REG), lexemes)) ||
+        (verify_tokens(make_tokens(PSR, REG), lexemes))
     ) {
         return arm_id::MSR_REG;
     }
@@ -267,13 +267,13 @@ arm_id mnemonic_arm::STR_family(sv mnemonic) {
 
 arm_id mnemonic_arm::STM(const lexemes_t &lexemes) {
     // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
-    if (verify_tokens({ REG, PRE_INDEX, REG_LIST }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, PRE_INDEX, REG_LIST), lexemes)) {
         return arm_id::STM1;
-    } else if (verify_tokens({ REG, REG_LIST }, lexemes)) {
+    } else if (verify_tokens(make_tokens(REG, REG_LIST), lexemes)) {
         return arm_id::STM1;
     }
 
-    if (verify_tokens({ REG, REG_LIST, CARET }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG_LIST, CARET), lexemes)) {
         return arm_id::STM2;
     }
 
@@ -283,19 +283,19 @@ arm_id mnemonic_arm::STM(const lexemes_t &lexemes) {
 
 arm_id mnemonic_arm::LDM(const lexemes_t &lexemes) {
     // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
-    if (verify_tokens({ REG, PRE_INDEX, REG_LIST }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, PRE_INDEX, REG_LIST), lexemes)) {
         return arm_id::LDM1;
-    } else if (verify_tokens({ REG, REG_LIST }, lexemes)) {
+    } else if (verify_tokens(make_tokens(REG, REG_LIST), lexemes)) {
         return arm_id::LDM1;
     }
 
-    if (verify_tokens({ REG, REG_LIST, CARET }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, REG_LIST, CARET), lexemes)) {
         return arm_id::LDM2;
     }
 
-    if (verify_tokens({ REG, PRE_INDEX, REG_LIST, CARET }, lexemes)) {
+    if (verify_tokens(make_tokens(REG, PRE_INDEX, REG_LIST, CARET), lexemes)) {
         return arm_id::LDM3;
-    } else if (verify_tokens({ REG, REG_LIST, CARET }, lexemes)) {
+    } else if (verify_tokens(make_tokens(REG, REG_LIST, CARET), lexemes)) {
         return arm_id::LDM3;
     }
 
@@ -304,9 +304,9 @@ arm_id mnemonic_arm::LDM(const lexemes_t &lexemes) {
 
 
 arm_id mnemonic_arm::BLX(const lexemes_t &lexemes) {
-    if (verify_tokens({ IMMED }, lexemes)) {
+    if (verify_tokens(make_tokens(IMMED), lexemes)) {
         return arm_id::BLX1;
-    } else if (verify_tokens({ REG }, lexemes)) {
+    } else if (verify_tokens(make_tokens(REG), lexemes)) {
         return arm_id::BLX2;
     }
 
@@ -557,7 +557,7 @@ mnemonic_struct_arm mnemonic_arm::fetch_mnemonic_args(const arm_id id, sv mnemon
             mnemonic.remove_prefix(1);
             args.cond_id = interpreter::fetch_cond_id(mnemonic);
             return args;
-        
+
         case arm_id::SMULWY:
         case arm_id::SMLAWY: 
             mnemonic.remove_prefix(5);
