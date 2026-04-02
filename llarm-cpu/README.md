@@ -44,6 +44,11 @@ const char* prod = cpu::fetch_product_string(cpu::fetch_product());
 const char* arch = cpu::fetch_arch_string(cpu::fetch_arch());
 ```
 
+## API reference
+
+See [docs/c_documentation.md](docs/c_documentation.md) and [docs/cpp_documentation.md](docs/cpp_documentation.md).
+
+
 ### CMake
 
 ```cmake
@@ -90,7 +95,3 @@ The test runner supports two modes, selected automatically:
 
 Install on Arch: `sudo pacman -S arm-linux-gnueabihf-gcc qemu-user`
 Install on Debian/Ubuntu: `sudo apt install g++-arm-linux-gnueabi qemu-user`
-
-## API reference
-
-See [docs/c_documentation.md](docs/c_documentation.md) and [docs/cpp_documentation.md](docs/cpp_documentation.md).
