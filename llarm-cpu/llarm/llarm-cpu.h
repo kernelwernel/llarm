@@ -1,5 +1,11 @@
-#if defined(__i386__) || defined(__x86_64__)
-    #define is_x86 1
+#if !defined(__arm__) && !defined(__aarch64__)
+    #define is_not_arm 1
+#endif
+
+#ifndef __cplusplus
+typedef unsigned char bool;
+#define true  1
+#define false 0
 #endif
 
 enum arch {
@@ -145,62 +151,62 @@ enum product {
     PROD_NEOVERSE_V3,
 
     /* Qualcomm */
-    PROD_QCOM_SCORPION,        // Snapdragon S1/S2 (ARMv7)
-    PROD_QCOM_SCORPION_MP,     // Snapdragon S3/S4 multi-core (ARMv7)
-    PROD_QCOM_KRAIT,           // Snapdragon 200/400 (ARMv7)
-    PROD_QCOM_KRAIT_S4_PRO,    // Snapdragon 600/800 (ARMv7)
-    PROD_QCOM_KRYO,            // Snapdragon 820/821 custom (ARMv8)
-    PROD_QCOM_FALKOR_V1,       // Centriq 2400 early silicon (server)
-    PROD_QCOM_FALKOR,          // Centriq 2400 (server)
-    PROD_QCOM_KRYO_3XX_SILVER, // Snapdragon 845 little (semi-custom A55)
-    PROD_QCOM_KRYO_4XX_GOLD,   // Snapdragon 855/865 big (semi-custom A76)
-    PROD_QCOM_KRYO_4XX_SILVER, // Snapdragon 855/865 little (semi-custom A55)
-    PROD_QCOM_KRYO_5XX_GOLD,   // Snapdragon 888 big (semi-custom A78)
-    PROD_QCOM_KRYO_5XX_SILVER, // Snapdragon 888 little (semi-custom A55)
-    PROD_QCOM_ORYON,           // Snapdragon X Elite (custom ARMv9)
+    PROD_QCOM_SCORPION,        /* Snapdragon S1/S2 (ARMv7) */
+    PROD_QCOM_SCORPION_MP,     /* Snapdragon S3/S4 multi-core (ARMv7) */
+    PROD_QCOM_KRAIT,           /* Snapdragon 200/400 (ARMv7) */
+    PROD_QCOM_KRAIT_S4_PRO,    /* Snapdragon 600/800 (ARMv7) */
+    PROD_QCOM_KRYO,            /* Snapdragon 820/821 custom (ARMv8) */
+    PROD_QCOM_FALKOR_V1,       /* Centriq 2400 early silicon (server) */
+    PROD_QCOM_FALKOR,          /* Centriq 2400 (server) */
+    PROD_QCOM_KRYO_3XX_SILVER, /* Snapdragon 845 little (semi-custom A55) */
+    PROD_QCOM_KRYO_4XX_GOLD,   /* Snapdragon 855/865 big (semi-custom A76) */
+    PROD_QCOM_KRYO_4XX_SILVER, /* Snapdragon 855/865 little (semi-custom A55) */
+    PROD_QCOM_KRYO_5XX_GOLD,   /* Snapdragon 888 big (semi-custom A78) */
+    PROD_QCOM_KRYO_5XX_SILVER, /* Snapdragon 888 little (semi-custom A55) */
+    PROD_QCOM_ORYON,           /* Snapdragon X Elite (custom ARMv9) */
 
     /* Apple M1+ (confirmed via Asahi Linux / mainline kernel) */
-    PROD_APPLE_ICESTORM,       // M1 efficiency (0x022); A14 little may be 0x020
-    PROD_APPLE_FIRESTORM,      // M1 performance (0x023); A14 big may be 0x021
-    PROD_APPLE_ICESTORM_PRO,   // M1 Pro/Max efficiency
-    PROD_APPLE_FIRESTORM_PRO,  // M1 Pro/Max performance
-    PROD_APPLE_ICESTORM_MAX,   // M1 Ultra efficiency
-    PROD_APPLE_FIRESTORM_MAX,  // M1 Ultra performance
-    PROD_APPLE_BLIZZARD,       // M2 efficiency
-    PROD_APPLE_AVALANCHE,      // M2 performance
+    PROD_APPLE_ICESTORM,       /* M1 efficiency (0x022); A14 little may be 0x020 */
+    PROD_APPLE_FIRESTORM,      /* M1 performance (0x023); A14 big may be 0x021 */
+    PROD_APPLE_ICESTORM_PRO,   /* M1 Pro/Max efficiency */
+    PROD_APPLE_FIRESTORM_PRO,  /* M1 Pro/Max performance */
+    PROD_APPLE_ICESTORM_MAX,   /* M1 Ultra efficiency */
+    PROD_APPLE_FIRESTORM_MAX,  /* M1 Ultra performance */
+    PROD_APPLE_BLIZZARD,       /* M2 efficiency */
+    PROD_APPLE_AVALANCHE,      /* M2 performance */
 
     /* Samsung Mongoose */
-    PROD_SAMSUNG_M1,           // Exynos 8890 (2016)
-    PROD_SAMSUNG_M2,           // Exynos 8895 (2017)
-    PROD_SAMSUNG_M3,           // Exynos 9810 (2018)
-    PROD_SAMSUNG_M4,           // Exynos 9820 (2019)
-    PROD_SAMSUNG_M5,           // Exynos 990 (2020)
+    PROD_SAMSUNG_M1,           /* Exynos 8890 (2016) */
+    PROD_SAMSUNG_M2,           /* Exynos 8895 (2017) */
+    PROD_SAMSUNG_M3,           /* Exynos 9810 (2018) */
+    PROD_SAMSUNG_M4,           /* Exynos 9820 (2019) */
+    PROD_SAMSUNG_M5,           /* Exynos 990 (2020) */
 
     /* Cavium */
-    PROD_CAVIUM_THUNDERX,      // ThunderX CN88xx
-    PROD_CAVIUM_THUNDERX_81XX, // ThunderX CN81xx
-    PROD_CAVIUM_THUNDERX_83XX, // ThunderX CN83xx
-    PROD_CAVIUM_THUNDERX2,     // ThunderX2 CN99xx
+    PROD_CAVIUM_THUNDERX,      /* ThunderX CN88xx */
+    PROD_CAVIUM_THUNDERX_81XX, /* ThunderX CN81xx */
+    PROD_CAVIUM_THUNDERX_83XX, /* ThunderX CN83xx */
+    PROD_CAVIUM_THUNDERX2,     /* ThunderX2 CN99xx */
 
     /* NVIDIA */
-    PROD_NVIDIA_DENVER,        // Tegra X1 (Denver 2)
-    PROD_NVIDIA_CARMEL,        // Tegra Xavier
+    PROD_NVIDIA_DENVER,        /* Tegra X1 (Denver 2) */
+    PROD_NVIDIA_CARMEL,        /* Tegra Xavier */
 
     /* Fujitsu */
-    PROD_FUJITSU_A64FX,        // Fugaku supercomputer
+    PROD_FUJITSU_A64FX,        /* Fugaku supercomputer */
 
     /* HiSilicon */
-    PROD_HISI_TSV110,          // Hi1620 / Kunpeng 920 (server)
+    PROD_HISI_TSV110,          /* Hi1620 / Kunpeng 920 (server) */
 
     /* APM */
-    PROD_APM_POTENZA           // X-Gene (first ARMv8 server processor)
+    PROD_APM_POTENZA           /* X-Gene (first ARMv8 server processor) */
 };
 
 enum implementor {
     IMPL_UNKNOWN,
     IMPL_ARM,
-    IMPL_BRCM, // broadcom 
-    IMPL_DEC, // digital equipment corporation
+    IMPL_BRCM, /* broadcom  */
+    IMPL_DEC, /* digital equipment corporation */
     IMPL_MOTOROLA,
     IMPL_QUALCOMM,
     IMPL_MARVELL,
@@ -209,18 +215,18 @@ enum implementor {
     IMPL_FUJITSU,
     IMPL_INFINEON,
     IMPL_NVIDIA,
-    IMPL_APM, // applied micro circuits corporation
+    IMPL_APM, /* applied micro circuits corporation */
     IMPL_SAMSUNG,
-    IMPL_TI, // texas instruments (this is a guess)
+    IMPL_TI, /* texas instruments (this is a guess) */
     IMPL_APPLE,
     IMPL_FARADAY,
     IMPL_AMPERE,
     IMPL_HISI,
     IMPL_MICROSOFT,
-    IMPL_LLARM // custom
+    IMPL_LLARM /* custom */
 };
 
-#if !defined(is_x86)
+#if !defined(is_not_arm)
 static uint32_t llarm_cpu_fetch_bits(const uint32_t value, const uint8_t start, const uint8_t end) {
     return (value >> end) & ((1U << (start - end + 1)) - 1);
 }
@@ -232,10 +238,10 @@ static void llarm_cpu_set_test_midr(uint32_t midr) { _llarm_test_midr_val = midr
 static uint32_t llarm_cpu_fetch_midr() { return _llarm_test_midr_val; }
 #else
 static unsigned int llarm_cpu_fetch_midr() {
-#if defined(is_x86)
+#if defined(is_not_arm)
     return 0;
 #else
-    uint32_t midr; // main ID register
+    uint32_t midr; /* main ID register */
     __asm__ volatile("mrc p15, 0, %0, c0, c0, 0" : "=r"(midr));
     return midr;
 #endif
@@ -244,7 +250,7 @@ static unsigned int llarm_cpu_fetch_midr() {
 
 
 static bool llarm_cpu_is_pre_arm7() {
-#if defined(is_x86)
+#if defined(is_not_arm)
     return false;
 #else
     const uint32_t upper_PPN = llarm_cpu_fetch_bits(llarm_cpu_fetch_midr(), 15, 12);
@@ -254,7 +260,7 @@ static bool llarm_cpu_is_pre_arm7() {
 
 
 static bool llarm_cpu_is_arm7() {
-#if defined(is_x86)
+#if defined(is_not_arm)
     return false;
 #else
     const uint32_t upper_PPN = llarm_cpu_fetch_bits(llarm_cpu_fetch_midr(), 15, 12);
@@ -264,7 +270,7 @@ static bool llarm_cpu_is_arm7() {
 
 
 static bool llarm_cpu_is_post_arm7() {
-#if defined(is_x86)
+#if defined(is_not_arm)
     return false;
 #else
     const uint32_t upper_PPN = llarm_cpu_fetch_bits(llarm_cpu_fetch_midr(), 15, 12);
@@ -274,7 +280,7 @@ static bool llarm_cpu_is_post_arm7() {
 
 
 static unsigned int llarm_cpu_fetch_revision() {
-#if defined(is_x86)
+#if defined(is_not_arm)
     return 0;
 #else
     return llarm_cpu_fetch_bits(llarm_cpu_fetch_midr(), 3, 0);
@@ -283,7 +289,7 @@ static unsigned int llarm_cpu_fetch_revision() {
 
 
 static unsigned int llarm_cpu_fetch_ppn() {
-#if defined(is_x86)
+#if defined(is_not_arm)
     return 0;
 #else
     if (llarm_cpu_is_pre_arm7()) {
@@ -296,7 +302,7 @@ static unsigned int llarm_cpu_fetch_ppn() {
 
 
 static unsigned int llarm_cpu_fetch_variant() {
-#if defined(is_x86)
+#if defined(is_not_arm)
     return 0;
 #else
     if (llarm_cpu_is_pre_arm7()) {
@@ -313,7 +319,7 @@ static unsigned int llarm_cpu_fetch_variant() {
 
 
 static enum implementor llarm_cpu_fetch_implementor() {
-#if defined(is_x86)
+#if defined(is_not_arm)
     return IMPL_UNKNOWN;
 #else
     if (llarm_cpu_is_pre_arm7()) {
@@ -349,7 +355,7 @@ static enum implementor llarm_cpu_fetch_implementor() {
 }
 
 static const char* llarm_cpu_fetch_implementor_string() {
-#if defined(is_x86)
+#if defined(is_not_arm)
     return "UNKNOWN";
 #else
     switch (llarm_cpu_fetch_implementor()) {
@@ -382,7 +388,7 @@ static const char* llarm_cpu_fetch_implementor_string() {
 
 
 static enum product llarm_cpu_fetch_product() {
-#if defined(is_x86)
+#if defined(is_not_arm)
     return PROD_UNKNOWN;
 #else
     const uint32_t midr = llarm_cpu_fetch_midr();
@@ -393,7 +399,7 @@ static enum product llarm_cpu_fetch_product() {
 
     const uint32_t product_code = midr & 0xFFFFFFF0;
 
-    // see https://github.com/NetBSD/src/blob/cce745e5e7843c99aabeec982cea42f75700d5b0/sys/arch/arm/include/cputypes.h#L116
+    /* see https://github.com/NetBSD/src/blob/cce745e5e7843c99aabeec982cea42f75700d5b0/sys/arch/arm/include/cputypes.h#L116 */
 
     if (llarm_cpu_is_pre_arm7()) {
         switch (product_code) {
@@ -417,7 +423,7 @@ static enum product llarm_cpu_fetch_product() {
         }
     }
 
-    // post-ARM7
+    /* post-ARM7 */
     const uint32_t ppn  = llarm_cpu_fetch_ppn();
     const enum implementor impl = llarm_cpu_fetch_implementor();
 
@@ -449,9 +455,9 @@ static enum product llarm_cpu_fetch_product() {
             case 0xd20: return PROD_CORTEX_M23;
             case 0xd21: return PROD_CORTEX_M33;
             case 0xd31: return PROD_CORTEX_M35P;
-            // case 0xd44: return PROD_CORTEX_M52; TODO resolve conflict
+            /* case 0xd44: return PROD_CORTEX_M52; TODO resolve conflict */
             case 0xd50: return PROD_CORTEX_M55;  /* also Cortex-M52 shares? verify */
-            // case 0xd85: return PROD_CORTEX_M85; TODO resolve conflict
+            /* case 0xd85: return PROD_CORTEX_M85; TODO resolve conflict */
 
             /* Cortex-R */
             case 0xc14: return PROD_CORTEX_R4;
@@ -614,8 +620,8 @@ static enum product llarm_cpu_fetch_product() {
         }
     }
 
-    // IMPL_AMPERE: 0xAC3 reported for Altra but unconfirmed
-    // IMPL_MARVELL PJ4B-MP: 0x581/0x584 reported but conflicting sources
+    /* IMPL_AMPERE: 0xAC3 reported for Altra but unconfirmed */
+    /* IMPL_MARVELL PJ4B-MP: 0x581/0x584 reported but conflicting sources */
 
     return PROD_UNKNOWN;
 #endif
@@ -763,7 +769,7 @@ static const char* llarm_cpu_fetch_product_string(const enum product prod) {
 }
 
 static enum arch llarm_cpu_fetch_arch() {
-#if defined(is_x86)
+#if defined(is_not_arm)
     return ARCH_UNKNOWN;
 #else
     if (llarm_cpu_is_pre_arm7()) {
@@ -781,9 +787,9 @@ static enum arch llarm_cpu_fetch_arch() {
 
     const uint32_t midr = llarm_cpu_fetch_midr();
 
-    // B2-8
+    /* B2-8 */
     if (llarm_cpu_is_arm7()) {
-        // this is literally called the A bit in the ARM docs
+        /* this is literally called the A bit in the ARM docs */
         const bool A = ((midr >> 23) & 1);
 
         if (A) {
@@ -793,7 +799,7 @@ static enum arch llarm_cpu_fetch_arch() {
         return ARCH_ARMv3;
     }
 
-    // B2-7
+    /* B2-7 */
     const uint32_t arch_bits = llarm_cpu_fetch_bits(midr, 19, 16);
 
     switch (arch_bits) {

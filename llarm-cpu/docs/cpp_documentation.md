@@ -76,28 +76,15 @@ int main() {
 }
 ```
 
-> [!NOTE]
-> These three functions are mutually exclusive. Exactly one will return `true` for any valid MIDR value.
-
 <br>
 
 ## `llarm::cpu::fetch_revision()`
 
 Returns an `unsigned int` representing the revision field of the MIDR (bits 3:0). This is the minor stepping of the CPU, distinct from the variant.
 
-```cpp
-unsigned int rev = llarm::cpu::fetch_revision();
-std::cout << "CPU revision: r" << rev << "\n";
-```
-
-<br>
-
 ## `llarm::cpu::fetch_ppn()`
 
 Returns an `unsigned int` representing the Primary Part Number (PPN). This is the main identifier used to distinguish specific CPU products within a given implementor.
-
-> [!NOTE]
-> Returns `0` for pre-ARM7 CPUs, as the MIDR format is different for those parts.
 
 <br>
 
@@ -125,13 +112,13 @@ int main() {
 }
 ```
 
-If the implementor byte does not match any known value, the function returns `IMPL_UNKNOWN`. See the [implementor table](llarm_cpu_docs.md#implementor-table) for all supported values.
+If the implementor byte does not match any known value, the function returns `IMPL_UNKNOWN`. See the [implementor table](c_documentation.md#implementor-table) for all supported values.
 
 <br>
 
 ## `llarm::cpu::fetch_implementor_string()`
 
-Returns a `const char*` name for the current CPU's implementor. Wraps `llarm_cpu_fetch_implementor_string()`.
+Returns a `const char*` name for the current CPU's implementor.
 
 ```cpp
 std::cout << "Implementor: " << llarm::cpu::fetch_implementor_string() << "\n";
@@ -165,7 +152,7 @@ int main() {
 }
 ```
 
-See the [product table](llarm_cpu_docs.md#product-table) for all supported products.
+See the [product table](c_documentation.md#product-table) for all supported products.
 
 > [!IMPORTANT]
 > A result of `PROD_UNKNOWN` does not mean the CPU is invalid. It means the specific part is not in the library's database. This is common for very old pre-ARM7 parts and newer unreleased silicon, but the lib will do its best to be as up-to-date as possible.
@@ -174,7 +161,7 @@ See the [product table](llarm_cpu_docs.md#product-table) for all supported produ
 
 ## `llarm::cpu::fetch_product_string()`
 
-Returns a `const char*` string for a given `enum product`. Takes an explicit product argument. Wraps `llarm_cpu_fetch_product_string()`.
+Returns a `const char*` string for a given `enum product`. Takes an explicit product argument.
 
 ```cpp
 enum product prod = llarm::cpu::fetch_product();
@@ -187,8 +174,7 @@ std::cout << "Product: " << name << "\n";
 
 ## `llarm::cpu::fetch_arch()`
 
-Returns an `enum arch` identifying the ARM architecture version of the current CPU. Wraps `llarm_cpu_fetch_arch()`.
-
+Returns an `enum arch` identifying the ARM architecture version of the current CPU.
 ```cpp
 #include "llarm-cpu.hpp"
 
@@ -201,13 +187,13 @@ int main() {
 }
 ```
 
-See the [architecture table](llarm_cpu_docs.md#architecture-table) for all supported archs.
+See the [architecture table](c_documentation.md#architecture-table) for all supported archs.
 
 <br>
 
 ## `llarm::cpu::fetch_arch_string()`
 
-Returns a `const char*` string for a given `enum arch`. Takes an explicit arch argument. Wraps `llarm_cpu_fetch_arch_string()`.
+Returns a `const char*` string for a given `enum arch`. Takes an explicit arch argument.
 
 ```cpp
 enum arch a = llarm::cpu::fetch_arch();
