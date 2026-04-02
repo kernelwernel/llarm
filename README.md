@@ -13,7 +13,6 @@
  - full system, CPU, and core emulation (`llarm-emu`)
  - instruction assembly, disassembly, identification, and validation (`llarm-asm`)
  - fetching ARM CPU information (`llarm-cpu`)
- - instruction documentation lookups (`llarm-inst`)
  - heat and power efficiency simulation (`llarm-sim`)
  - random ARM binary/assembly generation for sampling and stress-testing (`llarm-rand`)
  - and many other sub-projects are planned or currently in development

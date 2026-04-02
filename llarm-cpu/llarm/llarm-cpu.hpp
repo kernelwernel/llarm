@@ -2,7 +2,7 @@
 #include "llarm-cpu.h"
 
 namespace llarm::cpu {
-    inline uint32_t fetch_midr() { 
+    inline unsigned int fetch_midr() { 
         return llarm_cpu_fetch_midr();
     }
 
@@ -18,15 +18,15 @@ namespace llarm::cpu {
         return llarm_cpu_is_post_arm7();
     }
 
-    inline uint32_t fetch_revision() { 
+    inline unsigned int fetch_revision() { 
         return llarm_cpu_fetch_revision();
     }
 
-    inline uint32_t fetch_ppn() { 
+    inline unsigned int fetch_ppn() { 
         return llarm_cpu_fetch_ppn();
     }
 
-    inline uint32_t fetch_variant() { 
+    inline unsigned int fetch_variant() { 
         return llarm_cpu_fetch_variant();
     }
 
@@ -53,5 +53,4 @@ namespace llarm::cpu {
     inline const char* fetch_arch_string(enum arch a) { 
         return llarm_cpu_fetch_arch_string(a);
     }
-
 }

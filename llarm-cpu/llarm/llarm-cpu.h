@@ -1,5 +1,3 @@
-#include <stdint.h>
-
 #if defined(__i386__) || defined(__x86_64__)
     #define is_x86 1
 #endif
@@ -233,7 +231,7 @@ static uint32_t _llarm_test_midr_val = 0;
 static void llarm_cpu_set_test_midr(uint32_t midr) { _llarm_test_midr_val = midr; }
 static uint32_t llarm_cpu_fetch_midr() { return _llarm_test_midr_val; }
 #else
-static uint32_t llarm_cpu_fetch_midr() {
+static unsigned int llarm_cpu_fetch_midr() {
 #if defined(is_x86)
     return 0;
 #else
@@ -275,7 +273,7 @@ static bool llarm_cpu_is_post_arm7() {
 }
 
 
-static uint32_t llarm_cpu_fetch_revision() {
+static unsigned int llarm_cpu_fetch_revision() {
 #if defined(is_x86)
     return 0;
 #else
@@ -284,7 +282,7 @@ static uint32_t llarm_cpu_fetch_revision() {
 }
 
 
-static uint32_t llarm_cpu_fetch_ppn() {
+static unsigned int llarm_cpu_fetch_ppn() {
 #if defined(is_x86)
     return 0;
 #else
@@ -297,7 +295,7 @@ static uint32_t llarm_cpu_fetch_ppn() {
 }
 
 
-static uint32_t llarm_cpu_fetch_variant() {
+static unsigned int llarm_cpu_fetch_variant() {
 #if defined(is_x86)
     return 0;
 #else
