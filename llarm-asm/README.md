@@ -7,6 +7,8 @@ C++ library and CLI tool for ARM assembly and disassembly. Handles both ARM and 
 - Validate instructions
 - 135+ ARM instructions, 70+ Thumb instructions, 70+ shifter operand types
 - Configurable disassembly output via settings
+- Fastest disassembler and assembler according to benchmarks (up to 2x or 4x faster)
+
 
 ## Usage
 

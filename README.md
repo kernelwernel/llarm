@@ -13,19 +13,24 @@
  - full system, CPU, and core emulation (`llarm-emu`)
  - instruction assembly, disassembly, identification, and validation (`llarm-asm`)
  - fetching ARM CPU information (`llarm-cpu`)
- - heat and power efficiency simulation (`llarm-sim`)
- - random ARM binary/assembly generation for sampling and stress-testing (`llarm-rand`)
  - and many other sub-projects are planned or currently in development
 
 - - -
 
 
-## Current development roadmap
+## Development roadmap
 
 <br>
 <img align="center" src="assets/roadmap/llarm_roadmap.png" title="LLARM roadmap">
 <br>
 
+
+## Build setup
+```cmake
+mkdir build && cd build
+make
+sudo make install
+```
 
 - - -
 
@@ -36,5 +41,3 @@
 > My ambition is to expand it into something much bigger than it already is. The reason why I'm sharing this colossal project now is because I wanted to publish the progress I've made so far, and maybe get feedback from people to determine what could be better. But for the moment, this is only the beginning. 
 > 
 > My objective is to provide a completely new framework to work with the ARM architecture, with goals to have it become a practical solution for many low-level embedded development requirements out there. Think of it as LLVM but for ARM instead of compilers.
->
-> 

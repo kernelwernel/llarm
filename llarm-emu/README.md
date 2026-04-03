@@ -1,20 +1,17 @@
 # llarm-emu
 
-An ARM emulation framework for C++
+An ARM emulation framework for C++ (WORK IN PROGRESS)
 
 
 # Technical features
-llarm-emu has the goal of emulating pretty much everything about the ARM architecture up to v(something):
+llarm-emu has the goal of emulating pretty much everything about the ARM architecture up to ARMv5:
 - deprecated 26-bit architecture compatibility
 - Thumb, Thumb2 and Jazelle compatibility (WIP)
-- MMU and MPU support (WIP)
-- Enhanced DSP support (WIP)
-- VFP support (WIP)
+- MMU and MPU support
+- Enhanced DSP support
+- VFP support
 - optional clock configurations (WIP)
 - selection of a wide variety of architectures
-
-
-
 - completely modular
 
 
