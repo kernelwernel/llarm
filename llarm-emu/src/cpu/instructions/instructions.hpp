@@ -7,7 +7,6 @@
 #include "arm/addressing_modes/addressing_modes.hpp"
 #include "../vfp/exception.hpp"
 #include "../vfp/addressing_modes.hpp"
-#include "operation.hpp"
 
 #include <llarm/shared/types.hpp>
 
@@ -15,7 +14,6 @@ struct INSTRUCTIONS {
 private:
     REGISTERS& reg;
     ADDRESSING_MODE& address_mode;
-    OPERATION& operation;
     COPROCESSOR& coprocessor;
     SETTINGS& settings;
     MEMORY& memory;
@@ -24,14 +22,12 @@ public:
     struct arm {
         struct math {
             REGISTERS& reg;
-            OPERATION& operation;
             ADDRESSING_MODE& address_mode;
 
             math(
                 REGISTERS& reg, 
-                OPERATION& operation,
                 ADDRESSING_MODE& address_mode
-            ) : reg(reg), operation(operation), address_mode(address_mode) {}
+            ) : reg(reg), address_mode(address_mode) {}
     
             void ADC(const u32 code); // TODO, NOTE: MUST TEST CARRY AND OVERFLOW
             void ADD(const u32 code); // same
@@ -43,14 +39,12 @@ public:
 
         struct logic {
             REGISTERS& reg;
-            OPERATION& operation;
             ADDRESSING_MODE& address_mode;
 
             logic(
                 REGISTERS& reg, 
-                OPERATION& operation,
                 ADDRESSING_MODE& address_mode
-            ) : reg(reg), operation(operation), address_mode(address_mode) {}
+            ) : reg(reg), address_mode(address_mode) {}
     
             void CMN(const u32 code); // TODO
             void AND(const u32 code); // TODO
@@ -65,14 +59,12 @@ public:
 
         struct movement {
             REGISTERS& reg;
-            OPERATION& operation;
             ADDRESSING_MODE& address_mode;
 
             movement(
-                REGISTERS& reg, 
-                OPERATION& operation,
+                REGISTERS& reg,
                 ADDRESSING_MODE& address_mode
-            ) : reg(reg), operation(operation), address_mode(address_mode) {}
+            ) : reg(reg), address_mode(address_mode) {}
     
             void MOV(const u32 code); // TODO
             void MVN(const u32 code); // TODO
@@ -83,9 +75,8 @@ public:
 
         struct multiply {
             REGISTERS& reg;
-            OPERATION& operation;
 
-            multiply(REGISTERS& reg, OPERATION& operation) : reg(reg), operation(operation) {}
+            multiply(REGISTERS& reg) : reg(reg) {}
     
             void MLA(const u32 code); // TODO
             void MUL(const u32 code); // TODO
@@ -97,9 +88,8 @@ public:
 
         struct branching {
             REGISTERS& reg; // Direct reference to the reg object
-            OPERATION& operation;
 
-            branching(REGISTERS& reg, OPERATION& operation) : reg(reg), operation(operation) {}
+            branching(REGISTERS& reg) : reg(reg) {}
     
             void B(const u32 code); // TODO
             void BL(const u32 code); // TODO
@@ -110,16 +100,14 @@ public:
 
         struct coproc {
             REGISTERS& reg;
-            OPERATION& operation;
             ADDRESSING_MODE& address_mode;
             COPROCESSOR& coprocessor;
 
             coproc(
                 REGISTERS& reg, 
-                OPERATION& operation, 
                 ADDRESSING_MODE& address_mode,
                 COPROCESSOR& coprocessor
-            ) : reg(reg), operation(operation), address_mode(address_mode), coprocessor(coprocessor) {}
+            ) : reg(reg), address_mode(address_mode), coprocessor(coprocessor) {}
     
             void CDP(/*const u32 code*/); // TODO
             void LDC(/*const u32 code*/); // TODO
@@ -135,16 +123,15 @@ public:
 
         struct misc {
             REGISTERS& reg;
-            OPERATION& operation;
             ADDRESSING_MODE& address_mode;
             COPROCESSOR& coprocessor;
 
             misc(
                 REGISTERS& reg, 
-                OPERATION& operation,
+                
                 ADDRESSING_MODE& address_mode,
                 COPROCESSOR& coprocessor
-            ) : reg(reg), operation(operation), address_mode(address_mode), coprocessor(coprocessor) {}
+            ) : reg(reg), address_mode(address_mode), coprocessor(coprocessor) {}
 
             void NOP(const u32 code);
             void PSR(const u32 code);
@@ -154,19 +141,16 @@ public:
 
         struct load {
             REGISTERS& reg;
-            OPERATION& operation;
             MEMORY& memory;
             ADDRESSING_MODE& address_mode;
             SETTINGS& settings;
 
             load(
-                REGISTERS& reg, 
-                OPERATION& operation, 
+                REGISTERS& reg,
                 MEMORY& memory,
                 ADDRESSING_MODE& address_mode,
                 SETTINGS& settings
             ) : reg(reg), 
-                operation(operation), 
                 memory(memory), 
                 address_mode(address_mode), 
                 settings(settings) 
@@ -186,17 +170,15 @@ public:
 
         struct store {
             REGISTERS& reg;
-            OPERATION& operation;
             MEMORY& memory;
             ADDRESSING_MODE& address_mode;
 
             store(
                 REGISTERS& reg, 
-                OPERATION& operation, 
+                 
                 MEMORY& memory, 
                 ADDRESSING_MODE& address_mode
             ) : reg(reg), 
-                operation(operation), 
                 memory(memory), 
                 address_mode(address_mode)
             {}
@@ -214,19 +196,16 @@ public:
 
         struct dsp {
             REGISTERS& reg;
-            OPERATION& operation;
             MEMORY& memory;
             ADDRESSING_MODE& address_mode;
             EXCEPTION& exception;
 
             dsp(
                 REGISTERS& reg, 
-                OPERATION& operation, 
                 MEMORY& memory,
                 ADDRESSING_MODE& address_mode,
                 EXCEPTION& exception
             ) : reg(reg), 
-                operation(operation), 
                 memory(memory),
                 address_mode(address_mode),
                 exception(exception)
@@ -252,7 +231,6 @@ public:
 
         struct vfp {
             REGISTERS& reg;
-            OPERATION& operation;
             COPROCESSOR& coprocessor;
             MEMORY& memory;
             VFP_REG& vfp_reg;
@@ -261,14 +239,12 @@ public:
 
             vfp(
                 REGISTERS& reg, 
-                OPERATION& operation, 
                 COPROCESSOR& coprocessor,
                 MEMORY& memory,
                 VFP_REG& vfp_reg,
                 VFP_EXCEPTION& vfp_exception,
                 VFP_ADDRESS_MODE& vfp_addressing_mode
             ) : reg(reg), 
-                operation(operation),
                 coprocessor(coprocessor),
                 memory(memory),
                 vfp_reg(vfp_reg),
@@ -345,7 +321,7 @@ public:
 
         arm(
             REGISTERS& reg, 
-            OPERATION& operation,
+            
             ADDRESSING_MODE& address_mode,
             COPROCESSOR& coprocessor,
             MEMORY& memory,
@@ -354,17 +330,17 @@ public:
             VFP_REG& vfp_reg,
             VFP_EXCEPTION& vfp_exception,
             VFP_ADDRESS_MODE& vfp_addressing_mode
-        ) : math(reg, operation, address_mode),
-            logic(reg, operation, address_mode),
-            movement(reg, operation, address_mode),
-            multiply(reg, operation),
-            branching(reg, operation),
-            coproc(reg, operation, address_mode, coprocessor),
-            misc(reg, operation, address_mode, coprocessor),
-            load(reg, operation, memory, address_mode, settings),
-            store(reg, operation, memory, address_mode),
-            dsp(reg, operation, memory, address_mode, exception),
-            vfp(reg, operation, coprocessor, memory, vfp_reg, vfp_exception, vfp_addressing_mode)
+        ) : math(reg, address_mode),
+            logic(reg, address_mode),
+            movement(reg, address_mode),
+            multiply(reg),
+            branching(reg),
+            coproc(reg, address_mode, coprocessor),
+            misc(reg, address_mode, coprocessor),
+            load(reg, memory, address_mode, settings),
+            store(reg, memory, address_mode),
+            dsp(reg, memory, address_mode, exception),
+            vfp(reg, coprocessor, memory, vfp_reg, vfp_exception, vfp_addressing_mode)
         {
 
         }
@@ -375,9 +351,8 @@ public:
     struct thumb {
         struct math {
             REGISTERS& reg;
-            OPERATION& operation;
 
-            math(REGISTERS& reg, OPERATION& operation) : reg(reg), operation(operation) {}
+            math(REGISTERS& reg) : reg(reg) {}
 
             void ADC(const u16 code);
             void ADD1(const u16 code);
@@ -397,9 +372,8 @@ public:
 
         struct logic {
             REGISTERS& reg;
-            OPERATION& operation;
 
-            logic(REGISTERS& reg, OPERATION& operation) : reg(reg), operation(operation) {}
+            logic(REGISTERS& reg) : reg(reg) {}
     
             void AND(const u16 code);
             void ASR1(const u16 code); // NOTE: ARITHMETIC_SHIFT_RIGHT IMPLEMENTATION MIGHT BE WRONG
@@ -418,9 +392,8 @@ public:
 
         struct compare {
             REGISTERS& reg;
-            OPERATION& operation;
 
-            compare(REGISTERS& reg, OPERATION& operation) : reg(reg), operation(operation) {}
+            compare(REGISTERS& reg) : reg(reg) {}
 
             void CMN(const u16 code); // NOTE: BORROW_FROM MIGHT LEAD TO ERROR
             void CMP1(const u16 code); // NOTE: OVERFLOW_SUB MIGHT LEAD TO ERROR
@@ -430,9 +403,8 @@ public:
 
         struct movement {
             REGISTERS& reg;
-            OPERATION& operation;
 
-            movement(REGISTERS& reg, OPERATION& operation) : reg(reg), operation(operation) {}
+            movement(REGISTERS& reg) : reg(reg) {}
 
             void MOV1(const u16 code);
             void MOV2(const u16 code);
@@ -442,9 +414,8 @@ public:
 
         struct branching {
             REGISTERS& reg;
-            OPERATION& operation;
 
-            branching(REGISTERS& reg, OPERATION& operation) : reg(reg), operation(operation) {}
+            branching(REGISTERS& reg) : reg(reg) {}
 
             void B1(const u16 code);
             void B2(const u16 code);
@@ -457,10 +428,9 @@ public:
 
         struct misc {
             REGISTERS& reg;
-            OPERATION& operation;
             SETTINGS& settings;
 
-            misc(REGISTERS& reg, OPERATION& operation, SETTINGS& settings) : reg(reg), operation(operation), settings(settings) {}
+            misc(REGISTERS& reg,  SETTINGS& settings) : reg(reg), settings(settings) {}
 
             void NOP(const u16 code);
             void BKPT(const u16 code); // (v5)
@@ -469,16 +439,14 @@ public:
 
         struct load {
             REGISTERS& reg;
-            OPERATION& operation;
             MEMORY& memory;
             SETTINGS& settings;
 
             load(
                 REGISTERS& reg, 
-                OPERATION& operation,
                 MEMORY& memory,
                 SETTINGS& settings
-            ) : reg(reg), operation(operation), memory(memory), settings(settings) {}
+            ) : reg(reg), memory(memory), settings(settings) {}
 
             void LDMIA(const u16 code); // TODO
             void LDR1(const u16 code); // TODO
@@ -496,14 +464,13 @@ public:
 
         struct store {
             REGISTERS& reg;
-            OPERATION& operation;
             MEMORY& memory;
 
             store(
                 REGISTERS& reg, 
-                OPERATION& operation,
+                
                 MEMORY& memory
-            ) : reg(reg), operation(operation), memory(memory) {}
+            ) : reg(reg), memory(memory) {}
 
             void STMIA(const u16 code); // TODO
             void STR1(const u16 code); // TODO
@@ -518,18 +485,18 @@ public:
 
         thumb(
             REGISTERS& reg, 
-            OPERATION& operation,
+            
             SETTINGS& settings,
             MEMORY& memory
             //ADDRESSING_MODE& address_mode,
-        ) : math(reg, operation),
-            logic(reg, operation),
-            compare(reg, operation),
-            movement(reg, operation),
-            branching(reg, operation),
-            misc(reg, operation, settings),
-            load(reg, operation, memory, settings),
-            store(reg, operation, memory)
+        ) : math(reg),
+            logic(reg),
+            compare(reg),
+            movement(reg),
+            branching(reg),
+            misc(reg, settings),
+            load(reg, memory, settings),
+            store(reg, memory)
         {
 
         }
@@ -538,7 +505,7 @@ public:
     INSTRUCTIONS(
         REGISTERS& reg, 
         ADDRESSING_MODE& address_mode,
-        OPERATION& operation,
+        
         COPROCESSOR& coprocessor,
         SETTINGS& settings,
         MEMORY& memory,
@@ -548,12 +515,11 @@ public:
         VFP_ADDRESS_MODE& vfp_addressing_mode
     ) : reg(reg),
         address_mode(address_mode),
-        operation(operation),
         coprocessor(coprocessor),
         settings(settings),
         memory(memory),
-        arm(reg, operation, address_mode, coprocessor, memory, settings, exception, vfp_reg, vfp_exception, vfp_addressing_mode),
-        thumb(reg, operation, settings, memory)
+        arm(reg, address_mode, coprocessor, memory, settings, exception, vfp_reg, vfp_exception, vfp_addressing_mode),
+        thumb(reg, settings, memory)
     {
 
     }

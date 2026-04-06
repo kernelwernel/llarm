@@ -9,9 +9,9 @@
  * 4. return a 0 as a NULL, then analyse after the function has returned
  */
 
-#include "../id.hpp"
-#include "core/registers.hpp"
-#include "coprocessor/coprocessor.hpp"
+#include "../../id.hpp"
+#include "registers.hpp"
+#include "../coprocessor/coprocessor.hpp"
 
 #include <map>
 

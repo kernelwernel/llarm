@@ -1,6 +1,7 @@
 #include "../../../id.hpp"
 #include "../../core/registers.hpp"
 #include "../instructions.hpp"
+#include "../operation.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
@@ -33,8 +34,8 @@ void INSTRUCTIONS::arm::math::ADC(const u32 code) {
     } else if (S == 1) {
         reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
-        reg.write(id::cpsr::C, operation.carry_add(Rn, shifter_operand.value, reg.read(id::cpsr::C)));
-        reg.write(id::cpsr::V, operation.overflow_add(Rn, shifter_operand.value, reg.read(id::cpsr::C)));
+        reg.write(id::cpsr::C, operation::carry_add(Rn, shifter_operand.value, reg.read(id::cpsr::C)));
+        reg.write(id::cpsr::V, operation::overflow_add(Rn, shifter_operand.value, reg.read(id::cpsr::C)));
     }
 }
 
@@ -66,8 +67,8 @@ void INSTRUCTIONS::arm::math::ADD(const u32 code) {
         const u32 Rd = reg.read(Rd_id);
         reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
-        reg.write(id::cpsr::C, operation.carry_add(Rn, shifter_operand.value));
-        reg.write(id::cpsr::V, operation.overflow_add(Rn, shifter_operand.value));
+        reg.write(id::cpsr::C, operation::carry_add(Rn, shifter_operand.value));
+        reg.write(id::cpsr::V, operation::overflow_add(Rn, shifter_operand.value));
     }
 }
 
@@ -99,8 +100,8 @@ void INSTRUCTIONS::arm::math::RSC(const u32 code) {
         const u32 Rd = reg.read(Rd_id);
         reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
-        reg.write(id::cpsr::C, !operation.borrow_sub(shifter_operand.value, Rn, !(reg.read(id::cpsr::C))));
-        reg.write(id::cpsr::V, operation.overflow_sub(shifter_operand.value, Rn, !(reg.read(id::cpsr::C))));
+        reg.write(id::cpsr::C, !operation::borrow_sub(shifter_operand.value, Rn, !(reg.read(id::cpsr::C))));
+        reg.write(id::cpsr::V, operation::overflow_sub(shifter_operand.value, Rn, !(reg.read(id::cpsr::C))));
     }
 }
 
@@ -132,8 +133,8 @@ void INSTRUCTIONS::arm::math::SBC(const u32 code) {
         const u32 Rd = reg.read(Rd_id);
         reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
-        reg.write(id::cpsr::C, !operation.borrow_sub(Rn, shifter_operand, !(reg.read(id::cpsr::C))));
-        reg.write(id::cpsr::V, operation.overflow_sub(Rn, shifter_operand, !(reg.read(id::cpsr::C))));
+        reg.write(id::cpsr::C, !operation::borrow_sub(Rn, shifter_operand, !(reg.read(id::cpsr::C))));
+        reg.write(id::cpsr::V, operation::overflow_sub(Rn, shifter_operand, !(reg.read(id::cpsr::C))));
     }
 }
 
@@ -165,8 +166,8 @@ void INSTRUCTIONS::arm::math::RSB(const u32 code) {
         const u32 Rd = reg.read(Rd_id);
         reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
-        reg.write(id::cpsr::C, !operation.borrow_sub(shifter_operand, Rn));
-        reg.write(id::cpsr::V, operation.overflow_sub(shifter_operand, Rn));
+        reg.write(id::cpsr::C, !operation::borrow_sub(shifter_operand, Rn));
+        reg.write(id::cpsr::V, operation::overflow_sub(shifter_operand, Rn));
     }
 }
 
@@ -198,7 +199,7 @@ void INSTRUCTIONS::arm::math::SUB(const u32 code) {
         const u32 Rd = reg.read(Rd_id);
         reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
-        reg.write(id::cpsr::C, !operation.borrow_sub(Rn, shifter_operand.value));
-        reg.write(id::cpsr::V, operation.overflow_sub(Rn, shifter_operand.value));
+        reg.write(id::cpsr::C, !operation::borrow_sub(Rn, shifter_operand.value));
+        reg.write(id::cpsr::V, operation::overflow_sub(Rn, shifter_operand.value));
     }
 }

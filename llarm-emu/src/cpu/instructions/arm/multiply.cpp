@@ -1,5 +1,6 @@
 #include "../../core/registers.hpp"
 #include "../instructions.hpp"
+#include "../operation.hpp"
 
 #include <llarm/shared/util.hpp>
 #include <llarm/shared/types.hpp>
@@ -79,7 +80,7 @@ void INSTRUCTIONS::arm::multiply::SMLAL(const u32 code) {
     const id::reg RdHi_id = reg.fetch_reg_id(code, 16, 19);
 
     const u32 RdLo = low_result + reg.read(RdLo_id);
-    const u32 RdHi = high_result + reg.read(RdHi_id) + operation.carry_add(low_result, reg.read(RdLo_id));
+    const u32 RdHi = high_result + reg.read(RdHi_id) + operation::carry_add(low_result, reg.read(RdLo_id));
 
     reg.write(RdLo_id, RdLo);
     reg.write(RdHi_id, RdHi);
@@ -142,7 +143,7 @@ void INSTRUCTIONS::arm::multiply::UMLAL(const u32 code) {
     const id::reg RdHi_id = reg.fetch_reg_id(code, 16, 19);
 
     const u32 RdLo = low_result + reg.read(RdLo_id);
-    const u32 RdHi = high_result + reg.read(RdHi_id) + operation.carry_add(low_result, reg.read(RdLo_id));
+    const u32 RdHi = high_result + reg.read(RdHi_id) + operation::carry_add(low_result, reg.read(RdLo_id));
 
     reg.write(RdLo_id, RdLo);
     reg.write(RdHi_id, RdHi);

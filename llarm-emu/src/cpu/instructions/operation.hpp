@@ -6,8 +6,7 @@
 
 #include <llarm/shared/types.hpp>
 
-struct OPERATION {
-public:
+namespace operation {
     bool carry_add(const u64);
     bool carry_add(const u32, const u32);
     bool carry_add(const u32, const u32, const u32);

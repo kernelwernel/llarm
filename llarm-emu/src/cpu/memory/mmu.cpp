@@ -1,6 +1,6 @@
 #include "../../utility.hpp"
 #include "../coprocessor/coprocessor.hpp"
-#include "../globals.hpp"
+#include "../core/globals.hpp"
 #include "ram.hpp"
 #include <llarm/shared/out.hpp>
 #include "structures.hpp"

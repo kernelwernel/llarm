@@ -1,5 +1,6 @@
 #include "../../instructions/instructions.hpp"
 #include "../../core/registers.hpp"
+#include "../operation.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
@@ -25,7 +26,7 @@ void INSTRUCTIONS::thumb::store::STMIA(const u16 code) {
 
     u32 address = start_address;
 
-    std::vector<id::reg> reg_vec = operation.register_list(register_list);
+    std::vector<id::reg> reg_vec = operation::register_list(register_list);
 
     for (const id::reg reg_id : reg_vec) {
         const mem_write_struct access = memory.write(reg.read(reg_id), address, 4);
@@ -258,7 +259,7 @@ void INSTRUCTIONS::thumb::store::PUSH(const u16 code) {
 
     u32 address = start_address;
 
-    std::vector<id::reg> reg_vec = operation.register_list(register_list);
+    std::vector<id::reg> reg_vec = operation::register_list(register_list);
 
     for (const id::reg reg_id : reg_vec) {
         const mem_write_struct access = memory.write(reg.read(reg_id), address, 4);

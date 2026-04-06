@@ -1,5 +1,6 @@
 #include "../../instructions/instructions.hpp"
 #include "../../core/registers.hpp"
+#include "../operation.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
@@ -18,7 +19,7 @@ void INSTRUCTIONS::arm::branching::B(const u32 code) {
         reg.write(id::reg::LR, reg.read(id::reg::PC) + 4); // TODO: check if this is correct
     }
 
-    const u32 address = (reg.read(id::reg::PC) + u32(operation.sign_extend(u32(signed_immed_24), 23) << 2) + 4);
+    const u32 address = (reg.read(id::reg::PC) + u32(operation::sign_extend(u32(signed_immed_24), 23) << 2) + 4);
 
     // All 32 bits are stored in the Link register (R14) after a Branch with Link instruction or an exception entry.
 

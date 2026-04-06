@@ -18,7 +18,7 @@
 - - -
 
 
-## Development roadmap
+## Development roadmap and dependency tree
 
 <br>
 <img align="center" src="assets/roadmap/llarm_roadmap.png" title="LLARM roadmap">
@@ -40,4 +40,4 @@ sudo make install
 >
 > My ambition is to expand it into something much bigger than it already is. The reason why I'm sharing this colossal project now is because I wanted to publish the progress I've made so far, and maybe get feedback from people to determine what could be better. But for the moment, this is only the beginning. 
 > 
-> My objective is to provide a completely new framework to work with the ARM architecture, with goals to have it become a practical solution for many low-level embedded development requirements out there. Think of it as LLVM but for ARM instead of compilers.
+> My objective is to provide a completely new framework to work with the ARM architecture, with goals to have it become a practical solution for many low-level embedded development requirements out there. Think of it as what LLVM is to compilers, but for ARM development.

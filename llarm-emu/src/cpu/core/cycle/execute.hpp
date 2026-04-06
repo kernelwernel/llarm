@@ -2,7 +2,7 @@
 
 #include "decode.hpp"
 #include "../../instructions/instructions.hpp"
-#include "../../exception.hpp"
+#include "../exception.hpp"
 
 struct EXECUTE {
 private:

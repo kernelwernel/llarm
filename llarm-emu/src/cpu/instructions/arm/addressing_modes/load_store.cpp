@@ -1,6 +1,7 @@
 #include "../../../../id.hpp"
 
 #include "addressing_modes.hpp"
+#include "../../operation.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
@@ -136,7 +137,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg(const u32 code) {
                     index = 0;
                 }
             } else {
-                index = operation.arithmetic_shift_right(Rm, shift_imm);
+                index = operation::arithmetic_shift_right(Rm, shift_imm);
             }
             break;
 
@@ -285,7 +286,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg_pre(const u32 code) {
                     index = 0;
                 }
             } else {
-                index = operation.arithmetic_shift_right(Rm, shift_imm);
+                index = operation::arithmetic_shift_right(Rm, shift_imm);
             }
             break;
 
@@ -431,7 +432,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg_post(const u32 code) {
                     index = 0;
                 }
             } else {
-                index = operation.arithmetic_shift_right(Rm, shift_imm);
+                index = operation::arithmetic_shift_right(Rm, shift_imm);
             }
             break;
 

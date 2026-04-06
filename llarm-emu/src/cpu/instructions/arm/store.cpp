@@ -1,8 +1,8 @@
 #include "../instructions.hpp"
+#include "../operation.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
-
 
 /**
  * if ConditionPassed(cond) then
@@ -20,7 +20,7 @@ void INSTRUCTIONS::arm::store::STM1(const u32 code) {
 
     const u16 list = llarm::util::bit_range<u16>(code, 0, 15);
 
-    std::vector<id::reg> reg_list = operation.register_list(list);
+    std::vector<id::reg> reg_list = operation::register_list(list);
 
     for (const auto reg_id : reg_list) {
         const mem_write_struct access = memory.write(reg.read(reg_id), address, 4);
@@ -53,7 +53,7 @@ void INSTRUCTIONS::arm::store::STM2(const u32 code) {
 
     const u16 list = llarm::util::bit_range<u16>(code, 0, 15);
 
-    std::vector<id::reg> reg_list = operation.register_list(list);
+    std::vector<id::reg> reg_list = operation::register_list(list);
 
     for (const auto reg_id : reg_list) {
         const u32 value = reg.read(reg_id);

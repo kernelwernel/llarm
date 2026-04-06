@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../utility.hpp"
-#include "../globals.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/out.hpp>
@@ -11,9 +10,6 @@
 
 
 struct RAM {
-private:
-    GLOBALS& globals;
-
 private:
     static constexpr u32 default_size = util::get_kb(32); // 32KB
 
@@ -42,6 +38,4 @@ public:
     u64 read(const u32 address, const u8 access_size);
 
     void reset();
-
-    RAM(GLOBALS& globals);
 };

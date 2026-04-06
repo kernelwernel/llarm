@@ -1,6 +1,7 @@
 #include "../../../id.hpp"
 #include "../../core/registers.hpp"
 #include "../instructions.hpp"
+#include "../operation.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
@@ -106,8 +107,8 @@ void INSTRUCTIONS::arm::logic::CMP(const u32 code) {
 
     reg.write(id::cpsr::N, (llarm::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
-    reg.write(id::cpsr::C, !operation.borrow_sub(Rn, shifter_operand.value));
-    reg.write(id::cpsr::V, operation.overflow_sub(Rn, shifter_operand.value));
+    reg.write(id::cpsr::C, !operation::borrow_sub(Rn, shifter_operand.value));
+    reg.write(id::cpsr::V, operation::overflow_sub(Rn, shifter_operand.value));
 } 
 
 
@@ -128,8 +129,8 @@ void INSTRUCTIONS::arm::logic::CMN(const u32 code) {
 
     reg.write(id::cpsr::N, (llarm::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
-    reg.write(id::cpsr::C, operation.carry_add(Rn, shifter_operand.value));
-    reg.write(id::cpsr::V, operation.overflow_add(Rn, shifter_operand.value));
+    reg.write(id::cpsr::C, operation::carry_add(Rn, shifter_operand.value));
+    reg.write(id::cpsr::V, operation::overflow_add(Rn, shifter_operand.value));
 }
 
 

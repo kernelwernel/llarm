@@ -1,5 +1,6 @@
 #include "../../core/registers.hpp"
 #include "../instructions.hpp"
+#include "../operation.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
@@ -54,7 +55,7 @@ void INSTRUCTIONS::thumb::logic::ASR1(const u16 code) {
     } else {
         //C Flag = Rm[immed_5 - 1]
         reg.write(id::cpsr::C, (llarm::util::bit_fetch(Rm, (immed_5 - 1))));
-        reg.write(Rd_id, operation.arithmetic_shift_right(Rm, immed_5));
+        reg.write(Rd_id, operation::arithmetic_shift_right(Rm, immed_5));
     }
 
     const u32 Rd = reg.read(Rd_id);
@@ -94,7 +95,7 @@ void INSTRUCTIONS::thumb::logic::ASR2(const u16 code) {
 
     } else if (Rs_0_7 < 32) {
         reg.write(id::cpsr::C, llarm::util::bit_fetch(Rd, (Rs_0_7 - 1)));
-        reg.write(Rd_id, operation.arithmetic_shift_right(Rd, Rs_0_7));
+        reg.write(Rd_id, operation::arithmetic_shift_right(Rd, Rs_0_7));
     } else {
         reg.write(id::cpsr::C, (llarm::util::bit_fetch(Rd, 31)));
 
@@ -314,8 +315,8 @@ void INSTRUCTIONS::thumb::logic::NEG(const u16 code) {
 
     reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
     reg.write(id::cpsr::Z, (Rd == 0));
-    reg.write(id::cpsr::C, !operation.borrow_sub(0, Rm));
-    reg.write(id::cpsr::V, operation.overflow_sub(0, Rm));
+    reg.write(id::cpsr::C, !operation::borrow_sub(0, Rm));
+    reg.write(id::cpsr::V, operation::overflow_sub(0, Rm));
 }
 
 

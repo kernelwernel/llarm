@@ -1,5 +1,6 @@
 #include "../../instructions/instructions.hpp"
 #include "../../core/registers.hpp"
+#include "../operation.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
@@ -18,8 +19,8 @@ void INSTRUCTIONS::thumb::compare::CMN(const u16 code) {
 
     reg.write(id::cpsr::N, (llarm::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
-    reg.write(id::cpsr::C, !operation.borrow_add(Rn, Rm));
-    reg.write(id::cpsr::V, operation.overflow_add(Rn, Rm));
+    reg.write(id::cpsr::C, !operation::borrow_add(Rn, Rm));
+    reg.write(id::cpsr::V, operation::overflow_add(Rn, Rm));
 }
 
 
@@ -38,8 +39,8 @@ void INSTRUCTIONS::thumb::compare::CMP1(const u16 code) {
 
     reg.write(id::cpsr::N, (llarm::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
-    reg.write(id::cpsr::C, !operation.borrow_sub(Rn, immed_8));
-    reg.write(id::cpsr::V, operation.overflow_sub(Rn, immed_8));
+    reg.write(id::cpsr::C, !operation::borrow_sub(Rn, immed_8));
+    reg.write(id::cpsr::V, operation::overflow_sub(Rn, immed_8));
 }
 
 
@@ -58,8 +59,8 @@ void INSTRUCTIONS::thumb::compare::CMP2(const u16 code) {
 
     reg.write(id::cpsr::N, (llarm::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
-    reg.write(id::cpsr::C, !operation.borrow_sub(Rn, Rm));
-    reg.write(id::cpsr::V, operation.overflow_sub(Rn, Rm));
+    reg.write(id::cpsr::C, !operation::borrow_sub(Rn, Rm));
+    reg.write(id::cpsr::V, operation::overflow_sub(Rn, Rm));
 }
 
 
@@ -90,6 +91,6 @@ void INSTRUCTIONS::thumb::compare::CMP3(const u16 code) {
 
     reg.write(id::cpsr::N, (llarm::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
-    reg.write(id::cpsr::C, !operation.borrow_sub(Rn, Rm));
-    reg.write(id::cpsr::V, operation.overflow_sub(Rn, Rm));
+    reg.write(id::cpsr::C, !operation::borrow_sub(Rn, Rm));
+    reg.write(id::cpsr::V, operation::overflow_sub(Rn, Rm));
 }

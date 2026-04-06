@@ -104,6 +104,7 @@ set(LINUX_DEBUG_CXX_FLAGS
     -Wno-unused-parameter
     -Wno-unused-variable
     -Wno-unused-function
+    -Wno-unused-private-field
 )
 
 

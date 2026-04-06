@@ -1,4 +1,4 @@
-#include "../../globals.hpp"
+#include "../../core/globals.hpp"
 
 #include "fetch.hpp"
 

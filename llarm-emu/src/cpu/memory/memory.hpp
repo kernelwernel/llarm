@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../exception.hpp"
+#include "../core/exception.hpp"
 #include "../core/registers.hpp"
 #include "mmu.hpp"
 #include "mpu.hpp"

@@ -1,4 +1,4 @@
-#include "cpu/core/core.hpp"
+#include "cpu/cpu.hpp"
 
 #include <vector>
 #include <fstream>
@@ -35,7 +35,7 @@ int main(/*int argc, char* argv[]*/) {
     std::vector<u8> machine_code = fetch_binary("../tests/general/gcd/gcd.bin");
 
     //std::array<u8, 2> machine_code = { 0b00000010, 0b00000001 };
-    CORE core(machine_code);
+    CPU cpu(machine_code);
 
     return 0;
 }

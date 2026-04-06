@@ -1,4 +1,5 @@
 #include "../instructions.hpp"
+#include "../operation.hpp"
 
 #include "addressing_modes/addressing_modes.hpp"
 
@@ -90,8 +91,8 @@ void INSTRUCTIONS::arm::dsp::QADD(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rn = reg.read(code, 16, 19);
 
-    reg.write(code, 12, 15, u32(operation.signed_sat(Rm + Rn, 32)));
-    if (operation.signed_does_sat(Rm + Rn, 32)) {
+    reg.write(code, 12, 15, u32(operation::signed_sat(Rm + Rn, 32)));
+    if (operation::signed_does_sat(Rm + Rn, 32)) {
         reg.write(id::cpsr::Q, true);
     }
 }
@@ -108,13 +109,13 @@ void INSTRUCTIONS::arm::dsp::QDADD(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rn = reg.read(code, 16, 19);
 
-    const u32 result = (Rm + u32(operation.signed_sat(Rn * 2, 32)));
+    const u32 result = (Rm + u32(operation::signed_sat(Rn * 2, 32)));
 
-    reg.write(code, 12, 15, u32(operation.signed_sat(result, 32)));
+    reg.write(code, 12, 15, u32(operation::signed_sat(result, 32)));
 
     if (
-        (operation.signed_does_sat(result, 32)) ||
-        (operation.signed_does_sat(Rn * 2, 32))
+        (operation::signed_does_sat(result, 32)) ||
+        (operation::signed_does_sat(Rn * 2, 32))
     ) {
         reg.write(id::cpsr::Q, true);
     }
@@ -132,13 +133,13 @@ void INSTRUCTIONS::arm::dsp::QDSUB(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rn = reg.read(code, 16, 19);
 
-    const u32 result = (Rm - u32(operation.signed_sat(Rn * 2, 32)));
+    const u32 result = (Rm - u32(operation::signed_sat(Rn * 2, 32)));
 
-    reg.write(code, 12, 15, u32(operation.signed_sat(result, 32)));
+    reg.write(code, 12, 15, u32(operation::signed_sat(result, 32)));
 
     if (
-        (operation.signed_does_sat(result, 32)) ||
-        (operation.signed_does_sat(Rn * 2, 32))
+        (operation::signed_does_sat(result, 32)) ||
+        (operation::signed_does_sat(Rn * 2, 32))
     ) {
         reg.write(id::cpsr::Q, true);
     }
@@ -155,9 +156,9 @@ void INSTRUCTIONS::arm::dsp::QSUB(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rn = reg.read(code, 16, 19);
 
-    reg.write(code, 12, 15, u32(operation.signed_sat(Rm - Rn, 32)));
+    reg.write(code, 12, 15, u32(operation::signed_sat(Rm - Rn, 32)));
 
-    if (operation.signed_does_sat(Rm - Rn, 32)) {
+    if (operation::signed_does_sat(Rm - Rn, 32)) {
         reg.write(id::cpsr::Q, true);
     }
 }
@@ -191,22 +192,22 @@ void INSTRUCTIONS::arm::dsp::SMLAXY(const u32 code) {
     i32 operand2 = 0;
 
     if (X == false) {
-        operand1 = operation.sign_extend(llarm::util::bit_range(Rm, 0, 15), 15);
+        operand1 = operation::sign_extend(llarm::util::bit_range(Rm, 0, 15), 15);
     } else {
-        operand1 = operation.sign_extend(llarm::util::bit_range(Rm, 16, 31), 31);
+        operand1 = operation::sign_extend(llarm::util::bit_range(Rm, 16, 31), 31);
     }
 
     if (Y == false) {
-        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 0, 15), 15);   
+        operand2 = operation::sign_extend(llarm::util::bit_range(Rs, 0, 15), 15);   
     } else {
-        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 16, 31), 31);
+        operand2 = operation::sign_extend(llarm::util::bit_range(Rs, 16, 31), 31);
     }
 
     const i32 result = operand1 * operand2;
 
     reg.write(code, 16, 19, static_cast<u32>(result) + Rn);
 
-    if (operation.signed_overflow_add(result, static_cast<i32>(Rn))) {
+    if (operation::signed_overflow_add(result, static_cast<i32>(Rn))) {
         reg.write(id::cpsr::Q, true);
     }
 }
@@ -239,15 +240,15 @@ void INSTRUCTIONS::arm::dsp::SMLALXY(const u32 code) {
     i32 operand2 = 0;    
 
     if (X == false) {
-        operand1 = operation.sign_extend(llarm::util::bit_range(Rm, 0, 15), 15);
+        operand1 = operation::sign_extend(llarm::util::bit_range(Rm, 0, 15), 15);
     } else {
-        operand1 = operation.sign_extend(llarm::util::bit_range(Rm, 16, 31), 31);
+        operand1 = operation::sign_extend(llarm::util::bit_range(Rm, 16, 31), 31);
     }
 
     if (Y == false) {
-        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 0, 15), 15);
+        operand2 = operation::sign_extend(llarm::util::bit_range(Rs, 0, 15), 15);
     } else {
-        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 16, 31), 31);
+        operand2 = operation::sign_extend(llarm::util::bit_range(Rs, 16, 31), 31);
     }
 
     const id::reg RdLo_id = reg.fetch_reg_id(code, 21, 15);
@@ -264,7 +265,7 @@ void INSTRUCTIONS::arm::dsp::SMLALXY(const u32 code) {
     reg.write(RdLo_id, (reg.read(RdLo_id) + static_cast<u32>(result)));
 
     const u32 RdHi = reg.read(RdHi_id);
-    reg.write(RdHi_id, (RdHi + tmp + operation.carry_add(reg.read(RdLo_id), static_cast<u32>(result))));
+    reg.write(RdHi_id, (RdHi + tmp + operation::carry_add(reg.read(RdLo_id), static_cast<u32>(result))));
 }
 
 
@@ -290,16 +291,16 @@ void INSTRUCTIONS::arm::dsp::SMLAWY(const u32 code) {
     i32 operand2 = 0;
 
     if (Y == false) {
-        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 0, 15), 15);
+        operand2 = operation::sign_extend(llarm::util::bit_range(Rs, 0, 15), 15);
     } else {
-        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 16, 31), 31);
+        operand2 = operation::sign_extend(llarm::util::bit_range(Rs, 16, 31), 31);
     }
 
     const u32 result = llarm::util::bit_range<u32>(static_cast<u64>(Rm) * static_cast<u32>(operand2), 16, 47);
 
     reg.write(code, 16, 19, result + Rn);
 
-    if (operation.overflow_add(result, Rn)) {
+    if (operation::overflow_add(result, Rn)) {
         reg.write(id::cpsr::Q, true);
     }
 }
@@ -330,15 +331,15 @@ void INSTRUCTIONS::arm::dsp::SMULXY(const u32 code) {
     i32 operand2 = 0;
 
     if (X == false) {
-        operand1 = operation.sign_extend(llarm::util::bit_range(Rm, 0, 15), 15);
+        operand1 = operation::sign_extend(llarm::util::bit_range(Rm, 0, 15), 15);
     } else {
-        operand1 = operation.sign_extend(llarm::util::bit_range(Rm, 16, 31), 31);
+        operand1 = operation::sign_extend(llarm::util::bit_range(Rm, 16, 31), 31);
     }
 
     if (Y == false) {
-        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 0, 15), 15);
+        operand2 = operation::sign_extend(llarm::util::bit_range(Rs, 0, 15), 15);
     } else {
-        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 16, 31), 31);
+        operand2 = operation::sign_extend(llarm::util::bit_range(Rs, 16, 31), 31);
     }
 
     reg.write(code, 16, 19, static_cast<u32>(operand1 * operand2));
@@ -363,9 +364,9 @@ void INSTRUCTIONS::arm::dsp::SMULWY(const u32 code) {
     i32 operand2 = 0;
 
     if (Y == false) {
-        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 0, 15), 15);
+        operand2 = operation::sign_extend(llarm::util::bit_range(Rs, 0, 15), 15);
     } else {
-        operand2 = operation.sign_extend(llarm::util::bit_range(Rs, 16, 31), 31);
+        operand2 = operation::sign_extend(llarm::util::bit_range(Rs, 16, 31), 31);
     }
 
     reg.write(code, 16, 19, llarm::util::bit_range<u32>(static_cast<u64>(Rm * static_cast<u32>(operand2)), 16, 47));

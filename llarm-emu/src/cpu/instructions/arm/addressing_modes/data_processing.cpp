@@ -1,4 +1,5 @@
 #include "addressing_modes.hpp"
+#include "../../operation.hpp"
 
 #include "llarm/llarm-asm.hpp"
 #include <llarm/shared/types.hpp>
@@ -145,7 +146,7 @@ data_struct ADDRESSING_MODE::data_process_arithmetic_shift_right_immediate(const
             data.carry = (llarm::util::bit_fetch(Rm, 31));
         }
     } else {
-        data.value = operation.arithmetic_shift_right(Rm, shift_imm);
+        data.value = operation::arithmetic_shift_right(Rm, shift_imm);
         data.carry = (llarm::util::bit_fetch(Rm, (shift_imm - 1))); 
     }
 
@@ -298,7 +299,7 @@ data_struct ADDRESSING_MODE::data_process_arithmetic_shift_right_register(const 
         data.value = Rm;
         data.carry = reg.read(id::cpsr::C);
     } else if (Rs_bits < 32) {
-        data.value = operation.arithmetic_shift_right(Rm, Rs_bits);
+        data.value = operation::arithmetic_shift_right(Rm, Rs_bits);
         data.carry = (llarm::util::bit_fetch(Rm, Rs_bits - 1));
     } else {
         if ((llarm::util::bit_fetch(Rm, 31)) == 0) {

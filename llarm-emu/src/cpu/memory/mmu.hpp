@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../coprocessor/coprocessor.hpp"
-#include "../globals.hpp"
+#include "../core/globals.hpp"
 #include "../../id.hpp"
 #include "ram.hpp"
 #include "tlb.hpp"

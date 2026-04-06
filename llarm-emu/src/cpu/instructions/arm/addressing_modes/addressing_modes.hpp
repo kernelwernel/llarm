@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../../core/registers.hpp"
-#include "../../operation.hpp"
 
 #include <llarm/shared/types.hpp>
 
@@ -20,7 +19,6 @@ struct address_struct {
 struct ADDRESSING_MODE {
 private:
     REGISTERS& reg;
-    OPERATION& operation;
 
 private:
     data_struct data_process_immediate_mode(const u32 code);
@@ -72,10 +70,8 @@ public:
 
 
     ADDRESSING_MODE(
-        REGISTERS& reg, 
-        OPERATION& operation
-    ) : reg(reg),
-        operation(operation) 
+        REGISTERS& reg
+    ) : reg(reg)
     {
 
     }

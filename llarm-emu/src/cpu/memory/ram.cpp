@@ -1,6 +1,4 @@
 
-#include "../globals.hpp"
-
 #include "ram.hpp"
 
 #include <vector>
@@ -88,5 +86,3 @@ u64 RAM::read(const u32 address, const u8 access_size) {
 void RAM::reset() {
     ram.fill(0);
 }
-
-RAM::RAM(GLOBALS& globals) : globals(globals) {};

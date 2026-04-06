@@ -13,7 +13,7 @@
 
 #include "cp15.hpp"
 #include "../../settings.hpp"
-#include "../globals.hpp"
+#include "../core/globals.hpp"
 
 #include <llarm/shared/types.hpp>
 

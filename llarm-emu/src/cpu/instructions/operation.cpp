@@ -7,37 +7,37 @@
 #include <llarm/shared/out.hpp>
 
 
-bool OPERATION::carry_add(const u64 sum) {
+bool operation::carry_add(const u64 sum) {
     constexpr u64 max = ((1ULL << 32) - 1);
     return (sum > max);
 }
 
-bool OPERATION::carry_add(const u32 sum1, const u32 sum2) {
+bool operation::carry_add(const u32 sum1, const u32 sum2) {
     constexpr u64 max = ((1ULL << 32) - 1);
     return ((sum1 + sum2) > max);
 }
 
 // CHECK IF THIS WORKS TODO
-bool OPERATION::carry_add(const u32 sum1, const u32 sum2, const u32 sum3) {
+bool operation::carry_add(const u32 sum1, const u32 sum2, const u32 sum3) {
     constexpr u64 max = ((1ULL << 32) - 1);
     return ((sum1 + sum2 + sum3) > max);
 }
 
 // TODO: COMPLETE
-bool OPERATION::borrow_add(const u32 p1, const u32 p2) {
+bool operation::borrow_add(const u32 p1, const u32 p2) {
     return true; // TODO: COMPLETE THIS SHIT
 }
 
-bool OPERATION::borrow_sub(const u32 p1, const u32 p2) {
+bool operation::borrow_sub(const u32 p1, const u32 p2) {
     return (p1 < p2);
 }
 
 // CHECK IF THIS WORKS
-bool OPERATION::borrow_sub(const u32 p1, const u32 p2, const u32 p3) {
+bool operation::borrow_sub(const u32 p1, const u32 p2, const u32 p3) {
     return (p1 < p2) || (p1 - p2 < p3);
 }
 
-bool OPERATION::overflow_add(const u32 a, const u32 b) {
+bool operation::overflow_add(const u32 a, const u32 b) {
     const i32 a_sign = static_cast<i32>(a);
     const i32 b_sign = static_cast<i32>(b);
 
@@ -46,7 +46,7 @@ bool OPERATION::overflow_add(const u32 a, const u32 b) {
 }
 
 
-bool OPERATION::overflow_add(const u32 a, const u32 b, const u32 c) {
+bool operation::overflow_add(const u32 a, const u32 b, const u32 c) {
     const i32 a_sign = static_cast<i32>(a);
     const i32 b_sign = static_cast<i32>(b);
     const i32 c_sign = static_cast<i32>(c);
@@ -76,7 +76,7 @@ bool OPERATION::overflow_add(const u32 a, const u32 b, const u32 c) {
 // Subtraction causes an overflow if the operands have different signs, 
 // and the first operand and the result have different signs.
 // TODO: double check if this works manually
-bool OPERATION::overflow_sub(const u32 a, const u32 b) {
+bool operation::overflow_sub(const u32 a, const u32 b) {
     const i32 a_sign = static_cast<i32>(a);
     const i32 b_sign = static_cast<i32>(b);
 
@@ -89,7 +89,7 @@ bool OPERATION::overflow_sub(const u32 a, const u32 b) {
 // Subtraction causes an overflow if the operands have different signs, 
 // and the first operand and the result have different signs.
 // TODO: double check if this works manually
-bool OPERATION::overflow_sub(const u32 a, const u32 b, const u32 c) {
+bool operation::overflow_sub(const u32 a, const u32 b, const u32 c) {
     const i32 a_sign = static_cast<i32>(a);
     const i32 b_sign = static_cast<i32>(b);
     const i32 c_sign = static_cast<i32>(c);
@@ -100,17 +100,17 @@ bool OPERATION::overflow_sub(const u32 a, const u32 b, const u32 c) {
 }
 
 
-bool OPERATION::signed_overflow_sub(const i32 a, const i32 b) {
+bool operation::signed_overflow_sub(const i32 a, const i32 b) {
     return false; // TODO
 }
 
 
-bool OPERATION::signed_overflow_add(const i32 a, const i32 b) {
+bool operation::signed_overflow_add(const i32 a, const i32 b) {
     return false; // TODO
 }
 
 
-bool OPERATION::arithmetic_shift_right(u32 num, const u8 shift) {
+bool operation::arithmetic_shift_right(u32 num, const u8 shift) {
     const u32 sign = num & (1U << 31);
     num >>= shift;
     num |= sign;
@@ -118,7 +118,7 @@ bool OPERATION::arithmetic_shift_right(u32 num, const u8 shift) {
 }
 
 
-i32 OPERATION::sign_extend(const u32 value, const u8 sign_index) {
+i32 operation::sign_extend(const u32 value, const u8 sign_index) {
     const u32 mask = (1 << sign_index);
 
     if (value & mask) {
@@ -131,7 +131,7 @@ i32 OPERATION::sign_extend(const u32 value, const u8 sign_index) {
 
 
 // source: Glossary-XII
-i32 OPERATION::signed_sat(const u32 x, const u32 n) {
+i32 operation::signed_sat(const u32 x, const u32 n) {
     const i32 x_sign = static_cast<i32>(x);
 
     const i32 neg_range = -static_cast<i32>(1ULL << (n - 1)); // basically -2^(n - 1)
@@ -150,7 +150,7 @@ i32 OPERATION::signed_sat(const u32 x, const u32 n) {
 
 
 // source: Glossary-XII
-bool OPERATION::signed_does_sat(const u32 x, const u32 n) {
+bool operation::signed_does_sat(const u32 x, const u32 n) {
     const i32 x_sign = static_cast<i32>(x);
 
     const i32 neg_range = -static_cast<i32>(1ULL << (n - 1)); // basically -2^(n - 1)
@@ -161,7 +161,7 @@ bool OPERATION::signed_does_sat(const u32 x, const u32 n) {
 
 
 
-std::vector<id::reg> OPERATION::register_list(const u16 reg_list) {
+std::vector<id::reg> operation::register_list(const u16 reg_list) {
     std::vector<id::reg> tmp = {};
 
     for (u8 i = 0; i < (sizeof(reg_list) * 8); i++) {

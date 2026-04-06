@@ -11,7 +11,7 @@
 
 #include "../../settings.hpp"
 #include "../../id.hpp"
-#include "../globals.hpp"
+#include "../core/globals.hpp"
 #include "../memory/tlb.hpp"
 
 #include <llarm/shared/types.hpp>

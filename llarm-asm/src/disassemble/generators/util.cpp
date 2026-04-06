@@ -536,4 +536,4 @@ u32 util::thumb_sign_extend(u32 value, const u8 sign_index, const u32 PC) {
 
 
 
-//const u32 address = (reg.read(id::reg::PC) + (operation.sign_extend(signed_immed_24, 23) << 2) + 4);
+//const u32 address = (reg.read(id::reg::PC) + (operation::sign_extend(signed_immed_24, 23) << 2) + 4);

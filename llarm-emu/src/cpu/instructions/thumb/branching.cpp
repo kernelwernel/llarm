@@ -1,5 +1,6 @@
 #include "../../instructions/instructions.hpp"
 #include "../../core/registers.hpp"
+#include "../operation.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
@@ -14,7 +15,7 @@ void INSTRUCTIONS::thumb::branching::B1(const u16 code) {
     const id::cond cond = reg.fetch_cond_id(llarm::util::bit_range<u8>(code, 8, 11));
 
     if (reg.is_cond_valid(cond)) {
-        reg.write(id::reg::PC, (reg.read(id::reg::PC) + u32(operation.sign_extend(signed_immed_8, 7) << 1)));
+        reg.write(id::reg::PC, (reg.read(id::reg::PC) + u32(operation::sign_extend(signed_immed_8, 7) << 1)));
     }
 }
 
@@ -47,7 +48,7 @@ void INSTRUCTIONS::thumb::branching::BL(const u16 code) {
     const u32 next_instruction_address = reg.read(id::reg::PC) + 2;
 
     if (H == 0b10) {
-        reg.write(id::reg::LR, (reg.read(id::reg::PC) + u32(operation.sign_extend(offset_11, 10) << 12)));
+        reg.write(id::reg::LR, (reg.read(id::reg::PC) + u32(operation::sign_extend(offset_11, 10) << 12)));
     } else if (H == 0b11) {
         reg.write(id::reg::PC, (reg.read(id::reg::LR) + u32(offset_11 << 1)));
         reg.write(id::reg::LR, ((next_instruction_address + 2) | 1));
@@ -70,7 +71,7 @@ void INSTRUCTIONS::thumb::branching::BL(const u16 code) {
 void INSTRUCTIONS::thumb::branching::BL_BLX1_PREFIX(const u16 code) {
     const u16 offset_11 = llarm::util::bit_range<u16>(code, 0, 10);
 
-    reg.write(id::reg::LR, (reg.read(id::reg::PC) + u32(operation.sign_extend(offset_11, 10) << 12)));
+    reg.write(id::reg::LR, (reg.read(id::reg::PC) + u32(operation::sign_extend(offset_11, 10) << 12)));
 }
 
 
@@ -92,7 +93,7 @@ void INSTRUCTIONS::thumb::branching::BLX1(const u16 code) {
     const u32 next_instruction_address = reg.read(id::reg::PC) + 2;
 
     if (H == 0b10) {
-        reg.write(id::reg::LR, (reg.read(id::reg::PC) + u32(operation.sign_extend(offset_11, 10) << 12)));
+        reg.write(id::reg::LR, (reg.read(id::reg::PC) + u32(operation::sign_extend(offset_11, 10) << 12)));
     } else if (H == 0b11) {
         reg.write(id::reg::PC, (reg.read(id::reg::LR) + u32(offset_11 << 1)));
         reg.write(id::reg::LR, ((next_instruction_address + 2) | 1));

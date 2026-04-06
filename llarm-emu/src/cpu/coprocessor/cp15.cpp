@@ -9,7 +9,7 @@
 
 #include "../../settings.hpp"
 #include "../../id.hpp"
-#include "../globals.hpp"
+#include "../core/globals.hpp"
 #include "../../utility.hpp"
 
 #include "cp15.hpp"

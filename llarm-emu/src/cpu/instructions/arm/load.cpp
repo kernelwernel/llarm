@@ -3,6 +3,7 @@
 #include "../../../id.hpp"
 #include "../../core/registers.hpp"
 #include "../instructions.hpp"
+#include "../operation.hpp"
 
 #include <llarm/shared/out.hpp>
 #include <llarm/shared/types.hpp>
@@ -36,7 +37,7 @@ void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
 
     u32 address = addresses.start;
 
-    const std::vector<id::reg> reg_list = operation.register_list(list);
+    const std::vector<id::reg> reg_list = operation::register_list(list);
 
     for (const auto reg_id : reg_list) {
         const mem_read_struct access = memory.read(address, 4);
@@ -216,7 +217,7 @@ void INSTRUCTIONS::arm::load::LDRSB(const u32 code) {
 
     const u8 value = llarm::util::bit_range<u8>(access.value, 0, 7);
 
-    reg.write(code, 12, 15, static_cast<u32>(operation.sign_extend(value, 7)));
+    reg.write(code, 12, 15, static_cast<u32>(operation::sign_extend(value, 7)));
 }
 
 
@@ -246,7 +247,7 @@ void INSTRUCTIONS::arm::load::LDRSH(const u32 code) {
         llarm::out::unpredictable("LDRSH data assignment");
     }
 
-    reg.write(code, 12, 15, static_cast<u32>(operation.sign_extend(data, 15)));
+    reg.write(code, 12, 15, static_cast<u32>(operation::sign_extend(data, 15)));
 }
 
 
@@ -304,7 +305,7 @@ void INSTRUCTIONS::arm::load::LDM2(const u32 code) {
 
     const u16 list = llarm::util::bit_range<u16>(code, 0, 14);
 
-    std::vector<id::reg> reg_list = operation.register_list(list);
+    std::vector<id::reg> reg_list = operation::register_list(list);
 
     for (const auto reg_id : reg_list) {
         const mem_read_struct access = memory.read(address, 4);
@@ -351,7 +352,7 @@ void INSTRUCTIONS::arm::load::LDM3(const u32 code) {
 
     const u16 list = llarm::util::bit_range<u16>(code, 0, 14);
 
-    std::vector<id::reg> reg_list = operation.register_list(list);
+    std::vector<id::reg> reg_list = operation::register_list(list);
 
     for (const auto reg_id : reg_list) {
         const mem_read_struct access = memory.read(address, 4);

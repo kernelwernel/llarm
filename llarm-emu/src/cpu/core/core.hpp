@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../settings.hpp"
-#include "../globals.hpp"
-#include "../exception.hpp"
+#include "globals.hpp"
+#include "exception.hpp"
 #include "../memory/memory.hpp"
 #include "../memory/mmu.hpp"
 #include "../memory/mpu.hpp"
@@ -11,7 +11,6 @@
 #include "../memory/fcse.hpp"
 #include "../coprocessor/coprocessor.hpp"
 #include "../instructions/instructions.hpp"
-#include "../instructions/operation.hpp"
 #include "../vfp/registers.hpp"
 #include "../vfp/addressing_modes.hpp"
 #include "cycle/fetch.hpp"
@@ -46,7 +45,6 @@ public:
     MEMORY memory;
 
     // instructions modules
-    OPERATION operation;
     ADDRESSING_MODE address_mode;
     INSTRUCTIONS instructions;
 
@@ -69,8 +67,8 @@ public:
     bool continue_cycle;
 
 public:
-    CORE(const std::vector<u8> &binary) :
-        settings(default_settings()), 
+    CORE(const std::vector<u8> &binary, const SETTINGS& init_settings, RAM &ram) :
+        settings(init_settings),
         globals(),
         tlb(settings),
         cp15(settings, globals, tlb),
@@ -82,14 +80,13 @@ public:
         vfp_addressing_mode(settings, reg, vfp_reg),
         exception(reg, coprocessor),
         alignment(coprocessor, settings),
-        ram(globals),
+        ram(ram),
         mmu(globals, ram, alignment, coprocessor, settings, tlb),
         mpu(globals, coprocessor, settings, ram, fcse),
         fcse(coprocessor, settings),
         memory(reg, ram, mmu, mpu, fcse, arch_26, exception),
-        operation(),
-        address_mode(reg, operation),
-        instructions(reg, address_mode, operation, coprocessor, settings, memory, exception, vfp_reg, vfp_exception, vfp_addressing_mode),
+        address_mode(reg),
+        instructions(reg, address_mode, coprocessor, settings, memory, exception, vfp_reg, vfp_exception, vfp_addressing_mode),
         fetch(reg, memory, globals),
         decode(reg, settings),
         execute(instructions, exception)
