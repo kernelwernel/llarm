@@ -136,7 +136,7 @@ write_basic_package_version_file(
 
 # installations
 install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(FILES llarm-emu.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/llarm)
+install(FILES llarm/llarm-emu.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/llarm)
 install(DIRECTORY src/
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/llarm/emu/src
     FILES_MATCHING PATTERN "*.hpp"

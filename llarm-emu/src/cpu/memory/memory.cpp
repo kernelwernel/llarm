@@ -112,6 +112,4 @@ void MEMORY::reset() {
     } else if (mpu.is_mpu_enabled()) {
         mpu.reset();
     }
-
-    ram.reset();
 }

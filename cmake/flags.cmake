@@ -79,7 +79,8 @@ set(LINUX_RELEASE_CXX_FLAGS
     -Wunused
     -Wno-unused-private-field # TEMPORARY
     -Wno-unused-parameter # TEMPORARY
-    -Wno-return-type
+    -Wno-return-type # TEMPORARY
+    -Wno-unused-variable # TEMPORARY
 )
 
 

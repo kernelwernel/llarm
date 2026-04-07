@@ -1,41 +1,392 @@
-#include "cpu/cpu.hpp"
-
-#include <vector>
-#include <fstream>
+#include <bitset>
+#include <cstring>
+#include <iostream>
+#include <array>
+#include <string>
+#include <span>
+#include <algorithm>
+#include <cstdlib>
+#include <cstdio>
+#include <chrono>
+#include <thread>
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/out.hpp>
+#include <llarm/shared/metadata.hpp>
+
+#include <llarm/llarm-emu.hpp>
+#include <llarm/llarm-asm.hpp>
 
 
-std::vector<u8> fetch_binary(const std::string& filePath) {
-    std::ifstream file(filePath, std::ios::binary | std::ios::ate);
+enum arg_enum : u8 {
+    NULL_ARG,
+    HELP,
+    VERSION,
+    RUN,
+    STEP,
+    ARM,
+    THUMB,
+    REGS,
+    REG,
+    MEM,
+    END
+};
 
-    if (!file) {
-        llarm::out::error("Failed to open file");
-    }
 
-    std::size_t file_size = static_cast<std::size_t>(file.tellg());
-    file.seekg(0);
+[[noreturn]] void help() {
+    std::cout <<
+R"(Usage:
+ llarm-emu [option(s)] <binary>
 
-    std::vector<u8> buffer(file_size);
+Options:
+ -h   | --help          print this help menu
+ -v   | --version       print CLI version and other details
+ -r   | --run           run binary headlessly (default)
+ -s   | --step          interactive step-by-step execution
+ -a   | --arm           start in ARM mode (default)
+ -t   | --thumb         start in Thumb mode
+       | --regs         print all registers at each step or after run
+       | --reg <name>   print a specific register (e.g. R0, SP, PC, CPSR)
+       | --mem <addr>   read physical memory (e.g. 0x1000 or 0x1000:u8)
 
-    if (!file.read(reinterpret_cast<char*>(buffer.data()), static_cast<std::streamsize>(file_size))) {
-        llarm::out::error("Failed to read file");
-    }
+ (no mode flag)         defaults to --run
 
-    return buffer; // Return the vector containing the binary data
+Examples:
+ llarm-emu program.bin
+ llarm-emu --run program.bin
+ llarm-emu --step --thumb program.bin
+ llarm-emu --step --regs program.bin
+ llarm-emu --reg PC --mem 0x1000:u32 program.bin
+
+)";
+    std::exit(0);
 }
 
 
-int main(/*int argc, char* argv[]*/) {
-    //sanitize::handler(argc, argv);
+static constexpr std::array<std::pair<const char*, llarm::emu::reg>, 30> reg_table {{
+    { "R0",       llarm::emu::reg::R0 },
+    { "R1",       llarm::emu::reg::R1 },
+    { "R2",       llarm::emu::reg::R2 },
+    { "R3",       llarm::emu::reg::R3 },
+    { "R4",       llarm::emu::reg::R4 },
+    { "R5",       llarm::emu::reg::R5 },
+    { "R6",       llarm::emu::reg::R6 },
+    { "R7",       llarm::emu::reg::R7 },
+    { "R8",       llarm::emu::reg::R8 },
+    { "R9",       llarm::emu::reg::R9 },
+    { "R10",      llarm::emu::reg::R10 },
+    { "R11",      llarm::emu::reg::R11 },
+    { "R12",      llarm::emu::reg::R12 },
+    { "R13",      llarm::emu::reg::R13 },
+    { "R14",      llarm::emu::reg::R14 },
+    { "R15",      llarm::emu::reg::R15 },
+    { "SP",       llarm::emu::reg::SP },
+    { "LR",       llarm::emu::reg::LR },
+    { "PC",       llarm::emu::reg::PC },
+    { "IP",       llarm::emu::reg::IP },
+    { "CPSR",     llarm::emu::reg::CPSR },
+    { "SPSR",     llarm::emu::reg::SPSR },
+    { "SPSR_svc", llarm::emu::reg::SPSR_svc },
+    { "SPSR_abt", llarm::emu::reg::SPSR_abt },
+    { "SPSR_und", llarm::emu::reg::SPSR_und },
+    { "SPSR_irq", llarm::emu::reg::SPSR_irq },
+    { "SPSR_fiq", llarm::emu::reg::SPSR_fiq },
+    { "R8_fiq",   llarm::emu::reg::R8_fiq },
+    { "R9_fiq",   llarm::emu::reg::R9_fiq },
+    { "R10_fiq",  llarm::emu::reg::R10_fiq },
+}};
 
-    //std::array<u8, 2> machine_code = { 0b00100001, 0b11111110 }; // MOV R1, #0xFF  (thumb)
 
-    std::vector<u8> machine_code = fetch_binary("../tests/general/gcd/gcd.bin");
+static void print_all_regs(llarm::emu::cpu_blockstep &cpu) {
+    static constexpr std::array<std::pair<const char*, llarm::emu::reg>, 20> display_regs {{
+        { "R0",   llarm::emu::reg::R0   },
+        { "R1",   llarm::emu::reg::R1   },
+        { "R2",   llarm::emu::reg::R2   },
+        { "R3",   llarm::emu::reg::R3   },
+        { "R4",   llarm::emu::reg::R4   },
+        { "R5",   llarm::emu::reg::R5   },
+        { "R6",   llarm::emu::reg::R6   },
+        { "R7",   llarm::emu::reg::R7   },
+        { "R8",   llarm::emu::reg::R8   },
+        { "R9",   llarm::emu::reg::R9   },
+        { "R10",  llarm::emu::reg::R10  },
+        { "R11",  llarm::emu::reg::R11  },
+        { "R12",  llarm::emu::reg::R12  },
+        { "SP",   llarm::emu::reg::SP   },
+        { "LR",   llarm::emu::reg::LR   },
+        { "PC",   llarm::emu::reg::PC   },
+        { "CPSR", llarm::emu::reg::CPSR },
+        { "SPSR", llarm::emu::reg::SPSR },
+    }};
 
-    //std::array<u8, 2> machine_code = { 0b00000010, 0b00000001 };
-    CPU cpu(machine_code);
+    for (std::size_t i = 0; i < display_regs.size(); i += 4) {
+        for (std::size_t j = i; j < std::min(i + 4, display_regs.size()); ++j) {
+            const auto &[name, id] = display_regs[j];
+            std::printf("  %-5s=0x%08X", name, cpu.read_reg(id));
+        }
+        std::printf("\n");
+    }
+}
+
+
+static void print_one_reg(llarm::emu::cpu_blockstep &cpu, const std::string &name) {
+    const std::string upper = [&] {
+        std::string s = name;
+        std::transform(s.begin(), s.end(), s.begin(), ::toupper);
+        return s;
+    }();
+
+    auto it = std::find_if(reg_table.cbegin(), reg_table.cend(), [&](const auto &p) {
+        return upper == p.first;
+    });
+
+    if (it == reg_table.cend()) {
+        llarm::out::error("llarm-emu: unknown register \"", name, "\"");
+    }
+
+    std::printf("  %s=0x%08X\n", it->first, cpu.read_reg(it->second));
+}
+
+
+struct mem_request {
+    u32 address = 0;
+    u8  width   = 4; // bytes: 1, 2, 4, 8
+    bool valid  = false;
+};
+
+
+static mem_request parse_mem_arg(const std::string &arg) {
+    mem_request req;
+
+    // format: ADDRESS or ADDRESS:uN  (u8, u16, u32, u64)
+    const std::size_t colon = arg.find(':');
+    const std::string addr_part = arg.substr(0, colon);
+
+    char *end = nullptr;
+    req.address = static_cast<u32>(std::strtoul(addr_part.c_str(), &end, 0));
+
+    if (end == addr_part.c_str() || *end != '\0') {
+        return req; // invalid address
+    }
+
+    if (colon != std::string::npos) {
+        const std::string type_part = arg.substr(colon + 1);
+        if      (type_part == "u8")  { req.width = 1; }
+        else if (type_part == "u16") { req.width = 2; }
+        else if (type_part == "u32") { req.width = 4; }
+        else if (type_part == "u64") { req.width = 8; }
+        else {
+            return req; // invalid type
+        }
+    }
+
+    req.valid = true;
+    return req;
+}
+
+
+static void print_mem(llarm::emu::cpu_blockstep &cpu, const mem_request &req) {
+    switch (req.width) {
+        case 1: std::printf("  [0x%08X] = 0x%02X\n",   req.address, cpu.read_physical_mem<u8>(req.address));  break;
+        case 2: std::printf("  [0x%08X] = 0x%04X\n",   req.address, cpu.read_physical_mem<u16>(req.address)); break;
+        case 4: std::printf("  [0x%08X] = 0x%08X\n",   req.address, cpu.read_physical_mem<u32>(req.address)); break;
+        case 8: std::printf("  [0x%08X] = 0x%016lX\n", req.address, cpu.read_physical_mem<u64>(req.address)); break;
+    }
+}
+
+
+static void run_step_mode(
+    llarm::emu::cpu_blockstep &cpu,
+    const bool show_regs,
+    const std::string &reg_arg,
+    const mem_request &mem_req
+) {
+    cpu.start();
+
+    // give the CPU thread time to execute the first instruction and reach the spin-wait
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+    u64 step = 0;
+
+    while (true) {
+        const bool is_thumb = cpu.is_thumb_mode();
+        const u32  pc       = cpu.read_reg(llarm::emu::reg::PC);
+
+        if (is_thumb) {
+            const u16 code = cpu.current_thumb_code();
+            llarm::as::settings cfg = llarm::as::default_settings();
+            const std::string mnemonic = llarm::as::disassemble_thumb(code, pc, cfg);
+            std::printf("[%4lu] PC=0x%08X  THUMB: %s (0x%04X)\n", step, pc, mnemonic.c_str(), code);
+        } else {
+            const u32 code = cpu.current_arm_code();
+            llarm::as::settings cfg = llarm::as::default_settings();
+            const std::string mnemonic = llarm::as::disassemble_arm(code, pc, cfg);
+            std::printf("[%4lu] PC=0x%08X  ARM: %s (0x%08X)\n", step, pc, mnemonic.c_str(), code);
+        }
+
+        if (show_regs) {
+            print_all_regs(cpu);
+        }
+
+        if (!reg_arg.empty()) {
+            print_one_reg(cpu, reg_arg);
+        }
+
+        if (mem_req.valid) {
+            print_mem(cpu, mem_req);
+        }
+
+        std::printf("> [Enter]=step  [q]=quit\n");
+
+        const int ch = std::getchar();
+
+        if (ch == 'q' || ch == 'Q') {
+            break;
+        }
+
+        // consume any remaining characters on the line
+        if (ch != '\n') {
+            while (std::getchar() != '\n') {}
+        }
+
+        cpu.next_instruction();
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        ++step;
+    }
+}
+
+
+int main(int argc, char* argv[]) {
+    const std::span<char*> args(argv + 1, static_cast<std::size_t>(argc - 1));
+    const u32 arg_count = static_cast<u32>(argc - 1);
+
+    constexpr u8 arg_bits = static_cast<u8>(END) + 1;
+    std::bitset<arg_bits> arg_bitset;
+
+    if (arg_count == 0) {
+        help();
+        return 0;
+    }
+
+    static constexpr std::array<std::pair<const char*, arg_enum>, 15> table {{
+        { "-h",      HELP    },
+        { "--help",  HELP    },
+        { "-v",      VERSION },
+        { "--version", VERSION },
+        { "-r",      RUN     },
+        { "--run",   RUN     },
+        { "-s",      STEP    },
+        { "--step",  STEP    },
+        { "-a",      ARM     },
+        { "--arm",   ARM     },
+        { "-t",      THUMB   },
+        { "--thumb", THUMB   },
+        { "--regs",  REGS    },
+        { "--reg",   REG     },
+        { "--mem",   MEM     },
+    }};
+
+    std::string binary_path;
+    std::string reg_arg;
+    std::string mem_arg;
+    std::string potential_null_arg;
+
+    for (std::size_t i = 0; i < args.size(); ++i) {
+        auto it = std::find_if(table.cbegin(), table.cend(), [&](const auto &p) {
+            return (std::strcmp(args[i], p.first) == 0);
+        });
+
+        if (it == table.cend()) {
+            if (!binary_path.empty()) {
+                arg_bitset.set(NULL_ARG);
+                potential_null_arg = args[i];
+            } else {
+                binary_path = args[i];
+            }
+        } else {
+            arg_bitset.set(it->second);
+
+            if (it->second == REG) {
+                if (i + 1 < args.size() && args[i + 1][0] != '-') {
+                    reg_arg = args[++i];
+                } else {
+                    llarm::out::error("llarm-emu: --reg requires a register name");
+                }
+            } else if (it->second == MEM) {
+                if (i + 1 < args.size() && args[i + 1][0] != '-') {
+                    mem_arg = args[++i];
+                } else {
+                    llarm::out::error("llarm-emu: --mem requires an address (e.g. 0x1000 or 0x1000:u32)");
+                }
+            }
+        }
+    }
+
+    if (arg_bitset.test(NULL_ARG)) {
+        llarm::out::error("llarm-emu: unknown argument \"", potential_null_arg, "\"");
+    }
+
+    if (arg_bitset.test(HELP)) {
+        help();
+    }
+
+    if (arg_bitset.test(VERSION)) {
+        llarm::metadata::version(
+            "llarm-emu",
+            llarm::metadata::LLARM_EMU_VER,
+            llarm::metadata::LLARM_EMU_DATE
+        );
+    }
+
+    if (arg_bitset.test(RUN) && arg_bitset.test(STEP)) {
+        llarm::out::error("llarm-emu: --run and --step are mutually exclusive");
+    }
+
+    if (arg_bitset.test(ARM) && arg_bitset.test(THUMB)) {
+        llarm::out::error("llarm-emu: --arm and --thumb are mutually exclusive");
+    }
+
+    if (arg_bitset.test(REGS) && !arg_bitset.test(STEP)) {
+        llarm::out::error("llarm-emu: --regs requires --step mode");
+    }
+
+    if (arg_bitset.test(REG) && !arg_bitset.test(STEP)) {
+        llarm::out::error("llarm-emu: --reg requires --step mode");
+    }
+
+    if (arg_bitset.test(MEM) && !arg_bitset.test(STEP)) {
+        llarm::out::error("llarm-emu: --mem requires --step mode");
+    }
+
+    if (binary_path.empty()) {
+        llarm::out::error("llarm-emu: no binary file provided");
+    }
+
+    if (!std::filesystem::exists(binary_path)) {
+        llarm::out::error("llarm-emu: file not found: \"", binary_path, "\"");
+    }
+
+    mem_request mem_req;
+    if (arg_bitset.test(MEM)) {
+        mem_req = parse_mem_arg(mem_arg);
+        if (!mem_req.valid) {
+            llarm::out::error("llarm-emu: invalid --mem argument \"", mem_arg, "\" (expected e.g. 0x1000 or 0x1000:u32)");
+        }
+    }
+
+    const std::size_t binary_size = std::filesystem::file_size(binary_path);
+    std::printf("llarm-emu: loaded \"%s\" (%zu bytes)\n", binary_path.c_str(), binary_size);
+
+    // step mode
+    if (arg_bitset.test(STEP)) {
+        llarm::emu::cpu_blockstep cpu(binary_path);
+        run_step_mode(cpu, arg_bitset.test(REGS), reg_arg, mem_req);
+        return 0;
+    }
+
+    // headless run (default)
+    llarm::emu::cpu_headless cpu(binary_path);
+    cpu.run();
 
     return 0;
 }

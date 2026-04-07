@@ -9,14 +9,12 @@
 
 struct CPU {
 public:
-    CORE core;
-
     SETTINGS settings;
     RAM ram;
-
-public:
-    void initialise(const std::vector<u8> &binary);
+    CORE core;
 
 public:
     CPU(const std::vector<u8> &binary);
+
+    void run(const bool is_headless = false);
 };

@@ -1,9 +1,7 @@
 #include "core.hpp"
-#include "src/settings.hpp"
+#include "src/id.hpp"
 
 #include <llarm/shared/types.hpp>
-
-#include <vector>
 
 #include <llarm/llarm-asm.hpp>
 
@@ -23,10 +21,8 @@ inline void CORE::arm_cycle_headless() {
 }
 
 
-inline void CORE::arm_cycle(const llarm::as::settings &assembly_settings) {
+inline void CORE::arm_cycle() {
     continue_cycle = false;
-
-    std::cout << ">>>>> PC: 0x" << std::hex << reg.read(id::reg::PC) << std::dec << "\n";
 
     const arm_fetch_struct arm_code_access = fetch.arm_fetch();
 
@@ -34,14 +30,10 @@ inline void CORE::arm_cycle(const llarm::as::settings &assembly_settings) {
         return;
     }
 
-    std::cout << "0x" << std::hex << arm_code_access.code << std::dec << "\n";
     current_arm_code = arm_code_access.code;
     
     const arm_decode_struct instruction = decode.arm_decode(arm_code_access.code);
     current_arm_id = instruction.id;
-
-    std::cout << llarm::as::arm_id_to_string(instruction.id) << "\n";
-    std::cout << llarm::as::disassemble_arm(instruction.code, reg.read_PC(), assembly_settings) << "\n";
 
     execute.arm_execute(instruction);
 
@@ -56,6 +48,32 @@ inline void CORE::arm_cycle(const llarm::as::settings &assembly_settings) {
 
 
 inline void CORE::thumb_cycle() {
+    continue_cycle = false;
+
+    const thumb_fetch_struct thumb_code_access = fetch.thumb_fetch();
+
+    if (thumb_code_access.has_failed) {
+        return;
+    }
+
+    current_thumb_code = thumb_code_access.code;
+
+    const thumb_decode_struct instruction = decode.thumb_decode(thumb_code_access.code);
+    current_thumb_id = instruction.id;
+
+    execute.thumb_execute(instruction);
+
+    while (true) {
+        if (continue_cycle == true) {
+            break;
+        }
+    }
+
+    reg.thumb_increment_PC();
+}
+
+
+inline void CORE::thumb_cycle_headless() {
     const thumb_fetch_struct thumb_code_access = fetch.thumb_fetch();
 
     if (thumb_code_access.has_failed) {
@@ -70,7 +88,7 @@ inline void CORE::thumb_cycle() {
 }
 
 
-void CORE::initialise(const std::vector<u8> &binary) {
+void CORE::initialise(const bool is_headless) {
     // core reset, setup, and boot
     reg.reset();
     coprocessor.force_write(id::cp15::R1_M, false); // disable MMU/MPU
@@ -81,19 +99,27 @@ void CORE::initialise(const std::vector<u8> &binary) {
     //reg.write(id::cpsr::T, 1); // switch to thumb  // TODO: double check if it actually starts in thumb mode
     reg.write(id::cpsr::T, 0); // start in ARM mode, temporary
     memory.reset();
-    ram.write(binary, 0);
 
     if (!settings.fresh_system) {
         reg.write(id::reg::SP, util::get_kb(16));
     }
 
-    // temporary, for development purposes
-    const llarm::as::settings assembly_settings = default_dis_settings();
+    if (is_headless) {
+        while (true) {
+            if (globals.instruction_set == id::instruction_sets::ARM) {
+                arm_cycle_headless();
+            } else {
+                thumb_cycle_headless();
+            }
+        }
+
+        return;
+    }
 
     // instruction cycle 
     while (true) {
         switch (globals.instruction_set) {
-            case id::instruction_sets::ARM: arm_cycle(assembly_settings); continue;
+            case id::instruction_sets::ARM: arm_cycle(); continue;
             case id::instruction_sets::THUMB: thumb_cycle(); continue;
         }
     }

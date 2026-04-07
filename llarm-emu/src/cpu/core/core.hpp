@@ -54,20 +54,25 @@ public:
     EXECUTE execute;
 
 public:
-    void initialise(const std::vector<u8> &binary);
+    void initialise(const bool is_headless = false);
 
     void arm_cycle_headless();
-    void arm_cycle(const llarm::as::settings &settings);
+    void arm_cycle();
+    void thumb_cycle_headless();
     void thumb_cycle();
 
 public:
     // for end-user library access purposes
     llarm::as::arm_id current_arm_id;
     u32 current_arm_code;
+
+    llarm::as::thumb_id current_thumb_id;
+    u16 current_thumb_code;
+
     bool continue_cycle;
 
 public:
-    CORE(const std::vector<u8> &binary, const SETTINGS& init_settings, RAM &ram) :
+    CORE(const SETTINGS& init_settings, RAM &ram) :
         settings(init_settings),
         globals(),
         tlb(settings),
@@ -91,6 +96,5 @@ public:
         decode(reg, settings),
         execute(instructions, exception)
     {
-        initialise(binary);
     }
 };

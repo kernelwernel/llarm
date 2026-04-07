@@ -38,4 +38,8 @@ public:
     u64 read(const u32 address, const u8 access_size);
 
     void reset();
+
+    RAM(const std::vector<u8> &data) {
+        write(data, 0);
+    }
 };

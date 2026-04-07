@@ -8,14 +8,14 @@
 #include <llarm/shared/types.hpp>
 
 
-void CPU::initialise(const std::vector<u8> &binary) {
+CPU::CPU(const std::vector<u8> &binary) :
+    settings(default_settings()),
+    ram(binary),
+    core(settings, ram)
+{
 
 }
 
-CPU::CPU(const std::vector<u8> &binary) :
-    core(binary, settings, ram),
-    settings(default_settings()), 
-    ram()
-{
-
+void CPU::run(const bool is_headless) {
+    core.initialise(is_headless);
 }
