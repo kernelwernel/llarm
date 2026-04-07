@@ -1,7 +1,7 @@
 #pragma once
 
 #include "src/id.hpp"
-#include "src/cpu/core/core.hpp"
+#include "src/cpu/cpu.hpp"
 
 
 #include <llarm/shared/types.hpp>
@@ -12,9 +12,9 @@
 namespace llarm::emu {
     using reg = id::reg;
 
-    struct core_blockstep {
+    struct cpu_blockstep {
     private:
-        CORE internal_core;
+        CPU cpu;
 
         static inline std::vector<u8> load_binary(const std::filesystem::path &file_path) {
             std::ifstream file(file_path, std::ios::binary | std::ios::ate);
@@ -37,46 +37,35 @@ namespace llarm::emu {
 
     public:
         inline u32 read_reg(const reg id) {
-            return internal_core.reg.read(id);
+            return cpu.core.reg.read(id);
         }
 
         inline void write_reg(const reg id, const u32 data) {
-            internal_core.reg.write(id, data);
+            cpu.core.reg.write(id, data);
         }
 
         template <typename T>
         inline T read_physical_mem(const u32 address) {
-            return static_cast<T>(internal_core.ram.read(address, sizeof(T)));
+            return static_cast<T>(cpu.ram.read(address, sizeof(T)));
         }
 
         template <typename T>
         inline void write_physical_mem(const u32 address, const u64 value) {
-            internal_core.ram.write(value, address, sizeof(T));
+            cpu.ram.write(value, address, sizeof(T));
         }
 
         template <typename T>
         inline T read_virtual_mem(const u32 address) {
-            return static_cast<T>(internal_core.memory.read(address, sizeof(T)));
+            return static_cast<T>(cpu.core.memory.read(address, sizeof(T)));
         }
 
         template <typename T>
         inline void write_virtual_mem(const u32 address, const u64 value) {
-            internal_core.memory.write(value, address, sizeof(T));
+            cpu.core.memory.write(value, address, sizeof(T));
         }
 
         inline void next_instruction() {
-            internal_core.continue_cycle = true;
-        }
-
-        core_blockstep(const std::filesystem::path& binary) 
-        : internal_core(load_binary(binary)) {
-
+            cpu.core.continue_cycle = true;
         }
     };
 }
-
-
-/* ideas:
- * - blockstep struct 
- *
- */

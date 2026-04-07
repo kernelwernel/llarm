@@ -2,16 +2,16 @@
 
 #include "../settings.hpp"
 #include "memory/ram.hpp"
+#include "core/core.hpp"
 
 #include <llarm/llarm-asm.hpp>
 #include <llarm/shared/types.hpp>
 
 struct CPU {
 public:
-    // essential modules
-    SETTINGS settings;
+    CORE core;
 
-    // memory modules
+    SETTINGS settings;
     RAM ram;
 
 public:

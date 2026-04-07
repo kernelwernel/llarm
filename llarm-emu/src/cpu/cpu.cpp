@@ -13,8 +13,9 @@ void CPU::initialise(const std::vector<u8> &binary) {
 }
 
 CPU::CPU(const std::vector<u8> &binary) :
+    core(binary, settings, ram),
     settings(default_settings()), 
     ram()
 {
-    CORE core(binary, settings, ram);
+
 }

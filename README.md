@@ -5,39 +5,156 @@
   <br>
   <small>Artwork by <a href="https://t04st3r.carrd.co/">t04st3r</a></small>
 </div>
-<br>
+
 <br>
 
+**LLARM** (Low Level ARM) is an infrastructure toolchain for the ARM architecture. It is a collection of C/C++ libraries and tools that provide a unified foundation for low-level ARM work.
 
-**LLARM** (Low Level ARM) is an infrastructure toolchain for the ARM architecture that provides libraries and/or tools for:
- - full system, CPU, and core emulation (`llarm-emu`)
- - instruction assembly, disassembly, identification, and validation (`llarm-asm`)
- - fetching ARM CPU information (`llarm-cpu`)
- - and many other sub-projects are planned or currently in development
+| Subproject | Description |
+|---|---|
+| [`llarm-asm`](#llarm-asm) | Assembly, disassembly, identification, and validation of ARM/Thumb instructions |
+| [`llarm-emu`](#llarm-emu) | Full ARM CPU and system emulation framework |
+| [`llarm-cpu`](#llarm-cpu) | Runtime ARM CPU identification for C and C++ |
+| [`llarm-rand`](#llarm-rand) | Random instruction and binary generation for stress-testing |
 
 - - -
 
+## llarm-asm
 
-## Development roadmap and dependency tree
+C++ library and CLI for ARM/Thumb assembly and disassembly. Covers 135+ ARM instructions, 70+ Thumb instructions, and 70+ shifter operand types. Benchmarks show it is up to 2–4× faster than comparable tools.
+
+**Disassemble**
+```cpp
+#include <llarm/llarm-asm.hpp>
+
+llarm::as::disassemble_arm(0xE0821003);          // "ADD R1, R2, R3"
+llarm::as::disassemble_thumb(0x1888);            // "ADD R0, R1, R2"
+llarm::as::disassemble_arm(0xEA000005, 0x1000);  // "B #0x101C"  (PC-relative)
+```
+
+**Assemble**
+```cpp
+llarm::as::assemble_arm("ADD R1, R2, R3");   // 0xE0821003
+llarm::as::assemble_thumb("ADD R0, R1, R2"); // 0x1888
+```
+
+**Identify / Validate**
+```cpp
+llarm::as::arm_id   id = llarm::as::identify_arm(0xE0821003);    // arm_id::ADD
+llarm::as::thumb_id id = llarm::as::identify_thumb(0x1888);      // thumb_id::ADD3
+
+bool ok = llarm::as::is_arm_instruction_valid(0xE0821003);
+bool ok = llarm::as::is_thumb_instruction_valid(0x1888);
+```
+
+**Configurable output**
+```cpp
+llarm::as::settings cfg = llarm::as::default_settings();
+cfg.capitals       = false;  // lowercase mnemonics
+cfg.register_alias = false;  // r13/r14/r15 instead of SP/LR/PC
+cfg.gcc_convention = true;   // MOV.EQ instead of MOVEQ
+
+llarm::as::disassemble_arm(0xE0821003, 0, cfg);
+```
+
+See [`llarm-asm/docs/`](llarm-asm/docs/) for the full API reference.
+
+- - -
+
+## llarm-emu
+
+A modular ARM emulation framework targeting ARMv5 and earlier. Every hardware component is exposed and configurable: registers, memory, coprocessors, MMU/MPU, VFP,  making it suitable for debuggers, device emulation, program tracing, and embedded systems work.
+
+**Quick start**
+```cpp
+#include <llarm/llarm-emu.hpp>
+
+llarm::emu::cpu_blockstep cpu("firmware.bin");
+
+// read/write registers
+u32 pc = cpu.read_reg(reg_id::PC);
+cpu.write_reg(llarm::emu::reg::R0, 0xDEADBEEF);
+
+// read/write physical or virtual memory
+u32 val = cpu.read_physical_mem<u32>(0x08000000);
+cpu.write_virtual_mem<u16>(0x20000000, 0x1234);
+
+// step one instruction
+cpu.next_instruction();
+```
+
+- - -
+
+## llarm-cpu
+
+Header-only C library (with C++ wrapper) for identifying the host ARM CPU at runtime. Zero external dependencies, not even GLIBC.
+
+**C**
+```c
+#include <llarm/llarm-cpu.h>
+
+const char* impl = llarm_cpu_fetch_implementor_string();
+const char* prod = llarm_cpu_fetch_product_string(llarm_cpu_fetch_product());
+const char* arch = llarm_cpu_fetch_arch_string(llarm_cpu_fetch_arch());
+```
+
+**C++**
+```cpp
+#include <llarm/llarm-cpu.hpp>
+
+namespace cpu = llarm::cpu;
+const char* impl = cpu::fetch_implementor_string();
+const char* prod = cpu::fetch_product_string(cpu::fetch_product());
+```
+
+**CLI** — run `llarm-cpu` on any ARM device:
+```
+MIDR        : 0x410FD0B1
+Implementor : ARM
+Product     : Cortex-A76
+Architecture: ARMv8.2-A
+PPN         : 0xD0B
+Variant     : 1
+Revision    : 1
+Generation  : post-ARM7
+```
+
+See [`llarm-cpu/docs/`](llarm-cpu/docs/) for the full C and C++ API reference.
+
+- - -
+
+## Building
+
+**Requirements:** CMake 3.29+
+
+```bash
+mkdir build && cd build
+cmake ..
+make
+sudo make install
+```
+
+Individual subprojects can be built independently from their own directories using the same steps.
+
+- - -
+
+## Development roadmap
 
 <br>
 <img align="center" src="assets/roadmap/llarm_roadmap.png" title="LLARM roadmap">
 <br>
 
+- - -
 
-## Build setup
-```cmake
-mkdir build && cd build
-make
-sudo make install
-```
+## License
+
+LLARM is released under the [Apache 2.0 License](LICENSE). All subprojects share the same license.
 
 - - -
 
 > [!NOTE]
-> ## Note from the developer
-> I've written approximately 40k lines of C++ so far and have been working on this project for nearly 2 years. At the moment, the project doesn't have any practical use in real-world scenarios in its current state (especially since it only supports AArch32 for now). That being said, my plan is to eventually support modern AArch64 architectures, but it's a very long way ahead.
+> **A note from the developer**
 >
-> My ambition is to expand it into something much bigger than it already is. The reason why I'm sharing this colossal project now is because I wanted to publish the progress I've made so far, and maybe get feedback from people to determine what could be better. But for the moment, this is only the beginning. 
-> 
-> My objective is to provide a completely new framework to work with the ARM architecture, with goals to have it become a practical solution for many low-level embedded development requirements out there. Think of it as what LLVM is to compilers, but for ARM development.
+> This project is the result of nearly 2 years of work and ~40k lines of C++. In its current state it targets AArch32 only and is not yet ready for production use. The long-term goal is full AArch64 support and to grow LLARM into a practical framework for embedded and low-level ARM development as a foundation for others to build on, much like LLVM in the compiler world.
+>
+> I'm published the current progress in early April 2026 to gather feedback and share what's been built so far. Contributions and suggestions are very welcome.

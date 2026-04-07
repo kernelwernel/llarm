@@ -278,6 +278,51 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
 }
 
 
+void REGISTERS::force_write(const id::reg register_id, const u32 value) {
+    switch (register_id) {
+        case id::reg::R0: R0 = value; return;
+        case id::reg::R1: R1 = value; return;
+        case id::reg::R2: R2 = value; return;
+        case id::reg::R3: R3 = value; return;
+        case id::reg::R4: R4 = value; return;
+        case id::reg::R5: R5 = value; return;
+        case id::reg::R6: R6 = value; return;
+        case id::reg::R7: R7 = value; return;
+        case id::reg::R15: R15 = value; return;
+        case id::reg::PC: write_PC(value); return;
+        case id::reg::CPSR: CPSR = value; return;
+        case id::reg::R8:  R8 = value; return;
+        case id::reg::R9:  R9 = value; return;
+        case id::reg::R10: R10 = value; return;
+        case id::reg::R11: R11 = value; return;
+        case id::reg::R12: R12 = value; return;
+        case id::reg::R13: R13 = value; return;
+        case id::reg::R14: R14 = value; return;
+        case id::reg::R8_fiq:  R8_fiq = value; return;
+        case id::reg::R9_fiq:  R9_fiq = value; return;
+        case id::reg::R10_fiq: R10_fiq = value; return;
+        case id::reg::R11_fiq: R11_fiq = value; return;
+        case id::reg::R12_fiq: R12_fiq = value; return;
+        case id::reg::R13_fiq: R13_fiq = value; return;
+        case id::reg::R14_fiq: R14_fiq = value; return;
+        case id::reg::SPSR_fiq: SPSR_fiq = value; return;
+        case id::reg::R13_irq:  R13_irq = value; return;
+        case id::reg::R14_irq:  R14_irq = value; return;
+        case id::reg::SPSR_irq: SPSR_irq = value; return; 
+        case id::reg::R13_svc:  R13_svc = value; return;
+        case id::reg::R14_svc:  R14_svc = value; return;
+        case id::reg::SPSR_svc: SPSR_svc = value; return; 
+        case id::reg::R13_abt:  R13_abt = value; return;
+        case id::reg::R14_abt:  R14_abt = value; return;
+        case id::reg::SPSR_abt: SPSR_abt = value; return; 
+        case id::reg::R13_und: R13_und = value; return;
+        case id::reg::R14_und: R14_und = value; return;
+        case id::reg::SPSR_und: SPSR_und = value; return;
+        case id::reg::SPSR: llarm::out::error("Choose a specific SPSR register to write instead");
+    }
+}
+
+
 u8 REGISTERS::read(const id::cpsr cpsr_id) {
     if (arch_26.is_26_arch_program()) { // 26-bit
         switch (cpsr_id) {
@@ -303,6 +348,51 @@ u8 REGISTERS::read(const id::cpsr cpsr_id) {
             case id::cpsr::Z: return llarm::util::bit_fetch(CPSR, 30);
             case id::cpsr::N: return llarm::util::bit_fetch(CPSR, 31);
         }
+    }
+}
+
+
+u32 REGISTERS::force_read(const id::reg register_id) {
+    switch (register_id) {
+        case id::reg::R0: return R0;
+        case id::reg::R1: return R1;
+        case id::reg::R2: return R2;
+        case id::reg::R3: return R3;
+        case id::reg::R4: return R4;
+        case id::reg::R5: return R5;
+        case id::reg::R6: return R6;
+        case id::reg::R7: return R7;
+        case id::reg::R15: return R15;
+        case id::reg::PC: return R15;
+        case id::reg::CPSR: return CPSR;
+        case id::reg::R8: return R8;
+        case id::reg::R9: return R9;
+        case id::reg::R10: return R10;
+        case id::reg::R11: return R11;
+        case id::reg::R12: return R12;
+        case id::reg::R13: return R13;
+        case id::reg::R14: return R14;
+        case id::reg::R8_fiq: return R8_fiq;
+        case id::reg::R9_fiq: return R9_fiq;
+        case id::reg::R10_fiq: return R10_fiq;
+        case id::reg::R11_fiq: return R11_fiq;
+        case id::reg::R12_fiq: return R12_fiq;
+        case id::reg::R13_fiq: return R13_fiq;
+        case id::reg::R14_fiq: return R14_fiq;
+        case id::reg::SPSR_fiq: return SPSR_fiq;
+        case id::reg::R13_irq: return R13_irq;
+        case id::reg::R14_irq: return R14_irq;
+        case id::reg::SPSR_irq: return SPSR_irq;
+        case id::reg::R13_svc: return R13_svc;
+        case id::reg::R14_svc: return R14_svc;
+        case id::reg::SPSR_svc: return SPSR_svc;
+        case id::reg::R13_abt: return R13_abt;
+        case id::reg::R14_abt: return R14_abt;
+        case id::reg::SPSR_abt: return SPSR_abt;
+        case id::reg::R13_und: return R13_und;
+        case id::reg::R14_und: return R14_und;
+        case id::reg::SPSR_und: return SPSR_und;
+        case id::reg::SPSR: llarm::out::error("Choose a specific SPSR register to read instead");
     }
 }
 

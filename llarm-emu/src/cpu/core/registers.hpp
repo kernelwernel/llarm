@@ -91,11 +91,13 @@ public:
     void write(const id::reg, const u32);
     void write(const u32 code, const u8 start, const u8 end, const u32 value);
     void write(const u8 reg_bits, const u32 value);
+    void force_write(const id::reg register_id, const u32 value);
 
     u8 read(const id::cpsr cpsr_id);
     u32 read(const id::reg reg_id);
     u32 read(const u32 code, const u8 start, const u8 end);
     u32 read(const u8 reg_bits);
+    u32 force_read(const id::reg register_id);
 
     void switch_mode(const id::mode mode_id);
     id::mode read_mode();

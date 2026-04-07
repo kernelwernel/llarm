@@ -29,7 +29,7 @@ std::vector<u8> fetch_binary(const std::string& filePath) {
 
 int main(/*int argc, char* argv[]*/) {
     //sanitize::handler(argc, argv);
-    
+
     //std::array<u8, 2> machine_code = { 0b00100001, 0b11111110 }; // MOV R1, #0xFF  (thumb)
 
     std::vector<u8> machine_code = fetch_binary("../tests/general/gcd/gcd.bin");
