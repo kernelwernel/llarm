@@ -26,7 +26,7 @@ public:
     mem_write_struct write(const u64 value, u32 address, const u8 access_size);
 
     mem_read_struct read(
-        u32 address, 
+        u32 address,
         u8 access_size
     );
 
@@ -34,15 +34,15 @@ public:
 
     MEMORY(
         REGISTERS& reg,
-        RAM& ram, 
+        RAM& ram,
         MMU& mmu,
         MPU& mpu,
         FCSE& fcse,
         ARCH_26& arch_26,
         EXCEPTION& exception
     ) : reg(reg),
-        ram(ram), 
-        mmu(mmu), 
+        ram(ram),
+        mmu(mmu),
         mpu(mpu),
         fcse(fcse),
         arch_26(arch_26),

@@ -47,14 +47,14 @@ mem_write_struct MEMORY::write(const u64 value, u32 address, const u8 access_siz
         address = fcse.modify_address(address);
     }
 
-    // not to be confused with mmu and mpu   
+    // not to be confused with mmu and mpu
     if (mmu.is_mmu_enabled()) {
         return mmu.write(address, value, access_size);
     } else if (mpu.is_mpu_enabled()) {
         return mpu.write(address, value, access_size);
     }
 
-    // no MPU or MMU, so this will be written to the raw RAM 
+    // no MPU or MMU, so this will be written to the raw RAM
     ram.write(value, address, access_size);
 
     return mem_write_struct {
@@ -94,7 +94,7 @@ mem_read_struct MEMORY::read(
         return mpu.read(address, access_size);
     }
 
-    // no MPU or MMU, so this will be fetched from the raw RAM 
+    // no MPU or MMU, so this will be fetched from the raw RAM
     const u64 data = ram.read(address, access_size);
 
     return mem_read_struct {

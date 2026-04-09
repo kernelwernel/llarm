@@ -39,15 +39,15 @@ R"(Usage:
  llarm-emu [option(s)] <binary>
 
 Options:
- -h   | --help          print this help menu
- -v   | --version       print CLI version and other details
- -r   | --run           run binary headlessly (default)
- -s   | --step          interactive step-by-step execution
- -a   | --arm           start in ARM mode (default)
- -t   | --thumb         start in Thumb mode
-       | --regs         print all registers at each step or after run
-       | --reg <name>   print a specific register (e.g. R0, SP, PC, CPSR)
-       | --mem <addr>   read physical memory (e.g. 0x1000 or 0x1000:u8)
+ -h | --help          print this help menu
+ -v | --version       print CLI version and other details
+ -r | --run           run binary headlessly (default)
+ -s | --step          interactive step-by-step execution
+ -a | --arm           start in ARM mode (default)
+ -t | --thumb         start in Thumb mode
+    | --regs          print all registers at each step or after run
+    | --reg <name>    print a specific register (e.g. R0, SP, PC, CPSR)
+    | --mem <addr>    read physical memory (e.g. 0x1000 or 0x1000:u8)
 
  (no mode flag)         defaults to --run
 
@@ -62,61 +62,62 @@ Examples:
     std::exit(0);
 }
 
+using namespace llarm::emu;
 
 static constexpr std::array<std::pair<const char*, llarm::emu::reg>, 30> reg_table {{
-    { "R0",       llarm::emu::reg::R0 },
-    { "R1",       llarm::emu::reg::R1 },
-    { "R2",       llarm::emu::reg::R2 },
-    { "R3",       llarm::emu::reg::R3 },
-    { "R4",       llarm::emu::reg::R4 },
-    { "R5",       llarm::emu::reg::R5 },
-    { "R6",       llarm::emu::reg::R6 },
-    { "R7",       llarm::emu::reg::R7 },
-    { "R8",       llarm::emu::reg::R8 },
-    { "R9",       llarm::emu::reg::R9 },
-    { "R10",      llarm::emu::reg::R10 },
-    { "R11",      llarm::emu::reg::R11 },
-    { "R12",      llarm::emu::reg::R12 },
-    { "R13",      llarm::emu::reg::R13 },
-    { "R14",      llarm::emu::reg::R14 },
-    { "R15",      llarm::emu::reg::R15 },
-    { "SP",       llarm::emu::reg::SP },
-    { "LR",       llarm::emu::reg::LR },
-    { "PC",       llarm::emu::reg::PC },
-    { "IP",       llarm::emu::reg::IP },
-    { "CPSR",     llarm::emu::reg::CPSR },
-    { "SPSR",     llarm::emu::reg::SPSR },
-    { "SPSR_svc", llarm::emu::reg::SPSR_svc },
-    { "SPSR_abt", llarm::emu::reg::SPSR_abt },
-    { "SPSR_und", llarm::emu::reg::SPSR_und },
-    { "SPSR_irq", llarm::emu::reg::SPSR_irq },
-    { "SPSR_fiq", llarm::emu::reg::SPSR_fiq },
-    { "R8_fiq",   llarm::emu::reg::R8_fiq },
-    { "R9_fiq",   llarm::emu::reg::R9_fiq },
-    { "R10_fiq",  llarm::emu::reg::R10_fiq },
+    { "R0",       reg_R0 },
+    { "R1",       reg_R1 },
+    { "R2",       reg_R2 },
+    { "R3",       reg_R3 },
+    { "R4",       reg_R4 },
+    { "R5",       reg_R5 },
+    { "R6",       reg_R6 },
+    { "R7",       reg_R7 },
+    { "R8",       reg_R8 },
+    { "R9",       reg_R9 },
+    { "R10",      reg_R10 },
+    { "R11",      reg_R11 },
+    { "R12",      reg_R12 },
+    { "R13",      reg_R13 },
+    { "R14",      reg_R14 },
+    { "R15",      reg_R15 },
+    { "SP",       reg_SP },
+    { "LR",       reg_LR },
+    { "PC",       reg_PC },
+    { "IP",       reg_IP },
+    { "CPSR",     reg_CPSR },
+    { "SPSR",     reg_SPSR },
+    { "SPSR_svc", reg_SPSR_svc },
+    { "SPSR_abt", reg_SPSR_abt },
+    { "SPSR_und", reg_SPSR_und },
+    { "SPSR_irq", reg_SPSR_irq },
+    { "SPSR_fiq", reg_SPSR_fiq },
+    { "R8_fiq",   reg_R8_fiq },
+    { "R9_fiq",   reg_R9_fiq },
+    { "R10_fiq",  reg_R10_fiq },
 }};
 
 
 static void print_all_regs(llarm::emu::cpu_blockstep &cpu) {
     static constexpr std::array<std::pair<const char*, llarm::emu::reg>, 20> display_regs {{
-        { "R0",   llarm::emu::reg::R0   },
-        { "R1",   llarm::emu::reg::R1   },
-        { "R2",   llarm::emu::reg::R2   },
-        { "R3",   llarm::emu::reg::R3   },
-        { "R4",   llarm::emu::reg::R4   },
-        { "R5",   llarm::emu::reg::R5   },
-        { "R6",   llarm::emu::reg::R6   },
-        { "R7",   llarm::emu::reg::R7   },
-        { "R8",   llarm::emu::reg::R8   },
-        { "R9",   llarm::emu::reg::R9   },
-        { "R10",  llarm::emu::reg::R10  },
-        { "R11",  llarm::emu::reg::R11  },
-        { "R12",  llarm::emu::reg::R12  },
-        { "SP",   llarm::emu::reg::SP   },
-        { "LR",   llarm::emu::reg::LR   },
-        { "PC",   llarm::emu::reg::PC   },
-        { "CPSR", llarm::emu::reg::CPSR },
-        { "SPSR", llarm::emu::reg::SPSR },
+        { "R0",   reg_R0   },
+        { "R1",   reg_R1   },
+        { "R2",   reg_R2   },
+        { "R3",   reg_R3   },
+        { "R4",   reg_R4   },
+        { "R5",   reg_R5   },
+        { "R6",   reg_R6   },
+        { "R7",   reg_R7   },
+        { "R8",   reg_R8   },
+        { "R9",   reg_R9   },
+        { "R10",  reg_R10  },
+        { "R11",  reg_R11  },
+        { "R12",  reg_R12  },
+        { "SP",   reg_SP   },
+        { "LR",   reg_LR   },
+        { "PC",   reg_PC   },
+        { "CPSR", reg_CPSR },
+        { "SPSR", reg_SPSR },
     }};
 
     for (std::size_t i = 0; i < display_regs.size(); i += 4) {
@@ -201,7 +202,7 @@ static void run_step_mode(
     const std::string &reg_arg,
     const mem_request &mem_req
 ) {
-    cpu.start();
+    cpu.run();
 
     // give the CPU thread time to execute the first instruction and reach the spin-wait
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -210,7 +211,7 @@ static void run_step_mode(
 
     while (true) {
         const bool is_thumb = cpu.is_thumb_mode();
-        const u32  pc       = cpu.read_reg(llarm::emu::reg::PC);
+        const u32  pc       = cpu.read_reg(reg_PC);
 
         if (is_thumb) {
             const u16 code = cpu.current_thumb_code();

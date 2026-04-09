@@ -31,7 +31,7 @@ inline void CORE::arm_cycle() {
     }
 
     current_arm_code = arm_code_access.code;
-    
+
     const arm_decode_struct instruction = decode.arm_decode(arm_code_access.code);
     current_arm_id = instruction.id;
 
@@ -116,11 +116,12 @@ void CORE::initialise(const bool is_headless) {
         return;
     }
 
-    // instruction cycle 
+    // instruction cycle
     while (true) {
-        switch (globals.instruction_set) {
-            case id::instruction_sets::ARM: arm_cycle(); continue;
-            case id::instruction_sets::THUMB: thumb_cycle(); continue;
+        if (globals.instruction_set == id::instruction_sets::ARM) {
+            arm_cycle();
+        } else {
+            thumb_cycle();
         }
     }
 }

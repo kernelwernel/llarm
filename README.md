@@ -21,7 +21,7 @@
 
 ## llarm-asm
 
-C++ library and CLI for ARM/Thumb assembly and disassembly. Covers 135+ ARM instructions, 70+ Thumb instructions, and 70+ shifter operand types. Benchmarks show it is up to 2–4× faster than comparable tools.
+C++ library and CLI for ARM/Thumb assembly and disassembly. Covers 135+ ARM instructions, 70+ Thumb instructions, and 70+ shifter operand types. Benchmarks show it is up to 2-4× faster than comparable tools.
 
 **Disassemble**
 ```cpp
@@ -63,7 +63,7 @@ See [`llarm-asm/docs/`](llarm-asm/docs/) for the full API reference.
 
 ## llarm-emu
 
-A modular ARM emulation framework targeting ARMv5 and earlier. Every hardware component is exposed and configurable: registers, memory, coprocessors, MMU/MPU, VFP,  making it suitable for debuggers, device emulation, program tracing, and embedded systems work.
+A modular ARM emulation framework targeting ARMv5 and earlier. Every hardware component is exposed and configurable: registers, memory, coprocessors, MMU/MPU, TLB, VFP and much more, making it suitable for debuggers, device emulation, program tracing, and embedded systems work.
 
 **Quick start**
 ```cpp
@@ -107,7 +107,7 @@ const char* impl = cpu::fetch_implementor_string();
 const char* prod = cpu::fetch_product_string(cpu::fetch_product());
 ```
 
-**CLI** — run `llarm-cpu` on any ARM device:
+**CLI**: run `llarm-cpu` on any ARM device:
 ```
 MIDR        : 0x410FD0B1
 Implementor : ARM
@@ -153,8 +153,8 @@ LLARM is released under the [Apache 2.0 License](LICENSE). All subprojects share
 - - -
 
 > [!NOTE]
-> **A note from the developer**
+> **Note from the developer**
 >
 > This project is the result of nearly 2 years of work and ~40k lines of C++. In its current state it targets AArch32 only and is not yet ready for production use. The long-term goal is full AArch64 support and to grow LLARM into a practical framework for embedded and low-level ARM development as a foundation for others to build on, much like LLVM in the compiler world.
 >
-> I'm published the current progress in early April 2026 to gather feedback and share what's been built so far. Contributions and suggestions are very welcome.
+> I published the current progress in early April 2026 to gather feedback and share what's been built so far. Contributions and suggestions are very welcome.
