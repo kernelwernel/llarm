@@ -97,7 +97,7 @@ Step mode output:
 ```bash
 mkdir build && cd build
 cmake ..
-make
+cmake --build .
 ```
 
 

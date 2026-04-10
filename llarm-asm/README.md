@@ -81,7 +81,8 @@ See [docs/documentation.md](docs/documentation.md) for the full settings referen
 ```bash
 mkdir build && cd build
 cmake ..
-sudo make install
+cmake --build .
+cmake --install .
 ```
 
 ## CMake integration

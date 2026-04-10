@@ -61,7 +61,7 @@ target_link_libraries(my_target PRIVATE llarm::llarm-cpu-lib)
 ```bash
 mkdir build && cd build
 cmake ..
-make
+cmake --build .
 ```
 
 ## CLI tool

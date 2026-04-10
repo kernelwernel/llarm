@@ -27,24 +27,24 @@ C++ library and CLI for ARM/Thumb assembly and disassembly. Covers 135+ ARM inst
 ```cpp
 #include <llarm/llarm-asm.hpp>
 
-llarm::as::disassemble_arm(0xE0821003);          // "ADD R1, R2, R3"
-llarm::as::disassemble_thumb(0x1888);            // "ADD R0, R1, R2"
-llarm::as::disassemble_arm(0xEA000005, 0x1000);  // "B #0x101C"  (PC-relative)
+std::string inst1 = llarm::as::disassemble_arm(0xE0821003);          // "ADD R1, R2, R3"
+std::string inst2 = llarm::as::disassemble_thumb(0x1888);            // "ADD R0, R1, R2"
+std::string inst3 = llarm::as::disassemble_arm(0xEA000005, 0x1000);  // "B #0x101C"  (PC-relative)
 ```
 
 **Assemble**
 ```cpp
-llarm::as::assemble_arm("ADD R1, R2, R3");   // 0xE0821003
-llarm::as::assemble_thumb("ADD R0, R1, R2"); // 0x1888
+uint32_t bin1 = llarm::as::assemble_arm("ADD R1, R2, R3");   // 0xE0821003
+uint32_t bin2 = llarm::as::assemble_thumb("ADD R0, R1, R2"); // 0x1888
 ```
 
 **Identify / Validate**
 ```cpp
-llarm::as::arm_id   id = llarm::as::identify_arm(0xE0821003);    // arm_id::ADD
-llarm::as::thumb_id id = llarm::as::identify_thumb(0x1888);      // thumb_id::ADD3
+llarm::as::arm_id   id1 = llarm::as::identify_arm(0xE0821003);    // arm_id::ADD
+llarm::as::thumb_id id2 = llarm::as::identify_thumb(0x1888);      // thumb_id::ADD3
 
-bool ok = llarm::as::is_arm_instruction_valid(0xE0821003);
-bool ok = llarm::as::is_thumb_instruction_valid(0x1888);
+bool is_valid1 = llarm::as::is_arm_instruction_valid(0xE0821003);
+bool is_valid2 = llarm::as::is_thumb_instruction_valid(0x1888);
 ```
 
 **Configurable output**
@@ -54,7 +54,7 @@ cfg.capitals       = false;  // lowercase mnemonics
 cfg.register_alias = false;  // r13/r14/r15 instead of SP/LR/PC
 cfg.gcc_convention = true;   // MOV.EQ instead of MOVEQ
 
-llarm::as::disassemble_arm(0xE0821003, 0, cfg);
+std::string tmp = llarm::as::disassemble_arm(0xE0821003, 0, cfg);
 ```
 
 See [`llarm-asm/docs/`](llarm-asm/docs/) for the full API reference.
@@ -71,9 +71,11 @@ A modular ARM emulation framework targeting ARMv5 and earlier. Every hardware co
 
 llarm::emu::cpu_blockstep cpu("firmware.bin");
 
+using namespace llarm::emu;
+
 // read/write registers
-u32 pc = cpu.read_reg(reg_id::PC);
-cpu.write_reg(llarm::emu::reg::R0, 0xDEADBEEF);
+u32 pc = cpu.read_reg(reg_PC);
+cpu.write_reg(reg_R0, 0xDEADBEEF);
 
 // read/write physical or virtual memory
 u32 val = cpu.read_physical_mem<u32>(0x08000000);
@@ -130,8 +132,8 @@ See [`llarm-cpu/docs/`](llarm-cpu/docs/) for the full C and C++ API reference.
 ```bash
 mkdir build && cd build
 cmake ..
-make
-sudo make install
+cmake --build .
+cmake --install .
 ```
 
 Individual subprojects can be built independently from their own directories using the same steps.
