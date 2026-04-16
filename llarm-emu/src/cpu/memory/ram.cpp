@@ -7,16 +7,21 @@
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/out.hpp>
 
-void RAM::write(const std::vector<u8> &data, const u32 address) {
+void RAM::write(std::vector<u8> &data, const u32 address) {
     if (address + data.size() > ram.size()) {
         llarm::out::dev_error("Data exceeds RAM capacity (std::vector)");
     }
 
-    std::copy(data.cbegin(), data.cend(), ram.begin() + address);
+    std::move(data.cbegin(), data.cend(), ram.begin() + address);
 }
 
 
 void RAM::write(const u64 value, const u32 address, const u8 access_size) {
+    if (settings.has_vic && vic.contains(address)) {
+        vic.write(address, static_cast<u32>(value));
+        return;
+    }
+
     switch (access_size) {
         case 1: ram.at(address) = (value & 0xFF); return;
         case 2: 
@@ -53,10 +58,14 @@ std::vector<u8> RAM::vector_read(const u32 start, const u32 end) {
 
 
 u64 RAM::read(const u32 address, const u8 access_size) {
+    if (settings.has_vic && vic.contains(address)) {
+        return vic.read(address);
+    }
+
     switch (access_size) {
         case 1: return ram.at(address);
         case 2: return static_cast<u64>(
-            (ram.at(address) << 8) | 
+            (ram.at(address) << 8) |
             (ram.at(address + 1))
         );
 

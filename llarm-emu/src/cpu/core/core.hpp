@@ -3,6 +3,7 @@
 #include "../../settings.hpp"
 #include "globals.hpp"
 #include "exception.hpp"
+#include "../../vic/vic.hpp"
 #include "../memory/memory.hpp"
 #include "../memory/mmu.hpp"
 #include "../memory/mpu.hpp"
@@ -35,6 +36,7 @@ public:
     REGISTERS reg;
     VFP_ADDRESS_MODE vfp_addressing_mode;
     EXCEPTION exception;
+    VIC vic;
 
     // memory modules
     ALIGNMENT alignment;
@@ -84,6 +86,7 @@ public:
         reg(coprocessor, globals, arch_26, settings),
         vfp_addressing_mode(settings, reg, vfp_reg),
         exception(reg, coprocessor),
+        vic(settings),
         alignment(coprocessor, settings),
         ram(ram),
         mmu(globals, ram, alignment, coprocessor, settings, tlb),
@@ -96,5 +99,6 @@ public:
         decode(reg, settings),
         execute(instructions, exception)
     {
+
     }
 };

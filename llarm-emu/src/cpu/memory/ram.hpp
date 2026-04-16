@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../utility.hpp"
+#include "../../vic/vic.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/out.hpp>
@@ -11,6 +12,9 @@
 
 struct RAM {
 private:
+    SETTINGS& settings;
+    VIC& vic;
+
     static constexpr u32 default_size = util::get_kb(32); // 32KB
 
 #if (LLARM_LOW_MEMORY)
@@ -20,10 +24,10 @@ private:
 #endif
 
 public:
-    void write(const std::vector<u8> &data, const u32 address);
+    void write(std::vector<u8> &data, const u32 address);
 
     template <std::size_t N>
-    void write(const std::array<u8, N> &data, const u32 address) {
+    void write(std::array<u8, N> &data, const u32 address) {
         if (address + N > ram.size()) {
             llarm::out::dev_error("Data exceeds RAM capacity (std::array)");
         }
@@ -39,7 +43,7 @@ public:
 
     void reset();
 
-    RAM(const std::vector<u8> &data) {
+    RAM(std::vector<u8> &data, SETTINGS& settings, VIC& vic) : settings(settings), vic(vic) {
         write(data, 0);
     }
 };

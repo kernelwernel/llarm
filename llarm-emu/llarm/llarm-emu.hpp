@@ -77,12 +77,13 @@ namespace llarm::emu {
 
     struct cpu_blockstep {
     private:
+        std::vector<u8> binary;
         CPU cpu;
         std::thread cpu_thread;
 
     public:
         explicit cpu_blockstep(const std::filesystem::path &file_path)
-            : cpu(load_binary(file_path)) {}
+            : binary(load_binary(file_path)), cpu(binary) {}
 
         ~cpu_blockstep() {
             if (cpu_thread.joinable()) {
@@ -146,11 +147,12 @@ namespace llarm::emu {
         static constexpr bool HEADLESS = true;
 
     private:
+        std::vector<u8> binary;
         CPU cpu;
 
     public:
         explicit cpu_headless(const std::filesystem::path &file_path)
-            : cpu(load_binary(file_path)) {}
+            : binary(load_binary(file_path)), cpu(binary) {}
 
         void run() {
             cpu.run(HEADLESS);

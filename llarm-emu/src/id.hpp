@@ -499,6 +499,66 @@ namespace id {
         SEPARATE_DATA
     };
 
+    enum class vic_type : u8 {
+        NONE,
+        PL190,  // ARM PrimeCell VIC — 32 sources, 16 vectored slots (DDI0181)
+        PL192   // PL190 variant used on some Samsung/ST SoCs
+    };
+
+    enum class vic_reg : u8 {
+        VICIRQSTATUS,
+        VICFIQSTATUS,
+        VICRAWINTR,
+        VICINTSELECT,
+        VICINTENABLE,
+        VICINTENCLEAR,
+        VICSOFTINT,
+        VICSOFTINTCLEAR,
+        VICPROTECTION,
+        VICVECTADDR,
+        VICDEFVECTADDR,
+        VICVECTADDR0,
+        VICVECTADDR1,
+        VICVECTADDR2,
+        VICVECTADDR3,
+        VICVECTADDR4,
+        VICVECTADDR5,
+        VICVECTADDR6,
+        VICVECTADDR7,
+        VICVECTADDR8,
+        VICVECTADDR9,
+        VICVECTADDR10,
+        VICVECTADDR11, 
+        VICVECTADDR12,
+        VICVECTADDR13,
+        VICVECTADDR14,
+        VICVECTADDR15,
+        VICVECTCNTL0,
+        VICVECTCNTL1,
+        VICVECTCNTL2,
+        VICVECTCNTL3,
+        VICVECTCNTL4,
+        VICVECTCNTL5,
+        VICVECTCNTL6,
+        VICVECTCNTL7,
+        VICVECTCNTL8,
+        VICVECTCNTL9,
+        VICVECTCNTL10,
+        VICVECTCNTL11,
+        VICVECTCNTL12,
+        VICVECTCNTL13,
+        VICVECTCNTL14,
+        VICVECTCNTL15,
+        VICPERIPHID0,
+        VICPERIPHID1,
+        VICPERIPHID2,
+        VICPERIPHID3,
+        VICPCELLID0,
+        VICPCELLID1,
+        VICPCELLID2,
+        VICPCELLID3
+    };
+
     enum class pu_region : u8 { // pu = protection unit
         REGION_0,
         REGION_1,

@@ -8,9 +8,10 @@
 #include <llarm/shared/types.hpp>
 
 
-CPU::CPU(const std::vector<u8> &binary) :
+CPU::CPU(std::vector<u8> &binary) :
     settings(default_settings()),
-    ram(binary),
+    vic(settings),
+    ram(binary, settings, vic),
     core(settings, ram)
 {
 

@@ -62,19 +62,19 @@ public:
     void reset();
 
     MMU(
-        GLOBALS& globals, 
-        RAM& ram, 
+        GLOBALS& globals,
+        RAM& ram,
         ALIGNMENT& alignment,
         COPROCESSOR& coprocessor,
         SETTINGS& settings,
         TLB& tlb
-    ) : globals(globals), 
-        ram(ram), 
+    ) : globals(globals),
+        ram(ram),
         alignment(alignment),
         coprocessor(coprocessor),
         settings(settings),
         tlb(tlb)
     {
-        
+
     }
 };

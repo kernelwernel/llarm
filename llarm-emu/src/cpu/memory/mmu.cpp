@@ -3,6 +3,7 @@
 #include "../core/globals.hpp"
 #include "ram.hpp"
 #include <llarm/shared/out.hpp>
+#include "src/id.hpp"
 #include "structures.hpp"
 
 #include "mmu.hpp"
@@ -162,64 +163,64 @@ bool MMU::is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type)
     const bool privileged = globals.is_privileged;
 
 
-    const id::access_perm AP_id = [=]() -> id::access_perm {
-        // fetching the access permission depends entirely on the AP, S, R, and mode.
-        // so instead of creating a labyrinth of convoluted if conditions, i'm adding
-        // all of those to a concatenated u8 byte. Not only because that's faster
-        // and switch-friendly, but also because it's much easier to handle that way.
-        // the full table is situated in B3-16 which should make more sense to you.
-        const u8 bytecode = static_cast<u8>(
-            (!privileged) | // is user
-            (privileged << 1) | // is privileged
-            (R << 2) |
-            (S << 3) |
-            (raw_AP_bits << 4)
-        );
-        
-        constexpr u8 AP00_USER = 0b000001; // AP = 00, user
-        constexpr u8 AP00_PRIV = 0b000010; // AP = 00, priv
-        constexpr u8 AP00_USER_S = 0b001001; // AP = 00, user, S
-        constexpr u8 AP00_PRIV_S = 0b001010; // AP = 00, priv, S
-        constexpr u8 AP00_USER_R = 0b000101; // AP = 00, user, R
-        constexpr u8 AP00_PRIV_R = 0b000110; // AP = 00, priv, R
-        constexpr u8 AP00_USER_S_R = 0b001101; // AP = 00, user, S, R
-        constexpr u8 AP00_PRIV_S_R = 0b001110; // AP = 00, priv, S, R
-        constexpr u8 AP01_USER = 0b0101; // AP = 01, user
-        constexpr u8 AP01_PRIV = 0b0110; // AP = 01, priv
-        constexpr u8 AP10_USER = 0b1001; // AP = 10, user
-        constexpr u8 AP10_PRIV = 0b1010; // AP = 10, priv
-        constexpr u8 AP11_USER = 0b1101; // AP = 11, user
-        constexpr u8 AP11_PRIV = 0b1110; // AP = 11, priv
+    id::access_perm AP_id = id::access_perm::NO_ACCESS;
 
-        switch (bytecode) {
-            case AP00_USER: return id::access_perm::NO_ACCESS; // AP = 00, user
-            case AP00_PRIV: return id::access_perm::NO_ACCESS; // AP = 00, priv
-            case AP00_USER_S: return id::access_perm::NO_ACCESS; // AP = 00, user, S
-            case AP00_PRIV_S: return id::access_perm::READ_ONLY; // AP = 00, priv, S
-            case AP00_USER_R: return id::access_perm::READ_ONLY; // AP = 00, user, R
-            case AP00_PRIV_R: return id::access_perm::READ_ONLY; // AP = 00, priv, R
-            case AP00_USER_S_R: return id::access_perm::UNPREDICTABLE; // AP = 00, user, S, R
-            case AP00_PRIV_S_R: return id::access_perm::UNPREDICTABLE; // AP = 00, priv, S, R
-            default:
-                // this section is the same as above, but without the S and R bits 
-                // because they're irrelevant after this point when AP != 0b00
-                const u8 access_bytecode = static_cast<u8>(
-                    (!privileged) |
-                    (privileged << 1) |
-                    (raw_AP_bits << 2)
-                );
+    // fetching the access permission depends entirely on the AP, S, R, and mode.
+    // so instead of creating a labyrinth of convoluted if conditions, i'm adding
+    // all of those to a concatenated u8 byte. Not only because that's faster
+    // and switch-friendly, but also because it's much easier to handle that way.
+    // the full table is situated in B3-16 which should make more sense to you.
+    const u8 bytecode = static_cast<u8>(
+        (!privileged) | // is user
+        (privileged << 1) | // is privileged
+        (R << 2) |
+        (S << 3) |
+        (raw_AP_bits << 4)
+    );
+    
+    constexpr u8 AP00_USER = 0b000001; // AP = 00, user
+    constexpr u8 AP00_PRIV = 0b000010; // AP = 00, priv
+    constexpr u8 AP00_USER_S = 0b001001; // AP = 00, user, S
+    constexpr u8 AP00_PRIV_S = 0b001010; // AP = 00, priv, S
+    constexpr u8 AP00_USER_R = 0b000101; // AP = 00, user, R
+    constexpr u8 AP00_PRIV_R = 0b000110; // AP = 00, priv, R
+    constexpr u8 AP00_USER_S_R = 0b001101; // AP = 00, user, S, R
+    constexpr u8 AP00_PRIV_S_R = 0b001110; // AP = 00, priv, S, R
+    constexpr u8 AP01_USER = 0b0101; // AP = 01, user
+    constexpr u8 AP01_PRIV = 0b0110; // AP = 01, priv
+    constexpr u8 AP10_USER = 0b1001; // AP = 10, user
+    constexpr u8 AP10_PRIV = 0b1010; // AP = 10, priv
+    constexpr u8 AP11_USER = 0b1101; // AP = 11, user
+    constexpr u8 AP11_PRIV = 0b1110; // AP = 11, priv
 
-                switch (access_bytecode) {
-                    case AP01_USER: return id::access_perm::NO_ACCESS;  // AP = 01, user
-                    case AP01_PRIV: return id::access_perm::READ_WRITE; // AP = 01, priv
-                    case AP10_USER: return id::access_perm::READ_ONLY;  // AP = 10, user
-                    case AP10_PRIV: return id::access_perm::READ_WRITE; // AP = 10, priv
-                    case AP11_USER: return id::access_perm::READ_WRITE; // AP = 11, user
-                    case AP11_PRIV: return id::access_perm::READ_WRITE; // AP = 11, priv
-                    default: llarm::out::error("something went horribly wrong here...");
-                }
-        }
-    }();
+    switch (bytecode) {
+        case AP00_USER: AP_id = id::access_perm::NO_ACCESS; break; // AP = 00, user
+        case AP00_PRIV: AP_id = id::access_perm::NO_ACCESS; break; // AP = 00, priv
+        case AP00_USER_S: AP_id = id::access_perm::NO_ACCESS; break; // AP = 00, user, S
+        case AP00_PRIV_S: AP_id = id::access_perm::READ_ONLY; break; // AP = 00, priv, S
+        case AP00_USER_R: AP_id = id::access_perm::READ_ONLY; break; // AP = 00, user, R
+        case AP00_PRIV_R: AP_id = id::access_perm::READ_ONLY; break; // AP = 00, priv, R
+        case AP00_USER_S_R: AP_id = id::access_perm::UNPREDICTABLE; break; // AP = 00, user, S, R
+        case AP00_PRIV_S_R: AP_id = id::access_perm::UNPREDICTABLE; break; // AP = 00, priv, S, R
+        default:
+            // this section is the same as above, but without the S and R bits 
+            // because they're irrelevant after this point when AP != 0b00
+            const u8 access_bytecode = static_cast<u8>(
+                (!privileged) |
+                (privileged << 1) |
+                (raw_AP_bits << 2)
+            );
+
+            switch (access_bytecode) {
+                case AP01_USER: AP_id = id::access_perm::NO_ACCESS; break;  // AP = 01, user
+                case AP01_PRIV: AP_id = id::access_perm::READ_WRITE; break; // AP = 01, priv
+                case AP10_USER: AP_id = id::access_perm::READ_ONLY; break;  // AP = 10, user
+                case AP10_PRIV: AP_id = id::access_perm::READ_WRITE; break; // AP = 10, priv
+                case AP11_USER: AP_id = id::access_perm::READ_WRITE; break; // AP = 11, user
+                case AP11_PRIV: AP_id = id::access_perm::READ_WRITE; break; // AP = 11, priv
+                default: llarm::out::error("something went horribly wrong here...");
+            }
+    }
 
     switch (AP_id) {
         case id::access_perm::READ_WRITE: 
@@ -270,7 +271,7 @@ id::aborts MMU::check_block_access(
         case id::access_domain::RESERVED: 
             llarm::out::unpredictable("Reserved access domain encountered, defaulting to no access");
             [[fallthrough]];
-        
+
         case id::access_domain::NO_ACCESS: {
             // section
             if (section_access) {
@@ -352,7 +353,7 @@ translation_struct MMU::second_small(
     const u8 domain_bits
 ) {
     const u16 page_index = llarm::util::bit_range<u16>(address, 0, 11);
-    
+
     // the subpages are 1KB each
     const u8 subpage_index = static_cast<u8>(page_index / util::get_kb(1));
     

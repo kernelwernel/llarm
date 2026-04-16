@@ -26,17 +26,17 @@ void CACHE::set_parameters() {
 
 
 void CACHE::flush_data_cache() {
-
+// TODO
 }
 
 void CACHE::flush_inst_cache() {
-    
+// TODO
 }
 
 void CACHE::invalidate_data_entry(const u32 address) {
-
+// TODO
 }
 
 void CACHE::invalidate_inst_entry(const u32 address) {
-    
+// TODO
 }

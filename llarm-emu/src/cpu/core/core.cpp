@@ -17,6 +17,9 @@ inline void CORE::arm_cycle_headless() {
 
     execute.arm_execute(instruction);
 
+    if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
+    if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
+
     reg.arm_increment_PC();
 }
 
@@ -42,6 +45,9 @@ inline void CORE::arm_cycle() {
             break;
         }
     }
+
+    if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
+    if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
 
     reg.arm_increment_PC();
 }
@@ -69,6 +75,9 @@ inline void CORE::thumb_cycle() {
         }
     }
 
+    if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
+    if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
+
     reg.thumb_increment_PC();
 }
 
@@ -83,6 +92,9 @@ inline void CORE::thumb_cycle_headless() {
     const thumb_decode_struct instruction = decode.thumb_decode(thumb_code_access.code);
 
     execute.thumb_execute(instruction);
+
+    if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
+    if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
 
     reg.thumb_increment_PC();
 }

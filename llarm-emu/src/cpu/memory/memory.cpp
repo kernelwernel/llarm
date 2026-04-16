@@ -32,7 +32,7 @@ void MEMORY::manage_abort(const id::aborts abort_code) {
 mem_write_struct MEMORY::write(const u64 value, u32 address, const u8 access_size) {
     if (arch_26.is_26_arch_backwards_compatible()) {
         if (
-            (arch_26.is_26_arch_address()) && 
+            (arch_26.is_26_arch_address()) &&
             (arch_26.is_26_arch_address_unsupported(address))
         ) {
             exception.address_exception_26(reg.read(id::reg::PC));
@@ -47,14 +47,12 @@ mem_write_struct MEMORY::write(const u64 value, u32 address, const u8 access_siz
         address = fcse.modify_address(address);
     }
 
-    // not to be confused with mmu and mpu
     if (mmu.is_mmu_enabled()) {
         return mmu.write(address, value, access_size);
     } else if (mpu.is_mpu_enabled()) {
         return mpu.write(address, value, access_size);
     }
 
-    // no MPU or MMU, so this will be written to the raw RAM
     ram.write(value, address, access_size);
 
     return mem_write_struct {
@@ -65,12 +63,12 @@ mem_write_struct MEMORY::write(const u64 value, u32 address, const u8 access_siz
 
 
 mem_read_struct MEMORY::read(
-    u32 address, 
+    u32 address,
     const u8 access_size
 ) {
     if (arch_26.is_26_arch_backwards_compatible()) {
         if (
-            (arch_26.is_26_arch_address()) && 
+            (arch_26.is_26_arch_address()) &&
             (arch_26.is_26_arch_address_unsupported(address))
         ) {
             exception.address_exception_26(reg.read(id::reg::PC));
@@ -82,19 +80,17 @@ mem_read_struct MEMORY::read(
             };
         }
     }
-    
+
     if (fcse.is_fcse_enabled()) {
         address = fcse.modify_address(address);
     }
 
-    // not to be confused with mmu and mpu   
     if (mmu.is_mmu_enabled()) {
         return mmu.read(address, access_size);
     } else if (mpu.is_mpu_enabled()) {
         return mpu.read(address, access_size);
     }
 
-    // no MPU or MMU, so this will be fetched from the raw RAM
     const u64 data = ram.read(address, access_size);
 
     return mem_read_struct {

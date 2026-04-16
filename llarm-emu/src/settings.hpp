@@ -58,6 +58,7 @@ struct SETTINGS {
     bool is_vfp_double_precision_enabled;
     bool is_multiply_enabled;
     bool fresh_system;
+    bool has_vic;
 
     // /**/ = "not sure what to do with this, todo"
 
@@ -76,6 +77,9 @@ struct SETTINGS {
     /**/ u16 inst_tlb_table_size;
     /**/ u16 data_tlb_table_size;
     /**/ id::tlb_type tlb_type;
+
+    id::vic_type vic_type;
+    /**/ u32 vic_base; // PL190/PL192: register base address
 
     /**/ id::vfp_version vfp_version;
     /**/ id::vfp_format vfp_format;
@@ -209,6 +213,10 @@ struct SETTINGS {
             // ARMv2 has no support for multiplications
         }
 
+        if (has_vic && vic_type != id::vic_type::NONE) {
+            
+        }
+
         // all of the checks above should mostly just set a default correct value instead of crashing completely
     }
 
@@ -261,6 +269,7 @@ struct SETTINGS {
         is_vfp_double_precision_enabled(false),
         is_multiply_enabled(false),
         fresh_system(false),
+        has_vic(false),
 
         unified_cache_size(0),
         data_cache_size(0), 
@@ -273,6 +282,8 @@ struct SETTINGS {
         unified_tlb_table_size(0),
         inst_tlb_table_size(0),
         data_tlb_table_size(0),
+        vic_type(id::vic_type::NONE),
+        vic_base(0),
         vfp_version(id::vfp_version::UNKNOWN),
         vfp_format(id::vfp_format::NON_STANDARD),
         thumb_version(id::thumb_version::NO_THUMB),

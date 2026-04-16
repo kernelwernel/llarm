@@ -2,6 +2,7 @@
 
 #include "../settings.hpp"
 #include "memory/ram.hpp"
+#include "../vic/vic.hpp"
 #include "core/core.hpp"
 
 #include <llarm/llarm-asm.hpp>
@@ -10,11 +11,12 @@
 struct CPU {
 public:
     SETTINGS settings;
+    VIC vic;
     RAM ram;
     CORE core;
 
 public:
-    CPU(const std::vector<u8> &binary);
+    CPU(std::vector<u8> &binary);
 
     void run(const bool is_headless = false);
 };
