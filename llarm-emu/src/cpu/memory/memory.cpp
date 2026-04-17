@@ -1,7 +1,7 @@
 #include "../core/exception.hpp"
 #include "mmu.hpp"
 #include "mpu.hpp"
-#include "ram.hpp"
+#include "../../ram/ram.hpp"
 #include "fcse.hpp"
 #include "26_bit_arch.hpp"
 

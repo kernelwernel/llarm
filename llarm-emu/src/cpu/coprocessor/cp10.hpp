@@ -1,2 +1,0 @@
-
-// single precision VFP instructions

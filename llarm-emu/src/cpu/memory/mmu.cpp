@@ -1,7 +1,7 @@
 #include "../../utility.hpp"
 #include "../coprocessor/coprocessor.hpp"
 #include "../core/globals.hpp"
-#include "ram.hpp"
+#include "../../ram/ram.hpp"
 #include <llarm/shared/out.hpp>
 #include "src/id.hpp"
 #include "structures.hpp"

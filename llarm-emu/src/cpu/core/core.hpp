@@ -8,7 +8,7 @@
 #include "../memory/mmu.hpp"
 #include "../memory/mpu.hpp"
 #include "../memory/tlb.hpp"
-#include "../memory/ram.hpp"
+#include "../../ram/ram.hpp"
 #include "../memory/fcse.hpp"
 #include "../coprocessor/coprocessor.hpp"
 #include "../instructions/instructions.hpp"
@@ -74,7 +74,7 @@ public:
     bool continue_cycle;
 
 public:
-    CORE(const SETTINGS& init_settings, RAM &ram) :
+    CORE(const SETTINGS& init_settings, RAM &ram, VIC& vic) :
         settings(init_settings),
         globals(),
         tlb(settings),

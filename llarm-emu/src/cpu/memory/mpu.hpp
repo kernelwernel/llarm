@@ -3,7 +3,7 @@
 #include "../core/globals.hpp"
 #include "../coprocessor/coprocessor.hpp"
 #include "structures.hpp"
-#include "ram.hpp"
+#include "../../ram/ram.hpp"
 #include "fcse.hpp"
 
 #include <llarm/shared/types.hpp>

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../utility.hpp"
-#include "../../vic/vic.hpp"
+#include "../utility.hpp"
+#include "../vic/vic.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/out.hpp>

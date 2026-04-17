@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../settings.hpp"
-#include "memory/ram.hpp"
+#include "../ram/ram.hpp"
 #include "../vic/vic.hpp"
 #include "core/core.hpp"
 

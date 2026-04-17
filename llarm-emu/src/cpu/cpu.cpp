@@ -1,7 +1,7 @@
 #include "cpu.hpp"
 
 #include "../settings.hpp"
-#include "memory/ram.hpp"
+#include "../ram/ram.hpp"
 #include "core/core.hpp"
 
 #include <llarm/llarm-asm.hpp>
@@ -12,7 +12,7 @@ CPU::CPU(std::vector<u8> &binary) :
     settings(default_settings()),
     vic(settings),
     ram(binary, settings, vic),
-    core(settings, ram)
+    core(settings, ram, vic)
 {
 
 }
