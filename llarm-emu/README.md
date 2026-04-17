@@ -12,7 +12,8 @@ C++ ARM emulation library and tool. Supports ARMv1~ARMv5 user and system program
 
 It offers immense flexibility with a wide openness to the hardware components, with practically every aspect of the CPU being modifiable in a way that's as friendly and easy to anybody using the framework. The applications are endless. 
 
-It should be mentioned that this project is still a work in progress. While the CPU itself is practically finished, the peripherals and SoC components are still being developed. The current goal is to emulate Linux. 
+> [!WARNING]
+> It should be mentioned that this project is still a work in progress. While the CPU itself is practically finished, the peripherals and SoC components are still being developed. The current goal is to emulate Linux. 
 
 ## Usage
 
