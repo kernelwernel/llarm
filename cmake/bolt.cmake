@@ -71,11 +71,11 @@ function(setup_bolt TARGET)
         )
     endif()
 
-    llvm-bolt <executable> -instrument -o <instrumented-executable>
+#    llvm-bolt <executable> -instrument -o <instrumented-executable>
 
 
 
-    llvm-bolt <executable> -o <executable>.bolt -data=perf.fdata -reorder-blocks=ext-tsp -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats
+#    llvm-bolt <executable> -o <executable>.bolt -data=perf.fdata -reorder-blocks=ext-tsp -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats
 
 
 
