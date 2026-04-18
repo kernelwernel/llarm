@@ -8,7 +8,7 @@ on:
       - 'llarm-cpu/**/CMakeLists.txt'
       - 'llarm-cpu/**/*.cmake'
       - 'llarm-cpu/**/*.cmake.in'
-      - 'llarm-cpu/tests/**
+      - 'llarm-cpu/tests/**'
       - 'cmake/**'
       - 'shared/**'
   pull_request:
@@ -18,7 +18,7 @@ on:
       - 'llarm-cpu/**/CMakeLists.txt'
       - 'llarm-cpu/**/*.cmake'
       - 'llarm-cpu/**/*.cmake.in'
-      - 'llarm-cpu/tests/**
+      - 'llarm-cpu/tests/**'
       - 'cmake/**'
       - 'shared/**'
 
