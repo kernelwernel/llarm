@@ -23,6 +23,10 @@
 
 C++ library and CLI for ARM/Thumb assembly and disassembly. Covers 135+ ARM instructions, 70+ Thumb instructions, and 70+ shifter operand types. Benchmarks show it is up to 2-4× faster than comparable tools.
 
+> [!WARNING]
+> Currently only supports ARMv5, but support for successor versions are planned or in development.
+
+
 **Disassemble**
 ```cpp
 #include <llarm/llarm-asm.hpp>
@@ -63,7 +67,11 @@ See [`llarm-asm/docs/`](llarm-asm/docs/) for the full API reference.
 
 ## llarm-emu
 
-A modular ARM emulation framework targeting ARMv5 and earlier. Every hardware component is exposed and configurable: registers, memory, coprocessors, MMU/MPU, TLB, VFP and much more, making it suitable for debuggers, device emulation, program tracing, and embedded systems work.
+A modular ARM emulation framework targeting ARMv5 and earlier. Every hardware component is exposed and configurable: registers, memory, coprocessors, MMU/MPU, TLB, VFP and much more, making it suitable for debuggers, device emulation, program tracing, and embedded systems work. 
+
+> [!WARNING]
+> Currently only supports ARMv5, but support for successor versions are planned or in development.
+
 
 **Quick start**
 ```cpp
@@ -89,7 +97,7 @@ cpu.next_instruction();
 
 ## llarm-cpu
 
-Header-only C library (with C++ wrapper) for identifying the host ARM CPU at runtime. Zero external dependencies, not even GLIBC.
+Header-only C library (with C++ wrapper) for identifying the host ARM CPU at runtime. Zero external dependencies, not even GLIBC. Supports all versions of ARM. 
 
 **C**
 ```c

@@ -34,7 +34,7 @@ namespace llarm::cpu {
         return llarm_cpu_fetch_implementor();
     }
 
-    inline const char* fetch_implementor_string() { 
+    inline const char* fetch_implementor_string() {
         return llarm_cpu_fetch_implementor_string();
     }
 
@@ -42,15 +42,23 @@ namespace llarm::cpu {
         return llarm_cpu_fetch_product();
     }
 
-    inline const char* fetch_product_string(enum product p) { 
+    inline const char* fetch_product_string(const enum product p) { 
         return llarm_cpu_fetch_product_string(p);
+    }
+
+    inline const char* fetch_product_string() { 
+        return llarm_cpu_fetch_product_string(fetch_product());
     }
 
     inline enum arch fetch_arch() { 
         return llarm_cpu_fetch_arch();
     }
 
-    inline const char* fetch_arch_string(enum arch a) { 
+    inline const char* fetch_arch_string(const enum arch a) { 
         return llarm_cpu_fetch_arch_string(a);
+    }
+
+    inline const char* fetch_arch_string() { 
+        return llarm_cpu_fetch_arch_string(fetch_arch());
     }
 }

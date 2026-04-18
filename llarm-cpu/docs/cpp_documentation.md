@@ -161,11 +161,18 @@ See the [product table](c_documentation.md#product-table) for all supported prod
 
 ## `llarm::cpu::fetch_product_string()`
 
-Returns a `const char*` string for a given `enum product`. Takes an explicit product argument.
+Returns a `const char*` string for a given `enum product`. Takes an explicit product argument. Overloads are available:
+
+```cpp
+const char* fetch_product_string();
+const char* fetch_product_string(const enum product);
+```
 
 ```cpp
 enum product prod = llarm::cpu::fetch_product();
 const char* name  = llarm::cpu::fetch_product_string(prod);
+// or just use llarm::cpu::fetch_product_string()
+
 std::cout << "Product: " << name << "\n";
 // example output: "CORTEX_A76"
 ```
@@ -193,10 +200,17 @@ See the [architecture table](c_documentation.md#architecture-table) for all supp
 
 ## `llarm::cpu::fetch_arch_string()`
 
-Returns a `const char*` string for a given `enum arch`. Takes an explicit arch argument.
+Returns a `const char*` string for a given `enum arch`. Takes an explicit arch argument, overloads are available:
+
+```cpp
+const char* fetch_arch_string();
+const char* fetch_arch_string(const enum arch); 
+```
 
 ```cpp
 enum arch a = llarm::cpu::fetch_arch();
 std::cout << "Architecture: " << llarm::cpu::fetch_arch_string(a) << "\n";
+// or just use llarm::cpu::fetch_arch_string()
+
 // example output: "ARMv8-A"
 ```
