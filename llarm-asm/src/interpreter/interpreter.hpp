@@ -230,7 +230,7 @@ namespace interpreter {
         return { token_enum::OPTION, option };
     }
 
-    LLARM_CONSTEVAL lexeme immed(const immed_settings &settings = {}) {
+    LLARM_CONSTEVAL lexeme immed(const immed_settings& settings = {}) {
         IMM imm{};
 
         imm.number = 0;
@@ -275,7 +275,7 @@ namespace interpreter {
         return { token_enum::IMMED, imm };
     }
 
-    LLARM_CONSTEVAL lexeme reg_list(const reg_list_settings &settings = {}) {
+    LLARM_CONSTEVAL lexeme reg_list(const reg_list_settings& settings = {}) {
         REG_LIST reg_list{};
 
         reg_list.type = settings.reg_list_type;

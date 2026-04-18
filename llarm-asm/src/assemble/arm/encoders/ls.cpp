@@ -4,7 +4,7 @@
 #include <llarm/shared/out.hpp>
 
 // format: LDR|STR{<cond>}{B}{T} <Rd>, <addressing_mode>
-u32 generators::ls_instruction(const arm_id id, const operand_struct &args) {
+u32 generators::ls_instruction(const arm_id id, const operand_struct& args) {
     u32 binary = 0;
 
     if (id == arm_id::PLD) {

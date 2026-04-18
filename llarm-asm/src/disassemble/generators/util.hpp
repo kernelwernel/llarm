@@ -148,7 +148,7 @@ namespace internal::util {
 
     //std::string hex_signed(const i32 integer, const settings settings);
 
-    void to_lower(std::string &str);
+    void to_lower(std::string&str);
 
     u32 thumb_sign_extend(u32 value, const u8 sign_index, const u32 PC);
 

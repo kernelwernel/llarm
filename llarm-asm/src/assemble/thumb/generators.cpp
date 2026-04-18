@@ -210,7 +210,7 @@ u32 generators::BL_BLX1(const operand_struct& operands, const u32 PC, const thum
 
 u32 generators::thumb(const IR_thumb_struct& IR) {
     const thumb_id id = IR.mnemonic.id;
-    const operand_struct &operands = IR.operands;
+    const operand_struct& operands = IR.operands;
     
     // the raw binary in the parameters are the opcodes themselves.
     // they're not complete (especially at the tail end) because

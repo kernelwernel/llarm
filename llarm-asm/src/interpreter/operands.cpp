@@ -7,7 +7,7 @@
 
 #include <llarm/shared/out.hpp>
 
-operand_struct operands::lex_to_operands(const lexemes_t &lexemes, const cond_id cond_id) {
+operand_struct operands::lex_to_operands(const lexemes_t& lexemes, const cond_id cond_id) {
     operand_struct arg;
     
     u8 reg_iteration = 1;
@@ -20,7 +20,7 @@ operand_struct operands::lex_to_operands(const lexemes_t &lexemes, const cond_id
     // enumerated orders (first, second, third, etc...). So if a reglist appears, it's 
     // guaranteed that it won't appear again.
     
-    for (const auto &lexeme : lexemes) {
+    for (const auto& lexeme : lexemes) {
         switch (lexeme.token_type) {
             case UNKNOWN: llarm::out::dev_error("Invalid lexeme for converting IR to assembly");
             case REG_LIST: reg_list(arg, lexeme); continue;
@@ -78,7 +78,7 @@ operand_struct operands::lex_to_operands(const lexemes_t &lexemes, const cond_id
 }
 
 
-operand_struct operands::lex_to_operands_arm(const lexemes_t &lexemes, const mnemonic_struct_arm &mnemonic) {
+operand_struct operands::lex_to_operands_arm(const lexemes_t& lexemes, const mnemonic_struct_arm& mnemonic) {
     operand_struct arg = lex_to_operands(lexemes, mnemonic.cond_id);
 
     arg.has_S = mnemonic.has_S;
@@ -95,12 +95,12 @@ operand_struct operands::lex_to_operands_arm(const lexemes_t &lexemes, const mne
 
 
 // thumb doesn't need extra shifter/encoding stuff in their instructions unlike arm, so we're skipping unecessary stuff
-operand_struct operands::lex_to_operands_thumb(const lexemes_t &lexemes, const mnemonic_struct_thumb &mnemonic) {
+operand_struct operands::lex_to_operands_thumb(const lexemes_t& lexemes, const mnemonic_struct_thumb& mnemonic) {
     return lex_to_operands(lexemes, mnemonic.cond_id);
 }
 
 
-void operands::reg(u8 &reg_iteration, u8 &CR_reg_iteration, operand_struct &arg, const lexeme &lexeme) {
+void operands::reg(u8& reg_iteration, u8& CR_reg_iteration, operand_struct& arg, const lexeme& lexeme) {
     using enum reg_type;
 
     // I wish the reg_iteration and CR_reg_iteration could be static variables here,
@@ -136,7 +136,7 @@ void operands::reg(u8 &reg_iteration, u8 &CR_reg_iteration, operand_struct &arg,
 }
 
 
-void operands::imm(u8 &int_iteration, operand_struct &arg, const lexeme &lexeme) {
+void operands::imm(u8& int_iteration, operand_struct& arg, const lexeme& lexeme) {
     const u32 number = [&]() -> u32 {
         if (lexeme.token_type == OPTION) {
             return static_cast<u32>(lexeme.data.option.number);   
@@ -160,7 +160,7 @@ void operands::imm(u8 &int_iteration, operand_struct &arg, const lexeme &lexeme)
 }
 
 
-void operands::psr(operand_struct &arg, const lexeme &lexeme) {
+void operands::psr(operand_struct& arg, const lexeme& lexeme) {
     arg.has_spsr = lexeme.data.psr.is_spsr();
 
     const bool C = lexeme.data.psr.has_C();
@@ -188,6 +188,6 @@ void operands::psr(operand_struct &arg, const lexeme &lexeme) {
 }
 
 
-void operands::reg_list(operand_struct &arg, const lexeme &lexeme) {
+void operands::reg_list(operand_struct& arg, const lexeme& lexeme) {
     arg.reg_list = lexeme.data.reg_list.list;
 }

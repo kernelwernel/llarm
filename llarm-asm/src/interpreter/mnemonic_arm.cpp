@@ -11,7 +11,7 @@ using namespace internal;
 using namespace interpreter;
 using enum token_enum;
 
-mnemonic_struct_arm mnemonic_arm::arm(const std::string &code) {
+mnemonic_struct_arm mnemonic_arm::arm(const std::string& code) {
     const std::string assembly = llarm::util::to_upper(code);
     const sv mnemonic = interpreter::fetch_instruction(assembly);
 
@@ -25,7 +25,7 @@ mnemonic_struct_arm mnemonic_arm::arm(const std::string &code) {
     return mnemonic_struct_arm{};
 }
 
-arm_id mnemonic_arm::fetch_arm_id(const std::string &code, const sv mnemonic, const sv assembly) {
+arm_id mnemonic_arm::fetch_arm_id(const std::string& code, const sv mnemonic, const sv assembly) {
     const std::vector<sv> candidates = fetch_candidates(mnemonic);
 
     for (const auto candidate : candidates) {
@@ -152,7 +152,7 @@ std::vector<sv> mnemonic_arm::fetch_candidates(sv mnemonic) {
 }
 
 
-arm_id mnemonic_arm::MSR(const lexemes_t &lexemes) {
+arm_id mnemonic_arm::MSR(const lexemes_t& lexemes) {
     // MSR_IMM
     if (
         (verify_tokens(make_tokens(PSR, HASHTAG, IMMED), lexemes)) ||
@@ -265,7 +265,7 @@ arm_id mnemonic_arm::STR_family(sv mnemonic) {
 }
 
 
-arm_id mnemonic_arm::STM(const lexemes_t &lexemes) {
+arm_id mnemonic_arm::STM(const lexemes_t& lexemes) {
     // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
     if (verify_tokens(make_tokens(REG, PRE_INDEX, REG_LIST), lexemes)) {
         return arm_id::STM1;
@@ -281,7 +281,7 @@ arm_id mnemonic_arm::STM(const lexemes_t &lexemes) {
 }
 
 
-arm_id mnemonic_arm::LDM(const lexemes_t &lexemes) {
+arm_id mnemonic_arm::LDM(const lexemes_t& lexemes) {
     // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
     if (verify_tokens(make_tokens(REG, PRE_INDEX, REG_LIST), lexemes)) {
         return arm_id::LDM1;
@@ -303,7 +303,7 @@ arm_id mnemonic_arm::LDM(const lexemes_t &lexemes) {
 }
 
 
-arm_id mnemonic_arm::BLX(const lexemes_t &lexemes) {
+arm_id mnemonic_arm::BLX(const lexemes_t& lexemes) {
     if (verify_tokens(make_tokens(IMMED), lexemes)) {
         return arm_id::BLX1;
     } else if (verify_tokens(make_tokens(REG), lexemes)) {

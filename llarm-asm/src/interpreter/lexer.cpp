@@ -5,7 +5,7 @@
 #include <llarm/shared/out.hpp>
 
 
-lexemes_t lexer::lex(const raw_tokens_t &tokens) {
+lexemes_t lexer::lex(const raw_tokens_t& tokens) {
     lexemes_t lexeme_list{};
     lexeme_list.reserve(tokens.size());
 
@@ -60,7 +60,7 @@ lexemes_t lexer::lex(const raw_tokens_t &tokens) {
 
     u8 pos = 0;
 
-    for (const lexeme &lexeme : lexeme_list) {
+    for (const lexeme& lexeme : lexeme_list) {
         if (lexeme.token_type == token_enum::REG_LIST_START) {
             start_pos = pos;
             continue;
@@ -103,7 +103,7 @@ lexemes_t lexer::lex(const raw_tokens_t &tokens) {
 }
 
 
-void lexer::option_check(lexemes_t &lexemes, const u8 start_pos, const u8 end_pos) {
+void lexer::option_check(lexemes_t& lexemes, const u8 start_pos, const u8 end_pos) {
     const lexeme arg = lexemes.at(start_pos + 1);
     
     if (arg.token_type != token_enum::IMMED) {
@@ -142,7 +142,7 @@ void lexer::option_check(lexemes_t &lexemes, const u8 start_pos, const u8 end_po
 }
 
 
-void lexer::reg_list_check(lexemes_t &lexemes, const u8 start_pos, const u8 end_pos) {
+void lexer::reg_list_check(lexemes_t& lexemes, const u8 start_pos, const u8 end_pos) {
     REG_LIST reg_list = {
         reg_type::UNKNOWN_REG, // type
         0, // reg_count
@@ -235,7 +235,7 @@ void lexer::reg_list_check(lexemes_t &lexemes, const u8 start_pos, const u8 end_
 }
 
 
-void lexer::reg_list_range(lexemes_t &lexemes, const u8 start_pos, const u8 end_pos) { 
+void lexer::reg_list_range(lexemes_t& lexemes, const u8 start_pos, const u8 end_pos) { 
     const REG first_reg  = lexemes.at(start_pos + 1).data.reg;
     const REG second_reg = lexemes.at(start_pos + 3).data.reg;
 
@@ -275,7 +275,7 @@ void lexer::reg_list_range(lexemes_t &lexemes, const u8 start_pos, const u8 end_
     return;
 }
 
-void lexer::reg_list_categorize(lexemes_t &lexemes, REG_LIST &reg_list, const u8 start_pos, const u8 end_pos) {
+void lexer::reg_list_categorize(lexemes_t& lexemes, REG_LIST& reg_list, const u8 start_pos, const u8 end_pos) {
     lexemes.erase(lexemes.begin() + start_pos, lexemes.begin() + end_pos);
 
     lexeme reg_list_lexeme = {
@@ -287,7 +287,7 @@ void lexer::reg_list_categorize(lexemes_t &lexemes, REG_LIST &reg_list, const u8
 }
 
 
-bool lexer::reg_check(lexeme &lexeme, const sv token) {
+bool lexer::reg_check(lexeme& lexeme, const sv token) {
     const REG reg = matchers::reg(token);
     
     if (reg.is_invalid) {
@@ -303,7 +303,7 @@ bool lexer::reg_check(lexeme &lexeme, const sv token) {
 }
 
 
-bool lexer::psr_check(lexeme &lexeme, const sv token) {
+bool lexer::psr_check(lexeme& lexeme, const sv token) {
     PSR psr = matchers::cpsr_spsr(token);
 
     if (psr.is_invalid()) {
@@ -316,7 +316,7 @@ bool lexer::psr_check(lexeme &lexeme, const sv token) {
 }
 
 
-bool lexer::imm_check(lexeme &lexeme, const sv token) {
+bool lexer::imm_check(lexeme& lexeme, const sv token) {
     const IMM imm = matchers::immediate(token);
 
     if (imm.is_invalid) {
@@ -329,7 +329,7 @@ bool lexer::imm_check(lexeme &lexeme, const sv token) {
 }
 
 
-bool lexer::character_check(lexeme &lexeme, const sv token) {
+bool lexer::character_check(lexeme& lexeme, const sv token) {
     const token_enum token_candidate = matchers::character(token);
 
     if (token_candidate == token_enum::UNKNOWN) {
@@ -341,7 +341,7 @@ bool lexer::character_check(lexeme &lexeme, const sv token) {
 }
 
 
-bool lexer::address_check(lexeme &lexeme, const sv token) {
+bool lexer::address_check(lexeme& lexeme, const sv token) {
     const token_enum address_candidate = matchers::address_mode(token);
 
     if (address_candidate == token_enum::UNKNOWN) {
@@ -353,7 +353,7 @@ bool lexer::address_check(lexeme &lexeme, const sv token) {
 }
 
 
-bool lexer::comment_check(lexeme &lexeme, const sv token) {
+bool lexer::comment_check(lexeme& lexeme, const sv token) {
     const bool is_comment = matchers::comment(token);
 
     if (is_comment) {

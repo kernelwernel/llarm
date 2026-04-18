@@ -164,17 +164,17 @@ namespace internal::mnemonic_arm {
 
     std::vector<sv> fetch_candidates(sv mnemonic);
     mnemonic_struct_arm fetch_mnemonic_args(const arm_id id, sv mnemonic);
-    arm_id fetch_arm_id(const std::string &code, const sv mnemonic, const sv assembly);
+    arm_id fetch_arm_id(const std::string& code, const sv mnemonic, const sv assembly);
   
-    mnemonic_struct_arm arm(const std::string &code);
+    mnemonic_struct_arm arm(const std::string& code);
 
-    arm_id MSR(const lexemes_t &lexemes);
+    arm_id MSR(const lexemes_t& lexemes);
     arm_id SWPB(const sv mnemonic);
     arm_id LDR_family(sv mnemonic);
     arm_id STR_family(sv mnemonic);
     arm_id VFP_family(sv mnemonic);
     arm_id PSR_family(const sv mnemonic);
-    arm_id STM(const lexemes_t &lexemes);
-    arm_id LDM(const lexemes_t &lexemes);
-    arm_id BLX(const lexemes_t &lexemes);
+    arm_id STM(const lexemes_t& lexemes);
+    arm_id LDM(const lexemes_t& lexemes);
+    arm_id BLX(const lexemes_t& lexemes);
 }

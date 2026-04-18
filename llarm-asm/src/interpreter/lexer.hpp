@@ -39,19 +39,19 @@ struct lexeme {
 using lexemes_t = std::vector<lexeme>;
 
 namespace lexer {
-    lexemes_t lex(const raw_tokens_t &tokens);
+    lexemes_t lex(const raw_tokens_t& tokens);
     
-    bool reg_check(lexeme &lexeme, const sv token);
-    bool psr_check(lexeme &lexeme, const sv token);
-    bool imm_check(lexeme &lexeme, const sv token);
-    bool reg_list_check(lexeme &lexeme, const raw_tokens_t &list);
-    bool character_check(lexeme &lexeme, const sv token);
-    bool address_check(lexeme &lexeme, const sv token);
-    bool comment_check(lexeme &lexeme, const sv token);
+    bool reg_check(lexeme& lexeme, const sv token);
+    bool psr_check(lexeme& lexeme, const sv token);
+    bool imm_check(lexeme& lexeme, const sv token);
+    bool reg_list_check(lexeme& lexeme, const raw_tokens_t& list);
+    bool character_check(lexeme& lexeme, const sv token);
+    bool address_check(lexeme& lexeme, const sv token);
+    bool comment_check(lexeme& lexeme, const sv token);
     
-    void option_check(lexemes_t &lexemes, const u8 start_pos, const u8 end_pos);
+    void option_check(lexemes_t& lexemes, const u8 start_pos, const u8 end_pos);
 
-    void reg_list_check(lexemes_t &lexemes, const u8 start_pos, const u8 end_pos);
-    void reg_list_range(lexemes_t &rl_lexemes, const u8 start_pos, const u8 end_pos);
-    void reg_list_categorize(lexemes_t &rl_lexemes, REG_LIST &reg_list, const u8 start_pos, const u8 end_pos);
+    void reg_list_check(lexemes_t& lexemes, const u8 start_pos, const u8 end_pos);
+    void reg_list_range(lexemes_t& rl_lexemes, const u8 start_pos, const u8 end_pos);
+    void reg_list_categorize(lexemes_t& rl_lexemes, REG_LIST& reg_list, const u8 start_pos, const u8 end_pos);
 }

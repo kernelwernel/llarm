@@ -4,7 +4,7 @@
 #include <llarm/shared/out.hpp>
 
 // format: LDR|STR{<cond>}H|SH|SB|D <Rd>, <addressing_mode>
-u32 generators::ls_misc_instruction(const arm_id id, const operand_struct &args) {
+u32 generators::ls_misc_instruction(const arm_id id, const operand_struct& args) {
     u32 binary = 0;
     
     llarm::util::swap_bits(binary, 28, 31, args.cond);

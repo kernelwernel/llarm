@@ -7,5 +7,5 @@
 using namespace internal;
 
 namespace internal::ident::string_arm {
-    arm_id arm(const std::string &code);
+    arm_id arm(const std::string& code);
 }

@@ -47,13 +47,13 @@ bool is_bl_blx_target_valid(const u32 PC, const lexemes_t& lexemes, const bool i
     return offset >= -4194304 && offset <= 4194302;
 }
 
-bool validation::string_thumb::is_thumb_instruction_valid(const std::string &code) {
+bool validation::string_thumb::is_thumb_instruction_valid(const std::string& code) {
     return is_thumb_instruction_valid(IR::generate_thumb(code));
 }
 
 
-bool validation::string_thumb::is_thumb_instruction_valid(const IR_thumb_struct &IR) {
-    const lexemes_t &lexemes = IR.lexemes;
+bool validation::string_thumb::is_thumb_instruction_valid(const IR_thumb_struct& IR) {
+    const lexemes_t& lexemes = IR.lexemes;
 
     switch (IR.mnemonic.id) {
         case thumb_id::UNKNOWN: return false;

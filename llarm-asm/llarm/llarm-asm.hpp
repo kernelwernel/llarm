@@ -36,7 +36,7 @@ namespace llarm::as {
         return internal::ident::bin_arm::arm(raw_code);
     }
 
-    inline arm_id identify_arm(const std::string &code) {
+    inline arm_id identify_arm(const std::string& code) {
         return internal::ident::string_arm::arm(code);
     }
 
@@ -49,7 +49,7 @@ namespace llarm::as {
         return internal::ident::bin_thumb::thumb(raw_code);
     }
 
-    inline thumb_id identify_thumb(const std::string &code) {
+    inline thumb_id identify_thumb(const std::string& code) {
         return internal::ident::string_thumb::thumb(code);
     }
 
@@ -62,7 +62,7 @@ namespace llarm::as {
         return internal::ident::bin_shifters::identify_shifter(raw_code);
     }
 
-    inline shifter_id identify_shifter(const std::string &code) {
+    inline shifter_id identify_shifter(const std::string& code) {
         return internal::ident::string_shifters::identify_shifter(code);
     }
 
@@ -90,11 +90,11 @@ namespace llarm::as {
         return internal::disassemble::thumb(code, PC, config);
     }
 
-    inline u32 assemble_arm(const std::string &code, const u32 PC = 0) {
+    inline u32 assemble_arm(const std::string& code, const u32 PC = 0) {
         return internal::assemble::arm(code, PC);
     }
 
-    inline u32 assemble_thumb(const std::string &code, const u32 PC = 0) {
+    inline u32 assemble_thumb(const std::string& code, const u32 PC = 0) {
         return internal::assemble::thumb(code, PC);
     }
 
@@ -102,7 +102,7 @@ namespace llarm::as {
         return internal::validation::bin_arm::is_arm_instruction_valid(code);
     }
 
-    inline bool is_arm_instruction_valid(const std::string &code) {
+    inline bool is_arm_instruction_valid(const std::string& code) {
         return internal::validation::string_arm::is_arm_instruction_valid(code);
     }
 
@@ -110,7 +110,7 @@ namespace llarm::as {
         return internal::validation::bin_thumb::is_thumb_instruction_valid(code);
     }
 
-    inline bool is_thumb_instruction_valid(const std::string &code) {
+    inline bool is_thumb_instruction_valid(const std::string& code) {
         return internal::validation::string_thumb::is_thumb_instruction_valid(code);
     }
 

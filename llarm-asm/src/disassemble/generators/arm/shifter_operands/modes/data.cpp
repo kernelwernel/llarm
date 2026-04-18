@@ -55,14 +55,14 @@ std::string shifters::data_rrx(const u32 code, const settings& settings) {
 }
 
 
-std::string shifters::data_reg_pattern(const u32 code, const std::string &mode, const settings& settings) {
+std::string shifters::data_reg_pattern(const u32 code, const std::string&mode, const settings& settings) {
     const std::string Rs = util::reg_string(code, 8, 11, settings);
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     return util::make_string(Rm, ", ", mode, " ", Rs);
 }
 
 
-std::string shifters::data_imm_pattern(const u32 code, const std::string &mode, const settings& settings) {
+std::string shifters::data_imm_pattern(const u32 code, const std::string&mode, const settings& settings) {
     u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
 
     if (shift_imm == 0) {

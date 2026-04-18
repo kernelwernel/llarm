@@ -11,7 +11,7 @@
 using namespace internal;
 using enum token_enum;
 
-thumb_id ident::string_thumb::thumb(const std::string &code) {
+thumb_id ident::string_thumb::thumb(const std::string& code) {
     const std::string& assembly = llarm::util::to_upper(code);
     const sv mnemonic = interpreter::fetch_instruction(assembly);
 

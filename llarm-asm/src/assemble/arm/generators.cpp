@@ -5,9 +5,9 @@
 using namespace internal;
 
 
-u32 generators::arm(const IR_arm_struct &IR) {
+u32 generators::arm(const IR_arm_struct& IR) {
     const arm_id id = IR.mnemonic.id;
-    const operand_struct &operands = IR.operands;
+    const operand_struct& operands = IR.operands;
 
     switch (id) {
         case arm_id::UNKNOWN: return 0;

@@ -2,7 +2,7 @@
 #include <llarm/shared/util.hpp>
 #include <llarm/shared/out.hpp>
 
-u32 generators::vfp_mul_instructions(const arm_id id, const operand_struct &args) {
+u32 generators::vfp_mul_instructions(const arm_id id, const operand_struct& args) {
     u32 binary = 0;
 
     u8 bits_11_8 = 0;

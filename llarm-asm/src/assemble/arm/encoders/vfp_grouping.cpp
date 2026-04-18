@@ -2,7 +2,7 @@
 #include <llarm/shared/out.hpp>
 #include <llarm/shared/util.hpp>
 
-u32 generators::vfp_Dd_Dm_instructions(const arm_id id, const operand_struct &args) {
+u32 generators::vfp_Dd_Dm_instructions(const arm_id id, const operand_struct& args) {
     u32 binary = [=]() -> u32 {
         switch (id) {
             case arm_id::FABSD:  return 0b0000'1110'1011'0000'0000'1011'1100'0000;
@@ -23,7 +23,7 @@ u32 generators::vfp_Dd_Dm_instructions(const arm_id id, const operand_struct &ar
 }
 
 
-u32 generators::vfp_Dd_Dn_Dm_instructions(const arm_id id, const operand_struct &args) {
+u32 generators::vfp_Dd_Dn_Dm_instructions(const arm_id id, const operand_struct& args) {
     u32 binary = [=]() -> u32 {
         switch (id) {
             case arm_id::FADDD:  return 0b0000'1110'0011'0000'0000'1011'0000'0000;
@@ -48,7 +48,7 @@ u32 generators::vfp_Dd_Dn_Dm_instructions(const arm_id id, const operand_struct 
 }
 
 
-u32 generators::vfp_Sd_Sm_instructions(const arm_id id, const operand_struct &args) {
+u32 generators::vfp_Sd_Sm_instructions(const arm_id id, const operand_struct& args) {
     u32 binary = [=]() -> u32 {
         switch (id) {
             case arm_id::FABSS:  return 0b0000'1110'1011'0000'0000'1010'1100'0000; 
@@ -87,7 +87,7 @@ u32 generators::vfp_Sd_Sm_instructions(const arm_id id, const operand_struct &ar
 }
 
 
-u32 generators::vfp_Sd_Sn_Sm_instructions(const arm_id id, const operand_struct &args) {
+u32 generators::vfp_Sd_Sn_Sm_instructions(const arm_id id, const operand_struct& args) {
     u32 binary = [=]() -> u32 {
         switch (id) {
             case arm_id::FADDS:  return 0b0000'1110'0011'0000'0000'1010'0000'0000;
@@ -125,7 +125,7 @@ u32 generators::vfp_Sd_Sn_Sm_instructions(const arm_id id, const operand_struct 
 }
 
 
-u32 generators::vfp_Dd_Sm_instructions(const arm_id id, const operand_struct &args) {
+u32 generators::vfp_Dd_Sm_instructions(const arm_id id, const operand_struct& args) {
     u32 binary = [=]() -> u32 {
         switch (id) {
             case arm_id::FCVTDS: return 0b0000'1110'1011'0111'0000'1010'1100'0000;
@@ -150,7 +150,7 @@ u32 generators::vfp_Dd_Sm_instructions(const arm_id id, const operand_struct &ar
 }
 
 
-u32 generators::vfp_Sd_Dm_instructions(const arm_id id, const operand_struct &args) {
+u32 generators::vfp_Sd_Dm_instructions(const arm_id id, const operand_struct& args) {
     u32 binary = [=]() -> u32 {
         switch (id) {
             case arm_id::FCVTSD: return 0b0000'1110'1011'0111'0000'1011'1100'0000;

@@ -28,8 +28,8 @@ namespace internal::shifters {
     std::string shifter_to_string(const shifter_id shifter, const u32 code, const settings& settings);
 
     // defined in modes/data.cpp
-    std::string data_reg_pattern(const u32 code, const std::string &mode, const settings& settings);
-    std::string data_imm_pattern(const u32 code, const std::string &mode, const settings& settings);
+    std::string data_reg_pattern(const u32 code, const std::string&mode, const settings& settings);
+    std::string data_imm_pattern(const u32 code, const std::string&mode, const settings& settings);
     std::string data_imm(const u32 code, const settings& settings);
     std::string data_reg(const u32 code, const settings& settings);
     std::string data_rrx(const u32 code, const settings& settings);
@@ -41,9 +41,9 @@ namespace internal::shifters {
     std::string ls_reg(const u32 code, const settings& settings);
     std::string ls_reg_pre(const u32 code, const settings& settings);
     std::string ls_reg_post(const u32 code, const settings& settings);
-    std::string ls_reg_scaled(const u32 code, const std::string &mode, const settings& settings);
-    std::string ls_reg_scaled_pre(const u32 code, const std::string &mode, const settings& settings);
-    std::string ls_reg_scaled_post(const u32 code, const std::string &mode, const settings& settings);
+    std::string ls_reg_scaled(const u32 code, const std::string&mode, const settings& settings);
+    std::string ls_reg_scaled_pre(const u32 code, const std::string&mode, const settings& settings);
+    std::string ls_reg_scaled_post(const u32 code, const std::string&mode, const settings& settings);
     std::string ls_reg_scaled_rrx(const u32 code, const settings& settings);
     std::string ls_reg_scaled_pre_rrx(const u32 code, const settings& settings);
     std::string ls_reg_scaled_post_rrx(const u32 code, const settings& settings);

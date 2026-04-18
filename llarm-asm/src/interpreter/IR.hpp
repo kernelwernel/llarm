@@ -10,6 +10,6 @@
 using namespace internal;
 
 namespace IR {
-    IR_arm_struct generate(const std::string &code, const u32 PC = 0);
-    IR_thumb_struct generate_thumb(const std::string &code, const u32 PC = 0);
+    IR_arm_struct generate(const std::string& code, const u32 PC = 0);
+    IR_thumb_struct generate_thumb(const std::string& code, const u32 PC = 0);
 }

@@ -18,7 +18,7 @@ using enum token_enum;
 //};
 
 
-mnemonic_struct_thumb mnemonic_thumb::thumb(const std::string &code) {
+mnemonic_struct_thumb mnemonic_thumb::thumb(const std::string& code) {
     const std::string& assembly = llarm::util::to_upper(code);
     const sv mnemonic = interpreter::fetch_instruction(assembly);
 
@@ -33,7 +33,7 @@ mnemonic_struct_thumb mnemonic_thumb::thumb(const std::string &code) {
 }
 
 thumb_id mnemonic_thumb::fetch_thumb_id(const sv code, const sv mnemonic) {
-    for (const auto &inst : pure_thumb_instructions) {
+    for (const auto& inst : pure_thumb_instructions) {
         if (mnemonic == inst.str) {
             return inst.id;
         }
@@ -45,7 +45,7 @@ thumb_id mnemonic_thumb::fetch_thumb_id(const sv code, const sv mnemonic) {
 
     const lexemes_t lexemes = interpreter::analyze(code);
 
-    for (const auto &inst : thumb_subinstructions) {
+    for (const auto& inst : thumb_subinstructions) {
         if (mnemonic != inst.str) {
             continue;
         }
@@ -90,7 +90,7 @@ cond_id mnemonic_thumb::fetch_B1_cond_id(sv mnemonic) {
     return interpreter::fetch_cond_id(mnemonic);
 }
 
-thumb_id mnemonic_thumb::ADD(const lexemes_t &lexemes) {
+thumb_id mnemonic_thumb::ADD(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     // ADD1
@@ -133,7 +133,7 @@ thumb_id mnemonic_thumb::ADD(const lexemes_t &lexemes) {
 }
 
 
-thumb_id mnemonic_thumb::SUB(const lexemes_t &lexemes) {
+thumb_id mnemonic_thumb::SUB(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     // SUB1
@@ -160,7 +160,7 @@ thumb_id mnemonic_thumb::SUB(const lexemes_t &lexemes) {
 }
 
 
-thumb_id mnemonic_thumb::ASR(const lexemes_t &lexemes) {
+thumb_id mnemonic_thumb::ASR(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     // ASR1
@@ -177,7 +177,7 @@ thumb_id mnemonic_thumb::ASR(const lexemes_t &lexemes) {
 }
 
 
-thumb_id mnemonic_thumb::LSL(const lexemes_t &lexemes) {
+thumb_id mnemonic_thumb::LSL(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     // LSL1
@@ -194,7 +194,7 @@ thumb_id mnemonic_thumb::LSL(const lexemes_t &lexemes) {
 }
 
 
-thumb_id mnemonic_thumb::LSR(const lexemes_t &lexemes) {
+thumb_id mnemonic_thumb::LSR(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     // LSR1
@@ -211,7 +211,7 @@ thumb_id mnemonic_thumb::LSR(const lexemes_t &lexemes) {
 }
 
 
-thumb_id mnemonic_thumb::CMP(const lexemes_t &lexemes) {
+thumb_id mnemonic_thumb::CMP(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     // CMP1
@@ -233,7 +233,7 @@ thumb_id mnemonic_thumb::CMP(const lexemes_t &lexemes) {
 }
 
 
-thumb_id mnemonic_thumb::MOV(const lexemes_t &lexemes) {
+thumb_id mnemonic_thumb::MOV(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     // MOV1
@@ -255,7 +255,7 @@ thumb_id mnemonic_thumb::MOV(const lexemes_t &lexemes) {
 }
 
 
-thumb_id mnemonic_thumb::BLX(const lexemes_t &lexemes) {
+thumb_id mnemonic_thumb::BLX(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     // BLX1
@@ -272,7 +272,7 @@ thumb_id mnemonic_thumb::BLX(const lexemes_t &lexemes) {
 }
 
 
-thumb_id mnemonic_thumb::LDR(const lexemes_t &lexemes) {
+thumb_id mnemonic_thumb::LDR(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     // LDR1
@@ -300,7 +300,7 @@ thumb_id mnemonic_thumb::LDR(const lexemes_t &lexemes) {
 }
 
 
-thumb_id mnemonic_thumb::LDRB(const lexemes_t &lexemes) {
+thumb_id mnemonic_thumb::LDRB(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     // LDRB1
@@ -317,7 +317,7 @@ thumb_id mnemonic_thumb::LDRB(const lexemes_t &lexemes) {
 }
 
 
-thumb_id mnemonic_thumb::LDRH(const lexemes_t &lexemes) {
+thumb_id mnemonic_thumb::LDRH(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     // LDRH1
@@ -334,7 +334,7 @@ thumb_id mnemonic_thumb::LDRH(const lexemes_t &lexemes) {
 }
 
 
-thumb_id mnemonic_thumb::STR(const lexemes_t &lexemes) {
+thumb_id mnemonic_thumb::STR(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     // STR1
@@ -356,7 +356,7 @@ thumb_id mnemonic_thumb::STR(const lexemes_t &lexemes) {
 }
 
 
-thumb_id mnemonic_thumb::STRB(const lexemes_t &lexemes) {
+thumb_id mnemonic_thumb::STRB(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     // STRB1
@@ -373,7 +373,7 @@ thumb_id mnemonic_thumb::STRB(const lexemes_t &lexemes) {
 }
 
 
-thumb_id mnemonic_thumb::STRH(const lexemes_t &lexemes) {
+thumb_id mnemonic_thumb::STRH(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     // STRH1

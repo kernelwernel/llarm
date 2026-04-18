@@ -6,5 +6,5 @@
 
 
 namespace internal::ident::string_thumb {
-    thumb_id thumb(const std::string &code);
+    thumb_id thumb(const std::string& code);
 }

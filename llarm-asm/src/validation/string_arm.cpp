@@ -11,17 +11,17 @@
 using namespace internal;
 
 
-bool validation::string_arm::is_arm_instruction_valid(const std::string &code, const u32 PC) {
+bool validation::string_arm::is_arm_instruction_valid(const std::string& code, const u32 PC) {
     return is_arm_instruction_valid(IR::generate(code, PC));
 }
 
 
-bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct &IR) {
+bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct& IR) {
     using namespace interpreter;
     using enum token_enum;
     using enum reg_type;
 
-    const lexemes_t &lexemes = IR.lexemes;
+    const lexemes_t& lexemes = IR.lexemes;
 
     switch (IR.mnemonic.id) {
         case arm_id::UNKNOWN: return false;
@@ -284,7 +284,7 @@ bool validation::string_arm::is_data_processing_valid(lexemes_t lexemes, const s
 }
 
 
-bool validation::string_arm::is_ls_valid(const lexemes_t &lexemes, const shifter_id shifter_id, const arm_id id) {
+bool validation::string_arm::is_ls_valid(const lexemes_t& lexemes, const shifter_id shifter_id, const arm_id id) {
     using namespace interpreter;
     using enum token_enum;
 

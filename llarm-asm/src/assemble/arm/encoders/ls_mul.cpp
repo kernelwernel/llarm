@@ -4,7 +4,7 @@
 #include <llarm/shared/out.hpp>
 
 // format: LDM|STM{<cond>}<addressing_mode> <Rn>{!}, <registers>{^}
-u32 generators::ls_mul_instruction(const arm_id id, const operand_struct &args) {
+u32 generators::ls_mul_instruction(const arm_id id, const operand_struct& args) {
     u32 binary = 0;
 
     llarm::util::modify_bit(binary, 27, true);

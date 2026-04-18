@@ -11,7 +11,7 @@
 using namespace internal;
 using enum token_enum;
     
-shifter_id ident::string_shifters::data_instruction(const lexemes_t &lexemes) {
+shifter_id ident::string_shifters::data_instruction(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     if (verify_tokens(make_tokens(REG, REG, HASHTAG, IMMED), lexemes)) {
@@ -68,7 +68,7 @@ shifter_id ident::string_shifters::data_instruction(const lexemes_t &lexemes) {
 
 
 // PLD has an exception to its addressing mode format
-shifter_id ident::string_shifters::ls_instruction_PLD(const lexemes_t &lexemes) {
+shifter_id ident::string_shifters::ls_instruction_PLD(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     if (verify_tokens(make_tokens(MEM_START, REG, HASHTAG, HASHTAG, IMMED, MEM_END), lexemes)) {
@@ -99,7 +99,7 @@ shifter_id ident::string_shifters::ls_instruction_PLD(const lexemes_t &lexemes) 
 }
 
 
-shifter_id ident::string_shifters::ls_instruction(const lexemes_t &lexemes) {
+shifter_id ident::string_shifters::ls_instruction(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     if (verify_tokens(make_tokens(REG, MEM_START, REG, HASHTAG, IMMED, MEM_END), lexemes)) {
@@ -178,7 +178,7 @@ shifter_id ident::string_shifters::ls_instruction(const lexemes_t &lexemes) {
 }
 
 
-shifter_id ident::string_shifters::ls_misc_instruction(const lexemes_t &lexemes) {
+shifter_id ident::string_shifters::ls_misc_instruction(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     if (verify_tokens(make_tokens(REG, MEM_START, REG, HASHTAG, IMMED, MEM_END), lexemes)) {
@@ -231,7 +231,7 @@ shifter_id ident::string_shifters::ls_mul_instruction(const sv mnemonic) {
 }
 
 
-shifter_id ident::string_shifters::ls_coproc_instruction(const lexemes_t &lexemes) {
+shifter_id ident::string_shifters::ls_coproc_instruction(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     if (verify_tokens(make_tokens(REG, REG, MEM_START, REG, HASHTAG, IMMED, MUL_OP, IMMED, MEM_END), lexemes)) {
@@ -254,7 +254,7 @@ shifter_id ident::string_shifters::ls_coproc_instruction(const lexemes_t &lexeme
 }
 
 
-shifter_id ident::string_shifters::vfp_mul_instruction(const lexemes_t &lexemes, sv mnemonic) {
+shifter_id ident::string_shifters::vfp_mul_instruction(const lexemes_t& lexemes, sv mnemonic) {
     using namespace interpreter;
     
     const u16 cond = fetch_last_2_chars(mnemonic);
@@ -295,7 +295,7 @@ shifter_id ident::string_shifters::vfp_mul_instruction(const lexemes_t &lexemes,
 }
 
 
-shifter_id ident::string_shifters::identify_shifter(const lexemes_t &lexemes, const mnemonic_struct_arm &mnemonic) {
+shifter_id ident::string_shifters::identify_shifter(const lexemes_t& lexemes, const mnemonic_struct_arm& mnemonic) {
     const arm_id id = mnemonic.id;
     const sv instruction = mnemonic.instruction;
 
@@ -383,6 +383,6 @@ shifter_id ident::string_shifters::identify_shifter(const IR_arm_struct &&IR) {
     return identify_shifter(IR.lexemes, IR.mnemonic);
 }
 
-shifter_id ident::string_shifters::identify_shifter(const std::string &code) {
+shifter_id ident::string_shifters::identify_shifter(const std::string& code) {
     return identify_shifter(IR::generate(code));
 }

@@ -94,18 +94,18 @@ namespace internal::mnemonic_thumb {
 
     mnemonic_struct_thumb thumb(const std::string& code);
 
-    thumb_id ADD(const lexemes_t &lexemes);
-    thumb_id SUB(const lexemes_t &lexemes);
-    thumb_id ASR(const lexemes_t &lexemes);
-    thumb_id LSL(const lexemes_t &lexemes);
-    thumb_id LSR(const lexemes_t &lexemes);
-    thumb_id CMP(const lexemes_t &lexemes);
-    thumb_id MOV(const lexemes_t &lexemes);
-    thumb_id BLX(const lexemes_t &lexemes);
-    thumb_id LDR(const lexemes_t &lexemes);
-    thumb_id LDRB(const lexemes_t &lexemes);
-    thumb_id LDRH(const lexemes_t &lexemes);
-    thumb_id STR(const lexemes_t &lexemes);
-    thumb_id STRB(const lexemes_t &lexemes);
-    thumb_id STRH(const lexemes_t &lexemes);
+    thumb_id ADD(const lexemes_t& lexemes);
+    thumb_id SUB(const lexemes_t& lexemes);
+    thumb_id ASR(const lexemes_t& lexemes);
+    thumb_id LSL(const lexemes_t& lexemes);
+    thumb_id LSR(const lexemes_t& lexemes);
+    thumb_id CMP(const lexemes_t& lexemes);
+    thumb_id MOV(const lexemes_t& lexemes);
+    thumb_id BLX(const lexemes_t& lexemes);
+    thumb_id LDR(const lexemes_t& lexemes);
+    thumb_id LDRB(const lexemes_t& lexemes);
+    thumb_id LDRH(const lexemes_t& lexemes);
+    thumb_id STR(const lexemes_t& lexemes);
+    thumb_id STRB(const lexemes_t& lexemes);
+    thumb_id STRH(const lexemes_t& lexemes);
 }

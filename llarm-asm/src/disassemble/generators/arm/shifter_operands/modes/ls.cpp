@@ -69,7 +69,7 @@ std::string shifters::ls_reg_post(const u32 code, const settings& settings) {
 
 
 
-std::string shifters::ls_reg_scaled(const u32 code, const std::string &mode, const settings& settings) {
+std::string shifters::ls_reg_scaled(const u32 code, const std::string&mode, const settings& settings) {
     const std::string Rn = util::reg_string(code, 16, 19, settings);
     const std::string Rm = util::reg_string(code, 0, 3, settings);
 
@@ -85,12 +85,12 @@ std::string shifters::ls_reg_scaled(const u32 code, const std::string &mode, con
 }
 
 
-std::string shifters::ls_reg_scaled_pre(const u32 code, const std::string &mode, const settings& settings) {
+std::string shifters::ls_reg_scaled_pre(const u32 code, const std::string&mode, const settings& settings) {
     return (ls_reg_scaled(code, mode, settings) + "!");
 }
 
 
-std::string shifters::ls_reg_scaled_post(const u32 code, const std::string &mode, const settings& settings) {
+std::string shifters::ls_reg_scaled_post(const u32 code, const std::string&mode, const settings& settings) {
     const std::string Rn = util::reg_string(code, 16, 19, settings);
     const std::string Rm = util::reg_string(code, 0, 3, settings);
 

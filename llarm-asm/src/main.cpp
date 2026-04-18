@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
     std::string payload;
 
     for (const auto arg_string : args) {
-        auto it = std::find_if(table.cbegin(), table.cend(), [&](const auto &p) {
+        auto it = std::find_if(table.cbegin(), table.cend(), [&](const auto& p) {
             return (std::strcmp(arg_string, p.first) == 0);
         });
 
