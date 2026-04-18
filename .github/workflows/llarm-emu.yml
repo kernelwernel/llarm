@@ -1,0 +1,44 @@
+name: llarm-emu
+
+# llarm-emu depends on llarm-asm, which is why it's included here
+
+on:
+  push:
+    paths:
+      - 'llarm-emu/**/*.cpp'
+      - 'llarm-emu/**/*.hpp'
+      - 'llarm-asm/**/*.cpp'
+      - 'llarm-asm/**/*.hpp'
+      - 'shared/**'
+  pull_request:
+    paths:
+      - 'llarm-emu/**/*.cpp'
+      - 'llarm-emu/**/*.hpp'
+      - 'llarm-asm/**/*.cpp'
+      - 'llarm-asm/**/*.hpp'
+      - 'shared/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install CMake 3.29
+        run: |
+          wget -qO - https://apt.kitware.com/keys/kitware-archive-latest.asc \
+            | gpg --dearmor \
+            | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg > /dev/null
+          echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ noble main' \
+            | sudo tee /etc/apt/sources.list.d/kitware.list > /dev/null
+          sudo apt-get update -q
+          sudo apt-get install -y cmake
+
+      - name: Configure
+        run: |
+          cmake -S llarm-emu -B llarm-emu/build \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build llarm-emu/build --parallel
