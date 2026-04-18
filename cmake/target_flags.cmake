@@ -1,4 +1,5 @@
 include(${CMAKE_CURRENT_LIST_DIR}/flags.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/clang_tidy.cmake)
 
 function(configure_target_flags TARGET)
     set(CXX_FLAGS)
@@ -36,4 +37,5 @@ function(configure_target_flags TARGET)
     endif()
 
     target_compile_options(${TARGET} PRIVATE ${CXX_FLAGS})
+    configure_clang_tidy(${TARGET})
 endfunction()

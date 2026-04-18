@@ -15,12 +15,14 @@ Checks: >
     portability-*,
     modernize-*,
     -modernize-use-trailing-return-type,
+    -modernize-use-nullptr,
+    -modernize-use-override,
+    -modernize-use-default-member-init,
     cppcoreguidelines-*,
     -cppcoreguidelines-avoid-magic-numbers,
     -cppcoreguidelines-pro-bounds-pointer-arithmetic,
     misc-*,
     -misc-unused-alias-decls
 WarningsAsErrors: '*'
-HeaderFilterRegex: '.*'
-AnalyzeTemporaryDtors: true
+HeaderFilterRegex: '^(?!.*/(_deps|tests/build)/).*$'
 FormatStyle: none

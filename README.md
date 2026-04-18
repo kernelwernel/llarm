@@ -17,6 +17,14 @@
 | [`llarm-cpu`](#llarm-cpu) | Runtime ARM CPU identification for C and C++ |
 | [`llarm-rand`](#llarm-rand) | Random instruction and binary generation for stress-testing |
 
+
+> [!NOTE]
+> **Note from the developer**
+>
+> This project is the result of nearly 2 years of work and ~40k lines of C++. In its current state it targets AArch32 only and is not yet ready for production use. The long-term goal is full AArch64 support and to grow LLARM into a practical framework for embedded and low-level ARM development as a foundation for others to build on, much like LLVM in the compiler world.
+>
+> I published the current progress in early April 2026 to gather feedback and share what's been built so far. Contributions and suggestions are very welcome.
+
 - - -
 
 ## llarm-asm
@@ -159,12 +167,3 @@ Individual subprojects can be built independently from their own directories usi
 ## License
 
 LLARM is released under the [Apache 2.0 License](LICENSE). All subprojects share the same license.
-
-- - -
-
-> [!NOTE]
-> **Note from the developer**
->
-> This project is the result of nearly 2 years of work and ~40k lines of C++. In its current state it targets AArch32 only and is not yet ready for production use. The long-term goal is full AArch64 support and to grow LLARM into a practical framework for embedded and low-level ARM development as a foundation for others to build on, much like LLVM in the compiler world.
->
-> I published the current progress in early April 2026 to gather feedback and share what's been built so far. Contributions and suggestions are very welcome.
