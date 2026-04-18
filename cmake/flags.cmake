@@ -42,6 +42,9 @@ set(CLANG_CXX_FLAGS
     -Wdouble-promotion
     -Wformat=2
     -Wimplicit-fallthrough
+)
+
+set(CLANG_ONLY_CXX_FLAGS
     -Wnrvo
 )
 
@@ -59,7 +62,6 @@ set(GCC_CXX_FLAGS
     -Wlogical-op
     -Wuseless-cast
     -Wsuggest-override
-    -Wnrvo
     -Wno-shadow
     -Wno-error=return-type # GCC doesn't propagate [[noreturn]] through template instantiations
 )
@@ -77,7 +79,6 @@ set(LINUX_RELEASE_CXX_FLAGS
     -Wextra
     #-Wshadow
     -Wunused
-    -Wno-unused-private-field # TEMPORARY
     -Wno-unused-parameter # TEMPORARY
     -Wno-return-type # TEMPORARY
     -Wno-unused-variable # TEMPORARY
@@ -105,7 +106,6 @@ set(LINUX_DEBUG_CXX_FLAGS
     -Wno-unused-parameter
     -Wno-unused-variable
     -Wno-unused-function
-    -Wno-unused-private-field
 )
 
 
