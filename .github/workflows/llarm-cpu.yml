@@ -8,6 +8,7 @@ on:
       - 'llarm-cpu/**/CMakeLists.txt'
       - 'llarm-cpu/**/*.cmake'
       - 'llarm-cpu/**/*.cmake.in'
+      - 'cmake/**'
       - 'shared/**'
   pull_request:
     paths:
@@ -16,6 +17,7 @@ on:
       - 'llarm-cpu/**/CMakeLists.txt'
       - 'llarm-cpu/**/*.cmake'
       - 'llarm-cpu/**/*.cmake.in'
+      - 'cmake/**'
       - 'shared/**'
 
 jobs:

@@ -8,6 +8,7 @@ on:
       - 'llarm-asm/**/CMakeLists.txt'
       - 'llarm-asm/**/*.cmake'
       - 'llarm-asm/**/*.cmake.in'
+      - 'cmake/**'
       - 'shared/**'
   pull_request:
     paths:
@@ -16,6 +17,7 @@ on:
       - 'llarm-asm/**/CMakeLists.txt'
       - 'llarm-asm/**/*.cmake'
       - 'llarm-asm/**/*.cmake.in'
+      - 'cmake/**'
       - 'shared/**'
 
 jobs:
