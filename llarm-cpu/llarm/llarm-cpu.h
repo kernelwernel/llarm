@@ -2,6 +2,18 @@
     #define is_not_arm 1
 #endif
 
+#ifdef __cplusplus
+    #include <cstdint>
+#else
+    #include <stdint.h>
+#endif
+
+#if defined(__GNUC__) || defined(__clang__)
+    #define LLARM_UNUSED __attribute__((unused))
+#else
+    #define LLARM_UNUSED
+#endif
+
 #ifndef __cplusplus
 typedef unsigned char bool;
 #define true  1
@@ -301,7 +313,7 @@ static unsigned int llarm_cpu_fetch_ppn() {
 }
 
 
-static unsigned int llarm_cpu_fetch_variant() {
+static LLARM_UNUSED unsigned int llarm_cpu_fetch_variant() {
 #if defined(is_not_arm)
     return 0;
 #else
@@ -322,11 +334,13 @@ static enum implementor llarm_cpu_fetch_implementor() {
 #if defined(is_not_arm)
     return IMPL_UNKNOWN;
 #else
+    uint32_t implementor_bits;
+
     if (llarm_cpu_is_pre_arm7()) {
         return IMPL_UNKNOWN;
     }
 
-    const uint32_t implementor_bits = llarm_cpu_fetch_bits(llarm_cpu_fetch_midr(), 31, 24);
+    implementor_bits = llarm_cpu_fetch_bits(llarm_cpu_fetch_midr(), 31, 24);
 
     switch (implementor_bits) {
         case 0x41: return IMPL_ARM;
@@ -354,7 +368,7 @@ static enum implementor llarm_cpu_fetch_implementor() {
 #endif
 }
 
-static const char* llarm_cpu_fetch_implementor_string() {
+static LLARM_UNUSED const char* llarm_cpu_fetch_implementor_string() {
 #if defined(is_not_arm)
     return "UNKNOWN";
 #else
@@ -391,13 +405,18 @@ static enum product llarm_cpu_fetch_product() {
 #if defined(is_not_arm)
     return PROD_UNKNOWN;
 #else
-    const uint32_t midr = llarm_cpu_fetch_midr();
+    uint32_t midr;
+    uint32_t product_code;
+    uint32_t ppn;
+    enum implementor impl;
+
+    midr = llarm_cpu_fetch_midr();
 
     if (midr == 0) {
         return PROD_UNKNOWN;
     }
 
-    const uint32_t product_code = midr & 0xFFFFFFF0;
+    product_code = midr & 0xFFFFFFF0;
 
     /* see https://github.com/NetBSD/src/blob/cce745e5e7843c99aabeec982cea42f75700d5b0/sys/arch/arm/include/cputypes.h#L116 */
 
@@ -424,8 +443,8 @@ static enum product llarm_cpu_fetch_product() {
     }
 
     /* post-ARM7 */
-    const uint32_t ppn  = llarm_cpu_fetch_ppn();
-    const enum implementor impl = llarm_cpu_fetch_implementor();
+    ppn  = llarm_cpu_fetch_ppn();
+    impl = llarm_cpu_fetch_implementor();
 
     if (impl == IMPL_ARM) {
         switch (ppn) {
@@ -772,8 +791,11 @@ static enum arch llarm_cpu_fetch_arch() {
 #if defined(is_not_arm)
     return ARCH_UNKNOWN;
 #else
+    uint32_t midr;
+    uint32_t arch_bits;
+
     if (llarm_cpu_is_pre_arm7()) {
-        const enum product prod = llarm_cpu_fetch_product();
+        enum product prod = llarm_cpu_fetch_product();
 
         switch (prod) {
             case PROD_ARM3: return ARCH_ARMv2a;
@@ -785,12 +807,12 @@ static enum arch llarm_cpu_fetch_arch() {
         }
     }
 
-    const uint32_t midr = llarm_cpu_fetch_midr();
+    midr = llarm_cpu_fetch_midr();
 
     /* B2-8 */
     if (llarm_cpu_is_arm7()) {
         /* this is literally called the A bit in the ARM docs */
-        const bool A = ((midr >> 23) & 1);
+        bool A = ((midr >> 23) & 1);
 
         if (A) {
             return ARCH_ARMv4T;
@@ -800,7 +822,7 @@ static enum arch llarm_cpu_fetch_arch() {
     }
 
     /* B2-7 */
-    const uint32_t arch_bits = llarm_cpu_fetch_bits(midr, 19, 16);
+    arch_bits = llarm_cpu_fetch_bits(midr, 19, 16);
 
     switch (arch_bits) {
         case 0x1: return ARCH_ARMv4;
@@ -816,7 +838,7 @@ static enum arch llarm_cpu_fetch_arch() {
 }
 
 
-static const char* llarm_cpu_fetch_arch_string(const enum arch arch) {
+static LLARM_UNUSED const char* llarm_cpu_fetch_arch_string(const enum arch arch) {
     switch (arch) {
         case ARCH_UNKNOWN: return "UNKNOWN";
         case ARCH_ARMv1: return "ARMv1";

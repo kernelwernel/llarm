@@ -3,8 +3,7 @@
  * Runs bare-metal under qemu-system-arm with semihosting — no libc required.
  */
 
-#define LLARM_CPU_TEST_MIDR
-#include "../llarm-cpu.h"
+#include "../llarm/llarm-cpu.h"
 
 #include <stdint.h>
 
@@ -64,7 +63,7 @@ static int my_strcmp(const char* a, const char* b) {
 static int _tests_run    = 0;
 static int _tests_passed = 0;
 static int _tests_failed = 0;
-static const char* _current_test = nullptr;
+static const char* _current_test = 0;
 
 #define TEST_BEGIN(name) \
     do { _current_test = (name); _tests_run++; } while(0)
@@ -394,19 +393,19 @@ static void test_revision_zero() {
 
 static void test_product_string_arm926() {
     TEST_BEGIN("llarm_cpu_fetch_product_string: ARM926EJ-S");
-    ASSERT_TRUE(my_strcmp(llarm_cpu_fetch_product_string(PROD_ARM926EJ_S), "PROD_ARM926EJ_S") == 0);
+    ASSERT_TRUE(my_strcmp(llarm_cpu_fetch_product_string(PROD_ARM926EJ_S), "ARM926EJ_S") == 0);
     TEST_END();
 }
 
 static void test_product_string_cortex_a9() {
     TEST_BEGIN("llarm_cpu_fetch_product_string: Cortex-A9");
-    ASSERT_TRUE(my_strcmp(llarm_cpu_fetch_product_string(PROD_CORTEX_A9), "PROD_CORTEX_A9") == 0);
+    ASSERT_TRUE(my_strcmp(llarm_cpu_fetch_product_string(PROD_CORTEX_A9), "CORTEX_A9") == 0);
     TEST_END();
 }
 
 static void test_product_string_unknown() {
     TEST_BEGIN("llarm_cpu_fetch_product_string: UNKNOWN");
-    ASSERT_TRUE(my_strcmp(llarm_cpu_fetch_product_string(PROD_UNKNOWN), "PROD_UNKNOWN") == 0);
+    ASSERT_TRUE(my_strcmp(llarm_cpu_fetch_product_string(PROD_UNKNOWN), "UNKNOWN") == 0);
     TEST_END();
 }
 

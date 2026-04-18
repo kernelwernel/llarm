@@ -4,25 +4,22 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUT="$SCRIPT_DIR/test_arm"
 
-# ---------------------------------------------------------------------------
 # Two execution modes:
 #
-#   MODE 1 — Linux user-mode (preferred, needs arm-linux-gnueabi cross-compiler)
+#   MODE 1 => Linux user-mode (preferred, needs arm-linux-gnueabi cross-compiler)
 #     Compiler : arm-linux-gnueabi-g++ / arm-linux-gnueabihf-g++
 #     Runner   : qemu-arm -cpu arm926
 #     Install  : yay -S arm-linux-gnueabihf-gcc && sudo pacman -S qemu-user  (Arch)
-#              : sudo apt install g++-arm-linux-gnueabi qemu-user              (Debian/Ubuntu)
+#              : sudo apt install g++-arm-linux-gnueabi qemu-user            (Debian/Ubuntu)
 #
-#   MODE 2 — Bare-metal semihosting (no newlib — works with arm-none-eabi-g++ as shipped)
+#   MODE 2 => Bare-metal semihosting (no newlib, works with arm-none-eabi-g++ as shipped)
 #     Compiler : arm-none-eabi-g++ -nostdlib, startup.S provides _start + semihosting exit
 #     Runner   : qemu-system-arm -M versatilepb (ARM926EJ-S) with semihosting
-#     Install  : sudo pacman -S qemu-system-arm  (Arch — already installed if you have qemu)
-#
-# ---------------------------------------------------------------------------
+#     Install  : sudo pacman -S qemu-system-arm  (Arch, already installed if you have qemu)
 
 CXXFLAGS="-march=armv5te -mfloat-abi=soft -DLLARM_CPU_TEST_MIDR -Wall -Wextra"
 
-# --- Try mode 1 first -------------------------------------------------------
+# MODE 1:
 
 ARM_CXX_LINUX=""
 for candidate in arm-linux-gnueabi-g++ arm-linux-gnueabihf-g++; do
@@ -46,7 +43,7 @@ if [ -n "$ARM_CXX_LINUX" ] && command -v qemu-arm &>/dev/null; then
     qemu-arm -cpu arm926 "$OUT"
     EXIT_CODE=$?
 
-# --- Fall back to mode 2 (bare-metal semihosting, no newlib needed) ---------
+# MODE 2 FALLBACK:
 
 elif command -v arm-none-eabi-g++ &>/dev/null && command -v qemu-system-arm &>/dev/null; then
     echo "Mode     : bare-metal semihosting (qemu-system-arm versatilepb / ARM926EJ-S)"
