@@ -17,7 +17,7 @@ OUT="$SCRIPT_DIR/test_arm"
 #     Runner   : qemu-system-arm -M versatilepb (ARM926EJ-S) with semihosting
 #     Install  : sudo pacman -S qemu-system-arm  (Arch, already installed if you have qemu)
 
-CXXFLAGS="-march=armv5te -mfloat-abi=soft -DLLARM_CPU_TEST_MIDR -Wall -Wextra"
+CXXFLAGS="-march=armv5te -mfloat-abi=soft -DLLARM_CPU_TEST_MIDR -Wall -Wextra -static"
 
 # MODE 1:
 
