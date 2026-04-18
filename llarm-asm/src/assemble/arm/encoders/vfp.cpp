@@ -1,4 +1,5 @@
 #include "../generators.hpp"
+#include <llarm/shared/out.hpp>
 #include <llarm/shared/util.hpp>
 
 u32 generators::fcmpezd(const operand_struct &args) {
@@ -111,6 +112,7 @@ u32 generators::fmrx(const operand_struct &args) {
     u8 reg = 0;
 
     switch (args.vfp_special_reg) {
+        case vfp_special_reg_enum::UNKNOWN: llarm::out::dev_error("Invalid FMRX special VFP register argument");
         case vfp_special_reg_enum::NONE: break;
         case vfp_special_reg_enum::FPSID: break; // set to 0 already
         case vfp_special_reg_enum::FPSCR: reg = 1; break;
@@ -148,6 +150,7 @@ u32 generators::fmxr(const operand_struct &args) {
     u8 reg = 0;
 
     switch (args.vfp_special_reg) {
+        case vfp_special_reg_enum::UNKNOWN: llarm::out::dev_error("Invalid FMRX special VFP register argument");
         case vfp_special_reg_enum::NONE: break;
         case vfp_special_reg_enum::FPSID: break; // set to 0 already
         case vfp_special_reg_enum::FPSCR: reg = 1; break;

@@ -13,7 +13,7 @@
 
 using namespace internal;
 
-std::string disassemble::thumb_generate(const u32 code, const u32 PC, const settings settings) {
+std::string disassemble::thumb_generate(const u32 code, const u32 PC, const settings& settings) {
     const thumb_id id = ident::bin_thumb::thumb(code);
 
     switch (id) {
@@ -89,7 +89,7 @@ std::string disassemble::thumb_generate(const u32 code, const u32 PC, const sett
 }
 
 
-std::string disassemble::arm_generate(const u32 code, const u32 PC, const settings settings) {
+std::string disassemble::arm_generate(const u32 code, const u32 PC, const settings& settings) {
     const arm_id id = ident::bin_arm::arm(code);
 
     switch (id) {
@@ -243,7 +243,7 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
 }
 
 
-std::string disassemble::arm(const u32 code, const u32 PC, const settings settings) {
+std::string disassemble::arm(const u32 code, const u32 PC, const settings& settings) {
     std::string instruction = arm_generate(code, PC, settings);
 
     if (settings.capitals == false) {
@@ -254,7 +254,7 @@ std::string disassemble::arm(const u32 code, const u32 PC, const settings settin
 }
 
 
-std::string disassemble::thumb(const u32 code, const u32 PC, const settings settings) {
+std::string disassemble::thumb(const u32 code, const u32 PC, const settings& settings) {
     std::string instruction = thumb_generate(code, PC, settings);
 
     if (settings.capitals == false) {

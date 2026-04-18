@@ -26,6 +26,7 @@ void encoders::encode_imm(u32 &binary, const u32 immed) {
         if ((rotated & 0xFFFFFF00) == 0) {
             llarm::util::swap_bits(binary, 8, 11, rotated);
             llarm::util::swap_bits(binary, 0, 7, immed);
+            break;
         }
     }
 }

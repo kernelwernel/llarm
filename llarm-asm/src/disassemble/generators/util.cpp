@@ -436,17 +436,10 @@ std::string util::vfp_register_list(const u8 first_reg, const u8 offset, const s
     }
 
     const u8 reg_count = (offset >> (prefix == util::prefix::S ? 0 : 1));
-    
-    std::vector<u8> reg_nums;
-    reg_nums.reserve(reg_count);
-    
-    for (u8 i = first_reg; i < offset; i++) {
-        reg_nums.push_back(i);
-    }
 
-    std::string tmp(static_cast<u32>((reg_count) * 5) + 4, '\0'); // just an approximation, not exact but it should do the job 
-    
-    tmp += "{ ";
+    std::string tmp;
+    tmp.reserve(static_cast<u32>(reg_count * 5) + 4);
+    tmp = "{ ";
     
     for (u8 i = first_reg; i < offset; i++) {
         if (i != first_reg) {
@@ -499,12 +492,14 @@ std::string util::hex(const u32 integer, const settings settings) {
             s[byte * 2 + 1] = lut[pos + 1];
         }
 
-        auto first_nonzero = s.find_first_not_of('0');
+        const auto first_nonzero = s.find_first_not_of('0');
 
+        ret.reserve(10);
+        ret = "0x";
         if (first_nonzero == std::string::npos) {
-            ret = "0x0";
+            ret += '0';
         } else {
-            ret = ("0x" + s.substr(first_nonzero));
+            ret.append(s, first_nonzero);
         }
     } else {
         ret = std::to_string(integer);

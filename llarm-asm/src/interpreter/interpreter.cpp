@@ -21,8 +21,12 @@ sv interpreter::fetch_instruction(const sv code) {
 
 
 u16 interpreter::fetch_last_2_chars(const sv str) {
-    const sv sub = (str.substr(str.size() - 2));
-    return static_cast<u16>((sub.at(0) << 8) | sub.at(1));
+    if (str.size() < 2) {
+        return 0;
+    }
+
+    const sv sub = str.substr(str.size() - 2);
+    return static_cast<u16>((sub[0] << 8) | sub[1]);
 };
 
 

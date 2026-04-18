@@ -1,3 +1,5 @@
+#pragma once
+
 #include <llarm/shared/types.hpp>
 
 namespace encoders {

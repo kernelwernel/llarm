@@ -183,7 +183,7 @@ IMM matchers::immediate(sv str) {
     };
 
     // check for unnacceptable chars 
-    if (str.find_first_not_of("+-X0123456789ABCDEF") == std::string::npos) {
+    if (str.find_first_not_of("+-X0123456789ABCDEF") != std::string::npos) {
         imm.is_invalid = true;
         return imm;
     }

@@ -140,7 +140,7 @@ Individual subprojects can be built independently from their own directories usi
 
 - - -
 
-## Development roadmap
+## Development roadmap and dependency tree
 
 <br>
 <img align="center" src="assets/roadmap/llarm_roadmap.png" title="LLARM roadmap">

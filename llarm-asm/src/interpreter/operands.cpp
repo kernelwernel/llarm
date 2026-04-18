@@ -25,6 +25,7 @@ operand_struct operands::lex_to_operands(const lexemes_t &lexemes, const cond_id
             case UNKNOWN: llarm::out::dev_error("Invalid lexeme for converting IR to assembly");
             case REG_LIST: reg_list(arg, lexeme); continue;
             case REG: reg(reg_iteration, CR_reg_iteration, arg, lexeme); continue;
+            case REG_THUMB: reg(reg_iteration, CR_reg_iteration, arg, lexeme); continue;
             case IMMED: imm(int_iteration, arg, lexeme); continue;
             case OPTION: imm(int_iteration, arg, lexeme); continue;
             case PSR: psr(arg, lexeme); continue;

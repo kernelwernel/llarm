@@ -23,7 +23,7 @@ struct mnemonic_struct_arm {
 
 
 namespace internal::mnemonic_arm {
-    const std::unordered_map<sv, arm_id> arm_instructions = {
+    inline const std::unordered_map<sv, arm_id> arm_instructions = {
         { "ADC", arm_id::ADC },
         { "ADD", arm_id::ADD },
         { "AND", arm_id::AND },

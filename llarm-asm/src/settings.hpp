@@ -2,35 +2,21 @@
 
 namespace internal {
     struct settings {
-        bool hex;
-        bool register_alias;
-        bool capitals;
-        bool simplify;
-        bool remove_nulls;
-        bool gcc_convention;
-        bool cond_always_suffix;
-        bool explicit_operands;
-        bool strict_compliance;
-        bool equivalent_alias;
-        bool explicit_rotation;
-        bool extra_space;
+        bool hex = false;
+        bool register_alias = false;
+        bool capitals = false;
+        bool simplify = false;
+        bool remove_nulls = false;
+        bool gcc_convention = false;
+        bool cond_always_suffix = false;
+        bool explicit_operands = false;
+        bool strict_compliance = false;
+        bool equivalent_alias = false;
+        bool explicit_rotation = false;
+        bool extra_space = false;
     };
 
     inline settings default_dis_settings() {
-
-        bool hex;
-        bool register_alias;
-        bool capitals;
-        bool simplify;
-        bool remove_nulls;
-        bool gcc_convention;
-        bool cond_always_suffix;
-        bool explicit_operands;
-        bool strict_compliance;
-        bool equivalent_alias;
-        bool explicit_rotation;
-        bool extra_space;
-
         return settings { 
             true, // hex 
             true, // register alias 

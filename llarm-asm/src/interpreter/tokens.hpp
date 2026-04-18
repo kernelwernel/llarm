@@ -14,6 +14,7 @@ static constexpr u8 WILDCARD = 255;
 enum class token_enum : u8 {
     UNKNOWN,
     REG,
+    REG_THUMB,
     REG_LIST,
     REG_LIST_START, // "{"
     REG_LIST_END, // "}"

@@ -27,8 +27,8 @@ namespace interpreter {
         }
 
         for (size_t i = 0; i < raw_pattern.size(); i++) {
-            const lexeme raw = raw_pattern.at(i);
-            const lexeme match = match_pattern.at(i);
+            const lexeme& raw = raw_pattern.at(i);
+            const lexeme& match = match_pattern.at(i);
 
             if (raw.token_type != match.token_type) {
                 return false;
@@ -38,6 +38,7 @@ namespace interpreter {
 
             switch (raw.token_type) {
                 case token_enum::REG: is_equivalent = (raw.data.reg == match.data.reg); break;
+                case token_enum::REG_THUMB: is_equivalent = (raw.data.reg == match.data.reg); break;
                 case token_enum::PSR: is_equivalent = (raw.data.psr == match.data.psr); break;
                 case token_enum::OPTION: is_equivalent = (raw.data.option == match.data.option); break;
                 case token_enum::REG_LIST: is_equivalent = (raw.data.reg_list == match.data.reg_list); break;
@@ -82,6 +83,12 @@ namespace interpreter {
         for (size_t i = 0; i < raw_tokens.size(); i++) {
             const token_enum match = match_pattern.at(i).token_type;
             const token_enum raw = raw_tokens.at(i);
+
+            // REG_THUMB is supported under REG since it's a substitute, 
+            // but REG to REG_THUMB is incompatible. 
+            if (raw == REG_THUMB && match == REG) {
+                continue;
+            }
 
             if (match == SHIFT) {
                 switch (raw) {

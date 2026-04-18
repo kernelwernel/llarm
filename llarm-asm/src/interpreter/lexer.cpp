@@ -312,7 +312,6 @@ bool lexer::psr_check(lexeme &lexeme, const sv token) {
 
     lexeme.token_type = token_enum::PSR;
     lexeme.data.psr = psr;
-
     return true;
 }
 
@@ -325,6 +324,7 @@ bool lexer::imm_check(lexeme &lexeme, const sv token) {
     }
 
     lexeme.token_type = token_enum::IMMED;
+    lexeme.data.imm = imm;
     return true;
 }
 
@@ -361,5 +361,5 @@ bool lexer::comment_check(lexeme &lexeme, const sv token) {
         return true;
     }
 
-    return true;
+    return false;
 }

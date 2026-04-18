@@ -9,6 +9,7 @@
 using namespace internal;
 
 enum class vfp_special_reg_enum : u8 {
+    UNKNOWN,
     NONE,
     FPSID,
     FPSCR,
@@ -16,30 +17,30 @@ enum class vfp_special_reg_enum : u8 {
 };
 
 struct operand_struct {
-    u32 first_int;
-    u32 second_int;
-    u32 third_int;
-    u32 PC;
-    u32 reg_list;
-    u8 cond;
-    u8 PSR_field_mask;
-    u8 first_reg;
-    u8 second_reg;
-    u8 third_reg;
-    u8 fourth_reg;
-    u8 coproc;
-    u8 first_CR_reg;
-    u8 second_CR_reg;
-    u8 third_CR_reg;
-    shifter_id shifter;
-    vfp_special_reg_enum vfp_special_reg;
-    char x_char;
-    char y_char;
+    u32 first_int = 0;
+    u32 second_int = 0;
+    u32 third_int = 0;
+    u32 PC = 0;
+    u32 reg_list = 0;
+    u8 cond = 0;
+    u8 PSR_field_mask = 0;
+    u8 first_reg = 0;
+    u8 second_reg = 0;
+    u8 third_reg = 0;
+    u8 fourth_reg = 0;
+    u8 coproc = 0;
+    u8 first_CR_reg = 0;
+    u8 second_CR_reg = 0;
+    u8 third_CR_reg = 0;
+    shifter_id shifter = shifter_id::UNKNOWN;
+    vfp_special_reg_enum vfp_special_reg = vfp_special_reg_enum::UNKNOWN;
+    char x_char = '\0';
+    char y_char = '\0';
 
-    bool has_S;
-    bool has_Z;
-    bool has_L;
-    bool has_minus;
-    bool has_spsr;
-    bool has_preindex;
+    bool has_S = false;
+    bool has_Z = false;
+    bool has_L = false;
+    bool has_minus = false;
+    bool has_spsr = false;
+    bool has_preindex = false;
 };
