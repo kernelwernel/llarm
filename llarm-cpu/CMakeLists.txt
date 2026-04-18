@@ -60,7 +60,7 @@ target_link_libraries(${TARGET_LIB}
 
 
 # executable setup
-add_executable(${TARGET_BIN} "main.cpp")
+add_executable(${TARGET_BIN} "src/main.cpp")
 set_target_properties(${TARGET_BIN} PROPERTIES
     OUTPUT_NAME "llarm-cpu"
     INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"

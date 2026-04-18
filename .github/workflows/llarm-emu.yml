@@ -7,15 +7,27 @@ on:
     paths:
       - 'llarm-emu/**/*.cpp'
       - 'llarm-emu/**/*.hpp'
+      - 'llarm-emu/**/CMakeLists.txt'
+      - 'llarm-emu/**/*.cmake'
+      - 'llarm-emu/**/*.cmake.in'
       - 'llarm-asm/**/*.cpp'
       - 'llarm-asm/**/*.hpp'
+      - 'llarm-asm/**/CMakeLists.txt'
+      - 'llarm-asm/**/*.cmake'
+      - 'llarm-asm/**/*.cmake.in'
       - 'shared/**'
   pull_request:
     paths:
       - 'llarm-emu/**/*.cpp'
       - 'llarm-emu/**/*.hpp'
+      - 'llarm-emu/**/CMakeLists.txt'
+      - 'llarm-emu/**/*.cmake'
+      - 'llarm-emu/**/*.cmake.in'
       - 'llarm-asm/**/*.cpp'
       - 'llarm-asm/**/*.hpp'
+      - 'llarm-asm/**/CMakeLists.txt'
+      - 'llarm-asm/**/*.cmake'
+      - 'llarm-asm/**/*.cmake.in'
       - 'shared/**'
 
 jobs:

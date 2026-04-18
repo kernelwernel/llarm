@@ -5,11 +5,17 @@ on:
     paths:
       - 'llarm-cpu/**/*.cpp'
       - 'llarm-cpu/**/*.hpp'
+      - 'llarm-cpu/**/CMakeLists.txt'
+      - 'llarm-cpu/**/*.cmake'
+      - 'llarm-cpu/**/*.cmake.in'
       - 'shared/**'
   pull_request:
     paths:
       - 'llarm-cpu/**/*.cpp'
       - 'llarm-cpu/**/*.hpp'
+      - 'llarm-cpu/**/CMakeLists.txt'
+      - 'llarm-cpu/**/*.cmake'
+      - 'llarm-cpu/**/*.cmake.in'
       - 'shared/**'
 
 jobs:

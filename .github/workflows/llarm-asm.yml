@@ -5,11 +5,17 @@ on:
     paths:
       - 'llarm-asm/**/*.cpp'
       - 'llarm-asm/**/*.hpp'
+      - 'llarm-asm/**/CMakeLists.txt'
+      - 'llarm-asm/**/*.cmake'
+      - 'llarm-asm/**/*.cmake.in'
       - 'shared/**'
   pull_request:
     paths:
       - 'llarm-asm/**/*.cpp'
       - 'llarm-asm/**/*.hpp'
+      - 'llarm-asm/**/CMakeLists.txt'
+      - 'llarm-asm/**/*.cmake'
+      - 'llarm-asm/**/*.cmake.in'
       - 'shared/**'
 
 jobs:
