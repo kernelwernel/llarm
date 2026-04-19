@@ -65,9 +65,10 @@ namespace llarm::emu {
         const std::size_t file_size = static_cast<std::size_t>(file.tellg());
         file.seekg(0);
 
-        std::vector<u8> data;
-        data.reserve(file_size);
-        data.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
+        std::vector<u8> data(file_size);
+
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+        file.read(reinterpret_cast<char*>(data.data()), static_cast<std::streamsize>(file_size));
 
         return data;
     }

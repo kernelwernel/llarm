@@ -7,7 +7,7 @@ else()
 endif()
 
 function(configure_clang_tidy TARGET)
-    if(CLANG_TIDY_EXE)
+    if(CLANG_TIDY_EXE AND CMAKE_BUILD_TYPE STREQUAL "Debug")
         set_target_properties(${TARGET} PROPERTIES
             CXX_CLANG_TIDY "${CLANG_TIDY_EXE};--use-color;--extra-arg=-Wno-unknown-warning-option"
         )
