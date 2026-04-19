@@ -53,21 +53,21 @@ u32 VIC::read(const u32 address) {
         case OFFSET_VICVECTADDR: {
             // Priority arbitration: find highest-priority active vectored IRQ
             // that can preempt the current nesting level, then push the stack.
-            const u8 cur = (prio_depth == 0) ? PRIO_NONE : prio_stack[prio_depth - 1];
+            const u8 cur = (prio_depth == 0) ? PRIO_NONE : prio_stack.at(prio_depth - 1);
             for (u8 i = 0; i < NUM_SLOTS; i++) {
-                if (!llarm::util::bit_fetch(vect_cntl[i], 5)) {
+                if (!llarm::util::bit_fetch(vect_cntl.at(i), 5)) {
                     continue;
                 }
 
-                const u8 src = llarm::util::bit_range<u8>(vect_cntl[i], 0, 4);
+                const u8 src = llarm::util::bit_range<u8>(vect_cntl.at(i), 0, 4);
                 if (!llarm::util::bit_fetch(active_irq, src)) {
                     continue;
                 }
 
                 if (i < cur) {
-                    prio_stack[prio_depth++] = i;
-                    current_vect_addr = vect_addr[i];
-                    return vect_addr[i];
+                    prio_stack.at(prio_depth++) = i;
+                    current_vect_addr = vect_addr.at(i);
+                    return vect_addr.at(i);
                 }
 
                 break; // lower slots have higher index = lower priority, can't preempt either
@@ -96,11 +96,11 @@ u32 VIC::read(const u32 address) {
     }
 
     if (offset >= OFFSET_VICVECTADDR0 && offset <= OFFSET_VICVECTADDR15) {
-        return vect_addr[(offset - OFFSET_VICVECTADDR0) / 4];
+        return vect_addr.at((offset - OFFSET_VICVECTADDR0) / 4);
     }
 
     if (offset >= OFFSET_VICVECTCNTL0 && offset <= OFFSET_VICVECTCNTL15) {
-        return vect_cntl[(offset - OFFSET_VICVECTCNTL0) / 4];
+        return vect_cntl.at((offset - OFFSET_VICVECTCNTL0) / 4);
     }
 
     return 0;
@@ -129,7 +129,7 @@ void VIC::write(const u32 address, const u32 value) {
             if (prio_depth > 0) {
                 --prio_depth;
                 current_vect_addr = (prio_depth > 0)
-                    ? vect_addr[prio_stack[prio_depth - 1]]
+                    ? vect_addr.at(prio_stack.at(prio_depth - 1))
                     : 0;
             }
             return;
@@ -145,12 +145,12 @@ void VIC::write(const u32 address, const u32 value) {
     }
 
     if (offset >= OFFSET_VICVECTADDR0 && offset <= OFFSET_VICVECTADDR15) {
-        vect_addr[(offset - OFFSET_VICVECTADDR0) / 4] = value;
+        vect_addr.at((offset - OFFSET_VICVECTADDR0) / 4) = value;
         return;
     }
 
     if (offset >= OFFSET_VICVECTCNTL0 && offset <= OFFSET_VICVECTCNTL15) {
-        vect_cntl[(offset - OFFSET_VICVECTCNTL0) / 4] = value & 0x3F; // bits[5:0] only
+        vect_cntl.at((offset - OFFSET_VICVECTCNTL0) / 4) = value & 0x3F; // bits[5:0] only
         return;
     }
 }

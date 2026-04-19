@@ -25,6 +25,8 @@ bool operation::carry_add(const u32 sum1, const u32 sum2, const u32 sum3) {
 
 // TODO: COMPLETE
 bool operation::borrow_add(const u32 p1, const u32 p2) {
+    (void)p1;
+    (void)p2;
     return true; // TODO: COMPLETE THIS SHIT
 }
 
@@ -101,11 +103,15 @@ bool operation::overflow_sub(const u32 a, const u32 b, const u32 c) {
 
 
 bool operation::signed_overflow_sub(const i32 a, const i32 b) {
+    (void)a;
+    (void)b;
     return false; // TODO
 }
 
 
 bool operation::signed_overflow_add(const i32 a, const i32 b) {
+    (void)a;
+    (void)b;
     return false; // TODO
 }
 
@@ -122,7 +128,7 @@ i32 operation::sign_extend(const u32 value, const u8 sign_index) {
     const u32 mask = (1 << sign_index);
 
     if (value & mask) {
-        u32 extension = ~((mask << 1) - 1);
+        const u32 extension = ~((mask << 1) - 1);
         return static_cast<i32>(value | extension);
     }
 
@@ -139,9 +145,13 @@ i32 operation::signed_sat(const u32 x, const u32 n) {
 
     if (x_sign < neg_range) {
         return neg_range;
-    } else if (neg_range <= x_sign && x_sign <= pos_range) {
+    }
+    
+    if (neg_range <= x_sign && x_sign <= pos_range) {
         return x_sign;
-    } else if (x_sign > pos_range) {
+    }
+    
+    if (x_sign > pos_range) {
         return pos_range;
     }
 

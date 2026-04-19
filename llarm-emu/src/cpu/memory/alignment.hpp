@@ -5,17 +5,14 @@
 
 
 struct ALIGNMENT {
-private:
     COPROCESSOR& coprocessor;
     SETTINGS& settings;
 
-public:
-    bool is_enabled();
-    bool is_disabled();
+    bool is_enabled() const;
+    bool is_disabled() const;
 
-    bool is_aligned(const u32 value, const u8 access_size);
+    bool is_aligned(const u32 value, const u8 access_size) const;
 
-public:
     ALIGNMENT(COPROCESSOR& coprocessor, SETTINGS& settings) : coprocessor(coprocessor), settings(settings) {
     
     }

@@ -19,12 +19,12 @@
 
 
 struct COPROCESSOR {
-private:
+
     SETTINGS& settings;
     GLOBALS& globals;
     CP15& cp15;
 
-public:
+
     id::cp fetch_cp_id(const u8 raw_cp_num);
 
     void write(
@@ -38,7 +38,7 @@ public:
         const u32 value
     );
 
-    u32 read(const id::cp15 cp15_id);
+    u32 read(const id::cp15 cp15_id) const;
 
     void write(
         const u8 cp_id_bits, 

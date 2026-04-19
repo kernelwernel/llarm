@@ -77,7 +77,7 @@ void INSTRUCTIONS::arm::dsp::MRRC(/*const u32 code*/) {
  * // to the specified address are likely in the near future.
  */
 void INSTRUCTIONS::arm::dsp::PLD(/*const u32 code*/) {
-    return; // TODO, this might change 
+    // TODO, this might change 
 }
 
 
@@ -91,7 +91,7 @@ void INSTRUCTIONS::arm::dsp::QADD(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rn = reg.read(code, 16, 19);
 
-    reg.write(code, 12, 15, u32(operation::signed_sat(Rm + Rn, 32)));
+    reg.write(code, 12, 15, static_cast<u32>(operation::signed_sat(Rm + Rn, 32)));
     if (operation::signed_does_sat(Rm + Rn, 32)) {
         reg.write(id::cpsr::Q, true);
     }
@@ -109,9 +109,9 @@ void INSTRUCTIONS::arm::dsp::QDADD(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rn = reg.read(code, 16, 19);
 
-    const u32 result = (Rm + u32(operation::signed_sat(Rn * 2, 32)));
+    const u32 result = (Rm + static_cast<u32>(operation::signed_sat(Rn * 2, 32)));
 
-    reg.write(code, 12, 15, u32(operation::signed_sat(result, 32)));
+    reg.write(code, 12, 15, static_cast<u32>(operation::signed_sat(result, 32)));
 
     if (
         (operation::signed_does_sat(result, 32)) ||
@@ -133,9 +133,9 @@ void INSTRUCTIONS::arm::dsp::QDSUB(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rn = reg.read(code, 16, 19);
 
-    const u32 result = (Rm - u32(operation::signed_sat(Rn * 2, 32)));
+    const u32 result = (Rm - static_cast<u32>(operation::signed_sat(Rn * 2, 32)));
 
-    reg.write(code, 12, 15, u32(operation::signed_sat(result, 32)));
+    reg.write(code, 12, 15, static_cast<u32>(operation::signed_sat(result, 32)));
 
     if (
         (operation::signed_does_sat(result, 32)) ||
@@ -156,7 +156,7 @@ void INSTRUCTIONS::arm::dsp::QSUB(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u32 Rn = reg.read(code, 16, 19);
 
-    reg.write(code, 12, 15, u32(operation::signed_sat(Rm - Rn, 32)));
+    reg.write(code, 12, 15, static_cast<u32>(operation::signed_sat(Rm - Rn, 32)));
 
     if (operation::signed_does_sat(Rm - Rn, 32)) {
         reg.write(id::cpsr::Q, true);
@@ -369,7 +369,9 @@ void INSTRUCTIONS::arm::dsp::SMULWY(const u32 code) {
         operand2 = operation::sign_extend(llarm::util::bit_range(Rs, 16, 31), 31);
     }
 
-    reg.write(code, 16, 19, llarm::util::bit_range<u32>(static_cast<u64>(Rm * static_cast<u32>(operand2)), 16, 47));
+    // this is fucking awful
+    const i64 product = static_cast<i64>(static_cast<i32>(Rm)) * static_cast<i64>(operand2);
+    reg.write(code, 16, 19, llarm::util::bit_range<u32>(static_cast<u64>(product), 16, 47));
 }
 
 

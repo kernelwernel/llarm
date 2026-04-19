@@ -11,14 +11,14 @@
 #include <llarm/shared/types.hpp>
 
 struct INSTRUCTIONS {
-private:
+
     REGISTERS& reg;
     ADDRESSING_MODE& address_mode;
     COPROCESSOR& coprocessor;
     SETTINGS& settings;
     MEMORY& memory;
 
-public:
+
     struct arm {
         struct math {
             REGISTERS& reg;
@@ -133,10 +133,10 @@ public:
                 COPROCESSOR& coprocessor
             ) : reg(reg), address_mode(address_mode), coprocessor(coprocessor) {}
 
-            void NOP(const u32 code);
+            void NOP();
             void PSR(const u32 code);
-            void SWI(const u32 code);
-            void BKPT(const u32 code);
+            void SWI();
+            void BKPT();
         } misc;
 
         struct load {
@@ -288,7 +288,7 @@ public:
             void FMSCD(const u32 code); // TODO, D
             void FMSCS(const u32 code); // TODO
             void FMSR(const u32 code); // TODO
-            void FMSTAT(const u32 code); // TODO
+            void FMSTAT(); // TODO
             void FMULD(const u32 code); // TODO, D
             void FMULS(const u32 code); // TODO
             void FMXR(const u32 code); // TODO
@@ -432,9 +432,9 @@ public:
 
             misc(REGISTERS& reg,  SETTINGS& settings) : reg(reg), settings(settings) {}
 
-            void NOP(const u16 code);
+            void NOP();
             void BKPT(const u16 code); // (v5)
-            void SWI(const u16 code); // TODO
+            void SWI();
         } misc;
 
         struct load {

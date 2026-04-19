@@ -6,7 +6,7 @@
 #include <llarm/shared/util.hpp>
 
 // TODO SYSTEM MODE IS NOT SUPPORTED IN EARLIER VERSIONS
-id::mode REGISTERS::read_mode() {
+id::mode REGISTERS::read_mode() const {
     if (arch_26.is_26_arch_program()) { // 26-bit mode arch
         switch (read(id::cpsr::M)) {
             case constants::mode::USER_26: return id::mode::USER_26;
@@ -32,7 +32,7 @@ id::mode REGISTERS::read_mode() {
 }
 
 
-bool REGISTERS::is_privileged() {
+bool REGISTERS::is_privileged() const {
     const id::mode mode = read_mode();
 
     return (!(
@@ -41,7 +41,7 @@ bool REGISTERS::is_privileged() {
     ));
 }
 
-bool REGISTERS::is_exception() {
+bool REGISTERS::is_exception() const {
     const id::mode mode = read_mode();
     
     return (!(
@@ -51,7 +51,7 @@ bool REGISTERS::is_exception() {
     ));
 }
 
-bool REGISTERS::current_mode_has_SPSR() {
+bool REGISTERS::current_mode_has_SPSR() const {
     const id::mode mode = read_mode();
 
     switch (mode) {
@@ -323,7 +323,7 @@ void REGISTERS::force_write(const id::reg register_id, const u32 value) {
 }
 
 
-u8 REGISTERS::read(const id::cpsr cpsr_id) {
+u8 REGISTERS::read(const id::cpsr cpsr_id) const {
     if (arch_26.is_26_arch_program()) { // 26-bit
         switch (cpsr_id) {
             case id::cpsr::M: return (CPSR & 0b11);
@@ -352,7 +352,7 @@ u8 REGISTERS::read(const id::cpsr cpsr_id) {
 }
 
 
-u32 REGISTERS::force_read(const id::reg register_id) {
+u32 REGISTERS::force_read(const id::reg register_id) const {
     switch (register_id) {
         case id::reg::R0: return R0;
         case id::reg::R1: return R1;
@@ -397,10 +397,10 @@ u32 REGISTERS::force_read(const id::reg register_id) {
 }
 
 
-u32 REGISTERS::read(const id::reg register_id) {
-    access_check(register_id);
+u32 REGISTERS::read(const id::reg reg_id) const {
+    access_check(reg_id);
 
-    switch (register_id) {
+    switch (reg_id) {
         case id::reg::R0: return R0;
         case id::reg::R1: return R1;
         case id::reg::R2: return R2;
@@ -421,7 +421,7 @@ u32 REGISTERS::read(const id::reg register_id) {
 
     const id::mode mode = read_mode();
 
-    if (register_id == id::reg::SPSR) {
+    if (reg_id == id::reg::SPSR) {
         switch (mode) {
             case id::mode::FIQ: 
             case id::mode::FIQ_26: return SPSR_fiq;
@@ -444,7 +444,7 @@ u32 REGISTERS::read(const id::reg register_id) {
 
         case id::mode::USER:
         case id::mode::USER_26:
-            switch (register_id) {
+            switch (reg_id) {
                 case id::reg::R8:  return R8;
                 case id::reg::R9:  return R9;
                 case id::reg::R10: return R10;
@@ -458,7 +458,7 @@ u32 REGISTERS::read(const id::reg register_id) {
     
         case id::mode::FIQ:
         case id::mode::FIQ_26:
-            switch (register_id) {
+            switch (reg_id) {
                 case id::reg::R8_fiq:  return R8_fiq;
                 case id::reg::R9_fiq:  return R9_fiq;
                 case id::reg::R10_fiq: return R10_fiq;
@@ -473,7 +473,7 @@ u32 REGISTERS::read(const id::reg register_id) {
         
         case id::mode::IRQ:
         case id::mode::IRQ_26:
-            switch (register_id) {
+            switch (reg_id) {
                 case id::reg::R8:  return R8;
                 case id::reg::R9:  return R9;
                 case id::reg::R10: return R10;
@@ -488,7 +488,7 @@ u32 REGISTERS::read(const id::reg register_id) {
 
         case id::mode::SUPERVISOR:
         case id::mode::SUPERVISOR_26:
-            switch (register_id) {
+            switch (reg_id) {
                 case id::reg::R8:  return R8;
                 case id::reg::R9:  return R9;
                 case id::reg::R10: return R10;
@@ -502,7 +502,7 @@ u32 REGISTERS::read(const id::reg register_id) {
             break;
 
         case id::mode::ABORT:
-            switch (register_id) {
+            switch (reg_id) {
                 case id::reg::R8:  return R8;
                 case id::reg::R9:  return R9;
                 case id::reg::R10: return R10;
@@ -516,7 +516,7 @@ u32 REGISTERS::read(const id::reg register_id) {
             break;
 
         case id::mode::UNDEFINED:
-            switch (register_id) {
+            switch (reg_id) {
                 case id::reg::R8:  return R8;
                 case id::reg::R9:  return R9;
                 case id::reg::R10: return R10;
@@ -530,11 +530,11 @@ u32 REGISTERS::read(const id::reg register_id) {
             break;
     }
 
-    llarm::out::error("Couldn't read register in read() = ", u32(register_id));
+    llarm::out::error("Couldn't read register in read() = ", static_cast<u32>(reg_id));
 };
 
 
-void REGISTERS::access_check(const id::reg reg_id) {
+void REGISTERS::access_check(const id::reg reg_id) const {
     if (arch_26.no_26_arch_support()) {
         return;
     }
@@ -629,7 +629,7 @@ u32 REGISTERS::read(const u8 reg_bits) {
 }
 
 
-id::cond REGISTERS::fetch_cond_id(const u8 cond_bits) {
+id::cond REGISTERS::fetch_cond_id(const u8 cond_bits) const {
     switch (cond_bits) {
         case constants::cond::EQ: return id::cond::EQ;
         case constants::cond::NE: return id::cond::NE;
@@ -653,7 +653,7 @@ id::cond REGISTERS::fetch_cond_id(const u8 cond_bits) {
 }
 
 
-id::cond REGISTERS::fetch_cond_id(const u32 code) {
+id::cond REGISTERS::fetch_cond_id(const u32 code) const {
     return fetch_cond_id(llarm::util::bit_range<u8>(code, 28, 31));
 }
 
@@ -677,7 +677,7 @@ id::mode REGISTERS::fetch_mode_id(const u8 mode_bits) {
 
 
 
-bool REGISTERS::is_cond_valid(const id::cond cond) {
+bool REGISTERS::is_cond_valid(const id::cond cond) const {
     switch (cond) {
         case id::cond::EQ: return (read(id::cpsr::Z) == 1);
         case id::cond::NE: return (read(id::cpsr::Z) == 0);
@@ -756,7 +756,7 @@ void REGISTERS::switch_mode(const id::mode mode_id) {
 }
 
 
-bool REGISTERS::is_cond_valid(const u32 code) {
+bool REGISTERS::is_cond_valid(const u32 code) const {
     const id::cond cond_id = fetch_cond_id(code);
     return is_cond_valid(cond_id);
 }
@@ -771,12 +771,12 @@ void REGISTERS::write_PC(const u32 address) {
 }
 
 
-u32 REGISTERS::read_PC() {
+u32 REGISTERS::read_PC() const {
     if (arch_26.is_26_arch_address()) {
         return (llarm::util::bit_range<u32>(R15, 2, 25)); 
-    } else {
-        return R15; 
     }
+
+    return R15; 
 }
 
 

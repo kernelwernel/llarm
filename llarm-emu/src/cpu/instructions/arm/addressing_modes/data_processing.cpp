@@ -17,7 +17,7 @@
  * 
  * (A5-6)
  */
-data_struct ADDRESSING_MODE::data_process_immediate_mode(const u32 code) {
+data_struct ADDRESSING_MODE::data_process_immediate_mode(const u32 code) const {
     data_struct data = {};
 
     const u8 rotate_imm = llarm::util::bit_range<u8>(code, 8, 11);
@@ -212,7 +212,7 @@ data_struct ADDRESSING_MODE::data_process_logical_shift_left_register(const u32 
         data.carry = reg.read(id::cpsr::C);
     } else if (Rs_bits < 32) {
         data.value = (Rm << Rs_bits);
-        data.carry = (llarm::util::bit_fetch(Rm, u8(32 - Rs_bits))); // what the fuck?
+        data.carry = (llarm::util::bit_fetch(Rm, static_cast<u8>(32 - Rs_bits))); // what the fuck?
     } else if (Rs_bits == 32) {
         data.value = 0;
         data.carry = (Rm & 1);
@@ -253,7 +253,7 @@ data_struct ADDRESSING_MODE::data_process_logical_shift_right_register(const u32
         data.carry = reg.read(id::cpsr::C);
     } else if (Rs_bits < 32) {
         data.value = (Rm >> Rs_bits);
-        data.carry = (llarm::util::bit_fetch(Rm, u8(Rs_bits - 1)));
+        data.carry = (llarm::util::bit_fetch(Rm, static_cast<u8>(Rs_bits - 1)));
     } else if (Rs_bits == 32) {
         data.value = 0;
         data.carry = (llarm::util::bit_fetch(Rm, 31));
@@ -366,7 +366,7 @@ data_struct ADDRESSING_MODE::data_process_rotate_right_extend(const u32 code) {
 
     const u32 Rm = reg.read(code, 0, 3);
 
-    data.value = (u32(reg.read(id::cpsr::C) << 31) | (Rm >> 1));
+    data.value = (static_cast<u32>(reg.read(id::cpsr::C) << 31) | (Rm >> 1));
     data.carry = (Rm & 1);
 
     return data;

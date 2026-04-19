@@ -7,7 +7,7 @@
 #include <llarm/shared/out.hpp>
 #include <llarm/shared/types.hpp>
 
-u64 MPU::get_size(const u8 raw_size_bits) {
+u64 MPU::get_size(const u8 raw_size_bits) const {
     switch (raw_size_bits) {
         case 0b01011: return util::get_kb(4); // 4KB
         case 0b01100: return util::get_kb(8); // 8KB
@@ -35,26 +35,26 @@ u64 MPU::get_size(const u8 raw_size_bits) {
 };
 
 
-id::access_perm MPU::get_access_perm(const u8 AP) {
+id::access_perm MPU::get_access_perm(const u8 AP) const {
     if (globals.is_privileged) {
         if (AP == 0b00) {
             return id::access_perm::NO_ACCESS;
         }
 
         return id::access_perm::READ_WRITE;
-    } else {
-        switch (AP) {
-            case 0b00: return id::access_perm::NO_ACCESS;
-            case 0b01: return id::access_perm::NO_ACCESS;
-            case 0b10: return id::access_perm::READ_ONLY;
-            case 0b11: return id::access_perm::READ_WRITE;
-        }
+    }
+
+    switch (AP) {
+        case 0b00: return id::access_perm::NO_ACCESS;
+        case 0b01: return id::access_perm::NO_ACCESS;
+        case 0b10: return id::access_perm::READ_ONLY;
+        case 0b11: return id::access_perm::READ_WRITE;
     }
 
     llarm::out::dev_error("Unknown access permission bits (MPU)");
 }
 
-bool MPU::is_mpu_enabled() {
+bool MPU::is_mpu_enabled() const {
     return (
         (coprocessor.read(id::cp15::R1_M) == true) &&
         (settings.is_mpu_enabled)
@@ -146,7 +146,7 @@ id::aborts MPU::is_access_valid(const u32 address, const u8 access_size, const i
         globals.mpu_address_change = false;
     }
 
-    id::cp15 AP_region_id;
+    id::cp15 AP_region_id = id::cp15::UNKNOWN;
     const u32 address_start = address;
     const u32 address_end = address + access_size; 
 

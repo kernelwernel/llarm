@@ -29,10 +29,11 @@ void TLB::invalidate(const u32 virtual_address, const id::tlb_type tlb_type) {
     }
 
     switch (tlb_type) {
-        case id::tlb_type::UNIFIED: unified_table.erase(virtual_address); return;
+        case id::tlb_type::UNKNOWN: llarm::out::dev_error("Unknown TLB invalidation");
         case id::tlb_type::SEPARATE: llarm::out::dev_error("Unsupported TLB invalidation");
         case id::tlb_type::SEPARATE_INST: inst_table.erase(virtual_address); return;
         case id::tlb_type::SEPARATE_DATA: data_table.erase(virtual_address); return; 
+        case id::tlb_type::UNIFIED: unified_table.erase(virtual_address); return;
     }
 }
 
@@ -45,10 +46,11 @@ void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, c
         u16 tlb_size = 0;
 
         switch (tlb_type) {
-            case id::tlb_type::UNIFIED: tlb_size = settings.unified_tlb_table_size; break;
+            case id::tlb_type::UNKNOWN: llarm::out::dev_error("Unknown TLB invalidation");
             case id::tlb_type::SEPARATE: llarm::out::dev_error("Unsupported TLB invalidation for auto replacement");
             case id::tlb_type::SEPARATE_INST: tlb_size = settings.inst_tlb_table_size; break;
             case id::tlb_type::SEPARATE_DATA: tlb_size = settings.data_tlb_table_size; break;
+            case id::tlb_type::UNIFIED: tlb_size = settings.unified_tlb_table_size; break;
         }
 
         const u32 range = tlb_size + 1;
@@ -64,17 +66,7 @@ void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, c
     // replacing a random index. This prevents duplicate entries for the same virtual address. 
 
     switch (tlb_type) {
-        case id::tlb_type::UNIFIED: {
-            if (already_exists) {
-                invalidate(virtual_address, tlb_type);
-            } else {
-                const u32 unified_key = unified_table.at(generate_index());
-                unified_table.erase(unified_key);
-            }
-
-            unified_table.insert({ virtual_address, physical_address });
-            return;
-        }
+        case id::tlb_type::UNKNOWN: llarm::out::dev_error("Unknown TLB invalidation");
 
         case id::tlb_type::SEPARATE: llarm::out::dev_error("Unsupported TLB invalidation for auto replacement");
 
@@ -101,6 +93,18 @@ void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, c
             data_table.insert({ virtual_address, physical_address });
             return;
         }
+
+        case id::tlb_type::UNIFIED: {
+            if (already_exists) {
+                invalidate(virtual_address, tlb_type);
+            } else {
+                const u32 unified_key = unified_table.at(generate_index());
+                unified_table.erase(unified_key);
+            }
+
+            unified_table.insert({ virtual_address, physical_address });
+            return;
+        }
     }
 }
 
@@ -112,7 +116,9 @@ u32 TLB::fetch(const u32 virtual_address, const tlb_fetch_struct tlb_fetch) {
 
     if (tlb_fetch.is_in_inst_table) {
         return inst_table.at(virtual_address);
-    } else if (tlb_fetch.is_in_data_table) {
+    }
+    
+    if (tlb_fetch.is_in_data_table) {
         return data_table.at(virtual_address);
     }
 
@@ -122,32 +128,33 @@ u32 TLB::fetch(const u32 virtual_address, const tlb_fetch_struct tlb_fetch) {
 
 void TLB::insert(const u32 virtual_address, const u32 physical_address, const id::tlb_type tlb_type) {
     switch (tlb_type) {
-        case id::tlb_type::UNIFIED: 
-            if (unified_table.size() == settings.unified_tlb_table_size) {
-                auto_replace(id::tlb_type::UNIFIED, virtual_address, physical_address);
-            }
-            return;
-
         case id::tlb_type::SEPARATE: llarm::out::dev_error("Unsupported TLB invalidation for insertion");
+        case id::tlb_type::UNKNOWN: llarm::out::dev_error("Unknown TLB invalidation for insertion");
         case id::tlb_type::SEPARATE_INST:
             if (inst_table.size() == settings.inst_tlb_table_size) {
                 auto_replace(id::tlb_type::SEPARATE_INST, virtual_address, physical_address);
             }
             return;
-
+        
         case id::tlb_type::SEPARATE_DATA:
             if (data_table.size() == settings.data_tlb_table_size) {
                 auto_replace(id::tlb_type::SEPARATE_DATA, virtual_address, physical_address);
+            }
+            return;
+
+        case id::tlb_type::UNIFIED: 
+            if (unified_table.size() == settings.unified_tlb_table_size) {
+                auto_replace(id::tlb_type::UNIFIED, virtual_address, physical_address);
             }
             return;
     }
 }
 
 
-tlb_fetch_struct TLB::is_translation_cached(const u32 virtual_address) {
+tlb_fetch_struct TLB::is_translation_cached(const u32 virtual_address) const {
     if (settings.tlb_type == id::tlb_type::UNIFIED) {
         return tlb_fetch_struct {
-            /* is_found */ (unified_table.find(virtual_address) != unified_table.end()),
+            /* is_found */ (unified_table.contains(virtual_address)),
             /* is_in_unified_table */ true,
             /* is_in_inst_table */ false,
             /* is_in_data_table */ false
@@ -156,14 +163,16 @@ tlb_fetch_struct TLB::is_translation_cached(const u32 virtual_address) {
 
     // assume it's a separate TLB from this point
 
-    if (inst_table.find(virtual_address) != inst_table.end()) {
+    if (inst_table.contains(virtual_address)) {
         return tlb_fetch_struct {
             /* is_found */ true,
             /* is_in_unified_table */ false,
             /* is_in_inst_table */ true,
             /* is_in_data_table */ false
         };
-    } else if (data_table.find(virtual_address) != data_table.end()) {
+    }
+    
+    if (data_table.contains(virtual_address)) {
         return tlb_fetch_struct {
             /* is_found */ true,
             /* is_in_unified_table */ false,
@@ -181,10 +190,12 @@ tlb_fetch_struct TLB::is_translation_cached(const u32 virtual_address) {
 }
 
 
-bool TLB::is_type_invalid(const id::tlb_type tlb_type) {
+bool TLB::is_type_invalid(const id::tlb_type tlb_type) const {
     if (settings.tlb_type == id::tlb_type::UNIFIED) {
         return tlb_type != id::tlb_type::UNIFIED;
-    } else if (settings.tlb_type == id::tlb_type::SEPARATE) {
+    }
+    
+    if (settings.tlb_type == id::tlb_type::SEPARATE) {
         return tlb_type == id::tlb_type::UNIFIED;
     }
 

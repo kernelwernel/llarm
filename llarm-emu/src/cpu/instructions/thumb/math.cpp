@@ -133,7 +133,7 @@ void INSTRUCTIONS::thumb::math::ADD5(const u16 code) {
 
     const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 8, 10);
 
-    reg.write(Rd_id, (reg.read(id::reg::PC) & 0xFFFFFFFC) + u32(immed_8 << 2));
+    reg.write(Rd_id, (reg.read(id::reg::PC) & 0xFFFFFFFC) + static_cast<u32>(immed_8 << 2));
 }
 
 
@@ -144,7 +144,7 @@ void INSTRUCTIONS::thumb::math::ADD6(const u16 code) {
     const u8 immed_8 = llarm::util::bit_range<u8>(code, 0, 7);
     const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 8, 10);
 
-    reg.write(Rd_id, (reg.read(id::reg::SP) + u32(immed_8 << 2)));
+    reg.write(Rd_id, (reg.read(id::reg::SP) + static_cast<u32>(immed_8 << 2)));
 }
 
 
@@ -154,7 +154,7 @@ void INSTRUCTIONS::thumb::math::ADD6(const u16 code) {
 void INSTRUCTIONS::thumb::math::ADD7(const u16 code) {
     const u8 immed_7 = llarm::util::bit_range<u8>(code, 0, 6);
 
-    reg.write(id::reg::SP, (reg.read(id::reg::SP) + u32(immed_7 << 2)));
+    reg.write(id::reg::SP, (reg.read(id::reg::SP) + static_cast<u32>(immed_7 << 2)));
 }
 
 
@@ -258,7 +258,7 @@ void INSTRUCTIONS::thumb::math::SUB3(const u16 code) {
 void INSTRUCTIONS::thumb::math::SUB4(const u16 code) {
     const u8 immed_7 = llarm::util::bit_range<u8>(code, 0, 6);
 
-    reg.write(id::reg::SP, (reg.read(id::reg::SP) - u32(immed_7 << 2)));
+    reg.write(id::reg::SP, (reg.read(id::reg::SP) - static_cast<u32>(immed_7 << 2)));
 }
 
 

@@ -78,9 +78,9 @@ address_struct ADDRESSING_MODE::ls_coproc_imm_pre(const u32 code) {
     const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
 
     if (U == true) {
-        reg.write(Rn_id, (reg.read(Rn_id) + offset_8 * 4));
+        reg.write(Rn_id, (reg.read(Rn_id) + (offset_8 * 4)));
     } else {
-        reg.write(Rn_id, (reg.read(Rn_id) - offset_8 * 4));
+        reg.write(Rn_id, (reg.read(Rn_id) - (offset_8 * 4)));
     }
 
     const u32 start_address = reg.read(Rn_id);

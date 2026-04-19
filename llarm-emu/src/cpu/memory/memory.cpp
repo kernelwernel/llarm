@@ -49,7 +49,9 @@ mem_write_struct MEMORY::write(const u64 value, u32 address, const u8 access_siz
 
     if (mmu.is_mmu_enabled()) {
         return mmu.write(address, value, access_size);
-    } else if (mpu.is_mpu_enabled()) {
+    }
+    
+    if (mpu.is_mpu_enabled()) {
         return mpu.write(address, value, access_size);
     }
 
@@ -87,7 +89,9 @@ mem_read_struct MEMORY::read(
 
     if (mmu.is_mmu_enabled()) {
         return mmu.read(address, access_size);
-    } else if (mpu.is_mpu_enabled()) {
+    }
+    
+    if (mpu.is_mpu_enabled()) {
         return mpu.read(address, access_size);
     }
 

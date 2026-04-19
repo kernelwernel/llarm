@@ -36,19 +36,16 @@ struct vfp_address_struct {
 
 
 struct VFP_ADDRESS_MODE {
-private:
     SETTINGS& settings;
     REGISTERS& reg;
     VFP_REG& vfp_reg;
 
-public:
-    single_encoding_struct single_precision(const u32 code);
-    single_encoding_struct single_precision_monadic(const u32 code);
-    double_encoding_struct double_precision(const u32 code);
-    double_encoding_struct double_precision_monadic(const u32 code);
+    single_encoding_struct single_precision(const u32 code) const;
+    single_encoding_struct single_precision_monadic(const u32 code) const;
+    double_encoding_struct double_precision(const u32 code) const;
+    double_encoding_struct double_precision_monadic(const u32 code) const;
     vfp_address_struct vfp_load_multiple(const u32 code);
 
-public:
     VFP_ADDRESS_MODE(SETTINGS& settings, REGISTERS& reg, VFP_REG& vfp_reg) : settings(settings), reg(reg), vfp_reg(vfp_reg) {
 
     }

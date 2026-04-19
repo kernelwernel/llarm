@@ -27,7 +27,7 @@ void INSTRUCTIONS::thumb::load::LDMIA(const u16 code) {
 
     u32 address = start_address;
 
-    std::vector<id::reg> reg_vec = operation::register_list(register_list);
+    const std::vector<id::reg> reg_vec = operation::register_list(register_list);
 
     for (const id::reg reg_id : reg_vec) {
         const mem_read_struct access = memory.read(address, 4);
@@ -293,7 +293,7 @@ void INSTRUCTIONS::thumb::load::LDRSB(const u16 code) {
         return;
     }
 
-    reg.write(Rd_id, u32(operation::sign_extend(static_cast<u32>(access.value))));
+    reg.write(Rd_id, static_cast<u32>(operation::sign_extend(static_cast<u32>(access.value))));
 }
 
 
@@ -325,7 +325,7 @@ void INSTRUCTIONS::thumb::load::LDRSH(const u16 code) {
         return;
     }
 
-    reg.write(Rd_id, u32(operation::sign_extend(static_cast<u32>(access.value))));
+    reg.write(Rd_id, static_cast<u32>(operation::sign_extend(static_cast<u32>(access.value))));
 }
 
 
@@ -360,7 +360,7 @@ void INSTRUCTIONS::thumb::load::POP(const u16 code) {
 
     u32 address = start_address;
 
-    std::vector<id::reg> reg_vec = operation::register_list(register_list);
+    const std::vector<id::reg> reg_vec = operation::register_list(register_list);
 
     for (const id::reg reg_id : reg_vec) {
         const mem_read_struct access = memory.read(address, 4);

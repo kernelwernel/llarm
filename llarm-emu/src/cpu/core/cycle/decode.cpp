@@ -8,12 +8,12 @@
 #include <llarm/llarm-asm.hpp>
 
 
-bool DECODE::has_condition_failed(const id::cond cond) {
+bool DECODE::has_condition_failed(const id::cond cond) const {
     return (reg.is_cond_valid(cond) == false);
 }
 
 
-bool DECODE::is_arm_instruction_unsupported(const llarm::as::arm_id id) {
+bool DECODE::is_arm_instruction_unsupported(const llarm::as::arm_id id) const {
     using namespace llarm::as;
 
     if (settings.is_arch_version_inst_check_enabled == false) {
@@ -229,7 +229,7 @@ bool DECODE::is_arm_instruction_unsupported(const llarm::as::arm_id id) {
 }
 
 
-bool DECODE::is_thumb_instruction_unsupported(const llarm::as::thumb_id id) {
+bool DECODE::is_thumb_instruction_unsupported(const llarm::as::thumb_id id) const {
     using namespace llarm; // for llarm::as
 
     if (settings.is_arch_version_inst_check_enabled == false) {
@@ -254,7 +254,7 @@ bool DECODE::is_thumb_instruction_unsupported(const llarm::as::thumb_id id) {
 }
 
 
-arm_decode_struct DECODE::arm_decode(const u32 code) {
+arm_decode_struct DECODE::arm_decode(const u32 code) const {
     using namespace llarm; // for llarm::as
 
     const id::cond cond = reg.fetch_cond_id(code);
@@ -282,7 +282,7 @@ arm_decode_struct DECODE::arm_decode(const u32 code) {
 }
 
 
-thumb_decode_struct DECODE::thumb_decode(const u16 raw_code) {
+thumb_decode_struct DECODE::thumb_decode(const u16 raw_code) const {
     using namespace llarm; // for llarm::ass
     const as::thumb_id id = as::identify_thumb(raw_code);
 

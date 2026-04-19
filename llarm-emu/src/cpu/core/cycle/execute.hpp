@@ -5,14 +5,12 @@
 #include "../exception.hpp"
 
 struct EXECUTE {
-private:
     INSTRUCTIONS& instructions;
     EXCEPTION& exception;
 
-public:
-    void arm_execute(const arm_decode_struct &code);
+    void arm_execute(const arm_decode_struct &instruction);
     
-    void thumb_execute(const thumb_decode_struct &code);
+    void thumb_execute(const thumb_decode_struct &instruction);
 
     EXECUTE(
         INSTRUCTIONS& instructions, 

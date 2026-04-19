@@ -17,11 +17,9 @@ struct address_struct {
 
 
 struct ADDRESSING_MODE {
-private:
     REGISTERS& reg;
 
-private:
-    data_struct data_process_immediate_mode(const u32 code);
+    data_struct data_process_immediate_mode(const u32 code) const;
     data_struct data_process_register(const u32 code);
     data_struct data_process_logical_shift_left_immediate(const u32 code);
     data_struct data_process_logical_shift_right_immediate(const u32 code);
@@ -61,7 +59,7 @@ private:
     address_struct ls_coproc_unindexed(/*const u32 code*/);
 
 
-public:
+
     data_struct data_processing(const u32 code);
     u32 load_store(const u32 code);
     u32 load_store_misc(const u32 code);

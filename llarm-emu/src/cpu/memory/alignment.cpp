@@ -7,7 +7,7 @@
 #include <llarm/shared/out.hpp>
 
 
-bool ALIGNMENT::is_enabled() {
+bool ALIGNMENT::is_enabled() const {
     return (
         (settings.has_alignment_fault_checking) &&
         (coprocessor.read(id::cp15::R1_A))
@@ -18,12 +18,12 @@ bool ALIGNMENT::is_enabled() {
 // this might look stupid, but i'd much rather do this than have "!alignment.is_enabled()"
 // throughout the code, which is a common enough occurrence that this is kinda warranted
 // for the sake of having a natural readability style which i prefer. 
-bool ALIGNMENT::is_disabled() {
+bool ALIGNMENT::is_disabled() const {
     return (!is_enabled());
 }
 
 
-bool ALIGNMENT::is_aligned(const u32 value, const u8 access_size) {
+bool ALIGNMENT::is_aligned(const u32 value, const u8 access_size) const {
     switch (access_size) {
         // byte
         case 1: return true; // there are no alignment faults for byte accesses

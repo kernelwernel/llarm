@@ -11,7 +11,7 @@
 #include <llarm/shared/out.hpp>
 
 
-single_encoding_struct VFP_ADDRESS_MODE::single_precision(const u32 code) {
+single_encoding_struct VFP_ADDRESS_MODE::single_precision(const u32 code) const {
     const u8 Fd = llarm::util::bit_range<u8>(code, 12, 15);
     const u8 Fn = llarm::util::bit_range<u8>(code, 16, 19);
     const u8 Fm = llarm::util::bit_range<u8>(code, 0, 3);
@@ -85,7 +85,7 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision(const u32 code) {
         const id::vfp_reg Sm_id = vfp_reg.fetch_single_reg_id(m_num);
 
         for (u8 i = 0; i < vec_len - 1; i++) {
-            single_reg_struct regs = {
+            const single_reg_struct regs = {
                 /* Sd */ vfp_reg.fetch_single_reg_id(static_cast<u8>(d_bank << 3) | d_index),
                 /* Sn */ vfp_reg.fetch_single_reg_id(static_cast<u8>(n_bank << 3) | n_index),
                 /* Sm */ Sm_id
@@ -136,7 +136,7 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision(const u32 code) {
     std::vector<single_reg_struct> vec_regs = {};
 
     for (u8 i = 0; i < vec_len - 1; i++) {
-        single_reg_struct regs = {
+        const single_reg_struct regs = {
             /* Sd */ vfp_reg.fetch_single_reg_id(static_cast<u8>(d_bank << 3) | d_index),
             /* Sn */ vfp_reg.fetch_single_reg_id(static_cast<u8>(n_bank << 3) | n_index),
             /* Sm */ vfp_reg.fetch_single_reg_id(static_cast<u8>(m_bank << 3) | m_index)
@@ -170,7 +170,7 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision(const u32 code) {
 }
 
 
-single_encoding_struct VFP_ADDRESS_MODE::single_precision_monadic(const u32 code) {
+single_encoding_struct VFP_ADDRESS_MODE::single_precision_monadic(const u32 code) const {
     const u8 Fd = llarm::util::bit_range<u8>(code, 12, 15);
     const u8 Fm = llarm::util::bit_range<u8>(code, 0, 3);
 
@@ -191,7 +191,7 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision_monadic(const u32 code
      *     Sm[0] = m_num
      */
     if (d_bank == 0) {
-        single_reg_struct regs {
+        const single_reg_struct regs {
             /* Sd */ vfp_reg.fetch_single_reg_id(d_num),
             /* Sn */ id::vfp_reg::UNKNOWN,
             /* Sm */ vfp_reg.fetch_single_reg_id(m_num)
@@ -229,7 +229,7 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision_monadic(const u32 code
         const id::vfp_reg Sm_id = vfp_reg.fetch_single_reg_id(m_num);
 
         for (u8 i = 0; i < vec_len - 1; i++) {
-            single_reg_struct regs = {
+            const single_reg_struct regs = {
                 /* Sd */ vfp_reg.fetch_single_reg_id(static_cast<u8>(d_bank << 3) | d_index),
                 /* Sn */ id::vfp_reg::UNKNOWN,
                 /* Sm */ Sm_id
@@ -271,7 +271,7 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision_monadic(const u32 code
     std::vector<single_reg_struct> vec_regs = {};
 
     for (u8 i = 0; i < vec_len - 1; i++) {
-        single_reg_struct regs = {
+        const single_reg_struct regs = {
             /* Sd */ vfp_reg.fetch_single_reg_id(static_cast<u8>(d_bank << 3) | d_index),
             /* Sn */ id::vfp_reg::UNKNOWN,
             /* Sm */ vfp_reg.fetch_single_reg_id(static_cast<u8>(m_bank << 3) | m_index),
@@ -299,7 +299,7 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision_monadic(const u32 code
 }
 
 
-double_encoding_struct VFP_ADDRESS_MODE::double_precision(const u32 code) {
+double_encoding_struct VFP_ADDRESS_MODE::double_precision(const u32 code) const {
     const u8 Dd = llarm::util::bit_range<u8>(code, 12, 15);
     const u8 Dn = llarm::util::bit_range<u8>(code, 16, 19);
     const u8 Dm = llarm::util::bit_range<u8>(code, 0, 3);
@@ -316,7 +316,7 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision(const u32 code) {
      *     Dm[0] = Dm
      */
     if (d_bank == 0) {
-        double_reg_struct regs = {
+        const double_reg_struct regs = {
             /* Dd */ vfp_reg.fetch_double_reg_id(Dd),
             /* Dn */ vfp_reg.fetch_double_reg_id(Dn),
             /* Dm */ vfp_reg.fetch_double_reg_id(Dm)
@@ -360,7 +360,7 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision(const u32 code) {
         const id::vfp_reg Dm_id = vfp_reg.fetch_double_reg_id(Dm);
 
         for (u8 i = 0; i < vec_len - 1; i++) {
-            double_reg_struct regs = {
+            const double_reg_struct regs = {
                 /* Dd */ vfp_reg.fetch_double_reg_id(static_cast<u8>(d_bank << 2) | d_index),
                 /* Dn */ vfp_reg.fetch_double_reg_id(static_cast<u8>(n_bank << 2) | n_index),
                 /* Dm */ Dm_id
@@ -411,7 +411,7 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision(const u32 code) {
     std::vector<double_reg_struct> vec_regs = {};
 
     for (u8 i = 0; i < vec_len - 1; i++) {
-        double_reg_struct regs = {
+        const double_reg_struct regs = {
             /* Dd */ vfp_reg.fetch_double_reg_id(static_cast<u8>(d_bank << 2) | d_index),
             /* Dn */ vfp_reg.fetch_double_reg_id(static_cast<u8>(n_bank << 2) | n_index),
             /* Dm */ vfp_reg.fetch_double_reg_id(static_cast<u8>(m_bank << 2) | m_index),
@@ -445,7 +445,7 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision(const u32 code) {
 }
 
 
-double_encoding_struct VFP_ADDRESS_MODE::double_precision_monadic(const u32 code) {
+double_encoding_struct VFP_ADDRESS_MODE::double_precision_monadic(const u32 code) const {
     const u8 Dd = llarm::util::bit_range<u8>(code, 12, 15);
     const u8 Dm = llarm::util::bit_range<u8>(code, 0, 3);
 
@@ -460,7 +460,7 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision_monadic(const u32 code
      *     Dm[0] = Dm
      */
     if (d_bank == 0) {
-        double_reg_struct regs = {
+        const double_reg_struct regs = {
             /* Dd */ vfp_reg.fetch_double_reg_id(Dd),
             /* Dn */ id::vfp_reg::UNKNOWN,
             /* Dm */ vfp_reg.fetch_double_reg_id(Dm)
@@ -502,7 +502,7 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision_monadic(const u32 code
         const id::vfp_reg Dm_id = vfp_reg.fetch_double_reg_id(Dm);
 
         for (u8 i = 0; i < vec_len - 1; i++) {
-            double_reg_struct regs = {
+            const double_reg_struct regs = {
                 /* Dd */ vfp_reg.fetch_double_reg_id(static_cast<u8>(d_bank << 2) | d_index),
                 /* Dn */ id::vfp_reg::UNKNOWN,
                 /* Dm */ Dm_id
@@ -543,7 +543,7 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision_monadic(const u32 code
     std::vector<double_reg_struct> vec_regs = {};
 
     for (u8 i = 0; i < vec_len - 1; i++) {
-        double_reg_struct regs = {
+        const double_reg_struct regs = {
             /* Dd */ vfp_reg.fetch_double_reg_id(static_cast<u8>(d_bank << 2) | d_index),
             /* Dn */ id::vfp_reg::UNKNOWN,
             /* Dm */ vfp_reg.fetch_double_reg_id(static_cast<u8>(m_bank << 2) | m_index),
@@ -602,7 +602,7 @@ vfp_address_struct VFP_ADDRESS_MODE::vfp_load_multiple(const u32 code) {
         }
 
         const u32 start_address = reg.read(code, 16, 19);
-        const u32 end_address = start_address + 4 * word_count - 4;
+        const u32 end_address = start_address + (4 * word_count) - 4;
 
         return vfp_address_struct {
             start_address,
@@ -642,10 +642,10 @@ vfp_address_struct VFP_ADDRESS_MODE::vfp_load_multiple(const u32 code) {
         const u32 Rn = reg.read(Rn_id);
 
         const u32 start_address = Rn;
-        const u32 end_address = start_address + 4 * word_count - 4;
+        const u32 end_address = start_address + (4 * word_count) - 4;
 
         if (reg.is_cond_valid(code)) {
-            reg.write(Rn_id, Rn + 4 * offset);
+            reg.write(Rn_id, Rn + (4 * offset));
         }
 
         return vfp_address_struct {
@@ -685,11 +685,11 @@ vfp_address_struct VFP_ADDRESS_MODE::vfp_load_multiple(const u32 code) {
         const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
         const u32 Rn = reg.read(Rn_id);
 
-        const u32 start_address = Rn - 4 * offset;
-        const u32 end_address = start_address - 4 * offset + 4 * word_count - 4;
+        const u32 start_address = Rn - (4 * offset);
+        const u32 end_address = start_address - (4 * offset) + (4 * word_count) - 4;
 
         if (reg.is_cond_valid(code)) {
-            reg.write(Rn_id, Rn - 4 * offset);
+            reg.write(Rn_id, Rn - (4 * offset));
         }
 
         return vfp_address_struct {

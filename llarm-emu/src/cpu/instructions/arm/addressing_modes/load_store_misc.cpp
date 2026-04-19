@@ -39,9 +39,9 @@ u32 ADDRESSING_MODE::ls_misc_imm(const u32 code) {
 
     if (llarm::util::bit_fetch(code, 23)) {
         return (reg.read(Rn_id) + offset_8);
-    } else {
-        return (reg.read(Rn_id) - offset_8);
     }
+
+    return (reg.read(Rn_id) - offset_8);
 }
 
 
@@ -57,9 +57,9 @@ u32 ADDRESSING_MODE::ls_misc_reg(const u32 code) {
 
     if (llarm::util::bit_fetch(code, 23)) {
         return Rn + Rm;
-    } else {
-        return Rn - Rm;
     }
+    
+    return Rn - Rm;
 }
 
 

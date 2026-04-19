@@ -7,11 +7,11 @@
 #include <llarm/llarm-asm.hpp>
 
 
-void EXECUTE::arm_execute(const arm_decode_struct &decode) {
+void EXECUTE::arm_execute(const arm_decode_struct &instruction) {
     using namespace llarm::as;
 
-    const u32 code = decode.code;
-    const arm_id id = decode.id;
+    const u32 code = instruction.code;
+    const arm_id id = instruction.id;
 
     switch (id) {
         case arm_id::UNKNOWN: llarm::out::dev_error("Unknown instruction attempted to be executed");
@@ -34,12 +34,12 @@ void EXECUTE::arm_execute(const arm_decode_struct &decode) {
         case arm_id::MVN: instructions.arm.movement.MVN(code); return;
         case arm_id::B: instructions.arm.branching.B(code); return;
         case arm_id::BL: instructions.arm.branching.BL(code); return;
-        case arm_id::NOP: instructions.arm.misc.NOP(code); return;
+        case arm_id::NOP: instructions.arm.misc.NOP(); return;
         case arm_id::CMNP: instructions.arm.misc.PSR(code); return;
         case arm_id::CMPP: instructions.arm.misc.PSR(code); return;
         case arm_id::TEQP: instructions.arm.misc.PSR(code); return;
         case arm_id::TSTP: instructions.arm.misc.PSR(code); return;
-        case arm_id::SWI: instructions.arm.misc.SWI(code); return;
+        case arm_id::SWI: instructions.arm.misc.SWI(); return;
         case arm_id::LDM1: instructions.arm.load.LDM1(code); return;
         case arm_id::LDM2: instructions.arm.load.LDM2(code); return;
         case arm_id::LDM3: instructions.arm.load.LDM3(code); return;
@@ -74,7 +74,7 @@ void EXECUTE::arm_execute(const arm_decode_struct &decode) {
         case arm_id::LDRSH: instructions.arm.load.LDRSH(code); return;
         case arm_id::STRH: instructions.arm.store.STRH(code); return;
         case arm_id::BX: instructions.arm.branching.BX(code); return;
-        case arm_id::BKPT: instructions.arm.misc.BKPT(code); return;
+        case arm_id::BKPT: instructions.arm.misc.BKPT(); return;
         case arm_id::BLX1: instructions.arm.branching.BLX1(/*code*/); return; // TODO
         case arm_id::BLX2: instructions.arm.branching.BLX2(/*code*/); return; // TODO
         case arm_id::CLZ: instructions.arm.logic.CLZ(code); return;
@@ -113,7 +113,7 @@ void EXECUTE::arm_execute(const arm_decode_struct &decode) {
         case arm_id::FMRX: instructions.arm.vfp.FMRX(code); return;
         case arm_id::FMSCS: instructions.arm.vfp.FMSCS(code); return;
         case arm_id::FMSR: instructions.arm.vfp.FMSR(code); return;
-        case arm_id::FMSTAT: instructions.arm.vfp.FMSTAT(code); return;
+        case arm_id::FMSTAT: instructions.arm.vfp.FMSTAT(); return;
         case arm_id::FMULS: instructions.arm.vfp.FMULS(code); return;
         case arm_id::FMXR: instructions.arm.vfp.FMXR(code); return;
         case arm_id::FNEGS: instructions.arm.vfp.FNEGS(code); return;
@@ -214,9 +214,9 @@ void EXECUTE::thumb_execute(const thumb_decode_struct &instruction) {
         case thumb_id::BL_BLX1_PREFIX: instructions.thumb.branching.BL_BLX1_PREFIX(code); return;
         case thumb_id::BLX2: instructions.thumb.branching.BLX2(code); return;
         case thumb_id::BX: instructions.thumb.branching.BX(code); return;
-        case thumb_id::NOP: instructions.thumb.misc.NOP(code); return;
+        case thumb_id::NOP: instructions.thumb.misc.NOP(); return;
         case thumb_id::BKPT: instructions.thumb.misc.BKPT(code); return;
-        case thumb_id::SWI: instructions.thumb.misc.SWI(code); return;
+        case thumb_id::SWI: instructions.thumb.misc.SWI(); return;
         case thumb_id::LDMIA: instructions.thumb.load.LDMIA(code); return;
         case thumb_id::LDR1: instructions.thumb.load.LDR1(code); return;
         case thumb_id::LDR2: instructions.thumb.load.LDR2(code); return;

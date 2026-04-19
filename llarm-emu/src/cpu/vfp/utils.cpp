@@ -8,13 +8,13 @@
 
 
 double vfp_utils::u64_to_double(const u64 value) {
-    double d;
+    double d = 0.0;
     std::memcpy(&d, &value, sizeof(d));
     return d;
 }
 
 float vfp_utils::u32_to_single(const u32 value) {
-    float d;
+    float d = 0.0;
     std::memcpy(&d, &value, sizeof(d));
     return d;
 }

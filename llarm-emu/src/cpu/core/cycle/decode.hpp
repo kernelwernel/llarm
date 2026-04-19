@@ -19,19 +19,16 @@ struct thumb_decode_struct {
 
 
 struct DECODE {
-private:
     REGISTERS& reg;
     SETTINGS& settings;
 
-private:
-    bool has_condition_failed(const id::cond cond);
+    bool has_condition_failed(const id::cond cond) const;
 
-    bool is_arm_instruction_unsupported(const llarm::as::arm_id id);
-    bool is_thumb_instruction_unsupported(const llarm::as::thumb_id id);
+    bool is_arm_instruction_unsupported(const llarm::as::arm_id id) const;
+    bool is_thumb_instruction_unsupported(const llarm::as::thumb_id id) const;
 
-public:
-    arm_decode_struct arm_decode(const u32 raw_code);
-    thumb_decode_struct thumb_decode(const u16 raw_code);
+    arm_decode_struct arm_decode(const u32 raw_code) const;
+    thumb_decode_struct thumb_decode(const u16 raw_code) const;
 
     DECODE(
         REGISTERS& reg,

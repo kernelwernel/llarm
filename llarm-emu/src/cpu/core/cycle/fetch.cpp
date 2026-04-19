@@ -18,7 +18,7 @@ arm_fetch_struct FETCH::arm_fetch() {
     /* new: */ mem_read_struct access = memory.read(reg.read(id::reg::PC), 4);
 
     if (globals.is_little_endian) {
-        access.value = util::swap_endianness<u32>(u32(access.value));
+        access.value = util::swap_endianness(access.value);
     }
 
     if (access.has_failed) {
@@ -27,12 +27,12 @@ arm_fetch_struct FETCH::arm_fetch() {
             0, // code
             true // has_failed
         };
-    } else {
-        return arm_fetch_struct {
-            static_cast<u32>(access.value), // code
-            false // has_failed
-        };
     }
+
+    return arm_fetch_struct {
+        static_cast<u32>(access.value), // code
+        false // has_failed
+    };
 }
 
 
@@ -41,7 +41,7 @@ thumb_fetch_struct FETCH::thumb_fetch() {
     /* new: */ mem_read_struct access = memory.read(reg.read(id::reg::PC), 2);
 
     if (globals.is_little_endian) {
-        access.value = util::swap_endianness<u16>(u16(access.value));
+        access.value = util::swap_endianness(access.value);
     }
 
     if (access.has_failed) {
@@ -50,10 +50,10 @@ thumb_fetch_struct FETCH::thumb_fetch() {
             0, // code
             true // has_failed
         };
-    } else {
-        return thumb_fetch_struct {
-            static_cast<u16>(access.value), // code
-            false // has_failed
-        };
     }
+
+    return thumb_fetch_struct {
+        static_cast<u16>(access.value), // code
+        false // has_failed
+    };
 }

@@ -16,12 +16,12 @@ struct thumb_fetch_struct {
 
 
 struct FETCH {
-private:
+
     REGISTERS& reg;
     MEMORY& memory;
     GLOBALS& globals;
 
-public:
+
 
     arm_fetch_struct arm_fetch();
 

@@ -53,7 +53,7 @@ void INSTRUCTIONS::arm::logic::CLZ(const u32 code) {
     if (Rm == 0) {
         reg.write(Rd_id, 32);
     } else {
-        reg.write(Rd_id, 31 - u32(std::bit_width(Rm) - 1));
+        reg.write(Rd_id, static_cast<u32>(31 - std::bit_width(Rm) - 1));
     }
 }
 

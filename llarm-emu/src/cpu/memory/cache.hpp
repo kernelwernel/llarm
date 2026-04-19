@@ -5,10 +5,8 @@
 #include <llarm/shared/types.hpp>
 
 struct CACHE {
-private:
     COPROCESSOR& coprocessor;
 
-private:
     u8 DATA_LINELEN = 0;
     u8 DATA_MULTIPLIER = 0;
     u16 DATA_ASSOCIATIVITY = 0;
@@ -48,7 +46,7 @@ private:
 
     void invalidate_inst_entry(const u32 address);
 
-public:
+
     CACHE(COPROCESSOR& coprocessor) : coprocessor(coprocessor) {
         set_parameters();
     }

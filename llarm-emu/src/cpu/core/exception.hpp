@@ -18,11 +18,11 @@
 #include <llarm/shared/types.hpp>
 
 struct EXCEPTION {
-private:
+
     REGISTERS& reg;
     COPROCESSOR& coprocessor;
 
-public:
+
     struct exception_struct {
         u8 mode; 
         u32 normal_address;

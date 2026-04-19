@@ -400,9 +400,9 @@ void INSTRUCTIONS::arm::vfp::FLDD(const u32 code) {
     const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
     if (llarm::util::bit_fetch(code, 23) == 1) {
-        address = Rn + offset * 4;
+        address = Rn + (offset * 4);
     } else {
-        address = Rn - offset * 4;
+        address = Rn - (offset * 4);
     }
 
     const mem_read_struct access = memory.read(address, 4);
@@ -541,7 +541,7 @@ void INSTRUCTIONS::arm::vfp::FLDMX(const u32 code) {
 
     const vfp_address_struct addresses = vfp_addressing_mode.vfp_load_multiple(code);
 
-    u32 address = addresses.start;
+    const u32 address = addresses.start;
 
     for (u8 i = 0; i <= (offset - 3) / 2; i++) {
 
@@ -574,9 +574,9 @@ void INSTRUCTIONS::arm::vfp::FLDS(const u32 code) {
     const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
     if (U == 1) {
-        address = Rn + offset * 4;
+        address = Rn + (offset * 4);
     } else {
-        address = Rn - offset * 4;
+        address = Rn - (offset * 4);
     }
 
     const mem_read_struct access = memory.read(address, 4);
@@ -709,7 +709,7 @@ void INSTRUCTIONS::arm::vfp::FMSR(const u32 code) {
  *    CPSR C Flag = FPSCR C Flag
  *    CPSR V Flag = FPSCR V Flag
  */
-void INSTRUCTIONS::arm::vfp::FMSTAT(const u32 code) {
+void INSTRUCTIONS::arm::vfp::FMSTAT() {
     reg.write(id::cpsr::N, static_cast<u8>(vfp_reg.read(id::vfp_reg::FPSCR_N)));
     reg.write(id::cpsr::Z, static_cast<u8>(vfp_reg.read(id::vfp_reg::FPSCR_Z)));
     reg.write(id::cpsr::C, static_cast<u8>(vfp_reg.read(id::vfp_reg::FPSCR_C)));
@@ -832,9 +832,9 @@ void INSTRUCTIONS::arm::vfp::FSTD(const u32 code) {
     const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
     if (llarm::util::bit_fetch(code, 23)) {
-        address = Rn + offset * 4;
+        address = Rn + (offset * 4);
     } else {
-        address = Rn - offset * 4;
+        address = Rn - (offset * 4);
     }
 
     const u64 Dd = vfp_reg.read_double(code, 12, 15);

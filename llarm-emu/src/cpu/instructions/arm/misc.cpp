@@ -5,8 +5,8 @@
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
 
-void INSTRUCTIONS::arm::misc::NOP(const u32 code) {
-    return;
+void INSTRUCTIONS::arm::misc::NOP() {
+    // literally does nothing
 }
 
 
@@ -62,11 +62,12 @@ void INSTRUCTIONS::arm::misc::PSR(const u32 code) {
 
     if ((reg.read(id::reg::R15) & 0b11) == 0b00) { // user mode
         return; // all the flag bit updates are done
-    } else { // privileged
-        reg.write(id::cpsr::I, (0));// TODO
-        reg.write(id::cpsr::F, (0));// TODO
-        reg.write(id::cpsr::M, (0));// TODO
     }
+    
+    // privileged
+    reg.write(id::cpsr::I, 0);// TODO
+    reg.write(id::cpsr::F, 0);// TODO
+    reg.write(id::cpsr::M, 0);// TODO
 }
 
 
@@ -82,7 +83,7 @@ void INSTRUCTIONS::arm::misc::PSR(const u32 code) {
  *   else
  *     PC = 0x00000008
  */
-void INSTRUCTIONS::arm::misc::SWI(const u32 code) {
+void INSTRUCTIONS::arm::misc::SWI() {
     reg.switch_mode(id::mode::SUPERVISOR);
     reg.write(id::reg::R14_svc, reg.read(id::reg::PC) + 4);
     reg.write(id::reg::SPSR_svc, reg.CPSR);
@@ -109,7 +110,7 @@ void INSTRUCTIONS::arm::misc::SWI(const u32 code) {
  *     else
  *         PC = 0x0000000C
  */
-void INSTRUCTIONS::arm::misc::BKPT(const u32 code) {
+void INSTRUCTIONS::arm::misc::BKPT() {
     reg.switch_mode(id::mode::ABORT);
 
     reg.write(id::reg::R14_abt, reg.read(id::reg::PC) + 4);

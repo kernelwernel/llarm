@@ -7,14 +7,12 @@
 
 
 struct FCSE {
-private:
     COPROCESSOR& coprocessor;
     SETTINGS& settings;
 
-public:
-    bool is_fcse_enabled();
+    bool is_fcse_enabled() const;
 
-    u32 modify_address(const u32 address);
+    u32 modify_address(const u32 address) const;
 
     FCSE(
         COPROCESSOR& coprocessor, 

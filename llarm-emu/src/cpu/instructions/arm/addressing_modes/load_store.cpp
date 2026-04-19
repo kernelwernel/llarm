@@ -53,9 +53,9 @@ u32 ADDRESSING_MODE::ls_imm(const u32 code) {
     
     if (llarm::util::bit_fetch(code, 23)) {
         return (Rn + offset_12);
-    } else {
-        return (Rn - offset_12);
     }
+
+    return (Rn - offset_12);
 }
 
 
@@ -71,9 +71,9 @@ u32 ADDRESSING_MODE::ls_reg(const u32 code) {
 
     if (llarm::util::bit_fetch(code, 23)) {
         return (Rn + Rm);
-    } else {
-        return (Rn - Rm);
     }
+
+    return (Rn - Rm);
 }
 
 
@@ -143,7 +143,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg(const u32 code) {
 
         case 0b11: // ROR or RRX
             if (shift_imm == 0) { // RRX
-                index = (u32(reg.read(id::cpsr::C) << 31) | (Rm >> 1));
+                index = (static_cast<u32>(reg.read(id::cpsr::C) << 31) | (Rm >> 1));
             } else { // ROR
                 index = llarm::util::rotr(Rm, shift_imm);
             }
@@ -292,7 +292,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg_pre(const u32 code) {
 
         case 0b11: // ROR or RRX
             if (shift_imm == 0) { // RRX
-                index = (u32(reg.read(id::cpsr::C) << 31) | (Rm >> 1));
+                index = (static_cast<u32>(reg.read(id::cpsr::C) << 31) | (Rm >> 1));
             } else { // ROR
                 index = llarm::util::rotr(Rm, shift_imm);
             }
@@ -409,7 +409,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg_post(const u32 code) {
     const u32 Rn = reg.read(Rn_id);
 
     u32 index = 0;
-    u32 address = Rn;
+    const u32 address = Rn;
 
     switch (shift) {
         case 0b00: // LSL
@@ -438,7 +438,7 @@ u32 ADDRESSING_MODE::ls_scaled_reg_post(const u32 code) {
 
         case 0b11: // ROR or RRX
             if (shift_imm == 0) { // RRX
-                index = (u32(reg.read(id::cpsr::C) << 31) | (Rm >> 1));
+                index = (static_cast<u32>(reg.read(id::cpsr::C) << 31) | (Rm >> 1));
             } else { // ROR
                 index = llarm::util::rotr(Rm, shift_imm);
             }

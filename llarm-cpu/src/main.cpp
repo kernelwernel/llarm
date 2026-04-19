@@ -13,7 +13,7 @@
 
 #include <llarm/llarm-cpu.hpp>
 
-
+// NOLINTBEGIN(cppcoreguidelines-use-enum-class)
 enum arg_enum : u8 {
     NULL_ARG,
     HELP,
@@ -28,7 +28,7 @@ enum arg_enum : u8 {
     IS_ARM,
     END
 };
-
+// NOLINTEND(cppcoreguidelines-use-enum-class)
 
 [[noreturn]] void help() {
     std::cout <<

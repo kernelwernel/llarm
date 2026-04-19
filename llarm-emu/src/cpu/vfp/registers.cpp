@@ -107,7 +107,7 @@ void VFP_REG::write(const id::vfp_reg vfp_reg_id, const u64 value) {
 }
 
 
-u64 VFP_REG::read(const id::vfp_reg vfp_reg_id) {
+u64 VFP_REG::read(const id::vfp_reg vfp_reg_id) const {
     static constexpr u64 lower_mask_64 = 0x00000000FFFFFFFF;
     static constexpr u64 upper_mask_64 = 0xFFFFFFFF00000000;
 
@@ -231,20 +231,20 @@ void VFP_REG::write_single(const id::vfp_reg vfp_reg_id, const float value) {
 }
 
 
-u64 VFP_REG::read_double(const u32 code, const u8 start, const u8 end) {
+u64 VFP_REG::read_double(const u32 code, const u8 start, const u8 end) const {
     const u8 reg_bits = llarm::util::bit_range<u8>(code, start, end);
     const id::vfp_reg id = fetch_double_reg_id(reg_bits);
     return read(id);
 }
 
 
-double VFP_REG::read_double_IEEE(const u32 code, const u8 start, const u8 end) {
+double VFP_REG::read_double_IEEE(const u32 code, const u8 start, const u8 end) const {
     const u64 raw_bytes = read_double(code, start, end);
     return vfp_utils::u64_to_double(raw_bytes);
 }
 
 
-u32 VFP_REG::read_single(const u32 code, const u8 start, const u8 end, const u8 bottom_bit) {
+u32 VFP_REG::read_single(const u32 code, const u8 start, const u8 end, const u8 bottom_bit) const {
     const bool bottom = llarm::util::bit_fetch(code, bottom_bit);
     const u8 reg_bits = static_cast<u8>(llarm::util::bit_range(code, start, end) << 1) | bottom;
     
@@ -253,19 +253,19 @@ u32 VFP_REG::read_single(const u32 code, const u8 start, const u8 end, const u8 
 }
 
 
-float VFP_REG::read_single_IEEE(const u32 code, const u8 start, const u8 end, const u8 bottom_bit) {
+float VFP_REG::read_single_IEEE(const u32 code, const u8 start, const u8 end, const u8 bottom_bit) const {
     const u32 raw_bytes = read_single(code, start, end, bottom_bit);
     return vfp_utils::u32_to_single(raw_bytes);
 }
 
 
-double VFP_REG::read_double(const id::vfp_reg vfp_reg_id) {
+double VFP_REG::read_double(const id::vfp_reg vfp_reg_id) const {
     const u64 raw_bytes = read(vfp_reg_id);
     return vfp_utils::u64_to_double(raw_bytes);
 }
 
 
-float VFP_REG::read_single(const id::vfp_reg vfp_reg_id) {
+float VFP_REG::read_single(const id::vfp_reg vfp_reg_id) const {
     const u32 raw_bytes = static_cast<u32>(read(vfp_reg_id));
     return vfp_utils::u32_to_single(raw_bytes);
 }
@@ -321,19 +321,19 @@ void VFP_REG::setup() {
 }
 
 
-bool VFP_REG::is_single_nan(const u32 code, const u8 start, const u8 end, const u8 bottom_bit) {
+bool VFP_REG::is_single_nan(const u32 code, const u8 start, const u8 end, const u8 bottom_bit) const {
     const float tmp = read_single_IEEE(code, start, end, bottom_bit);
     return std::isnan(tmp);
 }
 
 
-bool VFP_REG::is_double_nan(const u32 code, const u8 start, const u8 end) {
+bool VFP_REG::is_double_nan(const u32 code, const u8 start, const u8 end) const {
     const double tmp = read_double_IEEE(code, start, end);
     return std::isnan(tmp);
 }
 
 
-id::vfp_reg VFP_REG::fetch_single_reg_id(const u8 reg_bits) {
+id::vfp_reg VFP_REG::fetch_single_reg_id(const u8 reg_bits) const {
     switch (reg_bits) {
         case 0: return id::vfp_reg::S0;
         case 1: return id::vfp_reg::S1;
@@ -372,7 +372,7 @@ id::vfp_reg VFP_REG::fetch_single_reg_id(const u8 reg_bits) {
 }
 
 
-id::vfp_reg VFP_REG::fetch_double_reg_id(const u8 reg_bits) {
+id::vfp_reg VFP_REG::fetch_double_reg_id(const u8 reg_bits) const {
     switch (reg_bits) {
         case 0: return id::vfp_reg::D0;
         case 1: return id::vfp_reg::D1;
@@ -395,19 +395,19 @@ id::vfp_reg VFP_REG::fetch_double_reg_id(const u8 reg_bits) {
 }
 
 
-id::vfp_reg VFP_REG::fetch_single_reg_id(const u32 code, const u8 start, const u8 end) {
+id::vfp_reg VFP_REG::fetch_single_reg_id(const u32 code, const u8 start, const u8 end) const {
     const u8 reg_bits = llarm::util::bit_range<u8>(code, start, end);
     return fetch_single_reg_id(reg_bits);
 }
 
 
-id::vfp_reg VFP_REG::fetch_double_reg_id(const u32 code, const u8 start, const u8 end) {
+id::vfp_reg VFP_REG::fetch_double_reg_id(const u32 code, const u8 start, const u8 end) const {
     const u8 reg_bits = llarm::util::bit_range<u8>(code, start, end);
     return fetch_double_reg_id(reg_bits);
 }
 
 
-u8 VFP_REG::fetch_vec_len() {
+u8 VFP_REG::fetch_vec_len() const {
     return llarm::util::bit_range<u8>(FPSCR, 16, 18);
 }
 

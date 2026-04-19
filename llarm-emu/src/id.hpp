@@ -20,7 +20,7 @@ namespace id {
         IRQ,
         PREFETCH_ABORT,
         UNDEFINED, 
-        SWI = 6 // UNDEFINED and SWI both have the same priority level of 6
+        SWI = UNDEFINED // UNDEFINED and SWI both have the same priority level of 6
     };
 
     enum class cpsr : u8 {
@@ -493,6 +493,7 @@ namespace id {
     };
 
     enum class tlb_type : u8 {
+        UNKNOWN,
         UNIFIED,
         SEPARATE,
         SEPARATE_INST,
@@ -673,7 +674,7 @@ namespace id {
         FPEXC_EN
     };
 
-    enum class vfp_format {
+    enum class vfp_format : u8 {
         NON_STANDARD,
         FORMAT_1,
         FORMAT_2

@@ -9,13 +9,11 @@
 #include <llarm/shared/types.hpp>
 
 struct CPU {
-public:
     SETTINGS settings;
     VIC vic;
     RAM ram;
     CORE core;
 
-public:
     CPU(std::vector<u8> &binary);
 
     void run(const bool is_headless = false);

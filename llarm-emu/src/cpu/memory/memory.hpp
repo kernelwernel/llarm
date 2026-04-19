@@ -15,7 +15,6 @@
 #include <llarm/shared/types.hpp>
 
 struct MEMORY {
-private:
     REGISTERS& reg;
     RAM& ram;
     MMU& mmu;
@@ -24,7 +23,6 @@ private:
     ARCH_26& arch_26;
     EXCEPTION& exception;
 
-public:
     void manage_abort(const id::aborts abort_code);
 
     mem_write_struct write(const u64 value, u32 address, const u8 access_size);

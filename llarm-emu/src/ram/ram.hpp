@@ -11,7 +11,6 @@
 
 
 struct RAM {
-private:
     SETTINGS& settings;
     VIC& vic;
 
@@ -23,7 +22,6 @@ private:
     std::array<u8, default_size> ram{};
 #endif
 
-public:
     void write(std::vector<u8> &data, const u32 address);
 
     template <std::size_t N>
@@ -37,7 +35,7 @@ public:
 
     void write(const u64 value, const u32 address, const u8 access_size);
 
-    std::vector<u8> vector_read(const u32 start, const u32 end);
+    std::vector<u8> vector_read(const u32 start, const u32 end) const;
 
     u64 read(const u32 address, const u8 access_size);
 

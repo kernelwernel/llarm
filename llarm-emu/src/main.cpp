@@ -1,4 +1,3 @@
-#include <bitset>
 #include <cstring>
 #include <iostream>
 #include <array>
@@ -18,6 +17,7 @@
 #include <llarm/llarm-asm.hpp>
 
 
+// NOLINTBEGIN(cppcoreguidelines-use-enum-class)
 enum arg_enum : u8 {
     NULL_ARG,
     HELP,
@@ -31,6 +31,7 @@ enum arg_enum : u8 {
     MEM,
     END
 };
+// NOLINTEND(cppcoreguidelines-use-enum-class)
 
 
 [[noreturn]] void help() {
@@ -122,7 +123,7 @@ static void print_all_regs(llarm::emu::cpu_blockstep &cpu) {
 
     for (std::size_t i = 0; i < display_regs.size(); i += 4) {
         for (std::size_t j = i; j < std::min(i + 4, display_regs.size()); ++j) {
-            const auto &[name, id] = display_regs[j];
+            const auto &[name, id] = display_regs.at(j);
             std::printf("  %-5s=0x%08X", name, cpu.read_reg(id));
         }
         std::printf("\n");
@@ -215,12 +216,12 @@ static void run_step_mode(
 
         if (is_thumb) {
             const u16 code = cpu.current_thumb_code();
-            llarm::as::settings cfg = llarm::as::default_settings();
+            const llarm::as::settings cfg = llarm::as::default_settings();
             const std::string mnemonic = llarm::as::disassemble_thumb(code, pc, cfg);
             std::printf("[%4lu] PC=0x%08X  THUMB: %s (0x%04X)\n", step, pc, mnemonic.c_str(), code);
         } else {
             const u32 code = cpu.current_arm_code();
-            llarm::as::settings cfg = llarm::as::default_settings();
+            const llarm::as::settings cfg = llarm::as::default_settings();
             const std::string mnemonic = llarm::as::disassemble_arm(code, pc, cfg);
             std::printf("[%4lu] PC=0x%08X  ARM: %s (0x%08X)\n", step, pc, mnemonic.c_str(), code);
         }
@@ -292,30 +293,32 @@ int main(int argc, char* argv[]) {
     std::string mem_arg;
     std::string potential_null_arg;
 
-    for (std::size_t i = 0; i < args.size(); ++i) {
+    for (auto arg_it = args.begin(); arg_it != args.end(); ++arg_it) {
         auto it = std::find_if(table.cbegin(), table.cend(), [&](const auto &p) {
-            return (std::strcmp(args[i], p.first) == 0);
+            return (std::strcmp(*arg_it, p.first) == 0);
         });
+
+        const auto next = std::next(arg_it);
 
         if (it == table.cend()) {
             if (!binary_path.empty()) {
                 arg_bitset.set(NULL_ARG);
-                potential_null_arg = args[i];
+                potential_null_arg = *arg_it;
             } else {
-                binary_path = args[i];
+                binary_path = *arg_it;
             }
         } else {
             arg_bitset.set(it->second);
 
             if (it->second == REG) {
-                if (i + 1 < args.size() && args[i + 1][0] != '-') {
-                    reg_arg = args[++i];
+                if (next != args.end() && (*next)[0] != '-') {
+                    reg_arg = *++arg_it;
                 } else {
                     llarm::out::error("llarm-emu: --reg requires a register name");
                 }
             } else if (it->second == MEM) {
-                if (i + 1 < args.size() && args[i + 1][0] != '-') {
-                    mem_arg = args[++i];
+                if (next != args.end() && (*next)[0] != '-') {
+                    mem_arg = *++arg_it;
                 } else {
                     llarm::out::error("llarm-emu: --mem requires an address (e.g. 0x1000 or 0x1000:u32)");
                 }

@@ -106,9 +106,12 @@ struct VIC {
     void raise_irq(const u8 source);
     void clear_irq(const u8 source);
 
-    VIC(SETTINGS& settings) : settings(settings) {
-        type = settings.vic_type;
-        base = (settings.vic_base != 0) ? settings.vic_base : VIC_BASE_ADDR;
+    VIC(SETTINGS& settings) : 
+        settings(settings), 
+        type(settings.vic_type), 
+        base((settings.vic_base != 0) ? settings.vic_base : VIC_BASE_ADDR) 
+    {
+        
     }
 
     u32 hw_raw = 0; // raw hardware interrupt line states (raise/clear)

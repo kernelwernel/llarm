@@ -131,7 +131,7 @@ void COPROCESSOR::force_write(
 }
 
 
-u32 COPROCESSOR::read(const id::cp15 cp15_id) {
+u32 COPROCESSOR::read(const id::cp15 cp15_id) const {
     return cp15.read(cp15_id);
 }
 

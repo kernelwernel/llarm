@@ -23,7 +23,6 @@
 #include <llarm/shared/types.hpp>
 
 struct CORE {
-public:
     // essential modules
     SETTINGS settings;
     GLOBALS globals;
@@ -55,7 +54,6 @@ public:
     DECODE decode;
     EXECUTE execute;
 
-public:
     void initialise(const bool is_headless = false);
 
     void arm_cycle_headless();
@@ -63,17 +61,15 @@ public:
     void thumb_cycle_headless();
     void thumb_cycle();
 
-public:
     // for end-user library access purposes
-    llarm::as::arm_id current_arm_id;
-    u32 current_arm_code;
+    llarm::as::arm_id current_arm_id = arm_id::UNKNOWN;
+    u32 current_arm_code = 0;
 
-    llarm::as::thumb_id current_thumb_id;
-    u16 current_thumb_code;
+    llarm::as::thumb_id current_thumb_id = thumb_id::UNKNOWN;
+    u16 current_thumb_code = 0;
 
-    bool continue_cycle;
+    bool continue_cycle = false;
 
-public:
     CORE(const SETTINGS& init_settings, RAM &ram, VIC& vic) :
         settings(init_settings),
         globals(),
@@ -86,7 +82,7 @@ public:
         reg(coprocessor, globals, arch_26, settings),
         vfp_addressing_mode(settings, reg, vfp_reg),
         exception(reg, coprocessor),
-        vic(settings),
+        vic(vic),
         alignment(coprocessor, settings),
         ram(ram),
         mmu(globals, ram, alignment, coprocessor, settings, tlb),

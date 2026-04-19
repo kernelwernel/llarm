@@ -3,10 +3,10 @@
 #include "registers.hpp"
 
 struct VFP_EXCEPTION {
-private:
+
     VFP_REG& vfp_reg;
 
-public:
+
     void invalid_operation();
     void div_by_zero();
     void overflow();

@@ -38,12 +38,12 @@
  * itself is structured in this unintuitive way. Also, hope you have a great day :)
  */
 struct CP15 {
-private:
+
     SETTINGS& settings;
     GLOBALS& globals;
     TLB& tlb;
 
-public:
+
 
     u32 R0_ID = 0;    // processor ID 
     u32 R0_CACHE = 0; // cache 
@@ -133,11 +133,10 @@ public:
     // implementation defined, not important
     u32 R15 = 0;
 
-public:
-    id::cp15 identify_R6(const u8 CRm, const u8 opcode_2);
-    id::cp15 identify(const u8 CRn, const u8 CRm, const u8 opcode2);
+    id::cp15 identify_R6(const u8 CRm, const u8 opcode_2) const;
+    id::cp15 identify(const u8 CRn, const u8 CRm, const u8 opcode_2) const;
 
-    u32 read(const id::cp15 reg);
+    u32 read(const id::cp15 reg) const;
 
     void force_write(const id::cp15 reg, const u32 value);
     void write(const id::cp15 reg, const u32 value);
@@ -145,7 +144,6 @@ public:
 
     void reset();
 
-private:
     void setup_R0_processor_id();
 
     // TODO (B2-9)
@@ -153,6 +151,5 @@ private:
 
     void setup_R1_control();
 
-public:
     CP15(SETTINGS& settings, GLOBALS& globals, TLB& tlb);
 };

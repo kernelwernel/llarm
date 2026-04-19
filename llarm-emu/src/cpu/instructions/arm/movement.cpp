@@ -68,8 +68,10 @@ void INSTRUCTIONS::arm::movement::MVN(const u32 code) {
 }
 
 
-void INSTRUCTIONS::arm::movement::MRS(const u32) {};// TODO
-
+void INSTRUCTIONS::arm::movement::MRS(const u32 code) {
+    (void)code;
+    // TODO
+};
 
 
 

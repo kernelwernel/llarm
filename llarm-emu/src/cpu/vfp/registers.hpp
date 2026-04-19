@@ -7,10 +7,9 @@
 
 
 struct VFP_REG {
-private:
+
     SETTINGS& settings;
 
-private:
     // maybe i could do something hacky with unions here, but whatever
     u64 D0 = 0; // S0 and S1
     u64 D1 = 0; // S2 and S3
@@ -33,7 +32,7 @@ private:
     u32 FPSCR = 0;
     u32 FPEXC = 0;
 
-public:
+
     void write(const id::vfp_reg vfp_reg_id, const u64 value);
     void write_single(const u32 code, const u8 start, const u8 end, const u32 value, const u8 bottom_bit);
     void write_double(const u32 code, const u8 start, const u8 end, const u64 value);
@@ -42,23 +41,23 @@ public:
     void write_double(const id::vfp_reg vfp_reg_id, const double value);
     void write_single(const id::vfp_reg vfp_reg_id, const float value);
 
-    u64 read(const id::vfp_reg vfp_reg_id);
-    u32 read_single(const u32 code, const u8 start, const u8 end, const u8 bottom_bit);
-    u64 read_double(const u32 code, const u8 start, const u8 end);
-    double read_double_IEEE(const u32 code, const u8 start, const u8 end);
-    float read_single_IEEE(const u32 code, const u8 start, const u8 end, const u8 bottom_bit);
-    double read_double(const id::vfp_reg vfp_reg_id);
-    float read_single(const id::vfp_reg vfp_reg_id);
+    u64 read(const id::vfp_reg vfp_reg_id) const;
+    u32 read_single(const u32 code, const u8 start, const u8 end, const u8 bottom_bit) const;
+    u64 read_double(const u32 code, const u8 start, const u8 end) const;
+    double read_double_IEEE(const u32 code, const u8 start, const u8 end) const;
+    float read_single_IEEE(const u32 code, const u8 start, const u8 end, const u8 bottom_bit) const;
+    double read_double(const id::vfp_reg vfp_reg_id) const;
+    float read_single(const id::vfp_reg vfp_reg_id) const;
 
-    id::vfp_reg fetch_single_reg_id(const u8 reg_bits);
-    id::vfp_reg fetch_double_reg_id(const u8 reg_bits);
-    id::vfp_reg fetch_single_reg_id(const u32 code, const u8 start, const u8 end);
-    id::vfp_reg fetch_double_reg_id(const u32 code, const u8 start, const u8 end);
+    id::vfp_reg fetch_single_reg_id(const u8 reg_bits) const;
+    id::vfp_reg fetch_double_reg_id(const u8 reg_bits) const;
+    id::vfp_reg fetch_single_reg_id(const u32 code, const u8 start, const u8 end) const;
+    id::vfp_reg fetch_double_reg_id(const u32 code, const u8 start, const u8 end) const;
 
-    bool is_single_nan(const u32 code, const u8 start, const u8 end, const u8 bottom_bit);
-    bool is_double_nan(const u32 code, const u8 start, const u8 end);
+    bool is_single_nan(const u32 code, const u8 start, const u8 end, const u8 bottom_bit) const;
+    bool is_double_nan(const u32 code, const u8 start, const u8 end) const;
 
-    u8 fetch_vec_len();
+    u8 fetch_vec_len() const;
 
     void reset();
 

@@ -14,10 +14,10 @@
 
 
 struct TLB {
-private:
+
     SETTINGS& settings;
 
-private:
+
     llarm::random random;
 
     // https://quick-bench.com/q/bhDceFgnZ7D3qR3ZR2GdCjwlt8g
@@ -31,13 +31,13 @@ private:
     std::unordered_map<u32, u32> data_table;
 #endif
 
-public:
+
     // read B3-27 for more context
     u32 W_unified;
     u32 W_inst;
     u32 W_data;
 
-public:
+
     void invalidate(const u32 virtual_address, const id::tlb_type tlb_type);
 
     void auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, const u32 physical_address);
@@ -48,11 +48,11 @@ public:
 
     void insert(const u32 virtual_address, const u32 physical_address, const id::tlb_type tlb_type);
 
-    tlb_fetch_struct is_translation_cached(const u32 virtual_address);
+    tlb_fetch_struct is_translation_cached(const u32 virtual_address) const;
 
-    bool is_type_invalid(const id::tlb_type tlb_type);
+    bool is_type_invalid(const id::tlb_type tlb_type) const;
 
-    void function(const u8 opcode_2, const u8 CRm, const u32 data);
+    void function(const u8 opcode_2, const u8 CRm, const u32 virtual_address);
 
     TLB(SETTINGS& settings);
 };

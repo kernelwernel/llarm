@@ -18,7 +18,7 @@
 #include <llarm/shared/util.hpp>
 #include <llarm/shared/out.hpp>
 
-id::cp15 CP15::identify_R6(const u8 CRm, const u8 opcode_2) {
+id::cp15 CP15::identify_R6(const u8 CRm, const u8 opcode_2) const {
     if (settings.is_mpu_enabled) {
         if (settings.is_mpu_separate) {
             if (opcode_2 == 1) {
@@ -58,15 +58,17 @@ id::cp15 CP15::identify_R6(const u8 CRm, const u8 opcode_2) {
         }
 
         return id::cp15::UNKNOWN;
-    } else if (settings.is_mmu_enabled) {
-        return id::cp15::R6_MMU;
-    } else {
-        return id::cp15::UNKNOWN;
     }
+    
+    if (settings.is_mmu_enabled) {
+        return id::cp15::R6_MMU;
+    }
+
+    return id::cp15::UNKNOWN;
 }
 
 
-id::cp15 CP15::identify(const u8 CRn, const u8 CRm, const u8 opcode_2) {
+id::cp15 CP15::identify(const u8 CRn, const u8 CRm, const u8 opcode_2) const {
     // maybe there's a better way to do this, idk
 
     switch (CRn) {
@@ -96,7 +98,9 @@ id::cp15 CP15::identify(const u8 CRn, const u8 CRm, const u8 opcode_2) {
                 if (settings.is_mpu_separate) {
                     if (opcode_2 == 1) {
                         return id::cp15::R3_PU_INST;
-                    } else if (opcode_2 == 0) {
+                    }
+                    
+                    if (opcode_2 == 0) {
                         return id::cp15::R3_PU_DATA;
                     }
 
@@ -124,7 +128,9 @@ id::cp15 CP15::identify(const u8 CRn, const u8 CRm, const u8 opcode_2) {
                 if (settings.is_mpu_separate) {
                     if (opcode_2 == 1) {
                         return id::cp15::R5_PU_INST;
-                    } else if (opcode_2 == 0) {
+                    }
+                    
+                    if (opcode_2 == 0) {
                         return id::cp15::R5_PU_DATA;
                     }
 
@@ -169,7 +175,9 @@ id::cp15 CP15::identify(const u8 CRn, const u8 CRm, const u8 opcode_2) {
 
                 if (opcode_2 == 0) {
                     return id::cp15::R10_MMU_DATA;
-                } else if (opcode_2 == 1) {
+                }
+
+                if (opcode_2 == 1) {
                     return id::cp15::R10_MMU_INST;
                 }
             }
@@ -187,7 +195,7 @@ id::cp15 CP15::identify(const u8 CRn, const u8 CRm, const u8 opcode_2) {
 }
 
 
-u32 CP15::read(const id::cp15 reg) {
+u32 CP15::read(const id::cp15 reg) const {
     switch (reg) {
         case id::cp15::UNKNOWN: return 0; // TODO log this somehow
         case id::cp15::R0_ID: return R0_ID;
@@ -441,16 +449,16 @@ u32 CP15::read(const id::cp15 reg) {
         case id::cp15::R9_CACHE_L: // TODO
         case id::cp15::R10: return R10;
         case id::cp15::R10_MMU: return R10;
-        case id::cp15::R10_MMU_BASE: return llarm::util::bit_range(R10, u8(32 - tlb.W_unified), 31);
-        case id::cp15::R10_MMU_VICTIM: return llarm::util::bit_range(R10, u8(32 - (2 * tlb.W_unified)), u8(31 - tlb.W_unified));
+        case id::cp15::R10_MMU_BASE: return llarm::util::bit_range(R10, static_cast<u8>(32 - tlb.W_unified), 31);
+        case id::cp15::R10_MMU_VICTIM: return llarm::util::bit_range(R10, static_cast<u8>(32 - (2 * tlb.W_unified)), static_cast<u8>(31 - tlb.W_unified));
         case id::cp15::R10_MMU_P: return (R10 & 1);
         case id::cp15::R10_MMU_INST: return R10_INST;
-        case id::cp15::R10_MMU_INST_BASE: return llarm::util::bit_range(R10_INST, u8(32 - tlb.W_inst), 31);
-        case id::cp15::R10_MMU_INST_VICTIM: return llarm::util::bit_range(R10_INST, u8(32 - (2 * tlb.W_inst)), u8(31 - tlb.W_inst));
+        case id::cp15::R10_MMU_INST_BASE: return llarm::util::bit_range(R10_INST, static_cast<u8>(32 - tlb.W_inst), 31);
+        case id::cp15::R10_MMU_INST_VICTIM: return llarm::util::bit_range(R10_INST, static_cast<u8>(32 - (2 * tlb.W_inst)), static_cast<u8>(31 - tlb.W_inst));
         case id::cp15::R10_MMU_INST_P: return (R10_INST & 1);
         case id::cp15::R10_MMU_DATA: return R10_DATA;
-        case id::cp15::R10_MMU_DATA_BASE: return llarm::util::bit_range(R10_DATA, u8(32 - tlb.W_data), 31);
-        case id::cp15::R10_MMU_DATA_VICTIM: return llarm::util::bit_range(R10_DATA, u8(32 - (2 * tlb.W_data)), u8(31 - tlb.W_data)); 
+        case id::cp15::R10_MMU_DATA_BASE: return llarm::util::bit_range(R10_DATA, static_cast<u8>(32 - tlb.W_data), 31);
+        case id::cp15::R10_MMU_DATA_VICTIM: return llarm::util::bit_range(R10_DATA, static_cast<u8>(32 - (2 * tlb.W_data)), static_cast<u8>(31 - tlb.W_data)); 
         case id::cp15::R10_MMU_DATA_P: return (R10_DATA & 1);
         case id::cp15::R10_PU: return R10;
         case id::cp15::R11: return R11;
@@ -1043,16 +1051,16 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
         case id::cp15::R9_CACHE_L: // TODO
         case id::cp15::R10: R10 = value; return;
         case id::cp15::R10_MMU: R10 = value; return;
-        case id::cp15::R10_MMU_BASE: llarm::util::swap_bits(R10, u8(32 - tlb.W_unified), 31, value); return;
-        case id::cp15::R10_MMU_VICTIM: llarm::util::swap_bits(R10, u8(32 - (2 * tlb.W_unified)), u8(31 - tlb.W_unified), value); return;
+        case id::cp15::R10_MMU_BASE: llarm::util::swap_bits(R10, static_cast<u8>(32 - tlb.W_unified), 31, value); return;
+        case id::cp15::R10_MMU_VICTIM: llarm::util::swap_bits(R10, static_cast<u8>(32 - (2 * tlb.W_unified)), static_cast<u8>(31 - tlb.W_unified), value); return;
         case id::cp15::R10_MMU_P: llarm::util::modify_bit(R10, 0, value); return;
         case id::cp15::R10_MMU_INST: R10_INST = value; return;
-        case id::cp15::R10_MMU_INST_BASE: llarm::util::swap_bits(R10_INST, u8(32 - tlb.W_inst), 31, value); return;
-        case id::cp15::R10_MMU_INST_VICTIM: llarm::util::swap_bits(R10_INST, u8(32 - (2 * tlb.W_inst)), u8(31 - tlb.W_data), value); return;
+        case id::cp15::R10_MMU_INST_BASE: llarm::util::swap_bits(R10_INST, static_cast<u8>(32 - tlb.W_inst), 31, value); return;
+        case id::cp15::R10_MMU_INST_VICTIM: llarm::util::swap_bits(R10_INST, static_cast<u8>(32 - (2 * tlb.W_inst)), static_cast<u8>(31 - tlb.W_data), value); return;
         case id::cp15::R10_MMU_INST_P: llarm::util::modify_bit(R10_INST, 0, value); return;
         case id::cp15::R10_MMU_DATA: R10_DATA = value; return;
-        case id::cp15::R10_MMU_DATA_BASE: llarm::util::swap_bits(R10_DATA, u8(32 - tlb.W_data), 31, value); return;
-        case id::cp15::R10_MMU_DATA_VICTIM: llarm::util::swap_bits(R10_DATA, u8(32 - (2 * tlb.W_data)), u8(31 - tlb.W_data), value); return;
+        case id::cp15::R10_MMU_DATA_BASE: llarm::util::swap_bits(R10_DATA, static_cast<u8>(32 - tlb.W_data), 31, value); return;
+        case id::cp15::R10_MMU_DATA_VICTIM: llarm::util::swap_bits(R10_DATA, static_cast<u8>(32 - (2 * tlb.W_data)), static_cast<u8>(31 - tlb.W_data), value); return;
         case id::cp15::R10_MMU_DATA_P: llarm::util::modify_bit(R10_DATA, 0, value); return;
         case id::cp15::R10_PU: R10 = value; return;
         case id::cp15::R11: R11 = value; return;

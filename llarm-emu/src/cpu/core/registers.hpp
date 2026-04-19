@@ -8,13 +8,13 @@
 #include <llarm/shared/types.hpp>
 
 struct REGISTERS {
-private:
+
     COPROCESSOR& coprocessor;
     GLOBALS& globals;
     ARCH_26& arch_26;
     SETTINGS& settings;
 
-public:
+
     // unbanked
     u32 R0 = 0;
     u32 R1 = 0;
@@ -70,20 +70,20 @@ public:
     u32 SPSR_irq = 0;
     u32 SPSR_fiq = 0;
 
-public:
-    bool is_privileged();
-    bool is_exception();
-    bool current_mode_has_SPSR();
+
+    bool is_privileged() const;
+    bool is_exception() const;
+    bool current_mode_has_SPSR() const;
     
     id::reg fetch_reg_id(const u8 reg_bits);
     id::reg fetch_reg_id(const u32 code, const u8 start, const u8 end);
     id::reg thumb_fetch_reg_id(const u32 code, const u8 start, const u8 end);
 
-    id::cond fetch_cond_id(const u8 cond_bits);
-    id::cond fetch_cond_id(const u32 code);
+    id::cond fetch_cond_id(const u8 cond_bits) const;
+    id::cond fetch_cond_id(const u32 code) const;
 
-    bool is_cond_valid(const id::cond cond_id);
-    bool is_cond_valid(const u32 code);
+    bool is_cond_valid(const id::cond cond_id) const;
+    bool is_cond_valid(const u32 code) const;
 
     void write(const id::cpsr cpsr_id, const u8 cpsr_value);
     void write(const id::reg reg_id);
@@ -93,22 +93,22 @@ public:
     void write(const u8 reg_bits, const u32 value);
     void force_write(const id::reg register_id, const u32 value);
 
-    u8 read(const id::cpsr cpsr_id);
-    u32 read(const id::reg reg_id);
+    u8 read(const id::cpsr cpsr_id) const;
+    u32 read(const id::reg reg_id) const;
     u32 read(const u32 code, const u8 start, const u8 end);
     u32 read(const u8 reg_bits);
-    u32 force_read(const id::reg register_id);
+    u32 force_read(const id::reg register_id) const;
 
     void switch_mode(const id::mode mode_id);
-    id::mode read_mode();
+    id::mode read_mode() const;
     
-    u32 read_PC();
+    u32 read_PC() const;
     void write_PC(const u32 address);
     
     void thumb_increment_PC();
     void arm_increment_PC();
 
-    void access_check(const id::reg reg_id);
+    void access_check(const id::reg reg_id) const;
 
     id::mode fetch_mode_id(const u8 mode_bits);
 

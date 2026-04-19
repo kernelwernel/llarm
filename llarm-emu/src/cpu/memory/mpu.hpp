@@ -10,14 +10,14 @@
 
 // memory protection unit
 struct MPU {
-private:
+
     GLOBALS& globals;
     COPROCESSOR& coprocessor;
     SETTINGS& settings;
     RAM& ram;
     FCSE& fcse;
     
-private:
+
     u32 region_0_start = 0;
     u32 region_1_start = 0;
     u32 region_2_start = 0;
@@ -93,12 +93,12 @@ private:
     bool region_data_6_enabled = false;
     bool region_data_7_enabled = false;
 
-public:
-    u64 get_size(const u8 raw_size_bits);
 
-    id::access_perm get_access_perm(const u8 AP);
+    u64 get_size(const u8 raw_size_bits) const;
 
-    bool is_mpu_enabled();
+    id::access_perm get_access_perm(const u8 AP) const;
+
+    bool is_mpu_enabled() const;
     
     id::aborts is_access_valid(const u32 address, const u8 access_size, const id::access_type access_type);
 

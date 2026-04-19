@@ -305,7 +305,7 @@ void INSTRUCTIONS::arm::load::LDM2(const u32 code) {
 
     const u16 list = llarm::util::bit_range<u16>(code, 0, 14);
 
-    std::vector<id::reg> reg_list = operation::register_list(list);
+    const std::vector<id::reg> reg_list = operation::register_list(list);
 
     for (const auto reg_id : reg_list) {
         const mem_read_struct access = memory.read(address, 4);
@@ -352,7 +352,7 @@ void INSTRUCTIONS::arm::load::LDM3(const u32 code) {
 
     const u16 list = llarm::util::bit_range<u16>(code, 0, 14);
 
-    std::vector<id::reg> reg_list = operation::register_list(list);
+    const std::vector<id::reg> reg_list = operation::register_list(list);
 
     for (const auto reg_id : reg_list) {
         const mem_read_struct access = memory.read(address, 4);

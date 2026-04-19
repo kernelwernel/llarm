@@ -9,6 +9,8 @@ Checks: >
     -readability-qualified-auto,
     -readability-avoid-const-params-in-decls,
     -readability-simplify-boolean-expr,
+    -readability-convert-member-functions-to-static,
+    -readability-uppercase-literal-suffix,
     clang-analyzer-*,
     bugprone-*,
     -bugprone-easily-swappable-parameters,
@@ -27,10 +29,12 @@ Checks: >
     -modernize-use-nodiscard,
     -modernize-use-auto,
     cppcoreguidelines-*,
+    -readability-enum-initial-value,
     -cppcoreguidelines-avoid-magic-numbers,
     -cppcoreguidelines-pro-bounds-pointer-arithmetic,
     -cppcoreguidelines-pro-type-vararg,
     -cppcoreguidelines-pro-type-union-access,
+    -cppcoreguidelines-avoid-const-or-ref-data-members,
     misc-*,
     -misc-unused-alias-decls,
     -misc-include-cleaner,
@@ -54,3 +58,7 @@ FormatStyle: none
 # -modernize-use-auto:
 #    usually good, but abusing auto throughout the codebase
 #    is a symptom of bad naming choices in the first place.
+#
+# -cppcoreguidelines-avoid-const-or-ref-data-members
+#    llarm-emu uses the dependency injection pattern,
+#    so this check is completely redundant

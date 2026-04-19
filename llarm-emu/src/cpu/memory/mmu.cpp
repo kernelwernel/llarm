@@ -41,7 +41,7 @@ id::second_level MMU::get_second_level_id(const u32 entry) {
 }
 
 
-id::access_domain MMU::fetch_domain(const u8 raw_domain_bits) {
+id::access_domain MMU::fetch_domain(const u8 raw_domain_bits) const {
     u8 cp_domain_bits = 0;
 
     switch (raw_domain_bits) {
@@ -84,7 +84,7 @@ u8 MMU::fetch_subpage_AP(const u8 subpage, const u32 entry) {
 }
 
 
-translation_struct MMU::first_section(const u32 entry, const u32 address, const u8 access_size, const id::access_type access_type) {
+translation_struct MMU::first_section(const u32 entry, const u32 address, const id::access_type access_type) {
     const u8 domain_bits = llarm::util::bit_range<u8>(entry, 5, 8);
     const id::access_domain domain = fetch_domain(domain_bits);
 
@@ -142,14 +142,14 @@ u32 MMU::first_fine(const u32 entry, const u32 address) {
     
     const u32 second_level_descriptor_address = (
         (page_table_base_address << 12) |
-        (u32(second_level_index) << 2)
+        (static_cast<u32>(second_level_index) << 2)
     );
 
     return second_level_descriptor_address;
 }
 
 
-bool MMU::is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type) {
+bool MMU::is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type) const {
     // since all the AP bits that aren't 0 WITH privileged permissions 
     // are all read/write, we're doing a small shortcut here to avoid
     // the costlier option of further investigating if the access is valid.
@@ -249,7 +249,7 @@ id::aborts MMU::check_block_access(
     const id::access_type access_type, 
     const id::access_domain domain,
     const id::memory_type memory_type
-) {
+) const {
     const bool section_access = (memory_type == id::memory_type::SECTION);
 
     switch (domain) {
@@ -410,7 +410,6 @@ translation_struct MMU::second_small(
 translation_struct MMU::second_tiny(
     const u32 entry, 
     const u32 address, 
-    const u8 access_size, 
     const id::access_type access_type, 
     const u8 domain_bits
 ) {
@@ -446,7 +445,7 @@ translation_struct MMU::second_tiny(
 }
 
 
-bool MMU::is_mmu_enabled() {
+bool MMU::is_mmu_enabled() const {
     return (
         (coprocessor.read(id::cp15::R1_M) == true) &&
         (settings.is_mmu_enabled)
@@ -485,7 +484,7 @@ translation_struct MMU::page_walk(const u32 address, const id::access_type acces
     switch (first_level_id) {
         case id::first_level::COARSE: second_key = first_coarse(first_level_descriptor, address); break;
         case id::first_level::FINE: second_key = first_fine(first_level_descriptor, address); break;
-        case id::first_level::SECTION: return first_section(first_level_descriptor, address, access_size, access_type);
+        case id::first_level::SECTION: return first_section(first_level_descriptor, address, access_type);
         case id::first_level::FAULT: 
             manage_abort(id::aborts::SECTION_TRANSLATION, address);
             return translation_struct {
@@ -504,7 +503,7 @@ translation_struct MMU::page_walk(const u32 address, const id::access_type acces
     switch (entry_id) {
         case id::second_level::LARGE: return second_large(second_level_descriptor, address, access_size, access_type, domain_bits);
         case id::second_level::SMALL: return second_small(second_level_descriptor, address, access_size, access_type, domain_bits);
-        case id::second_level::TINY: return second_tiny(second_level_descriptor, address, access_size, access_type, domain_bits);
+        case id::second_level::TINY: return second_tiny(second_level_descriptor, address, access_type, domain_bits);
         case id::second_level::FAULT:
             manage_abort(id::aborts::PAGE_TRANSLATION, address, domain_bits);
             return translation_struct {
