@@ -9,10 +9,11 @@
 using namespace internal;
 
 namespace internal::generators {
-    u32 data_instruction(const arm_id instruction, const operand_struct& arg);
-    u32 ls_instruction(const arm_id instruction, const operand_struct& arg);
-    u32 ls_misc_instruction(const arm_id instruction, const operand_struct& arg);
-    u32 ls_mul_instruction(const arm_id instruction, const operand_struct& arg);
+    u32 data_instruction(const arm_id id, const operand_struct& arg);
+    u32 ls_instruction(const arm_id id, const operand_struct& arg);
+    
+    u32 ls_misc_instruction(const arm_id id, const operand_struct& arg);
+    u32 ls_mul_instruction(const arm_id id, const operand_struct& arg);
     u32 ls_coproc_instruction(const arm_id id, const operand_struct& arg);
 
     // defined in encoders/special.cpp

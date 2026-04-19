@@ -132,11 +132,9 @@ namespace interpreter {
 
 
     struct immed_settings {
-        u8 divisor;
-        u8 msb;
-        bool is_msb_rangable;
-
-        constexpr immed_settings() : divisor(1), msb(0), is_msb_rangable(false) {}
+        u8 divisor = 1;
+        u8 msb = 0;
+        bool is_msb_rangable = false;
     };
 
     struct reg_list_settings {

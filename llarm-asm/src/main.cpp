@@ -13,7 +13,7 @@
 
 #include <llarm/llarm-asm.hpp>
 
-
+// NOLINTBEGIN(cppcoreguidelines-use-enum-class)
 enum arg_enum : u8 {
     NULL_ARG,
     HELP,
@@ -28,9 +28,10 @@ enum arg_enum : u8 {
     LOWERCASE,
     END
 };
+// NOLINTEND(cppcoreguidelines-use-enum-class)
 
 
-[[noreturn]] void help() {
+[[noreturn]] static void help() {
     std::cout <<
 R"(Usage:
  llarm-asm [option(s)] [args] [extra]
@@ -58,6 +59,8 @@ Examples:
 int main(int argc, char* argv[]) {
     const std::span<char*> args(argv + 1, static_cast<std::size_t>(argc - 1));
     const u32 arg_count = static_cast<u32>(argc - 1);
+
+    using enum arg_enum;
 
     constexpr u8 arg_bits = static_cast<u8>(END) + 1;
     std::bitset<arg_bits> arg_bitset;

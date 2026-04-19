@@ -12,11 +12,13 @@ raw_tokens_t tokens::tokenize(sv instruction) {
     std::size_t start = 0;
 
     // this is really ugly, might remake this in the future
-    while (!instruction.empty() && std::isspace(static_cast<unsigned char>(instruction.front())))
+    while (!instruction.empty() && std::isspace(static_cast<unsigned char>(instruction.front()))) {
         instruction.remove_prefix(1);
+    }
 
-    while (!instruction.empty() && std::isspace(static_cast<unsigned char>(instruction.back())))
+    while (!instruction.empty() && std::isspace(static_cast<unsigned char>(instruction.back()))) {
         instruction.remove_suffix(1);
+    }
 
 
     // delims = deliminators
@@ -25,7 +27,7 @@ raw_tokens_t tokens::tokenize(sv instruction) {
     const sv whitespace_delims = " ,";
 
     while (start < instruction.size()) {
-        const char c = instruction[start];
+        const char c = instruction.at(start);
 
         if (whitespace_delims.find(c) != sv::npos) {
             ++start;
@@ -33,7 +35,7 @@ raw_tokens_t tokens::tokenize(sv instruction) {
         }
 
         if (special_delims.find(c) != sv::npos) {
-            raw_tokens.emplace_back(&instruction[start], 1);
+            raw_tokens.emplace_back(&instruction.at(start), 1);
             ++start;
             continue;
         }
@@ -42,8 +44,8 @@ raw_tokens_t tokens::tokenize(sv instruction) {
 
         while (
             (end < instruction.size()) &&
-            whitespace_delims.find(instruction[end]) == sv::npos &&
-            special_delims.find(instruction[end]) == sv::npos
+            whitespace_delims.find(instruction.at(end)) == sv::npos &&
+            special_delims.find(instruction.at(end)) == sv::npos
         ) {
             ++end;
         }

@@ -9,14 +9,14 @@ lexemes_t interpreter::analyze(const sv instruction) {
 }
 
 
-sv interpreter::fetch_instruction(const sv code) {
-    const std::size_t pos = code.find(' ');
+sv interpreter::fetch_instruction(const sv instruction) {
+    const std::size_t pos = instruction.find(' ');
 
     if (pos == std::string::npos) {
-        return code;
+        return instruction;
     }
 
-    return code.substr(0, pos);
+    return instruction.substr(0, pos);
 }
 
 
@@ -26,7 +26,7 @@ u16 interpreter::fetch_last_2_chars(const sv str) {
     }
 
     const sv sub = str.substr(str.size() - 2);
-    return static_cast<u16>((sub[0] << 8) | sub[1]);
+    return static_cast<u16>((sub.at(0) << 8) | sub.at(1));
 };
 
 
@@ -83,7 +83,7 @@ cond_id interpreter::fetch_cond_id(const u16 cond) {
 
 
 cond_id interpreter::fetch_cond_id(const sv cond) {
-    if (cond.size() == 0) {
+    if (cond.empty()) {
         return cond_id::NONE;
     }
 

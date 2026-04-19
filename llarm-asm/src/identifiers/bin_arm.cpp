@@ -163,9 +163,9 @@ arm_id ident::bin_arm::unconditional(const u32 code) {
             (llarm::util::bit_range(code, 12, 15) == 0b1111)
         ) {
             return arm_id::PLD;
-        } else {
-            return arm_id::UNDEFINED;
         }
+
+        return arm_id::UNDEFINED;
     }
 
     switch (llarm::util::bit_range(code, 25, 26)) {
@@ -188,9 +188,9 @@ arm_id ident::bin_arm::unconditional(const u32 code) {
 
             if (llarm::util::bit_fetch(code, 20) == 1) {
                 return arm_id::MRC2;
-            } else {
-                return arm_id::MCR2;
             }
+
+            return arm_id::MCR2;
     }
 
     return arm_id::UNDEFINED;
@@ -370,9 +370,9 @@ arm_id ident::bin_arm::vfp_single(const u32 code) {
                     (llarm::util::bit_fetch(code, 4))
                 ) {
                     return arm_id::FMSTAT;
-                } else {
-                    return arm_id::FMRX;
                 }
+
+                return arm_id::FMRX;
             }
             break;
         
@@ -487,7 +487,9 @@ arm_id ident::bin_arm::vfp_double(const u32 code) {
             if (right == 0b1110) {
                 if (middle == 0b0111) {
                     return arm_id::FCVTDS;
-                } else if (middle == 0b1000) {
+                }
+                
+                if (middle == 0b1000) {
                     return arm_id::FSITOD;
                 }
             }
@@ -529,15 +531,21 @@ arm_id ident::bin_arm::vfp_double(const u32 code) {
             if (right == 0b1100) {
                 if (middle == 0b0111) {
                     return arm_id::FCVTSD;
-                } else if (middle == 0b1101) {
+                }
+                
+                if (middle == 0b1101) {
                     return arm_id::FTOSID;
-                } else if (middle == 0b1100) {
+                }
+                
+                if (middle == 0b1100) {
                     return arm_id::FTOUID;
                 }
             } else if (right == 0b0100) {
                 if (middle == 0b1101) {
                     return arm_id::FTOSID;
-                } else if (middle == 0b1100) {
+                }
+                
+                if (middle == 0b1100) {
                     return arm_id::FTOUID;
                 }
             }
@@ -577,22 +585,22 @@ arm_id ident::bin_arm::arm(const u32 code) {
 
                     // multiplies, extra load/stores
                     return multiply_extra_load_store(code);
-                } else {
-                    if (bit_24 && !bit_23 && !bit_20) {
-                        return misc_instructions(code);
-                    } else {
-                        // data processing register shift [2]
-                        return data_processing(code);
-                    }
                 }
-            } else {
+
                 if (bit_24 && !bit_23 && !bit_20) {
                     return misc_instructions(code);
-                } else {
-                    // data processing immediate shift
-                    return data_processing(code);
                 }
+
+                // data processing register shift [2]
+                return data_processing(code);
             }
+
+            if (bit_24 && !bit_23 && !bit_20) {
+                return misc_instructions(code);
+            }
+
+            // data processing immediate shift
+            return data_processing(code);
 
             break;
         }
@@ -608,7 +616,9 @@ arm_id ident::bin_arm::arm(const u32 code) {
 
             if (bytecode == 0b1000) {
                 return arm_id::UNDEFINED;
-            } else if (bytecode == 0b1010) {
+            }
+            
+            if (bytecode == 0b1010) {
                 return arm_id::MSR_IMM;
             }
 
@@ -695,7 +705,9 @@ arm_id ident::bin_arm::arm(const u32 code) {
                         return arm_id::FSTS;
                     }
                     return arm_id::FSTMS;
-                } else if (middle_right_zone == 0b1011) {
+                }
+                
+                if (middle_right_zone == 0b1011) {
                     if (llarm::util::bit_fetch(code, 22) == 0) {
                         if (
                             (llarm::util::bit_fetch(code, 24)) &&
@@ -706,44 +718,45 @@ arm_id ident::bin_arm::arm(const u32 code) {
 
                         if (code & 1) {
                             return arm_id::FSTMX;
-                        } else {
-                            return arm_id::FSTMD;
                         }
+
+                        return arm_id::FSTMD;
                     }
                 }
 
                 return arm_id::STC;
-            } else {
-                switch (bytecode) {
-                    case 0b00101: return arm_id::MRRC;
-                    case 0b10001: 
-                    case 0b10101: 
-                    case 0b11001: 
-                    case 0b11101: 
-                        if (llarm::util::bit_range(code, 8, 11) == 0b1010) {
-                            return arm_id::FLDS;
-                        }
-                }
-
-                const u8 middle_right_zone = llarm::util::bit_range<u8>(code, 8, 11);
-                if (middle_right_zone == 0b1010) {
-                    return arm_id::FLDMS;
-                } else if (
-                    (middle_right_zone == 0b1011) && 
-                    (llarm::util::bit_fetch(code, 22) == false)
-                ) {
-                    // odd offset = FLDMX
-                    // even offset = FLDMD 
-                    if (code & 1) {
-                        return arm_id::FLDMX;
-                    } else {
-                        return arm_id::FLDMD;
-                    }
-
-                }
-
-                return arm_id::LDC;
             }
+
+            switch (bytecode) {
+                case 0b00101: return arm_id::MRRC;
+                case 0b10001: 
+                case 0b10101: 
+                case 0b11001: 
+                case 0b11101: 
+                    if (llarm::util::bit_range(code, 8, 11) == 0b1010) {
+                        return arm_id::FLDS;
+                    }
+            }
+
+            const u8 middle_right_zone = llarm::util::bit_range<u8>(code, 8, 11);
+            if (middle_right_zone == 0b1010) {
+                return arm_id::FLDMS;
+            }
+            
+            if (
+                (middle_right_zone == 0b1011) && 
+                (llarm::util::bit_fetch(code, 22) == false)
+            ) {
+                // odd offset = FLDMX
+                // even offset = FLDMD 
+                if (code & 1) {
+                    return arm_id::FLDMX;
+                }
+
+                return arm_id::FLDMD;
+            }
+
+            return arm_id::LDC;
         }
         
 
@@ -752,27 +765,30 @@ arm_id ident::bin_arm::arm(const u32 code) {
             if (llarm::util::bit_fetch(code, 24) == 1) {
                 if (llarm::util::bit_range(code, 31, 28) == 0b1111) {
                     return arm_id::UNDEFINED;
-                } else {
-                    return arm_id::SWI;
                 }
-            } else {
-                if (llarm::util::bit_fetch(code, 4) == 1) {
-                    if (llarm::util::bit_fetch(code, 20) == 1) {
-                        return arm_id::MRC;
-                    } else {
-                        return arm_id::MCR;
-                    }
-                } else {
-                    const u8 cp_num = llarm::util::bit_range<u8>(code, 8, 11);
-                    if (cp_num == 0b1010) {
-                        return vfp_single(code);
-                    } else if (cp_num == 0b1011) {
-                        return vfp_double(code);
-                    }
-                
-                    return arm_id::CDP;
-                }
+
+                return arm_id::SWI;
             }
+
+            if (llarm::util::bit_fetch(code, 4) == 1) {
+                if (llarm::util::bit_fetch(code, 20) == 1) {
+                    return arm_id::MRC;
+                }
+
+                return arm_id::MCR;
+            }
+
+            const u8 cp_num = llarm::util::bit_range<u8>(code, 8, 11);
+            
+            if (cp_num == 0b1010) {
+                return vfp_single(code);
+            }
+            
+            if (cp_num == 0b1011) {
+                return vfp_double(code);
+            }
+        
+            return arm_id::CDP;
         }
     }
 

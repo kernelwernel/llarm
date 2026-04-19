@@ -162,7 +162,9 @@ thumb_id ident::bin_thumb::bits_101(const u32 code) {
             
             if (tmp == 0b0000) {
                 return thumb_id::ADD7;
-            } else if (tmp == 0b0001) {
+            }
+            
+            if (tmp == 0b0001) {
                 return thumb_id::SUB4;
             }
 

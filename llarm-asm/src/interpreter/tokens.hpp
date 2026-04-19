@@ -228,17 +228,17 @@ struct PSR {
 };
 
 struct REG_LIST {
-    reg_type type;
-    u8 reg_count;
-    bool is_r15_excluded;
-    bool must_have_r15;
-    bool is_thumb_supported;
-    bool is_thumb_optional_pc;
-    bool is_thumb_optional_lr;
-    bool is_malformed;
-    bool is_invalid;
-    bool is_empty;
-    u32 list;
+    reg_type type = reg_type::UNKNOWN_REG;
+    u8 reg_count = 0;
+    bool is_r15_excluded = false;
+    bool must_have_r15 = false;
+    bool is_thumb_supported = false;
+    bool is_thumb_optional_pc = false;
+    bool is_thumb_optional_lr = false;
+    bool is_malformed = false;
+    bool is_invalid = false;
+    bool is_empty = false;
+    u32 list = 0;
 
     constexpr bool operator==(const REG_LIST& rhs) const {
         if (is_invalid || is_malformed || rhs.is_invalid || rhs.is_malformed) {
@@ -285,5 +285,5 @@ struct OPTION {
 using raw_tokens_t = std::vector<sv>;
 
 namespace tokens {
-    raw_tokens_t tokenize(const sv code);
+    raw_tokens_t tokenize(const sv instruction);
 }

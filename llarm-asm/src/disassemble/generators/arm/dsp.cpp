@@ -40,13 +40,14 @@ std::string generators::arm::dsp::LDRD(const u32 code, const settings& settings)
             return "";
         }
 
+        const u8 Rd_bits = static_cast<u8>(Rd_id) + 1;
         // this is really stupid
-        const util::reg_id Rn_id = static_cast<util::reg_id>(static_cast<u8>(Rd_id) + 1); 
+        const util::reg_id Rn_id = static_cast<util::reg_id>(Rd_bits); 
 
         return util::reg_id_to_string(Rn_id, settings);
     }();
 
-    return util::make_string("LDR", (suf ? "D" : ""), util::cond(code, settings), (suf ? " ": "D "), Rd, ", ", Rn, (Rn == "" ? "" : ", "), addressing_mode);
+    return util::make_string("LDR", (suf ? "D" : ""), util::cond(code, settings), (suf ? " ": "D "), Rd, ", ", Rn, (Rn.empty() ? "" : ", "), addressing_mode);
 }
 
 
@@ -195,5 +196,5 @@ std::string generators::arm::dsp::STRD(const u32 code, const settings& settings)
 
     const bool suf = settings.cond_always_suffix;
 
-    return util::make_string("STR", (suf ? "D" : ""), util::cond(code, settings), (suf ? " " : "D "), Rd, ", ", Rn, (Rn == "" ? "" : ", "), addressing_mode);
+    return util::make_string("STR", (suf ? "D" : ""), util::cond(code, settings), (suf ? " " : "D "), Rd, ", ", Rn, (Rn.empty() ? "" : ", "), addressing_mode);
 }

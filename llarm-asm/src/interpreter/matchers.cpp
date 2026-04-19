@@ -143,8 +143,8 @@ PSR matchers::cpsr_spsr(const sv str) {
 
     const sv fields = str.substr(5);
 
-    for (u8 i = 0; i < fields.size(); i++) {
-        switch (fields.at(i)) {
+    for (const char field_char : fields) {
+        switch (field_char) {
             case 'C': psr.set_C(); break; 
             case 'X': psr.set_X(); break;
             case 'S': psr.set_S(); break;

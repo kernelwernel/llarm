@@ -296,8 +296,8 @@ shifter_id shifters::identify_vfp_ls_mul_shifter(const u32 code) {
 }
 
 
-std::string shifters::shifter_to_string(const shifter_id mode, const u32 code, const settings& settings) {
-    switch (mode) {
+std::string shifters::shifter_to_string(const shifter_id shifter, const u32 code, const settings& settings) {
+    switch (shifter) {
         case shifter_id::UNKNOWN: return ERROR;
         case shifter_id::DATA_IMM: return data_imm(code, settings);
         case shifter_id::DATA_IMM_LSL: return data_imm_pattern(code, "LSL", settings);

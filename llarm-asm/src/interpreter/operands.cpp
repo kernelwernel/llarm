@@ -183,8 +183,6 @@ void operands::psr(operand_struct& arg, const lexeme& lexeme) {
     llarm::util::modify_bit(fields, 3, F);
 
     arg.PSR_field_mask = fields;
-
-    return;
 }
 
 

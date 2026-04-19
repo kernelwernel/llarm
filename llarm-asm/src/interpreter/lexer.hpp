@@ -22,7 +22,7 @@ union lexeme_data {
 };
 
 struct lexeme {
-    token_enum token_type;
+    token_enum token_type = token_enum::UNKNOWN;
 
     // marking it as a union goes from 72 bytes to 40 bytes
     lexeme_data data;
@@ -32,8 +32,8 @@ struct lexeme {
     constexpr lexeme(token_enum t, IMM i) : token_type(t), data(i) {}
     constexpr lexeme(token_enum t, REG_LIST r) : token_type(t), data(r) {}
     constexpr lexeme(token_enum t, OPTION o) : token_type(t), data(o) {}
-    constexpr lexeme(token_enum t) : token_type(t), data()  {}
-    constexpr lexeme() : token_type(token_enum::UNKNOWN), data() {}
+    constexpr lexeme(token_enum t) : token_type(t) {}
+    constexpr lexeme() = default;
 };
 
 using lexemes_t = std::vector<lexeme>;

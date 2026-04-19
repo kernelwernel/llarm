@@ -90,22 +90,6 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct& IR) {
         case arm_id::B:
         case arm_id::BL: return is_B_BL_valid(lexemes, IR.PC);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         case arm_id::SWI: return verify_lexemes(make_lexemes(immed(24)), lexemes);
 
         case arm_id::MCR2: 
@@ -119,7 +103,7 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct& IR) {
 
         case arm_id::SWP:
         case arm_id::SWPB:
-            return ((verify_lexemes(make_lexemes(reg(), reg(), token(MEM_START), reg(), token(MEM_END)), lexemes)));
+            return (verify_lexemes(make_lexemes(reg(), reg(), token(MEM_START), reg(), token(MEM_END)), lexemes));
 
         case arm_id::QADD:
         case arm_id::QDADD:

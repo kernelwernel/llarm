@@ -258,9 +258,13 @@ shifter_id ident::bin_shifters::vfp_single(const u32 code) {
 
     if (d_bank == 0) {
         return shifter_id::VFP_SINGLE_SCALAR;
-    } else if (d_bank != 0 && m_bank == 0) {
+    } 
+    
+    if (d_bank != 0 && m_bank == 0) {
         return shifter_id::VFP_SINGLE_MIXED;
-    } else if (d_bank != 0 && m_bank != 0) {
+    }
+    
+    if (d_bank != 0 && m_bank != 0) {
         return shifter_id::VFP_SINGLE_VECTOR;
     }
 
@@ -283,9 +287,13 @@ shifter_id ident::bin_shifters::vfp_single_monadic(const u32 code) {
     
     if (d_bank == 0) {
         return shifter_id::VFP_SINGLE_MONADIC_SCALAR_TO_SCALAR;
-    } else if (d_bank != 0 && m_bank == 0) {
+    } 
+    
+    if (d_bank != 0 && m_bank == 0) {
         return shifter_id::VFP_SINGLE_MONADIC_SCALAR_TO_VECTOR;
-    } else if (d_bank != 0 && m_bank != 0) {
+    }
+    
+    if (d_bank != 0 && m_bank != 0) {
         return shifter_id::VFP_SINGLE_MONADIC_VECTOR_TO_VECTOR;
     }
 
@@ -303,9 +311,13 @@ shifter_id ident::bin_shifters::vfp_double(const u32 code) {
     
     if (d_bank == 0) {
         return shifter_id::VFP_DOUBLE_SCALAR;
-    } else  if (d_bank != 0 && m_bank == 0) {
+    } 
+    
+    if (d_bank != 0 && m_bank == 0) {
         return shifter_id::VFP_DOUBLE_MIXED;
-    } else if (d_bank != 0 && m_bank != 0) {
+    }
+    
+    if (d_bank != 0 && m_bank != 0) {
         return shifter_id::VFP_DOUBLE_VECTOR;
     }
 
@@ -322,9 +334,13 @@ shifter_id ident::bin_shifters::vfp_double_monadic(const u32 code) {
 
     if (d_bank == 0) {
         return shifter_id::VFP_DOUBLE_MONADIC_SCALAR_TO_SCALAR;
-    } else if (d_bank != 0 && m_bank == 0) {
+    }
+    
+    if (d_bank != 0 && m_bank == 0) {
         return shifter_id::VFP_DOUBLE_MONADIC_SCALAR_TO_VECTOR;
-    } else if (d_bank != 0 && m_bank != 0) {
+    }
+    
+    if (d_bank != 0 && m_bank != 0) {
         return shifter_id::VFP_DOUBLE_MONADIC_VECTOR_TO_VECTOR;
     }
 

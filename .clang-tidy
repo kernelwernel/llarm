@@ -7,10 +7,14 @@ Checks: >
     -readability-function-cognitive-complexity,
     -readability-implicit-bool-conversion,
     -readability-qualified-auto,
+    -readability-avoid-const-params-in-decls,
+    -readability-simplify-boolean-expr,
     clang-analyzer-*,
     bugprone-*,
     -bugprone-easily-swappable-parameters,
     -bugprone-too-small-loop-variable,
+    -bugprone-branch-clone,
+    -bugprone-switch-missing-default-case,
     performance-*,
     portability-*,
     modernize-*,
@@ -18,11 +22,35 @@ Checks: >
     -modernize-use-nullptr,
     -modernize-use-override,
     -modernize-use-default-member-init,
+    -modernize-use-ranges,
+    -modernize-use-designated-initializers, 
+    -modernize-use-nodiscard,
+    -modernize-use-auto,
     cppcoreguidelines-*,
     -cppcoreguidelines-avoid-magic-numbers,
     -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+    -cppcoreguidelines-pro-type-vararg,
+    -cppcoreguidelines-pro-type-union-access,
     misc-*,
-    -misc-unused-alias-decls
+    -misc-unused-alias-decls,
+    -misc-include-cleaner,
+    -misc-non-private-member-variables-in-classes,
+    -misc-use-internal-linkage,
+    -misc-use-anonymous-namespace
 WarningsAsErrors: '*'
 HeaderFilterRegex: '^(?!.*/(_deps|tests/build)/).*$'
 FormatStyle: none
+
+# JUSTIFICATIONS FOR SOME OMITTANCES OF CHECKS:
+#
+# -modernize-use-designated-initializers:
+#    would've been a good check, but unfortunately we're 
+#    trying to support c++14, and this is a c++20 feature. 
+#
+# -modernize-use-nodiscard:
+#    adding [[nodiscard]] is effectively useless imo. 
+#    you're pretty much just adding a readability debt 
+#
+# -modernize-use-auto:
+#    usually good, but abusing auto throughout the codebase
+#    is a symptom of bad naming choices in the first place.

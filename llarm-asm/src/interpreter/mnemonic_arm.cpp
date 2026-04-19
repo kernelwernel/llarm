@@ -269,7 +269,9 @@ arm_id mnemonic_arm::STM(const lexemes_t& lexemes) {
     // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
     if (verify_tokens(make_tokens(REG, PRE_INDEX, REG_LIST), lexemes)) {
         return arm_id::STM1;
-    } else if (verify_tokens(make_tokens(REG, REG_LIST), lexemes)) {
+    }
+    
+    if (verify_tokens(make_tokens(REG, REG_LIST), lexemes)) {
         return arm_id::STM1;
     }
 
@@ -285,7 +287,9 @@ arm_id mnemonic_arm::LDM(const lexemes_t& lexemes) {
     // pre-index is optional for LDM1, so both present and non-present pre-indexes are checked
     if (verify_tokens(make_tokens(REG, PRE_INDEX, REG_LIST), lexemes)) {
         return arm_id::LDM1;
-    } else if (verify_tokens(make_tokens(REG, REG_LIST), lexemes)) {
+    }
+    
+    if (verify_tokens(make_tokens(REG, REG_LIST), lexemes)) {
         return arm_id::LDM1;
     }
 
@@ -295,7 +299,9 @@ arm_id mnemonic_arm::LDM(const lexemes_t& lexemes) {
 
     if (verify_tokens(make_tokens(REG, PRE_INDEX, REG_LIST, CARET), lexemes)) {
         return arm_id::LDM3;
-    } else if (verify_tokens(make_tokens(REG, REG_LIST, CARET), lexemes)) {
+    }
+    
+    if (verify_tokens(make_tokens(REG, REG_LIST, CARET), lexemes)) {
         return arm_id::LDM3;
     }
 
@@ -306,7 +312,9 @@ arm_id mnemonic_arm::LDM(const lexemes_t& lexemes) {
 arm_id mnemonic_arm::BLX(const lexemes_t& lexemes) {
     if (verify_tokens(make_tokens(IMMED), lexemes)) {
         return arm_id::BLX1;
-    } else if (verify_tokens(make_tokens(REG), lexemes)) {
+    }
+    
+    if (verify_tokens(make_tokens(REG), lexemes)) {
         return arm_id::BLX2;
     }
 
@@ -328,9 +336,9 @@ arm_id mnemonic_arm::PSR_family(const sv mnemonic_str) {
 
     if (mnemonic_str.size() == 4 || mnemonic_str.size() == 6) {
         if (mnemonic_str.starts_with("CMN")) { return arm_id::CMNP; }
-        else if (mnemonic_str.starts_with("CMP")) { return arm_id::CMPP; }
-        else if (mnemonic_str.starts_with("TEQ")) { return arm_id::TEQP; }
-        else if (mnemonic_str.starts_with("TST")) { return arm_id::TSTP; }
+        if (mnemonic_str.starts_with("CMP")) { return arm_id::CMPP; }
+        if (mnemonic_str.starts_with("TEQ")) { return arm_id::TEQP; }
+        if (mnemonic_str.starts_with("TST")) { return arm_id::TSTP; }
     }
 
     return arm_id::UNKNOWN;

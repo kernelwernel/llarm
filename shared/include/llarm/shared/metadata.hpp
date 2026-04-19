@@ -6,22 +6,22 @@
 
 namespace llarm::metadata {
     // versions
-    static constinit const char* LLARM_ASM_VER = "0.1";
-    static constinit const char* LLARM_CPU_VER = "0.1";
-    static constinit const char* LLARM_EMU_VER = "0.1";
-    static constinit const char* LLARM_INST_VER = "0.1";
-    static constinit const char* LLARM_RAND_VER = "0.1";
+    static constexpr const char* LLARM_ASM_VER = "0.1";
+    static constexpr const char* LLARM_CPU_VER = "0.1";
+    static constexpr const char* LLARM_EMU_VER = "0.1";
+    static constexpr const char* LLARM_INST_VER = "0.1";
+    static constexpr const char* LLARM_RAND_VER = "0.1";
 
     // release dates
-    static constinit const char* LLARM_ASM_DATE = "00/00/00"; // TODO
-    static constinit const char* LLARM_CPU_DATE = "00/00/00"; // TODO
-    static constinit const char* LLARM_EMU_DATE = "00/00/00"; // TODO
-    static constinit const char* LLARM_INST_DATE = "00/00/00"; // TODO
-    static constinit const char* LLARM_RAND_DATE = "00/00/00"; // TODO
+    static constexpr const char* LLARM_ASM_DATE = "00/00/00"; // TODO
+    static constexpr const char* LLARM_CPU_DATE = "00/00/00"; // TODO
+    static constexpr const char* LLARM_EMU_DATE = "00/00/00"; // TODO
+    static constexpr const char* LLARM_INST_DATE = "00/00/00"; // TODO
+    static constexpr const char* LLARM_RAND_DATE = "00/00/00"; // TODO
 
     // overall LLARM framework details
-    static constinit const char* LLARM_VER = "0.1";
-    static constinit const char* LLARM_DATE = "00/00/00"; // TODO
+    static constexpr const char* LLARM_VER = "0.1";
+    static constexpr const char* LLARM_DATE = "00/00/00"; // TODO
 
     [[noreturn]] inline void version(const sv project, const sv ver, const sv date) {
         std::cout << 

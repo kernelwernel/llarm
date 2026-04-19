@@ -299,7 +299,7 @@ std::string util::reg_list(u16 list, const settings settings, const reg_id extra
         llarm::util::modify_bit(list, static_cast<u8>(extra) - 1, true);
     }
 
-    std::string tmp = "";
+    std::string tmp = {};
 
     if (list != 0 || extra != reg_id::NULL_REG) {
         std::vector<reg_id> reg_id_list = {};
@@ -480,7 +480,7 @@ std::string util::hex(const u32 integer, const settings settings) {
             "F0F1F2F3F4F5F6F7F8F9FAFBFCFDFEFF"
         };
 
-        u32 x = integer;
+        const u32 x = integer;
         const char* lut = digits.data();
         std::string s(8, '\0');
 
@@ -488,8 +488,8 @@ std::string util::hex(const u32 integer, const settings settings) {
             const u32 b = (x >> ((3 - byte) * 8)) & 0xFF;
             const std::size_t pos = static_cast<std::size_t>(b) * 2;
 
-            s[byte * 2]     = lut[pos];
-            s[byte * 2 + 1] = lut[pos + 1];
+            s.at(byte * 2) = lut[pos];
+            s.at((byte * 2) + 1) = lut[pos + 1];
         }
 
         const auto first_nonzero = s.find_first_not_of('0');

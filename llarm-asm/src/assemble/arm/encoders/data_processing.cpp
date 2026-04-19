@@ -5,13 +5,13 @@
 #include <llarm/shared/out.hpp>
 
 // format: <opcode>{<cond>}{S} <Rd>, <Rn>, <shifter_operand>
-u32 generators::data_instruction(const arm_id instruction, const operand_struct& args) {
+u32 generators::data_instruction(const arm_id id, const operand_struct& args) {
     u32 binary = 0;
 
     llarm::util::swap_bits(binary, 28, 31, args.cond);
 
     const bool is_26_bit_instruction = [=]() -> bool {
-        switch (instruction) {
+        switch (id) {
             case arm_id::CMNP: 
             case arm_id::CMPP: 
             case arm_id::TEQP: 
@@ -28,7 +28,7 @@ u32 generators::data_instruction(const arm_id instruction, const operand_struct&
 
         u8 opcode = 0;
 
-        switch (instruction) {
+        switch (id) {
             case arm_id::CMNP: opcode = 0b11; break;
             case arm_id::CMPP: opcode = 0b10; break;
             case arm_id::TEQP: opcode = 0b01; break;
@@ -48,7 +48,7 @@ u32 generators::data_instruction(const arm_id instruction, const operand_struct&
 
         // bits 26 and 27 are 0 for all instructions below, so they're ignored
 
-        switch (instruction) {
+        switch (id) {
             case arm_id::ADC: opcode = 0b0101; break;
             case arm_id::ADD: opcode = 0b0100; break;
             case arm_id::AND: opcode = 0b0000; break;

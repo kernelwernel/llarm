@@ -21,48 +21,50 @@ namespace llarm::out {
     static void info(const Args&... message) {
         std::cout << bold << "[" << blue << "INFO" << ansiexit << bold << "]" << ansiexit << " ";
         ((std::cout << message), ...);
-        std::printf("\n");
+        std::putchar('\n');
     }
 
     template <typename... Args>
     static void warning(const Args&... message) {
         std::cout << bold << "[" << orange << "WARNING" << ansiexit << bold << "]" << ansiexit << " ";
         ((std::cout << message), ...);
-        std::printf("\n");
+        std::putchar('\n');
     }
 
     template <typename... Args>
     static void failed_assert(const Args&... message) {
         std::cout << bold << "[" << grey << "FAILED ASSERT" << ansiexit << bold << "]" << ansiexit << " ";
         ((std::cout << message), ...);
-        std::printf("\n");
+        std::putchar('\n');
     }
 
     template <typename... Args>
     static void unpredictable(const Args&... message) {
         std::cout << bold << "[" << grey << "UNPREDICTABLE" << ansiexit << bold << "]" << ansiexit << " ";
         ((std::cout << message), ...);
-        std::printf("\n");
+        std::putchar('\n');
     }
 
     template <typename... Args>
     [[noreturn]] static void error(const Args&... message) {
         std::cout << bold << "[" << red << "ERROR" << ansiexit << bold << "]" << ansiexit << " ";
         ((std::cout << message),...);
-        std::printf("\n");
+        std::putchar('\n');
         std::exit(1);
     }
 
 
     inline void dev_warning(const char* error) {
         std::cout << bold << "[" << red << "DEV WARNING" << ansiexit << bold << "]" << ansiexit << " ";
-        std::printf("%s", error);
+        std::cout << error;
+        std::putchar('\n');
     }
 
 
     [[noreturn]] inline void dev_error(const char* error) {
         std::cout << bold << "[" << red << "DEV ERROR" << ansiexit << bold << "]" << ansiexit << " ";
-        std::printf("%s", error);
+        std::cout << error;
+        std::putchar('\n');
         std::exit(1);
     }
 }

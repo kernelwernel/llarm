@@ -45,8 +45,8 @@ std::string patterns::S_Rd_data(const u32 code, const std::string&instruction, c
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
     if (settings.equivalent_alias && aliasing) {
-        const char* alias_inst = "";
-        
+        const char* alias_inst = ERROR;
+
         bool is_reg = false;
         bool is_imm = false;
 
@@ -60,12 +60,12 @@ std::string patterns::S_Rd_data(const u32 code, const std::string&instruction, c
             case shifter_id::DATA_IMM_ASR: alias_inst = "ASR"; is_imm = true; break;
             case shifter_id::DATA_IMM_ROR: alias_inst = "ROR"; is_imm = true; break;
             case shifter_id::DATA_RRX: alias_inst = "RRX"; break;
-            default: alias_inst = ERROR;
+            default: break;
         }
 
         if (alias_inst != ERROR) {
             const std::string second = util::reg_string(code, 0, 3, settings);;
-            std::string third = "";
+            std::string third = {};
 
             if (is_reg) {
                 third = util::reg_string(code, 8, 11, settings);

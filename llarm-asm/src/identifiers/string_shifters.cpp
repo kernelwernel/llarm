@@ -210,8 +210,8 @@ shifter_id ident::string_shifters::ls_misc_instruction(const lexemes_t& lexemes)
 
 
 shifter_id ident::string_shifters::ls_mul_instruction(const sv mnemonic) {
-    const char second_char = mnemonic[mnemonic.size() - 1];
-    const char first_char = mnemonic[mnemonic.size() - 2];
+    const char second_char = mnemonic.at(mnemonic.size() - 1);
+    const char first_char = mnemonic.at(mnemonic.size() - 2);
 
     const u16 addressing_mode = static_cast<u16>(first_char << 8 | second_char);
 

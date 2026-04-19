@@ -119,7 +119,9 @@ thumb_id mnemonic_thumb::ADD(const lexemes_t& lexemes) {
 
         if (reg_num == 15) { // PC
             return thumb_id::ADD5;
-        } else if (reg_num == 13) { // SP
+        }
+        
+        if (reg_num == 13) { // SP
             return thumb_id::ADD6;
         }
     }
@@ -291,7 +293,9 @@ thumb_id mnemonic_thumb::LDR(const lexemes_t& lexemes) {
 
         if (reg_num == 15) { // PC
             return thumb_id::LDR3;
-        } else if (reg_num == 13) { // SP
+        }
+        
+        if (reg_num == 13) { // SP
             return thumb_id::LDR4;
         }
     }

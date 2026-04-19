@@ -13,21 +13,21 @@ using i32 = std::int32_t;
 using i64 = std::int64_t;
 
 #if __cplusplus > 202100L
-    #define CPP 26
+    constexpr u8 CPP = 26;
 #elif __cplusplus == 202100L
-    #define CPP 23
+    constexpr u8 CPP = 23;
 #elif __cplusplus == 202002L
-    #define CPP 20
+    constexpr u8 CPP = 20;
 #elif __cplusplus == 201703L
-    #define CPP 17
+    constexpr u8 CPP = 17;
 #elif __cplusplus == 201402L
-    #define CPP 14
+    constexpr u8 CPP = 14;
 #elif __cplusplus == 201103L
-    #define CPP 11
+    constexpr u8 CPP = 11;
 #elif __cplusplus < 201103L
-    #define CPP 1
+    constexpr u8 CPP = 1;
 #else
-    #define CPP 0
+    constexpr u8 CPP = 0;
 #endif
 
 #if (CPP >= 20) 

@@ -80,7 +80,7 @@ lexemes_t lexer::lex(const raw_tokens_t& tokens) {
     }
 
     if (end_pos >= start_pos) {
-        llarm::out::error("Invalid register list argument to instruction, malformed \"{\" and \"}\" positions");
+        llarm::out::error(R"(Invalid register list argument to instruction, malformed "{" and "}" positions)");
     }
 
     const u8 arg_count = static_cast<u8>(end_pos - start_pos) - 1;
@@ -132,7 +132,7 @@ void lexer::option_check(lexemes_t& lexemes, const u8 start_pos, const u8 end_po
         option.is_malformed = true;
     }
 
-    lexeme lex = {
+    const lexeme lex = {
         token_enum::OPTION, // token_type
         option
     };
@@ -166,7 +166,9 @@ void lexer::reg_list_check(lexemes_t& lexemes, const u8 start_pos, const u8 end_
 
         reg_list_categorize(lexemes, reg_list, start_pos, end_pos);
         return;
-    } else if (arg_count == 3) { // this could be a range based reglist, so for example "{ R0-R3 }"
+    }
+    
+    if (arg_count == 3) { // this could be a range based reglist, so for example "{ R0-R3 }"
         const u8 middle_index = start_pos + 2; // exact same as end_pos - 2
 
         if (lexemes.at(middle_index).token_type == token_enum::MIN_OP) {
@@ -231,7 +233,6 @@ void lexer::reg_list_check(lexemes_t& lexemes, const u8 start_pos, const u8 end_
     reg_list.is_thumb_supported = (reg_minimum <= 7);
 
     reg_list_categorize(lexemes, reg_list, start_pos, end_pos);
-    return;
 }
 
 
@@ -272,13 +273,12 @@ void lexer::reg_list_range(lexemes_t& lexemes, const u8 start_pos, const u8 end_
     }
 
     reg_list_categorize(lexemes, reg_list, start_pos, end_pos);
-    return;
 }
 
 void lexer::reg_list_categorize(lexemes_t& lexemes, REG_LIST& reg_list, const u8 start_pos, const u8 end_pos) {
     lexemes.erase(lexemes.begin() + start_pos, lexemes.begin() + end_pos);
 
-    lexeme reg_list_lexeme = {
+    const lexeme reg_list_lexeme = {
         token_enum::REG_LIST,
         reg_list
     };
@@ -304,7 +304,7 @@ bool lexer::reg_check(lexeme& lexeme, const sv token) {
 
 
 bool lexer::psr_check(lexeme& lexeme, const sv token) {
-    PSR psr = matchers::cpsr_spsr(token);
+    const PSR psr = matchers::cpsr_spsr(token);
 
     if (psr.is_invalid()) {
         return false;

@@ -197,8 +197,14 @@ u32 generators::BL_BLX1(const operand_struct& operands, const u32 PC, const thum
 
     // second halfword: H=11 for BL, H=01 for BLX1, lower offset bits [11:1]
     u16 second = [&]() -> u16 {
-        if (id == thumb_id::BL)   return 0b1111'1000'0000'0000;  // H=11
-        if (id == thumb_id::BLX1) return 0b1110'1000'0000'0000;  // H=01
+        if (id == thumb_id::BL) {
+            return 0b1111'1000'0000'0000;  // H=11
+        }
+
+        if (id == thumb_id::BLX1) { 
+            return 0b1110'1000'0000'0000;  // H=01
+        }
+
         llarm::out::dev_error("Invalid instruction id in BL_BLX1");
     }();
 

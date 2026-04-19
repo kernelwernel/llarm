@@ -36,10 +36,10 @@ std::string shifters::data_imm(const u32 code, const settings& settings) {
             return util::make_string("#", util::hex(immed_8, settings));
         }
         return util::make_string("#", immed_8, ", #", rotate_count);
-    } else {
-        // doesn't fit in 8 bits, show rotated value
-        return util::make_string("#", util::hex(rotated, settings));
     }
+
+    // doesn't fit in 8 bits, show rotated value
+    return util::make_string("#", util::hex(rotated, settings));
 }
 
 

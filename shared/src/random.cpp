@@ -1,12 +1,13 @@
 #include "../include/llarm/shared/random.hpp"
+#include <llarm/shared/types.hpp>
 
 #include <chrono>
 
 using namespace llarm;
 
 
-random::random(const u64 seed_arg) {
-    (void)seed_arg; // temporary
+random::random(const u64 seed_arg) : seed(seed_arg) {
+
 }
 
 

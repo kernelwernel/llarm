@@ -30,7 +30,7 @@ bool validation::string_thumb::is_B2_valid(const u32 PC, const lexemes_t& lexeme
 }
 
 
-bool is_bl_blx_target_valid(const u32 PC, const lexemes_t& lexemes, const bool is_blx) {
+bool validation::string_thumb::is_bl_blx_target_valid(const u32 PC, const lexemes_t& lexemes, const bool is_blx) {
     if (lexemes.front().token_type != token_enum::IMMED) {
         return false;
     }
@@ -38,10 +38,13 @@ bool is_bl_blx_target_valid(const u32 PC, const lexemes_t& lexemes, const bool i
     const u32 target_address = static_cast<u32>(lexemes.front().data.imm.number);
 
     // BLX target must be word-aligned (ARM mode), BL just halfword-aligned
-    if (is_blx && (target_address & 0x3))
+    if (is_blx && (target_address & 0x3)) {
         return false;
-    if (!is_blx && (target_address & 0x1))
+    }
+
+    if (!is_blx && (target_address & 0x1)) {
         return false;
+    }
 
     const i64 offset = static_cast<i64>(target_address) - (static_cast<i64>(PC) + 4);
     return offset >= -4194304 && offset <= 4194302;
