@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <cstdio>
+#include <cinttypes>
 #include <chrono>
 #include <thread>
 
@@ -192,7 +193,7 @@ static void print_mem(llarm::emu::cpu_blockstep &cpu, const mem_request &req) {
         case 1: std::printf("  [0x%08X] = 0x%02X\n",   req.address, cpu.read_physical_mem<u8>(req.address));  break;
         case 2: std::printf("  [0x%08X] = 0x%04X\n",   req.address, cpu.read_physical_mem<u16>(req.address)); break;
         case 4: std::printf("  [0x%08X] = 0x%08X\n",   req.address, cpu.read_physical_mem<u32>(req.address)); break;
-        case 8: std::printf("  [0x%08X] = 0x%016lX\n", req.address, cpu.read_physical_mem<u64>(req.address)); break;
+        case 8: std::printf("  [0x%08X] = 0x%016" PRIx64 "\n", req.address, cpu.read_physical_mem<u64>(req.address)); break;
     }
 }
 
@@ -218,12 +219,12 @@ static void run_step_mode(
             const u16 code = cpu.current_thumb_code();
             const llarm::as::settings cfg = llarm::as::default_settings();
             const std::string mnemonic = llarm::as::disassemble_thumb(code, pc, cfg);
-            std::printf("[%4lu] PC=0x%08X  THUMB: %s (0x%04X)\n", step, pc, mnemonic.c_str(), code);
+            std::printf("[%4" PRIu64 "] PC=0x%08X  THUMB: %s (0x%04X)\n", step, pc, mnemonic.c_str(), code);
         } else {
             const u32 code = cpu.current_arm_code();
             const llarm::as::settings cfg = llarm::as::default_settings();
             const std::string mnemonic = llarm::as::disassemble_arm(code, pc, cfg);
-            std::printf("[%4lu] PC=0x%08X  ARM: %s (0x%08X)\n", step, pc, mnemonic.c_str(), code);
+            std::printf("[%4" PRIu64 "] PC=0x%08X  ARM: %s (0x%08X)\n", step, pc, mnemonic.c_str(), code);
         }
 
         if (show_regs) {

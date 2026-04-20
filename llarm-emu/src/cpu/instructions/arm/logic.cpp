@@ -6,6 +6,8 @@
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
 
+#include <bit>
+
 /*
  * if ConditionPassed(cond) then
  *   Rd = Rn AND shifter_operand
