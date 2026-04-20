@@ -2,19 +2,7 @@ name: build-all
 
 on:
   push:
-    paths:
-      - '**/*.cpp'
-      - '**/*.hpp'
-      - '**/CMakeLists.txt'
-      - '**/*.cmake'
-      - '**/*.cmake.in'
   pull_request:
-    paths:
-      - '**/*.cpp'
-      - '**/*.hpp'
-      - '**/CMakeLists.txt'
-      - '**/*.cmake'
-      - '**/*.cmake.in'
 
 jobs:
   build:
