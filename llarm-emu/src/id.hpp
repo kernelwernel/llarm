@@ -584,11 +584,11 @@ namespace id {
     };
 
     enum class vfp_exception : u8 {
-        INVALID_OPERATION,
-        DIV_BY_ZERO,
-        OVERFLOW,
-        UNDERFLOW,
-        INEXACT
+        VFP_INVALID_OPERATION,
+        VFP_DIV_BY_ZERO,
+        VFP_OVERFLOW,
+        VFP_UNDERFLOW,
+        VFP_INEXACT
     };
 
     enum class vfp_reg : u8 {

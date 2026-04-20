@@ -69,8 +69,8 @@ namespace util {
     }
 
     // for example, ARMv5TEJ will be simplified to ARMv5
-    constexpr id::arch simplify_arch_version(const id::specific_arch arch) {
-        switch (arch) {
+    constexpr id::arch simplify_arch_version(const id::specific_arch specific_arch) {
+        switch (specific_arch) {
             case id::specific_arch::UNKNOWN: return id::arch::UNKNOWN;
             case id::specific_arch::ARMv1: return id::arch::ARMv1;
             case id::specific_arch::ARMv2: 

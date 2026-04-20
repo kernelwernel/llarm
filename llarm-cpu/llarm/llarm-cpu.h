@@ -1,4 +1,4 @@
-#if !defined(__arm__) && !defined(__aarch64__)
+#if !defined(__arm__)
     #define is_not_arm 1
 #endif
 
