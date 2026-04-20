@@ -55,6 +55,7 @@ set_target_properties(${TARGET_LIB} PROPERTIES
     CXX_VISIBILITY_PRESET default
     VISIBILITY_INLINES_HIDDEN NO
     OUTPUT_NAME "llarm-shared"
+    WINDOWS_EXPORT_ALL_SYMBOLS ON
 )
 target_include_directories(${TARGET_LIB}
     PUBLIC

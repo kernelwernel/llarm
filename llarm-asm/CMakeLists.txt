@@ -62,11 +62,12 @@ endforeach()
 
 # library setup
 add_library(${TARGET_LIB} SHARED ${LIB_SOURCES})
-set_target_properties(${TARGET_LIB} PROPERTIES 
+set_target_properties(${TARGET_LIB} PROPERTIES
     CXX_VISIBILITY_PRESET default
     VISIBILITY_INLINES_HIDDEN NO
     OUTPUT_NAME "llarm-asm"
     INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
+    WINDOWS_EXPORT_ALL_SYMBOLS ON
 )
 
 #target_include_directories(${TARGET_LIB}
