@@ -500,6 +500,13 @@ namespace id {
         SEPARATE_DATA
     };
 
+    enum class cache_type : u8 {
+        UNKNOWN, 
+        WRITE_BACK,
+        WRITE_THROUGH,
+        WRITE_BACK_AND_WRITE_THROUGH
+    };
+
     enum class vic_type : u8 {
         NONE,
         PL190,  // ARM PrimeCell VIC — 32 sources, 16 vectored slots (DDI0181)

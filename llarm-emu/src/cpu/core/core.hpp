@@ -5,6 +5,7 @@
 #include "exception.hpp"
 #include "../../vic/vic.hpp"
 #include "../memory/memory.hpp"
+#include "../memory/cache.hpp"
 #include "../memory/mmu.hpp"
 #include "../memory/mpu.hpp"
 #include "../memory/tlb.hpp"
@@ -40,6 +41,7 @@ struct CORE {
     // memory modules
     ALIGNMENT alignment;
     RAM ram;
+    CACHE cache;
     MMU mmu;
     MPU mpu;
     FCSE fcse;
@@ -85,6 +87,7 @@ struct CORE {
         vic(vic),
         alignment(coprocessor, settings),
         ram(ram),
+        cache(settings, coprocessor),
         mmu(globals, ram, alignment, coprocessor, settings, tlb),
         mpu(globals, coprocessor, settings, ram, fcse),
         fcse(coprocessor, settings),

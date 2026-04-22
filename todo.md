@@ -21,3 +21,6 @@ notes:
 - use a better alternative to std::unordered_map that's faster (https://martin.ankerl.com/2022/08/27/hashmap-bench-01/)
 - remove the model of minimal types being used for local variables and function parameters, this has almost no benefit on performance. Use a u32 instead of a u8.
 - implement LLARM_LOW_MEMORY preprocessor argument
+
+- work on the cache
+- finish the VFP extension
