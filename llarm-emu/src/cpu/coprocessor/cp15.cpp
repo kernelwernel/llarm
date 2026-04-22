@@ -467,7 +467,6 @@ u32 CP15::read(const id::cp15 reg) const {
         case id::cp15::R13_PID: return llarm::util::bit_range(R13, 25, 31);
         case id::cp15::R14: return R14;
         case id::cp15::R15: return R15;
-        // default: llarm::out::error("TODO");
     }
 }
 

@@ -27,6 +27,8 @@ struct translation_struct {
     bool has_failed;
     id::aborts abort_code;
     u32 physical_address;
+    bool is_cacheable;
+    bool is_write_bufferable;
 };
 
 

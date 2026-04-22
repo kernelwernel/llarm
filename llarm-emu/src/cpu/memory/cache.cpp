@@ -111,7 +111,7 @@ void CACHE::function(const u8 CRm, const u8 opcode_2, const u32 data) {
     constexpr u8 CLEAN_INVALIDATE_UNIFIED_CACHE_LINE_INDEX = 152; // c15, opcode_2 = 2
 
     // this only works assuming CRm is 0-15 while opcode_2 is 0-9, creating a unique key
-    const u8 function_key = (CRm * 10) + opcode_2;
+    const u8 function_key = static_cast<u8>((CRm * 10) + opcode_2);
   
     switch (function_key) {
         case WAIT_FOR_INTERRUPT: // TODO

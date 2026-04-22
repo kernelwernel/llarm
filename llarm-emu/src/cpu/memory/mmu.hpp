@@ -6,6 +6,7 @@
 #include "../../ram/ram.hpp"
 #include "tlb.hpp"
 #include "alignment.hpp"
+#include "cache.hpp"
 #include "structures.hpp"
 
 #include <llarm/shared/types.hpp>
@@ -17,13 +18,13 @@
  *   AP = access permission
  */
 struct MMU {
-
     GLOBALS& globals;
     RAM& ram;
     ALIGNMENT& alignment;
     COPROCESSOR& coprocessor;
     SETTINGS& settings;
     TLB& tlb;
+    CACHE& cache;
 
     id::first_level get_first_level_id(const u32 entry);
     id::second_level get_second_level_id(const u32 entry);
@@ -65,13 +66,15 @@ struct MMU {
         ALIGNMENT& alignment,
         COPROCESSOR& coprocessor,
         SETTINGS& settings,
-        TLB& tlb
+        TLB& tlb,
+        CACHE& cache
     ) : globals(globals),
         ram(ram),
         alignment(alignment),
         coprocessor(coprocessor),
         settings(settings),
-        tlb(tlb)
+        tlb(tlb),
+        cache(cache)
     {
 
     }

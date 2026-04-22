@@ -90,7 +90,7 @@ mem_read_struct MEMORY::read(
     if (mmu.is_mmu_enabled()) {
         return mmu.read(address, access_size);
     }
-    
+
     if (mpu.is_mpu_enabled()) {
         return mpu.read(address, access_size);
     }

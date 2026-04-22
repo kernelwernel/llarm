@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../coprocessor/coprocessor.hpp"
+#include "../../ram/ram.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <array>
@@ -9,6 +10,7 @@
 struct CACHE {
     SETTINGS& settings;
     COPROCESSOR& coprocessor;
+    RAM& ram;
 
     u8 DATA_LINELEN = 0;
     u8 DATA_MULTIPLIER = 0;
@@ -32,7 +34,7 @@ struct CACHE {
     bool is_unified = false;
 
     // flat 2D layout: index as lines[set * ASSOCIATIVITY + way]
-    // inst_lines is empty when is_unified — instruction fetches use data_lines instead
+    // inst_lines is empty when is_unified: instruction fetches use data_lines instead
     std::vector<cache_line> data_lines;
     std::vector<cache_line> inst_lines;
 
@@ -85,8 +87,14 @@ struct CACHE {
 
     void function(const u8 CRm, const u8 opcode_2, const u32 data = 0);
 
-
-    CACHE(SETTINGS& settings, COPROCESSOR& coprocessor) : settings(settings), coprocessor(coprocessor) {
+    CACHE(
+        SETTINGS& settings, 
+        COPROCESSOR& coprocessor,
+        RAM& ram
+    ) : settings(settings), 
+        coprocessor(coprocessor),
+        ram(ram) 
+    {
         set_parameters();
     }
 };
