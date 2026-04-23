@@ -52,7 +52,16 @@ jobs:
       - name: Configure
         run: |
           cmake -S llarm-emu -B llarm-emu/build \
-            -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: Build
         run: cmake --build llarm-emu/build --parallel
+
+      - name: Upload build data
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-data
+          path: |
+            llarm-emu/build/compile_commands.json
+            llarm-emu/build/_deps

@@ -81,6 +81,7 @@ u32 CACHE::find_victim_way(const u32 set) {
             return way;
         }
     }
+
     return 0;
 }
 
@@ -91,6 +92,7 @@ void CACHE::evict_if_dirty(cache_line& victim, const u32 set) {
     }
 
     const u32 base = (((victim.tag * DATA_NSETS) + set) * DATA_LINELEN);
+
     for (u32 i = 0; i < DATA_LINELEN; ++i) {
         ram.write(base + i, static_cast<u64>(victim.data.at(i)), 1);
     }
@@ -106,9 +108,11 @@ void CACHE::fill_line(cache_line& victim, const u32 line_base) {
 
 u32 CACHE::read_line(const cache_line& line, const u32 pos) const {
     u32 value = 0;
+
     for (u8 i = 0; i < 4; ++i) {
         value |= static_cast<u32>(line.data.at((pos + i) % DATA_LINELEN)) << (i * 8);
     }
+
     return value;
 }
 

@@ -48,10 +48,19 @@ jobs:
       - name: Configure
         run: |
           cmake -S llarm-cpu -B llarm-cpu/build \
-            -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
       - name: Build
         run: cmake --build llarm-cpu/build --parallel
 
       - name: Test
         run: bash llarm-cpu/tests/run_tests.sh
+
+      - name: Upload build data
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-data
+          path: |
+            llarm-cpu/build/compile_commands.json
+            llarm-cpu/build/_deps
