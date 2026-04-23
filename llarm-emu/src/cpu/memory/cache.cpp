@@ -191,7 +191,7 @@ u32 CACHE::read(const u32 virtual_address, const u32 physical_address, const boo
 
     // cache hit: valid line with matching tag
     for (u32 way = 0; way < DATA_ASSOCIATIVITY; ++way) {
-        cache_line& line = data_line(set, way);
+        const cache_line& line = data_line(set, way);
 
         if (!(line.valid && line.tag == tag)) {
             continue;

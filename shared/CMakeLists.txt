@@ -9,12 +9,14 @@ fetchcontent_declare(
     GIT_REPOSITORY https://github.com/martinmoene/string-view-lite.git
     GIT_TAG        v1.8.0
     GIT_SHALLOW    TRUE
+    SYSTEM
 )
 fetchcontent_declare(
     robin-hood-hashing
     GIT_REPOSITORY https://github.com/martinus/robin-hood-hashing.git
     GIT_TAG        3.11.5
     GIT_SHALLOW    TRUE
+    SYSTEM
 )
 fetchcontent_makeavailable(string-view-lite robin-hood-hashing)
 
