@@ -2,7 +2,7 @@
 #include "tokens.hpp"
 #include "../encoding_utils.hpp"
 
-#include <llarm/shared/string_view.hpp>
+#include <nonstd/string_view.hpp>
 #include <llarm/shared/util.hpp>
 
 #include <cctype>

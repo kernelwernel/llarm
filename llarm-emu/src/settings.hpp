@@ -72,6 +72,7 @@ struct SETTINGS {
     /**/ u8 data_cache_assoc_way = 0;
     /**/ u8 instruction_cache_assoc_way = 0;
     /**/ u8 cache_ctype_field = 0; // 0b0000, 0b0001, 0b0010, 0b0110, 0b0111 are supported
+    /**/ id::cache_type cache_type = id::cache_type::UNKNOWN;
 
     /**/ u16 unified_tlb_table_size = 0;
     /**/ u16 inst_tlb_table_size = 0;
@@ -215,6 +216,10 @@ struct SETTINGS {
 
         if (has_vic && vic_type != id::vic_type::NONE) {
             
+        }
+
+        if (has_cache && cache_type == id::cache_type::UNKNOWN) {
+
         }
 
         // all of the checks above should mostly just set a default correct value instead of crashing completely

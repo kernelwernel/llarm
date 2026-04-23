@@ -1,6 +1,7 @@
 #pragma once
 
-#include "string_view.hpp"
+#include <nonstd/string_view.hpp>
+#include <robin_hood.h>
 #include <cstdint>
 
 using u8  = std::uint8_t;
@@ -36,11 +37,22 @@ using i64 = std::int64_t;
     #define LLARM_CONSTEVAL constexpr
 #endif
 
-// This lib is mainly used for string interpretation in llarm-asm.
-// The reason why this is used is because llarm-asm has heavy usage
-// of string_views, but the fact that it was introduced in C++17
-// makes it a nonstarter, as I'm aiming to support at least C++11.
-// So to compensate, I've imported this header-only lib to make this
-// possible as it supports C++98. 
 
-using sv = nonstd::string_view;
+namespace llarm {
+    // This lib is mainly used for string interpretation in llarm-asm.
+    // The reason why this is used is because llarm-asm has heavy usage
+    // of string_views, but the fact that it was introduced in C++17
+    // makes it a nonstarter, as I'm aiming to support at least C++11.
+    // So to compensate, I've imported this header-only lib to make this
+    // possible as it supports C++98. 
+    // from https://github.com/nonstd-lite/string-view-lite
+    using string_view = nonstd::string_view;
+
+    // This is a replacement for std::unordered_map, as it's far too slow
+    // for the computationally demanding tasks i'm trying to achieve. 
+    // from https://github.com/martinus/robin-hood-hashing
+    template <typename K, typename V>
+    using unordered_map = robin_hood::unordered_map<K, V>;
+}
+
+using sv = llarm::string_view;

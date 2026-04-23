@@ -1,4 +1,5 @@
 #include "cache.hpp"
+#include "src/id.hpp"
 
 
 void CACHE::set_parameters() {
@@ -42,6 +43,7 @@ void CACHE::flush_data_cache() {
     }
 }
 
+
 void CACHE::flush_inst_cache() {
     if (is_unified) {
         for (auto& line : data_lines) {
@@ -56,26 +58,157 @@ void CACHE::flush_inst_cache() {
     }
 }
 
+
 void CACHE::invalidate_data_entry(const u32 address) {
     // TODO
 }
 
+
 void CACHE::invalidate_inst_entry(const u32 address) {
     // TODO
 }
+
 
 void CACHE::reset() {
     data_lines.clear();
     inst_lines.clear();
 }
 
-void CACHE::write_cache(const u32 address, const u32 value, const u8 size) {
-    // TODO
+
+u32 CACHE::find_victim_way(const u32 set) {
+    for (u32 way = 0; way < DATA_ASSOCIATIVITY; ++way) {
+        if (!data_line(set, way).valid) {
+            return way;
+        }
+    }
+    return 0;
 }
 
-u32 CACHE::read_cache(const u32 address) {
-    (void)address; // TODO
-    return 0;
+
+void CACHE::evict_if_dirty(cache_line& victim, const u32 set) {
+    if (!victim.dirty) {
+        return;
+    }
+
+    const u32 base = (((victim.tag * DATA_NSETS) + set) * DATA_LINELEN);
+    for (u32 i = 0; i < DATA_LINELEN; ++i) {
+        ram.write(base + i, static_cast<u64>(victim.data.at(i)), 1);
+    }
+}
+
+
+void CACHE::fill_line(cache_line& victim, const u32 line_base) {
+    for (u32 i = 0; i < DATA_LINELEN; ++i) {
+        victim.data.at(i) = static_cast<u8>(ram.read(line_base + i, 1));
+    }
+}
+
+
+u32 CACHE::read_line(const cache_line& line, const u32 pos) const {
+    u32 value = 0;
+    for (u8 i = 0; i < 4; ++i) {
+        value |= static_cast<u32>(line.data.at((pos + i) % DATA_LINELEN)) << (i * 8);
+    }
+    return value;
+}
+
+
+void CACHE::write(
+    const u32 virtual_address, 
+    const u32 physical_address, 
+    const u32 value, 
+    const u8 size, 
+    const bool is_write_bufferable
+) {
+    // cache access checks, read B5-8 for more information
+    if ((settings.cache_type == id::cache_type::WRITE_BACK) && is_write_bufferable) {
+        llarm::out::unpredictable("write-back only cache has no bufferability bit");
+    }
+ 
+    const u32 offset = virtual_address % DATA_LINELEN;
+    const u32 set = (virtual_address / DATA_LINELEN) % DATA_NSETS;
+    const u32 tag = virtual_address / (static_cast<u32>(DATA_LINELEN) * DATA_NSETS);
+
+    for (u32 way = 0; way < DATA_ASSOCIATIVITY; ++way) {
+        cache_line& line = data_line(set, way);
+
+        if (!(line.valid && line.tag == tag)) {
+            continue;
+        }
+
+        // cache hit: write bytes into the line
+        for (u8 i = 0; i < size; ++i) {
+            line.data.at((offset + i) % DATA_LINELEN) = static_cast<u8>((value >> (i * 8)) & 0xFF);
+        }
+
+        if (settings.cache_type == id::cache_type::WRITE_BACK) {
+            line.dirty = true;
+        } else {
+            // write-through: propagate to RAM on every write
+            ram.write(physical_address, static_cast<u64>(value), size);
+        }
+
+        return;
+    }
+
+    // cache miss
+    if (settings.cache_type == id::cache_type::WRITE_THROUGH) {
+        // no write-allocate: bypass cache and write directly to RAM
+        ram.write(physical_address, static_cast<u64>(value), size);
+        return;
+    }
+
+    // write-back miss: write-allocate, bring the line in, then write to it
+    cache_line& victim = data_line(set, find_victim_way(set));
+
+    evict_if_dirty(victim, set);
+    fill_line(victim, physical_address - offset);
+
+    victim.tag   = tag;
+    victim.valid = true;
+
+    for (u8 i = 0; i < size; ++i) {
+        victim.data.at((offset + i) % DATA_LINELEN) = static_cast<u8>((value >> (i * 8)) & 0xFF);
+    }
+
+    victim.dirty = true;
+}
+
+
+u32 CACHE::read(const u32 virtual_address, const u32 physical_address, const bool is_write_bufferable) {
+    // cache access checks, read B5-8 for more information
+    if ((settings.cache_type == id::cache_type::WRITE_BACK) && is_write_bufferable) {
+        llarm::out::unpredictable("write-back only cache has no bufferability bit");
+    }
+
+    const u32 pos = virtual_address % DATA_LINELEN;
+    const u32 set = (virtual_address / DATA_LINELEN) % DATA_NSETS;
+    const u32 tag = virtual_address / (static_cast<u32>(DATA_LINELEN) * DATA_NSETS);
+
+    // cache hit: valid line with matching tag
+    for (u32 way = 0; way < DATA_ASSOCIATIVITY; ++way) {
+        cache_line& line = data_line(set, way);
+
+        if (!(line.valid && line.tag == tag)) {
+            continue;
+        }
+
+        return read_line(line, pos);
+    }
+
+    // cache miss: prefer an invalid way, else evict way 0
+    cache_line& victim = data_line(set, find_victim_way(set));
+
+    evict_if_dirty(victim, set);
+    fill_line(victim, physical_address - pos);
+
+    victim.tag = tag;
+    victim.valid = true;
+    victim.dirty = false;
+
+    const u32 value = read_line(victim, pos);
+
+    return value;
 }
 
 
@@ -130,7 +263,7 @@ void CACHE::function(const u8 CRm, const u8 opcode_2, const u32 data) {
         case WAIT_FOR_INTERRUPT_ALTERNATIVE: // TODO
         case CLEAN_DATA_CACHE_LINE_VIRTUAL: // TODO
         case CLEAN_DATA_CACHE_LINE_INDEX: // TODO
-        case DRAIN_WRITE_BUFFER: // TODO
+        case DRAIN_WRITE_BUFFER: return; // llarm does not implement a write buffer
         case CLEAN_UNIFIED_CACHE_LINE_VIRTUAL: // TODO
         case CLEAN_UNIFIED_CACHE_LINE_INDEX: // TODO
         case PREFETCH_INSTRUCTION_CACHE_LINE: // TODO

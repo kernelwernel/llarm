@@ -6,7 +6,7 @@
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
 #include <llarm/shared/out.hpp>
-#include <llarm/shared/string_view.hpp>
+#include <nonstd/string_view.hpp>
 
 using namespace internal;
 using enum token_enum;

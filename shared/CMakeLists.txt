@@ -2,6 +2,23 @@
 cmake_minimum_required(VERSION 3.29 FATAL_ERROR)
 
 
+# dependencies
+include(FetchContent)
+fetchcontent_declare(
+    string-view-lite
+    GIT_REPOSITORY https://github.com/martinmoene/string-view-lite.git
+    GIT_TAG        v1.8.0
+    GIT_SHALLOW    TRUE
+)
+fetchcontent_declare(
+    robin-hood-hashing
+    GIT_REPOSITORY https://github.com/martinus/robin-hood-hashing.git
+    GIT_TAG        3.11.5
+    GIT_SHALLOW    TRUE
+)
+fetchcontent_makeavailable(string-view-lite robin-hood-hashing)
+
+
 # includes
 include("../cmake/flags.cmake") # collection of all the necessary flags
 include("../cmake/variables.cmake") # general variables, usually file paths
@@ -61,6 +78,11 @@ target_include_directories(${TARGET_LIB}
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(${TARGET_LIB}
+    PUBLIC
+        nonstd::string-view-lite
+        robin_hood::robin_hood
 )
 
 

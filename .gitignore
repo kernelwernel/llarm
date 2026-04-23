@@ -22,7 +22,6 @@ tmpCMakeLists.txt
 .cache/
 gpu/
 assets/private/
-lib/
 firmware/
 **/*.gch
 docs/development_docs.md

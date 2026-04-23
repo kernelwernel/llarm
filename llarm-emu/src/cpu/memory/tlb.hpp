@@ -6,37 +6,21 @@
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/random.hpp>
 
-#if (LLARM_LOW_MEMORY)
-    #include <map>
-#else
-    #include <unordered_map>
-#endif
 
 
 struct TLB {
-
     SETTINGS& settings;
-
 
     llarm::random random;
 
-    // https://quick-bench.com/q/bhDceFgnZ7D3qR3ZR2GdCjwlt8g
-#if (LLARM_LOW_MEMORY)
-    std::map<u32, u32> unified_table;
-    std::map<u32, u32> inst_table;
-    std::map<u32, u32> data_table;
-#else
-    std::unordered_map<u32, u32> unified_table;
-    std::unordered_map<u32, u32> inst_table;
-    std::unordered_map<u32, u32> data_table;
-#endif
-
+    llarm::unordered_map<u32, u32> unified_table;
+    llarm::unordered_map<u32, u32> inst_table;
+    llarm::unordered_map<u32, u32> data_table;
 
     // read B3-27 for more context
     u32 W_unified;
     u32 W_inst;
     u32 W_data;
-
 
     void invalidate(const u32 virtual_address, const id::tlb_type tlb_type);
 

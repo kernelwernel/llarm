@@ -55,7 +55,7 @@ mem_write_struct MEMORY::write(const u64 value, u32 address, const u8 access_siz
         return mpu.write(address, value, access_size);
     }
 
-    ram.write(value, address, access_size);
+    ram.write(address, value, access_size);
 
     return mem_write_struct {
         /* has_failed */ false,

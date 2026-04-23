@@ -84,7 +84,7 @@ u8 MMU::fetch_subpage_AP(const u8 subpage, const u32 entry) {
 }
 
 
-translation_struct MMU::first_section(const u32 entry, const u32 address, const id::access_type access_type) {
+translation_struct MMU::first_section(const u32 entry, const u32 virtual_address, const id::access_type access_type) {
     const u8 domain_bits = llarm::util::bit_range<u8>(entry, 5, 8);
     const id::access_domain domain = fetch_domain(domain_bits);
 
@@ -98,7 +98,7 @@ translation_struct MMU::first_section(const u32 entry, const u32 address, const 
     const bool C = llarm::util::bit_fetch(entry, 3);
 
     if (has_failed) {
-        manage_abort(abort_code, address, domain_bits);
+        manage_abort(abort_code, virtual_address, domain_bits);
         return translation_struct {
             /* has_failed */ true,
             /* abort_code */ abort_code,
@@ -110,7 +110,7 @@ translation_struct MMU::first_section(const u32 entry, const u32 address, const 
 
     const u32 section_base_address = 0;
 
-    const u32 section_index = llarm::util::bit_range(address, 0, 12);
+    const u32 section_index = llarm::util::bit_range(virtual_address, 0, 12);
     const u32 physical_address = (section_base_address << 20) | section_index;
 
     return translation_struct {
@@ -124,10 +124,10 @@ translation_struct MMU::first_section(const u32 entry, const u32 address, const 
 
 
 // B3-9
-u32 MMU::first_coarse(const u32 entry, const u32 address) {
+u32 MMU::first_coarse(const u32 entry, const u32 virtual_address) {
     const u32 page_table_base_address = llarm::util::bit_range(entry, 10, 31);
 
-    const u8 second_level_index = llarm::util::bit_range<u8>(address, 12, 19);
+    const u8 second_level_index = llarm::util::bit_range<u8>(virtual_address, 12, 19);
     
     const u32 second_level_descriptor_address = (
         (page_table_base_address << 10) |
@@ -139,10 +139,10 @@ u32 MMU::first_coarse(const u32 entry, const u32 address) {
 
 
 // B3-10
-u32 MMU::first_fine(const u32 entry, const u32 address) {
+u32 MMU::first_fine(const u32 entry, const u32 virtual_address) {
     const u32 page_table_base_address = llarm::util::bit_range(entry, 12, 31);
 
-    const u8 second_level_index = llarm::util::bit_range<u8>(address, 10, 19);
+    const u8 second_level_index = llarm::util::bit_range<u8>(virtual_address, 10, 19);
     
     const u32 second_level_descriptor_address = (
         (page_table_base_address << 12) |
@@ -291,7 +291,7 @@ id::aborts MMU::check_block_access(
 
 translation_struct MMU::second_large(
     const u32 entry, 
-    const u32 address, 
+    const u32 virtual_address, 
     const u8 access_size, 
     const id::access_type access_type, 
     const u8 domain_bits
@@ -299,7 +299,7 @@ translation_struct MMU::second_large(
     const bool C = llarm::util::bit_fetch(entry, 3);
     const bool B = llarm::util::bit_fetch(entry, 2);
 
-    const u16 page_index = llarm::util::bit_range<u16>(address, 0, 15);
+    const u16 page_index = llarm::util::bit_range<u16>(virtual_address, 0, 15);
 
     // the subpages are 1KB each
     const u8 subpage_index = static_cast<u8>(page_index / util::get_kb(16));
@@ -310,7 +310,7 @@ translation_struct MMU::second_large(
     const bool AP_failed = (AP_abort != id::aborts::NO_ABORT);
 
     if (AP_failed) {
-        manage_abort(AP_abort, address, domain_bits);
+        manage_abort(AP_abort, virtual_address, domain_bits);
         return translation_struct {
             /* has_failed */ true,
             /* abort_code */ AP_abort,
@@ -321,7 +321,7 @@ translation_struct MMU::second_large(
     }
 
     if (alignment.is_disabled()) {
-        const u32 end_address = (address + access_size);
+        const u32 end_address = (virtual_address + access_size);
 
         const bool subpage_crossed = (subpage_index != (end_address / util::get_kb(16)));
 
@@ -332,7 +332,7 @@ translation_struct MMU::second_large(
             const bool second_AP_failed = (second_AP_abort != id::aborts::NO_ABORT);
 
             if (second_AP_failed) {
-                manage_abort(second_AP_abort, address, domain_bits);
+                manage_abort(second_AP_abort, virtual_address, domain_bits);
                 return translation_struct {
                     /* has_failed */ true,
                     /* abort_code */ second_AP_abort,
@@ -360,7 +360,7 @@ translation_struct MMU::second_large(
 
 translation_struct MMU::second_small(
     const u32 entry, 
-    const u32 address, 
+    const u32 virtual_address, 
     const u8 access_size, 
     const id::access_type access_type, 
     const u8 domain_bits
@@ -368,7 +368,7 @@ translation_struct MMU::second_small(
     const bool C = llarm::util::bit_fetch(entry, 3);
     const bool B = llarm::util::bit_fetch(entry, 2);
 
-    const u16 page_index = llarm::util::bit_range<u16>(address, 0, 11);
+    const u16 page_index = llarm::util::bit_range<u16>(virtual_address, 0, 11);
 
     // the subpages are 1KB each
     const u8 subpage_index = static_cast<u8>(page_index / util::get_kb(1));
@@ -379,7 +379,7 @@ translation_struct MMU::second_small(
     const bool AP_failed = (AP_abort != id::aborts::NO_ABORT);
 
     if (AP_failed) {
-        manage_abort(AP_abort, address, domain_bits);
+        manage_abort(AP_abort, virtual_address, domain_bits);
         return translation_struct {
             /* has_failed */ true,
             /* abort_code */ AP_abort,
@@ -390,7 +390,7 @@ translation_struct MMU::second_small(
     }
 
     if (alignment.is_disabled()) {
-        const u32 end_address = (address + access_size);
+        const u32 end_address = (virtual_address + access_size);
         const bool subpage_crossed = (subpage_index != (end_address / util::get_kb(1)));
 
         if (subpage_crossed) {
@@ -400,7 +400,7 @@ translation_struct MMU::second_small(
             const bool second_AP_failed = (second_AP_abort != id::aborts::NO_ABORT);
 
             if (second_AP_failed) {
-                manage_abort(second_AP_abort, address, domain_bits);
+                manage_abort(second_AP_abort, virtual_address, domain_bits);
                 return translation_struct {
                     /* has_failed */ true,
                     /* abort_code */ second_AP_abort,
@@ -428,7 +428,7 @@ translation_struct MMU::second_small(
 
 translation_struct MMU::second_tiny(
     const u32 entry, 
-    const u32 address, 
+    const u32 virtual_address, 
     const id::access_type access_type, 
     const u8 domain_bits
 ) {
@@ -443,7 +443,7 @@ translation_struct MMU::second_tiny(
     const bool access_failed = (abort_code != id::aborts::NO_ABORT);
 
     if (access_failed) {
-        manage_abort(abort_code, address, domain_bits);
+        manage_abort(abort_code, virtual_address, domain_bits);
         return translation_struct {
             /* has_failed */ true,
             /* abort_code */ abort_code,
@@ -455,7 +455,7 @@ translation_struct MMU::second_tiny(
 
     const u32 tiny_page_base_address = llarm::util::bit_range(entry, 10, 31);
 
-    const u16 page_index = llarm::util::bit_range<u16>(address, 0, 9);
+    const u16 page_index = llarm::util::bit_range<u16>(virtual_address, 0, 9);
     const u32 physical_address = ((tiny_page_base_address << 10) | page_index);
 
     return translation_struct {
@@ -476,13 +476,13 @@ bool MMU::is_mmu_enabled() const {
 }
 
 
-translation_struct MMU::page_walk(const u32 address, const id::access_type access_type, const u8 access_size) {
+translation_struct MMU::page_walk(const u32 virtual_address, const id::access_type access_type, const u8 access_size) {
     if (
         (alignment.is_enabled()) && 
         (access_type != id::access_type::INSTRUCTION_FETCH)
     ) {
-        if (alignment.is_aligned(address, access_size) == false) {
-            manage_abort(id::aborts::ALIGNMENT, address);
+        if (alignment.is_aligned(virtual_address, access_size) == false) {
+            manage_abort(id::aborts::ALIGNMENT, virtual_address);
             return translation_struct {
                 /* has_failed */ true,
                 /* abort_code */ id::aborts::ALIGNMENT,
@@ -494,7 +494,7 @@ translation_struct MMU::page_walk(const u32 address, const id::access_type acces
     }
 
     const u32 translation_base = coprocessor.read(id::cp15::R2_MMU_TRANSLATION_BASE);
-    const u32 table_index = llarm::util::bit_range(address, 20, 31);
+    const u32 table_index = llarm::util::bit_range(virtual_address, 20, 31);
 
     const u32 first_level_descriptor_address = ((translation_base << 14) | (table_index << 2));
 
@@ -507,11 +507,11 @@ translation_struct MMU::page_walk(const u32 address, const id::access_type acces
     const id::first_level first_level_id = get_first_level_id(first_level_descriptor);
 
     switch (first_level_id) {
-        case id::first_level::COARSE: second_key = first_coarse(first_level_descriptor, address); break;
-        case id::first_level::FINE: second_key = first_fine(first_level_descriptor, address); break;
-        case id::first_level::SECTION: return first_section(first_level_descriptor, address, access_type);
+        case id::first_level::COARSE: second_key = first_coarse(first_level_descriptor, virtual_address); break;
+        case id::first_level::FINE: second_key = first_fine(first_level_descriptor, virtual_address); break;
+        case id::first_level::SECTION: return first_section(first_level_descriptor, virtual_address, access_type);
         case id::first_level::FAULT:
-            manage_abort(id::aborts::SECTION_TRANSLATION, address);
+            manage_abort(id::aborts::SECTION_TRANSLATION, virtual_address);
             return translation_struct {
                 /* has_failed */ true,
                 /* abort_code */ id::aborts::SECTION_TRANSLATION,
@@ -528,11 +528,11 @@ translation_struct MMU::page_walk(const u32 address, const id::access_type acces
     const u8 domain_bits = llarm::util::bit_range<u8>(first_level_descriptor, 5, 8);
 
     switch (entry_id) {
-        case id::second_level::LARGE: return second_large(second_level_descriptor, address, access_size, access_type, domain_bits);
-        case id::second_level::SMALL: return second_small(second_level_descriptor, address, access_size, access_type, domain_bits);
-        case id::second_level::TINY: return second_tiny(second_level_descriptor, address, access_type, domain_bits);
+        case id::second_level::LARGE: return second_large(second_level_descriptor, virtual_address, access_size, access_type, domain_bits);
+        case id::second_level::SMALL: return second_small(second_level_descriptor, virtual_address, access_size, access_type, domain_bits);
+        case id::second_level::TINY: return second_tiny(second_level_descriptor, virtual_address, access_type, domain_bits);
         case id::second_level::FAULT:
-            manage_abort(id::aborts::PAGE_TRANSLATION, address, domain_bits);
+            manage_abort(id::aborts::PAGE_TRANSLATION, virtual_address, domain_bits);
             return translation_struct {
                 /* has_failed */ true,
                 /* abort_code */ id::aborts::PAGE_TRANSLATION,
@@ -544,21 +544,21 @@ translation_struct MMU::page_walk(const u32 address, const id::access_type acces
 }
 
 
-translation_struct MMU::translate_address(const u32 address, const id::access_type access_type, const u8 access_size) {
-    const tlb_fetch_struct tlb_fetch = tlb.is_translation_cached(address);
+translation_struct MMU::translate_address(const u32 virtual_address, const id::access_type access_type, const u8 access_size) {
+    const tlb_fetch_struct tlb_fetch = tlb.is_translation_cached(virtual_address);
 
     if (tlb_fetch.is_found) { // TLB hit
         return translation_struct {
             /* has_failed */ false,
             /* abort_code */ id::aborts::NO_ABORT,
-            /* physical_address */ tlb.fetch(address, tlb_fetch),
+            /* physical_address */ tlb.fetch(virtual_address, tlb_fetch),
             /* is_cacheable */ false, // TODO: TLB needs to cache this attribute
             /* is_write_bufferable */ false
         };
     }
 
     // TLB miss
-    translation_struct translation = page_walk(address, access_type, access_size);
+    const translation_struct translation = page_walk(virtual_address, access_type, access_size);
 
     const bool tlb_is_absent = (
         settings.has_tlb == false ||
@@ -573,14 +573,14 @@ translation_struct MMU::translate_address(const u32 address, const id::access_ty
     }
 
     // a TLB store can now be made. If it already exists then it'll just replace the old physical address.
-    tlb.insert(address, translation.physical_address, settings.tlb_type);
+    tlb.insert(virtual_address, translation.physical_address, settings.tlb_type);
 
     return translation;
 }
 
 
-mem_write_struct MMU::write(const u32 address, const u64 value, const u8 access_size) {
-    const translation_struct translation = translate_address(address, id::access_type::WRITE, access_size);
+mem_write_struct MMU::write(const u32 virtual_address, const u64 value, const u8 access_size) {
+    const translation_struct translation = translate_address(virtual_address, id::access_type::WRITE, access_size);
 
     if (translation.has_failed) {
         return mem_write_struct {
@@ -589,10 +589,16 @@ mem_write_struct MMU::write(const u32 address, const u64 value, const u8 access_
         };
     }
 
-    if (translation.is_cacheable) {
-        cache.write_cache(address, static_cast<u32>(value), access_size);
+    if (settings.has_cache && translation.is_cacheable) {
+        cache.write(
+            virtual_address, 
+            translation.physical_address, 
+            static_cast<u32>(value), 
+            access_size, 
+            translation.is_write_bufferable
+        );
     } else {
-        ram.write(value, translation.physical_address, access_size);
+        ram.write(translation.physical_address, value, access_size);
     }
 
     return mem_write_struct {
@@ -602,8 +608,8 @@ mem_write_struct MMU::write(const u32 address, const u64 value, const u8 access_
 }
 
 
-mem_read_struct MMU::read(const u32 address, const u8 access_size) {
-    const translation_struct translation = translate_address(address, id::access_type::READ, access_size);
+mem_read_struct MMU::read(const u32 virtual_address, const u8 access_size) {
+    const translation_struct translation = translate_address(virtual_address, id::access_type::READ, access_size);
     
     if (translation.has_failed) {
         return mem_read_struct {
@@ -614,12 +620,12 @@ mem_read_struct MMU::read(const u32 address, const u8 access_size) {
         };
     }
 
-    if (translation.is_cacheable) {
+    if (settings.has_cache && translation.is_cacheable) {
         return mem_read_struct {
             /* has_failed  */ false,
             /* abort_code  */ id::aborts::NO_ABORT,
             /* access_size */ access_size,
-            /* value       */ cache.read_cache(address)
+            /* value       */ cache.read(virtual_address, translation.physical_address, translation.is_write_bufferable)
         };
     }
 

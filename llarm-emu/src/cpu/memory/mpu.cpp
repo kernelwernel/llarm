@@ -245,7 +245,7 @@ mem_write_struct MPU::write(const u32 address, const u64 value, const u8 access_
         };
     }
 
-    ram.write(value, address, access_size);
+    ram.write(address, value, access_size);
 
     return mem_write_struct {
         /* has_failed  */ false,

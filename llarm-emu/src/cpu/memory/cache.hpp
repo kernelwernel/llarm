@@ -12,13 +12,13 @@ struct CACHE {
     COPROCESSOR& coprocessor;
     RAM& ram;
 
-    u8 DATA_LINELEN = 0;
+    u8 DATA_LINELEN = 8;  // min value from formula: 1 << (len+3), len is 2-bit
     u8 DATA_MULTIPLIER = 0;
     u16 DATA_ASSOCIATIVITY = 0;
     u32 DATA_NSETS = 0;
     u32 DATA_CACHE_SIZE = 0;
 
-    u8 INST_LINELEN = 0;
+    u8 INST_LINELEN = 8;  // same formula as DATA_LINELEN
     u8 INST_MULTIPLIER = 0;
     u16 INST_ASSOCIATIVITY = 0;
     u32 INST_NSETS = 0;
@@ -71,19 +71,29 @@ struct CACHE {
      */
     void set_parameters();
 
+    // flushers/invalidators
     void flush_data_cache();
-
     void flush_inst_cache();
-
     void invalidate_data_entry(const u32 address);
-
     void invalidate_inst_entry(const u32 address);
 
     void reset();
 
-    void write_cache(const u32 address, const u32 value, const u8 size);
+    void write(
+        const u32 address,
+        const u32 physical_address,
+        const u32 value,
+        const u8 size,
+        const bool is_write_bufferable
+    );
 
-    u32 read_cache(const u32 address);
+    u32 read(const u32 address, const u32 physical_address, const bool is_write_bufferable);
+
+    // shared cache utilities for read/write/function
+    u32 find_victim_way(u32 set);
+    void evict_if_dirty(cache_line& victim, u32 set);
+    void fill_line(cache_line& victim, u32 line_base);
+    u32 read_line(const cache_line& line, u32 pos) const;
 
     void function(const u8 CRm, const u8 opcode_2, const u32 data = 0);
 
@@ -95,7 +105,9 @@ struct CACHE {
         coprocessor(coprocessor),
         ram(ram) 
     {
-        set_parameters();
+        if (settings.cache_type != id::cache_type::UNKNOWN) { 
+            set_parameters();
+        }
     }
 };
 

@@ -5,7 +5,6 @@
 #include "lexer.hpp"
 
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 using namespace internal;
@@ -23,7 +22,7 @@ struct mnemonic_struct_arm {
 
 
 namespace internal::mnemonic_arm {
-    inline const std::unordered_map<sv, arm_id> arm_instructions = {
+    inline const llarm::unordered_map<sv, arm_id> arm_instructions = {
         { "ADC", arm_id::ADC },
         { "ADD", arm_id::ADD },
         { "AND", arm_id::AND },

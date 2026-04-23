@@ -2,12 +2,11 @@
 #include "ram.hpp"
 
 #include <vector>
-#include <array>
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/out.hpp>
 
-void RAM::write(std::vector<u8> &data, const u32 address) {
+void RAM::write(const u32 address, std::vector<u8> &data) {
     if (address + data.size() > ram.size()) {
         llarm::out::dev_error("Data exceeds RAM capacity (std::vector)");
     }
@@ -16,14 +15,17 @@ void RAM::write(std::vector<u8> &data, const u32 address) {
 }
 
 
-void RAM::write(const u64 value, const u32 address, const u8 access_size) {
+void RAM::write(const u32 address, const u64 value, const u8 access_size) {
     if (settings.has_vic && vic.contains(address)) {
         vic.write(address, static_cast<u32>(value));
         return;
     }
 
     switch (access_size) {
-        case 1: ram.at(address) = (value & 0xFF); return;
+        case 1: 
+            ram.at(address) = (value & 0xFF); 
+            return;
+
         case 2: 
             ram.at(address)     = static_cast<u8>(value & 0x00FF);
             ram.at(address + 1) = static_cast<u8>(value & 0xFF00);
@@ -35,7 +37,7 @@ void RAM::write(const u64 value, const u32 address, const u8 access_size) {
             ram.at(address + 2) = static_cast<u8>(value & 0x00FF0000);
             ram.at(address + 3) = static_cast<u8>(value & 0xFF000000);
             return;
-        
+
         case 8: 
             ram.at(address)     = static_cast<u8>(value & 0x00000000000000FF);
             ram.at(address + 1) = static_cast<u8>(value & 0x000000000000FF00);
@@ -93,5 +95,5 @@ u64 RAM::read(const u32 address, const u8 access_size) {
 
 
 void RAM::reset() {
-    ram.fill(0);
+    std::fill(ram.begin(), ram.end(), 0);
 }
