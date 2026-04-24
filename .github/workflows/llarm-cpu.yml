@@ -57,10 +57,13 @@ jobs:
       - name: Test
         run: bash llarm-cpu/tests/run_tests.sh
 
-      - name: Upload build data
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-data
-          path: |
-            llarm-cpu/build/compile_commands.json
-            llarm-cpu/build/_deps
+      - name: Install clang-tidy
+        run: sudo apt-get install -y clang-tidy clang-tools
+
+      - name: clang-tidy
+        continue-on-error: true
+        run: |
+          run-clang-tidy \
+            -p llarm-cpu/build \
+            -extra-arg=-Wno-unknown-warning-option \
+            "llarm-cpu/src/.*\\.cpp"

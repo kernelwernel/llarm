@@ -46,10 +46,13 @@ jobs:
       - name: Build
         run: cmake --build llarm-asm/build --parallel
 
-      - name: Upload build data
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-data
-          path: |
-            llarm-asm/build/compile_commands.json
-            llarm-asm/build/_deps
+      - name: Install clang-tidy
+        run: sudo apt-get install -y clang-tidy clang-tools
+
+      - name: clang-tidy
+        continue-on-error: true
+        run: |
+          run-clang-tidy \
+            -p llarm-asm/build \
+            -extra-arg=-Wno-unknown-warning-option \
+            "llarm-asm/src/.*\\.cpp"
