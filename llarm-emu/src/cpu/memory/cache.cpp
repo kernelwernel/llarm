@@ -2,9 +2,49 @@
 #include "src/id.hpp"
 
 
-void CACHE::set_parameters() {
-    is_unified = !settings.has_separate_cache;
+CACHE::address_breakdown CACHE::inst_breakdown(const u32 virtual_address) const {
+    if (settings.has_unified_cache) {
+        return {virtual_address, DATA_LINELEN, DATA_NSETS, DATA_ASSOCIATIVITY};
+    }
 
+    return {virtual_address, INST_LINELEN, INST_NSETS, INST_ASSOCIATIVITY};
+}
+
+
+CACHE::address_breakdown CACHE::data_breakdown(const u32 virtual_address) const {
+    return {virtual_address, DATA_LINELEN, DATA_NSETS, DATA_ASSOCIATIVITY};
+}
+
+
+CACHE::index_breakdown CACHE::inst_index(const u32 index) const {
+    if (settings.has_unified_cache) {
+        return {index, DATA_LINELEN, DATA_NSETS, DATA_ASSOCIATIVITY};
+    }
+
+    return {index, INST_LINELEN, INST_NSETS, INST_ASSOCIATIVITY};
+}
+
+
+CACHE::index_breakdown CACHE::data_index(const u32 index) const {
+    return {index, DATA_LINELEN, DATA_NSETS, DATA_ASSOCIATIVITY};
+}
+
+
+CACHE::cache_line& CACHE::data_line(const u32 set, const u32 way) {
+    return data_lines[(set * DATA_ASSOCIATIVITY) + way];
+}
+
+
+CACHE::cache_line& CACHE::inst_line(const u32 set, const u32 way) {
+    if (settings.has_unified_cache) {
+        return data_lines[(set * DATA_ASSOCIATIVITY) + way];
+    }
+
+    return inst_lines[(set * INST_ASSOCIATIVITY) + way];
+}
+
+
+void CACHE::set_parameters() {
     // present in both unified and separate caches
     DATA_LINELEN = static_cast<u8>(1 << (coprocessor.read(id::cp15::R0_CACHE_DSIZE_LEN) + 3));
     DATA_MULTIPLIER = static_cast<u8>(2 + coprocessor.read(id::cp15::R0_CACHE_DSIZE_M));
@@ -45,11 +85,12 @@ void CACHE::flush_data_cache() {
 
 
 void CACHE::flush_inst_cache() {
-    if (is_unified) {
+    if (settings.has_unified_cache) {
         for (auto& line : data_lines) {
             line.valid = false;
             line.dirty = false;
         }
+
         return;
     }
 
@@ -59,13 +100,91 @@ void CACHE::flush_inst_cache() {
 }
 
 
-void CACHE::invalidate_data_entry(const u32 address) {
-    // TODO
+void CACHE::invalidate_data_entry(const u32 virtual_address) {
+    const address_breakdown address = data_breakdown(virtual_address);
+
+    for (u32 way = 0; way < address.associativity; ++way) {
+        cache_line& line = data_line(address.set, way);
+
+        if (line.valid && line.tag == address.tag) {
+            line.valid = false;
+            return;
+        }
+    }
 }
 
 
-void CACHE::invalidate_inst_entry(const u32 address) {
-    // TODO
+void CACHE::invalidate_inst_entry(const u32 virtual_address) {
+    const address_breakdown address = inst_breakdown(virtual_address);
+
+    for (u32 way = 0; way < address.associativity; ++way) {
+        cache_line& line = inst_line(address.set, way);
+
+        if (line.valid && line.tag == address.tag) {
+            line.valid = false;
+            return;
+        }
+    }
+}
+
+
+void CACHE::invalidate_data_entry_index(const u32 index) {
+    const index_breakdown idx = data_index(index);
+    data_line(idx.set, idx.way).valid = false;
+}
+
+
+void CACHE::invalidate_inst_entry_index(const u32 index) {
+    const index_breakdown idx = inst_index(index);
+    inst_line(idx.set, idx.way).valid = false;
+}
+
+
+void CACHE::clean_data_entry(const u32 virtual_address) {
+    const address_breakdown address = data_breakdown(virtual_address);
+
+    for (u32 way = 0; way < address.associativity; ++way) {
+        cache_line& line = data_line(address.set, way);
+
+        if (line.valid && line.tag == address.tag) {
+            evict_if_dirty(line, address.set);
+            line.dirty = false;
+            return;
+        }
+    }
+}
+
+
+void CACHE::clean_data_entry_index(const u32 index) {
+    const index_breakdown idx = data_index(index);
+    cache_line& line = data_line(idx.set, idx.way);
+    evict_if_dirty(line, idx.set);
+    line.dirty = false;
+}
+
+
+void CACHE::clean_invalidate_data_entry(const u32 virtual_address) {
+    const address_breakdown address = data_breakdown(virtual_address);
+
+    for (u32 way = 0; way < address.associativity; ++way) {
+        cache_line& line = data_line(address.set, way);
+
+        if (line.valid && line.tag == address.tag) {
+            evict_if_dirty(line, address.set);
+            line.valid = false;
+            line.dirty = false;
+            return;
+        }
+    }
+}
+
+
+void CACHE::clean_invalidate_data_entry_index(const u32 index) {
+    const index_breakdown idx = data_index(index);
+    cache_line& line = data_line(idx.set, idx.way);
+    evict_if_dirty(line, idx.set);
+    line.valid = false;
+    line.dirty = false;
 }
 
 
@@ -217,8 +336,6 @@ u32 CACHE::read(const u32 virtual_address, const u32 physical_address, const boo
 
 
 void CACHE::function(const u8 CRm, const u8 opcode_2, const u32 data) {
-    (void)data; // TODO
-
     // these are just combinations of the CRm and opcode_2 merged 
     // together to create an integral value to run a switch on. 
 
@@ -249,33 +366,33 @@ void CACHE::function(const u8 CRm, const u8 opcode_2, const u32 data) {
 
     // this only works assuming CRm is 0-15 while opcode_2 is 0-9, creating a unique key
     const u8 function_key = static_cast<u8>((CRm * 10) + opcode_2);
-  
+
     switch (function_key) {
-        case WAIT_FOR_INTERRUPT: // TODO
-        case INVALIDATE_ENTIRE_INST_CACHE: // TODO
-        case INVALIDATE_INST_CACHE_VIRTUAL: // TODO
-        case INVALIDATE_INST_CACHE_INDEX: // TODO
-        case FLUSH_PREFETCH_BUFFER: // TODO
-        case FLUSH_ENTIRE_BRANCH_TARGET_CACHE: // TODO
-        case FLUSH_BRANCH_TARGET_CACHE: // TODO
-        case INVALIDATE_ENTIRE_DATA_CACHE: // TODO
-        case INVALIDATE_DATA_CACHE_VIRTUAL: // TODO
-        case INVALDIATE_DATA_CACHE_INDEX: // TODO
-        case INVALIDATE_ENTIRE_UNIFIED_CACHE: // TODO
-        case INVALIDATE_UNIFIED_CACHE_LINE_VIRTUAL: // TODO
-        case INVALIDATE_UNIFIED_CACHE_LINE_INDEX: // TODO
-        case WAIT_FOR_INTERRUPT_ALTERNATIVE: // TODO
-        case CLEAN_DATA_CACHE_LINE_VIRTUAL: // TODO
-        case CLEAN_DATA_CACHE_LINE_INDEX: // TODO
+        case WAIT_FOR_INTERRUPT: is_halted = true; return; // this is referenced directly to the core
+        case INVALIDATE_ENTIRE_INST_CACHE: flush_inst_cache(); return;
+        case INVALIDATE_INST_CACHE_VIRTUAL: invalidate_inst_entry(data); return;
+        case INVALIDATE_INST_CACHE_INDEX: invalidate_inst_entry_index(data); return;
+        case FLUSH_PREFETCH_BUFFER: return; // all three below aren't implemented, so ignore it
+        case FLUSH_ENTIRE_BRANCH_TARGET_CACHE: return;
+        case FLUSH_BRANCH_TARGET_CACHE: return;
+        case INVALIDATE_ENTIRE_DATA_CACHE: flush_data_cache(); return;
+        case INVALIDATE_DATA_CACHE_VIRTUAL: invalidate_data_entry(data); return;
+        case INVALDIATE_DATA_CACHE_INDEX: invalidate_data_entry_index(data); return;
+        case INVALIDATE_ENTIRE_UNIFIED_CACHE: flush_data_cache(); return;
+        case INVALIDATE_UNIFIED_CACHE_LINE_VIRTUAL: invalidate_data_entry(data); return;
+        case INVALIDATE_UNIFIED_CACHE_LINE_INDEX: invalidate_data_entry_index(data); return;
+        case WAIT_FOR_INTERRUPT_ALTERNATIVE: is_halted = true; return;
+        case CLEAN_DATA_CACHE_LINE_VIRTUAL: clean_data_entry(data); return;
+        case CLEAN_DATA_CACHE_LINE_INDEX: clean_data_entry_index(data); return;
         case DRAIN_WRITE_BUFFER: return; // llarm does not implement a write buffer
-        case CLEAN_UNIFIED_CACHE_LINE_VIRTUAL: // TODO
-        case CLEAN_UNIFIED_CACHE_LINE_INDEX: // TODO
-        case PREFETCH_INSTRUCTION_CACHE_LINE: // TODO
-        case CLEAN_INVALIDATE_DATA_CACHE_LINE_VIRTUAL: // TODO
-        case CLEAN_INVALIDATE_DATA_CACHE_LINE_INDEX: // TODO
-        case CLEAN_INVALIDATE_UNIFIED_CACHE_LINE_VIRTUAL: // TODO
-        case CLEAN_INVALIDATE_UNIFIED_CACHE_LINE_INDEX: // TODO
-        default: break;
+        case CLEAN_UNIFIED_CACHE_LINE_VIRTUAL: clean_data_entry(data); return;
+        case CLEAN_UNIFIED_CACHE_LINE_INDEX: clean_data_entry_index(data); return;
+        case PREFETCH_INSTRUCTION_CACHE_LINE: return; // hint only, no architectural effect
+        case CLEAN_INVALIDATE_DATA_CACHE_LINE_VIRTUAL: clean_invalidate_data_entry(data); return;
+        case CLEAN_INVALIDATE_DATA_CACHE_LINE_INDEX: clean_invalidate_data_entry_index(data); return;
+        case CLEAN_INVALIDATE_UNIFIED_CACHE_LINE_VIRTUAL: clean_invalidate_data_entry(data); return;
+        case CLEAN_INVALIDATE_UNIFIED_CACHE_LINE_INDEX: clean_invalidate_data_entry_index(data); return;
+        default: llarm::out::warning("Unknown cache function provided, ignoring");
     }
 
     // WARNING: be careful to not forget extra functions when adding more features to the 

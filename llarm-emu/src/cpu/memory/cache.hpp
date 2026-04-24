@@ -11,6 +11,7 @@ struct CACHE {
     SETTINGS& settings;
     COPROCESSOR& coprocessor;
     RAM& ram;
+    bool& is_halted;
 
     u8 DATA_LINELEN = 8;  // min value from formula: 1 << (len+3), len is 2-bit
     u8 DATA_MULTIPLIER = 0;
@@ -24,6 +25,56 @@ struct CACHE {
     u32 INST_NSETS = 0;
     u32 INST_CACHE_SIZE = 0;
 
+    struct address_breakdown {
+        u32 linelen;
+        u32 nsets;
+        u32 associativity;
+        u32 set;
+        u32 tag;
+
+        address_breakdown(
+            const u32 virtual_address, 
+            const u32 linelen, 
+            const u32 nsets, 
+            const u32 associativity
+        ) : linelen(linelen), 
+            nsets(nsets), 
+            associativity(associativity),
+            set((virtual_address / linelen) % nsets),
+            tag(virtual_address / (static_cast<u32>(linelen) * nsets))
+        {
+
+        }
+    };
+
+    struct index_breakdown {
+        u32 set;
+        u32 way;
+
+        index_breakdown(
+            const u32 data, 
+            const u32 linelen, 
+            const u32 nsets, 
+            const u32 associativity
+        ) {
+            u32 linelen_bits = 0;
+            for (u32 l = linelen >> 1; l > 0; l >>= 1) {
+                ++linelen_bits; 
+            }
+
+            u32 way_bits = 0;
+            for (u32 a = associativity - 1; a > 0; a >>= 1) {
+                ++way_bits; 
+            }
+
+            set = (data >> linelen_bits) & (nsets - 1);
+            way = way_bits > 0 ? (data >> (32 - way_bits)) : 0;
+        }
+    };
+
+    index_breakdown inst_index(const u32 index) const;
+    index_breakdown data_index(const u32 index) const;
+
     struct cache_line {
         u32 tag = 0;
         bool valid = false;
@@ -31,28 +82,17 @@ struct CACHE {
         std::array<u8, 64> data = {};  // max LINELEN is 64 bytes (len is 2-bit: 8/16/32/64)
     };
 
-    bool is_unified = false;
-
     // flat 2D layout: index as lines[set * ASSOCIATIVITY + way]
     // inst_lines is empty when is_unified: instruction fetches use data_lines instead
     std::vector<cache_line> data_lines;
     std::vector<cache_line> inst_lines;
 
-    cache_line& data_line(const u32 set, const u32 way) {
-        return data_lines[(set * DATA_ASSOCIATIVITY) + way];
-    }
+    cache_line& data_line(const u32 set, const u32 way);
+    cache_line& inst_line(const u32 set, const u32 way);
 
-    cache_line& inst_line(const u32 set, const u32 way) {
-        if (is_unified) {
-            return data_lines[(set * DATA_ASSOCIATIVITY) + way];
-        }
+    address_breakdown inst_breakdown(const u32 virtual_address) const;
+    address_breakdown data_breakdown(const u32 virtual_address) const;
 
-        return inst_lines[(set * INST_ASSOCIATIVITY) + way];
-    }
-
-
-    
-    
     /**
      * The following formulae can be used to determine the values LINELEN, ASSOCIATIVITY
      * and NSETS, defined in Cache size on page B5-4, once the cache absent case (assoc == 0b000, M == 1) has
@@ -76,6 +116,12 @@ struct CACHE {
     void flush_inst_cache();
     void invalidate_data_entry(const u32 address);
     void invalidate_inst_entry(const u32 address);
+    void invalidate_data_entry_index(const u32 index);
+    void invalidate_inst_entry_index(const u32 index);
+    void clean_data_entry(const u32 address);
+    void clean_data_entry_index(const u32 index);
+    void clean_invalidate_data_entry(const u32 address);
+    void clean_invalidate_data_entry_index(const u32 index);
 
     void reset();
 
@@ -100,10 +146,12 @@ struct CACHE {
     CACHE(
         SETTINGS& settings, 
         COPROCESSOR& coprocessor,
-        RAM& ram
+        RAM& ram,
+        bool& is_halted
     ) : settings(settings), 
         coprocessor(coprocessor),
-        ram(ram) 
+        ram(ram),
+        is_halted(is_halted)
     {
         if (settings.cache_type != id::cache_type::UNKNOWN) { 
             set_parameters();

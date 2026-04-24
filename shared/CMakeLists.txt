@@ -81,10 +81,33 @@ target_include_directories(${TARGET_LIB}
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(${TARGET_LIB}
+
+# Expose FetchContent include dirs directly at build time so that they
+# propagate to consumers without recording a target-name dependency.
+# At install time INSTALL_INTERFACE covers everything via the installed headers.
+get_target_property(_sv_includes nonstd::string-view-lite INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(_rh_includes robin_hood::robin_hood   INTERFACE_INCLUDE_DIRECTORIES)
+
+target_include_directories(${TARGET_LIB}
     PUBLIC
+        $<BUILD_INTERFACE:${_sv_includes}>
+        $<BUILD_INTERFACE:${_rh_includes}>
+)
+
+# PRIVATE so the FetchContent target names don't end up in the exported config
+target_link_libraries(${TARGET_LIB}
+    PRIVATE
         nonstd::string-view-lite
         robin_hood::robin_hood
+)
+
+# Install the FetchContent headers alongside llarm-shared's own headers so
+# INSTALL_INTERFACE consumers can find <nonstd/string_view.hpp> and <robin_hood.h>
+install(DIRECTORY
+    "${string-view-lite_SOURCE_DIR}/include/"
+    "${robin-hood-hashing_SOURCE_DIR}/src/"
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    FILES_MATCHING PATTERN "*.hpp" PATTERN "*.h"
 )
 
 

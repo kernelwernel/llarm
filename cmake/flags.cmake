@@ -42,6 +42,8 @@ set(CLANG_CXX_FLAGS
     -Wdouble-promotion
     -Wformat=2
     -Wimplicit-fallthrough
+    -Wno-deprecated-literal-operator # specific to string-view-lite lib
+    -Wno-deprecated-builtins # same
 )
 
 

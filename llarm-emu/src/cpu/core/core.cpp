@@ -118,6 +118,18 @@ void CORE::initialise(const bool is_headless) {
 
     if (is_headless) {
         while (true) {
+            if (is_halted) {
+                if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { 
+                    is_halted = false; 
+                    exception.fiq(); 
+                } else if (vic.irq_pending() && !reg.read(id::cpsr::I)) { 
+                    is_halted = false; 
+                    exception.irq(); 
+                }
+
+                continue;
+            }
+
             if (globals.instruction_set == id::instruction_sets::ARM) {
                 arm_cycle_headless();
             } else {
@@ -130,6 +142,12 @@ void CORE::initialise(const bool is_headless) {
 
     // instruction cycle
     while (true) {
+        if (is_halted) {
+            if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { is_halted = false; exception.fiq(); }
+            else if (vic.irq_pending() && !reg.read(id::cpsr::I)) { is_halted = false; exception.irq(); }
+            continue;
+        }
+
         if (globals.instruction_set == id::instruction_sets::ARM) {
             arm_cycle();
         } else {

@@ -56,6 +56,9 @@ struct CORE {
     DECODE decode;
     EXECUTE execute;
 
+    // internal core state variables
+    bool is_halted = false;
+
     void initialise(const bool is_headless = false);
 
     void arm_cycle_headless();
@@ -65,11 +68,9 @@ struct CORE {
 
     // for end-user library access purposes
     llarm::as::arm_id current_arm_id = arm_id::UNKNOWN;
-    u32 current_arm_code = 0;
-
     llarm::as::thumb_id current_thumb_id = thumb_id::UNKNOWN;
+    u32 current_arm_code = 0;
     u16 current_thumb_code = 0;
-
     bool continue_cycle = false;
 
     CORE(const SETTINGS& init_settings, RAM &ram, VIC& vic) :
@@ -87,7 +88,7 @@ struct CORE {
         vic(vic),
         alignment(coprocessor, settings),
         ram(ram),
-        cache(settings, coprocessor, ram),
+        cache(settings, coprocessor, ram, is_halted),
         mmu(globals, ram, alignment, coprocessor, settings, tlb, cache),
         mpu(globals, coprocessor, settings, ram, fcse),
         fcse(coprocessor, settings),
