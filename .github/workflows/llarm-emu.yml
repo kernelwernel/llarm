@@ -17,6 +17,7 @@ on:
       - 'llarm-asm/**/*.cmake.in'
       - 'cmake/**'
       - 'shared/**'
+      - '.github/workflows/llarm-emu.yml'
   pull_request:
     paths:
       - 'llarm-emu/**/*.cpp'
@@ -31,6 +32,7 @@ on:
       - 'llarm-asm/**/*.cmake.in'
       - 'cmake/**'
       - 'shared/**'
+      - '.github/workflows/llarm-emu.yml'
 
 jobs:
   build:
@@ -38,6 +40,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Install CMake 3.29
         run: |
@@ -61,10 +65,27 @@ jobs:
       - name: Install clang-tidy
         run: sudo apt-get install -y clang-tidy clang-tools
 
+      - name: Resolve changed files
+        id: changed
+        run: |
+          CHANGED=$(git diff HEAD~1 --name-only)
+          CPPS=$(echo "$CHANGED" | grep -E "^llarm-emu/src/.*\.cpp$" || true)
+          HPPS=$(echo "$CHANGED" | grep -E "^llarm-emu/.*\.hpp$" || true)
+
+          if [ -n "$HPPS" ]; then
+            echo "filter=llarm-emu/src/.*\\.cpp" >> "$GITHUB_OUTPUT"
+          elif [ -n "$CPPS" ]; then
+            echo "filter=$(echo "$CPPS" | tr '\n' '|' | sed 's/|$//')" >> "$GITHUB_OUTPUT"
+          else
+            echo "filter=" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: clang-tidy
+        if: steps.changed.outputs.filter != ''
         continue-on-error: true
         run: |
           run-clang-tidy \
             -p llarm-emu/build \
             -extra-arg=-Wno-unknown-warning-option \
-            "llarm-emu/src/.*\\.cpp"
+            -header-filter="llarm-emu/.*\\.hpp" \
+            "${{ steps.changed.outputs.filter }}"

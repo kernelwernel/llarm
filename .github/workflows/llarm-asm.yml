@@ -10,6 +10,7 @@ on:
       - 'llarm-asm/**/*.cmake.in'
       - 'cmake/**'
       - 'shared/**'
+      - '.github/workflows/llarm-asm.yml'
   pull_request:
     paths:
       - 'llarm-asm/**/*.cpp'
@@ -19,6 +20,7 @@ on:
       - 'llarm-asm/**/*.cmake.in'
       - 'cmake/**'
       - 'shared/**'
+      - '.github/workflows/llarm-asm.yml'
 
 jobs:
   build:
@@ -26,6 +28,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Install CMake 3.29
         run: |
@@ -49,10 +53,27 @@ jobs:
       - name: Install clang-tidy
         run: sudo apt-get install -y clang-tidy clang-tools
 
+      - name: Resolve changed files
+        id: changed
+        run: |
+          CHANGED=$(git diff HEAD~1 --name-only)
+          CPPS=$(echo "$CHANGED" | grep -E "^llarm-asm/src/.*\.cpp$" || true)
+          HPPS=$(echo "$CHANGED" | grep -E "^llarm-asm/.*\.hpp$" || true)
+
+          if [ -n "$HPPS" ]; then
+            echo "filter=llarm-asm/src/.*\\.cpp" >> "$GITHUB_OUTPUT"
+          elif [ -n "$CPPS" ]; then
+            echo "filter=$(echo "$CPPS" | tr '\n' '|' | sed 's/|$//')" >> "$GITHUB_OUTPUT"
+          else
+            echo "filter=" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: clang-tidy
+        if: steps.changed.outputs.filter != ''
         continue-on-error: true
         run: |
           run-clang-tidy \
             -p llarm-asm/build \
             -extra-arg=-Wno-unknown-warning-option \
-            "llarm-asm/src/.*\\.cpp"
+            -header-filter="llarm-asm/.*\\.hpp" \
+            "${{ steps.changed.outputs.filter }}"
