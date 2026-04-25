@@ -46,32 +46,42 @@ CACHE::cache_line& CACHE::inst_line(const u32 set, const u32 way) {
 
 void CACHE::set_parameters() {
     // present in both unified and separate caches
-    DATA_LINELEN = static_cast<u8>(1 << (coprocessor.read(id::cp15::R0_CACHE_DSIZE_LEN) + 3));
-    DATA_MULTIPLIER = static_cast<u8>(2 + coprocessor.read(id::cp15::R0_CACHE_DSIZE_M));
-    DATA_ASSOCIATIVITY = static_cast<u16>(DATA_MULTIPLIER << (coprocessor.read(id::cp15::R0_CACHE_DSIZE_ASSOC) - 1));
+    DATA_LINELEN = static_cast<u8>(1 << (cp15.read(id::cp15::R0_CACHE_DSIZE_LEN) + 3));
+    DATA_MULTIPLIER = static_cast<u8>(2 + cp15.read(id::cp15::R0_CACHE_DSIZE_M));
+    DATA_ASSOCIATIVITY = static_cast<u16>(DATA_MULTIPLIER << (cp15.read(id::cp15::R0_CACHE_DSIZE_ASSOC) - 1));
     DATA_NSETS = (1 << (
-        coprocessor.read(id::cp15::R0_CACHE_DSIZE_SIZE)
+        cp15.read(id::cp15::R0_CACHE_DSIZE_SIZE)
         + 6
-        - coprocessor.read(id::cp15::R0_CACHE_DSIZE_ASSOC)
-        - coprocessor.read(id::cp15::R0_CACHE_DSIZE_LEN)
+        - cp15.read(id::cp15::R0_CACHE_DSIZE_ASSOC)
+        - cp15.read(id::cp15::R0_CACHE_DSIZE_LEN)
     ));
-    DATA_CACHE_SIZE = static_cast<u32>(DATA_MULTIPLIER << (coprocessor.read(id::cp15::R0_CACHE_DSIZE_SIZE) + 8));
+    DATA_CACHE_SIZE = static_cast<u32>(DATA_MULTIPLIER << (cp15.read(id::cp15::R0_CACHE_DSIZE_SIZE) + 8));
     data_lines.assign(static_cast<size_t>(DATA_NSETS) * DATA_ASSOCIATIVITY, cache_line{});
+
+    DATA_W = 0;
+    for (u16 a = DATA_ASSOCIATIVITY - 1; a > 0; a >>= 1) { 
+        ++DATA_W; 
+    }
 
     // only for separate
     if (settings.has_separate_cache) {
-        INST_LINELEN = static_cast<u8>(1 << (coprocessor.read(id::cp15::R0_CACHE_ISIZE_LEN) + 3));
-        INST_MULTIPLIER = static_cast<u8>(2 + coprocessor.read(id::cp15::R0_CACHE_ISIZE_M));
-        INST_ASSOCIATIVITY = static_cast<u16>(INST_MULTIPLIER << (coprocessor.read(id::cp15::R0_CACHE_ISIZE_ASSOC) - 1));
+        INST_LINELEN = static_cast<u8>(1 << (cp15.read(id::cp15::R0_CACHE_ISIZE_LEN) + 3));
+        INST_MULTIPLIER = static_cast<u8>(2 + cp15.read(id::cp15::R0_CACHE_ISIZE_M));
+        INST_ASSOCIATIVITY = static_cast<u16>(INST_MULTIPLIER << (cp15.read(id::cp15::R0_CACHE_ISIZE_ASSOC) - 1));
         INST_NSETS = (1 << (
-            coprocessor.read(id::cp15::R0_CACHE_ISIZE_SIZE) 
-            + 6 
-            - coprocessor.read(id::cp15::R0_CACHE_ISIZE_ASSOC) 
-            - coprocessor.read(id::cp15::R0_CACHE_ISIZE_LEN)
+            cp15.read(id::cp15::R0_CACHE_ISIZE_SIZE)
+            + 6
+            - cp15.read(id::cp15::R0_CACHE_ISIZE_ASSOC)
+            - cp15.read(id::cp15::R0_CACHE_ISIZE_LEN)
         ));
-        INST_CACHE_SIZE = static_cast<u32>(INST_MULTIPLIER << (coprocessor.read(id::cp15::R0_CACHE_ISIZE_SIZE) + 8));
+        INST_CACHE_SIZE = static_cast<u32>(INST_MULTIPLIER << (cp15.read(id::cp15::R0_CACHE_ISIZE_SIZE) + 8));
 
         inst_lines.assign(static_cast<size_t>(INST_NSETS) * INST_ASSOCIATIVITY, cache_line{});
+
+        INST_W = 0;
+        for (u16 a = INST_ASSOCIATIVITY - 1; a > 0; a >>= 1) { 
+            ++INST_W; 
+        }
     }
 }
 
@@ -194,13 +204,61 @@ void CACHE::reset() {
 }
 
 
+u32 CACHE::data_lock_base() const {
+    if (DATA_W == 0) { 
+        return 0;
+    }
+
+    return (cp15.read(id::cp15::R9) >> (32 - DATA_W)) & ((1u << DATA_W) - 1);
+}
+
+
+u32 CACHE::inst_lock_base() const {
+    if (settings.has_unified_cache) { 
+        return data_lock_base(); 
+    }
+
+    if (INST_W == 0) { 
+        return 0; 
+    }
+
+    return (cp15.R9_INST >> (32 - INST_W)) & ((1u << INST_W) - 1);
+}
+
+
 u32 CACHE::find_victim_way(const u32 set) {
-    for (u32 way = 0; way < DATA_ASSOCIATIVITY; ++way) {
-        if (!data_line(set, way).valid) {
+    const u32 base = data_lock_base();
+
+    for (u32 way = base; way < DATA_ASSOCIATIVITY; ++way) {
+        if (!data_line(set, way).valid) { 
             return way;
         }
     }
 
+    if (base < DATA_ASSOCIATIVITY) { 
+        return base; 
+    }
+
+    llarm::out::unpredictable("all data cache ways are locked, evicting way 0");
+    return 0;
+}
+
+
+u32 CACHE::find_victim_way_inst(const u32 set) {
+    const u32 base = inst_lock_base();
+    const u32 associativity = settings.has_unified_cache ? DATA_ASSOCIATIVITY : INST_ASSOCIATIVITY;
+
+    for (u32 way = base; way < associativity; ++way) {
+        if (!inst_line(set, way).valid) { 
+            return way; 
+        }
+    }
+
+    if (base < associativity) {
+        return base; 
+    }
+
+    llarm::out::unpredictable("all instruction cache ways are locked, evicting way 0");
     return 0;
 }
 
@@ -225,6 +283,13 @@ void CACHE::fill_line(cache_line& victim, const u32 line_base) {
 }
 
 
+void CACHE::fill_line_inst(cache_line& victim, const u32 line_base) {
+    for (u32 i = 0; i < INST_LINELEN; ++i) {
+        victim.data.at(i) = static_cast<u8>(ram.read(line_base + i, 1));
+    }
+}
+
+
 u32 CACHE::read_line(const cache_line& line, const u32 pos) const {
     u32 value = 0;
 
@@ -233,6 +298,45 @@ u32 CACHE::read_line(const cache_line& line, const u32 pos) const {
     }
 
     return value;
+}
+
+
+u32 CACHE::read_line_inst(const cache_line& line, const u32 pos) const {
+    u32 value = 0;
+
+    for (u8 i = 0; i < 4; ++i) {
+        value |= static_cast<u32>(line.data.at((pos + i) % INST_LINELEN)) << (i * 8);
+    }
+
+    return value;
+}
+
+
+u32 CACHE::fetch_inst(const u32 virtual_address, const u32 physical_address) {
+    if (settings.has_unified_cache) {
+        return read(virtual_address, physical_address, false);
+    }
+
+    const u32 pos = virtual_address % INST_LINELEN;
+    const u32 set = (virtual_address / INST_LINELEN) % INST_NSETS;
+    const u32 tag = virtual_address / (static_cast<u32>(INST_LINELEN) * INST_NSETS);
+
+    for (u32 way = 0; way < INST_ASSOCIATIVITY; ++way) {
+        const cache_line& line = inst_line(set, way);
+
+        if (line.valid && line.tag == tag) {
+            return read_line_inst(line, pos);
+        }
+    }
+
+    cache_line& victim = inst_line(set, find_victim_way_inst(set));
+    fill_line_inst(victim, physical_address - pos);
+
+    victim.tag = tag;
+    victim.valid = true;
+    victim.dirty = false;
+
+    return read_line_inst(victim, pos);
 }
 
 

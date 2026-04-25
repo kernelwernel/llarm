@@ -6,7 +6,7 @@
   <small>Artwork by <a href="https://t04st3r.carrd.co/">t04st3r</a></small>
   <p align="center">
    <br>
-   <img align="center" src="https://img.shields.io/github/actions/workflow/status/kernelwernel/llarm/build-all.yml">
+   <img align="center" src="https://img.shields.io/github/actions/workflow/status/kernelwernel/llarm/build-cross-platform.yml">
    <img align="center" src="https://img.shields.io/github/license/kernelwernel/llarm">
    <a href="https://deepwiki.com/kernelwernel/llarm"><img align="center" src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
 </div>

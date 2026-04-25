@@ -84,7 +84,7 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision(const u32 code) const 
         
         const id::vfp_reg Sm_id = vfp_reg.fetch_single_reg_id(m_num);
 
-        for (u8 i = 0; i < vec_len - 1; i++) {
+        for (u8 i = 0; i < vec_len; i++) {
             const single_reg_struct regs = {
                 /* Sd */ vfp_reg.fetch_single_reg_id(static_cast<u8>(d_bank << 3) | d_index),
                 /* Sn */ vfp_reg.fetch_single_reg_id(static_cast<u8>(n_bank << 3) | n_index),
@@ -135,7 +135,7 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision(const u32 code) const 
      // d_bank and m_bank conds are already true, no check needed
     std::vector<single_reg_struct> vec_regs = {};
 
-    for (u8 i = 0; i < vec_len - 1; i++) {
+    for (u8 i = 0; i < vec_len; i++) {
         const single_reg_struct regs = {
             /* Sd */ vfp_reg.fetch_single_reg_id(static_cast<u8>(d_bank << 3) | d_index),
             /* Sn */ vfp_reg.fetch_single_reg_id(static_cast<u8>(n_bank << 3) | n_index),
@@ -228,7 +228,7 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision_monadic(const u32 code
 
         const id::vfp_reg Sm_id = vfp_reg.fetch_single_reg_id(m_num);
 
-        for (u8 i = 0; i < vec_len - 1; i++) {
+        for (u8 i = 0; i < vec_len; i++) {
             const single_reg_struct regs = {
                 /* Sd */ vfp_reg.fetch_single_reg_id(static_cast<u8>(d_bank << 3) | d_index),
                 /* Sn */ id::vfp_reg::UNKNOWN,
@@ -270,7 +270,7 @@ single_encoding_struct VFP_ADDRESS_MODE::single_precision_monadic(const u32 code
     // d_bank and m_bank conds are already true, no check needed
     std::vector<single_reg_struct> vec_regs = {};
 
-    for (u8 i = 0; i < vec_len - 1; i++) {
+    for (u8 i = 0; i < vec_len; i++) {
         const single_reg_struct regs = {
             /* Sd */ vfp_reg.fetch_single_reg_id(static_cast<u8>(d_bank << 3) | d_index),
             /* Sn */ id::vfp_reg::UNKNOWN,
@@ -359,7 +359,7 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision(const u32 code) const 
 
         const id::vfp_reg Dm_id = vfp_reg.fetch_double_reg_id(Dm);
 
-        for (u8 i = 0; i < vec_len - 1; i++) {
+        for (u8 i = 0; i < vec_len; i++) {
             const double_reg_struct regs = {
                 /* Dd */ vfp_reg.fetch_double_reg_id(static_cast<u8>(d_bank << 2) | d_index),
                 /* Dn */ vfp_reg.fetch_double_reg_id(static_cast<u8>(n_bank << 2) | n_index),
@@ -410,7 +410,7 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision(const u32 code) const 
     // d_bank and m_bank conds are already true, no check needed
     std::vector<double_reg_struct> vec_regs = {};
 
-    for (u8 i = 0; i < vec_len - 1; i++) {
+    for (u8 i = 0; i < vec_len; i++) {
         const double_reg_struct regs = {
             /* Dd */ vfp_reg.fetch_double_reg_id(static_cast<u8>(d_bank << 2) | d_index),
             /* Dn */ vfp_reg.fetch_double_reg_id(static_cast<u8>(n_bank << 2) | n_index),
@@ -501,7 +501,7 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision_monadic(const u32 code
 
         const id::vfp_reg Dm_id = vfp_reg.fetch_double_reg_id(Dm);
 
-        for (u8 i = 0; i < vec_len - 1; i++) {
+        for (u8 i = 0; i < vec_len; i++) {
             const double_reg_struct regs = {
                 /* Dd */ vfp_reg.fetch_double_reg_id(static_cast<u8>(d_bank << 2) | d_index),
                 /* Dn */ id::vfp_reg::UNKNOWN,
@@ -542,7 +542,7 @@ double_encoding_struct VFP_ADDRESS_MODE::double_precision_monadic(const u32 code
     // d_bank and m_bank conds are already true, no check needed
     std::vector<double_reg_struct> vec_regs = {};
 
-    for (u8 i = 0; i < vec_len - 1; i++) {
+    for (u8 i = 0; i < vec_len; i++) {
         const double_reg_struct regs = {
             /* Dd */ vfp_reg.fetch_double_reg_id(static_cast<u8>(d_bank << 2) | d_index),
             /* Dn */ id::vfp_reg::UNKNOWN,

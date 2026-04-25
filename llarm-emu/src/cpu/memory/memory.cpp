@@ -66,7 +66,8 @@ mem_write_struct MEMORY::write(const u64 value, u32 address, const u8 access_siz
 
 mem_read_struct MEMORY::read(
     u32 address,
-    const u8 access_size
+    const u8 access_size,
+    const id::access_type access_type
 ) {
     if (arch_26.is_26_arch_backwards_compatible()) {
         if (
@@ -88,7 +89,7 @@ mem_read_struct MEMORY::read(
     }
 
     if (mmu.is_mmu_enabled()) {
-        return mmu.read(address, access_size);
+        return mmu.read(address, access_size, access_type);
     }
 
     if (mpu.is_mpu_enabled()) {

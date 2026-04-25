@@ -18,10 +18,8 @@
 #include <llarm/shared/types.hpp>
 
 struct EXCEPTION {
-
     REGISTERS& reg;
     COPROCESSOR& coprocessor;
-
 
     struct exception_struct {
         u8 mode; 
@@ -48,4 +46,3 @@ struct EXCEPTION {
         COPROCESSOR& coprocessor
     );
 };
-

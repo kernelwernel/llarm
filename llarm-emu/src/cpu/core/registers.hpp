@@ -8,12 +8,10 @@
 #include <llarm/shared/types.hpp>
 
 struct REGISTERS {
-
     COPROCESSOR& coprocessor;
     GLOBALS& globals;
     ARCH_26& arch_26;
     SETTINGS& settings;
-
 
     // unbanked
     u32 R0 = 0;
@@ -69,7 +67,6 @@ struct REGISTERS {
     u32 SPSR_und = 0;
     u32 SPSR_irq = 0;
     u32 SPSR_fiq = 0;
-
 
     bool is_privileged() const;
     bool is_exception() const;

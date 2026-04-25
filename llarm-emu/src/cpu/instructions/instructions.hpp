@@ -11,13 +11,11 @@
 #include <llarm/shared/types.hpp>
 
 struct INSTRUCTIONS {
-
     REGISTERS& reg;
     ADDRESSING_MODE& address_mode;
     COPROCESSOR& coprocessor;
     SETTINGS& settings;
     MEMORY& memory;
-
 
     struct arm {
         struct math {

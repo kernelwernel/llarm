@@ -67,14 +67,17 @@ void COPROCESSOR::write(
         case id::cp::CP12:
         case id::cp::CP13:
         case id::cp::CP14: llarm::out::dev_error("Currently unsupported coprocessor in write operation");
-        case id::cp::CP15:
-            cp15.write(
-                cp15.identify(CRn, CRm, opcode_2), 
-                static_cast<u32>(value), 
-                opcode_2,
-                CRm,
-                is_forced
-            );
+        case id::cp::CP15: {
+            const id::cp15 cp15_id = cp15.identify(CRn, CRm, opcode_2);
+
+            if (cp15_id == id::cp15::R7_CACHE) {
+                cache.function(CRm, opcode_2, static_cast<u32>(value));
+                return;
+            }
+
+            cp15.write(cp15_id, static_cast<u32>(value), opcode_2, CRm, is_forced);
+            return;
+        }
     }
 }
 
@@ -165,12 +168,14 @@ void COPROCESSOR::reset(const id::cp cp_id) {
 
 
 COPROCESSOR::COPROCESSOR(
-    SETTINGS& settings, 
-    GLOBALS& globals, 
-    CP15& cp15
-) : settings(settings), 
-    globals(globals), 
-    cp15(cp15) 
+    SETTINGS& settings,
+    GLOBALS& globals,
+    CP15& cp15,
+    CACHE& cache
+) : settings(settings),
+    globals(globals),
+    cp15(cp15),
+    cache(cache)
 {
 
 }

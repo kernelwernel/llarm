@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../coprocessor/coprocessor.hpp"
+#include "../coprocessor/cp15.hpp"
 #include "../../ram/ram.hpp"
 
 #include <llarm/shared/types.hpp>
@@ -9,7 +9,7 @@
 
 struct CACHE {
     SETTINGS& settings;
-    COPROCESSOR& coprocessor;
+    CP15& cp15;
     RAM& ram;
     bool& is_halted;
 
@@ -18,12 +18,14 @@ struct CACHE {
     u16 DATA_ASSOCIATIVITY = 0;
     u32 DATA_NSETS = 0;
     u32 DATA_CACHE_SIZE = 0;
+    u8 DATA_W = 0;  // bits needed to index a way (ceil(log2(DATA_ASSOCIATIVITY)))
 
     u8 INST_LINELEN = 8;  // same formula as DATA_LINELEN
     u8 INST_MULTIPLIER = 0;
     u16 INST_ASSOCIATIVITY = 0;
     u32 INST_NSETS = 0;
     u32 INST_CACHE_SIZE = 0;
+    u8 INST_W = 0;  // bits needed to index a way (ceil(log2(INST_ASSOCIATIVITY)))
 
     struct address_breakdown {
         u32 linelen;
@@ -135,21 +137,28 @@ struct CACHE {
 
     u32 read(const u32 address, const u32 physical_address, const bool is_write_bufferable);
 
+    u32 fetch_inst(const u32 address, const u32 physical_address);
+
     // shared cache utilities for read/write/function
-    u32 find_victim_way(u32 set);
-    void evict_if_dirty(cache_line& victim, u32 set);
-    void fill_line(cache_line& victim, u32 line_base);
-    u32 read_line(const cache_line& line, u32 pos) const;
+    u32 data_lock_base() const;
+    u32 inst_lock_base() const;
+    u32 find_victim_way(const u32 set);
+    u32 find_victim_way_inst(const u32 set);
+    void evict_if_dirty(cache_line& victim, const u32 set);
+    void fill_line(cache_line& victim, const u32 line_base);
+    void fill_line_inst(cache_line& victim, const u32 line_base);
+    u32 read_line(const cache_line& line, const u32 pos) const;
+    u32 read_line_inst(const cache_line& line, const u32 pos) const;
 
     void function(const u8 CRm, const u8 opcode_2, const u32 data = 0);
 
     CACHE(
-        SETTINGS& settings, 
-        COPROCESSOR& coprocessor,
+        SETTINGS& settings,
+        CP15& cp15,
         RAM& ram,
         bool& is_halted
-    ) : settings(settings), 
-        coprocessor(coprocessor),
+    ) : settings(settings),
+        cp15(cp15),
         ram(ram),
         is_halted(is_halted)
     {

@@ -3,9 +3,7 @@
 #include "registers.hpp"
 
 struct VFP_EXCEPTION {
-
     VFP_REG& vfp_reg;
-
 
     void invalid_operation();
     void div_by_zero();

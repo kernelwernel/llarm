@@ -19,7 +19,7 @@ void VFP_REG::write(const id::vfp_reg vfp_reg_id, const u64 value) {
     };
 
     auto high = [=](u64 &vfp_reg) {
-        vfp_reg = (vfp_reg & low_half) | value;
+        vfp_reg = (vfp_reg & low_half) | (value << 32);
     };
 
     switch (vfp_reg_id) {
@@ -87,9 +87,9 @@ void VFP_REG::write(const id::vfp_reg vfp_reg_id, const u64 value) {
         case id::vfp_reg::FPSCR_C: llarm::util::modify_bit(FPSCR, 29, static_cast<u32>(value)); return;
         case id::vfp_reg::FPSCR_V: llarm::util::modify_bit(FPSCR, 28, static_cast<u32>(value)); return;
         case id::vfp_reg::FPSCR_FZ: llarm::util::modify_bit(FPSCR, 24, static_cast<u32>(value)); return;
-        case id::vfp_reg::FPSCR_RMODE: llarm::util::swap_bits(FPSID, 22, 23, static_cast<u32>(value)); return;
-        case id::vfp_reg::FPSCR_STRIDE: llarm::util::swap_bits(FPSID, 20, 21, static_cast<u32>(value)); return;
-        case id::vfp_reg::FPSCR_LEN: llarm::util::swap_bits(FPSID, 16, 18, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_RMODE: llarm::util::swap_bits(FPSCR, 22, 23, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_STRIDE: llarm::util::swap_bits(FPSCR, 20, 21, static_cast<u32>(value)); return;
+        case id::vfp_reg::FPSCR_LEN: llarm::util::swap_bits(FPSCR, 16, 18, static_cast<u32>(value)); return;
         case id::vfp_reg::FPSCR_IXE: llarm::util::modify_bit(FPSCR, 12, static_cast<u32>(value)); return;
         case id::vfp_reg::FPSCR_UFE: llarm::util::modify_bit(FPSCR, 11, static_cast<u32>(value)); return;
         case id::vfp_reg::FPSCR_OFE: llarm::util::modify_bit(FPSCR, 10, static_cast<u32>(value)); return;
@@ -113,22 +113,22 @@ u64 VFP_REG::read(const id::vfp_reg vfp_reg_id) const {
 
     switch (vfp_reg_id) {
         case id::vfp_reg::UNKNOWN: llarm::out::dev_error("Unknown VFP register id provided for read operation");
-        case id::vfp_reg::S1: return ((D0 & upper_mask_64) >> 31);
-        case id::vfp_reg::S3: return ((D1 & upper_mask_64) >> 31);
-        case id::vfp_reg::S5: return ((D2 & upper_mask_64) >> 31);
-        case id::vfp_reg::S7: return ((D3 & upper_mask_64) >> 31); 
-        case id::vfp_reg::S9: return ((D4 & upper_mask_64) >> 31); 
-        case id::vfp_reg::S11: return ((D5 & upper_mask_64) >> 31); 
-        case id::vfp_reg::S13: return ((D6 & upper_mask_64) >> 31);
-        case id::vfp_reg::S15: return ((D7 & upper_mask_64) >> 31);
-        case id::vfp_reg::S17: return ((D8 & upper_mask_64) >> 31);
-        case id::vfp_reg::S19: return ((D9 & upper_mask_64) >> 31);
-        case id::vfp_reg::S21: return ((D10 & upper_mask_64) >> 31);
-        case id::vfp_reg::S23: return ((D11 & upper_mask_64) >> 31);
-        case id::vfp_reg::S25: return ((D12 & upper_mask_64) >> 31);
-        case id::vfp_reg::S27: return ((D13 & upper_mask_64) >> 31);
-        case id::vfp_reg::S29: return ((D14 & upper_mask_64) >> 31);
-        case id::vfp_reg::S31: return ((D15 & upper_mask_64) >> 31);
+        case id::vfp_reg::S1: return ((D0 & upper_mask_64) >> 32);
+        case id::vfp_reg::S3: return ((D1 & upper_mask_64) >> 32);
+        case id::vfp_reg::S5: return ((D2 & upper_mask_64) >> 32);
+        case id::vfp_reg::S7: return ((D3 & upper_mask_64) >> 32); 
+        case id::vfp_reg::S9: return ((D4 & upper_mask_64) >> 32); 
+        case id::vfp_reg::S11: return ((D5 & upper_mask_64) >> 32); 
+        case id::vfp_reg::S13: return ((D6 & upper_mask_64) >> 32);
+        case id::vfp_reg::S15: return ((D7 & upper_mask_64) >> 32);
+        case id::vfp_reg::S17: return ((D8 & upper_mask_64) >> 32);
+        case id::vfp_reg::S19: return ((D9 & upper_mask_64) >> 32);
+        case id::vfp_reg::S21: return ((D10 & upper_mask_64) >> 32);
+        case id::vfp_reg::S23: return ((D11 & upper_mask_64) >> 32);
+        case id::vfp_reg::S25: return ((D12 & upper_mask_64) >> 32);
+        case id::vfp_reg::S27: return ((D13 & upper_mask_64) >> 32);
+        case id::vfp_reg::S29: return ((D14 & upper_mask_64) >> 32);
+        case id::vfp_reg::S31: return ((D15 & upper_mask_64) >> 32);
         case id::vfp_reg::S0: return (D0 & lower_mask_64);
         case id::vfp_reg::S2: return (D1 & lower_mask_64);
         case id::vfp_reg::S4: return (D2 & lower_mask_64);

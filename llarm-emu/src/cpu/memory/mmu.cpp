@@ -589,12 +589,12 @@ mem_write_struct MMU::write(const u32 virtual_address, const u64 value, const u8
         };
     }
 
-    if (settings.has_cache && translation.is_cacheable) {
+    if (settings.has_cache && translation.is_cacheable && coprocessor.read(id::cp15::R1_C)) {
         cache.write(
-            virtual_address, 
-            translation.physical_address, 
-            static_cast<u32>(value), 
-            access_size, 
+            virtual_address,
+            translation.physical_address,
+            static_cast<u32>(value),
+            access_size,
             translation.is_write_bufferable
         );
     } else {
@@ -608,9 +608,9 @@ mem_write_struct MMU::write(const u32 virtual_address, const u64 value, const u8
 }
 
 
-mem_read_struct MMU::read(const u32 virtual_address, const u8 access_size) {
-    const translation_struct translation = translate_address(virtual_address, id::access_type::READ, access_size);
-    
+mem_read_struct MMU::read(const u32 virtual_address, const u8 access_size, const id::access_type access_type) {
+    const translation_struct translation = translate_address(virtual_address, access_type, access_size);
+
     if (translation.has_failed) {
         return mem_read_struct {
             /* has_failed  */ true,
@@ -620,13 +620,30 @@ mem_read_struct MMU::read(const u32 virtual_address, const u8 access_size) {
         };
     }
 
-    if (settings.has_cache && translation.is_cacheable) {
-        return mem_read_struct {
-            /* has_failed  */ false,
-            /* abort_code  */ id::aborts::NO_ABORT,
-            /* access_size */ access_size,
-            /* value       */ cache.read(virtual_address, translation.physical_address, translation.is_write_bufferable)
-        };
+    if (access_type == id::access_type::INSTRUCTION_FETCH) {
+        // unified: R1_I reads as 0 and ignores writes, instruction fetches are gated by R1_C
+        // separate: instruction cache is independently gated by R1_I
+        const bool inst_cache_on = settings.has_unified_cache
+            ? coprocessor.read(id::cp15::R1_C)
+            : coprocessor.read(id::cp15::R1_I);
+
+        if (settings.has_cache && translation.is_cacheable && inst_cache_on) {
+            return mem_read_struct {
+                /* has_failed  */ false,
+                /* abort_code  */ id::aborts::NO_ABORT,
+                /* access_size */ access_size,
+                /* value       */ cache.fetch_inst(virtual_address, translation.physical_address)
+            };
+        }
+    } else {
+        if (settings.has_cache && translation.is_cacheable && coprocessor.read(id::cp15::R1_C)) {
+            return mem_read_struct {
+                /* has_failed  */ false,
+                /* abort_code  */ id::aborts::NO_ABORT,
+                /* access_size */ access_size,
+                /* value       */ cache.read(virtual_address, translation.physical_address, translation.is_write_bufferable)
+            };
+        }
     }
 
     const u64 value = ram.read(translation.physical_address, access_size);

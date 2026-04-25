@@ -240,7 +240,7 @@ void TLB::function(const u8 opcode_2, const u8 CRm, const u32 virtual_address) {
             return;
 
         default: 
-            llarm::out::unpredictable("Unknown TLB function");
+            llarm::out::unpredictable("Unknown TLB function, ignoring operation");
             return;
     }
 }

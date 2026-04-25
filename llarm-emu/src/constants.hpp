@@ -3,7 +3,6 @@
 #include <llarm/shared/types.hpp>
 
 namespace constants {
-
     namespace mode {
         constexpr u8 USER_26 = 0b00000;
         constexpr u8 FIQ_26 = 0b00001;

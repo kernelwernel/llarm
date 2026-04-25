@@ -54,7 +54,7 @@ struct MMU {
 
     mem_write_struct write(const u32 address, const u64 value, const u8 access_size);
 
-    mem_read_struct read(const u32 address, const u8 access_size);
+    mem_read_struct read(const u32 address, const u8 access_size, const id::access_type access_type = id::access_type::READ);
 
     void manage_abort(const id::aborts abort, const u32 virtual_address, const u8 domain_bits = 0);
 

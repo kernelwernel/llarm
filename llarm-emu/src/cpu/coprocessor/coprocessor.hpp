@@ -12,6 +12,7 @@
 #include "../../id.hpp"
 
 #include "cp15.hpp"
+#include "../memory/cache.hpp"
 #include "../../settings.hpp"
 #include "../core/globals.hpp"
 
@@ -19,11 +20,10 @@
 
 
 struct COPROCESSOR {
-
     SETTINGS& settings;
     GLOBALS& globals;
     CP15& cp15;
-
+    CACHE& cache;
 
     id::cp fetch_cp_id(const u8 raw_cp_num);
 
@@ -61,8 +61,9 @@ struct COPROCESSOR {
     void reset(const id::cp cp = id::cp::UNKNOWN);
 
     COPROCESSOR(
-        SETTINGS& settings, 
-        GLOBALS& globals, 
-        CP15& cp15
+        SETTINGS& settings,
+        GLOBALS& globals,
+        CP15& cp15,
+        CACHE& cache
     );
 };

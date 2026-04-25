@@ -10,13 +10,11 @@
 
 // memory protection unit
 struct MPU {
-
     GLOBALS& globals;
     COPROCESSOR& coprocessor;
     SETTINGS& settings;
     RAM& ram;
     FCSE& fcse;
-    
 
     u32 region_0_start = 0;
     u32 region_1_start = 0;

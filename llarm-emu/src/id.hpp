@@ -218,6 +218,24 @@ namespace id {
         R2_PU_C5,
         R2_PU_C6,
         R2_PU_C7,
+        R2_PU_INST,
+        R2_PU_INST_C0,
+        R2_PU_INST_C1,
+        R2_PU_INST_C2,
+        R2_PU_INST_C3,
+        R2_PU_INST_C4,
+        R2_PU_INST_C5,
+        R2_PU_INST_C6,
+        R2_PU_INST_C7,
+        R2_PU_DATA,
+        R2_PU_DATA_C0,
+        R2_PU_DATA_C1,
+        R2_PU_DATA_C2,
+        R2_PU_DATA_C3,
+        R2_PU_DATA_C4,
+        R2_PU_DATA_C5,
+        R2_PU_DATA_C6,
+        R2_PU_DATA_C7,
 
         R3,
         R3_MMU,
@@ -403,15 +421,16 @@ namespace id {
         R6_PU_DATA_7,
 
         R7,
-        R7_CACHE_INDEX,
-        R7_CACHE_SET,
+        R7_CACHE,
 
         R8_MMU, // write-only functionalities
         R8_PU, // reserved
 
         R9,
-        R9_CACHE_INDEX,
-        R9_CACHE_L,
+        R9_CACHE_DATA_INDEX,
+        R9_CACHE_DATA_L,
+        R9_CACHE_INST_INDEX,
+        R9_CACHE_INST_L,
 
         R10,
         R10_MMU,

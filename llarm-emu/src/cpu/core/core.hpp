@@ -31,6 +31,8 @@ struct CORE {
     CP15 cp15;
     VFP_REG vfp_reg;
     VFP_EXCEPTION vfp_exception;
+    RAM ram;
+    CACHE cache;
     COPROCESSOR coprocessor;
     ARCH_26 arch_26;
     REGISTERS reg;
@@ -40,8 +42,6 @@ struct CORE {
 
     // memory modules
     ALIGNMENT alignment;
-    RAM ram;
-    CACHE cache;
     MMU mmu;
     MPU mpu;
     FCSE fcse;
@@ -80,15 +80,15 @@ struct CORE {
         cp15(settings, globals, tlb),
         vfp_reg(settings),
         vfp_exception(vfp_reg),
-        coprocessor(settings, globals, cp15),
+        ram(ram),
+        cache(settings, cp15, ram, is_halted),
+        coprocessor(settings, globals, cp15, cache),
         arch_26(coprocessor, settings),
         reg(coprocessor, globals, arch_26, settings),
         vfp_addressing_mode(settings, reg, vfp_reg),
         exception(reg, coprocessor),
         vic(vic),
         alignment(coprocessor, settings),
-        ram(ram),
-        cache(settings, coprocessor, ram, is_halted),
         mmu(globals, ram, alignment, coprocessor, settings, tlb, cache),
         mpu(globals, coprocessor, settings, ram, fcse),
         fcse(coprocessor, settings),

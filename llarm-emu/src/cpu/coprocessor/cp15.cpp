@@ -84,13 +84,18 @@ id::cp15 CP15::identify(const u8 CRn, const u8 CRm, const u8 opcode_2) const {
 
         case 1: return id::cp15::R1;
 
-        case 2: 
+        case 2:
             if (settings.is_mpu_enabled) {
+                if (settings.is_mpu_separate) {
+                    if (opcode_2 == 0) { return id::cp15::R2_PU_DATA; }
+                    if (opcode_2 == 1) { return id::cp15::R2_PU_INST; }
+                    return id::cp15::UNKNOWN;
+                }
                 return id::cp15::R2_PU;
             } else if (settings.is_mmu_enabled) {
                 return id::cp15::R2_MMU;
             }
-        
+
             return id::cp15::UNKNOWN;
         
         case 3: 
@@ -159,9 +164,30 @@ id::cp15 CP15::identify(const u8 CRn, const u8 CRm, const u8 opcode_2) const {
 
             return id::cp15::UNKNOWN;
 
-        case 9: return id::cp15::R9;
+        case 9:
+            if (settings.has_separate_cache) {
+                if (opcode_2 == 0) { 
+                    return id::cp15::R9_CACHE_DATA_INDEX; 
+                }
+    
+                if (opcode_2 == 1) { 
+                    return id::cp15::R9_CACHE_INST_L; 
+                }
 
-        case 10: 
+                return id::cp15::R9;
+            }
+
+            if (opcode_2 == 0) { 
+                return id::cp15::R9_CACHE_DATA_INDEX;
+            }
+
+            if (opcode_2 == 1) { 
+                return id::cp15::R9_CACHE_DATA_L;
+            }
+
+            return id::cp15::R9;
+
+        case 10:
             if (settings.is_mpu_enabled) {
                 return id::cp15::R10_PU;
             } else if (settings.is_mmu_enabled) {
@@ -258,6 +284,24 @@ u32 CP15::read(const id::cp15 reg) const {
         case id::cp15::R2_PU_C5: return llarm::util::bit_fetch(R2, 5);
         case id::cp15::R2_PU_C6: return llarm::util::bit_fetch(R2, 6);
         case id::cp15::R2_PU_C7: return llarm::util::bit_fetch(R2, 7);
+        case id::cp15::R2_PU_INST: return R2_PU_INST;
+        case id::cp15::R2_PU_INST_C0: return (R2_PU_INST & 1);
+        case id::cp15::R2_PU_INST_C1: return llarm::util::bit_fetch(R2_PU_INST, 1);
+        case id::cp15::R2_PU_INST_C2: return llarm::util::bit_fetch(R2_PU_INST, 2);
+        case id::cp15::R2_PU_INST_C3: return llarm::util::bit_fetch(R2_PU_INST, 3);
+        case id::cp15::R2_PU_INST_C4: return llarm::util::bit_fetch(R2_PU_INST, 4);
+        case id::cp15::R2_PU_INST_C5: return llarm::util::bit_fetch(R2_PU_INST, 5);
+        case id::cp15::R2_PU_INST_C6: return llarm::util::bit_fetch(R2_PU_INST, 6);
+        case id::cp15::R2_PU_INST_C7: return llarm::util::bit_fetch(R2_PU_INST, 7);
+        case id::cp15::R2_PU_DATA: return R2_PU_DATA;
+        case id::cp15::R2_PU_DATA_C0: return (R2_PU_DATA & 1);
+        case id::cp15::R2_PU_DATA_C1: return llarm::util::bit_fetch(R2_PU_DATA, 1);
+        case id::cp15::R2_PU_DATA_C2: return llarm::util::bit_fetch(R2_PU_DATA, 2);
+        case id::cp15::R2_PU_DATA_C3: return llarm::util::bit_fetch(R2_PU_DATA, 3);
+        case id::cp15::R2_PU_DATA_C4: return llarm::util::bit_fetch(R2_PU_DATA, 4);
+        case id::cp15::R2_PU_DATA_C5: return llarm::util::bit_fetch(R2_PU_DATA, 5);
+        case id::cp15::R2_PU_DATA_C6: return llarm::util::bit_fetch(R2_PU_DATA, 6);
+        case id::cp15::R2_PU_DATA_C7: return llarm::util::bit_fetch(R2_PU_DATA, 7);
         case id::cp15::R3: return R3;
         case id::cp15::R3_MMU: return R3;
         case id::cp15::R3_MMU_D0: return llarm::util::bit_range(R3, 0, 1);
@@ -438,15 +482,15 @@ u32 CP15::read(const id::cp15 reg) const {
         case id::cp15::R6_PU_DATA_5: return R6_PU_DATA_5;
         case id::cp15::R6_PU_DATA_6: return R6_PU_DATA_6;
         case id::cp15::R6_PU_DATA_7: return R6_PU_DATA_7;
-    
         case id::cp15::R7: return R7;
-        case id::cp15::R7_CACHE_INDEX: // TODO
-        case id::cp15::R7_CACHE_SET: // TODO
-        case id::cp15::R8_MMU: return 0; // UNPREDICTABLE TODO
+        case id::cp15::R7_CACHE: llarm::out::unpredictable("R7 cache register is write-only"); return 0;
+        case id::cp15::R8_MMU: llarm::out::unpredictable("R8 MMU register is write-only"); return 0;
         case id::cp15::R8_PU: return R8;
         case id::cp15::R9: return R9;
-        case id::cp15::R9_CACHE_INDEX: // TODO
-        case id::cp15::R9_CACHE_L: // TODO
+        case id::cp15::R9_CACHE_DATA_INDEX: return R9;
+        case id::cp15::R9_CACHE_DATA_L: return R9;
+        case id::cp15::R9_CACHE_INST_INDEX: return R9_INST;
+        case id::cp15::R9_CACHE_INST_L: return R9_INST;
         case id::cp15::R10: return R10;
         case id::cp15::R10_MMU: return R10;
         case id::cp15::R10_MMU_BASE: return llarm::util::bit_range(R10, static_cast<u8>(32 - tlb.W_unified), 31);
@@ -746,6 +790,24 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
         case id::cp15::R2_PU_C5: llarm::util::modify_bit(R2, 5, value); return;
         case id::cp15::R2_PU_C6: llarm::util::modify_bit(R2, 6, value); return;
         case id::cp15::R2_PU_C7: llarm::util::modify_bit(R2, 7, value); return;
+        case id::cp15::R2_PU_INST: R2_PU_INST = value; return;
+        case id::cp15::R2_PU_INST_C0: llarm::util::modify_bit(R2_PU_INST, 0, value); return;
+        case id::cp15::R2_PU_INST_C1: llarm::util::modify_bit(R2_PU_INST, 1, value); return;
+        case id::cp15::R2_PU_INST_C2: llarm::util::modify_bit(R2_PU_INST, 2, value); return;
+        case id::cp15::R2_PU_INST_C3: llarm::util::modify_bit(R2_PU_INST, 3, value); return;
+        case id::cp15::R2_PU_INST_C4: llarm::util::modify_bit(R2_PU_INST, 4, value); return;
+        case id::cp15::R2_PU_INST_C5: llarm::util::modify_bit(R2_PU_INST, 5, value); return;
+        case id::cp15::R2_PU_INST_C6: llarm::util::modify_bit(R2_PU_INST, 6, value); return;
+        case id::cp15::R2_PU_INST_C7: llarm::util::modify_bit(R2_PU_INST, 7, value); return;
+        case id::cp15::R2_PU_DATA: R2_PU_DATA = value; return;
+        case id::cp15::R2_PU_DATA_C0: llarm::util::modify_bit(R2_PU_DATA, 0, value); return;
+        case id::cp15::R2_PU_DATA_C1: llarm::util::modify_bit(R2_PU_DATA, 1, value); return;
+        case id::cp15::R2_PU_DATA_C2: llarm::util::modify_bit(R2_PU_DATA, 2, value); return;
+        case id::cp15::R2_PU_DATA_C3: llarm::util::modify_bit(R2_PU_DATA, 3, value); return;
+        case id::cp15::R2_PU_DATA_C4: llarm::util::modify_bit(R2_PU_DATA, 4, value); return;
+        case id::cp15::R2_PU_DATA_C5: llarm::util::modify_bit(R2_PU_DATA, 5, value); return;
+        case id::cp15::R2_PU_DATA_C6: llarm::util::modify_bit(R2_PU_DATA, 6, value); return;
+        case id::cp15::R2_PU_DATA_C7: llarm::util::modify_bit(R2_PU_DATA, 7, value); return;
         case id::cp15::R3: R3 = value; return;
         case id::cp15::R3_MMU: R3 = value; return;
         case id::cp15::R3_MMU_D0: llarm::util::swap_bits(R3, 0, 1, value);  return;
@@ -1041,13 +1103,14 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             }
 
         case id::cp15::R7: R7 = value; return;
-        case id::cp15::R7_CACHE_INDEX: // TODO
-        case id::cp15::R7_CACHE_SET: // TODO
+        case id::cp15::R7_CACHE: llarm::out::error("R7_CACHE must be handled by COPROCESSOR, not CP15");
         case id::cp15::R8_MMU: tlb.function(opcode_2, CRm, data); return;
         case id::cp15::R8_PU: R8 = value; return;
         case id::cp15::R9: R9 = value; return;
-        case id::cp15::R9_CACHE_INDEX: // TODO
-        case id::cp15::R9_CACHE_L: // TODO
+        case id::cp15::R9_CACHE_DATA_INDEX: R9 = value; return;
+        case id::cp15::R9_CACHE_DATA_L: R9 = value; return;
+        case id::cp15::R9_CACHE_INST_INDEX: R9_INST = value; return;
+        case id::cp15::R9_CACHE_INST_L: R9_INST = value; return;
         case id::cp15::R10: R10 = value; return;
         case id::cp15::R10_MMU: R10 = value; return;
         case id::cp15::R10_MMU_BASE: llarm::util::swap_bits(R10, static_cast<u8>(32 - tlb.W_unified), 31, value); return;
@@ -1486,6 +1549,8 @@ void CP15::reset() {
     R0_CACHE = 0;
     R1 = 0;
     R2 = 0;
+    R2_PU_INST = 0;
+    R2_PU_DATA = 0;
     R3 = 0;
     R3_PU_INST = 0;
     R3_PU_DATA = 0;
@@ -1521,6 +1586,7 @@ void CP15::reset() {
     R7 = 0;
     R8 = 0;
     R9 = 0;
+    R9_INST = 0;
     R10 = 0;
     R11 = 0;
     R12 = 0;
@@ -1560,5 +1626,5 @@ CP15::CP15(SETTINGS& settings, GLOBALS& globals, TLB& tlb) : settings(settings),
     // R10_PU is reserved
 
     // R7_CACHE is a special write-only register, different implementation required
-    // R9_CACHE i honestly don't know, TODO
+    // R9_CACHE_DATA_* and R9_CACHE_INST_* are handled by CACHE via cp15.R9 / cp15.R9_INST
 }

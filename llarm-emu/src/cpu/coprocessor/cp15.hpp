@@ -38,12 +38,9 @@
  * itself is structured in this unintuitive way. Also, hope you have a great day :)
  */
 struct CP15 {
-
     SETTINGS& settings;
     GLOBALS& globals;
     TLB& tlb;
-
-
 
     u32 R0_ID = 0;    // processor ID 
     u32 R0_CACHE = 0; // cache 
@@ -54,7 +51,9 @@ struct CP15 {
     // MMU: translation table
     // MPU: cachability bits
     u32 R2 = 0;
-    
+    u32 R2_PU_INST = 0;
+    u32 R2_PU_DATA = 0;
+
     // MMU: domain access control
     // MPU: bufferability bits
     u32 R3 = 0;
@@ -110,7 +109,8 @@ struct CP15 {
     u32 R8 = 0;
 
     // cache lockdown
-    u32 R9 = 0;
+    u32 R9 = 0;      // data cache lockdown
+    u32 R9_INST = 0; // instruction cache lockdown
 
     // MMU: TLB lockdown
     // MPU: reserved

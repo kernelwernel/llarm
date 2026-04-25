@@ -7,10 +7,8 @@
 
 
 struct VFP_REG {
-
     SETTINGS& settings;
 
-    // maybe i could do something hacky with unions here, but whatever
     u64 D0 = 0; // S0 and S1
     u64 D1 = 0; // S2 and S3
     u64 D2 = 0; // S4 and S5
@@ -31,7 +29,6 @@ struct VFP_REG {
     u32 FPSID = 0;
     u32 FPSCR = 0;
     u32 FPEXC = 0;
-
 
     void write(const id::vfp_reg vfp_reg_id, const u64 value);
     void write_single(const u32 code, const u8 start, const u8 end, const u32 value, const u8 bottom_bit);

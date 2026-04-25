@@ -29,7 +29,8 @@ struct MEMORY {
 
     mem_read_struct read(
         u32 address,
-        u8 access_size
+        u8 access_size,
+        id::access_type access_type = id::access_type::READ
     );
 
     void reset();

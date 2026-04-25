@@ -24,3 +24,4 @@ notes:
 
 - work on the cache
 - finish the VFP extension
+- implement the TLB lockdown
