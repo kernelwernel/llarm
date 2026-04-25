@@ -548,12 +548,14 @@ translation_struct MMU::translate_address(const u32 virtual_address, const id::a
     const tlb_fetch_struct tlb_fetch = tlb.is_translation_cached(virtual_address);
 
     if (tlb_fetch.is_found) { // TLB hit
+        const tlb_entry_struct entry = tlb.fetch(virtual_address, tlb_fetch);
+
         return translation_struct {
-            /* has_failed */ false,
-            /* abort_code */ id::aborts::NO_ABORT,
-            /* physical_address */ tlb.fetch(virtual_address, tlb_fetch),
-            /* is_cacheable */ false, // TODO: TLB needs to cache this attribute
-            /* is_write_bufferable */ false
+            /* has_failed          */ false,
+            /* abort_code          */ id::aborts::NO_ABORT,
+            /* physical_address    */ entry.physical_address,
+            /* is_cacheable        */ entry.is_cacheable,
+            /* is_write_bufferable */ entry.is_write_bufferable
         };
     }
 
@@ -563,7 +565,7 @@ translation_struct MMU::translate_address(const u32 virtual_address, const id::a
     const bool tlb_is_absent = (
         settings.has_tlb == false ||
         (
-            (settings.is_tlb_unified == false) && 
+            (settings.is_tlb_unified == false) &&
             (settings.is_tlb_separate == false)
         )
     );
@@ -573,7 +575,7 @@ translation_struct MMU::translate_address(const u32 virtual_address, const id::a
     }
 
     // a TLB store can now be made. If it already exists then it'll just replace the old physical address.
-    tlb.insert(virtual_address, translation.physical_address, settings.tlb_type);
+    tlb.insert(virtual_address, translation.physical_address, settings.tlb_type, translation.is_cacheable, translation.is_write_bufferable);
 
     return translation;
 }
@@ -697,64 +699,63 @@ void MMU::reset() {
 
 
 
-    /*
-     * MMU NOTES:
-     *
-     * - For caches and write buffers which are not allowed to be enabled while the MMU is disabled, 
-     *   the values of the C and B bits for a memory access are irrelevant.
-     *
-     * - For caches and write buffers which are allowed to be enabled while the MMU is disabled, a
-     *   data access is treated as uncachable and unbufferable (C == 0, B == 0). An instruction fetch is
-     *   treated as uncachable (C == 0) in a system with a unified TLB, and as cachable (C == 1) in a
-     *   system with a separate instruction TLB.
-     * 
-     * - Before the MMU is enabled, suitable translation tables must be set up 
-     *   in memory and all relevant CP15 registers must be programmed.
-     * 
-     * 
-     * MEMORY SIZES:
-     * - Sections are comprised of 1MB blocks of memory.
-     * 
-     * - Three different page sizes are supported:
-     *   - Tiny pages: Consist of 1KB blocks of memory.
-     *   - Small pages: Consist of 4KB blocks of memory.
-     *   - Large pages: Consist of 64KB blocks of memory.
-     * 
-     * CP15 reg 2 is the translation table base register:
-     *  - the first-level page table must reside on a 16KB boundary.
-     *  - bits 31:14 are significant, 13:0 should be 0
-     * 
-     * 
-     * 
-     * 
-     * 
-     * Fine page tables are used to hold large, small and 
-     * tiny pages. Coarse page tables can only hold large 
-     * and small pages. A coarse page table holds 256 32-bit 
-     * entries, making it hold 4KB of data. A fine page table holds 1024 
-     * 32-bit entries but with 1KB in size. When bits[1:0] of the Level
-     * 1 descriptor are set to 01 this indicates memory access 
-     * is to a coarse page. When bits[1:0] of the Level 1 
-     * descriptor are set to 11 this indicates memory access 
-     * is to a fine page. In both 01 and 11 cases a Level 2 
-     * descriptor is required to determine the page type
-     * 
-     * 
-     * 
-     * 
-     * TRANSLATION PROCESS:
-     * 1: look up the address in the TLB
-     * 2. if it doesn't have a unified TLB:
-     *   2a: if it's an instruction address, fetch from instruction TLB
-     *   2b: if it's a data address, fetch from data TLB
-     *   2c: else, fetch from the unified TLB
-     * 3: if the TLB doesn't have an address hit, do a translation table walk
-     * 4: retrieve the translation and access permission information from the translation table
-     * 5: when the address is finally retrieved, put that in the TLB
-     *   5a: write it by either in a currently unused entry 
-     *   5b: or by overwriting an existing entry
-
-
-    coase = 256 entries
-    fine = 1024 entries
-     */
+/*
+ * MMU NOTES:
+ *
+ * - For caches and write buffers which are not allowed to be enabled while the MMU is disabled, 
+ *   the values of the C and B bits for a memory access are irrelevant.
+ *
+ * - For caches and write buffers which are allowed to be enabled while the MMU is disabled, a
+ *   data access is treated as uncachable and unbufferable (C == 0, B == 0). An instruction fetch is
+ *   treated as uncachable (C == 0) in a system with a unified TLB, and as cachable (C == 1) in a
+ *   system with a separate instruction TLB.
+ * 
+ * - Before the MMU is enabled, suitable translation tables must be set up 
+ *   in memory and all relevant CP15 registers must be programmed.
+ * 
+ * 
+ * MEMORY SIZES:
+ * - Sections are comprised of 1MB blocks of memory.
+ * 
+ * - Three different page sizes are supported:
+ *   - Tiny pages: Consist of 1KB blocks of memory.
+ *   - Small pages: Consist of 4KB blocks of memory.
+ *   - Large pages: Consist of 64KB blocks of memory.
+ * 
+ * CP15 reg 2 is the translation table base register:
+ *  - the first-level page table must reside on a 16KB boundary.
+ *  - bits 31:14 are significant, 13:0 should be 0
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Fine page tables are used to hold large, small and 
+ * tiny pages. Coarse page tables can only hold large 
+ * and small pages. A coarse page table holds 256 32-bit 
+ * entries, making it hold 4KB of data. A fine page table holds 1024 
+ * 32-bit entries but with 1KB in size. When bits[1:0] of the Level
+ * 1 descriptor are set to 01 this indicates memory access 
+ * is to a coarse page. When bits[1:0] of the Level 1 
+ * descriptor are set to 11 this indicates memory access 
+ * is to a fine page. In both 01 and 11 cases a Level 2 
+ * descriptor is required to determine the page type
+ * 
+ * 
+ * 
+ * 
+ * TRANSLATION PROCESS:
+ * 1: look up the address in the TLB
+ * 2. if it doesn't have a unified TLB:
+ *   2a: if it's an instruction address, fetch from instruction TLB
+ *   2b: if it's a data address, fetch from data TLB
+ *   2c: else, fetch from the unified TLB
+ * 3: if the TLB doesn't have an address hit, do a translation table walk
+ * 4: retrieve the translation and access permission information from the translation table
+ * 5: when the address is finally retrieved, put that in the TLB
+ *   5a: write it by either in a currently unused entry 
+ *   5b: or by overwriting an existing entry
+ *
+ * coase = 256 entries
+ * fine = 1024 entries
+*/

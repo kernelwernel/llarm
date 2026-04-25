@@ -13,9 +13,9 @@ struct TLB {
 
     llarm::random random;
 
-    llarm::unordered_map<u32, u32> unified_table;
-    llarm::unordered_map<u32, u32> inst_table;
-    llarm::unordered_map<u32, u32> data_table;
+    llarm::unordered_map<u32, tlb_entry_struct> unified_table;
+    llarm::unordered_map<u32, tlb_entry_struct> inst_table;
+    llarm::unordered_map<u32, tlb_entry_struct> data_table;
 
     // read B3-27 for more context
     u32 W_unified;
@@ -24,13 +24,13 @@ struct TLB {
 
     void invalidate(const u32 virtual_address, const id::tlb_type tlb_type);
 
-    void auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, const u32 physical_address);
+    void auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, const u32 physical_address, const bool is_cacheable, const bool is_write_bufferable);
 
     void flush();
 
-    u32 fetch(const u32 virtual_address, const tlb_fetch_struct tlb_fetch);
+    tlb_entry_struct fetch(const u32 virtual_address, const tlb_fetch_struct tlb_fetch);
 
-    void insert(const u32 virtual_address, const u32 physical_address, const id::tlb_type tlb_type);
+    void insert(const u32 virtual_address, const u32 physical_address, const id::tlb_type tlb_type, const bool is_cacheable, const bool is_write_bufferable);
 
     tlb_fetch_struct is_translation_cached(const u32 virtual_address) const;
 

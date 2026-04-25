@@ -127,17 +127,28 @@ struct CACHE {
 
     void reset();
 
+    // meant for MMU
     void write(
-        const u32 address,
+        const u32 virtual_address,
         const u32 physical_address,
         const u32 value,
         const u8 size,
         const bool is_write_bufferable
     );
 
-    u32 read(const u32 address, const u32 physical_address, const bool is_write_bufferable);
+    // overload of the above, mainly meant for MPU and RAM 
+    void write(
+        const u32 physical_address,
+        const u32 value,
+        const u8 size,
+        const bool is_write_bufferable
+    );
 
-    u32 fetch_inst(const u32 address, const u32 physical_address);
+    u32 read(const u32 virtual_address, const u32 physical_address, const bool is_write_bufferable);
+    u32 read(const u32 physical_address, const bool is_write_bufferable);
+
+    u32 fetch_inst(const u32 virtual_address, const u32 physical_address);
+    u32 fetch_inst(const u32 physical_address);
 
     // shared cache utilities for read/write/function
     u32 data_lock_base() const;

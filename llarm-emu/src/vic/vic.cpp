@@ -55,6 +55,7 @@ u32 VIC::read(const u32 address) {
             // that can preempt the current nesting level, then push the stack.
             const u8 cur = (prio_depth == 0) ? PRIO_NONE : prio_stack.at(prio_depth - 1);
             for (u8 i = 0; i < NUM_SLOTS; i++) {
+                // E bit in VICVECTCNT
                 if (!llarm::util::bit_fetch(vect_cntl.at(i), 5)) {
                     continue;
                 }

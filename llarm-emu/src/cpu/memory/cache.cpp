@@ -340,8 +340,13 @@ u32 CACHE::fetch_inst(const u32 virtual_address, const u32 physical_address) {
 }
 
 
+u32 CACHE::fetch_inst(const u32 physical_address) {
+    return fetch_inst(physical_address, physical_address);
+}
+
+
 void CACHE::write(
-    const u32 virtual_address, 
+    const u32 virtual_address, // could be either virtual or physical
     const u32 physical_address, 
     const u32 value, 
     const u8 size, 
@@ -351,7 +356,7 @@ void CACHE::write(
     if ((settings.cache_type == id::cache_type::WRITE_BACK) && is_write_bufferable) {
         llarm::out::unpredictable("write-back only cache has no bufferability bit");
     }
- 
+
     const u32 offset = virtual_address % DATA_LINELEN;
     const u32 set = (virtual_address / DATA_LINELEN) % DATA_NSETS;
     const u32 tag = virtual_address / (static_cast<u32>(DATA_LINELEN) * DATA_NSETS);
@@ -402,7 +407,21 @@ void CACHE::write(
 }
 
 
-u32 CACHE::read(const u32 virtual_address, const u32 physical_address, const bool is_write_bufferable) {
+void CACHE::write(
+    const u32 physical_address,
+    const u32 value,
+    const u8 size,
+    const bool is_write_bufferable
+) {
+    write(physical_address, physical_address, value, size, is_write_bufferable);
+}
+
+
+u32 CACHE::read(
+    const u32 virtual_address, // could be either physical or virtual
+    const u32 physical_address, 
+    const bool is_write_bufferable
+) {
     // cache access checks, read B5-8 for more information
     if ((settings.cache_type == id::cache_type::WRITE_BACK) && is_write_bufferable) {
         llarm::out::unpredictable("write-back only cache has no bufferability bit");
@@ -436,6 +455,11 @@ u32 CACHE::read(const u32 virtual_address, const u32 physical_address, const boo
     const u32 value = read_line(victim, pos);
 
     return value;
+}
+
+
+u32 CACHE::read(const u32 physical_address, const bool is_write_bufferable) {
+    return read(physical_address, physical_address, is_write_bufferable);
 }
 
 

@@ -22,6 +22,9 @@ struct MEMORY {
     FCSE& fcse;
     ARCH_26& arch_26;
     EXCEPTION& exception;
+    SETTINGS& settings;
+    CACHE& cache;
+    COPROCESSOR& coprocessor;
 
     void manage_abort(const id::aborts abort_code);
 
@@ -42,14 +45,20 @@ struct MEMORY {
         MPU& mpu,
         FCSE& fcse,
         ARCH_26& arch_26,
-        EXCEPTION& exception
+        EXCEPTION& exception,
+        SETTINGS& settings,
+        CACHE& cache,
+        COPROCESSOR& coprocessor
     ) : reg(reg),
         ram(ram),
         mmu(mmu),
         mpu(mpu),
         fcse(fcse),
         arch_26(arch_26),
-        exception(exception)
+        exception(exception),
+        settings(settings),
+        cache(cache),
+        coprocessor(coprocessor)
     {
 
     }

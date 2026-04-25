@@ -39,3 +39,9 @@ struct tlb_fetch_struct {
     bool is_in_inst_table;
     bool is_in_data_table;
 };
+
+struct tlb_entry_struct {
+    u32 physical_address;
+    bool is_cacheable;
+    bool is_write_bufferable;
+};

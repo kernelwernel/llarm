@@ -38,7 +38,7 @@ void TLB::invalidate(const u32 virtual_address, const id::tlb_type tlb_type) {
 }
 
 
-void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, const u32 physical_address) {
+void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, const u32 physical_address, const bool is_cacheable, const bool is_write_bufferable) {
     // random replacement strategy, i guess different strategies could be added in the future
 
     auto generate_index = [this, tlb_type]() -> u16 {
@@ -63,7 +63,9 @@ void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, c
     // this will work by deleting the previous entry in the TLB that occupied that random index,
     // and then it'll insert that new entry. It's pretty simple, but if the virtual address being
     // inserted already exists in the TLB, then that specific entry will be replaced instead of
-    // replacing a random index. This prevents duplicate entries for the same virtual address. 
+    // replacing a random index. This prevents duplicate entries for the same virtual address.
+
+    const tlb_entry_struct entry { physical_address, is_cacheable, is_write_bufferable };
 
     switch (tlb_type) {
         case id::tlb_type::UNKNOWN: llarm::out::dev_error("Unknown TLB invalidation");
@@ -74,11 +76,11 @@ void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, c
             if (already_exists) {
                 invalidate(virtual_address, tlb_type);
             } else {
-                const u32 inst_key = inst_table.at(generate_index());
-                inst_table.erase(inst_key);
+                const tlb_entry_struct inst_evict = inst_table.at(generate_index());
+                inst_table.erase(inst_evict.physical_address);
             }
 
-            inst_table.insert({ virtual_address, physical_address });
+            inst_table.insert({ virtual_address, entry });
             return;
         }
 
@@ -86,11 +88,11 @@ void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, c
             if (already_exists) {
                 invalidate(virtual_address, tlb_type);
             } else {
-                const u32 data_key = data_table.at(generate_index());
-                data_table.erase(data_key);
+                const tlb_entry_struct data_evict = data_table.at(generate_index());
+                data_table.erase(data_evict.physical_address);
             }
 
-            data_table.insert({ virtual_address, physical_address });
+            data_table.insert({ virtual_address, entry });
             return;
         }
 
@@ -98,18 +100,18 @@ void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, c
             if (already_exists) {
                 invalidate(virtual_address, tlb_type);
             } else {
-                const u32 unified_key = unified_table.at(generate_index());
-                unified_table.erase(unified_key);
+                const tlb_entry_struct unified_evict = unified_table.at(generate_index());
+                unified_table.erase(unified_evict.physical_address);
             }
 
-            unified_table.insert({ virtual_address, physical_address });
+            unified_table.insert({ virtual_address, entry });
             return;
         }
     }
 }
 
 
-u32 TLB::fetch(const u32 virtual_address, const tlb_fetch_struct tlb_fetch) {
+tlb_entry_struct TLB::fetch(const u32 virtual_address, const tlb_fetch_struct tlb_fetch) {
     if (settings.tlb_type == id::tlb_type::UNIFIED) {
         return unified_table.at(virtual_address);
     }
@@ -117,7 +119,7 @@ u32 TLB::fetch(const u32 virtual_address, const tlb_fetch_struct tlb_fetch) {
     if (tlb_fetch.is_in_inst_table) {
         return inst_table.at(virtual_address);
     }
-    
+
     if (tlb_fetch.is_in_data_table) {
         return data_table.at(virtual_address);
     }
@@ -126,25 +128,33 @@ u32 TLB::fetch(const u32 virtual_address, const tlb_fetch_struct tlb_fetch) {
 }
 
 
-void TLB::insert(const u32 virtual_address, const u32 physical_address, const id::tlb_type tlb_type) {
+void TLB::insert(const u32 virtual_address, const u32 physical_address, const id::tlb_type tlb_type, const bool is_cacheable, const bool is_write_bufferable) {
+    const tlb_entry_struct entry { physical_address, is_cacheable, is_write_bufferable };
+
     switch (tlb_type) {
         case id::tlb_type::SEPARATE: llarm::out::dev_error("Unsupported TLB invalidation for insertion");
         case id::tlb_type::UNKNOWN: llarm::out::dev_error("Unknown TLB invalidation for insertion");
         case id::tlb_type::SEPARATE_INST:
             if (inst_table.size() == settings.inst_tlb_table_size) {
-                auto_replace(id::tlb_type::SEPARATE_INST, virtual_address, physical_address);
-            }
-            return;
-        
-        case id::tlb_type::SEPARATE_DATA:
-            if (data_table.size() == settings.data_tlb_table_size) {
-                auto_replace(id::tlb_type::SEPARATE_DATA, virtual_address, physical_address);
+                auto_replace(id::tlb_type::SEPARATE_INST, virtual_address, physical_address, is_cacheable, is_write_bufferable);
+            } else {
+                inst_table.insert({ virtual_address, entry });
             }
             return;
 
-        case id::tlb_type::UNIFIED: 
+        case id::tlb_type::SEPARATE_DATA:
+            if (data_table.size() == settings.data_tlb_table_size) {
+                auto_replace(id::tlb_type::SEPARATE_DATA, virtual_address, physical_address, is_cacheable, is_write_bufferable);
+            } else {
+                data_table.insert({ virtual_address, entry });
+            }
+            return;
+
+        case id::tlb_type::UNIFIED:
             if (unified_table.size() == settings.unified_tlb_table_size) {
-                auto_replace(id::tlb_type::UNIFIED, virtual_address, physical_address);
+                auto_replace(id::tlb_type::UNIFIED, virtual_address, physical_address, is_cacheable, is_write_bufferable);
+            } else {
+                unified_table.insert({ virtual_address, entry });
             }
             return;
     }
@@ -208,37 +218,20 @@ bool TLB::is_type_invalid(const id::tlb_type tlb_type) const {
 void TLB::function(const u8 opcode_2, const u8 CRm, const u32 virtual_address) {
     const u8 bytecode = static_cast<u8>((opcode_2 << 3) | CRm);
 
+    constexpr u8 INVALIDATE_ENTIRE_UNIFIED_TLB = 0b0000111;
+    constexpr u8 INVALIDATE_ENTRY_UNIFIED_TLB = 0b0010111;
+    constexpr u8 INVALIDATE_ENTIRE_INST_TLB = 0b0000101;
+    constexpr u8 INVALIDATE_ENTRY_INST_TLB = 0b0010101;
+    constexpr u8 INVALIDATE_ENTIRE_DATA_TLB = 0b0000110;
+    constexpr u8 INVALIDATE_ENTRY_DATA_TLB = 0b0010110;
+
     switch (bytecode) {
-        // invalidate entire unified TLB or both instruction and data TLBs
-        case 0b0000111: 
-            flush(); 
-            return;
-
-        // invalidate unified single entry
-        case 0b0010111: 
-            invalidate(virtual_address, id::tlb_type::UNIFIED); 
-            return;
-            
-        // invalidate entire instruction TLB
-        case 0b0000101:
-            inst_table.clear();
-            return;
-
-        // invalidate instruction single entry
-        case 0b0010101: 
-            invalidate(virtual_address, id::tlb_type::SEPARATE_INST); 
-            return;
-
-        // invalidate entire data TLB
-        case 0b0000110:
-            data_table.clear();
-            return;
-
-        // invalidate data single entry
-        case 0b0010110: 
-            invalidate(virtual_address, id::tlb_type::SEPARATE_DATA); 
-            return;
-
+        case INVALIDATE_ENTIRE_UNIFIED_TLB: flush(); return;
+        case INVALIDATE_ENTRY_UNIFIED_TLB: invalidate(virtual_address, id::tlb_type::UNIFIED); return;
+        case INVALIDATE_ENTIRE_INST_TLB: inst_table.clear(); return;
+        case INVALIDATE_ENTRY_INST_TLB: invalidate(virtual_address, id::tlb_type::SEPARATE_INST); return;
+        case INVALIDATE_ENTIRE_DATA_TLB: data_table.clear(); return;
+        case INVALIDATE_ENTRY_DATA_TLB: invalidate(virtual_address, id::tlb_type::SEPARATE_DATA); return;
         default: 
             llarm::out::unpredictable("Unknown TLB function, ignoring operation");
             return;

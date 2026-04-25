@@ -50,9 +50,17 @@ mem_write_struct MEMORY::write(const u64 value, u32 address, const u8 access_siz
     if (mmu.is_mmu_enabled()) {
         return mmu.write(address, value, access_size);
     }
-    
+
     if (mpu.is_mpu_enabled()) {
         return mpu.write(address, value, access_size);
+    }
+
+    if (settings.has_cache && coprocessor.read(id::cp15::R1_C)) {
+        cache.write(address, static_cast<u32>(value), access_size, false);
+        return mem_write_struct {
+            /* has_failed */ false,
+            /* abort_code */ id::aborts::NO_ABORT
+        };
     }
 
     ram.write(address, value, access_size);
@@ -93,7 +101,34 @@ mem_read_struct MEMORY::read(
     }
 
     if (mpu.is_mpu_enabled()) {
-        return mpu.read(address, access_size);
+        return mpu.read(address, access_size, access_type);
+    }
+
+    // horrendous nesting and indentation, find a way to de-nest this garbage TODO
+    if (settings.has_cache) {
+        if (access_type == id::access_type::INSTRUCTION_FETCH) {
+            const bool inst_cache_on = settings.has_unified_cache
+                ? coprocessor.read(id::cp15::R1_C)
+                : coprocessor.read(id::cp15::R1_I);
+
+            if (inst_cache_on) {
+                return mem_read_struct {
+                    /* has_failed  */ false,
+                    /* abort_code  */ id::aborts::NO_ABORT,
+                    /* access_size */ access_size,
+                    /* value       */ cache.fetch_inst(address)
+                };
+            }
+        } else {
+            if (coprocessor.read(id::cp15::R1_C)) {
+                return mem_read_struct {
+                    /* has_failed  */ false,
+                    /* abort_code  */ id::aborts::NO_ABORT,
+                    /* access_size */ access_size,
+                    /* value       */ cache.read(address, false)
+                };
+            }
+        }
     }
 
     const u64 data = ram.read(address, access_size);
