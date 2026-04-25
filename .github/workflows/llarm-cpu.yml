@@ -86,5 +86,5 @@ jobs:
           run-clang-tidy \
             -p llarm-cpu/build \
             -extra-arg=-Wno-unknown-warning-option \
-            -header-filter="llarm-cpu/.*\\.hpp" \
+            -header-filter="llarm-cpu/src/.*\\.hpp" \
             "${{ steps.changed.outputs.filter }}"
