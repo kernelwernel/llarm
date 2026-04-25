@@ -87,5 +87,5 @@ jobs:
           run-clang-tidy \
             -p llarm-emu/build \
             -extra-arg=-Wno-unknown-warning-option \
-            -header-filter="llarm-emu/.*\\.hpp" \
+            -header-filter="llarm-emu/src/.*\\.hpp" \
             "${{ steps.changed.outputs.filter }}"

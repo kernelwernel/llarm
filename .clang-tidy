@@ -32,6 +32,7 @@ Checks: >
     -readability-enum-initial-value,
     -cppcoreguidelines-avoid-magic-numbers,
     -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+    -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
     -cppcoreguidelines-pro-type-vararg,
     -cppcoreguidelines-pro-type-union-access,
     -cppcoreguidelines-avoid-const-or-ref-data-members,

@@ -14,14 +14,13 @@
 #include "src/validation/string_arm.hpp"
 #include "src/validation/string_thumb.hpp"
 #include "src/validation/bin_thumb.hpp"
-#include "src/settings.hpp"
 
 
 namespace llarm::as {
     // setting aliases, ignore these
     using settings = internal::settings;
     using default_func = settings(*)();
-    inline default_func default_settings = &internal::default_dis_settings;
+    inline const default_func default_settings = &internal::default_dis_settings;
 
     // alternatives in case it's under C++17
     using arm_id = internal::arm_id;
