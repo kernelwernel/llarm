@@ -12,31 +12,31 @@ bool operation::carry_add(const u64 sum) {
     return (sum > max);
 }
 
-bool operation::carry_add(const u32 sum1, const u32 sum2) {
+bool operation::carry_add(const u32 a, const u32 b) {
     constexpr u64 max = ((1ULL << 32) - 1);
-    return ((sum1 + sum2) > max);
+    return ((a + b) > max);
 }
 
 // CHECK IF THIS WORKS TODO
-bool operation::carry_add(const u32 sum1, const u32 sum2, const u32 sum3) {
+bool operation::carry_add(const u32 a, const u32 b, const u32 c) {
     constexpr u64 max = ((1ULL << 32) - 1);
-    return ((sum1 + sum2 + sum3) > max);
+    return ((a + b + c) > max);
 }
 
 // TODO: COMPLETE
-bool operation::borrow_add(const u32 p1, const u32 p2) {
-    (void)p1;
-    (void)p2;
+bool operation::borrow_add(const u32 a, const u32 b) {
+    (void)a;
+    (void)b;
     return true; // TODO: COMPLETE THIS SHIT
 }
 
-bool operation::borrow_sub(const u32 p1, const u32 p2) {
-    return (p1 < p2);
+bool operation::borrow_sub(const u32 a, const u32 b) {
+    return (a < b);
 }
 
 // CHECK IF THIS WORKS
-bool operation::borrow_sub(const u32 p1, const u32 p2, const u32 p3) {
-    return (p1 < p2) || (p1 - p2 < p3);
+bool operation::borrow_sub(const u32 a, const u32 b, const u32 c) {
+    return (a < b) || (a - b < c);
 }
 
 bool operation::overflow_add(const u32 a, const u32 b) {

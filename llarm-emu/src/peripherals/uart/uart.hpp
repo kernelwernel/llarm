@@ -105,20 +105,20 @@ struct UART {
 
     // TX FIFO: 32 x 8-bit entries
     std::queue<u8>  tx_fifo;
-    // RX FIFO: 32 x 12-bit entries — bits [11:8] = error flags, bits [7:0] = data
+    // RX FIFO: 32 x 12-bit entries, bits [11:8] = error flags, bits [7:0] = data
     std::queue<u16> rx_fifo;
 
     // registers with TRM reset values
-    u32 rsr = 0x00;    // UARTRSR — receive status / error bits
-    u32 ilpr = 0x00;    // UARTILPR — IrDA low-power counter
-    u32 ibrd = 0x0000;  // UARTIBRD — integer baud rate divisor
-    u32 fbrd = 0x00;    // UARTFBRD — fractional baud rate divisor
-    u32 lcr_h = 0x00;    // UARTLCR_H — line control
-    u32 cr = 0x0300;  // UARTCR — control register (TXE=1, RXE=1, UARTEN=0)
-    u32 ifls = 0x12;    // UARTIFLS — interrupt FIFO level select (TX=1/2, RX=1/2)
-    u32 imsc = 0x000;   // UARTIMSC — interrupt mask
-    u32 ris = 0x000;   // UARTRIS — raw interrupt status
-    u32 dmacr = 0x00;    // UARTDMACR — DMA control
+    u32 rsr = 0x00; // UARTRSR: receive status / error bits
+    u32 ilpr = 0x00; // UARTILPR: IrDA low-power counter
+    u32 ibrd = 0x0000; // UARTIBRD: integer baud rate divisor
+    u32 fbrd = 0x00; // UARTFBRD: fractional baud rate divisor
+    u32 lcr_h = 0x00; // UARTLCR_H: line control
+    u32 cr = 0x0300; // UARTCR: control register (TXE=1, RXE=1, UARTEN=0)
+    u32 ifls = 0x12; // UARTIFLS: interrupt FIFO level select (TX=1/2, RX=1/2)
+    u32 imsc = 0x000; // UARTIMSC: interrupt mask
+    u32 ris = 0x000; // UARTRIS: raw interrupt status
+    u32 dmacr = 0x00; // UARTDMACR: DMA control
 
     u32 flag_register() const;
     u8 tx_trigger_level() const;

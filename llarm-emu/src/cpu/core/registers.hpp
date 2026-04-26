@@ -84,8 +84,8 @@ struct REGISTERS {
 
     void write(const id::cpsr cpsr_id, const u8 cpsr_value);
     void write(const id::reg reg_id);
-    void write(const id::reg, const id::reg);
-    void write(const id::reg, const u32);
+    void write(const id::reg destination_reg_id, const id::reg source_reg_id);
+    void write(const id::reg register_id, const u32 value);
     void write(const u32 code, const u8 start, const u8 end, const u32 value);
     void write(const u8 reg_bits, const u32 value);
     void force_write(const id::reg register_id, const u32 value);

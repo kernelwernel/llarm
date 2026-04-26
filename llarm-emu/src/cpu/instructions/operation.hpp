@@ -7,21 +7,21 @@
 #include <llarm/shared/types.hpp>
 
 namespace operation {
-    bool carry_add(const u64);
-    bool carry_add(const u32, const u32);
-    bool carry_add(const u32, const u32, const u32);
+    bool carry_add(const u64 sum);
+    bool carry_add(const u32 a, const u32 b);
+    bool carry_add(const u32 a, const u32 b, const u32 c);
 
-    bool borrow_add(const u32, const u32);
-    bool borrow_sub(const u32, const u32);
-    bool borrow_sub(const u32, const u32, const u32);
+    bool borrow_add(const u32 a, const u32 b);
+    bool borrow_sub(const u32 a, const u32 b);
+    bool borrow_sub(const u32 a, const u32 b, const u32 c);
 
-    bool overflow_add(const u32, const u32, const u32);
-    bool overflow_add(const u32, const u32);
-    bool overflow_sub(const u32, const u32);
-    bool overflow_sub(const u32, const u32, const u32);
+    bool overflow_add(const u32 a, const u32 b, const u32 c);
+    bool overflow_add(const u32 a, const u32 b);
+    bool overflow_sub(const u32 a, const u32 b);
+    bool overflow_sub(const u32 a, const u32 b, const u32 c);
 
-    bool signed_overflow_sub(const i32, const i32);
-    bool signed_overflow_add(const i32, const i32);
+    bool signed_overflow_sub(const i32 a, const i32 b);
+    bool signed_overflow_add(const i32 a, const i32 b);
 
     i32 sign_extend(const u32 value, const u8 sign_index = 31);
     i32 signed_sat(const u32 x, const u32 n);

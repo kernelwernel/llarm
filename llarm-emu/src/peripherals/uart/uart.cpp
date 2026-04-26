@@ -159,11 +159,11 @@ void UART::write(const u32 address, const u32 value) {
             return;
         }
 
-        case OFFSET_UARTRSR:   // UARTECR on write: any write clears all error bits
+        case OFFSET_UARTRSR: // UARTECR on write: any write clears all error bits
             rsr = 0;
             return;
 
-        case OFFSET_UARTFR: return;  // read-only
+        case OFFSET_UARTFR: return; // read-only
 
         case OFFSET_UARTILPR: ilpr = value & 0xFFU; return;
         case OFFSET_UARTIBRD: ibrd = value & 0xFFFFU; return;
