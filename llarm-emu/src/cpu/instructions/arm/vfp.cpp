@@ -838,14 +838,14 @@ void INSTRUCTIONS::arm::vfp::FSTD(const u32 code) {
         second_access = high_Dd;
     }
 
-    const mem_write_struct access = memory.write(first_access, address, 4);
+    const mem_write_struct access = memory.write(address, first_access, 4);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
         return;
     }
 
-    const mem_write_struct access2 = memory.write(second_access, address + 4, 4);
+    const mem_write_struct access2 = memory.write(address + 4, second_access, 4);
 
     if (access2.has_failed) {
         memory.manage_abort(access2.abort_code);

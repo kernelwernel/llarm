@@ -404,14 +404,14 @@ void INSTRUCTIONS::arm::dsp::STRD(const u32 code) {
         const u64 value = reg.read(Rd_bits);
         const u32 value2 = reg.read(Rd_bits + 1);
 
-        const mem_write_struct access = memory.write(value, address, 4);
+        const mem_write_struct access = memory.write(address, value, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
             return;
         }
         
-        const mem_write_struct access2 = memory.write(value2, address + 4, 4);
+        const mem_write_struct access2 = memory.write(address + 4, value2, 4);
 
         if (access2.has_failed) {
             memory.manage_abort(access2.abort_code);

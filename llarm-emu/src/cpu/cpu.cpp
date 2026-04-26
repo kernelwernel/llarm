@@ -11,8 +11,9 @@
 CPU::CPU(std::vector<u8> &binary) :
     settings(default_settings()),
     vic(settings),
-    ram(binary, settings, vic),
-    core(settings, ram, vic)
+    uart(settings, (settings.uart_base != 0) ? settings.uart_base : 0x10000000U),
+    ram(binary, settings, vic, uart),
+    core(settings, ram, vic, uart)
 {
 
 }

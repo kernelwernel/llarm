@@ -29,7 +29,7 @@ void INSTRUCTIONS::thumb::store::STMIA(const u16 code) {
     const std::vector<id::reg> reg_vec = operation::register_list(register_list);
 
     for (const id::reg reg_id : reg_vec) {
-        const mem_write_struct access = memory.write(reg.read(reg_id), address, 4);
+        const mem_write_struct access = memory.write(address, reg.read(reg_id), 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -69,7 +69,7 @@ void INSTRUCTIONS::thumb::store::STR1(const u16 code) {
         llarm::out::unpredictable("STR1 memory write data");
     }
 
-    const mem_write_struct access = memory.write(value, address, 4);
+    const mem_write_struct access = memory.write(address, value, 4);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -99,7 +99,7 @@ void INSTRUCTIONS::thumb::store::STR2(const u16 code) {
         llarm::out::unpredictable("STR2 memory write data");
     }
     
-    const mem_write_struct access = memory.write(value, address, 4);
+    const mem_write_struct access = memory.write(address, value, 4);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -128,7 +128,7 @@ void INSTRUCTIONS::thumb::store::STR3(const u16 code) {
         llarm::out::unpredictable("STR3 memory write data");
     }
 
-    const mem_write_struct access = memory.write(value, address, 4);
+    const mem_write_struct access = memory.write(address, value, 4);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -147,7 +147,7 @@ void INSTRUCTIONS::thumb::store::STRB1(const u16 code) {
 
     const u32 address = (Rn + immed_5);
 
-    const mem_write_struct access = memory.write(llarm::util::bit_range<u8>(Rd, 0, 7), address , 1);
+    const mem_write_struct access = memory.write(address, llarm::util::bit_range<u8>(Rd, 0, 7), 1);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -166,7 +166,7 @@ void INSTRUCTIONS::thumb::store::STRB2(const u16 code) {
 
     const u32 address = (Rn + Rm);
 
-    const mem_write_struct access = memory.write(llarm::util::bit_range(Rd, 0, 7), address, 1);
+    const mem_write_struct access = memory.write(address, llarm::util::bit_range(Rd, 0, 7), 1);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -196,7 +196,7 @@ void INSTRUCTIONS::thumb::store::STRH1(const u16 code) {
         llarm::out::unpredictable("unpredictable STRH1 memory write data alignment");
     }
 
-    const mem_write_struct access = memory.write(value, address, 2);
+    const mem_write_struct access = memory.write(address, value, 2);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -226,7 +226,7 @@ void INSTRUCTIONS::thumb::store::STRH2(const u16 code) {
         llarm::out::unpredictable("unpredictable STRH2 memory write data alignment");
     }
 
-    const mem_write_struct access = memory.write(value, address, 2);
+    const mem_write_struct access = memory.write(address, value, 2);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -262,7 +262,7 @@ void INSTRUCTIONS::thumb::store::PUSH(const u16 code) {
     const std::vector<id::reg> reg_vec = operation::register_list(register_list);
 
     for (const id::reg reg_id : reg_vec) {
-        const mem_write_struct access = memory.write(reg.read(reg_id), address, 4);
+        const mem_write_struct access = memory.write(address, reg.read(reg_id), 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -273,7 +273,7 @@ void INSTRUCTIONS::thumb::store::PUSH(const u16 code) {
     }
 
     if (R == true) {
-        const mem_write_struct access = memory.write(reg.read(id::reg::LR), address, 4);
+        const mem_write_struct access = memory.write(address, reg.read(id::reg::LR), 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);

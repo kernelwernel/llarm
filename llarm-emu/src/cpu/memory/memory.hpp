@@ -28,7 +28,7 @@ struct MEMORY {
 
     void manage_abort(const id::aborts abort_code);
 
-    mem_write_struct write(const u64 value, u32 address, const u8 access_size);
+    mem_write_struct write(u32 address, const u64 value, const u8 access_size);
 
     mem_read_struct read(
         u32 address,

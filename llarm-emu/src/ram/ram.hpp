@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../vic/vic.hpp"
+#include "../peripherals/uart/uart.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/out.hpp>
@@ -12,6 +13,7 @@
 struct RAM {
     SETTINGS& settings;
     VIC& vic;
+    UART& uart;
 
     std::vector<u8> ram;
 
@@ -34,8 +36,8 @@ struct RAM {
 
     void reset();
 
-    RAM(std::vector<u8> &data, SETTINGS& settings, VIC& vic)
-        : settings(settings), vic(vic), ram(settings.memsize, 0) {
+    RAM(std::vector<u8> &data, SETTINGS& settings, VIC& vic, UART& uart)
+        : settings(settings), vic(vic), uart(uart), ram(settings.memsize, 0) {
         write(0, data);
     }
 };

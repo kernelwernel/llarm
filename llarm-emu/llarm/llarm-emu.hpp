@@ -113,7 +113,7 @@ namespace llarm::emu {
 
         template <typename T>
         void write_physical_mem(const u32 address, const u64 value) {
-            cpu.ram.write(value, address, sizeof(T));
+            cpu.ram.write(address, value, sizeof(T));
         }
 
         template <typename T>
@@ -123,7 +123,7 @@ namespace llarm::emu {
 
         template <typename T>
         void write_virtual_mem(const u32 address, const u64 value) {
-            cpu.core.memory.write(value, address, sizeof(T));
+            cpu.core.memory.write(address, value, sizeof(T));
         }
 
         void next_instruction() {

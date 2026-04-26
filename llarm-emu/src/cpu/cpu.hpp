@@ -3,6 +3,7 @@
 #include "../settings.hpp"
 #include "../ram/ram.hpp"
 #include "../vic/vic.hpp"
+#include "../peripherals/uart/uart.hpp"
 #include "core/core.hpp"
 
 #include <llarm/llarm-asm.hpp>
@@ -11,6 +12,7 @@
 struct CPU {
     SETTINGS settings;
     VIC vic;
+    UART uart;
     RAM ram;
     CORE core;
 

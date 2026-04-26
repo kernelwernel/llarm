@@ -26,3 +26,4 @@ firmware/
 **/*.gch
 docs/development_docs.md
 scripts/switch.sh
+**/*.bin

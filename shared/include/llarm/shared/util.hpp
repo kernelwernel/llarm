@@ -10,7 +10,7 @@ namespace llarm::util {
     template <typename T = u32, typename M>
     T bit_range(const M input, const u8 start, const u8 end) {
         if (start > end) [[unlikely]] {
-            llarm::out::error("Invalid range in llarm::util::bit_range function");
+            llarm::out::dev_error("Invalid range in llarm::util::bit_range function");
         }
 
         const M mask = static_cast<M>((static_cast<u64>(1) << (end - start + 1)) - 1);
@@ -26,8 +26,7 @@ namespace llarm::util {
     template<typename T = u32>
     constexpr void modify_bit(T &original, const u8 index, const bool value) {
         if (index > (sizeof(T) * 8) - 1) {
-            //llarm::out::dev_error("Index for modify_bit() must be between 0 and 31");
-            // TODO think of an error
+            llarm::out::dev_error("Index for modify_bit() must be below the maximum value bit size");
         }
 
         if (value) {
@@ -53,7 +52,6 @@ namespace llarm::util {
     inline void to_lower(std::string& str) {
         for (char& c : str) {
             c = (c >= 'A' && c <= 'Z') ? static_cast<char>(c | 0x20) : c;
-
         }
     }
 

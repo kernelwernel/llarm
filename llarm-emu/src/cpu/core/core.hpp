@@ -4,6 +4,7 @@
 #include "globals.hpp"
 #include "exception.hpp"
 #include "../../vic/vic.hpp"
+#include "../../peripherals/uart/uart.hpp"
 #include "../memory/memory.hpp"
 #include "../memory/cache.hpp"
 #include "../memory/mmu.hpp"
@@ -39,6 +40,7 @@ struct CORE {
     VFP_ADDRESS_MODE vfp_addressing_mode;
     EXCEPTION exception;
     VIC vic;
+    UART uart;
 
     // memory modules
     ALIGNMENT alignment;
@@ -73,7 +75,7 @@ struct CORE {
     u16 current_thumb_code = 0;
     bool continue_cycle = false;
 
-    CORE(const SETTINGS& init_settings, RAM &ram, VIC& vic) :
+    CORE(const SETTINGS& init_settings, RAM &ram, VIC& vic, UART& uart) :
         settings(init_settings),
         globals(),
         tlb(settings),
@@ -88,6 +90,7 @@ struct CORE {
         vfp_addressing_mode(settings, reg, vfp_reg),
         exception(reg, coprocessor),
         vic(vic),
+        uart(uart),
         alignment(coprocessor, settings),
         mmu(globals, ram, alignment, coprocessor, settings, tlb, cache),
         mpu(globals, coprocessor, settings, ram, fcse, cache),

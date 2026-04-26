@@ -21,6 +21,11 @@ void RAM::write(const u32 address, const u64 value, const u8 access_size) {
         return;
     }
 
+    if (settings.has_uart && uart.contains(address)) {
+        uart.write(address, static_cast<u32>(value));
+        return;
+    }
+
     switch (access_size) {
         case 1: 
             ram.at(address) = (value & 0xFF); 
@@ -62,6 +67,10 @@ std::vector<u8> RAM::vector_read(const u32 start, const u32 end) const {
 u64 RAM::read(const u32 address, const u8 access_size) {
     if (settings.has_vic && vic.contains(address)) {
         return vic.read(address);
+    }
+
+    if (settings.has_uart && uart.contains(address)) {
+        return uart.read(address);
     }
 
     switch (access_size) {

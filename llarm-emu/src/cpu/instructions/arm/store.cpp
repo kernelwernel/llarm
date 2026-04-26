@@ -23,7 +23,7 @@ void INSTRUCTIONS::arm::store::STM1(const u32 code) {
     const std::vector<id::reg> reg_list = operation::register_list(list);
 
     for (const auto reg_id : reg_list) {
-        const mem_write_struct access = memory.write(reg.read(reg_id), address, 4);
+        const mem_write_struct access = memory.write(address, reg.read(reg_id), 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -57,7 +57,7 @@ void INSTRUCTIONS::arm::store::STM2(const u32 code) {
 
     for (const auto reg_id : reg_list) {
         const u32 value = reg.read(reg_id);
-        const mem_write_struct access = memory.write(value, address, 4);
+        const mem_write_struct access = memory.write(address, value, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
@@ -78,7 +78,7 @@ void INSTRUCTIONS::arm::store::STR(const u32 code) {
 
     const u32 value = reg.read(code, 12, 15);
 
-    const mem_write_struct access = memory.write(value, address, 4);
+    const mem_write_struct access = memory.write(address, value, 4);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -97,7 +97,7 @@ void INSTRUCTIONS::arm::store::STRB(const u32 code) {
     const u32 Rd = reg.read(code, 12, 15);
     const u8 value = llarm::util::bit_range<u8>(Rd, 0, 7);
 
-    const mem_write_struct access = memory.write(value, address, 1);
+    const mem_write_struct access = memory.write(address, value, 1);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -116,7 +116,7 @@ void INSTRUCTIONS::arm::store::STRBT(const u32 code) {
     const u32 Rd = reg.read(code, 12, 15);
     const u8 value = llarm::util::bit_range<u8>(Rd, 0, 7);
 
-    const mem_write_struct access = memory.write(value, address, 1);
+    const mem_write_struct access = memory.write(address, value, 1);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -145,7 +145,7 @@ void INSTRUCTIONS::arm::store::STRH(const u32 code) {
         // TODO UNPREDICTABLE
     }
 
-    const mem_write_struct access = memory.write(data, address, 2);
+    const mem_write_struct access = memory.write(address, data, 2);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -163,7 +163,7 @@ void INSTRUCTIONS::arm::store::STRT(const u32 code) {
 
     const u32 Rd = reg.read(code, 12, 15);
 
-    const mem_write_struct access = memory.write(Rd, address, 4);
+    const mem_write_struct access = memory.write(address, Rd, 4);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -208,7 +208,7 @@ void INSTRUCTIONS::arm::store::SWP(const u32 code) {
 
     const u32 Rm = reg.read(code, 0, 3);
     
-    const mem_write_struct write_access = memory.write(Rm, Rn, 4);
+    const mem_write_struct write_access = memory.write(Rn, Rm, 4);
     
     if (write_access.has_failed) {
         memory.manage_abort(write_access.abort_code);
@@ -240,7 +240,7 @@ void INSTRUCTIONS::arm::store::SWPB(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
     const u8 value = llarm::util::bit_range<u8>(Rm, 0, 7);
 
-    const mem_write_struct write_access = memory.write(value, Rn, 1);
+    const mem_write_struct write_access = memory.write(Rn, value, 1);
 
     if (write_access.has_failed) {
         memory.manage_abort(write_access.abort_code);

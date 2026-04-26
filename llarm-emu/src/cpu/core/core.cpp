@@ -102,6 +102,7 @@ inline void CORE::thumb_cycle_headless() {
 
 void CORE::initialise(const bool is_headless) {
     // core reset, setup, and boot
+    globals.is_little_endian = settings.is_little_endian;
     reg.reset();
     coprocessor.force_write(id::cp15::R1_M, false); // disable MMU/MPU
     coprocessor.force_write(id::cp15::R1_P, true); // set to 32-bit mode (maybe temporary idk)
