@@ -71,7 +71,7 @@ std::vector<sv> mnemonic_arm::fetch_candidates(sv mnemonic) {
     // "mnemonic.extra" convention, i.e. "b.eq" (gcc does this)
     const std::size_t dot_pos = mnemonic.find('.');
     const bool has_dot = (dot_pos != sv::npos);
-    
+
     if (has_dot) {
         candidates.push_back(mnemonic.substr(0, dot_pos));
         
@@ -345,13 +345,32 @@ arm_id mnemonic_arm::PSR_family(const sv mnemonic_str) {
 }
 
 
+void mnemonic_arm::CPS(mnemonic_struct_arm& args, sv mnemonic) {
+    if (mnemonic.size() == 5) {
+        mnemonic.remove_prefix(3); // remove the "CPS" part and leave the effect fields
+
+        if (mnemonic == "IE") {
+            args.effect_id = effect_id::IE;
+        } else if (mnemonic == "ID") {
+            args.effect_id = effect_id::ID;
+        } else {
+            args.effect_id = effect_id::UNKNOWN;
+        }
+    } else if (mnemonic.size() == 3) {
+        args.effect_id = effect_id::NONE;
+    } else {
+        args.effect_id = effect_id::UNKNOWN;
+    }
+}
+
+
 mnemonic_struct_arm mnemonic_arm::fetch_mnemonic_args(const arm_id id, sv mnemonic) {
     mnemonic_struct_arm args{};
 
     args.instruction = mnemonic;
     args.id = id;
 
-    switch (id) {
+    switch (id) {    
         case arm_id::UNKNOWN: return args;
         case arm_id::UNDEFINED: return args;
         
@@ -363,17 +382,12 @@ mnemonic_struct_arm mnemonic_arm::fetch_mnemonic_args(const arm_id id, sv mnemon
         case arm_id::BKPT:
         case arm_id::NOP: // maybe this shouldn't be here since it's a unique instruction to the project, idk
         case arm_id::PLD: 
+        case arm_id::SETEND:
             args.cond_id = cond_id::NONE;
             return args;
-        
-        // <mnemonic>{<cond>} format
-        case arm_id::LDR:
-        case arm_id::MCR:
-        case arm_id::MRC: mnemonic.remove_prefix(1); [[fallthrough]];
-        case arm_id::BL: mnemonic.remove_prefix(1); [[fallthrough]];
-        case arm_id::B: mnemonic.remove_prefix(1);
-            args.cond_id = interpreter::fetch_cond_id(mnemonic);
-            return args;
+
+        // special cases
+        case arm_id::CPS: CPS(args, mnemonic); return args;
 
         // <mnemonic>{<cond>}{S} format
         case arm_id::SMLAL:
@@ -404,6 +418,26 @@ mnemonic_struct_arm mnemonic_arm::fetch_mnemonic_args(const arm_id id, sv mnemon
             return args;
             
         // <mnemonic>{<cond>} format
+
+        // 9 LETTER INSTRUCTIONS:
+
+        case arm_id::SHADDSUBX:
+        case arm_id::SHSUBADDX:
+        case arm_id::UHADDSUBX:
+        case arm_id::UHSUBADDX:
+        case arm_id::UQADDSUBX:
+        case arm_id::UQSUBADDX: mnemonic.remove_prefix(1); [[fallthrough]];
+
+        // 8 LETTER INSTRUCTIONS:
+
+        case arm_id::QADDSUBX:
+        case arm_id::QSUBADDX: 
+        case arm_id::SADDSUBX:
+        case arm_id::SSUBADDX:
+        case arm_id::UADDSUBX:
+        case arm_id::USUBADDX: mnemonic.remove_prefix(1); [[fallthrough]];
+
+        // 7 LETTER INSTRUCTIONS
         case arm_id::FLDMD: // while it may not seem like these VFP instructions have 
         case arm_id::FLDMS: // 7 characters to be removed to reach the cond value, 
         case arm_id::FLDMX: // the addressing mode extends them to have 2 more characters,
@@ -411,7 +445,17 @@ mnemonic_struct_arm mnemonic_arm::fetch_mnemonic_args(const arm_id id, sv mnemon
         case arm_id::FSTMS:
         case arm_id::FSTMX:
         case arm_id::FCMPEZS:
-        case arm_id::FCMPEZD: mnemonic.remove_prefix(1); [[fallthrough]];
+        case arm_id::FCMPEZD: 
+        case arm_id::SHADD16:
+        case arm_id::SHSUB16:
+        case arm_id::SXTAB16:
+        case arm_id::UHADD16:
+        case arm_id::UHSUB16:
+        case arm_id::UQADD16:
+        case arm_id::UXTAB16:
+        case arm_id::UQSUB16: mnemonic.remove_prefix(1); [[fallthrough]];
+
+        // 6 LETTER INSTRUCTIONS
         case arm_id::FCMPES:
         case arm_id::FCMPZS:
         case arm_id::FMSTAT:
@@ -430,7 +474,27 @@ mnemonic_struct_arm mnemonic_arm::fetch_mnemonic_args(const arm_id id, sv mnemon
         case arm_id::FNMULD:
         case arm_id::FSITOD:
         case arm_id::FSQRTD:
-        case arm_id::FUITOD: mnemonic.remove_prefix(1); [[fallthrough]];
+        case arm_id::FUITOD: 
+        case arm_id::QADD16:
+        case arm_id::QSUB16: 
+        case arm_id::SADD16: 
+        case arm_id::SHADD8:
+        case arm_id::SHSUB8:
+        case arm_id::SMLSLD:
+        case arm_id::SSAT16:
+        case arm_id::SSUB16:
+        case arm_id::UADD16:
+        case arm_id::SXTB16:
+        case arm_id::UHADD8:
+        case arm_id::UHSUB8:
+        case arm_id::UQADD8:
+        case arm_id::UQSUB8:
+        case arm_id::USAT16:
+        case arm_id::USADA8:
+        case arm_id::UXTB16:
+        case arm_id::USUB16: mnemonic.remove_prefix(1); [[fallthrough]];
+
+        // 5 LETTER INSTRUCTIONS
         case arm_id::FABSS:
         case arm_id::FADDS:
         case arm_id::FCMPS:
@@ -456,7 +520,29 @@ mnemonic_struct_arm mnemonic_arm::fetch_mnemonic_args(const arm_id id, sv mnemon
         case arm_id::FNEGD:
         case arm_id::FSUBD: 
         case arm_id::QDADD:
-        case arm_id::QDSUB: mnemonic.remove_prefix(1); [[fallthrough]];
+        case arm_id::QDSUB: 
+        case arm_id::LDREX: 
+        case arm_id::PKHBT: 
+        case arm_id::PKHTB: 
+        case arm_id::QADD8: 
+        case arm_id::MCRR2: 
+        case arm_id::MRRC2:
+        case arm_id::QSUB8: 
+        case arm_id::REV16: 
+        case arm_id::REVSH:
+        case arm_id::SADD8: 
+        case arm_id::SSUB8:
+        case arm_id::STREX:
+        case arm_id::SXTAB:
+        case arm_id::SXTAH:
+        case arm_id::UADD8:
+        case arm_id::USAD8:
+        case arm_id::UMAAL:
+        case arm_id::USUB8:
+        case arm_id::UXTAH:
+        case arm_id::UXTAB: mnemonic.remove_prefix(1); [[fallthrough]];
+
+        // 4 LETTER INSTRUCTIONS
         case arm_id::FLDS:
         case arm_id::FMRS:
         case arm_id::FMRX:
@@ -468,7 +554,15 @@ mnemonic_struct_arm mnemonic_arm::fetch_mnemonic_args(const arm_id id, sv mnemon
         case arm_id::MCRR:
         case arm_id::MRRC:
         case arm_id::QADD:
-        case arm_id::QSUB: mnemonic.remove_prefix(1); [[fallthrough]];
+        case arm_id::QSUB: 
+        case arm_id::SSAT:
+        case arm_id::USAT:
+        case arm_id::UXTB: 
+        case arm_id::SXTB: 
+        case arm_id::UXTH: 
+        case arm_id::SXTH: mnemonic.remove_prefix(1); [[fallthrough]];
+
+        // 3 LETTER INSTRUCTIONS
         case arm_id::CDP:
         case arm_id::CLZ:
         case arm_id::CMN:
@@ -503,8 +597,21 @@ mnemonic_struct_arm mnemonic_arm::fetch_mnemonic_args(const arm_id id, sv mnemon
         case arm_id::TSTP:
         case arm_id::STRD: // format STR{<cond>}D
         case arm_id::LDRD: // same as above
-        case arm_id::TST: mnemonic.remove_prefix(1); [[fallthrough]];
-        case arm_id::BX: mnemonic.remove_prefix(2);
+        case arm_id::LDR:
+        case arm_id::MCR:
+        case arm_id::MRC:
+        case arm_id::CPY:
+        case arm_id::TST: 
+        case arm_id::REV:
+        case arm_id::RFE: 
+        case arm_id::SEL: mnemonic.remove_prefix(1); [[fallthrough]];
+
+        // 2 LETTER INSTRUCTIONS
+        case arm_id::BL:
+        case arm_id::BX: mnemonic.remove_prefix(1); [[fallthrough]];
+
+        // 1 LETTER INSTRUCTIONS, FINAL STEP
+        case arm_id::B: mnemonic.remove_prefix(1);
             args.cond_id = interpreter::fetch_cond_id(mnemonic);
             return args;
 
@@ -524,6 +631,27 @@ mnemonic_struct_arm mnemonic_arm::fetch_mnemonic_args(const arm_id id, sv mnemon
             
             return args;
             
+        // <mnemonic>{X|R}{<cond>} format
+        case arm_id::SMLALD: mnemonic.remove_prefix(1); [[fallthrough]];
+        case arm_id::SMLAD: 
+        case arm_id::SMLSD:
+        case arm_id::SMMLA:
+        case arm_id::SMMLS:
+        case arm_id::SMMUL:
+        case arm_id::SMUAD:
+        case arm_id::SMUSD:
+            mnemonic.remove_prefix(5);
+            if (mnemonic.front() == 'X') {
+                args.has_X = true;
+                mnemonic.remove_prefix(1);
+            } else if (mnemonic.front() == 'R') {
+                args.has_R = true;
+                mnemonic.remove_prefix(1);
+            }
+
+            args.cond_id = interpreter::fetch_cond_id(mnemonic);
+
+            return args;
         
         // <mnemonic>{L} format
         case arm_id::LDC2:
@@ -535,6 +663,12 @@ mnemonic_struct_arm mnemonic_arm::fetch_mnemonic_args(const arm_id id, sv mnemon
                 args.has_L = (mnemonic.back() == 'L');
             }
             
+            return args;
+
+        // <mnemonic><addressing_mode> format
+        case arm_id::SRS:
+            mnemonic.remove_prefix(3);
+            args.addressing_mode_id = interpreter::fetch_addressing_mode_id(mnemonic);
             return args;
         
         // <mnemonic>{Z}<S|D>{<cond>} format

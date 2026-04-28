@@ -22,4 +22,6 @@ bool validation::bin_thumb::is_thumb_instruction_valid(const thumb_id id) {
         (id != thumb_id::UNDEFINED) &&
         (id != thumb_id::UNKNOWN)
     );
+
+    // TODO check for armv6 thumb instructions if this is still applicable
 }

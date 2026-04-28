@@ -60,7 +60,18 @@ std::string generators::arm::dsp::MCRR(const u32 code, const settings& settings)
 
     const u8 opcode = llarm::util::bit_range<u8>(code, 4, 7);
 
-    return util::make_string("MCRR", util::cond(code, settings), " ", coproc, ", #", opcode, ", ", Rd, ", ", Rn, ", ", CRm);
+    const std::string mnemonic = [=]() -> std::string {
+        if (
+            (settings.arm_version >= 6) &&
+            (llarm::util::bit_range(code, 28, 31) == 0b1111)
+        ) {
+            return "MCRR2";
+        }
+
+        return util::make_string("MCRR", util::cond(code, settings));
+    }();
+
+    return util::make_string(mnemonic, " ", coproc, ", #", opcode, ", ", Rd, ", ", Rn, ", ", CRm);
 }
 
 
@@ -73,7 +84,18 @@ std::string generators::arm::dsp::MRRC(const u32 code, const settings& settings)
 
     const u8 opcode = llarm::util::bit_range<u8>(code, 4, 7);
 
-    return util::make_string("MRRC", util::cond(code, settings), " ", coproc, ", #", opcode, ", ", Rd, ", ", Rn, ", ", CRm);
+    const std::string mnemonic = [=]() -> std::string {
+        if (
+            (settings.arm_version >= 6) &&
+            (llarm::util::bit_range(code, 28, 31) == 0b1111)
+        ) {
+            return "MRRC2";
+        }
+
+        return util::make_string("MRRC", util::cond(code, settings));
+    }();
+
+    return util::make_string(mnemonic, " ", coproc, ", #", opcode, ", ", Rd, ", ", Rn, ", ", CRm);
 }
 
 

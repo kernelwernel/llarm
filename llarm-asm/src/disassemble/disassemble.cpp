@@ -85,6 +85,15 @@ std::string disassemble::thumb_generate(const u32 code, const u32 PC, const sett
         case thumb_id::UNDEFINED: return UNDEFINED;
         case thumb_id::UNKNOWN: llarm::out::error("Unknown instruction encountered for disassembly");
         case thumb_id::NOP: llarm::out::error("NOP instruction encountered for thumb disassembly");
+        case thumb_id::CPS: // TODO
+        case thumb_id::REV16: // TODO
+        case thumb_id::REVSH: // TODO
+        case thumb_id::SETEND: // TODO
+        case thumb_id::SXTB: // TODO
+        case thumb_id::SXTH: // TODO
+        case thumb_id::UXTB: // TODO
+        case thumb_id::UXTH: // TODO
+            break;
     }
 }
 
@@ -138,7 +147,6 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
         case arm_id::STRT: return generators::arm::store::STRT(code, settings);
         case arm_id::SUB: return generators::arm::math::SUB(code, settings);
         case arm_id::SWI: return generators::arm::misc::SWI(code, settings);
-        case arm_id::NOP: return generators::arm::misc::NOP();
         case arm_id::SWP: return generators::arm::store::SWP(code, settings);
         case arm_id::SWPB: return generators::arm::store::SWPB(code, settings);
         case arm_id::TEQ: return generators::arm::logic::TEQ(code, settings);
@@ -237,8 +245,89 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
         case arm_id::FTOUIS: return generators::arm::vfp::FTOUIS(code, settings);
         case arm_id::FUITOD: return generators::arm::vfp::FUITOD(code, settings);
         case arm_id::FUITOS: return generators::arm::vfp::FUITOS(code, settings); 
+        case arm_id::CPS: return generators::arm::misc::CPS(code, settings);
+        case arm_id::CPY: return generators::arm::movement::CPY(code, settings);
+        case arm_id::LDREX: return generators::arm::load::LDREX(code, settings);
+        case arm_id::MCRR2: return generators::arm::dsp::MCRR(code, settings);
+        case arm_id::MRRC2: return generators::arm::dsp::MRRC(code, settings);
+        case arm_id::PKHBT: return generators::arm::logic::PKHBT(code, settings);
+        case arm_id::PKHTB: return generators::arm::logic::PKHTB(code, settings);
+        case arm_id::QADD16: return generators::arm::math::QADD16(code, settings);
+        case arm_id::QADD8: return generators::arm::math::QADD8(code, settings);
+        case arm_id::QADDSUBX: return generators::arm::math::QADDSUBX(code, settings);
+        case arm_id::QSUB16: return generators::arm::math::QSUB16(code, settings);
+        case arm_id::QSUB8: return generators::arm::math::QSUB8(code, settings);
+        case arm_id::QSUBADDX: return generators::arm::math::QSUBADDX(code, settings);
+        case arm_id::REV: return generators::arm::logic::REV(code, settings);
+        case arm_id::REV16: return generators::arm::logic::REV16(code, settings);
+        case arm_id::REVSH: return generators::arm::logic::REVSH(code, settings);
+        case arm_id::RFE: // TODO
+        case arm_id::SADD16: // TODO
+        case arm_id::SADD8: // TODO
+        case arm_id::SADDSUBX: // TODO
+        case arm_id::SEL: // TODO
+        case arm_id::SETEND: // TODO
+        case arm_id::SHADD16: // TODO
+        case arm_id::SHADD8: // TODO
+        case arm_id::SHADDSUBX: // TODO
+        case arm_id::SHSUB16: // TODO
+        case arm_id::SHSUB8: // TODO
+        case arm_id::SHSUBADDX: // TODO
+        case arm_id::SMLAD: // TODO
+        case arm_id::SMLALD: // TODO
+        case arm_id::SMLSD: // TODO
+        case arm_id::SMLSLD: // TODO
+        case arm_id::SMMLA: // TODO
+        case arm_id::SMMLS: // TODO
+        case arm_id::SMMUL: // TODO
+        case arm_id::SMUAD: // TODO
+        case arm_id::SMUSD: // TODO
+        case arm_id::SRS: // TODO
+        case arm_id::SSAT: // TODO
+        case arm_id::SSAT16: // TODO
+        case arm_id::SSUB16: // TODO
+        case arm_id::SSUB8: // TODO
+        case arm_id::SSUBADDX: // TODO
+        case arm_id::STREX: // TODO
+        case arm_id::SXTAB: // TODO
+        case arm_id::SXTAB16: // TODO
+        case arm_id::SXTAH: // TODO
+        case arm_id::SXTB: // TODO
+        case arm_id::SXTB16: // TODO
+        case arm_id::SXTH: // TODO
+        case arm_id::UADD16: // TODO
+        case arm_id::UADD8: // TODO
+        case arm_id::UADDSUBX: // TODO
+        case arm_id::UHADD16: // TODO
+        case arm_id::UHADD8: // TODO
+        case arm_id::UHADDSUBX: // TODO
+        case arm_id::UHSUB16: // TODO
+        case arm_id::UHSUB8: // TODO
+        case arm_id::UHSUBADDX: // TODO
+        case arm_id::UMAAL: // TODO
+        case arm_id::UQADD16: // TODO
+        case arm_id::UQADD8: // TODO
+        case arm_id::UQADDSUBX: // TODO
+        case arm_id::UQSUB16: // TODO
+        case arm_id::UQSUB8: // TODO
+        case arm_id::UQSUBADDX: // TODO
+        case arm_id::USAD8: // TODO
+        case arm_id::USADA8: // TODO
+        case arm_id::USAT: // TODO
+        case arm_id::USAT16: // TODO
+        case arm_id::USUB16: // TODO
+        case arm_id::USUB8: // TODO
+        case arm_id::USUBADDX: // TODO
+        case arm_id::UXTAB: // TODO
+        case arm_id::UXTAB16: // TODO
+        case arm_id::UXTAH: // TODO
+        case arm_id::UXTB: // TODO
+        case arm_id::UXTB16: // TODO
+        case arm_id::UXTH: // TODO
+        case arm_id::NOP: return generators::arm::misc::NOP();
         case arm_id::UNKNOWN: llarm::out::error("Unknown instruction encountered for disassembly");
-        case arm_id::UNDEFINED: return UNDEFINED; // llarm::out::error("Undefined instruction encountered for disassembly");
+        case arm_id::UNDEFINED: return UNDEFINED;
+        break;
     }
 }
 
@@ -336,7 +425,16 @@ std::string disassemble::thumb_id_to_string(const thumb_id id) {
         case thumb_id::STRB2: return "STRB2";
         case thumb_id::STRH1: return "STRH1";
         case thumb_id::STRH2: return "STRH2";
-    }
+        case thumb_id::CPS: return "CPS";
+        case thumb_id::REV16: return "REV16";
+        case thumb_id::REVSH: return "REVSH";
+        case thumb_id::SETEND: return "SETEND";
+        case thumb_id::SXTB: return "SXTB";
+        case thumb_id::SXTH: return "SXTH";
+        case thumb_id::UXTB: return "UXTB";
+        case thumb_id::UXTH: return "UXTH";
+                break;
+        }
 }
 
 
@@ -490,5 +588,85 @@ std::string disassemble::arm_id_to_string(const arm_id id) {
         case arm_id::MCR2: return "MCR2";
         case arm_id::MRC2: return "MRC2";
         case arm_id::STC2: return "STC2";
+        case arm_id::CPS: return "CPS";
+        case arm_id::CPY: return "CPY";
+        case arm_id::LDREX: return "LDREX";
+        case arm_id::MCRR2: return "MCRR2";
+        case arm_id::MRRC2: return "MRRC2";
+        case arm_id::PKHBT: return "PKHBT";
+        case arm_id::PKHTB: return "PKHTB";
+        case arm_id::QADD16: return "QADD16";
+        case arm_id::QADD8: return "QADD8";
+        case arm_id::QADDSUBX: return "QADDSUBX";
+        case arm_id::QSUB16: return "QSUB16";
+        case arm_id::QSUB8: return "QSUB8";
+        case arm_id::QSUBADDX: return "QSUBADDX";
+        case arm_id::REV: return "REV";
+        case arm_id::REV16: return "REV16";
+        case arm_id::REVSH: return "REVSH";
+        case arm_id::RFE: return "RFE";
+        case arm_id::SADD16: return "SADD16";
+        case arm_id::SADD8: return "SADD8";
+        case arm_id::SADDSUBX: return "SADDSUBX";
+        case arm_id::SEL: return "SEL";
+        case arm_id::SETEND: return "SETEND";
+        case arm_id::SHADD16: return "SHADD16";
+        case arm_id::SHADD8: return "SHADD8";
+        case arm_id::SHADDSUBX: return "SHADDSUBX";
+        case arm_id::SHSUB16: return "SHSUB16";
+        case arm_id::SHSUB8: return "SHSUB8";
+        case arm_id::SHSUBADDX: return "SHSUBADDX";
+        case arm_id::SMLAD: return "SMLAD";
+        case arm_id::SMLALD: return "SMLALD";
+        case arm_id::SMLSD: return "SMLSD";
+        case arm_id::SMLSLD: return "SMLSLD";
+        case arm_id::SMMLA: return "SMMLA";
+        case arm_id::SMMLS: return "SMMLS";
+        case arm_id::SMMUL: return "SMMUL";
+        case arm_id::SMUAD: return "SMUAD";
+        case arm_id::SMUSD: return "SMUSD";
+        case arm_id::SRS: return "SRS";
+        case arm_id::SSAT: return "SSAT";
+        case arm_id::SSAT16: return "SSAT16";
+        case arm_id::SSUB16: return "SSUB16";
+        case arm_id::SSUB8: return "SSUB8";
+        case arm_id::SSUBADDX: return "SSUBADDX";
+        case arm_id::STREX: return "STREX";
+        case arm_id::SXTAB: return "SXTAB";
+        case arm_id::SXTAB16: return "SXTAB16";
+        case arm_id::SXTAH: return "SXTAH";
+        case arm_id::SXTB: return "SXTB";
+        case arm_id::SXTB16: return "SXTB16";
+        case arm_id::SXTH: return "SXTH";
+        case arm_id::UADD16: return "UADD16";
+        case arm_id::UADD8: return "UADD8";
+        case arm_id::UADDSUBX: return "UADDSUBX";
+        case arm_id::UHADD16: return "UHADD16";
+        case arm_id::UHADD8: return "UHADD8";
+        case arm_id::UHADDSUBX: return "UHADDSUBX";
+        case arm_id::UHSUB16: return "UHSUB16";
+        case arm_id::UHSUB8: return "UHSUB8";
+        case arm_id::UHSUBADDX: return "UHSUBADDX";
+        case arm_id::UMAAL: return "UMAAL";
+        case arm_id::UQADD16: return "UQADD16";
+        case arm_id::UQADD8: return "UQADD8";
+        case arm_id::UQADDSUBX: return "UQADDSUBX";
+        case arm_id::UQSUB16: return "UQSUB16";
+        case arm_id::UQSUB8: return "UQSUB8";
+        case arm_id::UQSUBADDX: return "UQSUBADDX";
+        case arm_id::USAD8: return "USAD8";
+        case arm_id::USADA8: return "USADA8";
+        case arm_id::USAT: return "USAT";
+        case arm_id::USAT16: return "USAT16";
+        case arm_id::USUB16: return "USUB16";
+        case arm_id::USUB8: return "USUB8";
+        case arm_id::USUBADDX: return "USUBADDX";
+        case arm_id::UXTAB: return "UXTAB";
+        case arm_id::UXTAB16: return "UXTAB16";
+        case arm_id::UXTAH: return "UXTAH";
+        case arm_id::UXTB: return "UXTB";
+        case arm_id::UXTB16: return "UXTB16";
+        case arm_id::UXTH: return "UXTH";
+            break;
     }
 }

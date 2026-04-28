@@ -1,5 +1,7 @@
 #pragma once
 
+#include <llarm/shared/types.hpp>
+
 namespace internal {
     struct settings {
         bool hex = false;
@@ -14,6 +16,7 @@ namespace internal {
         bool equivalent_alias = false;
         bool explicit_rotation = false;
         bool extra_space = false;
+        u8 arm_version = 9;
     };
 
     inline settings default_dis_settings() {
@@ -29,7 +32,8 @@ namespace internal {
             true, // strict_compliance
             false, // equivalent_alias
             false, // explicit_rotation
-            false // extra_space
+            false, // extra_space
+            9 // arm_version
         };
     }
 }

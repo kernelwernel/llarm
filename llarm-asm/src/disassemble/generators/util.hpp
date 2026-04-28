@@ -122,6 +122,25 @@ namespace internal::util {
            // different, the overall syntax isn't.
     };
 
+    constexpr u8 USER = 0b10000;
+    constexpr u8 SUPERVISOR = 0b10011;
+    constexpr u8 ABORT = 0b10111;
+    constexpr u8 UNDEFINED = 0b11011;
+    constexpr u8 FIQ = 0b10001;
+    constexpr u8 IRQ = 0b10010;
+    constexpr u8 SYSTEM = 0b11111;
+
+    enum class modes : u8 {
+        UNKNOWN,
+        USER,
+        SUPERVISOR,
+        ABORT,
+        UNDEFINED,
+        FIQ,
+        IRQ,
+        SYSTEM
+    };
+
     reg_id identify_reg(const u8 reg_bits, const prefix prefix = prefix::R);
 
     reg_id identify_reg(const u32 code, const u8 start, const u8 end, const prefix prefix = prefix::R);

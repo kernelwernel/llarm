@@ -31,16 +31,16 @@ CACHE::index_breakdown CACHE::data_index(const u32 index) const {
 
 
 CACHE::cache_line& CACHE::data_line(const u32 set, const u32 way) {
-    return data_lines[(set * DATA_ASSOCIATIVITY) + way];
+    return data_lines.at((set * DATA_ASSOCIATIVITY) + way);
 }
 
 
 CACHE::cache_line& CACHE::inst_line(const u32 set, const u32 way) {
     if (settings.has_unified_cache) {
-        return data_lines[(set * DATA_ASSOCIATIVITY) + way];
+        return data_lines.at((set * DATA_ASSOCIATIVITY) + way);
     }
 
-    return inst_lines[(set * INST_ASSOCIATIVITY) + way];
+    return inst_lines.at((set * INST_ASSOCIATIVITY) + way);
 }
 
 

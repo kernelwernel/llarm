@@ -1,6 +1,7 @@
 #include "../generators.hpp"
 #include "../util.hpp"
 #include "../patterns/patterns.hpp"
+#include "llarm/shared/util.hpp"
 
 #include <llarm/shared/types.hpp>
 
@@ -257,4 +258,113 @@ std::string generators::arm::logic::TEQ(const u32 code, const settings& settings
  */
 std::string generators::arm::logic::TST(const u32 code, const settings& settings) {
     return patterns::Rn_data(code, "TST", settings);
+}
+
+
+/**
+ * PKHBT {<cond>} <Rd>, <Rn>, <Rm> {, LSL #<shift_imm>}
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined
+ * in The condition field on page A3-3. If <cond> is omitted, the AL (always) condition
+ * is used.
+ * <Rd> Specifies the destination register.
+ * <Rn> Specifies the register that contains the first operand. Bits[15:0] of this operand
+ * become bits[15:0] of the result of the operation.
+ * <Rm> Specifies the register that contains the second operand. This is shifted left by the
+ * specified amount, then bits[31:16] of this operand become bits[31:16] of the result
+ * of the operation.
+ * <shift_imm> Specifies the amount by which <Rm> is to be shifted left. This is a value from 0 to 31.
+ * If the shift specifier is omitted, a left shift by 0 is used
+ */
+std::string generators::arm::logic::PKHBT(const u32 code, const settings& settings) {
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
+
+    const u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
+
+    const std::string suffix = [=, &settings]() -> std::string {
+        if (shift_imm == 0) {
+            return "";
+        }
+
+        return util::make_string(", LSL #", util::hex(shift_imm, settings));
+    }();
+
+    return util::make_string("PKHBT", util::cond(code, settings), ", ", Rd, ", ", Rn, ", ", Rm, suffix);
+}
+
+
+/**
+ * PKHTB {<cond>} <Rd>, <Rn>, <Rm> {, ASR #<shift_imm>}
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined
+ * in The condition field on page A3-3. If <cond> is omitted, the AL (always) condition
+ * is used.
+ * <Rd> Specifies the destination register.
+ * <Rn> Specifies the register that contains the first operand. Bits[31:16] of this operand
+ * become bits[31:16] of the result of the operation.
+ * <Rm> Specifies the register that contains the second operand. This is shifted right
+ * arithmetically by the specified amount, then bits[15:0] of this operand become
+ * bits[15:0] of the result of the operation.
+ * <shift_imm> Specifies the amount by which <Rm> is to be shifted right. A shift by 32 is encoded
+ * as shift_imm == 0.
+ * If the shift specifier is omitted, the assembler converts the instruction to PKHBT Rd,
+ * Rm, Rn. This produces the same effect as an arithmetic shift right by 0
+ */
+std::string generators::arm::logic::PKHTB(const u32 code, const settings& settings) {
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
+
+    const u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
+
+    const std::string suffix = [=, &settings]() -> std::string {
+        if (shift_imm == 0) {
+            return "";
+        }
+
+        return util::make_string(", ASR #", util::hex(shift_imm, settings));
+    }();
+
+    return util::make_string("PKHTB", util::cond(code, settings), ", ", Rd, ", ", Rn, ", ", Rm, suffix);
+}
+
+
+/**
+ * REV{<cond>} Rd, Rm
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd> Specifies the destination register.
+ * <Rm> Specifies the register that contains the operand.
+ */
+std::string generators::arm::logic::REV(const u32 code, const settings& settings) {
+    return patterns::Rd_Rm(code, "REV", settings);
+}
+
+
+/**
+ * REV16{<cond>} Rd, Rm
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd> Specifies the destination register.
+ * <Rm> Specifies the register that contains the operand
+ */
+std::string generators::arm::logic::REV16(const u32 code, const settings& settings) {
+    return patterns::Rd_Rm(code, "REV16", settings);
+}
+
+
+/**
+ * REV16{<cond>} Rd, Rm
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd> Specifies the destination register.
+ * <Rm> Specifies the register that contains the operand
+ */
+std::string generators::arm::logic::REVSH(const u32 code, const settings& settings) {
+    return patterns::Rd_Rm(code, "REVSH", settings);
 }

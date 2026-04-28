@@ -355,3 +355,18 @@ std::string generators::arm::load::LDRT(const u32 code, const settings& settings
     return util::make_string("LDR", util::cond(code, settings), "T ", Rd, ", ", post_indexed_addressing_mode);
 }
 
+
+/**
+ * LDREX{<cond>} <Rd>, [<Rn>]
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd> Specifies the destination register for the memory word addressed by <Rd>.
+ * <Rn> Specifies the register containing the address
+ */
+std::string generators::arm::load::LDREX(const u32 code, const settings& settings) {
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
+
+    return util::make_string("LDREX", util::cond(code, settings), " ", Rd, ", [", Rn, "]");
+}

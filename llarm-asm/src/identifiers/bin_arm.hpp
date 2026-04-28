@@ -12,6 +12,8 @@ namespace internal::ident::bin_arm {
     arm_id load_store(const u32 code);
     arm_id vfp_single(const u32 code);
     arm_id vfp_double(const u32 code);
+    arm_id pack_and_saturates(const u32 code);
+    arm_id coproc_and_floats(const u32 code);
 
     arm_id arm(const u32 code);
 }

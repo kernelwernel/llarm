@@ -13,12 +13,12 @@ namespace internal::patterns {
     std::string Rn_data(const u32 code, const std::string&instruction, const settings& settings);
     std::string S_Rd_data(const u32 code, const std::string&instruction, const settings& settings, const bool aliasing = false);
     std::string psr_fields(const u32 code);
+    std::string Rd_Rm(const u32 code, const std::string&instruction, const settings& settings);
 
     std::string mul_Hi_Lo(const u32 code, const std::string&instruction, const settings& settings);
-
-    // ARM DSP instructions
+    std::string sat_Rd_Rn_Rm(const u32 code, const std::string&instruction, const settings& settings);
     std::string dsp_Rd_Rm_Rn(const u32 code, const std::string&instruction, const settings& settings);
-
+  
     // ARM VFP instructions 
     std::string vfp_Dd_Dm(const u32 code, const std::string&instruction, const settings& settings);
     std::string vfp_Dd_Dn_Dm(const u32 code, const std::string&instruction, const settings& settings);

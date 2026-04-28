@@ -89,3 +89,25 @@ cond_id interpreter::fetch_cond_id(const sv cond) {
 
     return fetch_cond_id(static_cast<u16>((cond.at(0) << 8) | cond.at(1)));
 }
+
+
+addressing_mode_id interpreter::fetch_addressing_mode_id(const sv mode) {
+    if (mode.size() < 2) {
+        return addressing_mode_id::UNKNOWN;
+    }
+
+    constexpr u16 IA = ('I' << 8) | 'A';
+    constexpr u16 IB = ('I' << 8) | 'B';
+    constexpr u16 DA = ('D' << 8) | 'A';
+    constexpr u16 DB = ('D' << 8) | 'B';
+
+    const u16 key = fetch_last_2_chars(mode);
+
+    switch (key) {
+        case IA: return addressing_mode_id::IA;
+        case IB: return addressing_mode_id::IB;
+        case DA: return addressing_mode_id::DA;
+        case DB: return addressing_mode_id::DB;
+        default: return addressing_mode_id::UNKNOWN;
+    }
+}

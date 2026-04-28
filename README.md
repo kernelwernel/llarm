@@ -32,6 +32,14 @@
 
 - - -
 
+## Development roadmap and dependency tree
+
+<br>
+<img align="center" src="assets/roadmap/llarm_roadmap.drawio.png" title="LLARM roadmap">
+<br>
+
+- - -
+
 ## llarm-asm
 
 C++ library and CLI for ARM/Thumb assembly and disassembly. Covers 135+ ARM instructions, 70+ Thumb instructions, and 70+ shifter operand types. Benchmarks show it is up to 2-4× faster than comparable tools.
@@ -158,14 +166,6 @@ cmake --install .
 ```
 
 Individual subprojects can be built independently from their own directories using the same steps.
-
-- - -
-
-## Development roadmap and dependency tree
-
-<br>
-<img align="center" src="assets/roadmap/llarm_roadmap.png" title="LLARM roadmap">
-<br>
 
 - - -
 

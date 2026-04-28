@@ -9,6 +9,22 @@
 
 using namespace internal;
 
+// specific to CPS instructions and alike
+enum class effect_id : u8 {
+    UNKNOWN,
+    NONE,
+    IE, 
+    ID
+};
+
+enum class addressing_mode_id : u8 {
+    UNKNOWN,
+    IA, 
+    IB,
+    DA,
+    DB
+};
+
 struct mnemonic_struct_arm {
     sv instruction;
     enum arm_id id = arm_id::UNKNOWN;
@@ -16,8 +32,12 @@ struct mnemonic_struct_arm {
     bool has_S = false;
     bool has_Z = false;
     bool has_L = false;
+    bool has_X = false;
+    bool has_R = false;
     char x_char = '\0';
     char y_char = '\0';
+    enum effect_id effect_id = effect_id::UNKNOWN;
+    enum addressing_mode_id addressing_mode_id = addressing_mode_id::UNKNOWN;
 };
 
 
@@ -158,22 +178,114 @@ namespace internal::mnemonic_arm {
         { "TEQ", arm_id::TEQ },
         { "TST", arm_id::TST },
         { "UMLAL", arm_id::UMLAL },
-        { "UMULL", arm_id::UMULL }
+        { "UMULL", arm_id::UMULL },
+        { "CPS", arm_id::CPS },
+        { "CPSIE", arm_id::CPS },
+        { "CPSID", arm_id::CPS },
+        { "CPY", arm_id::CPY },
+        { "LDREX", arm_id::LDREX },
+        { "PKHBT", arm_id::PKHBT },
+        { "PKHTB", arm_id::PKHTB },
+        { "QADD16", arm_id::QADD16 },
+        { "QADD8", arm_id::QADD8 },
+        { "QADDSUBX", arm_id::QADDSUBX },
+        { "MCRR2", arm_id::MCRR2 },
+        { "MRRC2", arm_id::MRRC2 },
+        { "QSUB16", arm_id::QSUB16 },
+        { "QSUB8", arm_id::QSUB8 },
+        { "QSUBADDX", arm_id::QSUBADDX },
+        { "REV", arm_id::REV },
+        { "REV16", arm_id::REV16 },
+        { "REVSH", arm_id::REVSH },
+        { "RFE", arm_id::RFE },
+        { "SADD16", arm_id::SADD16 },
+        { "SADD8", arm_id::SADD8 },
+        { "SADDSUBX", arm_id::SADDSUBX },
+        { "SEL", arm_id::SEL },
+        { "SETEND", arm_id::SETEND },
+        { "SHADD16", arm_id::SHADD16 },
+        { "SHADD8", arm_id::SHADD8 },
+        { "SHADDSUBX", arm_id::SHADDSUBX },
+        { "SHSUB16", arm_id::SHSUB16 },
+        { "SHSUB8", arm_id::SHSUB8 },
+        { "SHSUBADDX", arm_id::SHSUBADDX },
+        { "SMLAD", arm_id::SMLAD },
+        { "SMLADX", arm_id::SMLAD },
+        { "SMLALD", arm_id::SMLALD },
+        { "SMLALDX", arm_id::SMLALD },
+        { "SMLSD", arm_id::SMLSD },
+        { "SMLSDX", arm_id::SMLSD },
+        { "SMLSLD", arm_id::SMLSLD },
+        { "SMLSLDX", arm_id::SMLSLD },
+        { "SMMLA", arm_id::SMMLA },
+        { "SMMLAR", arm_id::SMMLA },
+        { "SMMLS", arm_id::SMMLS },
+        { "SMMLSR", arm_id::SMMLS },
+        { "SMMUL", arm_id::SMMUL },
+        { "SMMULR", arm_id::SMMUL },
+        { "SMUAD", arm_id::SMUAD },
+        { "SMUADX", arm_id::SMUAD },
+        { "SMUSD", arm_id::SMUSD },
+        { "SMUSDX", arm_id::SMUSD },
+        { "SRS", arm_id::SRS },
+        { "SSAT", arm_id::SSAT },
+        { "SSAT16", arm_id::SSAT16 },
+        { "SSUB16", arm_id::SSUB16 },
+        { "SSUB8", arm_id::SSUB8 },
+        { "SSUBADDX", arm_id::SSUBADDX },
+        { "STREX", arm_id::STREX },
+        { "SXTAB", arm_id::SXTAB },
+        { "SXTAB16", arm_id::SXTAB16 },
+        { "SXTAH", arm_id::SXTAH },
+        { "SXTB", arm_id::SXTB }, 
+        { "SXTB16", arm_id::SXTB16 },
+        { "SXTH", arm_id::SXTH }, 
+        { "UADD16", arm_id::UADD16 },
+        { "UADD8", arm_id::UADD8 },
+        { "UADDSUBX", arm_id::UADDSUBX },
+        { "UHADD16", arm_id::UHADD16 },
+        { "UHADD8", arm_id::UHADD8 },
+        { "UHADDSUBX", arm_id::UHADDSUBX },
+        { "UHSUB16", arm_id::UHSUB16 },
+        { "UHSUB8", arm_id::UHSUB8 },
+        { "UHSUBADDX", arm_id::UHSUBADDX },
+        { "UMAAL", arm_id::UMAAL },
+        { "UQADD16", arm_id::UQADD16 },
+        { "UQADD8", arm_id::UQADD8 },
+        { "UQADDSUBX", arm_id::UQADDSUBX },
+        { "UQSUB16", arm_id::UQSUB16 },
+        { "UQSUB8", arm_id::UQSUB8 },
+        { "UQSUBADDX", arm_id::UQSUBADDX },
+        { "USAD8", arm_id::USAD8 },
+        { "USADA8", arm_id::USADA8 },
+        { "USAT", arm_id::USAT },
+        { "USAT16", arm_id::USAT16 },
+        { "USUB16", arm_id::USUB16 },
+        { "USUB8", arm_id::USUB8 },
+        { "USUBADDX", arm_id::USUBADDX },
+        { "UXTAB", arm_id::UXTAB },
+        { "UXTAB16", arm_id::UXTAB16 },
+        { "UXTAH", arm_id::UXTAH },
+        { "UXTB", arm_id::UXTB }, 
+        { "UXTB16", arm_id::UXTB16 },
+        { "UXTH", arm_id::UXTH }, 
     };
 
     std::vector<sv> fetch_candidates(sv mnemonic);
     mnemonic_struct_arm fetch_mnemonic_args(const arm_id id, sv mnemonic);
     arm_id fetch_arm_id(const std::string& code, const sv mnemonic, const sv assembly);
-  
+
     mnemonic_struct_arm arm(const std::string& code);
 
     arm_id MSR(const lexemes_t& lexemes);
     arm_id SWPB(const sv mnemonic);
     arm_id LDR_family(sv mnemonic);
     arm_id STR_family(sv mnemonic);
-    arm_id VFP_family(sv mnemonic);
+    //arm_id VFP_family(sv mnemonic);
     arm_id PSR_family(const sv mnemonic);
     arm_id STM(const lexemes_t& lexemes);
     arm_id LDM(const lexemes_t& lexemes);
     arm_id BLX(const lexemes_t& lexemes);
+
+    void CPS(mnemonic_struct_arm& args, sv mnemonic);
 }

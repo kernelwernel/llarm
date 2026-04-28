@@ -124,6 +124,17 @@ std::string patterns::psr_fields(const u32 code) {
 }
 
 
+std::string patterns::Rd_Rm(const u32 code, const std::string&instruction, const settings& settings) {
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
+
+    return util::make_string(
+        instruction, util::cond(code, settings), ", ", Rd, ", ", Rm
+    );
+}
+
+
+
 std::string patterns::mul_Hi_Lo(const u32 code, const std::string&instruction, const settings& settings) {
     const std::string Rm = util::reg_string(code, 0, 3, settings);
     const std::string Rs = util::reg_string(code, 8, 11, settings);
@@ -140,8 +151,6 @@ std::string patterns::mul_Hi_Lo(const u32 code, const std::string&instruction, c
 }
 
 
-
-
 std::string patterns::dsp_Rd_Rm_Rn(const u32 code, const std::string&instruction, const settings& settings) {
     const std::string Rd = util::reg_string(code, 12, 15, settings);
     const std::string Rm = util::reg_string(code, 0, 3, settings);
@@ -151,6 +160,18 @@ std::string patterns::dsp_Rd_Rm_Rn(const u32 code, const std::string&instruction
         instruction, util::cond(code, settings), " ", Rd, ", ", Rm, ", ", Rn
     );
 }
+
+
+std::string patterns::sat_Rd_Rn_Rm(const u32 code, const std::string&instruction, const settings& settings) {
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
+
+    return util::make_string(
+        instruction, util::cond(code, settings), " ", Rd,  ", ", Rn, ", ", Rm
+    );
+}
+
 
 std::string patterns::vfp_Dd_Dm(const u32 code, const std::string&instruction, const settings& settings) {
     const std::string Dd = util::reg_string(code, 12, 15, settings, util::prefix::D);

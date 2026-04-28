@@ -18,6 +18,12 @@ namespace internal::generators {
             std::string RSC(const u32 code, const settings& settings);
             std::string SBC(const u32 code, const settings& settings);
             std::string SUB(const u32 code, const settings& settings);
+            std::string QADD16(const u32 code, const settings& settings);
+            std::string QADD8(const u32 code, const settings& settings);
+            std::string QADDSUBX(const u32 code, const settings& settings);
+            std::string QSUB16(const u32 code, const settings& settings);
+            std::string QSUB8(const u32 code, const settings& settings);
+            std::string QSUBADDX(const u32 code, const settings& settings);
         }
 
         namespace logic {
@@ -30,6 +36,11 @@ namespace internal::generators {
             std::string ORR(const u32 code, const settings& settings);
             std::string TEQ(const u32 code, const settings& settings);
             std::string TST(const u32 code, const settings& settings);
+            std::string PKHBT(const u32 code, const settings& settings);
+            std::string PKHTB(const u32 code, const settings& settings);
+            std::string REV(const u32 code, const settings& settings);
+            std::string REV16(const u32 code, const settings& settings);
+            std::string REVSH(const u32 code, const settings& settings);
         }
 
         namespace movement {
@@ -38,6 +49,7 @@ namespace internal::generators {
             std::string MRS(const u32 code, const settings& settings);
             std::string MSR_IMM(const u32 code, const settings& settings);
             std::string MSR_REG(const u32 code, const settings& settings);
+            std::string CPY(const u32 code, const settings& settings);
         }
 
         namespace multiply {
@@ -74,6 +86,7 @@ namespace internal::generators {
             std::string SWI(const u32 code, const settings& settings);
             std::string BKPT(const u32 code, const settings& settings);
             std::string PSR(const u32 code, const settings& settings);
+            std::string CPS(const u32 code, const settings& settings);
         }
 
         namespace load {
@@ -87,6 +100,7 @@ namespace internal::generators {
             std::string LDRSB(const u32 code, const settings& settings);
             std::string LDRSH(const u32 code, const settings& settings);
             std::string LDRT(const u32 code, const settings& settings);
+            std::string LDREX(const u32 code, const settings& settings);
         }
 
         namespace store {

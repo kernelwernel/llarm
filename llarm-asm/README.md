@@ -1,6 +1,6 @@
 # llarm-asm
 
-C++ library and CLI tool for ARM assembly and disassembly. Handles both ARM and Thumb instruction sets.
+C++ library and CLI tool for ARM assembly and disassembly. Handles both ARM and Thumb instruction sets for ARMv5.
 
 - Assemble mnemonics to binary and disassemble binary to mnemonics
 - Identify instructions and shifter operands from binary or string
@@ -9,6 +9,8 @@ C++ library and CLI tool for ARM assembly and disassembly. Handles both ARM and 
 - Configurable disassembly output via settings
 - Fastest disassembler and assembler according to benchmarks (up to 2x or 4x faster)
 
+> [!NOTE]
+> ARMv6 support is currently in development
 
 ## Usage
 

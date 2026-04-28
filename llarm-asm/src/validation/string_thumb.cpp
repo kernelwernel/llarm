@@ -127,5 +127,14 @@ bool validation::string_thumb::is_thumb_instruction_valid(const IR_thumb_struct&
         case thumb_id::BX: return verify_lexemes(make_lexemes(reg()), lexemes); // R0~R15 is only supported here 
         case thumb_id::POP: return verify_lexemes(make_lexemes(reg_list_thumb_optional_PC()), lexemes);
         case thumb_id::PUSH: return verify_lexemes(make_lexemes(reg_list_thumb_optional_LR()), lexemes);
+        case thumb_id::CPS: // TODO
+        case thumb_id::REV16: // TODO
+        case thumb_id::REVSH: // TODO
+        case thumb_id::SETEND: // TODO
+        case thumb_id::SXTB: // TODO
+        case thumb_id::SXTH: // TODO
+        case thumb_id::UXTB: // TODO
+        case thumb_id::UXTH: // TODO
+            break;
     }
 }

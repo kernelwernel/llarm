@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0">
   <diagram name="Page-1" id="vd27VnRxTMPMCAIc7cgx">
-    <mxGraphModel dx="73" dy="696" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="236" dy="819" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -8,13 +8,13 @@
           <mxGeometry height="570" width="870" x="860" y="570" as="geometry" />
         </mxCell>
         <mxCell id="keE6CP2fWxsbIICl772--43" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
-          <mxGeometry height="210" width="140" x="1570" y="900" as="geometry" />
+          <mxGeometry height="220" width="140" x="1570" y="900" as="geometry" />
         </mxCell>
-        <mxCell id="keE6CP2fWxsbIICl772--10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#B7FA60;strokeColor=#36393d;" value="testing phase" vertex="1">
+        <mxCell id="keE6CP2fWxsbIICl772--10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#B7FA60;strokeColor=#36393d;" value="ARMv5 support" vertex="1">
           <mxGeometry height="30" width="120" x="1580" y="1030" as="geometry" />
         </mxCell>
-        <mxCell id="keE6CP2fWxsbIICl772--11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#3FF7DC;strokeColor=#000000;" value="completed" vertex="1">
-          <mxGeometry height="30" width="120" x="1580" y="1070" as="geometry" />
+        <mxCell id="keE6CP2fWxsbIICl772--11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#3FF7DC;strokeColor=#000000;" value="&lt;div&gt;completed&amp;nbsp;&lt;/div&gt;&lt;div&gt;(ARMv9 support)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="120" x="1580" y="1070" as="geometry" />
         </mxCell>
         <mxCell id="keE6CP2fWxsbIICl772--12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FAEEAE;strokeColor=#36393d;" value="in progress" vertex="1">
           <mxGeometry height="30" width="120" x="1580" y="990" as="geometry" />

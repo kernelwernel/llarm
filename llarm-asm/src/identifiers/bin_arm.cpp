@@ -97,21 +97,30 @@ arm_id ident::bin_arm::misc_instructions(const u32 code) {
 
 
 arm_id ident::bin_arm::multiply_extra_load_store(const u32 code) {
-    const u8 second_half = llarm::util::bit_range<u8>(code, 20, 24);
     const u8 first_half = llarm::util::bit_range<u8>(code, 4, 7);
+    
+    // edgecase, handled differently 
+    if (
+        (llarm::util::bit_fetch(code, 20) == false) && 
+        (first_half == 0b1111)
+    ) {
+        return arm_id::STRD;
+    }
 
+    const u8 second_half = llarm::util::bit_range<u8>(code, 20, 24);
+    
     switch (first_half) {
-        // multiplies
+        // multiplies and exclusive memory access
         case 0b1001:
             switch (second_half) {
                 case 0b00000:
                 case 0b00001: return arm_id::MUL;
                 case 0b00010:
                 case 0b00011: return arm_id::MLA;
+                case 0b00100: return arm_id::UMAAL;
                 // this normally wouldn't be necessary but i'm designing it for 
                 // each possible case as a contiguous condition so that the 
-                // compiler can take advantage of page table lookup optimisations
-                case 0b00100: 
+                // compiler can take advantage of optimisations (i think)
                 case 0b00101:
                 case 0b00110:
                 case 0b00111: return arm_id::UNDEFINED;
@@ -125,6 +134,8 @@ arm_id ident::bin_arm::multiply_extra_load_store(const u32 code) {
                 case 0b01111: return arm_id::SMLAL;
                 case 0b10000: return arm_id::SWP;
                 case 0b10100: return arm_id::SWPB;
+                case 0b11001: return arm_id::LDREX;
+                case 0b11000: return arm_id::STREX;
             }
             break;
 
@@ -165,10 +176,44 @@ arm_id ident::bin_arm::unconditional(const u32 code) {
             return arm_id::PLD;
         }
 
+        if (
+            (llarm::util::bit_range(code, 20, 26) == 0010000) &&
+            (llarm::util::bit_fetch(code, 16) == 0) &&
+            (llarm::util::bit_fetch(code, 5) == 0)
+        ) {
+            return arm_id::CPS;
+        }
+
+        if (
+            (llarm::util::bit_range(code, 16, 27) == 0b0001'0000'0001) &&
+            (llarm::util::bit_range(code, 4, 7) == 0b0000)
+        ) {
+
+        }
+
         return arm_id::UNDEFINED;
     }
 
     switch (llarm::util::bit_range(code, 25, 26)) {
+        case 0b00:
+            if (
+                (llarm::util::bit_fetch(code, 22) == false) &&
+                (llarm::util::bit_fetch(code, 20) == true) &&
+                (llarm::util::bit_range(code, 8, 11) == 0b1010)
+            ) {
+                return arm_id::RFE;
+            }
+
+            if (
+                (llarm::util::bit_fetch(code, 22) == true) &&
+                (llarm::util::bit_range(code, 8, 11) == 0b0101) &&
+                (llarm::util::bit_range(code, 16, 20) == 0b01101)
+            ) {
+                return arm_id::SRS;
+            }            
+
+            return arm_id::UNDEFINED;
+
         case 0b01: return arm_id::BLX1;
         case 0b10: 
             if (llarm::util::bit_fetch(code, 20) == 1) {
@@ -555,6 +600,255 @@ arm_id ident::bin_arm::vfp_double(const u32 code) {
 }
 
 
+arm_id ident::bin_arm::pack_and_saturates(const u32 code) {
+    {
+        const u8 small_upper_part = llarm::util::bit_range<u8>(code, 21, 24);
+        const u8 small_lower_part = llarm::util::bit_range<u8>(code, 5, 6);
+
+        if ((small_upper_part == 0b0101) && (small_lower_part == 0b01)) {
+            return arm_id::SSAT;
+        }
+
+        if ((small_upper_part == 0b0111) && (small_lower_part == 0b01)) {
+            return arm_id::USAT;
+        }
+    }
+
+    const u8 upper_part = llarm::util::bit_range<u8>(code, 20, 24);
+    const u8 lower_part = llarm::util::bit_range<u8>(code, 4, 7);
+
+    const u16 full_snippet = static_cast<u16>(upper_part << 5 | lower_part);
+
+    switch (full_snippet) {
+        case 0b0'1000'1001:
+        case 0b0'1000'0001: return arm_id::PKHBT;
+        case 0b0'1000'1101:
+        case 0b0'1000'0101: return arm_id::PKHTB;
+        case 0b0'1000'1011: return arm_id::SEL;
+
+
+        case 0b0'0010'0001: return arm_id::QADD16;
+        case 0b0'0010'1001: return arm_id::QADD8;
+        case 0b0'0010'0011: return arm_id::QADD8;
+        case 0b0'0010'0111: return arm_id::QSUB16;
+        case 0b0'0010'1111: return arm_id::QSUB8;
+        case 0b0'0010'0101: return arm_id::QSUBADDX;
+
+        case 0b0'1011'0011: return arm_id::REV;
+        case 0b0'1011'1011: return arm_id::REV16;
+        case 0b0'1011'0111: 
+            if (llarm::util::bit_range(code, 16, 19) == 0b1111) {
+                return arm_id::SXTH;
+            }
+
+            return arm_id::SXTAH;
+
+        case 0b0'1010'0011: return arm_id::SSAT16;
+        case 0b0'1010'0111: 
+            if (llarm::util::bit_range(code, 16, 19) == 0b1111) {
+                return arm_id::SXTB;
+            }
+
+            return arm_id::SXTAB;
+
+        case 0b0'1000'0111: 
+            if (llarm::util::bit_range(code, 16, 19) == 0b1111) {
+                return arm_id::SXTB16;
+            }
+
+            return arm_id::SXTAB16;
+
+        case 0b0'0101'0011: return arm_id::UADDSUBX;
+        case 0b0'0101'0001: return arm_id::UADD16;
+        case 0b0'0101'1001: return arm_id::UADD8;
+        case 0b0'0101'0111: return arm_id::USUB16;
+        case 0b0'0101'1111: return arm_id::USUB8;
+        case 0b0'0101'0101: return arm_id::USUBADDX;
+
+        case 0b0'0110'0001: return arm_id::UQADD16;
+        case 0b0'0110'1001: return arm_id::UQADD8;
+
+        case 0b0'1111'1011: return arm_id::REVSH;
+        case 0b0'0001'0001: return arm_id::SADD16;
+        case 0b0'0001'1001: return arm_id::SADD8;
+        case 0b0'0001'0011: return arm_id::SADDSUBX;
+
+        case 0b0'0001'0111: return arm_id::SSUB16;
+        case 0b0'0001'1111: return arm_id::SSUB8;
+        case 0b0'0001'0101: return arm_id::SSUBADDX;
+
+        case 0b0'0110'0011: return arm_id::UQADDSUBX;
+        case 0b0'0110'0111: return arm_id::UQSUB16;
+        case 0b0'0110'1111: return arm_id::UQSUB8;
+        case 0b0'0110'0101: return arm_id::UQSUBADDX;
+
+        case 0b0'1110'0011: return arm_id::USAT16;
+        case 0b0'1110'0111: 
+            if (llarm::util::bit_range(code, 16, 19) == 0b1111) {
+                return arm_id::UXTB;
+            }
+
+            return arm_id::UXTAB;
+
+        case 0b0'1100'0111: 
+            if (llarm::util::bit_range(code, 16, 19) == 0b1111) {
+                return arm_id::UXTB16;
+            }
+
+            return arm_id::UXTAB16;
+
+        case 0b0'0011'0001: return arm_id::SHADD16;
+        case 0b0'0011'1011: return arm_id::SHADD8;
+        case 0b0'0011'0011: return arm_id::SHADDSUBX;
+        case 0b0'0011'0111: return arm_id::SHSUB16;
+        case 0b0'0011'1111: return arm_id::SHSUB8;
+        case 0b0'0011'0101: return arm_id::SHSUBADDX;
+
+        case 0b0'0111'0001: return arm_id::UHADD16;
+        case 0b0'0111'1001: return arm_id::UHADD8;
+        case 0b0'0111'0011: return arm_id::UHADDSUBX;
+        case 0b0'0111'0111: return arm_id::UHSUB16;
+        case 0b0'0111'1111: return arm_id::UHSUB8;
+        case 0b0'0111'0101: return arm_id::UHSUBADDX;
+
+        case 0b0'1111'0111: 
+            if (llarm::util::bit_range(code, 16, 19) == 0b1111) {
+                return arm_id::UXTH;
+            }
+
+            return arm_id::UXTAH;
+
+        case 0b1'0000'0001:
+        case 0b1'0000'0011: 
+            if (llarm::util::bit_range(code, 12, 15) == 0b1111) {
+                return arm_id::SMUAD;
+            }
+
+            return arm_id::SMLAD;
+
+        case 0b1'0100'0001:
+        case 0b1'0100'0011: return arm_id::SMLALD;
+        case 0b1'0000'0101:
+        case 0b1'0000'0111: return arm_id::SMLSD;
+
+        case 0b1'0100'0101:
+        case 0b1'0100'0111: 
+            if (llarm::util::bit_range(code, 12, 15) == 0b1111) {
+                return arm_id::SMUSD;
+            }
+
+            return arm_id::SMLSLD;
+
+        case 0b1'0101'0001:
+        case 0b1'0101'0011: 
+            if (llarm::util::bit_range(code, 12, 15) == 0b1111) {
+                return arm_id::SMMUL;
+            }
+
+            return arm_id::SMMLA;
+
+        case 0b1'0101'1101:
+        case 0b1'0101'1111: return arm_id::SMMLS;
+
+        case 0b1'1000'0001: 
+            if (llarm::util::bit_range(code, 12, 15) == 0b1111) {
+                return arm_id::USAD8;
+            }
+
+            return arm_id::USADA8;
+    }
+
+    return arm_id::UNDEFINED;
+}
+
+
+arm_id ident::bin_arm::coproc_and_floats(const u32 code) {
+    // coprocessor load/store and double register transfers [6]
+    const u8 bytecode = llarm::util::bit_range<u8>(code, 20, 24);
+
+    if (llarm::util::bit_fetch(code, 20) == 0) {
+        if (bytecode == 0b00100) {
+
+            if (llarm::util::bit_range(code, 28, 31) == 0b1111) {
+                return arm_id::MCRR2;
+            }
+
+            return arm_id::MCRR;
+        }
+
+        const u8 middle_right_zone = llarm::util::bit_range<u8>(code, 8, 11);
+
+        if (middle_right_zone == 0b1010) {
+            if (
+                (llarm::util::bit_fetch(code, 24)) &&
+                (llarm::util::bit_fetch(code, 21) == 0) &&
+                (llarm::util::bit_fetch(code, 20) == 0)
+            ) {
+                return arm_id::FSTS;
+            }
+
+            return arm_id::FSTMS;
+        }
+        
+        if (middle_right_zone == 0b1011) {
+            if (llarm::util::bit_fetch(code, 22) == 0) {
+                if (
+                    (llarm::util::bit_fetch(code, 24)) &&
+                    (llarm::util::bit_fetch(code, 21) == 0)
+                ) {
+                    return arm_id::FSTD;
+                }
+
+                if (code & 1) {
+                    return arm_id::FSTMX;
+                }
+
+                return arm_id::FSTMD;
+            }
+        }
+
+        return arm_id::STC;
+    }
+
+    switch (bytecode) {
+        case 0b00101: 
+            if (llarm::util::bit_range(code, 28, 31) == 0b1111) {
+                return arm_id::MRRC2;
+            }
+
+            return arm_id::MRRC;
+
+        case 0b10001: 
+        case 0b10101: 
+        case 0b11001: 
+        case 0b11101: 
+            if (llarm::util::bit_range(code, 8, 11) == 0b1010) {
+                return arm_id::FLDS;
+            }
+    }
+
+    const u8 middle_right_zone = llarm::util::bit_range<u8>(code, 8, 11);
+    if (middle_right_zone == 0b1010) {
+        return arm_id::FLDMS;
+    }
+    
+    if (
+        (middle_right_zone == 0b1011) && 
+        (llarm::util::bit_fetch(code, 22) == false)
+    ) {
+        // odd offset = FLDMX
+        // even offset = FLDMD 
+        if (code & 1) {
+            return arm_id::FLDMX;
+        }
+
+        return arm_id::FLDMD;
+    }
+
+    return arm_id::LDC;
+}
+
+
 arm_id ident::bin_arm::arm(const u32 code) {
     // note: NOP is not handled because it's a pseudo 
     // instruction that's unique to this project. 
@@ -579,10 +873,6 @@ arm_id ident::bin_arm::arm(const u32 code) {
                 const bool bit_7 = llarm::util::bit_fetch(code, 7);
 
                 if (bit_7) {
-                    if (!bit_20 && llarm::util::bit_range(code, 4, 7) == 0b1111) {
-                        return arm_id::STRD;
-                    }
-
                     // multiplies, extra load/stores
                     return multiply_extra_load_store(code);
                 }
@@ -599,10 +889,15 @@ arm_id ident::bin_arm::arm(const u32 code) {
                 return misc_instructions(code);
             }
 
+            if (
+                (llarm::util::bit_range(code, 20, 27) == 0b00011010) &&
+                (llarm::util::bit_range(code, 4, 11) == 0)
+            ) {
+                return arm_id::CPY;
+            }
+
             // data processing immediate shift
             return data_processing(code);
-
-            break;
         }
 
         // complete
@@ -633,7 +928,7 @@ arm_id ident::bin_arm::arm(const u32 code) {
         // complete
         case 0b011:
             if (llarm::util::bit_fetch(code, 4) == true) {
-                return arm_id::UNDEFINED;
+                return pack_and_saturates(code);
             }
 
             // load/store register offset
@@ -686,78 +981,7 @@ arm_id ident::bin_arm::arm(const u32 code) {
             }
     
         // complete
-        case 0b110: {
-            // coprocessor load/store and double register transfers [6]
-            const u8 bytecode = llarm::util::bit_range<u8>(code, 20, 24);
-
-            if (llarm::util::bit_fetch(code, 20) == 0) {
-                if (bytecode == 0b00100) {
-                    return arm_id::MCRR;
-                } 
-
-                const u8 middle_right_zone = llarm::util::bit_range<u8>(code, 8, 11);
-                if (middle_right_zone == 0b1010) {
-                    if (
-                        (llarm::util::bit_fetch(code, 24)) &&
-                        (llarm::util::bit_fetch(code, 21) == 0) &&
-                        (llarm::util::bit_fetch(code, 20) == 0)
-                    ) {
-                        return arm_id::FSTS;
-                    }
-                    return arm_id::FSTMS;
-                }
-                
-                if (middle_right_zone == 0b1011) {
-                    if (llarm::util::bit_fetch(code, 22) == 0) {
-                        if (
-                            (llarm::util::bit_fetch(code, 24)) &&
-                            (llarm::util::bit_fetch(code, 21) == 0)
-                        ) {
-                            return arm_id::FSTD;
-                        }
-
-                        if (code & 1) {
-                            return arm_id::FSTMX;
-                        }
-
-                        return arm_id::FSTMD;
-                    }
-                }
-
-                return arm_id::STC;
-            }
-
-            switch (bytecode) {
-                case 0b00101: return arm_id::MRRC;
-                case 0b10001: 
-                case 0b10101: 
-                case 0b11001: 
-                case 0b11101: 
-                    if (llarm::util::bit_range(code, 8, 11) == 0b1010) {
-                        return arm_id::FLDS;
-                    }
-            }
-
-            const u8 middle_right_zone = llarm::util::bit_range<u8>(code, 8, 11);
-            if (middle_right_zone == 0b1010) {
-                return arm_id::FLDMS;
-            }
-            
-            if (
-                (middle_right_zone == 0b1011) && 
-                (llarm::util::bit_fetch(code, 22) == false)
-            ) {
-                // odd offset = FLDMX
-                // even offset = FLDMD 
-                if (code & 1) {
-                    return arm_id::FLDMX;
-                }
-
-                return arm_id::FLDMD;
-            }
-
-            return arm_id::LDC;
-        }
+        case 0b110: return coproc_and_floats(code);
         
 
         // complete

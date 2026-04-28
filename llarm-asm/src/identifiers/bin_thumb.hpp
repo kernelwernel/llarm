@@ -15,4 +15,6 @@ namespace internal::ident::bin_thumb {
     thumb_id bits_101(const u32 code);
     thumb_id bits_110(const u32 code);
     thumb_id bits_111(const u32 code);
+
+    // TODO make the armv6 thumb instruction identifiers
 }

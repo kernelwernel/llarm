@@ -108,4 +108,6 @@ namespace internal::mnemonic_thumb {
     thumb_id STR(const lexemes_t& lexemes);
     thumb_id STRB(const lexemes_t& lexemes);
     thumb_id STRH(const lexemes_t& lexemes);
+
+    // TODO finish adding all the armv6 thumb instructions here
 }

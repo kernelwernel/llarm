@@ -155,3 +155,18 @@ std::string generators::arm::movement::MSR_REG(const u32 code, const settings& s
 
     return util::make_string("MSR", util::cond(code, settings), fields, ", ", Rm);
 }
+
+/**
+ * CPY{<cond>} <Rd>, <Rm>
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd> Specifies the destination register.
+ * <Rm> Specifies the source register.
+ */
+std::string generators::arm::movement::CPY(const u32 code, const settings& settings) {
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
+
+    return util::make_string("CPY", util::cond(code, settings), ", ", Rd, ", ", Rm);
+}

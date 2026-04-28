@@ -206,3 +206,86 @@ std::string generators::arm::math::SUB(const u32 code, const settings& settings)
     return patterns::S_Rd_Rn_data(code, "SUB", settings);
 }
 
+
+/**
+ * QADD16{<cond>} <Rd>, <Rn>, <Rm>
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd> Specifies the destination register.
+ * <Rn> Specifies the register that contains the first operand.
+ * <Rm> Specifies the register that contains the second operand.
+ */
+std::string generators::arm::math::QADD16(const u32 code, const settings& settings) {
+    return patterns::sat_Rd_Rn_Rm(code, "QADD16", settings);
+}
+
+
+/**
+ * QADD8{<cond>} <Rd>, <Rn>, <Rm>
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd> Specifies the destination register.
+ * <Rn> Specifies the register that contains the first operand.
+ * <Rm> Specifies the register that contains the second operand
+ */
+std::string generators::arm::math::QADD8(const u32 code, const settings& settings) {
+    return patterns::sat_Rd_Rn_Rm(code, "QADD8", settings);
+}
+
+
+/**
+ * QADDSUBX{<cond>} <Rd>, <Rn>, <Rm>
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd> Specifies the destination register.
+ * <Rn> Specifies the register that contains the first operand.
+ * <Rm> Specifies the register that contains the second operand
+ */
+std::string generators::arm::math::QADDSUBX(const u32 code, const settings& settings) {
+    return patterns::sat_Rd_Rn_Rm(code, "QADDSUBX", settings);
+}
+
+
+/**
+ * QSUB16{<cond>} <Rd>, <Rn>, <Rm>
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd> Specifies the destination register.
+ * <Rn> Specifies the register that contains the first operand.
+ * <Rm> Specifies the register that contains the second operand
+ */
+std::string generators::arm::math::QSUB16(const u32 code, const settings& settings) {
+    return patterns::sat_Rd_Rn_Rm(code, "QSUB16", settings);
+}
+
+
+/**
+ * QSUB8{<cond>} <Rd>, <Rn>, <Rm>
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd> Specifies the destination register.
+ * <Rn> Specifies the register that contains the first operand.
+ * <Rm> Specifies the register that contains the second operand
+ */
+std::string generators::arm::math::QSUB8(const u32 code, const settings& settings) {
+    return patterns::sat_Rd_Rn_Rm(code, "QSUB8", settings);
+}
+
+
+/**
+ * QSUBADDX{<cond>} <Rd>, <Rn>, <Rm>
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd> Specifies the destination register.
+ * <Rn> Specifies the register that contains the first operand.
+ * <Rm> Specifies the register that contains the second operand
+ */
+std::string generators::arm::math::QSUBADDX(const u32 code, const settings& settings) {
+    return patterns::sat_Rd_Rn_Rm(code, "QSUBADDX", settings);
+}
