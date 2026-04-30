@@ -6,7 +6,6 @@
 #include "../id/shifter_id.hpp"
 #include "../id/instruction_id.hpp"
 #include "../encoding_utils.hpp"
-#include "src/interpreter/IR_struct.hpp"
 
 using namespace internal;
 
