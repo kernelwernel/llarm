@@ -16,6 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Authenticate git for FetchContent
+        run: git config --global url."https://${{ github.token }}@github.com/".insteadOf "https://github.com/"
+
       - name: Install CMake 3.29 (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -26,6 +29,12 @@ jobs:
             | sudo tee /etc/apt/sources.list.d/kitware.list > /dev/null
           sudo apt-get update -q
           sudo apt-get install -y cmake
+
+      - name: Cache FetchContent dependencies
+        uses: actions/cache@v4
+        with:
+          path: build/_deps
+          key: deps-${{ runner.os }}-${{ hashFiles('cmake/dependencies.cmake', 'shared/CMakeLists.txt') }}
 
       - name: Configure
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
