@@ -155,3 +155,190 @@ std::string generators::arm::multiply::UMLAL(const u32 code, const settings& set
 std::string generators::arm::multiply::UMULL(const u32 code, const settings& settings) {
     return patterns::mul_Hi_Lo(code, "UMULL", settings);
 }
+
+
+/**
+ * SMLAD{X}{<cond>} <Rd>, <Rm>, <Rs>, <Rn>
+ * where:
+ * Sets the X bit of the instruction to 1, and the multiplications are bottom x top and top x
+ * bottom.
+ * X
+ * If the X is omitted, sets the X bit to 0, and the multiplications are bottom x bottom and top
+ * x top.
+ * <cond>Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd>Specifies the destination register.
+ * <Rm>Specifies the register that contains the first operand.
+ * <Rs>Specifies the register that contains the second operand.
+ * <Rn>Specifies the register that contains the accumulate operand.
+ */
+std::string generators::arm::multiply::SMLAD(const u32 code, const settings& settings) {
+    return patterns::mul_Rd_Rm_Rs_Rn(code, "SMLAD", "X", settings);
+}
+
+
+/**
+ * SMLALD{X}{<cond>} <RdLo>, <RdHi>, <Rm>, <Rs>
+ * where:
+ * Sets the X bit of the instruction to 1, and the multiplications are bottom x top and top x
+ * bottom.
+ * X If the X is omitted, sets the X bit to 0, and the multiplications are bottom x bottom and top
+ * x top.
+ * <cond>Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <RdLo>Supplies the lower 32 bits of the 64-bit accumulate value to be added to the product, and is
+ * the destination register for the lower 32 bits of the 64-bit result.
+ * <RdHi>Supplies the upper 32 bits of the 64-bit accumulate value to be added to the product, and is
+ * the destination register for the upper 32 bits of the 64-bit result.
+ * <Rm>Specifies the register that contains the first multiply operand.
+ * <Rs>Specifies the register that contains the second multiply operand.
+ */
+std::string generators::arm::multiply::SMLALD(const u32 code, const settings& settings) {
+    return patterns::mul_RdLo_RdHi_Rm_Rs_X(code, "SMLALD", settings);
+}
+
+
+/**
+ * SMLSD{X}{<cond>} <Rd>, <Rm>, <Rs>, <Rn>
+ * where:
+ * Sets the X bit of the instruction to 1, and the multiplications are bottom x top and top x
+ * bottom.
+ * X
+ * If the X is omitted, sets the X bit to 0, and the multiplications are bottom x bottom and top
+ * x top.
+ * <cond>Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd>Specifies the destination register.
+ * <Rm>Specifies the register that contains the first multiply operand.
+ * <Rs>Specifies the register that contains the second multiply operand.
+ * <Rn>Specifies the register that contains the accumulate operand.
+ */
+std::string generators::arm::multiply::SMLSD(const u32 code, const settings& settings) {
+    return patterns::mul_Rd_Rm_Rs_Rn(code, "SMLSD", "X", settings);
+}
+
+
+/**
+ * SMLSD{X}{<cond>} <Rd>, <Rm>, <Rs>, <Rn>
+ * where:
+ * Sets the X bit of the instruction to 1, and the multiplications are bottom x top and top x
+ * bottom.
+ * X
+ * If the X is omitted, sets the X bit to 0, and the multiplications are bottom x bottom and top
+ * x top.
+ * <cond>Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd>Specifies the destination register.
+ * <Rm>Specifies the register that contains the first multiply operand.
+ * <Rs>Specifies the register that contains the second multiply operand.
+ * <Rn>Specifies the register that contains the accumulate operand.
+ */
+std::string generators::arm::multiply::SMLSLD(const u32 code, const settings& settings) {
+    return patterns::mul_RdLo_RdHi_Rm_Rs_X(code, "SMLSLD", settings);
+}
+
+
+/**
+ * SMMLA{R}{<cond>} <Rd>, <Rm>, <Rs>, <Rn>
+ * where:
+ * Sets the R bit of the instruction to 1. The multiplication is rounded.
+ * R
+ * If the R is omitted, sets the R bit to 0. The multiplication is truncated.
+ * <cond>Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd>Specifies the destination register.
+ * <Rm>Specifies the register that contains the first multiply operand.
+ * <Rs>Specifies the register that contains the second multiply operand.
+ * <Rn>Specifies the register that contains the accumulate operand.
+ */
+std::string generators::arm::multiply::SMMLA(const u32 code, const settings& settings) {
+    return patterns::mul_Rd_Rm_Rs_Rn(code, "SMMLA", "R", settings);
+}
+
+
+/**
+ * SMMLS{R}{<cond>} <Rd>, <Rm>, <Rs>, <Rn>
+ * where:
+ * Sets the R bit of the instruction to 1. The multiplication is rounded.
+ * R
+ * If the R is omitted, sets the R bit to 0. The multiplication is truncated.
+ * <cond>Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd>Specifies the destination register.
+ * <Rm>Specifies the register that contains the first multiply operand.
+ * <Rs>Specifies the register that contains the second multiply operand.
+ * <Rn>Specifies the register that contains the accumulate operand.
+ */
+std::string generators::arm::multiply::SMMLS(const u32 code, const settings& settings) {
+    return patterns::mul_Rd_Rm_Rs_Rn(code, "SMMLS", "R", settings);
+}
+
+
+/**
+ * SMMUL{R}{<cond>} <Rd>, <Rm>, <Rs>
+ * where:
+ * Sets the R bit of the instruction to 1. The multiplication is rounded.
+ * R If the R is omitted, sets the R bit to 0. The multiplication is truncated.
+ * <cond>Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd>Specifies the destination register.
+ * <Rm>Specifies the register that contains the first multiply operand.
+ * <Rs>Specifies the register that contains the second multiply operand.
+ */
+std::string generators::arm::multiply::SMMUL(const u32 code, const settings& settings) {
+    return patterns::mul_Rd_Rm_Rs_X(code, "SMMUL", "R", settings);
+}
+
+
+/**
+ * SMUAD{X}{<cond>} <Rd>, <Rm>, <Rs>
+ * where:
+ * Sets the X bit of the instruction to 1, and the multiplications are bottom x top and top x
+ * bottom.
+ * X
+ * If the X is omitted, sets the X bit to 0, and the multiplications are bottom x bottom and top
+ * x top.
+ * <cond>Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd>Specifies the destination register.
+ * <Rm>Specifies the register that contains the first operand.
+ * <Rs>Specifies the register that contains the second operand.
+ */
+std::string generators::arm::multiply::SMUAD(const u32 code, const settings& settings) {
+    return patterns::mul_Rd_Rm_Rs_X(code, "SMUAD", "X", settings);
+}
+
+
+
+/**
+ * SMUSD{X}{<cond>} <Rd>, <Rm>, <Rs>
+ * where:
+ * Sets the X bit of the instruction to 1. The multiplications are bottom x top and top x bottom.
+ * X
+ * If the X is omitted, sets the X bit to 0. The multiplications are bottom x bottom and top x top.
+ * <cond>Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd>Specifies the destination register.
+ * <Rm>Specifies the register that contains the first multiply operand.
+ * <Rs>Specifies the register that contains the second multiply operand.
+ */
+std::string generators::arm::multiply::SMUSD(const u32 code, const settings& settings) {
+    return patterns::mul_Rd_Rm_Rs_X(code, "SMUSD", "X", settings);
+}
+
+
+/**
+ * UMAAL{<cond>} <RdLo>, <RdHi>, <Rm>, <Rs>
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <RdLo> Supplies one of the 32-bit values to be added to the product of <Rm> and <Rs>, and is the
+ * destination register for the lower 32 bits of the result.
+ * <RdHi> Supplies the other 32-bit value to be added to the product of <Rm> and <Rs>, and is the
+ * destination register for the upper 32 bits of the result.
+ * <Rm> Holds the unsigned value to be multiplied with the value of <Rs>.
+ * <Rs> Holds the unsigned value to be multiplied with the value of <Rm>.
+ */
+std::string generators::arm::multiply::UMAAL(const u32 code, const settings& settings) {
+    return patterns::mul_RdLo_RdHi_Rm_Rs(code, "UMAAL", settings);
+}

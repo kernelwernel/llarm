@@ -368,3 +368,108 @@ std::string generators::arm::logic::REV16(const u32 code, const settings& settin
 std::string generators::arm::logic::REVSH(const u32 code, const settings& settings) {
     return patterns::Rd_Rm(code, "REVSH", settings);
 }
+
+
+/**
+ * SSAT{<cond>} <Rd>, #<immed>, <Rm>{, <shift>}
+ * where:
+ * <cond>Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd>Specifies the destination register.
+ * <immed>Specifies the bit position for saturation, in the range 1 to 32. It is encoded in the sat_imm field
+ * of the instruction as <immed>-1.
+ * <Rm>Specifies the register that contains the signed value to be saturated.
+ * <shift>Specifies the optional shift. If present, it must be one of:
+ * •LSL #N. N must be in the range 0 to 31.
+ * This is encoded as sh == 0 and shift_imm == N.
+ * •ASR #N. N must be in the range 1 to 32. This is encoded as sh == 1 and either shift_imm
+ * == 0 for N == 32, or shift_imm == N otherwise.
+ * If <shift> is omitted, LSL #0 is used.
+ */
+std::string generators::arm::logic::SSAT(const u32 code, const settings& settings) {
+    const u8 sat_imm = llarm::util::bit_range<u8>(code, 16, 20);
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
+    const u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
+    const bool sh = llarm::util::bit_fetch(code, 6);
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
+
+    const std::string shift = [=, &settings]() -> std::string {
+        if (!sh && shift_imm == 0) {
+            return "";
+        }
+
+        if (!sh) {
+            return util::make_string(", LSL #", util::hex(shift_imm, settings));
+        }
+
+        const u8 n = (shift_imm == 0) ? 32 : shift_imm;
+
+        return util::make_string(", ASR #", util::hex(n, settings));
+    }();
+
+    return util::make_string("SSAT", util::cond(code, settings), " ", Rd, ", #", util::hex(static_cast<u8>(sat_imm + 1), settings), ", ", Rm, shift);
+}
+
+
+/**
+ * SSAT16{<cond>} <Rd>, #<immed>, <Rm>
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd> Specifies the destination register.
+ * <immed> Specifies the bit position for saturation. This lies in the range 1 to 16. It is encoded in the
+ * sat_imm field of the instruction as <immed>-1.
+ * <Rm> Specifies the register that contains the signed value to be saturated
+ */
+std::string generators::arm::logic::SSAT16(const u32 code, const settings& settings) {
+    const u8 sat_imm = llarm::util::bit_range<u8>(code, 16, 20);
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
+
+    return util::make_string("SSAT16", util::cond(code, settings), " ", Rd, ", #", util::hex(sat_imm, settings), ", ", Rm);
+}
+
+
+/**
+ * USAT{<cond>} <Rd>, #<immed>, <Rm>{, <shift>}
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd> Specifies the destination register.
+ * <immed> Specifies the bit position for saturation. This lies in the range 0 to 31. It is encoded in the
+ * sat_imm field of the instruction.
+ * <Rm> Specifies the register that contains the signed value to be saturated.
+ * <shift> Specifies the optional shift. If present, it must be one of:
+ * • LSL #N. N must be in the range 0 to 31.
+ * This is encoded as sh == 0 and shift_imm == N.
+ * • ASR #N. N must be in the range 1 to 32. This is encoded as sh == 1 and either shift_imm
+ * == 0 for N == 32, or shift_imm == N otherwise.
+ * If <shift> is omitted, LSL #0 is used.
+ */
+std::string generators::arm::logic::USAT(const u32 code, const settings& settings) {
+    const std::string Rd = util::reg_string(code, 16, 19, settings);
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
+    const std::string Rs = util::reg_string(code, 8, 11, settings);
+    const std::string Rn = util::reg_string(code, 12, 15, settings);
+
+    return util::make_string("USADA8", util::cond(code, settings), " ", Rd, ", ", Rm, ", ", Rs, ", ", Rn);
+}
+
+
+/**
+ * USAT16{<cond>} <Rd>, #<immed>, <Rm>
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd> Specifies the destination register.
+ * <immed> Specifies the bit position for saturation. This lies in the range 0 to 15. It is encoded in the
+ * sat_imm field of the instruction.
+ * <Rm> Specifies the register that contains the signed value to be saturated
+ */
+std::string generators::arm::logic::USAT16(const u32 code, const settings& settings) {
+    const u8 sat_imm = llarm::util::bit_range<u8>(code, 16, 19);
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
+
+    return util::make_string("USAT16", util::cond(code, settings), " ", Rd, ", #", util::hex(sat_imm, settings), ", ", Rm);
+}

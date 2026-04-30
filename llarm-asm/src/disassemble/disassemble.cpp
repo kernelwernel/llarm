@@ -261,69 +261,69 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
         case arm_id::REV: return generators::arm::logic::REV(code, settings);
         case arm_id::REV16: return generators::arm::logic::REV16(code, settings);
         case arm_id::REVSH: return generators::arm::logic::REVSH(code, settings);
-        case arm_id::RFE: // TODO
-        case arm_id::SADD16: // TODO
-        case arm_id::SADD8: // TODO
-        case arm_id::SADDSUBX: // TODO
-        case arm_id::SEL: // TODO
-        case arm_id::SETEND: // TODO
-        case arm_id::SHADD16: // TODO
-        case arm_id::SHADD8: // TODO
-        case arm_id::SHADDSUBX: // TODO
-        case arm_id::SHSUB16: // TODO
-        case arm_id::SHSUB8: // TODO
-        case arm_id::SHSUBADDX: // TODO
-        case arm_id::SMLAD: // TODO
-        case arm_id::SMLALD: // TODO
-        case arm_id::SMLSD: // TODO
-        case arm_id::SMLSLD: // TODO
-        case arm_id::SMMLA: // TODO
-        case arm_id::SMMLS: // TODO
-        case arm_id::SMMUL: // TODO
-        case arm_id::SMUAD: // TODO
-        case arm_id::SMUSD: // TODO
-        case arm_id::SRS: // TODO
-        case arm_id::SSAT: // TODO
-        case arm_id::SSAT16: // TODO
-        case arm_id::SSUB16: // TODO
-        case arm_id::SSUB8: // TODO
-        case arm_id::SSUBADDX: // TODO
-        case arm_id::STREX: // TODO
-        case arm_id::SXTAB: // TODO
-        case arm_id::SXTAB16: // TODO
-        case arm_id::SXTAH: // TODO
-        case arm_id::SXTB: // TODO
-        case arm_id::SXTB16: // TODO
-        case arm_id::SXTH: // TODO
-        case arm_id::UADD16: // TODO
-        case arm_id::UADD8: // TODO
-        case arm_id::UADDSUBX: // TODO
-        case arm_id::UHADD16: // TODO
-        case arm_id::UHADD8: // TODO
-        case arm_id::UHADDSUBX: // TODO
-        case arm_id::UHSUB16: // TODO
-        case arm_id::UHSUB8: // TODO
-        case arm_id::UHSUBADDX: // TODO
-        case arm_id::UMAAL: // TODO
-        case arm_id::UQADD16: // TODO
-        case arm_id::UQADD8: // TODO
-        case arm_id::UQADDSUBX: // TODO
-        case arm_id::UQSUB16: // TODO
-        case arm_id::UQSUB8: // TODO
-        case arm_id::UQSUBADDX: // TODO
-        case arm_id::USAD8: // TODO
-        case arm_id::USADA8: // TODO
-        case arm_id::USAT: // TODO
-        case arm_id::USAT16: // TODO
-        case arm_id::USUB16: // TODO
-        case arm_id::USUB8: // TODO
-        case arm_id::USUBADDX: // TODO
-        case arm_id::UXTAB: // TODO
-        case arm_id::UXTAB16: // TODO
-        case arm_id::UXTAH: // TODO
-        case arm_id::UXTB: // TODO
-        case arm_id::UXTB16: // TODO
-        case arm_id::UXTH: // TODO
+        case arm_id::RFE: return generators::arm::load::RFE(code, settings);
+        case arm_id::SADD16: return generators::arm::math::SADD16(code, settings);
+        case arm_id::SADD8: return generators::arm::math::SADD8(code, settings);
+        case arm_id::SADDSUBX: return generators::arm::math::SADDSUBX(code, settings);
+        case arm_id::SEL: return generators::arm::math::SEL(code, settings);
+        case arm_id::SETEND: return generators::arm::misc::SETEND(code);
+        case arm_id::SHADD16: return generators::arm::math::SHADD16(code, settings);
+        case arm_id::SHADD8: return generators::arm::math::SHADD8(code, settings);
+        case arm_id::SHADDSUBX: return generators::arm::math::SHADDSUBX(code, settings);
+        case arm_id::SHSUB16: return generators::arm::math::SHSUB16(code, settings);
+        case arm_id::SHSUB8: return generators::arm::math::SHSUB8(code, settings);
+        case arm_id::SHSUBADDX: return generators::arm::math::SHSUBADDX(code, settings);
+        case arm_id::SMLAD: return generators::arm::multiply::SMLAD(code, settings);
+        case arm_id::SMLALD: return generators::arm::multiply::SMLALD(code, settings);
+        case arm_id::SMLSD: return generators::arm::multiply::SMLSD(code, settings);
+        case arm_id::SMLSLD: return generators::arm::multiply::SMLSLD(code, settings);
+        case arm_id::SMMLA: return generators::arm::multiply::SMMLA(code, settings);
+        case arm_id::SMMLS: return generators::arm::multiply::SMMLS(code, settings);
+        case arm_id::SMMUL: return generators::arm::multiply::SMMUL(code, settings);
+        case arm_id::SMUAD: return generators::arm::multiply::SMUAD(code, settings);
+        case arm_id::SMUSD: return generators::arm::multiply::SMUSD(code, settings);
+        case arm_id::SRS: return generators::arm::store::SRS(code, settings);
+        case arm_id::SSAT: return generators::arm::logic::SSAT(code, settings);
+        case arm_id::SSAT16: return generators::arm::logic::SSAT16(code, settings);
+        case arm_id::SSUB16: return generators::arm::math::SSUB16(code, settings);
+        case arm_id::SSUB8: return generators::arm::math::SSUB8(code, settings);
+        case arm_id::SSUBADDX: return generators::arm::math::SSUBADDX(code, settings);
+        case arm_id::STREX: return generators::arm::store::STREX(code, settings);
+        case arm_id::SXTAB: return generators::arm::math::SXTAB(code, settings);
+        case arm_id::SXTAB16: return generators::arm::math::SXTAB16(code, settings);
+        case arm_id::SXTAH: return generators::arm::math::SXTAH(code, settings);
+        case arm_id::SXTB: return generators::arm::math::SXTB(code, settings);
+        case arm_id::SXTB16: return generators::arm::math::SXTB(code, settings);
+        case arm_id::SXTH: return generators::arm::math::SXTH(code, settings);
+        case arm_id::UADD16: return generators::arm::math::UADD16(code, settings);
+        case arm_id::UADD8: return generators::arm::math::UADD8(code, settings);
+        case arm_id::UADDSUBX: return generators::arm::math::UADDSUBX(code, settings);
+        case arm_id::UHADD16: return generators::arm::math::UHADD16(code, settings);
+        case arm_id::UHADD8: return generators::arm::math::UHADD8(code, settings);
+        case arm_id::UHADDSUBX: return generators::arm::math::UHADDSUBX(code, settings);
+        case arm_id::UHSUB16: return generators::arm::math::UHSUB16(code, settings);
+        case arm_id::UHSUB8: return generators::arm::math::UHSUB8(code, settings);
+        case arm_id::UHSUBADDX: return generators::arm::math::UHSUBADDX(code, settings);
+        case arm_id::UMAAL: return generators::arm::multiply::UMAAL(code, settings);
+        case arm_id::UQADD16: return generators::arm::math::UQADD16(code, settings);
+        case arm_id::UQADD8: return generators::arm::math::UQADD8(code, settings);
+        case arm_id::UQADDSUBX: return generators::arm::math::UQADDSUBX(code, settings);
+        case arm_id::UQSUB16: return generators::arm::math::UQSUB16(code, settings);
+        case arm_id::UQSUB8: return generators::arm::math::UQSUB8(code, settings);
+        case arm_id::UQSUBADDX: return generators::arm::math::UQSUBADDX(code, settings);
+        case arm_id::USAD8: return generators::arm::math::USAD8(code, settings);
+        case arm_id::USADA8: return generators::arm::math::USADA8(code, settings);
+        case arm_id::USAT: return generators::arm::logic::USAT(code, settings);
+        case arm_id::USAT16: return generators::arm::logic::USAT16(code, settings);
+        case arm_id::USUB16: return generators::arm::math::USUB16(code, settings);
+        case arm_id::USUB8: return generators::arm::math::USUB8(code, settings); 
+        case arm_id::USUBADDX: return generators::arm::math::USUBADDX(code, settings); 
+        case arm_id::UXTAB: return generators::arm::math::UXTAB(code, settings); 
+        case arm_id::UXTAB16: return generators::arm::math::UXTAB16(code, settings);
+        case arm_id::UXTAH: return generators::arm::math::UXTAH(code, settings);
+        case arm_id::UXTB: return generators::arm::math::UXTB(code, settings);
+        case arm_id::UXTB16: return generators::arm::math::UXTB16(code, settings);
+        case arm_id::UXTH: return generators::arm::math::UXTH(code, settings);
         case arm_id::NOP: return generators::arm::misc::NOP();
         case arm_id::UNKNOWN: llarm::out::error("Unknown instruction encountered for disassembly");
         case arm_id::UNDEFINED: return UNDEFINED;

@@ -172,3 +172,18 @@ std::string generators::arm::misc::CPS(const u32 code, const settings& settings)
     // format 1: CPS<effect> <iflags> {, #<mode>}
     return util::make_string("CPS", effect, " ", iflags, mode);
 }
+
+
+/**
+ * SETEND <endian_specifier>
+ * where:
+ * <endian_specifier>
+ * Is one of:
+ * BE Sets the E bit in the instruction. This sets the CPSR E bit.
+ * LE Clears the E bit in the instruction. This clears the CPSR E bit.
+ */
+ std::string generators::arm::misc::SETEND(const u32 code) {
+    const bool E = llarm::util::bit_fetch(code, 9);
+
+    return util::make_string("SETEND ", (E ? "BE" : "LE"));
+}

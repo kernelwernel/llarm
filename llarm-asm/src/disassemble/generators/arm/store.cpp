@@ -285,3 +285,51 @@ std::string generators::arm::store::SWPB(const u32 code, const settings& setting
 
     return util::make_string("SWP", (suf ? "B" : ""), util::cond(code, settings), (suf ? " " : "B "), Rd, ", ", Rm, ", [", Rn, "]");
 }
+
+
+/**
+ * SRS<addressing_mode> #<mode>{!}
+ * where:
+ * <addressing_mode>
+ * Is similar to the <addressing_mode> in LDM and STM instructions, see Addressing Mode 4 -
+ * Load and Store Multiple on page A5-41, but with the following differences:
+ * •The base register, Rn, is the banked version of R13 for the mode specified by <mode>,
+ * rather than the current mode.
+ * •The number of registers to store is 2.
+ * •The register list is {R14, SPSR}, with both R14 and the SPSR being the versions
+ * belonging to the current mode.
+ * <mode>Specifies the number of the mode whose banked register is used as the base register for
+ * <addressing_mode>. The mode number is the 5-bit encoding of the chosen mode in a PSR, as
+ * described in The mode bits on page A2-14.
+ * !If present, sets the W bit. This causes the instruction to write a modified value back to its
+ * base register, in a manner similar to that specified for Addressing Mode 4 - Load and Store
+ * Multiple on page A5-41. If ! is omitted, the W bit is 0 and the instruction does not change
+ * the base register.
+ */
+std::string generators::arm::store::SRS(const u32 code, const settings& settings) {
+    const std::string addressing_mode = shifters::ls_mul(code, settings);
+
+    const u8 mode = llarm::util::bit_range<u8>(code, 0, 4);
+
+    return util::make_string("SRS", addressing_mode, " #", util::hex(mode, settings), llarm::util::bit_fetch(code, 21) ? "!" : "");
+}
+
+
+/**
+ * STREX{<cond>} <Rd>, <Rm>, [<Rn>]
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
+ * <Rd> Specifies the destination register for the returned status value. The value returned is:
+ * 0 if the operation updates memory
+ * 1 if the operation fails to update memory.
+ * <Rm> Specifies the register containing the word to be stored to memory.
+ * <Rn> Specifies the register containing the address.
+ */
+std::string generators::arm::store::STREX(const u32 code, const settings& settings) {
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
+
+    return util::make_string("STREX", util::cond(code, settings), " ", Rd, ", ", Rm, ", [", Rn, "]");
+}

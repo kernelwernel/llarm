@@ -370,3 +370,29 @@ std::string generators::arm::load::LDREX(const u32 code, const settings& setting
 
     return util::make_string("LDREX", util::cond(code, settings), " ", Rd, ", [", Rn, "]");
 }
+
+
+/**
+ * RFE<addressing_mode> <Rn>{!}
+ * where:
+ * <addressing_mode>
+ * Is similar to the <addressing_mode> in LDM and STM instructions, see Addressing Mode 4 -
+ * Load and Store Multiple on page A5-41, but with the following differences:
+ * •The number of registers to load is 2.
+ * •The register list is {PC, CPSR}.
+ * <Rn>Specifies the base register to be used by <addressing_mode>. If R15 is specified as the base
+ * register, the result is UNPREDICTABLE.
+ * !If present, sets the W bit. This causes the instruction to write a modified value back to its
+ * base register, in a manner similar to that specified for Addressing Mode 4 - Load and Store
+ * Multiple on page A5-41. If ! is omitted, the W bit is 0 and the instruction does not change
+ * the base register.
+ */
+std::string generators::arm::load::RFE(const u32 code, const settings& settings) {
+    const std::string addressing_mode = shifters::ls_mul(code, settings);
+
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
+
+    const std::string W = (llarm::util::bit_fetch(code, 21) ? "!" : "");
+
+    return util::make_string("RFE", addressing_mode, " ", Rn, W);
+}

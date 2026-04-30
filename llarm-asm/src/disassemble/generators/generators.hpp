@@ -24,8 +24,53 @@ namespace internal::generators {
             std::string QSUB16(const u32 code, const settings& settings);
             std::string QSUB8(const u32 code, const settings& settings);
             std::string QSUBADDX(const u32 code, const settings& settings);
+            std::string SADD16(const u32 code, const settings& settings);
+            std::string SADD8(const u32 code, const settings& settings);
+            std::string SADDSUBX(const u32 code, const settings& settings);
+            std::string SEL(const u32 code, const settings& settings);
+            std::string SHADD16(const u32 code, const settings& settings);
+            std::string SHADD8(const u32 code, const settings& settings);
+            std::string SHADDSUBX(const u32 code, const settings& settings);
+            std::string SHSUB16(const u32 code, const settings& settings);
+            std::string SHSUB8(const u32 code, const settings& settings);
+            std::string SHSUBADDX(const u32 code, const settings& settings);
+            std::string SSUB16(const u32 code, const settings& settings);
+            std::string SSUB8(const u32 code, const settings& settings);
+            std::string SSUBADDX(const u32 code, const settings& settings);
+            std::string SXTAB(const u32 code, const settings& settings);
+            std::string SXTAB16(const u32 code, const settings& settings);
+            std::string SXTAH(const u32 code, const settings& settings);
+            std::string SXTB(const u32 code, const settings& settings);
+            std::string SXTB16(const u32 code, const settings& settings);
+            std::string SXTH(const u32 code, const settings& settings);
+            std::string UADD16(const u32 code, const settings& settings);
+            std::string UADD8(const u32 code, const settings& settings);
+            std::string UADDSUBX(const u32 code, const settings& settings);
+            std::string UHADD16(const u32 code, const settings& settings);
+            std::string UHADD8(const u32 code, const settings& settings);
+            std::string UHADDSUBX(const u32 code, const settings& settings);
+            std::string UHSUB16(const u32 code, const settings& settings);
+            std::string UHSUB8(const u32 code, const settings& settings);
+            std::string UHSUBADDX(const u32 code, const settings& settings);
+            std::string UQADD16(const u32 code, const settings& settings);
+            std::string UQADD8(const u32 code, const settings& settings);
+            std::string UQADDSUBX(const u32 code, const settings& settings);
+            std::string UQSUB16(const u32 code, const settings& settings);
+            std::string UQSUB8(const u32 code, const settings& settings);
+            std::string UQSUBADDX(const u32 code, const settings& settings);
+            std::string USAD8(const u32 code, const settings& settings);
+            std::string USADA8(const u32 code, const settings& settings);
+            std::string USUB16(const u32 code, const settings& settings);
+            std::string USUB8(const u32 code, const settings& settings);
+            std::string USUBADDX(const u32 code, const settings& settings);
+            std::string UXTAB(const u32 code, const settings& settings);
+            std::string UXTAB16(const u32 code, const settings& settings);
+            std::string UXTAH(const u32 code, const settings& settings);
+            std::string UXTB(const u32 code, const settings& settings);
+            std::string UXTB16(const u32 code, const settings& settings);
+            std::string UXTH(const u32 code, const settings& settings);
         }
-
+        
         namespace logic {
             std::string CMN(const u32 code, const settings& settings);
             std::string AND(const u32 code, const settings& settings);
@@ -41,8 +86,12 @@ namespace internal::generators {
             std::string REV(const u32 code, const settings& settings);
             std::string REV16(const u32 code, const settings& settings);
             std::string REVSH(const u32 code, const settings& settings);
+            std::string SSAT(const u32 code, const settings& settings);
+            std::string SSAT16(const u32 code, const settings& settings);
+            std::string USAT(const u32 code, const settings& settings);
+            std::string USAT16(const u32 code, const settings& settings);
         }
-
+        
         namespace movement {
             std::string MOV(const u32 code, const settings& settings);
             std::string MVN(const u32 code, const settings& settings);
@@ -59,6 +108,16 @@ namespace internal::generators {
             std::string SMULL(const u32 code, const settings& settings);
             std::string UMLAL(const u32 code, const settings& settings);
             std::string UMULL(const u32 code, const settings& settings);
+            std::string SMLAD(const u32 code, const settings& settings);
+            std::string SMLALD(const u32 code, const settings& settings);
+            std::string SMLSD(const u32 code, const settings& settings);
+            std::string SMLSLD(const u32 code, const settings& settings);
+            std::string SMMLA(const u32 code, const settings& settings);
+            std::string SMMLS(const u32 code, const settings& settings);
+            std::string SMMUL(const u32 code, const settings& settings);
+            std::string SMUAD(const u32 code, const settings& settings);
+            std::string SMUSD(const u32 code, const settings& settings);
+            std::string UMAAL(const u32 code, const settings& settings);
         }
 
         namespace branching {
@@ -87,6 +146,7 @@ namespace internal::generators {
             std::string BKPT(const u32 code, const settings& settings);
             std::string PSR(const u32 code, const settings& settings);
             std::string CPS(const u32 code, const settings& settings);
+            std::string SETEND(const u32 code);
         }
 
         namespace load {
@@ -101,6 +161,7 @@ namespace internal::generators {
             std::string LDRSH(const u32 code, const settings& settings);
             std::string LDRT(const u32 code, const settings& settings);
             std::string LDREX(const u32 code, const settings& settings);
+            std::string RFE(const u32 code, const settings& settings);
         }
 
         namespace store {
@@ -113,6 +174,8 @@ namespace internal::generators {
             std::string STRT(const u32 code, const settings& settings);
             std::string SWP(const u32 code, const settings& settings);
             std::string SWPB(const u32 code, const settings& settings);
+            std::string SRS(const u32 code, const settings& settings);
+            std::string STREX(const u32 code, const settings& settings);
         }
 
         namespace dsp {
