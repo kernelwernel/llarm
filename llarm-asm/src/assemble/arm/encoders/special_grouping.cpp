@@ -197,18 +197,23 @@ u32 generators::saturate_instructions(const arm_id id, const operand_struct& arg
 
 
 u32 generators::ssat_instruction(const arm_id id, const operand_struct& args) {
-//    // Fixed bits: 27-25=011, 24-21=0101, 5=1, 4=1
-//    u32 binary = 0b0000'0110'1010'0000'0000'0000'0011'0000;
-//
-//    llarm::util::swap_bits(binary, 28, 31, args.cond);
-//    llarm::util::swap_bits(binary, 16, 20, args.first_int - 1); // sat_imm encoded as immed-1
-//    llarm::util::swap_bits(binary, 12, 15, args.first_reg);     // Rd
-//    llarm::util::swap_bits(binary, 7, 11, args.second_int);     // shift_imm
-//    llarm::util::swap_bits(binary, 0, 3, args.second_reg);      // Rm
-//
-//    return binary;
+    if (id == arm_id::SSAT16) {
+        u32 binary = 0b0000'0110'1010'0000'0000'1111'0011'0000;
+        llarm::util::swap_bits(binary, 28, 31, args.cond);
+        llarm::util::swap_bits(binary, 16, 19, args.first_int - 1); // sat_imm
+        llarm::util::swap_bits(binary, 12, 15, args.first_reg);     // Rd
+        llarm::util::swap_bits(binary, 0, 3, args.second_reg);      // Rm
+        return binary;
+    }
 
-    // TODO
+    u32 binary = 0b0000'0110'1010'0000'0000'0000'0001'0000;
+    llarm::util::swap_bits(binary, 28, 31, args.cond);
+    llarm::util::swap_bits(binary, 16, 20, args.first_int - 1);                   // sat_imm
+    llarm::util::swap_bits(binary, 12, 15, args.first_reg);                        // Rd
+    llarm::util::swap_bits(binary, 7, 11, args.second_int);                        // shift_imm
+    llarm::util::modify_bit(binary, 6, args.shifter == shifter_id::USAT_ASR);     // sh
+    llarm::util::swap_bits(binary, 0, 3, args.second_reg);                         // Rm
+    return binary;
 }
 
 

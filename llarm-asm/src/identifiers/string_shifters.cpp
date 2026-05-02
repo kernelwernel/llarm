@@ -295,7 +295,7 @@ shifter_id ident::string_shifters::vfp_mul_instruction(const lexemes_t& lexemes,
 }
 
 
-shifter_id ident::string_shifters::usat_instruction(const lexemes_t& lexemes) {
+shifter_id ident::string_shifters::sat_instruction(const lexemes_t& lexemes) {
     using namespace interpreter;
 
     // no shifter
@@ -403,7 +403,8 @@ shifter_id ident::string_shifters::identify_shifter(const lexemes_t& lexemes, co
         case arm_id::FLDS: return shifter_id::VFP_LS_MUL_SPECIAL;
         case arm_id::FSTD: return shifter_id::VFP_LS_MUL_SPECIAL;
         case arm_id::FSTS: return shifter_id::VFP_LS_MUL_SPECIAL;
-        case arm_id::USAT: return usat_instruction(lexemes);
+        case arm_id::USAT: return sat_instruction(lexemes);
+        case arm_id::SSAT: return sat_instruction(lexemes);
         default: return shifter_id::NONE;
     }
 }

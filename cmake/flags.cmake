@@ -31,6 +31,10 @@ set(MSVC_CXX_FLAGS
 
 
 set(CLANG_CXX_FLAGS
+    -Werror
+    -Wall
+    -Wextra
+    -Wunused
     -Wnon-virtual-dtor
     -Wold-style-cast
     -Wcast-align
@@ -77,11 +81,7 @@ set(LINUX_RELEASE_CXX_FLAGS
     -march=native
     -mtune=native
     # -fno-omit-frame-pointer for llvm-bolt
-    -Wall
-    -Werror
-    -Wextra
     #-Wshadow
-    -Wunused
     -Wno-unused-parameter # TEMPORARY
     -Wno-return-type # TEMPORARY
     -Wno-unused-variable # TEMPORARY
@@ -98,10 +98,6 @@ set(LINUX_EMBEDDED_CXX_FLAGS
 set(LINUX_DEBUG_CXX_FLAGS
     -g
     -O0
-    -Werror
-    -Wall
-    -Wextra
-    -Wunused
     #-fsanitize=address,undefined,nullability
 
     # for prototyping purposes, should be removed one day
