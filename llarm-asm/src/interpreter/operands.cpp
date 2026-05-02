@@ -2,8 +2,8 @@
 #include "../identifiers/string_shifters.hpp"
 #include "../interpreter/mnemonic_arm.hpp"
 #include "../interpreter/lexer.hpp"
-#include "src/id/cond_id.hpp"
-#include "src/interpreter/operand_struct.hpp"
+#include "../id/cond_id.hpp"
+#include "operand_struct.hpp"
 
 #include <llarm/shared/out.hpp>
 
@@ -37,6 +37,9 @@ operand_struct operands::lex_to_operands(const lexemes_t& lexemes, const cond_id
             case MIN_OP: continue;
             case MEM_START: continue;
             case MEM_END: continue;
+            case BE: arg.endianness = endianness_enum::BIG; continue;
+            case LE: arg.endianness = endianness_enum::LITTLE; continue;
+            case IFLAGS: iflags(arg, lexeme); continue;
             case LSL:
             case LSR:
             case ASR:
@@ -84,8 +87,11 @@ operand_struct operands::lex_to_operands_arm(const lexemes_t& lexemes, const mne
     arg.has_S = mnemonic.has_S;
     arg.has_Z = mnemonic.has_Z;
     arg.has_L = mnemonic.has_L;
+    arg.has_X = mnemonic.has_X;
+    arg.has_R = mnemonic.has_R;
     arg.x_char = mnemonic.x_char;
     arg.y_char = mnemonic.y_char;
+    arg.effect = mnemonic.effect;
 
     // finishing touches with shifter analysis (if there's any to begin with)
     arg.shifter = ident::string_shifters::identify_shifter(lexemes, mnemonic);
@@ -188,4 +194,11 @@ void operands::psr(operand_struct& arg, const lexeme& lexeme) {
 
 void operands::reg_list(operand_struct& arg, const lexeme& lexeme) {
     arg.reg_list = lexeme.data.reg_list.list;
+}
+
+
+void operands::iflags(operand_struct& arg, const lexeme& lexeme) {
+    arg.a_flag = lexeme.data.iflags.a_flag;
+    arg.i_flag = lexeme.data.iflags.i_flag;
+    arg.f_flag = lexeme.data.iflags.f_flag;
 }

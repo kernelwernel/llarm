@@ -372,6 +372,13 @@ shifter_id ident::bin_shifters::vfp_ls_multiple(const u32 code) {
 }
 
 
+shifter_id ident::bin_shifters::usat_special(const u32 code) {
+    const bool sh_bit = llarm::util::bit_fetch(code, 6);
+
+    return (sh_bit ? shifter_id::USAT_ASR : shifter_id::USAT_LSL);
+}
+
+
 shifter_id ident::bin_shifters::identify_shifter(const u32 code) {
     const arm_id instruction = ident::bin_arm::arm(code);
 
@@ -420,6 +427,7 @@ shifter_id ident::bin_shifters::identify_shifter(const u32 code) {
         case arm_id::FSTMS:
         case arm_id::FSTMX:
         case arm_id::FLDMD: return vfp_ls_multiple(code);
+        case arm_id::USAT: return usat_special(code);
         case arm_id::UNKNOWN: return shifter_id::UNKNOWN;
         case arm_id::UNDEFINED: return shifter_id::UNKNOWN;
         default: return shifter_id::NONE;
@@ -520,6 +528,8 @@ std::string ident::bin_shifters::shifter_id_to_string(const shifter_id id) {
         case shifter_id::VFP_LS_MUL_INC: return "VFP_LS_MUL_INC";
         case shifter_id::VFP_LS_MUL_DEC: return "VFP_LS_MUL_DEC";
         case shifter_id::VFP_LS_MUL_SPECIAL: return "VFP_LS_MUL_SPECIAL";
+        case shifter_id::USAT_LSL: return "USAT_LSL";
+        case shifter_id::USAT_ASR: return "USAT_ASR";
     }
 
     return "UNKNOWN";

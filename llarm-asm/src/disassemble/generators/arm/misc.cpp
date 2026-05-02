@@ -120,37 +120,37 @@ std::string generators::arm::misc::CPS(const u32 code, const settings& settings)
 
     const u8 mode_bits = llarm::util::bit_range<u8>(code, 0, 4);
 
-    effect_id effect_id = effect_id::UNKNOWN;
+    effect_enum effect = effect_enum::UNKNOWN;
 
     if (imod == 0b10) {
-        effect_id = effect_id::IE;
+        effect = effect_enum::IE;
     } else if (imod == 0b11) {
-        effect_id = effect_id::ID;
+        effect = effect_enum::ID;
     } else if (
         (imod == 0b00 && mmod == 0) ||
         (imod == 0b01 && mmod == 0) ||
         (imod == 0b01 && mmod == 1)
     ) {
         llarm::out::unpredictable("imod and mmod bits in CPS instruction during disassembly is unpredictable");
-        effect_id = effect_id::NONE;
+        effect = effect_enum::NONE;
     } else if (imod == 0b00) {
-        effect_id = effect_id::NONE;
+        effect = effect_enum::NONE;
     } else {
         llarm::out::unpredictable("CPS instruction effect field during disassembly is unpredictable");
-        effect_id = effect_id::NONE;
+        effect = effect_enum::NONE;
     }
 
-    if (effect_id == effect_id::NONE) {
+    if (effect == effect_enum::NONE) {
         // format 2: CPS #<mode>
         return util::make_string("CPS #", util::hex(mode_bits, settings));
     }
 
-    const std::string effect = [=]() -> std::string {
-        if (effect_id == effect_id::IE) {
+    const std::string effect_str = [=]() -> std::string {
+        if (effect == effect_enum::IE) {
             return "IE";
         }
 
-        if (effect_id == effect_id::ID) {
+        if (effect == effect_enum::ID) {
             return "ID";
         }
 
@@ -162,7 +162,7 @@ std::string generators::arm::misc::CPS(const u32 code, const settings& settings)
     );
 
     const std::string mode = [=, &settings]() -> std::string {
-        if (effect_id == effect_id::NONE) {
+        if (effect == effect_enum::NONE) {
             return "";
         }
 
@@ -170,7 +170,7 @@ std::string generators::arm::misc::CPS(const u32 code, const settings& settings)
     }();
     
     // format 1: CPS<effect> <iflags> {, #<mode>}
-    return util::make_string("CPS", effect, " ", iflags, mode);
+    return util::make_string("CPS", effect_str, " ", iflags, mode);
 }
 
 

@@ -20,7 +20,6 @@ raw_tokens_t tokens::tokenize(sv instruction) {
         instruction.remove_suffix(1);
     }
 
-
     // delims = deliminators
 
     const sv special_delims = "[]^!-+#<>";

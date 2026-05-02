@@ -9,20 +9,20 @@
 
 using namespace internal;
 
-// specific to CPS instructions and alike
-enum class effect_id : u8 {
-    UNKNOWN,
-    NONE,
-    IE, 
-    ID
-};
-
 enum class addressing_mode_id : u8 {
     UNKNOWN,
     IA, 
     IB,
     DA,
     DB
+};
+
+// specific to CPS instructions and alike
+enum class effect_enum : u8 {
+    UNKNOWN,
+    NONE,
+    IE, 
+    ID
 };
 
 struct mnemonic_struct_arm {
@@ -36,10 +36,9 @@ struct mnemonic_struct_arm {
     bool has_R = false;
     char x_char = '\0';
     char y_char = '\0';
-    enum effect_id effect_id = effect_id::UNKNOWN;
+    enum effect_enum effect = effect_enum::UNKNOWN;
     enum addressing_mode_id addressing_mode_id = addressing_mode_id::UNKNOWN;
 };
-
 
 namespace internal::mnemonic_arm {
     inline const llarm::unordered_map<sv, arm_id> arm_instructions = {

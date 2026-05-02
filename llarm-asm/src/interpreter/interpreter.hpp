@@ -44,6 +44,7 @@ namespace interpreter {
                 case token_enum::OPTION: is_equivalent = (raw.data.option == match.data.option); break;
                 case token_enum::REG_LIST: is_equivalent = (raw.data.reg_list == match.data.reg_list); break;
                 case token_enum::IMMED: is_equivalent = (raw.data.imm == match.data.imm); break;
+                case token_enum::IFLAGS: is_equivalent = (raw.data.iflags == match.data.iflags); break; 
                 case token_enum::REG_LIST_START:
                 case token_enum::REG_LIST_END:
                 case token_enum::HASHTAG:
@@ -59,6 +60,8 @@ namespace interpreter {
                 case token_enum::SHIFT:
                 case token_enum::PRE_INDEX:
                 case token_enum::CARET:
+                case token_enum::BE: 
+                case token_enum::LE:
                 case token_enum::COMMENT: return true; // these tokens don't have complex components to check if they're valid or not
                 case token_enum::UNKNOWN: return false;
             }

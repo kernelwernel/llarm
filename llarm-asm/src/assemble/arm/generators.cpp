@@ -156,86 +156,85 @@ u32 generators::arm(const IR_arm_struct& IR) {
         case arm_id::FMSR: return fmsr(operands);
         case arm_id::FMSTAT: return fmstat(operands);
         case arm_id::FMXR: return fmxr(operands);
-        case arm_id::CPS: // TODO
-        case arm_id::CPY: // TODO
-        case arm_id::LDREX: // TODO
-        case arm_id::MCRR2: // TODO
-        case arm_id::MRRC2: // TODO
-        case arm_id::PKHBT: // TODO
-        case arm_id::PKHTB: // TODO
-        case arm_id::QADD16: // TODO
-        case arm_id::QADD8: // TODO
-        case arm_id::QADDSUBX: // TODO
-        case arm_id::QSUB16: // TODO
-        case arm_id::QSUB8: // TODO
-        case arm_id::QSUBADDX: // TODO
-        case arm_id::REV: // TODO
-        case arm_id::REV16: // TODO
-        case arm_id::REVSH: // TODO
-        case arm_id::RFE: // TODO
-        case arm_id::SADD16: // TODO
-        case arm_id::SADD8: // TODO
-        case arm_id::SADDSUBX: // TODO
-        case arm_id::SEL: // TODO
-        case arm_id::SETEND: // TODO
-        case arm_id::SHADD16: // TODO
-        case arm_id::SHADD8: // TODO
-        case arm_id::SHADDSUBX: // TODO
-        case arm_id::SHSUB16: // TODO
-        case arm_id::SHSUB8: // TODO
-        case arm_id::SHSUBADDX: // TODO
-        case arm_id::SMLAD: // TODO
-        case arm_id::SMLALD: // TODO
-        case arm_id::SMLSD: // TODO
-        case arm_id::SMLSLD: // TODO
-        case arm_id::SMMLA: // TODO
-        case arm_id::SMMLS: // TODO
-        case arm_id::SMMUL: // TODO
-        case arm_id::SMUAD: // TODO
-        case arm_id::SMUSD: // TODO
-        case arm_id::SRS: // TODO
-        case arm_id::SSAT: // TODO
-        case arm_id::SSAT16: // TODO
-        case arm_id::SSUB16: // TODO
-        case arm_id::SSUB8: // TODO
-        case arm_id::SSUBADDX: // TODO
-        case arm_id::STREX: // TODO
-        case arm_id::SXTAB: // TODO
-        case arm_id::SXTAB16: // TODO
-        case arm_id::SXTAH: // TODO
-        case arm_id::SXTB: // TODO
-        case arm_id::SXTB16: // TODO
-        case arm_id::SXTH: // TODO
-        case arm_id::UADD16: // TODO
-        case arm_id::UADD8: // TODO
-        case arm_id::UADDSUBX: // TODO
-        case arm_id::UHADD16: // TODO
-        case arm_id::UHADD8: // TODO
-        case arm_id::UHADDSUBX: // TODO
-        case arm_id::UHSUB16: // TODO
-        case arm_id::UHSUB8: // TODO
-        case arm_id::UHSUBADDX: // TODO
-        case arm_id::UMAAL: // TODO
-        case arm_id::UQADD16: // TODO
-        case arm_id::UQADD8: // TODO
-        case arm_id::UQADDSUBX: // TODO
-        case arm_id::UQSUB16: // TODO
-        case arm_id::UQSUB8: // TODO
-        case arm_id::UQSUBADDX: // TODO
-        case arm_id::USAD8: // TODO
-        case arm_id::USADA8: // TODO
-        case arm_id::USAT: // TODO
-        case arm_id::USAT16: // TODO
-        case arm_id::USUB16: // TODO
-        case arm_id::USUB8: // TODO
-        case arm_id::USUBADDX: // TODO
-        case arm_id::UXTAB: // TODO
-        case arm_id::UXTAB16: // TODO
-        case arm_id::UXTAH: // TODO
-        case arm_id::UXTB: // TODO
-        case arm_id::UXTB16: // TODO
-        case arm_id::UXTH: // TODO
-            break;
+        case arm_id::USUB16: return saturate_instructions(id, operands);
+        case arm_id::USUB8: return saturate_instructions(id, operands);
+        case arm_id::USUBADDX: return saturate_instructions(id, operands);
+        case arm_id::UADD16: return saturate_instructions(id, operands);
+        case arm_id::UADD8: return saturate_instructions(id, operands);
+        case arm_id::UADDSUBX: return saturate_instructions(id, operands);
+        case arm_id::UHADD16: return saturate_instructions(id, operands);
+        case arm_id::UHADD8: return saturate_instructions(id, operands);
+        case arm_id::UHADDSUBX: return saturate_instructions(id, operands);
+        case arm_id::UHSUB16: return saturate_instructions(id, operands);
+        case arm_id::UHSUB8: return saturate_instructions(id, operands);
+        case arm_id::UHSUBADDX: return saturate_instructions(id, operands);
+        case arm_id::UQADD16: return saturate_instructions(id, operands);
+        case arm_id::UQADD8: return saturate_instructions(id, operands);
+        case arm_id::UQADDSUBX: return saturate_instructions(id, operands);
+        case arm_id::UQSUB16: return saturate_instructions(id, operands);
+        case arm_id::UQSUB8: return saturate_instructions(id, operands);
+        case arm_id::UQSUBADDX: return saturate_instructions(id, operands);
+        case arm_id::QADD16: return saturate_instructions(id, operands);
+        case arm_id::QADD8: return saturate_instructions(id, operands);
+        case arm_id::QADDSUBX: return saturate_instructions(id, operands);
+        case arm_id::QSUB16: return saturate_instructions(id, operands);
+        case arm_id::QSUB8: return saturate_instructions(id, operands);
+        case arm_id::QSUBADDX: return saturate_instructions(id, operands);
+        case arm_id::SADD16: return saturate_instructions(id, operands);
+        case arm_id::SADD8: return saturate_instructions(id, operands);
+        case arm_id::SADDSUBX: return saturate_instructions(id, operands);
+        case arm_id::SEL: return saturate_instructions(id, operands);
+        case arm_id::SHADD16: return saturate_instructions(id, operands);
+        case arm_id::SHADD8: return saturate_instructions(id, operands);
+        case arm_id::SHADDSUBX: return saturate_instructions(id, operands);
+        case arm_id::SHSUB16: return saturate_instructions(id, operands);
+        case arm_id::SHSUB8: return saturate_instructions(id, operands);
+        case arm_id::SHSUBADDX: return saturate_instructions(id, operands);
+        case arm_id::SSUB16: return saturate_instructions(id, operands);
+        case arm_id::SSUB8: return saturate_instructions(id, operands);
+        case arm_id::SSUBADDX: return saturate_instructions(id, operands);
+        case arm_id::CPS: return cps(operands);
+        case arm_id::CPY: return cpy(operands);
+        case arm_id::LDREX: return ldrex(operands);
+        case arm_id::MCRR2: return mcrr(operands, true); // the "true" here means it's the armv6 version of mcrr/mrrc
+        case arm_id::MRRC2: return mcrr(operands, true); // same
+        case arm_id::PKHBT: return pkh_instruction(id, operands);
+        case arm_id::PKHTB: return pkh_instruction(id, operands);
+        case arm_id::REV: return rev_instructions(id, operands);
+        case arm_id::REV16: return rev_instructions(id, operands);
+        case arm_id::REVSH: return rev_instructions(id, operands);
+        case arm_id::RFE: return rfe(operands);
+        case arm_id::SETEND: return setend(operands);
+        case arm_id::SMLALD: return mul_high_low_instructions(id, operands);
+        case arm_id::SMLSLD: return mul_high_low_instructions(id, operands);
+        case arm_id::SMMLS: return signed_mul_instructions(id, operands);
+        case arm_id::SMMLA: return signed_mul_instructions(id, operands);
+        case arm_id::SMLSD: return signed_mul_instructions(id, operands);
+        case arm_id::SMLAD: return signed_mul_instructions(id, operands);
+        case arm_id::SMMUL: return signed_mul_1111_instructions(id, operands);
+        case arm_id::SMUAD: return signed_mul_1111_instructions(id, operands);
+        case arm_id::SMUSD: return signed_mul_1111_instructions(id, operands);
+        case arm_id::SRS: return srs(operands);
+        case arm_id::SSAT: return ssat_instruction(id, operands);
+        case arm_id::SSAT16: return ssat_instruction(id, operands);
+        case arm_id::STREX: return strex(operands);
+        case arm_id::SXTAB: return sign_extend_rotate_instructions(id, operands);
+        case arm_id::SXTAB16: return sign_extend_rotate_instructions(id, operands);
+        case arm_id::SXTAH: return sign_extend_rotate_instructions(id, operands);
+        case arm_id::UXTAB: return sign_extend_rotate_instructions(id, operands);
+        case arm_id::UXTAB16: return sign_extend_rotate_instructions(id, operands);
+        case arm_id::UXTAH: return sign_extend_rotate_instructions(id, operands);
+        case arm_id::UMAAL: return mul_high_low_instructions(id, operands);
+        case arm_id::USAD8: return usad8(operands);
+        case arm_id::USADA8: return usada8(operands);
+        case arm_id::USAT: return usat(operands);
+        case arm_id::USAT16: return usat16(operands);
+        case arm_id::SXTB: return sign_extend_rotate_no_Rn_instructions(id, operands);
+        case arm_id::SXTB16: return sign_extend_rotate_no_Rn_instructions(id, operands);
+        case arm_id::SXTH: return sign_extend_rotate_no_Rn_instructions(id, operands);
+        case arm_id::UXTB: return sign_extend_rotate_no_Rn_instructions(id, operands);
+        case arm_id::UXTB16: return sign_extend_rotate_no_Rn_instructions(id, operands);
+        case arm_id::UXTH: return sign_extend_rotate_no_Rn_instructions(id, operands);
     }
 
     return 0;

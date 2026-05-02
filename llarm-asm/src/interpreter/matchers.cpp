@@ -258,6 +258,40 @@ IMM matchers::immediate(sv str) {
 }
 
 
+IFLAGS matchers::iflags(const sv str) {
+    IFLAGS iflags = {
+        /* a_flag */ false,
+        /* i_flag */ false,
+        /* f_flag */ false,
+        /* is_malformed */ false,
+        /* is_invalid */ false,
+    };
+
+    if (str.size() > 3) {
+        iflags.is_invalid = true;
+        return iflags;
+    }
+
+    for (const char c : str) {
+        switch (c) {
+            case 'a': iflags.a_flag = true; continue;
+            case 'i': iflags.i_flag = true; continue;
+            case 'f': iflags.f_flag = true; continue;
+            default: 
+                if (!std::isalpha(c)) {
+                    iflags.is_invalid = true;
+                    return iflags;
+                }
+
+                iflags.is_malformed = true;
+                return iflags;
+        }
+    }
+
+    return iflags;
+}
+
+
 token_enum matchers::character(const sv str) {
     if (str.size() != 1) {
         return token_enum::UNKNOWN;
@@ -312,4 +346,17 @@ bool matchers::comment(const sv str) {
     // and the standard comment starter is '@' 
 
     return (first_char == '@' || first_char == '<');
+}
+
+
+token_enum matchers::endianness(const sv str) {
+    if (str == "BE") {
+        return token_enum::BE;
+    }
+    
+    if (str == "LE") {
+        return token_enum::LE;
+    }
+
+    return token_enum::UNKNOWN;
 }

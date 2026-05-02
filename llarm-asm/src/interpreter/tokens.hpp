@@ -34,7 +34,10 @@ enum class token_enum : u8 {
     PRE_INDEX, // '!'
     CARET, // '^'
     COMMENT, // '@' and '<'
-    OPTION // specific to address mode 5
+    OPTION, // specific to address mode 5
+    BE, // big endian
+    LE, // little endian
+    IFLAGS
 };
 
 enum class reg_type : u8 {
@@ -277,6 +280,19 @@ struct OPTION {
     bool is_invalid;
 
     constexpr bool operator==(const OPTION& rhs) const {
+        return ((is_invalid || is_malformed || rhs.is_invalid || rhs.is_malformed) == false);
+    }
+};
+
+
+struct IFLAGS {
+    bool a_flag;
+    bool i_flag;
+    bool f_flag;
+    bool is_malformed;
+    bool is_invalid;
+
+    constexpr bool operator==(const IFLAGS& rhs) const {
         return ((is_invalid || is_malformed || rhs.is_invalid || rhs.is_malformed) == false);
     }
 };

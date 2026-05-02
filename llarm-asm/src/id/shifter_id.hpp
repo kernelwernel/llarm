@@ -84,7 +84,11 @@ namespace internal {
         VFP_LS_MUL_UNINDEXED,
         VFP_LS_MUL_INC,
         VFP_LS_MUL_DEC,
-        VFP_LS_MUL_SPECIAL
+        VFP_LS_MUL_SPECIAL,
+
+        // edgecases for USAT instruction, has a unique shifter argument component
+        USAT_LSL,
+        USAT_ASR
     };
 
 

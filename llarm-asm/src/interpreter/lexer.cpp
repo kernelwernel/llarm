@@ -46,10 +46,21 @@ lexemes_t lexer::lex(const raw_tokens_t& tokens) {
             continue;
         }
 
+        if (endianness_check(lexeme, token)) {
+            lexeme_list.push_back(lexeme);
+            continue;
+        }
+
+        if (iflags_check(lexeme, token)) {
+            lexeme_list.push_back(lexeme);
+            continue;
+        }
+
         // end of instruction arguments, return earlier if a comment was found
         if (comment_check(lexeme, token)) {
             return lexeme_list;
         }
+
 
         llarm::out::error("Unidentifiable or invalid token \"", token, "\" in assembly string argument");
     }
@@ -360,6 +371,32 @@ bool lexer::comment_check(lexeme& lexeme, const sv token) {
         lexeme.token_type = token_enum::COMMENT;
         return true;
     }
+
+    return false;
+}
+
+
+bool lexer::endianness_check(lexeme& lexeme, const sv token) {
+    const bool is_comment = matchers::comment(token);
+
+    if (is_comment) {
+        lexeme.token_type = token_enum::COMMENT;
+        return true;
+    }
+
+    return false;
+}
+
+
+bool lexer::iflags_check(lexeme& lexeme, const sv token) {
+    const IFLAGS iflags = matchers::iflags(token);
+
+    if (iflags.is_invalid) {
+        return false;
+    }
+
+    lexeme.token_type = token_enum::IFLAGS;
+    lexeme.data = iflags;
 
     return false;
 }

@@ -12,6 +12,7 @@ namespace internal::ident::string_shifters {
     shifter_id ls_mul_instruction(const sv mnemonic);
     shifter_id ls_coproc_instruction(const lexemes_t& lexemes);
     shifter_id vfp_mul_instruction(const lexemes_t& lexemes, const sv mnemonic);
+    shifter_id usat_instruction(const lexemes_t& lexemes);
 
     // PLD has an exception to its addressing mode format
     shifter_id ls_instruction_PLD(const lexemes_t& lexemes);

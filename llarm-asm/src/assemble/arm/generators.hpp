@@ -35,13 +35,33 @@ namespace internal::generators {
     u32 blx1(const operand_struct& args);
     u32 blx2(const operand_struct& args);
     u32 bx(const operand_struct& args);
-    u32 mcrr(const operand_struct& args);
-    u32 mrrc(const operand_struct& args);
+    u32 mcrr(const operand_struct& args, const bool is_mcrr2 = false);
+    u32 mrrc(const operand_struct& args, const bool is_mrrc2 = false);
+    u32 cps(const operand_struct& args);
+    u32 cpy(const operand_struct& args);
+    u32 srs(const operand_struct& args);
+    u32 strex(const operand_struct& args);
+    u32 ldrex(const operand_struct& args);
+    u32 usad8(const operand_struct& args);
+    u32 usada8(const operand_struct& args);
+    u32 setend(const operand_struct& args);
+    u32 rfe(const operand_struct& args);
+    u32 usat16(const operand_struct& args);
+    u32 usat(const operand_struct& args);
 
     // defined in encoders/special_grouping.cpp
     u32 q_instructions(const arm_id id, const operand_struct& args);
     u32 mul_instructions(const arm_id id, const operand_struct& args);
     u32 dsp_mul_instructions(const arm_id id, const operand_struct& args);
+    u32 saturate_instructions(const arm_id id, const operand_struct& args);
+    u32 signed_mul_instructions(const arm_id id, const operand_struct& args);
+    u32 signed_mul_1111_instructions(const arm_id id, const operand_struct& args);
+    u32 ssat_instruction(const arm_id id, const operand_struct& args);
+    u32 pkh_instruction(const arm_id id, const operand_struct& args);
+    u32 sign_extend_rotate_instructions(const arm_id id, const operand_struct& args);
+    u32 sign_extend_rotate_no_Rn_instructions(const arm_id id, const operand_struct& args);
+    u32 rev_instructions(const arm_id id, const operand_struct& args);
+    u32 mul_high_low_instructions(const arm_id id, const operand_struct& args);
 
     // defined in encoders/vfp.cpp
     u32 vfp_Dd_Dm_instructions(const arm_id id, const operand_struct& args);

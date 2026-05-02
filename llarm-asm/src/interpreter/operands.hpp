@@ -19,4 +19,5 @@ namespace operands {
     void imm(u8& int_iteration, operand_struct& arg, const lexeme& lexeme);
     void psr(operand_struct& arg, const lexeme& lexeme);
     void reg_list(operand_struct& arg, const lexeme& lexeme);
+    void iflags(operand_struct& arg, const lexeme& lexeme);
 }

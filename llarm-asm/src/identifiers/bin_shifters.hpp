@@ -15,6 +15,7 @@ namespace internal::ident::bin_shifters {
     shifter_id vfp_double(const u32 code);
     shifter_id vfp_double_monadic(const u32 code);
     shifter_id vfp_ls_multiple(const u32 code);
+    shifter_id usat_special(const u32 code);
 
     shifter_id identify_shifter(const u32 code);
     shifter_id identify_shifter(const shifter_category shift_category, const u32 code);

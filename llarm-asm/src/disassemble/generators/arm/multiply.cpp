@@ -219,19 +219,20 @@ std::string generators::arm::multiply::SMLSD(const u32 code, const settings& set
 
 
 /**
- * SMLSD{X}{<cond>} <Rd>, <Rm>, <Rs>, <Rn>
+ * SMLSLD{X}{<cond>} <RdLo>, <RdHi>, <Rm>, <Rs>
  * where:
- * Sets the X bit of the instruction to 1, and the multiplications are bottom x top and top x
+ * X Sets the X bit of the instruction to 1, and the multiplications are bottom x top and top x
  * bottom.
- * X
  * If the X is omitted, sets the X bit to 0, and the multiplications are bottom x bottom and top
  * x top.
- * <cond>Is the condition under which the instruction is executed. The conditions are defined in The
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
  * condition field on page A3-3. If <cond> is omitted, the AL (always) condition is used.
- * <Rd>Specifies the destination register.
- * <Rm>Specifies the register that contains the first multiply operand.
- * <Rs>Specifies the register that contains the second multiply operand.
- * <Rn>Specifies the register that contains the accumulate operand.
+ * <RdLo> Supplies the lower 32 bits of the 64-bit accumulate value to be added to the product, and is
+ * the destination register for the lower 32 bits of the 64-bit result.
+ * <RdHi> Supplies the upper 32 bits of the 64-bit accumulate value to be added to the product, and is
+ * the destination register for the upper 32 bits of the 64-bit result.
+ * <Rm> Specifies the register that contains the first multiply operand.
+ * <Rs> Specifies the register that contains the second multiply operand.
  */
 std::string generators::arm::multiply::SMLSLD(const u32 code, const settings& settings) {
     return patterns::mul_RdLo_RdHi_Rm_Rs_X(code, "SMLSLD", settings);
@@ -307,7 +308,6 @@ std::string generators::arm::multiply::SMMUL(const u32 code, const settings& set
 std::string generators::arm::multiply::SMUAD(const u32 code, const settings& settings) {
     return patterns::mul_Rd_Rm_Rs_X(code, "SMUAD", "X", settings);
 }
-
 
 
 /**

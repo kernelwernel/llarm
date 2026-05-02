@@ -12,6 +12,7 @@ union lexeme_data {
     IMM imm;
     REG_LIST reg_list;
     OPTION option;
+    IFLAGS iflags;
 
     constexpr lexeme_data() : reg{} {}
     constexpr lexeme_data(REG r) : reg(r) {}
@@ -19,6 +20,7 @@ union lexeme_data {
     constexpr lexeme_data(IMM i) : imm(i) {}
     constexpr lexeme_data(REG_LIST r) : reg_list(r) {}
     constexpr lexeme_data(OPTION o) : option(o) {}
+    constexpr lexeme_data(IFLAGS iflags) : iflags(iflags) {}
 };
 
 struct lexeme {
@@ -32,6 +34,7 @@ struct lexeme {
     constexpr lexeme(token_enum t, IMM i) : token_type(t), data(i) {}
     constexpr lexeme(token_enum t, REG_LIST r) : token_type(t), data(r) {}
     constexpr lexeme(token_enum t, OPTION o) : token_type(t), data(o) {}
+    constexpr lexeme(token_enum t, IFLAGS iflags) : token_type(t), data(iflags) {}
     constexpr lexeme(token_enum t) : token_type(t) {}
     constexpr lexeme() = default;
 };
@@ -48,6 +51,8 @@ namespace lexer {
     bool character_check(lexeme& lexeme, const sv token);
     bool address_check(lexeme& lexeme, const sv token);
     bool comment_check(lexeme& lexeme, const sv token);
+    bool endianness_check(lexeme& lexeme, const sv token);
+    bool iflags_check(lexeme& lexeme, const sv token);
     
     void option_check(lexemes_t& lexemes, const u8 start_pos, const u8 end_pos);
 

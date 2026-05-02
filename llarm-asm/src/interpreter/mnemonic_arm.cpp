@@ -350,16 +350,16 @@ void mnemonic_arm::CPS(mnemonic_struct_arm& args, sv mnemonic) {
         mnemonic.remove_prefix(3); // remove the "CPS" part and leave the effect fields
 
         if (mnemonic == "IE") {
-            args.effect_id = effect_id::IE;
+            args.effect = effect_enum::IE;
         } else if (mnemonic == "ID") {
-            args.effect_id = effect_id::ID;
+            args.effect = effect_enum::ID;
         } else {
-            args.effect_id = effect_id::UNKNOWN;
+            args.effect = effect_enum::UNKNOWN;
         }
     } else if (mnemonic.size() == 3) {
-        args.effect_id = effect_id::NONE;
+        args.effect = effect_enum::NONE;
     } else {
-        args.effect_id = effect_id::UNKNOWN;
+        args.effect = effect_enum::UNKNOWN;
     }
 }
 

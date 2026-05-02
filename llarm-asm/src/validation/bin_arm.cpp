@@ -323,6 +323,6 @@ bool validation::bin_arm::is_arm_instruction_valid(const u32 code) {
         case arm_id::UXTB: // TODO
         case arm_id::UXTB16: // TODO
         case arm_id::UXTH: // TODO
-                break;
-        }
+            return true;
+    }
 }

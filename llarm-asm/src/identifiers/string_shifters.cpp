@@ -295,6 +295,34 @@ shifter_id ident::string_shifters::vfp_mul_instruction(const lexemes_t& lexemes,
 }
 
 
+shifter_id ident::string_shifters::usat_instruction(const lexemes_t& lexemes) {
+    using namespace interpreter;
+
+    // no shifter
+    if (lexemes.size() == 4) {
+        return shifter_id::NONE;
+    }
+    
+    if (lexemes.size() != 7) {
+        return shifter_id::UNKNOWN;
+    }
+
+    // potential shifter after this point
+
+    const token_enum shift_token = lexemes.at(4).token_type;
+
+    if (shift_token == token_enum::ASR) {
+        return shifter_id::USAT_ASR;
+    }
+
+    if (shift_token == token_enum::LSL) {
+        return shifter_id::USAT_LSL;
+    }
+
+    return shifter_id::UNKNOWN;
+}
+
+
 shifter_id ident::string_shifters::identify_shifter(const lexemes_t& lexemes, const mnemonic_struct_arm& mnemonic) {
     const arm_id id = mnemonic.id;
     const sv instruction = mnemonic.instruction;
@@ -375,6 +403,7 @@ shifter_id ident::string_shifters::identify_shifter(const lexemes_t& lexemes, co
         case arm_id::FLDS: return shifter_id::VFP_LS_MUL_SPECIAL;
         case arm_id::FSTD: return shifter_id::VFP_LS_MUL_SPECIAL;
         case arm_id::FSTS: return shifter_id::VFP_LS_MUL_SPECIAL;
+        case arm_id::USAT: return usat_instruction(lexemes);
         default: return shifter_id::NONE;
     }
 }
