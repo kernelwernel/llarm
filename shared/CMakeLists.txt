@@ -88,7 +88,7 @@ target_include_directories(${TARGET_LIB}
 get_target_property(_sv_includes nonstd::string-view-lite INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(_rh_includes robin_hood::robin_hood   INTERFACE_INCLUDE_DIRECTORIES)
 
-target_include_directories(${TARGET_LIB}
+target_include_directories(${TARGET_LIB} SYSTEM
     PUBLIC
         $<BUILD_INTERFACE:${_sv_includes}>
         $<BUILD_INTERFACE:${_rh_includes}>
