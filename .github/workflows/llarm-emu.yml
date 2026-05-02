@@ -1,4 +1,4 @@
-name: llarm-emu
+name: llarm-emu build
 
 # llarm-emu depends on llarm-asm, which is why it's included here
 

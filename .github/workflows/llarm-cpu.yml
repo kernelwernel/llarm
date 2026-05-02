@@ -1,4 +1,4 @@
-name: llarm-cpu
+name: llarm-cpu build
 
 on:
   push:

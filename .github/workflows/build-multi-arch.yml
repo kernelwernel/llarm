@@ -1,4 +1,4 @@
-name: Linux Multi-Architecture Build
+name: Linux multi-architecture build
 
 on:
   push:
@@ -68,7 +68,7 @@ jobs:
             ${{ matrix.image }} \
             bash -c "
               apt-get update -q &&
-              apt-get install -y --no-install-recommends g++ build-essential python3-pip &&
+              apt-get install -y --no-install-recommends g++ build-essential python3-pip git &&
               pip3 install cmake --break-system-packages &&
               cmake -B build -DCMAKE_BUILD_TYPE=Release &&
               cmake --build build --config Release

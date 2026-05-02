@@ -1,4 +1,4 @@
-name: llarm-asm
+name: llarm-asm build
 
 on:
   push:
