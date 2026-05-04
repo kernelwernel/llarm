@@ -169,18 +169,7 @@ PSR matchers::cpsr_spsr(const sv str) {
 
 
 IMM matchers::immediate(sv str) {
-    IMM imm = {
-        0, /* number */
-        0, /* msb */
-        1, /* divisor_constraint */
-        0, /* start_value (only used for comparison, ignored) */
-        0, /* end_value (same) */
-        false, // has_msb_comparison */
-        false, // is_rotateable */
-        false, /* is_negative */
-        false, /* is_malformed*/
-        true /* is_invalid*/
-    };
+    IMM imm = {};
 
     // check for unnacceptable chars 
     if (str.find_first_not_of("+-X0123456789ABCDEF") != std::string::npos) {

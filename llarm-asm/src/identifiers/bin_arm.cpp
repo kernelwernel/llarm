@@ -605,11 +605,11 @@ arm_id ident::bin_arm::pack_and_saturates(const u32 code) {
         const u8 small_upper_part = llarm::util::bit_range<u8>(code, 21, 24);
         const u8 small_lower_part = llarm::util::bit_range<u8>(code, 5, 6);
 
-        if ((small_upper_part == 0b0101) && (small_lower_part == 0b01)) {
+        if ((small_upper_part == 0b0101) && (small_lower_part == 0b01 || small_lower_part == 0b11)) {
             return arm_id::SSAT;
         }
 
-        if ((small_upper_part == 0b0111) && (small_lower_part == 0b01)) {
+        if ((small_upper_part == 0b0111) && (small_lower_part == 0b01 || small_lower_part == 0b11)) {
             return arm_id::USAT;
         }
     }

@@ -110,34 +110,48 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct& IR) {
         case arm_id::QSUB:
         case arm_id::SMULXY:
         case arm_id::SMULWY:
-        case arm_id::MUL: return verify_lexemes(make_lexemes(reg(), reg(), reg()), lexemes);
+        case arm_id::MUL: 
+        case arm_id::USAD8: return verify_lexemes(make_lexemes(reg(), reg(), reg()), lexemes);
 
         case arm_id::MLA:
+        case arm_id::UMLAL:
+        case arm_id::UMULL: 
+        case arm_id::USADA8:
+        case arm_id::UMAAL:
         case arm_id::SMLAL:
         case arm_id::SMULL:
-        case arm_id::UMLAL:
         case arm_id::SMLAXY:
         case arm_id::SMLALXY:
         case arm_id::SMLAWY:
-        case arm_id::UMULL: return verify_lexemes(make_lexemes(reg(), reg(), reg(), reg()), lexemes);
+        case arm_id::SMMLS:
+        case arm_id::SMMLA:
+        case arm_id::SMLSD:
+        case arm_id::SMLALD:
+        case arm_id::SMLSLD:
+        case arm_id::SMLAD: return verify_lexemes(make_lexemes(reg(), reg(), reg(), reg()), lexemes);
 
         case arm_id::MRS: 
             return (
                 (verify_lexemes(make_lexemes(reg(), psr(CPSR)), lexemes)) ||
                 (verify_lexemes(make_lexemes(reg(), psr(SPSR)), lexemes))
             );
-
+            
         case arm_id::MSR_IMM: // both these instructions are already verified in the identification process
         case arm_id::MSR_REG: return true; 
         case arm_id::BKPT: return verify_lexemes(make_lexemes(immed(16)), lexemes);
         case arm_id::BLX1:
         case arm_id::BX: return verify_lexemes(make_lexemes(reg()), lexemes);
         case arm_id::BLX2: return verify_lexemes(make_lexemes(reg()), lexemes);
+        case arm_id::UXTB:
+        case arm_id::SXTH:
+        case arm_id::CPY: 
         case arm_id::CLZ: return verify_lexemes(make_lexemes(reg(), reg()), lexemes);
         case arm_id::CDP2:
         case arm_id::CDP: return verify_lexemes(make_lexemes(reg(COPROC), immed(2), reg(CR), reg(CR), reg(CR), immed(2)), lexemes);
         case arm_id::MCRR:
-        case arm_id::MRRC: return verify_lexemes(make_lexemes(reg(COPROC), immed(3), reg(), reg(), reg(CR)), lexemes);
+        case arm_id::MRRC:
+        case arm_id::MCRR2:
+        case arm_id::MRRC2:  return verify_lexemes(make_lexemes(reg(COPROC), immed(3), reg(), reg(), reg(CR)), lexemes);
         
         case arm_id::PLD: return (ident::string_shifters::identify_shifter(lexemes, IR.mnemonic) != shifter_id::UNKNOWN);
 
@@ -237,86 +251,129 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct& IR) {
                 (verify_lexemes(make_lexemes(reg(DOUBLE), token(MEM_START), reg(), token(HASHTAG), immed(7, 4), token(MEM_END)), lexemes))
             );
 
-        case arm_id::CPS: // TODO
-        case arm_id::CPY: // TODO
-        case arm_id::LDREX: // TODO
-        case arm_id::MCRR2: // TODO
-        case arm_id::MRRC2: // TODO
-        case arm_id::PKHBT: // TODO
-        case arm_id::PKHTB: // TODO
-        case arm_id::QADD16: // TODO
-        case arm_id::QADD8: // TODO
-        case arm_id::QADDSUBX: // TODO
-        case arm_id::QSUB16: // TODO
-        case arm_id::QSUB8: // TODO
-        case arm_id::QSUBADDX: // TODO
-        case arm_id::REV: // TODO
-        case arm_id::REV16: // TODO
-        case arm_id::REVSH: // TODO
-        case arm_id::RFE: // TODO
-        case arm_id::SADD16: // TODO
-        case arm_id::SADD8: // TODO
-        case arm_id::SADDSUBX: // TODO
-        case arm_id::SEL: // TODO
-        case arm_id::SETEND: // TODO
-        case arm_id::SHADD16: // TODO
-        case arm_id::SHADD8: // TODO
-        case arm_id::SHADDSUBX: // TODO
-        case arm_id::SHSUB16: // TODO
-        case arm_id::SHSUB8: // TODO
-        case arm_id::SHSUBADDX: // TODO
-        case arm_id::SMLAD: // TODO
-        case arm_id::SMLALD: // TODO
-        case arm_id::SMLSD: // TODO
-        case arm_id::SMLSLD: // TODO
-        case arm_id::SMMLA: // TODO
-        case arm_id::SMMLS: // TODO
-        case arm_id::SMMUL: // TODO
-        case arm_id::SMUAD: // TODO
-        case arm_id::SMUSD: // TODO
-        case arm_id::SRS: // TODO
-        case arm_id::SSAT: // TODO
-        case arm_id::SSAT16: // TODO
-        case arm_id::SSUB16: // TODO
-        case arm_id::SSUB8: // TODO
-        case arm_id::SSUBADDX: // TODO
-        case arm_id::STREX: // TODO
-        case arm_id::SXTAB: // TODO
-        case arm_id::SXTAB16: // TODO
-        case arm_id::SXTAH: // TODO
-        case arm_id::SXTB: // TODO
-        case arm_id::SXTB16: // TODO
-        case arm_id::SXTH: // TODO
-        case arm_id::UADD16: // TODO
-        case arm_id::UADD8: // TODO
-        case arm_id::UADDSUBX: // TODO
-        case arm_id::UHADD16: // TODO
-        case arm_id::UHADD8: // TODO
-        case arm_id::UHADDSUBX: // TODO
-        case arm_id::UHSUB16: // TODO
-        case arm_id::UHSUB8: // TODO
-        case arm_id::UHSUBADDX: // TODO
-        case arm_id::UMAAL: // TODO
-        case arm_id::UQADD16: // TODO
-        case arm_id::UQADD8: // TODO
-        case arm_id::UQADDSUBX: // TODO
-        case arm_id::UQSUB16: // TODO
-        case arm_id::UQSUB8: // TODO
-        case arm_id::UQSUBADDX: // TODO
-        case arm_id::USAD8: // TODO
-        case arm_id::USADA8: // TODO
-        case arm_id::USAT: // TODO
-        case arm_id::USAT16: // TODO
-        case arm_id::USUB16: // TODO
-        case arm_id::USUB8: // TODO
-        case arm_id::USUBADDX: // TODO
-        case arm_id::UXTAB: // TODO
-        case arm_id::UXTAB16: // TODO
-        case arm_id::UXTAH: // TODO
-        case arm_id::UXTB: // TODO
-        case arm_id::UXTB16: // TODO
-        case arm_id::UXTH: // TODO
-            return true;
+        case arm_id::USUB16:
+        case arm_id::USUB8:
+        case arm_id::USUBADDX:
+        case arm_id::UADD16:
+        case arm_id::UADD8:
+        case arm_id::UADDSUBX:
+        case arm_id::UHADD16:
+        case arm_id::UHADD8:
+        case arm_id::UHADDSUBX:
+        case arm_id::UHSUB16:
+        case arm_id::UHSUB8:
+        case arm_id::UHSUBADDX:
+        case arm_id::UQADD16:
+        case arm_id::UQADD8:
+        case arm_id::UQADDSUBX:
+        case arm_id::UQSUB16:
+        case arm_id::UQSUB8:
+        case arm_id::UQSUBADDX:
+        case arm_id::QADD16:
+        case arm_id::QADD8:
+        case arm_id::QADDSUBX:
+        case arm_id::QSUB16:
+        case arm_id::QSUB8:
+        case arm_id::QSUBADDX:
+        case arm_id::SADD16:
+        case arm_id::SADD8:
+        case arm_id::SADDSUBX:
+        case arm_id::SEL:
+        case arm_id::SHADD16:
+        case arm_id::SHADD8:
+        case arm_id::SHADDSUBX:
+        case arm_id::SHSUB16:
+        case arm_id::SHSUB8:
+        case arm_id::SHSUBADDX:
+        case arm_id::SSUB16:
+        case arm_id::SSUB8:
+        case arm_id::SSUBADDX:
+        case arm_id::SMMUL:
+        case arm_id::SMUAD:
+        case arm_id::SMUSD:
+            return verify_lexemes(make_lexemes(reg(), reg(), reg()), lexemes);
+            
+        case arm_id::REV:
+        case arm_id::REV16:
+        case arm_id::REVSH:
+            return verify_lexemes(make_lexemes(reg(), reg()), lexemes);
+            
+        case arm_id::UXTAB16:
+        case arm_id::UXTAH:
+        case arm_id::SXTAB:
+        case arm_id::UXTAB:
+        case arm_id::SXTAH:
+        case arm_id::SXTAB16:
+            return (
+                verify_lexemes(make_lexemes(reg(), reg(), reg()), lexemes) ||
+                verify_lexemes(make_lexemes(reg(), reg(), reg(), token(ROR), token(HASHTAG), immed_constant(8) ), lexemes) || // this is bad tbh, might redesign this
+                verify_lexemes(make_lexemes(reg(), reg(), reg(), token(ROR), token(HASHTAG), immed_constant(16) ), lexemes) ||
+                verify_lexemes(make_lexemes(reg(), reg(), reg(), token(ROR), token(HASHTAG), immed_constant(24) ), lexemes)
+            );
+
+        case arm_id::SSAT16: 
+        case arm_id::USAT16: 
+            return verify_lexemes(make_lexemes(reg(), token(HASHTAG), immed_range(1, 16), reg()), lexemes);
+
+        case arm_id::SXTB16: 
+        case arm_id::UXTH: 
+        case arm_id::UXTB16: 
+        case arm_id::SXTB: 
+            return (
+                verify_lexemes(make_lexemes(reg(), reg()), lexemes) ||
+                verify_lexemes(make_lexemes(reg(), reg(), token(ROR), token(HASHTAG), immed_constant(8) ), lexemes) || // this is bad tbh, might redesign this
+                verify_lexemes(make_lexemes(reg(), reg(), token(ROR), token(HASHTAG), immed_constant(16) ), lexemes) ||
+                verify_lexemes(make_lexemes(reg(), reg(), token(ROR), token(HASHTAG), immed_constant(24) ), lexemes)
+            );
+
+        case arm_id::USAT:
+        case arm_id::SSAT:
+            return (
+                verify_lexemes(make_lexemes(reg(), token(HASHTAG), immed_range(1, 32), reg()), lexemes) ||
+                verify_lexemes(make_lexemes(reg(), token(HASHTAG), immed_range(1, 32), reg(), token(LSL), token(HASHTAG), immed_range(0, 31)), lexemes) ||
+                verify_lexemes(make_lexemes(reg(), token(HASHTAG), immed_range(1, 32), reg(), token(ASR), token(HASHTAG), immed_range(1, 32)), lexemes)
+            );
+
+        case arm_id::PKHBT: 
+            return (
+                verify_lexemes(make_lexemes(reg(), reg(), reg()), lexemes) ||
+                verify_lexemes(make_lexemes(reg(), reg(), reg(), token(LSL), token(HASHTAG), immed_range(0, 31)), lexemes)
+            );
+
+        case arm_id::PKHTB: 
+            return (
+                verify_lexemes(make_lexemes(reg(), reg(), reg()), lexemes) ||
+                verify_lexemes(make_lexemes(reg(), reg(), reg(), token(ASR), token(HASHTAG), immed_range(1, 32)), lexemes)
+            );
+
+        case arm_id::LDREX: return verify_lexemes(make_lexemes(reg(), token(MEM_START), reg(), token(MEM_END)), lexemes);
+        case arm_id::STREX: return verify_lexemes(make_lexemes(reg(), reg(), token(MEM_START), reg(), token(MEM_END)), lexemes);
+        case arm_id::SETEND: 
+            return (
+                verify_lexemes(make_lexemes(token(BE)), lexemes) ||
+                verify_lexemes(make_lexemes(token(LE)), lexemes)
+            );
+
+        case arm_id::RFE: 
+            return (
+                verify_lexemes(make_lexemes(reg()), lexemes) ||
+                verify_lexemes(make_lexemes(reg(), token(PRE_INDEX)), lexemes)
+            );
+
+        case arm_id::SRS:  
+            return (
+                verify_lexemes(make_lexemes(token(HASHTAG), immed_modes()), lexemes) ||
+                verify_lexemes(make_lexemes(token(HASHTAG), immed_modes(), token(PRE_INDEX)), lexemes)
+            );
+
+        case arm_id::CPS: 
+            return (
+                verify_lexemes(make_lexemes(iflags()), lexemes) ||
+                verify_lexemes(make_lexemes(iflags(), token(HASHTAG), immed_modes()), lexemes) ||
+                verify_lexemes(make_lexemes(token(HASHTAG), immed_modes()), lexemes)
+            );
+
+        return true;
     }
 }
 

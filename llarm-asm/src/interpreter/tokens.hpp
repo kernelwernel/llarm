@@ -89,23 +89,46 @@ struct REG {
     }
 };
 
+
 struct IMM {
-    u64 number;
-    u8 msb; // most significant bit index, this is useful since there's a limit in some cases
-    u8 divisor_constraint; // some immeds can only be a multiple of that number, default is 1
-    u8 start_value;
-    u8 end_value;
-    bool has_msb_comparison; // means that the msb will be analysed instead of the number during comparison
-    bool is_rotateable; // important distinction for instructions with data processing address modes
-    bool is_negative;
-    bool is_malformed;
-    bool is_invalid;
+    u64 number = 0;
+    u8 msb = 0; // most significant bit index, this is useful since there's a limit in some cases
+    u8 divisor_constraint = 1; // some immeds can only be a multiple of that number, default is 1
+    u8 start_value = 0;
+    u8 end_value = 0;
+    u8 constant = 0;
+    bool has_msb_comparison = false; // means that the msb will be analysed instead of the number during comparison
+    bool is_rotateable = false; // important distinction for instructions with data processing address modes
+    bool is_negative = false;
+    bool is_constant = false;
+    bool is_mode_comparison = false;
+    bool is_malformed = false;
+    bool is_invalid = false;
 
     constexpr bool operator==(const IMM& rhs) const {
         // the rhs is considered as the immed "matcher" that was
         // pre-set for comparison, it's not the raw immed itself
 
         if (is_invalid || is_malformed || rhs.is_invalid || rhs.is_malformed) {
+            return false;
+        }
+
+        if (rhs.is_constant) {
+            return (rhs.number == constant); 
+        }
+
+        if (rhs.is_mode_comparison) {
+            switch (number) {
+                case 0b10000: // User
+                case 0b10001: // FIQ
+                case 0b10010: // IRQ
+                case 0b10011: // Supervisor
+                case 0b10111: // Abort
+                case 0b11011: // Undefined
+                case 0b11111: // System
+                    return true;
+            }
+
             return false;
         }
 
@@ -275,9 +298,9 @@ struct REG_LIST {
 };
 
 struct OPTION {
-    u8 number;
-    bool is_malformed;
-    bool is_invalid;
+    u8 number = 0;
+    bool is_malformed = false;
+    bool is_invalid = false;
 
     constexpr bool operator==(const OPTION& rhs) const {
         return ((is_invalid || is_malformed || rhs.is_invalid || rhs.is_malformed) == false);
@@ -286,17 +309,16 @@ struct OPTION {
 
 
 struct IFLAGS {
-    bool a_flag;
-    bool i_flag;
-    bool f_flag;
-    bool is_malformed;
-    bool is_invalid;
+    bool a_flag = false;
+    bool i_flag = false;
+    bool f_flag = false;
+    bool is_malformed = false;
+    bool is_invalid = false;
 
     constexpr bool operator==(const IFLAGS& rhs) const {
         return ((is_invalid || is_malformed || rhs.is_invalid || rhs.is_malformed) == false);
     }
 };
-
 
 using raw_tokens_t = std::vector<sv>;
 

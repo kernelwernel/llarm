@@ -43,8 +43,8 @@ namespace interpreter {
                 case token_enum::PSR: is_equivalent = (raw.data.psr == match.data.psr); break;
                 case token_enum::OPTION: is_equivalent = (raw.data.option == match.data.option); break;
                 case token_enum::REG_LIST: is_equivalent = (raw.data.reg_list == match.data.reg_list); break;
-                case token_enum::IMMED: is_equivalent = (raw.data.imm == match.data.imm); break;
                 case token_enum::IFLAGS: is_equivalent = (raw.data.iflags == match.data.iflags); break; 
+                case token_enum::IMMED: is_equivalent = (raw.data.imm == match.data.imm); break;
                 case token_enum::REG_LIST_START:
                 case token_enum::REG_LIST_END:
                 case token_enum::HASHTAG:
@@ -137,9 +137,11 @@ namespace interpreter {
 
 
     struct immed_settings {
+        u8 constant_num = 0;
         u8 divisor = 1;
         u8 msb = 0;
         bool is_msb_rangable = false;
+        bool has_constant_num = false;
     };
 
     struct reg_list_settings {
@@ -236,16 +238,10 @@ namespace interpreter {
     LLARM_CONSTEVAL lexeme immed(const immed_settings& settings = {}) {
         IMM imm{};
 
-        imm.number = 0;
+        imm.number = settings.constant_num;
         imm.msb = settings.msb;
         imm.divisor_constraint = settings.divisor;
-        imm.start_value = 0;
-        imm.end_value = 0;
         imm.has_msb_comparison = settings.is_msb_rangable;
-        imm.is_rotateable = false;
-        imm.is_negative = false;
-        imm.is_malformed = false;
-        imm.is_invalid = false;
 
         return { token_enum::IMMED, imm };
     }
@@ -278,20 +274,28 @@ namespace interpreter {
         return { token_enum::IMMED, imm };
     }
 
+    LLARM_CONSTEVAL lexeme immed_constant(const u8 constant) {
+        IMM imm{};
+        imm.constant = constant;
+        imm.is_constant = true;
+        return { token_enum::IMMED, imm };
+    }
+
+    LLARM_CONSTEVAL lexeme immed_modes() {
+        IMM imm{};
+        imm.is_mode_comparison = true;
+        return { token_enum::IMMED, imm };
+    }
+
     LLARM_CONSTEVAL lexeme reg_list(const reg_list_settings& settings = {}) {
         REG_LIST reg_list{};
 
         reg_list.type = settings.reg_list_type;
-        reg_list.reg_count = 0;
         reg_list.is_r15_excluded = settings.is_r15_excluded; 
         reg_list.must_have_r15 = settings.must_include_r15;
         reg_list.is_thumb_supported = settings.is_reg_list_thumb;
         reg_list.is_thumb_optional_pc = settings.is_PC_optional;
         reg_list.is_thumb_optional_lr = settings.is_LR_optional;
-        reg_list.is_malformed = false;
-        reg_list.is_invalid = false;
-        reg_list.is_empty = false;
-        reg_list.list = 0;
 
         return { token_enum::REG_LIST, reg_list };
     }
@@ -338,6 +342,11 @@ namespace interpreter {
         reg_list_settings s{};
         s.is_r15_excluded = true;
         return reg_list(s);
+    }
+
+    LLARM_CONSTEVAL lexeme iflags() {
+        IFLAGS iflags = {};
+        return { token_enum::IFLAGS, iflags };
     }
 
     LLARM_CONSTEVAL lexeme token(const token_enum t) {

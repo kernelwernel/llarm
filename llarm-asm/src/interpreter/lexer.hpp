@@ -53,9 +53,10 @@ namespace lexer {
     bool comment_check(lexeme& lexeme, const sv token);
     bool endianness_check(lexeme& lexeme, const sv token);
     bool iflags_check(lexeme& lexeme, const sv token);
-    
     void option_check(lexemes_t& lexemes, const u8 start_pos, const u8 end_pos);
-
+    // mode_imm is not present since that's solely for lexeme verification purposes, 
+    // not for lexeme analysis. It's also indistinguishable from actual immeds anyway.
+ 
     void reg_list_check(lexemes_t& lexemes, const u8 start_pos, const u8 end_pos);
     void reg_list_range(lexemes_t& rl_lexemes, const u8 start_pos, const u8 end_pos);
     void reg_list_categorize(lexemes_t& rl_lexemes, REG_LIST& reg_list, const u8 start_pos, const u8 end_pos);
