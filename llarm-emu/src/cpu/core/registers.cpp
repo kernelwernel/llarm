@@ -409,8 +409,8 @@ u32 REGISTERS::read(const id::reg reg_id) const {
         case id::reg::R5: return R5;
         case id::reg::R6: return R6;
         case id::reg::R7: return R7;
-        case id::reg::R15: return R15;
-        case id::reg::PC: return read_PC(); // R15 and PC are the same, except for 26-bit arch 
+        case id::reg::R15: return read_PC();
+        case id::reg::PC:  return read_PC();
         case id::reg::CPSR: 
             if (arch_26.is_only_26_arch()) {
                 llarm::out::error("CPSR does not exist in pure 26-bit architecture");
@@ -587,8 +587,9 @@ id::reg REGISTERS::fetch_reg_id(const u8 reg_bits) {
         default: break;
     }
 
-    llarm::out::error("Couldn't find suitable match for register identification in identifier()");
+    llarm::out::error("Couldn't find suitable match for register identification in fetch_reg_id()");
 }
+
 
 id::reg REGISTERS::fetch_reg_id(const u32 code, const u8 start, const u8 end) {
     const u8 Rd_bits = llarm::util::bit_range<u8>(code, start, end);
@@ -773,10 +774,10 @@ void REGISTERS::write_PC(const u32 address) {
 
 u32 REGISTERS::read_PC() const {
     if (arch_26.is_26_arch_address()) {
-        return (llarm::util::bit_range<u32>(R15, 2, 25)); 
+        return (llarm::util::bit_range<u32>(R15, 2, 25));
     }
 
-    return R15; 
+    return R15 + 8;
 }
 
 

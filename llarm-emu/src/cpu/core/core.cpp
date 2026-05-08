@@ -24,8 +24,9 @@ inline void CORE::arm_cycle_headless() {
 }
 
 
-inline void CORE::arm_cycle() {
+inline void CORE::arm_cycle_step() {
     continue_cycle = false;
+    current_pc = reg.force_read(id::reg::R15);
 
     const arm_fetch_struct arm_code_access = fetch.arm_fetch();
 
@@ -33,19 +34,23 @@ inline void CORE::arm_cycle() {
         return;
     }
 
+    //std::cout << "inst : " << arm_code_access.code << "\n";
     current_arm_code = arm_code_access.code;
 
     const arm_decode_struct instruction = decode.arm_decode(arm_code_access.code);
+
+    //std::cout << "inst_id : " << llarm::as::arm_id_to_string(instruction.id) << "\n";
+
     current_arm_id = instruction.id;
 
     execute.arm_execute(instruction);
 
-    while (true) {
-        if (continue_cycle == true) {
-            break;
-        }
+    while (!continue_cycle.load()) {
+        // wait till continue_cycle variable is true
     }
 
+    //std::cout << "reached end of cycle\n";
+    
     if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
     if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
 
@@ -53,8 +58,9 @@ inline void CORE::arm_cycle() {
 }
 
 
-inline void CORE::thumb_cycle() {
+inline void CORE::thumb_cycle_step() {
     continue_cycle = false;
+    current_pc = reg.force_read(id::reg::R15);
 
     const thumb_fetch_struct thumb_code_access = fetch.thumb_fetch();
 
@@ -100,6 +106,52 @@ inline void CORE::thumb_cycle_headless() {
 }
 
 
+void CORE::headless_mode() {
+    while (true) {
+        if (is_halted) {
+            if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { 
+                is_halted = false; 
+                exception.fiq(); 
+            } else if (vic.irq_pending() && !reg.read(id::cpsr::I)) { 
+                is_halted = false; 
+                exception.irq(); 
+            }
+
+            continue;
+        }
+
+        if (globals.instruction_set == id::instruction_sets::ARM) {
+            arm_cycle_headless();
+        } else {
+            thumb_cycle_headless();
+        }
+    }
+}
+
+
+void CORE::step_mode() {
+    while (true) {
+        if (is_halted) {
+            if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { 
+                is_halted = false;
+                exception.fiq();
+            } else if (vic.irq_pending() && !reg.read(id::cpsr::I)) { 
+                is_halted = false; 
+                exception.irq();
+            }
+
+            continue;
+        }
+
+        if (globals.instruction_set == id::instruction_sets::ARM) {
+            arm_cycle_step();
+        } else {
+            thumb_cycle_step();
+        }
+    }
+}
+
+
 void CORE::initialise(const bool is_headless) {
     // core reset, setup, and boot
     globals.is_little_endian = settings.is_little_endian;
@@ -118,41 +170,9 @@ void CORE::initialise(const bool is_headless) {
     }
 
     if (is_headless) {
-        while (true) {
-            if (is_halted) {
-                if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { 
-                    is_halted = false; 
-                    exception.fiq(); 
-                } else if (vic.irq_pending() && !reg.read(id::cpsr::I)) { 
-                    is_halted = false; 
-                    exception.irq(); 
-                }
-
-                continue;
-            }
-
-            if (globals.instruction_set == id::instruction_sets::ARM) {
-                arm_cycle_headless();
-            } else {
-                thumb_cycle_headless();
-            }
-        }
-
+        headless_mode();
         return;
     }
 
-    // instruction cycle
-    while (true) {
-        if (is_halted) {
-            if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { is_halted = false; exception.fiq(); }
-            else if (vic.irq_pending() && !reg.read(id::cpsr::I)) { is_halted = false; exception.irq(); }
-            continue;
-        }
-
-        if (globals.instruction_set == id::instruction_sets::ARM) {
-            arm_cycle();
-        } else {
-            thumb_cycle();
-        }
-    }
+    step_mode();
 }

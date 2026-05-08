@@ -8,6 +8,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <thread>
 
 namespace llarm::emu {
     enum reg : u8 {
@@ -76,14 +77,24 @@ namespace llarm::emu {
     struct cpu_blockstep {
         std::vector<u8> binary;
         CPU cpu;
+        std::thread cpu_thread;
 
         explicit cpu_blockstep(const std::filesystem::path &file_path)
             : binary(load_binary(file_path)), cpu(binary) {}
 
-        // starts the CPU cycle loop on a background thread;
-        // the loop pauses after each instruction until next_instruction() is called
+        cpu_blockstep(const cpu_blockstep&) = delete;
+        cpu_blockstep& operator=(const cpu_blockstep&) = delete;
+        cpu_blockstep(cpu_blockstep&&) = delete;
+        cpu_blockstep& operator=(cpu_blockstep&&) = delete;
+
+        ~cpu_blockstep() {
+            if (cpu_thread.joinable()) {
+                cpu_thread.detach();
+            }
+        }
+
         void run() {
-            cpu.run();
+            cpu_thread = std::thread([this]{ cpu.run(); });
         }
 
         bool is_thumb_mode() const {
@@ -98,12 +109,16 @@ namespace llarm::emu {
             return cpu.core.current_thumb_code;
         }
 
-        u32 read_reg(const reg id) {
-            return cpu.core.reg.read(id);
+        u32 current_pc() const {
+            return cpu.core.current_pc;
+        }
+
+        u32 read_reg(const reg id) const {
+            return cpu.core.reg.read(static_cast<id::reg>(id));
         }
 
         void write_reg(const reg id, const u32 data) {
-            cpu.core.reg.write(id, data);
+            cpu.core.reg.write(static_cast<id::reg>(id), data);
         }
 
         template <typename T>

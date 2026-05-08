@@ -23,6 +23,7 @@
 
 #include <llarm/llarm-asm.hpp>
 #include <llarm/shared/types.hpp>
+#include <atomic>
 
 struct CORE {
     // essential modules
@@ -64,16 +65,20 @@ struct CORE {
     void initialise(const bool is_headless = false);
 
     void arm_cycle_headless();
-    void arm_cycle();
+    void arm_cycle_step();
     void thumb_cycle_headless();
-    void thumb_cycle();
+    void thumb_cycle_step();
+
+    void headless_mode();
+    void step_mode();
 
     // for end-user library access purposes
     llarm::as::arm_id current_arm_id = arm_id::UNKNOWN;
     llarm::as::thumb_id current_thumb_id = thumb_id::UNKNOWN;
     u32 current_arm_code = 0;
     u16 current_thumb_code = 0;
-    bool continue_cycle = false;
+    u32 current_pc = 0;
+    std::atomic<bool> continue_cycle{false};
 
     CORE(const SETTINGS& init_settings, RAM &ram, VIC& vic, UART& uart) :
         settings(init_settings),

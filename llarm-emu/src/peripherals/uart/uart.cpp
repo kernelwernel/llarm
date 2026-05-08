@@ -153,6 +153,7 @@ void UART::write(const u32 address, const u32 value) {
                 const auto byte = static_cast<u8>(value & 0xFFU);
                 tx_fifo.push(byte);
                 std::putchar(byte);
+                tx_fifo.pop();
             }
 
             update_tx_interrupt();

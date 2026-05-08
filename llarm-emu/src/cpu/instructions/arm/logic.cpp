@@ -6,7 +6,6 @@
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
 
-#include <bit>
 
 /*
  * if ConditionPassed(cond) then
@@ -55,7 +54,7 @@ void INSTRUCTIONS::arm::logic::CLZ(const u32 code) {
     if (Rm == 0) {
         reg.write(Rd_id, 32);
     } else {
-        reg.write(Rd_id, static_cast<u32>(31 - std::bit_width(Rm) - 1));
+        reg.write(Rd_id, static_cast<u32>(31 - llarm::util::get_msb(Rm)));
     }
 }
 

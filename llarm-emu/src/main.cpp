@@ -213,7 +213,7 @@ static void run_step_mode(
 
     while (true) {
         const bool is_thumb = cpu.is_thumb_mode();
-        const u32  pc       = cpu.read_reg(reg_PC);
+        const u32 pc = cpu.current_pc();
 
         if (is_thumb) {
             const u16 code = cpu.current_thumb_code();
