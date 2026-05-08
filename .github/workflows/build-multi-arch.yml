@@ -70,6 +70,6 @@ jobs:
               apt-get update -q &&
               apt-get install -y --no-install-recommends g++ build-essential python3-pip git &&
               pip3 install cmake --break-system-packages &&
-              cmake -B build -DCMAKE_BUILD_TYPE=Release &&
-              cmake --build build --config Release
+              cmake -B build -DCMAKE_BUILD_TYPE=Debug &&
+              cmake --build build --config Debug --parallel
             "

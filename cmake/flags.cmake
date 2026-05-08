@@ -78,8 +78,6 @@ set(LINUX_RELEASE_CXX_FLAGS
     -O2
     # -flto for some reason this really fucks up in a few cases
     -g0
-    -march=native
-    -mtune=native
     # -fno-omit-frame-pointer for llvm-bolt
     #-Wshadow
     -Wno-unused-parameter # TEMPORARY
