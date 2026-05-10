@@ -89,7 +89,7 @@ struct SETTINGS {
     id::thumb_version thumb_version = id::thumb_version::NO_THUMB; // either 1 or 2, 0 if not supported
     /**/ u8 core_count = 0;
     /**/ u16 clock_speed_mhz = 0; // 0 will mean no clock speed constraints
-    /**/ u64 memsize = 0;
+    /**/ std::size_t memsize = 0;
     id::arch arch = id::arch::UNKNOWN;
     /**/ id::specific_arch specific_arch = id::specific_arch::UNKNOWN;
     id::product_family product_family = id::product_family::UNKNOWN;

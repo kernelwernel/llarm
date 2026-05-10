@@ -37,7 +37,7 @@ struct RAM {
     void reset();
 
     RAM(std::vector<u8> &data, SETTINGS& settings, VIC& vic, UART& uart)
-        : settings(settings), vic(vic), uart(uart), ram(static_cast<std::size_t>(settings.memsize), 0) {
+        : settings(settings), vic(vic), uart(uart), ram(settings.memsize, 0) {
         write(0, data);
     }
 };
