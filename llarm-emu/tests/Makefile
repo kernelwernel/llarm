@@ -1,9 +1,11 @@
+SUBDIRS := algorithms instructions
 
+.PHONY: all clean $(SUBDIRS)
 
-all: test
+all: $(SUBDIRS)
 
-test:
-	gcc -ffreestanding -nostdlib -T linker.ld -o output.bin test_1_O/test.c
+$(SUBDIRS):
+	$(MAKE) -C $@
 
-disassemble:
-	arm-none-eabi-objdump -D -b binary -marm -Mforce-thumb main.bin
+clean:
+	for d in $(SUBDIRS); do $(MAKE) -C $$d clean; done
