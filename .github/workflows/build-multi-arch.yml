@@ -68,8 +68,7 @@ jobs:
             ${{ matrix.image }} \
             bash -c "
               apt-get update -q &&
-              apt-get install -y --no-install-recommends g++ build-essential python3-pip git &&
-              pip3 install cmake --break-system-packages &&
+              apt-get install -y --no-install-recommends g++ build-essential cmake git &&
               cmake -B build -DCMAKE_BUILD_TYPE=Debug &&
               cmake --build build --config Debug --parallel
             "

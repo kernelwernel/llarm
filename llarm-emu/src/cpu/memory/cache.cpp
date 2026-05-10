@@ -56,7 +56,7 @@ void CACHE::set_parameters() {
         - cp15.read(id::cp15::R0_CACHE_DSIZE_LEN)
     ));
     DATA_CACHE_SIZE = static_cast<u32>(DATA_MULTIPLIER << (cp15.read(id::cp15::R0_CACHE_DSIZE_SIZE) + 8));
-    data_lines.assign(static_cast<size_t>(DATA_NSETS) * DATA_ASSOCIATIVITY, cache_line{});
+    data_lines.assign(DATA_NSETS * static_cast<std::size_t>(DATA_ASSOCIATIVITY), cache_line{});
 
     DATA_W = 0;
     for (u16 a = DATA_ASSOCIATIVITY - 1; a > 0; a >>= 1) { 
@@ -76,7 +76,7 @@ void CACHE::set_parameters() {
         ));
         INST_CACHE_SIZE = static_cast<u32>(INST_MULTIPLIER << (cp15.read(id::cp15::R0_CACHE_ISIZE_SIZE) + 8));
 
-        inst_lines.assign(static_cast<size_t>(INST_NSETS) * INST_ASSOCIATIVITY, cache_line{});
+        inst_lines.assign(INST_NSETS * static_cast<std::size_t>(INST_ASSOCIATIVITY), cache_line{});
 
         INST_W = 0;
         for (u16 a = INST_ASSOCIATIVITY - 1; a > 0; a >>= 1) { 
