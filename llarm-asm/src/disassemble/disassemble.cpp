@@ -324,7 +324,8 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
         case arm_id::UXTB: return generators::arm::math::UXTB(code, settings);
         case arm_id::UXTB16: return generators::arm::math::UXTB16(code, settings);
         case arm_id::UXTH: return generators::arm::math::UXTH(code, settings);
-        case arm_id::NOP: return generators::arm::misc::NOP();
+        case arm_id::NOP: return "NOP";
+        case arm_id::HALT: return "HALT";
         case arm_id::UNKNOWN: llarm::out::error("Unknown instruction encountered for disassembly");
         case arm_id::UNDEFINED: return UNDEFINED;
         break;
@@ -444,10 +445,11 @@ std::string disassemble::arm_id_to_string(const arm_id id) {
     switch (id) {
         case arm_id::UNKNOWN: return ERROR;
         case arm_id::UNDEFINED: return UNDEFINED; 
+        case arm_id::NOP: return "NOP"; 
+        case arm_id::HALT: return "HALT";
         case arm_id::ADC: return "ADC"; 
         case arm_id::ADD: return "ADD"; 
         case arm_id::AND: return "AND"; 
-        case arm_id::NOP: return "NOP"; 
         case arm_id::B: return "B"; 
         case arm_id::BL: return "BL"; 
         case arm_id::BIC: return "BIC"; 

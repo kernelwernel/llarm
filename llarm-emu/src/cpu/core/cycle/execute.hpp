@@ -16,7 +16,7 @@ struct EXECUTE {
         INSTRUCTIONS& instructions, 
         EXCEPTION& exception
     ) : instructions(instructions), 
-        exception(exception) 
+        exception(exception)
     {
 
     }

@@ -137,7 +137,6 @@ namespace internal::generators {
         }
 
         namespace misc {
-            std::string NOP();
             std::string CMNP(const u32 code, const settings& settings);
             std::string CMPP(const u32 code, const settings& settings);
             std::string TEQP(const u32 code, const settings& settings);

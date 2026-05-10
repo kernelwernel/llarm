@@ -13,6 +13,7 @@ u32 generators::arm(const IR_arm_struct& IR) {
         case arm_id::UNKNOWN: return 0;
         case arm_id::UNDEFINED:  return 0;
         case arm_id::NOP: return 0;
+        case arm_id::HALT: return 0xE7FFDEAD; // custom instruction, not a real one
         case arm_id::ADC: return data_instruction(id, operands);
         case arm_id::ADD: return data_instruction(id, operands);
         case arm_id::AND: return data_instruction(id, operands);

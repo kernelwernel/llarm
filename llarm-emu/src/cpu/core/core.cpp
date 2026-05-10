@@ -109,6 +109,10 @@ inline void CORE::thumb_cycle_headless() {
 void CORE::headless_mode() {
     while (true) {
         if (is_halted) {
+            if (is_terminated) {
+                return;
+            }
+
             if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { 
                 is_halted = false; 
                 exception.fiq(); 

@@ -20,7 +20,7 @@ _start:
     str r3, [r0] // write to UARTDR
     b 1b
 2:
-    b 2b @ halt
+    .word 0xE7FFDEAD @ halt
 
 msg:
-    .asciz  "If you can read this, the UART emulation works.\n"
+    .asciz  "If you can read this, the UART emulation worked.\n"

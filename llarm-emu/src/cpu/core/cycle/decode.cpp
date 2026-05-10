@@ -46,6 +46,7 @@ bool DECODE::is_arm_instruction_unsupported(const llarm::as::arm_id id) const {
             case arm_id::B:
             case arm_id::BL:
             case arm_id::NOP:
+            case arm_id::HALT:
             case arm_id::CMNP:
             case arm_id::CMPP:
             case arm_id::TEQP:

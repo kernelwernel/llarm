@@ -26,6 +26,7 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct& IR) {
         case arm_id::UNKNOWN: return false;
         case arm_id::UNDEFINED: return false;
         case arm_id::NOP: return false;
+        case arm_id::HALT: return false;
 
         // addressing mode 1: data processing
         case arm_id::ADC: 

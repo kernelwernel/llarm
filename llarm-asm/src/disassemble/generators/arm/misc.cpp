@@ -72,15 +72,6 @@ std::string generators::arm::misc::SWI(const u32 code, const settings& settings)
 
 
 /**
- * This isn't a real instruction documentated in the ARM docs, 
- * but i'm still adding this here for the sake of convenience
- */
-std::string generators::arm::misc::NOP() {
-    return "NOP";
-}
-
-
-/**
  * CPS<effect> <iflags> {, #<mode>}
  * CPS #<mode>
  *

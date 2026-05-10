@@ -381,6 +381,7 @@ mnemonic_struct_arm mnemonic_arm::fetch_mnemonic_args(const arm_id id, sv mnemon
         case arm_id::MRC2:
         case arm_id::BKPT:
         case arm_id::NOP: // maybe this shouldn't be here since it's a unique instruction to the project, idk
+        case arm_id::HALT: // same here
         case arm_id::PLD: 
         case arm_id::SETEND:
             args.cond_id = cond_id::NONE;

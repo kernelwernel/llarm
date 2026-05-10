@@ -852,7 +852,7 @@ arm_id ident::bin_arm::coproc_and_floats(const u32 code) {
 arm_id ident::bin_arm::arm(const u32 code) {
     // note: NOP is not handled because it's a pseudo 
     // instruction that's unique to this project. 
-    
+
     if (llarm::util::bit_range(code, 28, 31) == 0b1111) {
         const arm_id tmp = unconditional(code);
 
@@ -929,6 +929,11 @@ arm_id ident::bin_arm::arm(const u32 code) {
         case 0b011:
             if (llarm::util::bit_fetch(code, 4) == true) {
                 return pack_and_saturates(code);
+            }
+
+            // special instruction opcode, doesn't exist on real systems
+            if (code == 0xE7FFDEAD) {
+                return arm_id::HALT;
             }
 
             // load/store register offset

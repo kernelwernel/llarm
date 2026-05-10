@@ -101,6 +101,7 @@ bool validation::bin_arm::is_arm_instruction_valid(const u32 code) {
         case arm_id::UNKNOWN: return false;
         case arm_id::UNDEFINED: return false;
         case arm_id::NOP: return false;
+        case arm_id::HALT: return false;
         case arm_id::ADC: return check_shifter(code, shifter_category::DATA);
         case arm_id::ADD: return check_shifter(code, shifter_category::DATA);
         case arm_id::RSB: return check_shifter(code, shifter_category::DATA);

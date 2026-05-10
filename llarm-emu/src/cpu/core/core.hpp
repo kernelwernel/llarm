@@ -61,6 +61,7 @@ struct CORE {
 
     // internal core state variables
     bool is_halted = false;
+    bool is_terminated = false;
 
     void initialise(const bool is_headless = false);
 
@@ -102,7 +103,7 @@ struct CORE {
         fcse(coprocessor, settings),
         memory(reg, ram, mmu, mpu, fcse, arch_26, exception, settings, cache, coprocessor),
         address_mode(reg),
-        instructions(reg, address_mode, coprocessor, settings, memory, exception, vfp_reg, vfp_exception, vfp_addressing_mode),
+        instructions(reg, address_mode, coprocessor, settings, memory, exception, vfp_reg, vfp_exception, vfp_addressing_mode, is_halted, is_terminated),
         fetch(reg, memory, globals),
         decode(reg, settings),
         execute(instructions, exception)

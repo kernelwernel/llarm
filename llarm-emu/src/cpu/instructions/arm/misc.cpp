@@ -10,6 +10,12 @@ void INSTRUCTIONS::arm::misc::NOP() {
 }
 
 
+void INSTRUCTIONS::arm::misc::HALT() {
+    is_halted = true;
+    is_terminated = true;
+}
+
+
 /** TODO, this part needs to be extensively analysed (A2-9)
  * if ConditionPassed(<cond>) then
  *    case <opc> of

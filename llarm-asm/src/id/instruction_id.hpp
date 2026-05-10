@@ -7,6 +7,7 @@ namespace internal {
         UNKNOWN,
         UNDEFINED,
         NOP,
+        HALT,
 
         // ARMv1 and 26-bit architecture instructions
         ADC,

@@ -16,6 +16,8 @@ void EXECUTE::arm_execute(const arm_decode_struct &instruction) {
     switch (id) {
         case arm_id::UNKNOWN: llarm::out::dev_error("Unknown instruction attempted to be executed");
         case arm_id::UNDEFINED: exception.undefined(); return;
+        case arm_id::NOP: instructions.arm.misc.NOP(); return;
+        case arm_id::HALT: instructions.arm.misc.HALT(); return;
         case arm_id::ADC: instructions.arm.math.ADC(code); return;
         case arm_id::ADD: instructions.arm.math.ADD(code); return;
         case arm_id::RSB: instructions.arm.math.RSB(code); return;
@@ -34,7 +36,6 @@ void EXECUTE::arm_execute(const arm_decode_struct &instruction) {
         case arm_id::MVN: instructions.arm.movement.MVN(code); return;
         case arm_id::B: instructions.arm.branching.B(code); return;
         case arm_id::BL: instructions.arm.branching.BL(code); return;
-        case arm_id::NOP: instructions.arm.misc.NOP(); return;
         case arm_id::CMNP: instructions.arm.misc.PSR(code); return;
         case arm_id::CMPP: instructions.arm.misc.PSR(code); return;
         case arm_id::TEQP: instructions.arm.misc.PSR(code); return;
@@ -318,14 +319,14 @@ void EXECUTE::thumb_execute(const thumb_decode_struct &instruction) {
         case thumb_id::STRB2: instructions.thumb.store.STRB2(code); return;
         case thumb_id::STRH1: instructions.thumb.store.STRH1(code); return;
         case thumb_id::STRH2: instructions.thumb.store.STRH2(code); return;
-        case internal::thumb_id::CPS: // TODO
-        case internal::thumb_id::REV16: // TODO
-        case internal::thumb_id::REVSH: // TODO
-        case internal::thumb_id::SETEND: // TODO
-        case internal::thumb_id::SXTB: // TODO
-        case internal::thumb_id::SXTH: // TODO
-        case internal::thumb_id::UXTB: // TODO
-        case internal::thumb_id::UXTH: // TODO
+        case thumb_id::CPS: // TODO
+        case thumb_id::REV16: // TODO
+        case thumb_id::REVSH: // TODO
+        case thumb_id::SETEND: // TODO
+        case thumb_id::SXTB: // TODO
+        case thumb_id::SXTH: // TODO
+        case thumb_id::UXTB: // TODO
+        case thumb_id::UXTH: // TODO
                 break;
         }
 }

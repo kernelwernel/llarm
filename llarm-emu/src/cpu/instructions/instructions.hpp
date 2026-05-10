@@ -16,6 +16,8 @@ struct INSTRUCTIONS {
     COPROCESSOR& coprocessor;
     SETTINGS& settings;
     MEMORY& memory;
+    bool& is_halted;
+    bool& is_terminated;
 
     struct arm {
         struct math {
@@ -123,15 +125,24 @@ struct INSTRUCTIONS {
             REGISTERS& reg;
             ADDRESSING_MODE& address_mode;
             COPROCESSOR& coprocessor;
+            bool& is_halted;
+            bool& is_terminated;
 
             misc(
                 REGISTERS& reg, 
-                
                 ADDRESSING_MODE& address_mode,
-                COPROCESSOR& coprocessor
-            ) : reg(reg), address_mode(address_mode), coprocessor(coprocessor) {}
+                COPROCESSOR& coprocessor,
+                bool& is_halted,
+                bool& is_terminated
+            ) : reg(reg), 
+                address_mode(address_mode), 
+                coprocessor(coprocessor),
+                is_halted(is_halted),
+                is_terminated(is_terminated)
+            {}
 
             void NOP();
+            void HALT();
             void PSR(const u32 code);
             void SWI();
             void BKPT();
@@ -327,14 +338,16 @@ struct INSTRUCTIONS {
             EXCEPTION& exception,
             VFP_REG& vfp_reg,
             VFP_EXCEPTION& vfp_exception,
-            VFP_ADDRESS_MODE& vfp_addressing_mode
+            VFP_ADDRESS_MODE& vfp_addressing_mode,
+            bool& is_halted,
+            bool& is_terminated
         ) : math(reg, address_mode),
             logic(reg, address_mode),
             movement(reg, address_mode),
             multiply(reg),
             branching(reg),
             coproc(reg, address_mode, coprocessor),
-            misc(reg, address_mode, coprocessor),
+            misc(reg, address_mode, coprocessor, is_halted, is_terminated),
             load(reg, memory, address_mode, settings),
             store(reg, memory, address_mode),
             dsp(reg, memory, address_mode, exception),
@@ -503,20 +516,23 @@ struct INSTRUCTIONS {
     INSTRUCTIONS(
         REGISTERS& reg, 
         ADDRESSING_MODE& address_mode,
-        
         COPROCESSOR& coprocessor,
         SETTINGS& settings,
         MEMORY& memory,
         EXCEPTION& exception,
         VFP_REG& vfp_reg,
         VFP_EXCEPTION& vfp_exception,
-        VFP_ADDRESS_MODE& vfp_addressing_mode
+        VFP_ADDRESS_MODE& vfp_addressing_mode,
+        bool& is_halted,
+        bool& is_terminated
     ) : reg(reg),
         address_mode(address_mode),
         coprocessor(coprocessor),
         settings(settings),
         memory(memory),
-        arm(reg, address_mode, coprocessor, memory, settings, exception, vfp_reg, vfp_exception, vfp_addressing_mode),
+        is_halted(is_halted),
+        is_terminated(is_terminated),
+        arm(reg, address_mode, coprocessor, memory, settings, exception, vfp_reg, vfp_exception, vfp_addressing_mode, is_halted, is_terminated),
         thumb(reg, settings, memory)
     {
 
