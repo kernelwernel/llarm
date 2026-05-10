@@ -68,7 +68,7 @@ jobs:
             ${{ matrix.image }} \
             bash -c "
               apt-get update -q &&
-              apt-get install -y --no-install-recommends g++ build-essential cmake git &&
+              apt-get install -y --no-install-recommends g++ build-essential cmake git ca-certificates &&
               cmake -B build -DCMAKE_BUILD_TYPE=Debug &&
               cmake --build build --config Debug --parallel
             "
