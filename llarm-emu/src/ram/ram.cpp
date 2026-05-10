@@ -11,7 +11,7 @@ void RAM::write(const u32 address, std::vector<u8> &data) {
         llarm::out::dev_error("Data exceeds RAM capacity (std::vector)");
     }
 
-    std::move(data.cbegin(), data.cend(), ram.begin() + address);
+    std::move(data.cbegin(), data.cend(), ram.begin() + static_cast<std::ptrdiff_t>(address));
 }
 
 
@@ -60,7 +60,7 @@ void RAM::write(const u32 address, const u64 value, const u8 access_size) {
 
 
 std::vector<u8> RAM::vector_read(const u32 start, const u32 end) const {
-    return {ram.cbegin() + start, ram.cbegin() + end};
+    return {ram.cbegin() + static_cast<std::ptrdiff_t>(start), ram.cbegin() + static_cast<std::ptrdiff_t>(end)};
 }
 
 

@@ -17,15 +17,15 @@ struct RAM {
 
     std::vector<u8> ram;
 
-    void write(const u32 address, std::vector<u8> &data);
+    void write(const u32 address, std::vector<u8>& data);
 
     template <std::size_t N>
-    void write(const u32 address, std::array<u8, N> &data) {
+    void write(const u32 address, std::array<u8, N>& data) {
         if (address + N > ram.size()) {
             llarm::out::dev_error("Data exceeds RAM capacity (std::array)");
         }
 
-        std::move(data.cbegin(), data.cend(), ram.begin() + address);
+        std::move(data.cbegin(), data.cend(), ram.begin() + static_cast<std::ptrdiff_t>(address));
     }
 
     void write(const u32 address, const u64 value, const u8 access_size);
@@ -37,7 +37,7 @@ struct RAM {
     void reset();
 
     RAM(std::vector<u8> &data, SETTINGS& settings, VIC& vic, UART& uart)
-        : settings(settings), vic(vic), uart(uart), ram(settings.memsize, 0) {
+        : settings(settings), vic(vic), uart(uart), ram(static_cast<std::size_t>(settings.memsize), 0) {
         write(0, data);
     }
 };

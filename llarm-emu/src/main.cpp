@@ -30,6 +30,7 @@ enum arg_enum : u8 {
     REGS,
     REG,
     MEM,
+    VERBOSE,
     END
 };
 // NOLINTEND(cppcoreguidelines-use-enum-class)
@@ -50,6 +51,7 @@ Options:
     | --regs          print all registers at each step or after run
     | --reg <name>    print a specific register (e.g. R0, SP, PC, CPSR)
     | --mem <addr>    read physical memory (e.g. 0x1000 or 0x1000:u8)
+    | --verbose       print diagnostic info (e.g. loaded binary path)
 
  (no mode flag)         defaults to --run
 
@@ -271,7 +273,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    static constexpr std::array<std::pair<const char*, arg_enum>, 15> table {{
+    static constexpr std::array<std::pair<const char*, arg_enum>, 16> table {{
         { "-h",      HELP    },
         { "--help",  HELP    },
         { "-v",      VERSION },
@@ -287,6 +289,7 @@ int main(int argc, char* argv[]) {
         { "--regs",  REGS    },
         { "--reg",   REG     },
         { "--mem",   MEM     },
+        { "--verbose", VERBOSE },
     }};
 
     std::string binary_path;
@@ -380,7 +383,9 @@ int main(int argc, char* argv[]) {
     }
 
     const std::size_t binary_size = std::filesystem::file_size(binary_path);
-    std::printf("llarm-emu: loaded \"%s\" (%zu bytes)\n", binary_path.c_str(), binary_size);
+    if (arg_bitset.test(VERBOSE)) {
+        std::printf("llarm-emu: loaded \"%s\" (%zu bytes)\n", binary_path.c_str(), binary_size);
+    }
 
     // step mode
     if (arg_bitset.test(STEP)) {
