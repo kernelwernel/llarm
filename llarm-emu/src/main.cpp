@@ -382,9 +382,9 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    const std::size_t binary_size = std::filesystem::file_size(binary_path);
+    const std::uintmax_t binary_size = std::filesystem::file_size(binary_path);
     if (arg_bitset.test(VERBOSE)) {
-        std::printf("llarm-emu: loaded \"%s\" (%zu bytes)\n", binary_path.c_str(), binary_size);
+        std::printf("llarm-emu: loaded \"%s\" (%" PRIuMAX " bytes)\n", binary_path.c_str(), binary_size);
     }
 
     // step mode
