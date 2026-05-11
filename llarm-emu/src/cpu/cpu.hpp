@@ -4,6 +4,7 @@
 #include "../ram/ram.hpp"
 #include "../vic/vic.hpp"
 #include "../peripherals/uart/uart.hpp"
+#include "../peripherals/timer/timer.hpp"
 #include "core/core.hpp"
 
 #include <llarm/llarm-asm.hpp>
@@ -13,6 +14,7 @@ struct CPU {
     SETTINGS settings;
     VIC vic;
     UART uart;
+    SP804 timer;
     RAM ram;
     CORE core;
 

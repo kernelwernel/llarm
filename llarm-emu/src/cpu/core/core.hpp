@@ -5,6 +5,7 @@
 #include "exception.hpp"
 #include "../../vic/vic.hpp"
 #include "../../peripherals/uart/uart.hpp"
+#include "../../peripherals/timer/timer.hpp"
 #include "../memory/memory.hpp"
 #include "../memory/cache.hpp"
 #include "../memory/mmu.hpp"
@@ -33,16 +34,19 @@ struct CORE {
     CP15 cp15;
     VFP_REG vfp_reg;
     VFP_EXCEPTION vfp_exception;
-    RAM ram;
     CACHE cache;
     COPROCESSOR coprocessor;
     ARCH_26 arch_26;
     REGISTERS reg;
     VFP_ADDRESS_MODE vfp_addressing_mode;
     EXCEPTION exception;
-    VIC vic;
-    UART uart;
 
+    // CPU/SoC modules
+    VIC& vic;
+    UART& uart;
+    SP804& timer;
+    RAM& ram;
+    
     // memory modules
     ALIGNMENT alignment;
     MMU mmu;
@@ -81,7 +85,7 @@ struct CORE {
     u32 current_pc = 0;
     std::atomic<bool> continue_cycle{false};
 
-    CORE(const SETTINGS& init_settings, RAM &ram, VIC& vic, UART& uart) :
+    CORE(const SETTINGS& init_settings, RAM &ram, VIC& vic, UART& uart, SP804& timer) :
         settings(init_settings),
         globals(),
         tlb(settings),
@@ -97,6 +101,7 @@ struct CORE {
         exception(reg, coprocessor),
         vic(vic),
         uart(uart),
+        timer(timer),
         alignment(coprocessor, settings),
         mmu(globals, ram, alignment, coprocessor, settings, tlb, cache),
         mpu(globals, coprocessor, settings, ram, fcse, cache),

@@ -58,6 +58,11 @@ run_test "uart: basic TX output" \
     "uart_test.bin" \
     "If you can read this, the UART emulation worked."
 
+run_test "timer: SP804 periodic IRQ" \
+    "peripherals/timer" \
+    "timer_test.bin" \
+    "Timer IRQ fired."
+
 echo ""
 echo "Results: ${PASS} passed, ${FAIL} failed"
 [ "$FAIL" -eq 0 ]

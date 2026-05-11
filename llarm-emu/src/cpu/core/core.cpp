@@ -17,6 +17,14 @@ inline void CORE::arm_cycle_headless() {
 
     execute.arm_execute(instruction);
 
+    timer.tick();
+
+    if (timer.irq_pending()) { 
+        vic.raise_irq(settings.timer_irq_source);
+    } else { 
+        vic.clear_irq(settings.timer_irq_source);
+    }
+     
     if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
     if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
 
@@ -50,7 +58,15 @@ inline void CORE::arm_cycle_step() {
     }
 
     //std::cout << "reached end of cycle\n";
-    
+
+    timer.tick();
+
+    if (timer.irq_pending()) { 
+        vic.raise_irq(settings.timer_irq_source);
+    } else { 
+        vic.clear_irq(settings.timer_irq_source);
+    }
+     
     if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
     if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
 
@@ -81,6 +97,14 @@ inline void CORE::thumb_cycle_step() {
         }
     }
 
+    timer.tick();
+
+    if (timer.irq_pending()) { 
+        vic.raise_irq(settings.timer_irq_source);
+    } else { 
+        vic.clear_irq(settings.timer_irq_source);
+    }
+
     if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
     if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
 
@@ -99,6 +123,14 @@ inline void CORE::thumb_cycle_headless() {
 
     execute.thumb_execute(instruction);
 
+    timer.tick();
+
+    if (timer.irq_pending()) { 
+        vic.raise_irq(settings.timer_irq_source); 
+    } else { 
+        vic.clear_irq(settings.timer_irq_source); 
+    }
+
     if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
     if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
 
@@ -113,12 +145,20 @@ void CORE::headless_mode() {
                 return;
             }
 
-            if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { 
-                is_halted = false; 
-                exception.fiq(); 
-            } else if (vic.irq_pending() && !reg.read(id::cpsr::I)) { 
-                is_halted = false; 
-                exception.irq(); 
+            timer.tick();
+
+            if (timer.irq_pending()) {
+                vic.raise_irq(settings.timer_irq_source);
+            } else {
+                vic.clear_irq(settings.timer_irq_source);
+            }
+
+            if (vic.fiq_pending() && !reg.read(id::cpsr::F)) {
+                is_halted = false;
+                exception.fiq();
+            } else if (vic.irq_pending() && !reg.read(id::cpsr::I)) {
+                is_halted = false;
+                exception.irq();
             }
 
             continue;
@@ -136,11 +176,19 @@ void CORE::headless_mode() {
 void CORE::step_mode() {
     while (true) {
         if (is_halted) {
-            if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { 
+            timer.tick();
+
+            if (timer.irq_pending()) {
+                vic.raise_irq(settings.timer_irq_source);
+            } else {
+                vic.clear_irq(settings.timer_irq_source);
+            }
+
+            if (vic.fiq_pending() && !reg.read(id::cpsr::F)) {
                 is_halted = false;
                 exception.fiq();
-            } else if (vic.irq_pending() && !reg.read(id::cpsr::I)) { 
-                is_halted = false; 
+            } else if (vic.irq_pending() && !reg.read(id::cpsr::I)) {
+                is_halted = false;
                 exception.irq();
             }
 

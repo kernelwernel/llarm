@@ -60,6 +60,7 @@ struct SETTINGS {
     bool fresh_system = false;
     bool has_vic = false;
     bool has_uart = false;
+    bool has_timer = false;
 
     // /**/ = "not sure what to do with this, todo"
 
@@ -81,8 +82,10 @@ struct SETTINGS {
     /**/ id::tlb_type tlb_type = id::tlb_type::UNKNOWN;
 
     id::vic_type vic_type = id::vic_type::NONE;
-    /**/ u32 vic_base = 0;  // PL190/PL192: register base address
-    /**/ u32 uart_base = 0; // PL011: register base address
+    /**/ u32 vic_base = 0;   // PL190/PL192: register base address
+    /**/ u32 uart_base = 0;  // PL011: register base address
+    /**/ u32 timer_base = 0; // SP804: register base address
+    /**/ u8 timer_irq_source = 0; // VIC source line for TIMINTC
 
     /**/ id::vfp_version vfp_version = id::vfp_version::UNKNOWN;
     /**/ id::vfp_format vfp_format = id::vfp_format::NON_STANDARD;
@@ -258,6 +261,9 @@ constexpr SETTINGS default_settings() {
     tmp.vic_type = id::vic_type::PL190;
     tmp.has_uart = true;
     tmp.uart_base = 0x10000000;
+    tmp.has_timer = true;
+    tmp.timer_base = 0x101E2000; // VersatilePB SP804 Timer0/1
+    tmp.timer_irq_source = 4;    // VersatilePB VIC source 4
 
     tmp.sanitize();
 

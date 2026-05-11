@@ -2,6 +2,7 @@
 
 #include "../vic/vic.hpp"
 #include "../peripherals/uart/uart.hpp"
+#include "../peripherals/timer/timer.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/out.hpp>
@@ -14,6 +15,7 @@ struct RAM {
     SETTINGS& settings;
     VIC& vic;
     UART& uart;
+    SP804& timer;
 
     std::vector<u8> ram;
 
@@ -36,8 +38,8 @@ struct RAM {
 
     void reset();
 
-    RAM(std::vector<u8> &data, SETTINGS& settings, VIC& vic, UART& uart)
-        : settings(settings), vic(vic), uart(uart), ram(settings.memsize, 0) {
+    RAM(std::vector<u8> &data, SETTINGS& settings, VIC& vic, UART& uart, SP804& timer)
+        : settings(settings), vic(vic), uart(uart), timer(timer), ram(settings.memsize, 0) {
         write(0, data);
     }
 };
