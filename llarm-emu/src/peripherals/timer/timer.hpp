@@ -86,7 +86,7 @@ struct timer_channel {
     u32 prescaler_count = 0;
 };
 
-struct SP804 {
+struct TIMER {
     SETTINGS& settings;
     u32 base;
 
@@ -99,7 +99,7 @@ struct SP804 {
     // advance both timer counters by one effective clock tick
     void tick();
 
-    SP804(SETTINGS& settings, const u32 base)
+    TIMER(SETTINGS& settings, const u32 base)
         : settings(settings), base(base) {}
 
     timer_channel timer1;

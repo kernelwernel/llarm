@@ -79,8 +79,11 @@ namespace llarm::emu {
         CPU cpu;
         std::thread cpu_thread;
 
-        explicit cpu_blockstep(const std::filesystem::path &file_path)
-            : binary(load_binary(file_path)), cpu(binary) {}
+        explicit cpu_blockstep(
+            const std::filesystem::path &kernel_path,
+            const SETTINGS &settings = default_settings()
+        ) : binary(load_binary(kernel_path)),
+            cpu(binary, settings) {}
 
         cpu_blockstep(const cpu_blockstep&) = delete;
         cpu_blockstep& operator=(const cpu_blockstep&) = delete;
@@ -149,13 +152,14 @@ namespace llarm::emu {
     struct cpu_headless {
         static constexpr bool HEADLESS = true;
 
-    
         std::vector<u8> binary;
         CPU cpu;
 
-    
-        explicit cpu_headless(const std::filesystem::path &file_path)
-            : binary(load_binary(file_path)), cpu(binary) {}
+        explicit cpu_headless(
+            const std::filesystem::path &kernel_path,
+            const SETTINGS &settings = default_settings()
+        ) : binary(load_binary(kernel_path)),
+            cpu(binary, settings) {}
 
         void run() {
             cpu.run(HEADLESS);

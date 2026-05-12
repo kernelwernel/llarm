@@ -117,17 +117,17 @@ void timer_channel::tick() {
 }
 
 
-bool SP804::contains(const u32 address) const {
+bool TIMER::contains(const u32 address) const {
 	return (address >= base) && (address <= (base + SP804_RANGE_ADDR));
 }
 
 
-bool SP804::irq_pending() const {
+bool TIMER::irq_pending() const {
 	return timer1.irq_pending() || timer2.irq_pending();
 }
 
 
-u32 SP804::read(const u32 address) const {
+u32 TIMER::read(const u32 address) const {
 	const u32 offset = address - base;
 
 	if (offset <= OFFSET_TIMER1BGLOAD) {
@@ -152,7 +152,7 @@ u32 SP804::read(const u32 address) const {
 }
 
 
-void SP804::write(const u32 address, const u32 value) {
+void TIMER::write(const u32 address, const u32 value) {
 	const u32 offset = address - base;
 
 	if (offset <= OFFSET_TIMER1BGLOAD) {
@@ -169,7 +169,7 @@ void SP804::write(const u32 address, const u32 value) {
 }
 
 
-void SP804::tick() {
+void TIMER::tick() {
 	timer1.tick();
 	timer2.tick();
 }

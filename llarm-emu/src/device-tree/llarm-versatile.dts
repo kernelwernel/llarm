@@ -1,0 +1,69 @@
+/dts-v1/;
+
+/ {
+	model = "LLARM Virtual Board";
+	compatible = "llarm,virtual-board";
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	chosen {
+		bootargs = "console=ttyAMA0 earlyprintk";
+		stdout-path = &uart0;
+	};
+
+	memory@0 {
+		device_type = "memory";
+		reg = <0x00000000 0x08000000>;  /* 128 MB */
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,arm7tdmi";
+			reg = <0>;
+		};
+	};
+
+	intc: interrupt-controller@fffff000 {
+		compatible = "arm,pl190-vic";
+		interrupt-controller;
+		#interrupt-cells = <1>;
+		reg = <0xFFFFF000 0x1000>;
+	};
+
+	apb_pclk: clock-apb {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <24000000>;
+		clock-output-names = "apb_pclk";
+	};
+
+	timclk: clock-timer {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-frequency = <1000000>;
+		clock-output-names = "timclk";
+	};
+
+	uart0: serial@10000000 {
+		compatible = "arm,pl011", "arm,primecell";
+		arm,primecell-periphid = <0x00041011>;
+		reg = <0x10000000 0x1000>;
+		interrupts = <12>;
+		interrupt-parent = <&intc>;
+		clocks = <&apb_pclk>, <&apb_pclk>;
+		clock-names = "uartclk", "apb_pclk";
+	};
+
+	timer@101e2000 {
+		compatible = "arm,sp804", "arm,primecell";
+		reg = <0x101E2000 0x1000>;
+		interrupts = <4>;
+		interrupt-parent = <&intc>;
+		clocks = <&timclk>, <&apb_pclk>;
+		clock-names = "timclk", "apb_pclk";
+	};
+};

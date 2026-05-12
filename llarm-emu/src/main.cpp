@@ -31,6 +31,7 @@ enum arg_enum : u8 {
     REG,
     MEM,
     VERBOSE,
+    LINUX,
     END
 };
 // NOLINTEND(cppcoreguidelines-use-enum-class)
@@ -52,6 +53,7 @@ Options:
     | --reg <name>    print a specific register (e.g. R0, SP, PC, CPSR)
     | --mem <addr>    read physical memory (e.g. 0x1000 or 0x1000:u8)
     | --verbose       print diagnostic info (e.g. loaded binary path)
+    | --linux         boot as Linux kernel (sets up SVC mode, passes DTB via r2)
 
  (no mode flag)         defaults to --run
 
@@ -273,7 +275,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    static constexpr std::array<std::pair<const char*, arg_enum>, 16> table {{
+    static constexpr std::array<std::pair<const char*, arg_enum>, 17> table {{
         { "-h",      HELP    },
         { "--help",  HELP    },
         { "-v",      VERSION },
@@ -290,9 +292,11 @@ int main(int argc, char* argv[]) {
         { "--reg",   REG     },
         { "--mem",   MEM     },
         { "--verbose", VERBOSE },
+        { "--linux",   LINUX   },
     }};
 
     std::string binary_path;
+
     std::string reg_arg;
     std::string mem_arg;
     std::string potential_null_arg;
@@ -387,15 +391,17 @@ int main(int argc, char* argv[]) {
         std::printf("llarm-emu: loaded \"%s\" (%" PRIuMAX " bytes)\n", binary_path.c_str(), binary_size);
     }
 
+    const SETTINGS run_settings = arg_bitset.test(LINUX) ? linux_settings() : default_settings();
+
     // step mode
     if (arg_bitset.test(STEP)) {
-        llarm::emu::cpu_blockstep cpu(binary_path);
+        llarm::emu::cpu_blockstep cpu(binary_path, run_settings);
         run_step_mode(cpu, arg_bitset.test(REGS), reg_arg, mem_req);
         return 0;
     }
 
     // headless run (default)
-    llarm::emu::cpu_headless cpu(binary_path);
+    llarm::emu::cpu_headless cpu(binary_path, run_settings);
     cpu.run();
 
     return 0;

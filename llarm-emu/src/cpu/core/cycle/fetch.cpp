@@ -14,7 +14,7 @@ FETCH::FETCH(
 
 
 arm_fetch_struct FETCH::arm_fetch() {
-    mem_read_struct access = memory.read(reg.force_read(id::reg::R15), 4, id::access_type::INSTRUCTION_FETCH);
+    const mem_read_struct access = memory.read(reg.force_read(id::reg::R15), 4, id::access_type::INSTRUCTION_FETCH);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);
@@ -32,7 +32,7 @@ arm_fetch_struct FETCH::arm_fetch() {
 
 
 thumb_fetch_struct FETCH::thumb_fetch() {
-    mem_read_struct access = memory.read(reg.force_read(id::reg::R15), 2, id::access_type::INSTRUCTION_FETCH);
+    const mem_read_struct access = memory.read(reg.force_read(id::reg::R15), 2, id::access_type::INSTRUCTION_FETCH);
 
     if (access.has_failed) {
         memory.manage_abort(access.abort_code);

@@ -61,6 +61,10 @@ struct SETTINGS {
     bool has_vic = false;
     bool has_uart = false;
     bool has_timer = false;
+    bool linux_boot = false;
+
+    u32 dtb_load_addr = 0;
+    u32 machine_type = 0;
 
     // /**/ = "not sure what to do with this, todo"
 
@@ -266,6 +270,19 @@ constexpr SETTINGS default_settings() {
     tmp.timer_irq_source = 4;    // VersatilePB VIC source 4
 
     tmp.sanitize();
+
+    return tmp;
+}
+
+
+constexpr SETTINGS linux_settings() {
+    SETTINGS tmp = default_settings();
+
+    tmp.memsize       = 128UL * 1024 * 1024;  // 128 MB
+    tmp.fresh_system  = true;
+    tmp.linux_boot    = true;
+    tmp.dtb_load_addr = 0x01000000U;  // 16 MB into RAM
+    tmp.machine_type  = 0xFFFFFFFFU;  // generic; override at runtime if needed
 
     return tmp;
 }

@@ -44,7 +44,7 @@ struct CORE {
     // CPU/SoC modules
     VIC& vic;
     UART& uart;
-    SP804& timer;
+    TIMER& timer;
     RAM& ram;
     
     // memory modules
@@ -85,7 +85,7 @@ struct CORE {
     u32 current_pc = 0;
     std::atomic<bool> continue_cycle{false};
 
-    CORE(const SETTINGS& init_settings, RAM &ram, VIC& vic, UART& uart, SP804& timer) :
+    CORE(const SETTINGS& init_settings, RAM &ram, VIC& vic, UART& uart, TIMER& timer) :
         settings(init_settings),
         globals(),
         tlb(settings),

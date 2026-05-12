@@ -205,21 +205,29 @@ void CORE::step_mode() {
 
 
 void CORE::initialise(const bool is_headless) {
-    // core reset, setup, and boot
     globals.is_little_endian = settings.is_little_endian;
     reg.reset();
-    coprocessor.force_write(id::cp15::R1_M, false); // disable MMU/MPU
-    coprocessor.force_write(id::cp15::R1_P, true); // set to 32-bit mode (maybe temporary idk)
-    coprocessor.force_write(id::cp15::R1_D, true); // set to 32-bit mode (maybe temporary idk)
-    // reg.switch_mode(id::mode::SUPERVISOR); only enable for system mode
-    reg.switch_mode(id::mode::USER); // only for user programs, temporary
-    //reg.write(id::cpsr::T, 1); // switch to thumb  // TODO: double check if it actually starts in thumb mode
-    reg.write(id::cpsr::T, 0); // start in ARM mode, temporary
-    memory.reset();
+    coprocessor.force_write(id::cp15::R1_M, false);
+    coprocessor.force_write(id::cp15::R1_P, true);
+    coprocessor.force_write(id::cp15::R1_D, true);
 
-    if (!settings.fresh_system) {
-        reg.write(id::reg::SP, util::get_kb(16));
+    if (settings.linux_boot) {
+        reg.switch_mode(id::mode::SUPERVISOR);
+        reg.write(id::cpsr::I, 1);
+        reg.write(id::cpsr::F, 1);
+        reg.write(id::cpsr::T, 0);
+        reg.write(id::reg::R0, 0);
+        reg.write(id::reg::R1, settings.machine_type);
+        reg.write(id::reg::R2, settings.dtb_load_addr);
+    } else {
+        reg.switch_mode(id::mode::USER);
+        reg.write(id::cpsr::T, 0);
+        if (!settings.fresh_system) {
+            reg.write(id::reg::SP, util::get_kb(16));
+        }
     }
+
+    memory.reset();
 
     if (is_headless) {
         headless_mode();

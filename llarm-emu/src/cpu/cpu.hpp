@@ -14,11 +14,11 @@ struct CPU {
     SETTINGS settings;
     VIC vic;
     UART uart;
-    SP804 timer;
+    TIMER timer;
     RAM ram;
     CORE core;
 
-    CPU(std::vector<u8> &binary);
+    CPU(std::vector<u8> &binary, const SETTINGS &init_settings = default_settings());
 
     void run(const bool is_headless = false);
 };
