@@ -941,7 +941,7 @@ arm_id ident::bin_arm::arm(const u32 code) {
         
         // complete
         case 0b100: {
-            if (llarm::util::bit_range(code, 31, 28) == 0b1111) {
+            if (llarm::util::bit_range(code, 28, 31) == 0b1111) {
                 return arm_id::UNDEFINED;
             }
 
@@ -992,7 +992,7 @@ arm_id ident::bin_arm::arm(const u32 code) {
         // complete
         case 0b111: {
             if (llarm::util::bit_fetch(code, 24) == 1) {
-                if (llarm::util::bit_range(code, 31, 28) == 0b1111) {
+                if (llarm::util::bit_range(code, 28, 31) == 0b1111) {
                     return arm_id::UNDEFINED;
                 }
 

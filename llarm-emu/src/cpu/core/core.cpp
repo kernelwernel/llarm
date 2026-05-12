@@ -218,7 +218,8 @@ void CORE::initialise(const bool is_headless) {
         reg.write(id::cpsr::T, 0);
         reg.write(id::reg::R0, 0);
         reg.write(id::reg::R1, settings.machine_type);
-        reg.write(id::reg::R2, settings.dtb_load_addr);
+        reg.write(id::reg::R2, settings.dtb_load_address);
+        reg.force_write(id::reg::R15, settings.binary_load_address);
     } else {
         reg.switch_mode(id::mode::USER);
         reg.write(id::cpsr::T, 0);

@@ -3,7 +3,7 @@
 #include "../settings.hpp"
 #include "../ram/ram.hpp"
 #include "core/core.hpp"
-#include "src/device-tree/dtb.hpp"
+#include "../device-tree/dtb.hpp"
 
 #include <llarm/llarm-asm.hpp>
 #include <llarm/shared/types.hpp>
@@ -17,8 +17,8 @@ CPU::CPU(std::vector<u8> &binary, const SETTINGS &init_settings) :
     ram(binary, settings, vic, uart, timer),
     core(settings, ram, vic, uart, timer)
 {
-    if (settings.linux_boot && settings.dtb_load_addr != 0) {
-        DTB{}.load(ram, settings.dtb_load_addr);
+    if (settings.linux_boot && settings.dtb_load_address != 0) {
+        DTB{}.load(ram, settings.dtb_load_address);
     }
 }
 

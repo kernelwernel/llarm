@@ -10,7 +10,7 @@ namespace llarm::util {
     template <typename T = u32, typename M>
     T bit_range(const M input, const u8 start, const u8 end) {
         if (start > end) [[unlikely]] {
-            llarm::out::dev_error("Invalid range in llarm::util::bit_range function");
+            llarm::out::dev_error("Invalid range in llarm::util::bit_range (start=", static_cast<u32>(start), ", end=", static_cast<u32>(end), ")");
         }
 
         const M mask = static_cast<M>((static_cast<u64>(1) << (end - start + 1)) - 1);

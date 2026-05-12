@@ -63,8 +63,9 @@ struct SETTINGS {
     bool has_timer = false;
     bool linux_boot = false;
 
-    u32 dtb_load_addr = 0;
+    u32 dtb_load_address = 0;
     u32 machine_type = 0;
+    u32 binary_load_address = 0;
 
     // /**/ = "not sure what to do with this, todo"
 
@@ -278,11 +279,17 @@ constexpr SETTINGS default_settings() {
 constexpr SETTINGS linux_settings() {
     SETTINGS tmp = default_settings();
 
-    tmp.memsize       = 128UL * 1024 * 1024;  // 128 MB
-    tmp.fresh_system  = true;
-    tmp.linux_boot    = true;
-    tmp.dtb_load_addr = 0x01000000U;  // 16 MB into RAM
-    tmp.machine_type  = 0xFFFFFFFFU;  // generic; override at runtime if needed
+    tmp.memsize = 128UL * 1024 * 1024; // 128Mb
+    tmp.fresh_system = true;
+    tmp.linux_boot = true;
+    tmp.dtb_load_address = 0x01000000U;
+    tmp.machine_type = 0x183U; // MACH_TYPE_VERSATILE_PB
+    tmp.binary_load_address = 0x00010000U; // standard ARM Linux load address
+    tmp.arch = id::arch::ARMv5;
+    tmp.specific_arch = id::specific_arch::ARMv5TEJ;
+    tmp.product_family = id::product_family::ARM9E;
+    tmp.processor = id::processor::ARM926EJ_S;
+    tmp.ppn = 0x9; // ARM926EJ-S PPN upper nibble (full PPN = 0x926)
 
     return tmp;
 }

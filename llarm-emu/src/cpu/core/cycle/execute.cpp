@@ -240,6 +240,7 @@ void EXECUTE::arm_execute(const arm_decode_struct &instruction) {
         case arm_id::UXTB: // TODO
         case arm_id::UXTB16: // TODO
         case arm_id::UXTH: // TODO
+            llarm::out::warning(llarm::as::arm_id_to_string(id), " is unimplemented, skipped");
             break;
     }
 }

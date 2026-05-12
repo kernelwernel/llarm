@@ -40,6 +40,6 @@ struct RAM {
 
     RAM(std::vector<u8> &data, SETTINGS& settings, VIC& vic, UART& uart, TIMER& timer)
         : settings(settings), vic(vic), uart(uart), timer(timer), ram(settings.memsize, 0) {
-        write(0, data);
+        write(settings.binary_load_address, data);
     }
 };

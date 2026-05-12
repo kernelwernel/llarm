@@ -1217,7 +1217,7 @@ void CP15::setup_R0_processor_id() {
 
             // ppn
             if (upper_ppn == 0x7 || upper_ppn == 0x0) {
-                llarm::out::error("PPN upper 4 bits must be 0x7 for post-ARM7 family");
+                llarm::out::error("PPN upper 4 bits must not be 0x7 or 0x0 for post-ARM7 family");
             }
         }
 

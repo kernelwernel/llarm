@@ -54,16 +54,17 @@ namespace llarm::out {
     }
 
 
-    inline void dev_warning(const char* error) {
+    template <typename... Args>
+    static void dev_warning(const Args&... message) {
         std::cout << bold << "[" << red << "DEV WARNING" << ansiexit << bold << "]" << ansiexit << " ";
-        std::cout << error;
+        ((std::cout << message), ...);
         std::putchar('\n');
     }
 
-
-    [[noreturn]] inline void dev_error(const char* error) {
+    template <typename... Args>
+    [[noreturn]] static void dev_error(const Args&... message) {
         std::cout << bold << "[" << red << "DEV ERROR" << ansiexit << bold << "]" << ansiexit << " ";
-        std::cout << error;
+        ((std::cout << message), ...);
         std::putchar('\n');
         std::exit(1);
     }
