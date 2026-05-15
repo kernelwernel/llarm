@@ -162,7 +162,7 @@ void EXECUTE::arm_execute(const arm_decode_struct &instruction) {
         case arm_id::FTOUID: instructions.arm.vfp.FTOUID(code); return;
         case arm_id::FUITOD: instructions.arm.vfp.FUITOD(code); return;
         case arm_id::CPS: // TODO
-        case arm_id::CPY: // TODO
+        case arm_id::CPY: instructions.arm.movement.CPY(code); return;
         case arm_id::LDREX: // TODO
         case arm_id::MCRR2: // TODO
         case arm_id::MRRC2: // TODO

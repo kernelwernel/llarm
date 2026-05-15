@@ -59,6 +59,7 @@ void INSTRUCTIONS::arm::dsp::LDRD(const u32 code) {
  * 
  */
 void INSTRUCTIONS::arm::dsp::MCRR(/*const u32 code*/) {
+    llarm::out::warning("MCRR is unimplemented");
     // TODO
 }
 
@@ -67,6 +68,7 @@ void INSTRUCTIONS::arm::dsp::MCRR(/*const u32 code*/) {
  * 
  */
 void INSTRUCTIONS::arm::dsp::MRRC(/*const u32 code*/) {
+    llarm::out::warning("MRRC is unimplemented");
     // TODO
 }
 

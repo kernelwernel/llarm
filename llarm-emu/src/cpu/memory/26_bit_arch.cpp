@@ -6,14 +6,10 @@
 
 
 bool ARCH_26::is_26_arch_address_unsupported(const u32 address) const {
-    // 26-bit architecture cannot have an address above (2^26)-1
     if (is_26_arch_address()) {
-        if (address > ((1 << 26) - 1)) {
-            return false;
-        }
+        return (address > ((1U << 26) - 1));
     }
-
-    return true;
+    return false;
 }
 
 bool ARCH_26::is_26_arch_program() const {

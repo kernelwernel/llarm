@@ -147,6 +147,18 @@ namespace llarm::emu {
         void next_instruction() {
             cpu.core.continue_cycle = true;
         }
+
+        // Call after next_instruction() to block until the next instruction finishes executing.
+        // Uses a two-phase wait on execution_done to avoid races with the cycle boundary.
+        void wait_for_execution() const {
+            while ( cpu.core.execution_done.load(std::memory_order_acquire)) {}
+            while (!cpu.core.execution_done.load(std::memory_order_acquire)) {}
+        }
+
+        // Block until the first instruction has finished executing after run().
+        void wait_for_first_execution() const {
+            while (!cpu.core.execution_done.load(std::memory_order_acquire)) {}
+        }
     };
 
     struct cpu_headless {

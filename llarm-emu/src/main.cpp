@@ -7,8 +7,6 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cinttypes>
-#include <chrono>
-#include <thread>
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/out.hpp>
@@ -32,6 +30,7 @@ enum arg_enum : u8 {
     MEM,
     VERBOSE,
     LINUX,
+    BREAK,
     END
 };
 // NOLINTEND(cppcoreguidelines-use-enum-class)
@@ -206,14 +205,25 @@ static void run_step_mode(
     llarm::emu::cpu_blockstep &cpu,
     const bool show_regs,
     const std::string &reg_arg,
-    const mem_request &mem_req
+    const mem_request &mem_req,
+    const bool has_break,
+    const u32 break_addr
 ) {
     cpu.run();
-
-    // give the CPU thread time to execute the first instruction and reach the spin-wait
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    cpu.wait_for_first_execution();
 
     u64 step = 0;
+
+    // Auto-run to breakpoint
+    if (has_break) {
+        std::printf("Running to 0x%08X...\n", break_addr);
+        while (cpu.current_pc() != break_addr) {
+            cpu.next_instruction();
+            cpu.wait_for_execution();
+            ++step;
+        }
+        std::printf("Reached breakpoint at step %" PRIu64 "\n", step);
+    }
 
     while (true) {
         const bool is_thumb = cpu.is_thumb_mode();
@@ -257,7 +267,7 @@ static void run_step_mode(
         }
 
         cpu.next_instruction();
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        cpu.wait_for_execution();
         ++step;
     }
 }
@@ -275,7 +285,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    static constexpr std::array<std::pair<const char*, arg_enum>, 17> table {{
+    static constexpr std::array<std::pair<const char*, arg_enum>, 18> table {{
         { "-h",      HELP    },
         { "--help",  HELP    },
         { "-v",      VERSION },
@@ -293,12 +303,14 @@ int main(int argc, char* argv[]) {
         { "--mem",   MEM     },
         { "--verbose", VERBOSE },
         { "--linux",   LINUX   },
+        { "--break",   BREAK   },
     }};
 
     std::string binary_path;
 
     std::string reg_arg;
     std::string mem_arg;
+    std::string break_arg;
     std::string potential_null_arg;
 
     for (auto arg_it = args.begin(); arg_it != args.end(); ++arg_it) {
@@ -329,6 +341,12 @@ int main(int argc, char* argv[]) {
                     mem_arg = *++arg_it;
                 } else {
                     llarm::out::error("llarm-emu: --mem requires an address (e.g. 0x1000 or 0x1000:u32)");
+                }
+            } else if (it->second == BREAK) {
+                if (next != args.end() && (*next)[0] != '-') {
+                    break_arg = *++arg_it;
+                } else {
+                    llarm::out::error("llarm-emu: --break requires an address (e.g. 0x10140)");
                 }
             }
         }
@@ -386,6 +404,15 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    u32 break_addr = 0;
+    if (arg_bitset.test(BREAK)) {
+        char *end = nullptr;
+        break_addr = static_cast<u32>(std::strtoul(break_arg.c_str(), &end, 0));
+        if (end == break_arg.c_str() || *end != '\0') {
+            llarm::out::error("llarm-emu: invalid --break address \"", break_arg, "\"");
+        }
+    }
+
     const std::uintmax_t binary_size = std::filesystem::file_size(binary_path);
     if (arg_bitset.test(VERBOSE)) {
         std::printf("llarm-emu: loaded \"%s\" (%" PRIuMAX " bytes)\n", binary_path.c_str(), binary_size);
@@ -396,7 +423,7 @@ int main(int argc, char* argv[]) {
     // step mode
     if (arg_bitset.test(STEP)) {
         llarm::emu::cpu_blockstep cpu(binary_path, run_settings);
-        run_step_mode(cpu, arg_bitset.test(REGS), reg_arg, mem_req);
+        run_step_mode(cpu, arg_bitset.test(REGS), reg_arg, mem_req, arg_bitset.test(BREAK), break_addr);
         return 0;
     }
 

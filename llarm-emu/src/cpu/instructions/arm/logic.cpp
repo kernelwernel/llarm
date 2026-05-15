@@ -148,14 +148,23 @@ void INSTRUCTIONS::arm::logic::CMN(const u32 code) {
  */
 void INSTRUCTIONS::arm::logic::BIC(const u32 code) {
     const data_struct shifter_operand = address_mode.data_processing(code);
-    
+
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
     const u32 Rd = (Rn & ~shifter_operand.value);
-    reg.write(code, 12, 15, Rd);
+    const bool S = llarm::util::bit_fetch(code, 20);
 
-    reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
-    reg.write(id::cpsr::Z, (Rd == 0));
-    reg.write(id::cpsr::C, shifter_operand.carry);
+    reg.write(Rd_id, Rd);
+
+    if (S == 1) {
+        if (Rd_id == id::reg::R15) {
+            reg.write(id::reg::CPSR, id::reg::SPSR);
+        } else {
+            reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
+            reg.write(id::cpsr::Z, (Rd == 0));
+            reg.write(id::cpsr::C, shifter_operand.carry);
+        }
+    }
 }
 
 

@@ -37,11 +37,11 @@ void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
 
     u32 address = addresses.start;
 
-    const std::vector<id::reg> reg_list = operation::register_list(list);
+    const std::vector<id::reg> reg_list = operation::register_list(llarm::util::bit_range<u16>(list, 0, 14));
 
     for (const auto reg_id : reg_list) {
         const mem_read_struct access = memory.read(address, 4);
-    
+
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
             return;

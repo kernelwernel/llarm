@@ -31,6 +31,10 @@ void RAM::write(const u32 address, const u64 value, const u8 access_size) {
         return;
     }
 
+    if (static_cast<std::size_t>(address) + access_size > ram.size()) {
+        return;
+    }
+
     switch (access_size) {
         case 1:
             ram.at(address) = (value & 0xFF);
@@ -80,6 +84,10 @@ u64 RAM::read(const u32 address, const u8 access_size) {
 
     if (settings.has_timer && timer.contains(address)) {
         return timer.read(address);
+    }
+
+    if (static_cast<std::size_t>(address) + access_size > ram.size()) {
+        return 0;
     }
 
     switch (access_size) {

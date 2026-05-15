@@ -590,11 +590,13 @@ void INSTRUCTIONS::arm::vfp::FLDS(const u32 code) {
 
 
 void INSTRUCTIONS::arm::vfp::FMACD(const u32 code) {
+    llarm::out::warning("FMACD is unimplemented");
 // TODO
 }
 
 
 void INSTRUCTIONS::arm::vfp::FMACS(const u32 code) {
+    llarm::out::warning("FMACS is unimplemented");
 // TODO
 }
 
@@ -680,11 +682,13 @@ void INSTRUCTIONS::arm::vfp::FMRX(const u32 code) {
 
 
 void INSTRUCTIONS::arm::vfp::FMSCD(const u32 code) {
+    llarm::out::warning("FMSCD is unimplemented");
 // TODO
 }
 
 
 void INSTRUCTIONS::arm::vfp::FMSCS(const u32 code) {
+    llarm::out::warning("FMSCS is unimplemented");
 // TODO
 }
 
@@ -715,11 +719,13 @@ void INSTRUCTIONS::arm::vfp::FMSTAT() {
 
 
 void INSTRUCTIONS::arm::vfp::FMULD(const u32 code) {
+    llarm::out::warning("FMULD is unimplemented");
 // TODO
 }
 
 
 void INSTRUCTIONS::arm::vfp::FMULS(const u32 code) {
+    llarm::out::warning("FMULS is unimplemented");
 // TODO
 }
 
@@ -749,50 +755,62 @@ void INSTRUCTIONS::arm::vfp::FMXR(const u32 code) {
 
 
 void INSTRUCTIONS::arm::vfp::FNEGD(const u32 code) {
+    llarm::out::warning("FNEGD is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FNEGS(const u32 code) {
+    llarm::out::warning("FNEGS is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FNMACD(const u32 code) {
+    llarm::out::warning("FNMACD is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FNMACS(const u32 code) {
+    llarm::out::warning("FNMACS is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FNMSCD(const u32 code) {
+    llarm::out::warning("FNMSCD is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FNMSCS(const u32 code) {
+    llarm::out::warning("FNMSCS is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FNMULD(const u32 code) {
+    llarm::out::warning("FNMULD is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FNMULS(const u32 code) {
+    llarm::out::warning("FNMULS is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FSITOD(const u32 code) {
+    llarm::out::warning("FSITOD is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FSITOS(const u32 code) {
+    llarm::out::warning("FSITOS is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FSQRTD(const u32 code) {
+    llarm::out::warning("FSQRTD is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FSQRTS(const u32 code) {
+    llarm::out::warning("FSQRTS is unimplemented");
 // TODO
 }
 
@@ -854,49 +872,61 @@ void INSTRUCTIONS::arm::vfp::FSTD(const u32 code) {
 }
 
 void INSTRUCTIONS::arm::vfp::FSTMD(const u32 code) {
+    llarm::out::warning("FSTMD is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FSTMS(const u32 code) {
+    llarm::out::warning("FSTMS is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FSTMX(const u32 code) {
+    llarm::out::warning("FSTMX is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FSTS(const u32 code) {
+    llarm::out::warning("FSTS is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FSUBD(const u32 code) {
+    llarm::out::warning("FSUBD is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FSUBS(const u32 code) {
+    llarm::out::warning("FSUBS is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FTOSID(const u32 code) {
+    llarm::out::warning("FTOSID is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FTOSIS(const u32 code) {
+    llarm::out::warning("FTOSIS is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FTOUID(const u32 code) {
+    llarm::out::warning("FTOUID is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FTOUIS(const u32 code) {
+    llarm::out::warning("FTOUIS is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FUITOD(const u32 code) {
+    llarm::out::warning("FUITOD is unimplemented");
 // TODO
 }
 
 void INSTRUCTIONS::arm::vfp::FUITOS(const u32 code) {
+    llarm::out::warning("FUITOS is unimplemented");
 // TODO
 }

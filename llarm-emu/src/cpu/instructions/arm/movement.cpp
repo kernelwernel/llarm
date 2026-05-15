@@ -26,14 +26,16 @@ void INSTRUCTIONS::arm::movement::MOV(const u32 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    if ((S == 1) && (Rd_id == id::reg::R15)) {
-        reg.write(id::reg::CPSR, id::reg::SPSR);
-    } else {
-        reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
-        reg.write(id::cpsr::Z, (Rd == 0));
-        reg.write(id::cpsr::C, (shifter_operand.carry));
+    if (S == 1) {
+        if (Rd_id == id::reg::R15) {
+            reg.write(id::reg::CPSR, id::reg::SPSR);
+        } else {
+            reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
+            reg.write(id::cpsr::Z, (Rd == 0));
+            reg.write(id::cpsr::C, (shifter_operand.carry));
+        }
     }
-} 
+}
 
 
 /**
@@ -58,19 +60,46 @@ void INSTRUCTIONS::arm::movement::MVN(const u32 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    if ((S == 1) && (Rd_id == id::reg::R15)) {
-        reg.write(id::reg::CPSR, id::reg::SPSR);
-    } else {
-        reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
-        reg.write(id::cpsr::Z, (Rd == 0));
-        reg.write(id::cpsr::C, (shifter_operand.carry));
+    if (S == 1) {
+        if (Rd_id == id::reg::R15) {
+            reg.write(id::reg::CPSR, id::reg::SPSR);
+        } else {
+            reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
+            reg.write(id::cpsr::Z, (Rd == 0));
+            reg.write(id::cpsr::C, (shifter_operand.carry));
+        }
     }
 }
 
 
+/**
+ * if ConditionPassed(cond) then
+ *   Rd = Rm
+ */
+void INSTRUCTIONS::arm::movement::CPY(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rm = reg.read(code, 0, 3);
+
+    reg.write(Rd_id, Rm);
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *    if R == 1 then
+ *       Rd = SPSR
+ *    else
+ *       Rd = CPS
+ */
 void INSTRUCTIONS::arm::movement::MRS(const u32 code) {
-    (void)code;
-    // TODO
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const bool R = llarm::util::bit_fetch(code, 22);
+
+    if (R == true) {
+        reg.write(Rd_id, reg.read(id::reg::SPSR));
+    } else {
+        reg.write(Rd_id, reg.read(id::reg::CPSR));
+    }
 };
 
 

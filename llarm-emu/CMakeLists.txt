@@ -135,6 +135,10 @@ write_basic_package_version_file(
 )
 
 
+# maybe not needed, might remove later
+add_subdirectory(tests/diff)
+
+
 # installations
 install(TARGETS ${TARGET_BIN} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES llarm/llarm-emu.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/llarm)

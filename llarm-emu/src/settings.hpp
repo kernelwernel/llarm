@@ -51,6 +51,7 @@ struct SETTINGS {
     /**/ bool has_random_replacement_cache_strategy = false;
     /**/ bool has_round_robin_replacement_cache_strategy = false;
     /**/ bool is_L4_bit_enabled_cp15 = false;
+    /**/ u32 r1_sbo_mask = 0; // implementation-defined bits that are SBO (Should Be One) in R1
     bool has_debug_hardware = false;
     bool anti_emulation_detection = false;
     bool is_vfp_enabled = false;
@@ -264,6 +265,7 @@ constexpr SETTINGS default_settings() {
     tmp.ppn = 0x7;
     tmp.has_vic = true;
     tmp.vic_type = id::vic_type::PL190;
+    tmp.vic_base = 0x10140000;   // VersatilePB PL190 VIC base address
     tmp.has_uart = true;
     tmp.uart_base = 0x10000000;
     tmp.has_timer = true;
@@ -289,7 +291,15 @@ constexpr SETTINGS linux_settings() {
     tmp.specific_arch = id::specific_arch::ARMv5TEJ;
     tmp.product_family = id::product_family::ARM9E;
     tmp.processor = id::processor::ARM926EJ_S;
-    tmp.ppn = 0x9; // ARM926EJ-S PPN upper nibble (full PPN = 0x926)
+    tmp.implementor = id::implementor::ARM;
+    tmp.ppn = 0x926; // ARM926EJ-S full PPN
+    tmp.revision = 5; // ARM926EJ-S stepping r0p5
+    tmp.has_write_buffer = true; // bit 3 W, RAO on ARM926EJ-S
+    tmp.is_abort_model_early = false;
+    tmp.is_abort_model_late = true; // bit 6 L = 1, ARM926EJ-S uses late abort
+    tmp.has_round_robin_replacement_cache_strategy = false;
+    tmp.has_random_replacement_cache_strategy = true; // bit 14 RR = 0 (random/default)
+    tmp.r1_sbo_mask = (1U << 16) | (1U << 19); // ARM926EJ-S SBO bits per TRM
 
     return tmp;
 }

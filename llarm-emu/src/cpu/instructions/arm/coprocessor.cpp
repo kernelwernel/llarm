@@ -9,6 +9,7 @@
  *     Coprocessor[cp_num]-dependent operation
  */
 void INSTRUCTIONS::arm::coproc::CDP(/* const u32 code */) {
+    llarm::out::warning("CDP is unimplemented");
 // TODO
 }
 
@@ -23,6 +24,7 @@ void INSTRUCTIONS::arm::coproc::CDP(/* const u32 code */) {
  *     assert address == end_address
  */
 void INSTRUCTIONS::arm::coproc::LDC(/*const u32 code*/) {
+    llarm::out::warning("LDC is unimplemented");
     // const address_struct addresses = address_mode.load_store_coprocessor(code);
 // 
     // u32 address = addresses.start;
@@ -96,19 +98,20 @@ void INSTRUCTIONS::arm::coproc::MRC(const u32 code) {
  *         Memory[address,4] = value from Coprocessor[cp_num]
  *     assert address == end_address
  */
-void INSTRUCTIONS::arm::coproc::STC(/* const u32 code */) { // TODO
+void INSTRUCTIONS::arm::coproc::STC(/* const u32 code */) {
+    llarm::out::warning("STC is unimplemented");
     //const address_struct addresses = address_mode.load_store_coprocessor(code);
     // TODO
 }
 
 
-void INSTRUCTIONS::arm::coproc::CDP2(/* const u32 code */) { // TODO 
-    CDP(/*code*/); // TODO 
+void INSTRUCTIONS::arm::coproc::CDP2(/* const u32 code */) {
+    CDP(/*code*/);
 }
 
 
-void INSTRUCTIONS::arm::coproc::LDC2(/* const u32 code */) { // TODO 
-    LDC(/*code*/); // TODO
+void INSTRUCTIONS::arm::coproc::LDC2(/* const u32 code */) {
+    LDC(/*code*/);
 }
 
 

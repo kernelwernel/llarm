@@ -42,7 +42,6 @@ void INSTRUCTIONS::arm::branching::BL(const u32 code) {
  *   T Flag = Rm[0]
  *   PC = Rm AND 0xFFFFFFFE
  */
-// TODO
 void INSTRUCTIONS::arm::branching::BX(const u32 code) {
     const u32 Rm = reg.read(code, 0, 3);
 
@@ -53,10 +52,12 @@ void INSTRUCTIONS::arm::branching::BX(const u32 code) {
 
 
 void INSTRUCTIONS::arm::branching::BLX1(/* const u32 code */) {
+    llarm::out::warning("BLX1 is unimplemented");
     // TODO
 }
 
 
 void INSTRUCTIONS::arm::branching::BLX2(/* const u32 code */) {
+    llarm::out::warning("BLX2 is unimplemented");
     // TODO
 }

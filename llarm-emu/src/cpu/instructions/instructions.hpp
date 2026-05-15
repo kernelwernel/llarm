@@ -68,7 +68,8 @@ struct INSTRUCTIONS {
     
             void MOV(const u32 code); // TODO
             void MVN(const u32 code); // TODO
-            void MRS(const u32 code); // TODO
+            void CPY(const u32 code);
+            void MRS(const u32 code);
             void MSR_IMM(const u32 code);
             void MSR_REG(const u32 code);
         } movement;

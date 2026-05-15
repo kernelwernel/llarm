@@ -1164,7 +1164,7 @@ void CP15::setup_R0_processor_id() {
         case id::product_family::UNKNOWN: llarm::out::error("Cannot configure R0_ID coprocessor register for unknown processor");
     }
 
-    write(id::cp15::R0_ID_REVISION, settings.revision);
+    force_write(id::cp15::R0_ID_REVISION, settings.revision);
 
     if (pre_arm7) {
         switch (settings.processor) {
@@ -1179,8 +1179,8 @@ void CP15::setup_R0_processor_id() {
     } else {
         // https://developer.arm.com/documentation/ddi0406/b/Appendices/ARMv4-and-ARMv5-Differences/System-Control-coprocessor--CP15--support/c0--ID-support?lang=en#CHDGAGJH
 
-        const u8 upper_ppn = static_cast<u8>(settings.ppn);
-    
+        const u8 ppn_top = static_cast<u8>(settings.ppn >> 8);
+
         if (arm7) {
             // variant (ARM7 specific)
             force_write(id::cp15::R0_ID_7_VARIANT, settings.variant);
@@ -1195,7 +1195,7 @@ void CP15::setup_R0_processor_id() {
             }
 
             // ppn
-            if (upper_ppn != 0x7) {
+            if (ppn_top != 0x7) {
                 llarm::out::error("PPN upper 4 bits must be 0x7 for ARM7 family");
             }
         } else if (post_arm7) {
@@ -1216,13 +1216,13 @@ void CP15::setup_R0_processor_id() {
             force_write(id::cp15::R0_ID_POST7_VARIANT, settings.variant);
 
             // ppn
-            if (upper_ppn == 0x7 || upper_ppn == 0x0) {
+            if (ppn_top == 0x7 || ppn_top == 0x0) {
                 llarm::out::error("PPN upper 4 bits must not be 0x7 or 0x0 for post-ARM7 family");
             }
         }
 
-        // PPN (primary part number)
-        force_write(id::cp15::R0_ID_PPN, upper_ppn);
+        // PPN (primary part number) — full 12-bit value
+        force_write(id::cp15::R0_ID_PPN, settings.ppn);
 
         // implementor
         // source: https://developer.arm.com/documentation/ddi0406/b/System-Level-Architecture/Virtual-Memory-System-Architecture--VMSA-/CP15-registers-for-a-VMSA-implementation/c0--Main-ID-Register--MIDR-?lang=en
@@ -1539,6 +1539,9 @@ void CP15::setup_R1_control() {
 
     // L4
     force_write(id::cp15::R1_L4, settings.is_L4_bit_enabled_cp15);
+
+    // implementation-defined SBO (Should Be One) bits
+    R1 |= settings.r1_sbo_mask;
 }
 
 

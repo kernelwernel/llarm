@@ -34,6 +34,7 @@ inline void CORE::arm_cycle_headless() {
 
 inline void CORE::arm_cycle_step() {
     continue_cycle = false;
+    execution_done = false;
     current_pc = reg.force_read(id::reg::R15);
 
     const arm_fetch_struct arm_code_access = fetch.arm_fetch();
@@ -42,16 +43,15 @@ inline void CORE::arm_cycle_step() {
         return;
     }
 
-    //std::cout << "inst : " << arm_code_access.code << "\n";
     current_arm_code = arm_code_access.code;
 
     const arm_decode_struct instruction = decode.arm_decode(arm_code_access.code);
 
-    //std::cout << "inst_id : " << llarm::as::arm_id_to_string(instruction.id) << "\n";
-
     current_arm_id = instruction.id;
 
     execute.arm_execute(instruction);
+
+    execution_done = true;
 
     while (!continue_cycle.load()) {
         // wait till continue_cycle variable is true
@@ -76,6 +76,7 @@ inline void CORE::arm_cycle_step() {
 
 inline void CORE::thumb_cycle_step() {
     continue_cycle = false;
+    execution_done = false;
     current_pc = reg.force_read(id::reg::R15);
 
     const thumb_fetch_struct thumb_code_access = fetch.thumb_fetch();
@@ -90,6 +91,8 @@ inline void CORE::thumb_cycle_step() {
     current_thumb_id = instruction.id;
 
     execute.thumb_execute(instruction);
+
+    execution_done = true;
 
     while (true) {
         if (continue_cycle == true) {

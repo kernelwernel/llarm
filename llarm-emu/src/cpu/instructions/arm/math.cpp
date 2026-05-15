@@ -29,7 +29,7 @@ void INSTRUCTIONS::arm::math::ADC(const u32 code) {
 
     const u32 Rd = reg.read(Rd_id);
 
-    if ((S == 1) && (Rd == reg.read(id::reg::R15))) {
+    if ((S == 1) && (Rd_id == id::reg::R15)) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
     } else if (S == 1) {
         reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
