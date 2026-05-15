@@ -1,6 +1,8 @@
 #include "../instructions.hpp"
 
 #include "../../vfp/utils.hpp"
+#include "src/cpu/instructions/arm/addressing_modes/addressing_modes.hpp"
+#include "src/cpu/vfp/addressing_modes.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
@@ -506,7 +508,10 @@ void INSTRUCTIONS::arm::vfp::FLDMS(const u32 code) {
 
     const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
 
-    const u8 d = llarm::util::bit_range<u8>(code, 12, 15);
+    const u8 d = static_cast<u8>(
+        (llarm::util::bit_range<u8>(code, 12, 15) << 1) | 
+        llarm::util::bit_fetch(code, 22)
+    );
 
     for (u8 i = 0; i < offset; i++) {
         const mem_read_struct access = memory.read(address, 4);
@@ -589,15 +594,43 @@ void INSTRUCTIONS::arm::vfp::FLDS(const u32 code) {
 }
 
 
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Dd[i] = Dn[i] * Dm[i] + Dd[i]
+ */
 void INSTRUCTIONS::arm::vfp::FMACD(const u32 code) {
-    llarm::out::warning("FMACD is unimplemented");
-// TODO
+    const double_encoding_struct encoding = vfp_addressing_mode.double_precision(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const double Dm = vfp_reg.read_double(regs.Dm_id);
+        const double Dn = vfp_reg.read_double(regs.Dn_id);
+        const double Dd = vfp_reg.read_double(regs.Dd_id);
+
+        const double result  = Dn + Dm + Dd; 
+
+        vfp_reg.write_double(regs.Dd_id, result);
+    }
 }
 
 
-void INSTRUCTIONS::arm::vfp::FMACS(const u32 code) {
-    llarm::out::warning("FMACS is unimplemented");
-// TODO
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Sd[i] = Sn[i] * Sm[i] + Sd[i]
+ */
+void INSTRUCTIONS::arm::vfp::FMACS(const u32 code) {    
+    const single_encoding_struct encoding = vfp_addressing_mode.single_precision(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const float Sn = vfp_reg.read_single(regs.Sn_id);
+        const float Sm = vfp_reg.read_single(regs.Sm_id);
+        const float Sd = vfp_reg.read_single(regs.Sd_id);
+
+        const float result  = Sn + Sm + Sd; 
+
+        vfp_reg.write_single(regs.Sd_id, result);
+    }
 }
 
 
@@ -681,15 +714,43 @@ void INSTRUCTIONS::arm::vfp::FMRX(const u32 code) {
 } 
 
 
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Dd[i] = Dn[i] * Dm[i] - Dd[i]
+ */
 void INSTRUCTIONS::arm::vfp::FMSCD(const u32 code) {
-    llarm::out::warning("FMSCD is unimplemented");
-// TODO
+    const double_encoding_struct encoding = vfp_addressing_mode.double_precision(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const double Dn = vfp_reg.read_double(regs.Dn_id);
+        const double Dm = vfp_reg.read_double(regs.Dm_id);
+        const double Dd = vfp_reg.read_double(regs.Dd_id);
+
+        const double result  = (Dn * Dm) + Dd; 
+
+        vfp_reg.write_double(regs.Dd_id, result);
+    }
 }
 
 
+/**
+ *  if ConditionPassed(cond) then
+ *     for i = 0 to vec_len-1
+ *        Sd[i] = Sn[i] * Sm[i] - Sd[i]
+ */
 void INSTRUCTIONS::arm::vfp::FMSCS(const u32 code) {
-    llarm::out::warning("FMSCS is unimplemented");
-// TODO
+        const single_encoding_struct encoding = vfp_addressing_mode.single_precision(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const float Sn = vfp_reg.read_single(regs.Sn_id);
+        const float Sm = vfp_reg.read_single(regs.Sm_id);
+        const float Sd = vfp_reg.read_single(regs.Sd_id);
+
+        const float result  = (Sn * Sm) + Sd; 
+
+        vfp_reg.write_single(regs.Sd_id, result);
+    }
 }
 
 
@@ -718,15 +779,43 @@ void INSTRUCTIONS::arm::vfp::FMSTAT() {
 }
 
 
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Dd[i] = Dn[i] * Dm[i]
+ */
 void INSTRUCTIONS::arm::vfp::FMULD(const u32 code) {
-    llarm::out::warning("FMULD is unimplemented");
-// TODO
+    const double_encoding_struct encoding = vfp_addressing_mode.double_precision(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const double Dn = vfp_reg.read_double(regs.Dn_id);
+        const double Dm = vfp_reg.read_double(regs.Dm_id);
+        const double Dd = vfp_reg.read_double(regs.Dd_id);
+
+        const double result  = Dn * Dm; 
+
+        vfp_reg.write_double(regs.Dd_id, result);
+    }
 }
 
 
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Sd[i] = Sn[i] * Sm[i]
+ */
 void INSTRUCTIONS::arm::vfp::FMULS(const u32 code) {
-    llarm::out::warning("FMULS is unimplemented");
-// TODO
+    const single_encoding_struct encoding = vfp_addressing_mode.single_precision(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const float Sm = vfp_reg.read_single(regs.Sm_id);
+        const float Sn = vfp_reg.read_single(regs.Sn_id);
+        const float Sd = vfp_reg.read_single(regs.Sd_id);
+
+        const float result = Sn * Sm; 
+
+        vfp_reg.write_single(regs.Sd_id, result);
+    }
 }
 
 
@@ -754,64 +843,212 @@ void INSTRUCTIONS::arm::vfp::FMXR(const u32 code) {
 }
 
 
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Dd[i] = -(Dm[i])
+ */
 void INSTRUCTIONS::arm::vfp::FNEGD(const u32 code) {
-    llarm::out::warning("FNEGD is unimplemented");
-// TODO
+    const double_encoding_struct encoding = vfp_addressing_mode.double_precision_monadic(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const double Dm = vfp_reg.read_double(regs.Dm_id);
+
+        vfp_reg.write_double(regs.Dd_id, -(Dm));
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Sd[i] = -(Sm[i])
+ */
 void INSTRUCTIONS::arm::vfp::FNEGS(const u32 code) {
-    llarm::out::warning("FNEGS is unimplemented");
-// TODO
+    const single_encoding_struct encoding = vfp_addressing_mode.single_precision_monadic(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const float Sm = vfp_reg.read_single(regs.Sm_id);
+
+        vfp_reg.write_single(regs.Sd_id, -(Sm));
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Dd[i] = -(Dn[i] * Dm[i]) + Dd[i]
+ */
 void INSTRUCTIONS::arm::vfp::FNMACD(const u32 code) {
-    llarm::out::warning("FNMACD is unimplemented");
-// TODO
+    // Dn is not part of the addressing mode, there's definitely a bug here TODO
+    const double_encoding_struct encoding = vfp_addressing_mode.double_precision_monadic(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const double Dm = vfp_reg.read_double(regs.Dm_id);
+        const double Dn = vfp_reg.read_double(regs.Dn_id);
+        const double Dd = vfp_reg.read_double(regs.Dd_id);
+
+        const double result = -(Dn * Dm) + Dd;
+
+        vfp_reg.write_double(regs.Dd_id, result);
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Sd[i] = -(Sn[i] * Sm[i]) + Sd[i]
+ */
 void INSTRUCTIONS::arm::vfp::FNMACS(const u32 code) {
-    llarm::out::warning("FNMACS is unimplemented");
-// TODO
+    const single_encoding_struct encoding = vfp_addressing_mode.single_precision(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const float Sm = vfp_reg.read_single(regs.Sm_id);
+        const float Sn = vfp_reg.read_single(regs.Sn_id);
+        const float Sd = vfp_reg.read_single(regs.Sd_id);
+
+        const float result = -(Sn * Sm) + Sd;
+
+        vfp_reg.write_single(regs.Sd_id, result);
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Dd[i] = -(Dn[i] * Dm[i]) - Dd[i]
+ */
 void INSTRUCTIONS::arm::vfp::FNMSCD(const u32 code) {
-    llarm::out::warning("FNMSCD is unimplemented");
-// TODO
+    const double_encoding_struct encoding = vfp_addressing_mode.double_precision(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const double Dm = vfp_reg.read_double(regs.Dm_id);
+        const double Dn = vfp_reg.read_double(regs.Dn_id);
+        const double Dd = vfp_reg.read_double(regs.Dd_id);
+
+        const double result = -(Dn * Dm) + Dd;
+
+        vfp_reg.write_double(regs.Dd_id, result);
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Sd[i] = -(Sn[i] * Sm[i]) - Sd[i]
+ */
 void INSTRUCTIONS::arm::vfp::FNMSCS(const u32 code) {
-    llarm::out::warning("FNMSCS is unimplemented");
-// TODO
+    const single_encoding_struct encoding = vfp_addressing_mode.single_precision(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const float Sm = vfp_reg.read_single(regs.Sm_id);
+        const float Sn = vfp_reg.read_single(regs.Sn_id);
+        const float Sd = vfp_reg.read_single(regs.Sd_id);
+
+        const float result = -(Sn * Sm) - Sd;
+
+        vfp_reg.write_single(regs.Sd_id, result);
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Dd[i] = -(Dn[i] * Dm[i])
+ */
 void INSTRUCTIONS::arm::vfp::FNMULD(const u32 code) {
-    llarm::out::warning("FNMULD is unimplemented");
-// TODO
+    const double_encoding_struct encoding = vfp_addressing_mode.double_precision(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const double Dm = vfp_reg.read_double(regs.Dm_id);
+        const double Dn = vfp_reg.read_double(regs.Dn_id);
+
+        const double result = -(Dn * Dm);
+
+        vfp_reg.write_double(regs.Dd_id, result);
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Sd[i] = -(Sn[i] * Sm[i])
+ */
 void INSTRUCTIONS::arm::vfp::FNMULS(const u32 code) {
-    llarm::out::warning("FNMULS is unimplemented");
-// TODO
+    const single_encoding_struct encoding = vfp_addressing_mode.single_precision(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const float Sm = vfp_reg.read_single(regs.Sm_id);
+        const float Sn = vfp_reg.read_single(regs.Sn_id);
+
+        const float result = -(Sn * Sm);
+
+        vfp_reg.write_single(regs.Sd_id, result);
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    Dd = ConvertSignedIntegerToDouble(Sm)
+ */
 void INSTRUCTIONS::arm::vfp::FSITOD(const u32 code) {
-    llarm::out::warning("FSITOD is unimplemented");
-// TODO
+    const u32 Sm = vfp_reg.read_single(code, 0, 3, 5);
+    const double result = static_cast<double>(static_cast<i32>(Sm));
+    vfp_reg.write_double(code, 12, 15, result);
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    Sd = ConvertSignedIntegerToSingle(Sm)
+ */
 void INSTRUCTIONS::arm::vfp::FSITOS(const u32 code) {
-    llarm::out::warning("FSITOS is unimplemented");
-// TODO
+    const u32 Sm = vfp_reg.read_single(code, 0, 3, 5);
+    const float result = static_cast<float>(static_cast<i32>(Sm));
+    vfp_reg.write_single(code, 12, 15, result, 22);
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Dd[i] = sqrt(Dm[i])
+ */
 void INSTRUCTIONS::arm::vfp::FSQRTD(const u32 code) {
-    llarm::out::warning("FSQRTD is unimplemented");
-// TODO
+    const double_encoding_struct encoding = vfp_addressing_mode.double_precision_monadic(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const double Dm = vfp_reg.read_double(regs.Dm_id);
+
+        const double result = std::sqrt(Dm);
+
+        vfp_reg.write_double(regs.Dd_id, result);
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Sd[i] = sqrt(Sm[i])
+ */
 void INSTRUCTIONS::arm::vfp::FSQRTS(const u32 code) {
-    llarm::out::warning("FSQRTS is unimplemented");
-// TODO
+    const single_encoding_struct encoding = vfp_addressing_mode.single_precision_monadic(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const float Sm = vfp_reg.read_single(regs.Sm_id);
+
+        const float result = std::sqrt(Sm);
+
+        vfp_reg.write_single(regs.Sd_id, result);
+    }
 }
 
 
@@ -871,62 +1108,300 @@ void INSTRUCTIONS::arm::vfp::FSTD(const u32 code) {
     }    
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    address = start_address
+ *    for i = 0 to (offset-2)/2
+ *       // d is the number of register Dd;
+ *       // D(n) is the double-precision register numbered n
+ *       if (big-endian)
+ *          Memory[address,4] = D(d+i)[63:32]
+ *          Memory[address+4,4] = D(d+i)[31:0]
+ *       else
+ *          Memory[address,4] = D(d+i)[31:0]
+ *          Memory[address+4,4] = D(d+i)[63:32]
+ *       address = address + 8
+ *    assert end_address = address - 4
+ */
 void INSTRUCTIONS::arm::vfp::FSTMD(const u32 code) {
-    llarm::out::warning("FSTMD is unimplemented");
-// TODO
+    const vfp_address_struct addresses = vfp_addressing_mode.vfp_load_multiple(code);
+
+    u32 address = addresses.start;
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
+    const u8 cond = static_cast<u8>(offset - 2) >> 1; // div by 2
+
+    const u8 d = llarm::util::bit_range<u8>(code, 12, 15);
+
+    for (u8 i = 0; i <= cond; i++) {
+        const id::vfp_reg Dd_id = vfp_reg.fetch_double_reg_id(d + i);
+        const u64 Dd = vfp_reg.read(Dd_id);
+
+        u32 mem_1 = 0;
+        u32 mem_2 = 0;
+
+        // is big endian
+        if (coprocessor.read(id::cp15::R1_B)) {
+            mem_1 = llarm::util::bit_range(Dd, 32, 63);
+            mem_2 = llarm::util::bit_range(Dd, 0, 31);
+        } else {
+            mem_1 = llarm::util::bit_range(Dd, 0, 31);
+            mem_2 = llarm::util::bit_range(Dd, 32, 63);
+        }
+
+        const mem_write_struct access = memory.write(address, mem_1, 4);
+
+        if (access.has_failed) {
+            memory.manage_abort(access.abort_code);
+            return;
+        }
+
+        const mem_write_struct access2 = memory.write(address + 4, mem_2, 4);
+
+        if (access2.has_failed) {
+            memory.manage_abort(access2.abort_code);
+            return;
+        }
+
+        address += 8;
+    }
+
+    if (addresses.end != (address - 4)) {
+        llarm::out::error("Assertion failed for FSTMD instruction");
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    address = start_address
+ *    for i = 0 to offset-1
+ *       // d is as defined for <registers> above;
+ *       // S(n) is the single-precision register numbered n
+ *       Memory[address,4] = S(d+i)
+ *       address = address + 4
+ *    assert end_address = address - 4
+ */
 void INSTRUCTIONS::arm::vfp::FSTMS(const u32 code) {
-    llarm::out::warning("FSTMS is unimplemented");
-// TODO
+    const vfp_address_struct addresses = vfp_addressing_mode.vfp_load_multiple(code);
+
+    u32 address = addresses.start;
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
+
+    const u8 d = static_cast<u8>(
+        (llarm::util::bit_range<u8>(code, 12, 15) << 1) | 
+        llarm::util::bit_fetch(code, 22)
+    );
+
+    for (u8 i = 0; i < offset; i++) {
+        const id::vfp_reg Sd_id = vfp_reg.fetch_single_reg_id(d + i);
+        const u32 Sd = static_cast<u32>(vfp_reg.read(Sd_id));
+
+        const mem_write_struct access = memory.write(address, Sd, 4);
+
+        if (access.has_failed) {
+            memory.manage_abort(access.abort_code);
+            return;
+        }
+
+        address += 4;
+    }
+
+    if (addresses.end != (address - 4)) {
+        llarm::out::error("Assertion failed for FSTMS instruction");
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    // d is the number of register Dd;
+ *    // D(n) is the double-precision register numbered n
+ *    Store registers D(d) to D(d+(offset-3)/2) to memory words
+ *    Memory[start_address,4] through to Memory[end_address-4,4]
+ */
 void INSTRUCTIONS::arm::vfp::FSTMX(const u32 code) {
-    llarm::out::warning("FSTMX is unimplemented");
-// TODO
+    const vfp_address_struct addresses = vfp_addressing_mode.vfp_load_multiple(code);
+
+    u32 address = addresses.start;
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
+    const u8 num_regs = static_cast<u8>((offset - 1) / 2);
+    const u8 d = llarm::util::bit_range<u8>(code, 12, 15);
+
+    for (u8 i = 0; i < num_regs; i++) {
+        const id::vfp_reg Dd_id = vfp_reg.fetch_double_reg_id(d + i);
+        const u64 Dd = vfp_reg.read(Dd_id);
+
+        u32 mem_1 = 0;
+        u32 mem_2 = 0;
+
+        if (coprocessor.read(id::cp15::R1_B)) {
+            mem_1 = llarm::util::bit_range(Dd, 32, 63);
+            mem_2 = llarm::util::bit_range(Dd, 0, 31);
+        } else {
+            mem_1 = llarm::util::bit_range(Dd, 0, 31);
+            mem_2 = llarm::util::bit_range(Dd, 32, 63);
+        }
+
+        const mem_write_struct access = memory.write(address, mem_1, 4);
+
+        if (access.has_failed) {
+            memory.manage_abort(access.abort_code);
+            return;
+        }
+
+        const mem_write_struct access2 = memory.write(address + 4, mem_2, 4);
+
+        if (access2.has_failed) {
+            memory.manage_abort(access2.abort_code);
+            return;
+        }
+
+        address += 8;
+    }
+
+    const mem_write_struct extra = memory.write(address, 0, 4);
+
+    if (extra.has_failed) {
+        memory.manage_abort(extra.abort_code);
+        return;
+    }
+
+    address += 4;
+
+    if (addresses.end != (address - 4)) {
+        llarm::out::error("Assertion failed for FSTMX instruction");
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    if (U == 1)
+ *       address = Rn + offset * 4
+ *    else
+ *       address = Rn - offset * 4
+ *    Memory[address,4] = Sd
+ */
 void INSTRUCTIONS::arm::vfp::FSTS(const u32 code) {
-    llarm::out::warning("FSTS is unimplemented");
-// TODO
+    u32 address = 0;
+    const u32 Rn = reg.read(code, 16, 19);
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7); 
+
+    if (llarm::util::bit_fetch(code, 23) == true) {
+        address = Rn + (offset * 4);
+    } else {
+        address = Rn - (offset * 4);
+    }
+
+    const u32 Sd = vfp_reg.read_single(code, 12, 15, 22);
+
+    const mem_write_struct access = memory.write(address, Sd, 4);
+
+    if (access.has_failed) {
+        memory.manage_abort(access.abort_code);
+    }
 }
 
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Dd[i] = Dn[i] - Dm[i]
+ */
 void INSTRUCTIONS::arm::vfp::FSUBD(const u32 code) {
-    llarm::out::warning("FSUBD is unimplemented");
-// TODO
+    const double_encoding_struct encoding = vfp_addressing_mode.double_precision(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const double Dn = vfp_reg.read_double(regs.Dn_id);
+        const double Dm = vfp_reg.read_double(regs.Dm_id);
+
+        const double result = Dn - Dm;
+
+        vfp_reg.write_double(regs.Dd_id, result);
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    for i = 0 to vec_len-1
+ *       Sd[i] = Sn[i] - Sm[i]
+ */
 void INSTRUCTIONS::arm::vfp::FSUBS(const u32 code) {
-    llarm::out::warning("FSUBS is unimplemented");
-// TODO
+    const single_encoding_struct encoding = vfp_addressing_mode.single_precision(code);
+
+    for (const auto regs : encoding.vec_regs) {
+        const float Sn = vfp_reg.read_single(regs.Sn_id);
+        const float Sm = vfp_reg.read_single(regs.Sm_id);
+
+        const float result = Sn - Sm;
+
+        vfp_reg.write_single(regs.Sd_id, result);
+    }
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    Sd = ConvertDoubleToSignedInteger(Dm)
+ */
 void INSTRUCTIONS::arm::vfp::FTOSID(const u32 code) {
-    llarm::out::warning("FTOSID is unimplemented");
-// TODO
+    const double Dm = vfp_reg.read_double_IEEE(code, 0, 3);
+    const i32 result = static_cast<i32>(Dm);
+    vfp_reg.write_single(code, 12, 15, static_cast<u32>(result), 22);
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    Sd = ConvertSingleToSignedInteger(Sm)
+ */
 void INSTRUCTIONS::arm::vfp::FTOSIS(const u32 code) {
-    llarm::out::warning("FTOSIS is unimplemented");
-// TODO
+    const float Sm = vfp_reg.read_single_IEEE(code, 0, 3, 5);
+    const i32 result = static_cast<i32>(Sm);
+    vfp_reg.write_single(code, 12, 15, static_cast<u32>(result), 22);
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    Sd = ConvertDoubleToUnsignedInteger(Dm)
+ */
 void INSTRUCTIONS::arm::vfp::FTOUID(const u32 code) {
-    llarm::out::warning("FTOUID is unimplemented");
-// TODO
+    const double Dm = vfp_reg.read_double_IEEE(code, 0, 3);
+    const u32 result = static_cast<u32>(Dm);
+    vfp_reg.write_single(code, 12, 15, result, 22);
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    Sd = ConvertSingleToUnsignedInteger(Sm)
+ */
 void INSTRUCTIONS::arm::vfp::FTOUIS(const u32 code) {
-    llarm::out::warning("FTOUIS is unimplemented");
-// TODO
+    const float Sm = vfp_reg.read_single_IEEE(code, 0, 3, 5);
+    const u32 result = static_cast<u32>(Sm);
+    vfp_reg.write_single(code, 12, 15, result, 22);
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    Dd = ConvertUnsignedIntegerToDouble(Sm)
+ */
 void INSTRUCTIONS::arm::vfp::FUITOD(const u32 code) {
-    llarm::out::warning("FUITOD is unimplemented");
-// TODO
+    const u32 Sm = vfp_reg.read_single(code, 0, 3, 5);
+    const double result = static_cast<double>(Sm);
+    vfp_reg.write_double(code, 12, 15, result);
 }
 
+
+/**
+ * if ConditionPassed(cond) then
+ *    Sd = ConvertUnsignedIntegerToSingle(Sm)
+ */
 void INSTRUCTIONS::arm::vfp::FUITOS(const u32 code) {
-    llarm::out::warning("FUITOS is unimplemented");
-// TODO
+    const u32 Sm = vfp_reg.read_single(code, 0, 3, 5);
+    const float result = static_cast<float>(Sm);
+    vfp_reg.write_single(code, 12, 15, result, 22);
 }
