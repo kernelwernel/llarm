@@ -209,23 +209,26 @@ struct INSTRUCTIONS {
             MEMORY& memory;
             ADDRESSING_MODE& address_mode;
             EXCEPTION& exception;
+            COPROCESSOR& coprocessor;
 
             dsp(
-                REGISTERS& reg, 
+                REGISTERS& reg,
                 MEMORY& memory,
                 ADDRESSING_MODE& address_mode,
-                EXCEPTION& exception
-            ) : reg(reg), 
+                EXCEPTION& exception,
+                COPROCESSOR& coprocessor
+            ) : reg(reg),
                 memory(memory),
                 address_mode(address_mode),
-                exception(exception)
+                exception(exception),
+                coprocessor(coprocessor)
             {
 
             }
     
             void LDRD(const u32 code); // TODO
-            void MCRR(/*const u32 code*/); // TODO
-            void MRRC(/*const u32 code*/); // TODO
+            void MCRR(const u32 code); // TODO
+            void MRRC(const u32 code);
             void PLD(/*const u32 code*/); // TODO
             void QADD(const u32 code); // TODO
             void QDADD(const u32 code); // TODO
@@ -351,7 +354,7 @@ struct INSTRUCTIONS {
             misc(reg, address_mode, coprocessor, is_halted, is_terminated),
             load(reg, memory, address_mode, settings),
             store(reg, memory, address_mode),
-            dsp(reg, memory, address_mode, exception),
+            dsp(reg, memory, address_mode, exception, coprocessor),
             vfp(reg, coprocessor, memory, vfp_reg, vfp_exception, vfp_addressing_mode)
         {
 

@@ -135,8 +135,7 @@ write_basic_package_version_file(
 )
 
 
-# maybe not needed, might remove later
-add_subdirectory(tests/diff)
+# add_subdirectory(tests/diff)
 
 
 # installations

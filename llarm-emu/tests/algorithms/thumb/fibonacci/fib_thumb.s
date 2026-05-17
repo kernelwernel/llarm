@@ -1,70 +1,35 @@
-	.cpu cortex-m3
-	.arch armv7-m
-	.fpu softvfp
-	.eabi_attribute 20, 1
-	.eabi_attribute 21, 1
-	.eabi_attribute 23, 3
-	.eabi_attribute 24, 1
-	.eabi_attribute 25, 1
-	.eabi_attribute 26, 1
-	.eabi_attribute 30, 6
-	.eabi_attribute 34, 1
-	.eabi_attribute 18, 4
-	.file	"fib_thumb.c"
-	.text
-	.align	1
-	.global	main
-	.syntax unified
-	.thumb
-	.thumb_func
-	.type	main, %function
-main:
-	@ args = 0, pretend = 0, frame = 40
-	@ frame_needed = 1, uses_anonymous_args = 0
-	@ link register save eliminated.
-	push	{r4, r5, r7, r8, r9}
-	sub	sp, sp, #44
-	add	r7, sp, #0
-	mov	r2, #10
-	mov	r3, #0
-	strd	r2, [r7, #8]
-	mov	r2, #0
-	mov	r3, #0
-	strd	r2, [r7, #32]
-	mov	r2, #1
-	mov	r3, #0
-	strd	r2, [r7, #24]
-	movs	r3, #2
-	str	r3, [r7, #20]
-	b	.L2
-.L3:
-	ldrd	r0, [r7, #32]
-	ldrd	r2, [r7, #24]
-	adds	r8, r0, r2
-	adc	r9, r1, r3
-	strd	r8, [r7]
-	ldrd	r2, [r7, #24]
-	strd	r2, [r7, #32]
-	ldrd	r2, [r7]
-	strd	r2, [r7, #24]
-	ldr	r3, [r7, #20]
-	adds	r3, r3, #1
-	str	r3, [r7, #20]
-.L2:
-	ldr	r3, [r7, #20]
-	asrs	r2, r3, #31
-	mov	r4, r3
-	mov	r5, r2
-	ldrd	r2, [r7, #8]
-	cmp	r2, r4
-	sbcs	r3, r3, r5
-	bge	.L3
-	ldr	r3, [r7, #24]
-	mov	r0, r3
-	adds	r7, r7, #44
-	mov	sp, r7
-	@ sp needed
-	pop	{r4, r5, r7, r8, r9}
-	bx	lr
-	.size	main, .-main
-	.ident	"GCC: (Arch Repository) 14.2.0"
+    .syntax unified
+    .arch armv4t
+    .text
+    .global _start
+
+@ ARM startup: set up stack, call Thumb fibonacci, halt on return
+    .arm
+_start:
+    mov     sp, #0x7000         @ stack within 32KB RAM
+    ldr     lr, =_halt          @ return address (ARM mode, bit 0 = 0)
+    ldr     r0, =fib_main + 1   @ Thumb entry with interworking bit set
+    bx      r0                  @ switch to Thumb, jump to fib_main
+
+_halt:
+    .word   0xE7FFDEAD
+    .ltorg
+
+@ Thumb fibonacci: compute fib(10) = 55 iteratively, result in r0
+    .thumb
+    .thumb_func
+fib_main:
+    movs    r0, #0              @ prev = 0
+    movs    r1, #1              @ curr = 1
+    movs    r2, #0              @ i = 0
+    movs    r3, #10             @ n = 10
+.L_loop:
+    cmp     r2, r3
+    bge     .L_done
+    movs    r4, r1              @ tmp = curr
+    adds    r1, r0, r1          @ curr = prev + curr
+    movs    r0, r4              @ prev = tmp
+    adds    r2, r2, #1          @ i++
+    b       .L_loop
+.L_done:
+    bx      lr                  @ return to ARM _halt, r0 = 55

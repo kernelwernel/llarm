@@ -22,7 +22,7 @@ reset_handler:
     str     r1, [r0, #0x30]
 
     @ Enable VIC source 4 (SP804 timer)
-    ldr     r0, =0xFFFFF000
+    ldr     r0, =0x10140000
     mov     r1, #(1 << 4)
     str     r1, [r0, #0x010]    @ VICINTENABLE
 
@@ -34,7 +34,10 @@ reset_handler:
     mov     r1, #0xE2           @ TimerEn | Periodic | IntEnable | 32-bit
     str     r1, [r0, #0x008]    @ Timer1Control
 
-    @ IRQs are already enabled (CPSR.I = 0 at reset)
+    @ Enable IRQs (reset sets CPSR.I=1, so clear it explicitly)
+    mrs     r0, cpsr
+    bic     r0, r0, #0x80
+    msr     cpsr_c, r0
 spin:
     b       spin
 
@@ -48,7 +51,7 @@ irq_handler:
     str     r1, [r0, #0x008]    @ Timer1Control
 
     @ Signal end-of-interrupt to VIC
-    ldr     r0, =0xFFFFF000
+    ldr     r0, =0x10140000
     str     r0, [r0, #0x030]    @ VICVECTADDR
 
     @ Print success message via UART

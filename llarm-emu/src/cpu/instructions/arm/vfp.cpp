@@ -1,8 +1,7 @@
 #include "../instructions.hpp"
 
 #include "../../vfp/utils.hpp"
-#include "src/cpu/instructions/arm/addressing_modes/addressing_modes.hpp"
-#include "src/cpu/vfp/addressing_modes.hpp"
+#include "../../vfp/addressing_modes.hpp"
 
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
@@ -1302,6 +1301,7 @@ void INSTRUCTIONS::arm::vfp::FSTS(const u32 code) {
         memory.manage_abort(access.abort_code);
     }
 }
+
 
 /**
  * if ConditionPassed(cond) then

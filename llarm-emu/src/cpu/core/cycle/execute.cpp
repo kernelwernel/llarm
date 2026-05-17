@@ -84,8 +84,8 @@ void EXECUTE::arm_execute(const arm_decode_struct &instruction) {
         case arm_id::MCR2: instructions.arm.coproc.MCR2(code); return;
         case arm_id::MRC2: instructions.arm.coproc.MRC2(code); return;
         case arm_id::STC2: instructions.arm.coproc.STC2(/*code*/); return; // TODO
-        case arm_id::MCRR: instructions.arm.dsp.MCRR(/*code*/); return; // TODO
-        case arm_id::MRRC: instructions.arm.dsp.MRRC(/*code*/); return; // TODO
+        case arm_id::MCRR: instructions.arm.dsp.MCRR(code); return;
+        case arm_id::MRRC: instructions.arm.dsp.MRRC(code); return;
         case arm_id::PLD: instructions.arm.dsp.PLD(/*code*/); return; // TODO
         case arm_id::STRD: instructions.arm.dsp.STRD(code); return;
         case arm_id::LDRD: instructions.arm.dsp.LDRD(code); return;

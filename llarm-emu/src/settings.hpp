@@ -262,7 +262,7 @@ constexpr SETTINGS default_settings() {
     tmp.product_family = id::product_family::ARM7T;
     tmp.processor = id::processor::ARM7TDMI_S;
     tmp.has_round_robin_replacement_cache_strategy = true;
-    tmp.ppn = 0x7;
+    tmp.ppn = 0x770; // ARM7TDMI-S full PPN
     tmp.has_vic = true;
     tmp.vic_type = id::vic_type::PL190;
     tmp.vic_base = 0x10140000;   // VersatilePB PL190 VIC base address

@@ -321,7 +321,6 @@ arm_id ident::bin_arm::load_store(const u32 code) {
 }
 
 
-
 arm_id ident::bin_arm::vfp_single(const u32 code) {
     const bool bit_24 = llarm::util::bit_fetch(code, 24);
     const bool bit_23 = llarm::util::bit_fetch(code, 23);
@@ -429,7 +428,7 @@ arm_id ident::bin_arm::vfp_single(const u32 code) {
         
         case 0b00000001:
         case 0b00001001:
-            if (llarm::util::bit_fetch(code, 22) == true) {
+            if (llarm::util::bit_fetch(code, 22) == false) {
                 return arm_id::FMSR;
             }
             break;
@@ -818,12 +817,21 @@ arm_id ident::bin_arm::coproc_and_floats(const u32 code) {
 
             return arm_id::MRRC;
 
-        case 0b10001: 
-        case 0b10101: 
-        case 0b11001: 
-        case 0b11101: 
+        case 0b10001:
+        case 0b10101:
+        case 0b11001:
+        case 0b11101:
             if (llarm::util::bit_range(code, 8, 11) == 0b1010) {
                 return arm_id::FLDS;
+            }
+
+            if (
+                (llarm::util::bit_range(code, 8, 11) == 0b1011) &&
+                (llarm::util::bit_fetch(code, 22) == false) &&
+                (llarm::util::bit_fetch(code, 24)) &&
+                (llarm::util::bit_fetch(code, 21) == false)
+            ) {
+                return arm_id::FLDD;
             }
     }
 
@@ -831,13 +839,11 @@ arm_id ident::bin_arm::coproc_and_floats(const u32 code) {
     if (middle_right_zone == 0b1010) {
         return arm_id::FLDMS;
     }
-    
+
     if (
-        (middle_right_zone == 0b1011) && 
+        (middle_right_zone == 0b1011) &&
         (llarm::util::bit_fetch(code, 22) == false)
     ) {
-        // odd offset = FLDMX
-        // even offset = FLDMD 
         if (code & 1) {
             return arm_id::FLDMX;
         }
@@ -999,6 +1005,16 @@ arm_id ident::bin_arm::arm(const u32 code) {
                 return arm_id::SWI;
             }
 
+            const u8 cp_num = llarm::util::bit_range<u8>(code, 8, 11);
+
+            if (cp_num == 0b1010) {
+                return vfp_single(code);
+            }
+
+            if (cp_num == 0b1011) {
+                return vfp_double(code);
+            }
+
             if (llarm::util::bit_fetch(code, 4) == 1) {
                 if (llarm::util::bit_fetch(code, 20) == 1) {
                     return arm_id::MRC;
@@ -1007,16 +1023,6 @@ arm_id ident::bin_arm::arm(const u32 code) {
                 return arm_id::MCR;
             }
 
-            const u8 cp_num = llarm::util::bit_range<u8>(code, 8, 11);
-            
-            if (cp_num == 0b1010) {
-                return vfp_single(code);
-            }
-            
-            if (cp_num == 0b1011) {
-                return vfp_double(code);
-            }
-        
             return arm_id::CDP;
         }
     }

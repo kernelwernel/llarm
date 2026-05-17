@@ -47,7 +47,7 @@ void INSTRUCTIONS::arm::branching::BX(const u32 code) {
 
     reg.write(id::cpsr::T, (Rm & 1));
 
-    reg.write(id::reg::PC, (Rm & 0xFFFFFFFE));
+    reg.write(id::reg::PC, (Rm & 0xFFFFFFFE) - 4);
 }
 
 

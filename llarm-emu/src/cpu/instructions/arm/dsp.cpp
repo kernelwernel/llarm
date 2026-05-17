@@ -56,20 +56,37 @@ void INSTRUCTIONS::arm::dsp::LDRD(const u32 code) {
 
 
 /**
- * 
+ * if ConditionPassed(cond) then
+ *    send Rd value to Coprocessor[cp_num]
+ *    send Rn value to Coprocessor[cp_num]
  */
-void INSTRUCTIONS::arm::dsp::MCRR(/*const u32 code*/) {
-    llarm::out::warning("MCRR is unimplemented");
-    // TODO
+void INSTRUCTIONS::arm::dsp::MCRR(const u32 code) {
+    const u8 cp_num = llarm::util::bit_range<u8>(code, 8, 11);
+    const u8 opcode = llarm::util::bit_range<u8>(code, 4, 7);
+    const u8 CRm = llarm::util::bit_range<u8>(code, 0, 3);
+    const u32 Rd = reg.read(code, 12, 15);
+    const u32 Rn = reg.read(code, 16, 19);
+
+    const u64 value = static_cast<u64>(Rn) << 32 | Rd;
+    coprocessor.write(cp_num, 0, CRm, opcode, value);
 }
 
 
 /**
- * 
+ * if ConditionPassed(cond) then
+ *    Rd = first value from Coprocessor[cp_num]
+ *    Rn = second value from Coprocessor[cp_num]
  */
-void INSTRUCTIONS::arm::dsp::MRRC(/*const u32 code*/) {
-    llarm::out::warning("MRRC is unimplemented");
-    // TODO
+void INSTRUCTIONS::arm::dsp::MRRC(const u32 code) {
+    const u8 cp_num  = llarm::util::bit_range<u8>(code, 8, 11);
+    const u8 opcode  = llarm::util::bit_range<u8>(code, 4, 7);
+    const u8 CRm     = llarm::util::bit_range<u8>(code, 0, 3);
+    const u8 Rd_bits = llarm::util::bit_range<u8>(code, 12, 15);
+    const u8 Rn_bits = llarm::util::bit_range<u8>(code, 16, 19);
+
+    const u64 value = static_cast<u64>(coprocessor.read(cp_num, 0, CRm, opcode));
+    reg.write(Rd_bits, static_cast<u32>(value));
+    reg.write(Rn_bits, static_cast<u32>(value >> 32));
 }
 
 
