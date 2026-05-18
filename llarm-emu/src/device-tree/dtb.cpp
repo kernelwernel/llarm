@@ -7,7 +7,7 @@
 // dtb = device tree blob
 
 void DTB::load(RAM& ram, const u32 address) const {
-    for (u32 i = 0; i < static_cast<u32>(data.size()); i++) {
+    for (u32 i = 0; i < data.size(); i++) {
         ram.write(address + i, static_cast<u64>(data.at(i)), 1);
     }
 }
