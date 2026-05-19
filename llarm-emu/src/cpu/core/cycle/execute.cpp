@@ -321,6 +321,7 @@ void EXECUTE::thumb_execute(const thumb_decode_struct &instruction) {
         case thumb_id::STRH1: instructions.thumb.store.STRH1(code); return;
         case thumb_id::STRH2: instructions.thumb.store.STRH2(code); return;
         case thumb_id::CPS: // TODO
+        case thumb_id::CPY: // TODO
         case thumb_id::REV16: // TODO
         case thumb_id::REVSH: // TODO
         case thumb_id::SETEND: // TODO
