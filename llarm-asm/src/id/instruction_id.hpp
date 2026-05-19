@@ -327,6 +327,7 @@ namespace internal {
 
         // ARMv6
         CPS,
+        CPY,
         REV16,
         REVSH,
         SETEND,

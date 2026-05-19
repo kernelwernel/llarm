@@ -1,4 +1,6 @@
 #include "generators.hpp"
+#include "src/interpreter/mnemonic_arm.hpp"
+#include "src/interpreter/operand_struct.hpp"
 #include <llarm/shared/out.hpp>
 #include <llarm/shared/util.hpp>
 #include <llarm/shared/types.hpp>
@@ -214,6 +216,28 @@ u32 generators::BL_BLX1(const operand_struct& operands, const u32 PC, const thum
 }
 
 
+u16 generators::CPS(const operand_struct& operands) {
+    u16 opcode = 0b1011'0110'0110'0000;
+
+    llarm::util::modify_bit(opcode, 4, (operands.effect == effect_enum::ID));
+
+    llarm::util::modify_bit(opcode, 2, (operands.a_flag));
+    llarm::util::modify_bit(opcode, 1, (operands.i_flag));
+    llarm::util::modify_bit(opcode, 0, (operands.f_flag));
+
+    return opcode;
+}
+
+
+u16 generators::SETEND(const operand_struct& operands) {
+    u16 opcode = 0b1011'0110'0101'0000;
+
+    llarm::util::modify_bit(opcode, 3, operands.endianness == endianness_enum::BIG);
+
+    return opcode;
+}
+
+
 u32 generators::thumb(const IR_thumb_struct& IR) {
     const thumb_id id = IR.mnemonic.id;
     const operand_struct& operands = IR.operands;
@@ -292,14 +316,15 @@ u32 generators::thumb(const IR_thumb_struct& IR) {
         case thumb_id::BL_BLX1_PREFIX: return BL_BLX1(operands, IR.PC, id);
         case thumb_id::BLX2: return Rm_special(0b0100'0111'1000'0000, operands);
         case thumb_id::BX: return Rm_special(0b0100'0111'0000'0000, operands);
-        case thumb_id::CPS: // TODO
-        case thumb_id::REV16: // TODO
-        case thumb_id::REVSH: // TODO
-        case thumb_id::SETEND: // TODO
-        case thumb_id::SXTB: // TODO
-        case thumb_id::SXTH: // TODO
-        case thumb_id::UXTB: // TODO
-        case thumb_id::UXTH: // TODO
+        case thumb_id::CPS: return CPS(operands);
+        case thumb_id::CPY: return Rd_Rm_special(0b0100'0110'0000'0000, operands);
+        case thumb_id::REV16: return Rd_Rm(0b1011'1010'0100'0000, operands);
+        case thumb_id::REVSH: return Rd_Rm(0b1011'1010'1100'0000, operands);
+        case thumb_id::SETEND: return SETEND(operands);
+        case thumb_id::SXTB: return Rd_Rm(0b1011'0010'0100'0000, operands);
+        case thumb_id::SXTH: return Rd_Rm(0b1011'0010'0000'0000, operands);
+        case thumb_id::UXTB: return Rd_Rm(0b1011'0010'1100'0000, operands);
+        case thumb_id::UXTH: return Rd_Rm(0b1011'0010'1000'0000, operands);
                 break;
         }
 

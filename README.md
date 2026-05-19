@@ -13,7 +13,7 @@
 
 <br>
 
-**LLARM** (Low Level ARM) is an infrastructure toolchain for the ARM architecture. It is a collection of C/C++ libraries and tools that provide a unified foundation for low-level ARM work.
+**LLARM** (Low Level ARM) is an infrastructure toolchain for the ARM architecture. It is a collection of cross-platform C/C++ libraries and tools that provide a unified foundation for low-level ARM work.
 
 | Subproject | Description |
 |---|---|

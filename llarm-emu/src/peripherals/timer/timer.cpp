@@ -76,7 +76,7 @@ void timer_channel::tick() {
 			case 0: return 1;
 			case 1: return 16;
 			case 2: return 256;
-			default: return 1;  // undefined per TRM; treat as div1
+			default: return 1;  // undefined per TRM, treat as div1
 		}
 	}();
 
@@ -90,7 +90,7 @@ void timer_channel::tick() {
 	if (is_32bit) {
 		value--;
 	} else {
-		// only bits [15:0] participate; upper 16 bits are preserved (TRM 3.2.2)
+		// only bits [15:0] participate, upper 16 bits are preserved (TRM 3.2.2)
 		const u32 low = (value & 0xFFFFU) - 1U;
 		value = (value & 0xFFFF0000U) | (low & 0xFFFFU);
 	}
@@ -107,7 +107,7 @@ void timer_channel::tick() {
 	const bool is_periodic = llarm::util::bit_fetch(control, TIMERCTRL_BIT_TIMERMODE);
 
 	if (is_oneshot) {
-		// counter halts at zero; retriggered by a new write to TimerXLoad
+		// counter halts at zero, retriggered by a new write to TimerXLoad
 	} else if (is_periodic) {
 		value = load;
 	} else {
@@ -165,7 +165,7 @@ void TIMER::write(const u32 address, const u32 value) {
 		return;
 	}
 
-	// identification registers are read-only; writes are silently ignored
+	// identification registers are read-only, writes are silently ignored
 }
 
 
