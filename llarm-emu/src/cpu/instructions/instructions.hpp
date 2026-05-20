@@ -401,7 +401,13 @@ struct INSTRUCTIONS {
             void LSR2(const u16 code);
             void NEG(const u16 code); // NOTE: OVERFLOW_SUB MIGHT LEAD TO ERROR
             void ORR(const u16 code);
+            void REV16(const u16 code);
+            void REVSH(const u16 code);
             void ROR(const u16 code);
+            void SXTB(const u16 code);
+            void SXTH(const u16 code);
+            void UXTB(const u16 code);
+            void UXTH(const u16 code);
             void TST(const u16 code);
         } logic;
 
@@ -421,6 +427,7 @@ struct INSTRUCTIONS {
 
             movement(REGISTERS& reg) : reg(reg) {}
 
+            void CPY(const u16 code);
             void MOV1(const u16 code);
             void MOV2(const u16 code);
             void MOV3(const u16 code);
@@ -447,8 +454,10 @@ struct INSTRUCTIONS {
 
             misc(REGISTERS& reg,  SETTINGS& settings) : reg(reg), settings(settings) {}
 
+            void CPS(const u16 code);
             void NOP();
             void BKPT(const u16 code); // (v5)
+            void SETEND(const u16 code);
             void SWI();
         } misc;
 

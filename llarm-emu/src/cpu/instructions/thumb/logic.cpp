@@ -379,6 +379,90 @@ void INSTRUCTIONS::thumb::logic::ROR(const u16 code) {
 
 
 /*
+ * Rd[31:24] = Rm[23:16]
+ * Rd[23:16] = Rm[31:24]
+ * Rd[15:8]  = Rm[7:0]
+ * Rd[7:0]   = Rm[15:8]
+ */
+void INSTRUCTIONS::thumb::logic::REV16(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
+    const u32 Rm = reg.read(code, 3, 5);
+
+    const u32 result = (
+        ((Rm & 0x00FF0000) << 8) |
+        ((Rm & 0xFF000000) >> 8) |
+        ((Rm & 0x000000FF) << 8) |
+        ((Rm & 0x0000FF00) >> 8)
+    );
+
+    reg.write(Rd_id, result);
+}
+
+
+/*
+ * Rd[15:8] = Rn[7:0]
+ * Rd[7:0] = Rn[15:8]
+ * if Rn[7] == 1 then
+ *    Rd[31:16] = 0xFFFF
+ * else
+ *    Rd[31:16] = 0x0000
+ */
+void INSTRUCTIONS::thumb::logic::REVSH(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
+    const u32 Rm = reg.read(code, 3, 5);
+
+    const u8 byte0 = static_cast<u8>(Rm & 0xFF);
+    const u8 byte1 = static_cast<u8>((Rm >> 8) & 0xFF);
+
+    reg.write(Rd_id, static_cast<u32>(operation::sign_extend(static_cast<u32>((byte0 << 8) | byte1), 15)));
+}
+
+
+/*
+ * Rd = SignExtend(Rm[7:0])
+ */
+void INSTRUCTIONS::thumb::logic::SXTB(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
+    const u32 Rm = reg.read(code, 3, 5);
+
+    reg.write(Rd_id, static_cast<u32>(operation::sign_extend(Rm & 0xFF, 7)));
+}
+
+
+/*
+ * Rd = SignExtend(Rm[15:0])
+ */
+void INSTRUCTIONS::thumb::logic::SXTH(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
+    const u32 Rm = reg.read(code, 3, 5);
+
+    reg.write(Rd_id, static_cast<u32>(operation::sign_extend(Rm & 0xFFFF, 15)));
+}
+
+
+/*
+ * Rd = Rm AND 0x000000ff
+ */
+void INSTRUCTIONS::thumb::logic::UXTB(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
+    const u32 Rm = reg.read(code, 3, 5);
+
+    reg.write(Rd_id, Rm & 0xFF);
+}
+
+
+/*
+ * Rd = Rm AND 0x0000ffff
+ */
+void INSTRUCTIONS::thumb::logic::UXTH(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
+    const u32 Rm = reg.read(code, 3, 5);
+
+    reg.write(Rd_id, Rm & 0xFFFF);
+}
+
+
+/*
  * alu_out = Rn AND Rm
  * N Flag = alu_out[31]
  * Z Flag = if alu_out == 0 then 1 else 0

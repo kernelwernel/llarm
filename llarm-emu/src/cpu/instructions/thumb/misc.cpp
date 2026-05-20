@@ -2,6 +2,38 @@
 #include "../../core/registers.hpp"
 
 #include <llarm/shared/types.hpp>
+#include <llarm/shared/util.hpp>
+
+/**
+ * if InAPrivilegedMode() then
+ * if A == 1 then CPSR[8] = imod
+ * if I == 1 then CPSR[7] = imod
+ * if F == 1 then CPSR[6] = imod
+ * // else no change to interrupt disable bits
+ */
+void INSTRUCTIONS::thumb::misc::CPS(const u16 code) {
+    if (!reg.is_privileged()) {
+        return;
+    }
+
+    const bool disable   = llarm::util::bit_fetch(code, 4);
+    const bool affect_A  = llarm::util::bit_fetch(code, 2);
+    const bool affect_I  = llarm::util::bit_fetch(code, 1);
+    const bool affect_F  = llarm::util::bit_fetch(code, 0);
+
+    if (affect_I) {
+        reg.write(id::cpsr::I, disable);
+    }
+
+    if (affect_F) {
+        reg.write(id::cpsr::F, disable);
+    }
+
+    if (affect_A) {
+        reg.write(id::cpsr::A, disable);
+    }
+}
+
 
 void INSTRUCTIONS::thumb::misc::NOP() {
     // literally nothing happens here
@@ -72,4 +104,15 @@ void INSTRUCTIONS::thumb::misc::SWI() {
     } else {
         reg.write(id::reg::PC, 0x00000008);
     }
+}
+
+
+/**
+ * CPSR = CPSR with specified E bit modification
+ */
+void INSTRUCTIONS::thumb::misc::SETEND(const u16 code) {
+    const bool E = llarm::util::bit_fetch(code, 3);
+    u32 cpsr = reg.read(id::reg::CPSR);
+    llarm::util::modify_bit(cpsr, 9, E);
+    reg.write(id::reg::CPSR, cpsr);
 }

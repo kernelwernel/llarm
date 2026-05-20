@@ -28,8 +28,8 @@ namespace id {
         T,   // Thumb state bit
         F,   // FIQ disable bit
         I,   // IRQ disable bit
-        //A,   // imprecise data abort disable bit
-        //E,   // data endianness bit
+        A,   // imprecise data abort disable bit
+        E,   // data endianness bit
         //IT,  // if-then state bits
         //GE, // greater-than-or-equal-to bits
         //DNM, // the "do not modify" bits

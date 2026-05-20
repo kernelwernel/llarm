@@ -115,8 +115,8 @@ void REGISTERS::write(const id::cpsr cpsr_id, const u8 cpsr_value) {
                 return;
             case id::cpsr::F: llarm::util::modify_bit(CPSR, 6, cpsr_value); return;
             case id::cpsr::I: llarm::util::modify_bit(CPSR, 7, cpsr_value); return;
-            //case id::cpsr::A: llarm::util::modify_bit(CPSR, 8, value); return;
-            //case id::cpsr::E: llarm::util::modify_bit(CPSR, 9, value); return;
+            case id::cpsr::A: llarm::util::modify_bit(CPSR, 8, cpsr_value); return;
+            case id::cpsr::E: llarm::util::modify_bit(CPSR, 9, cpsr_value); return;
             //case id::cpsr::IT: return; // TODO: think of a good exception
             //case id::cpsr::GE: llarm::util::swap_bits(CPSR, 16, 19, value); return;
             //case id::cpsr::DNM: llarm::util::swap_bits(CPSR, 20, 23, value); return;
@@ -357,6 +357,8 @@ u8 REGISTERS::read(const id::cpsr cpsr_id) const {
             case id::cpsr::T: return llarm::util::bit_fetch(CPSR, 5);
             case id::cpsr::F: return llarm::util::bit_fetch(CPSR, 6);
             case id::cpsr::I: return llarm::util::bit_fetch(CPSR, 7);
+            case id::cpsr::A: return llarm::util::bit_fetch(CPSR, 8);
+            case id::cpsr::E: return llarm::util::bit_fetch(CPSR, 9);
             case id::cpsr::Q: return llarm::util::bit_fetch(CPSR, 27);
             case id::cpsr::V: return llarm::util::bit_fetch(CPSR, 28);
             case id::cpsr::C: return llarm::util::bit_fetch(CPSR, 29);

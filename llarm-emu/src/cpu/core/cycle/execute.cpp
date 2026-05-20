@@ -320,15 +320,14 @@ void EXECUTE::thumb_execute(const thumb_decode_struct &instruction) {
         case thumb_id::STRB2: instructions.thumb.store.STRB2(code); return;
         case thumb_id::STRH1: instructions.thumb.store.STRH1(code); return;
         case thumb_id::STRH2: instructions.thumb.store.STRH2(code); return;
-        case thumb_id::CPS: // TODO
-        case thumb_id::CPY: // TODO
-        case thumb_id::REV16: // TODO
-        case thumb_id::REVSH: // TODO
-        case thumb_id::SETEND: // TODO
-        case thumb_id::SXTB: // TODO
-        case thumb_id::SXTH: // TODO
-        case thumb_id::UXTB: // TODO
-        case thumb_id::UXTH: // TODO
-                break;
-        }
+        case thumb_id::CPS: instructions.thumb.misc.CPS(code); return;
+        case thumb_id::CPY: instructions.thumb.movement.CPY(code); return;
+        case thumb_id::REV16: instructions.thumb.logic.REV16(code); return;
+        case thumb_id::REVSH: instructions.thumb.logic.REVSH(code); return;
+        case thumb_id::SETEND: instructions.thumb.misc.SETEND(code); return;
+        case thumb_id::SXTB: instructions.thumb.logic.SXTB(code); return;
+        case thumb_id::SXTH: instructions.thumb.logic.SXTH(code); return;
+        case thumb_id::UXTB: instructions.thumb.logic.UXTB(code); return;
+        case thumb_id::UXTH: instructions.thumb.logic.UXTH(code); return;
+    }
 }

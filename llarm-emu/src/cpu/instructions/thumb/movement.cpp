@@ -6,6 +6,21 @@
 
 
 /**
+ * Rd = Rm
+ */
+void INSTRUCTIONS::thumb::movement::CPY(const u16 code) {
+    u8 Rd_bits = llarm::util::bit_range<u8>(code, 0, 2);
+    const u32 Rm = reg.read(code, 3, 6);
+    const bool H1 = llarm::util::bit_fetch(code, 7);
+
+    Rd_bits += static_cast<u8>(H1 * 8);
+    const id::reg Rd_id = reg.fetch_reg_id(Rd_bits);
+
+    reg.write(Rd_id, Rm);
+}
+
+
+/**
  * Rd = immed_8
  * N Flag = Rd[31]
  * Z Flag = if Rd == 0 then 1 else 0
