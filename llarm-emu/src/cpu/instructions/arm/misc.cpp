@@ -98,9 +98,9 @@ void INSTRUCTIONS::arm::misc::SWI() {
     reg.write(id::cpsr::I, 1);
 
     if (coprocessor.read(id::cp15::R1_V)) {
-        reg.write(id::reg::PC, 0xFFFF0004);
+        reg.write(id::reg::PC, 0xFFFF0008);
     } else {
-        reg.write(id::reg::PC, 0x00000004);
+        reg.write(id::reg::PC, 0x00000008);
     }
 }
 
@@ -126,8 +126,8 @@ void INSTRUCTIONS::arm::misc::BKPT() {
     reg.write(id::cpsr::I, true);
 
     if (coprocessor.read(id::cp15::R1_V)) {
-        reg.write(id::reg::PC, 0xFFFF0008);
+        reg.write(id::reg::PC, 0xFFFF000C);
     } else {
-        reg.write(id::reg::PC, 0x00000008);
+        reg.write(id::reg::PC, 0x0000000C);
     }
 }

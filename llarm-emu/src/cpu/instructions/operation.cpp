@@ -33,14 +33,13 @@ bool operation::borrow_sub(const u32 a, const u32 b) {
     return (a < b);
 }
 
-// CHECK IF THIS WORKS
+// TODO CHECK IF THIS WORKS
 bool operation::borrow_sub(const u32 a, const u32 b, const u32 c) {
     return (a < b) || (a - b < c);
 }
 
 bool operation::overflow_add(const u32 a, const u32 b) {
     const u32 result = a + b;
-    // Overflow when both operands have the same sign but the result has a different sign.
     return static_cast<bool>(((a ^ result) & (b ^ result)) >> 31);
 }
 

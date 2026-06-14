@@ -98,7 +98,7 @@ struct SETTINGS {
     id::thumb_version thumb_version = id::thumb_version::NO_THUMB; // either 1 or 2, 0 if not supported
     /**/ u8 core_count = 0;
     /**/ u16 clock_speed_mhz = 0; // 0 will mean no clock speed constraints
-    /**/ std::size_t memsize = 0;
+    /**/ u32 memsize = 0;
     id::arch arch = id::arch::UNKNOWN;
     /**/ id::specific_arch specific_arch = id::specific_arch::UNKNOWN;
     id::product_family product_family = id::product_family::UNKNOWN;
@@ -281,7 +281,7 @@ constexpr SETTINGS default_settings() {
 constexpr SETTINGS linux_settings() {
     SETTINGS tmp = default_settings();
 
-    tmp.memsize = 128UL * 1024 * 1024; // 128Mb
+    tmp.memsize = 128U * 1024U * 1024U; // 128Mb
     tmp.fresh_system = true;
     tmp.linux_boot = true;
     tmp.dtb_load_address = 0x01000000U;
@@ -301,12 +301,12 @@ constexpr SETTINGS linux_settings() {
     tmp.has_random_replacement_cache_strategy = true; // bit 14 RR = 0 (random/default)
     tmp.r1_sbo_mask = (1U << 16) | (1U << 19); // ARM926EJ-S SBO bits per TRM
 
-    // ARM926EJ-S has a full MMU.  Enable it so that when the kernel writes to
-    // CP15 C1 (R1_M bit) to turn on the MMU, LLARM actually activates virtual →
-    // physical translation.  Without this the emulator ignores the MCR and keeps
+    // ARM926EJ-S has a full MMU. Enable it so that when the kernel writes to
+    // CP15 C1 (R1_M bit) to turn on the MMU, LLARM actually activates virtual to
+    // physical translation. Without this, the emulator ignores the MCR and keeps
     // reading from raw physical addresses even after the kernel has jumped to
     // virtual space (0xC0xxxxxx → 0x00xxxxxx).
-    // Use a unified TLB model for simplicity; real ARM926EJ-S has separate I/D
+    // Use a unified TLB model for simplicity, real ARM926EJ-S has separate I/D
     // TLBs, but the kernel's TLB-invalidation operations map cleanly onto the
     // unified table the LLARM TLB implementation exposes.
     tmp.is_mmu_enabled = true;
@@ -319,8 +319,8 @@ constexpr SETTINGS linux_settings() {
 }
 
 
-// Linux Image (uncompressed kernel) — load directly at the standard ARM physical entry point.
-// No decompressor involved; the kernel's head.S runs immediately from 0x8000.
+// Linux Image (uncompressed kernel), load directly at the standard ARM physical entry point.
+// No decompressor involved, the kernel's head.S runs immediately from 0x8000.
 constexpr SETTINGS image_settings() {
     SETTINGS tmp = linux_settings();
     tmp.binary_load_address = 0x00008000U; // ARM Linux TEXT_OFFSET, physical entry point
