@@ -92,15 +92,15 @@ void INSTRUCTIONS::arm::misc::PSR(const u32 code) {
 void INSTRUCTIONS::arm::misc::SWI() {
     const u32 saved_cpsr = reg.read(id::reg::CPSR);
     reg.switch_mode(id::mode::SUPERVISOR);
-    reg.write(id::reg::R14_svc, reg.force_read(id::reg::PC));
+    reg.write(id::reg::R14_svc, reg.force_read(id::reg::PC) + 4);
     reg.write(id::reg::SPSR_svc, saved_cpsr);
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
 
     if (coprocessor.read(id::cp15::R1_V)) {
-        reg.write(id::reg::PC, 0xFFFF0008);
+        reg.write(id::reg::PC, 0xFFFF0004);
     } else {
-        reg.write(id::reg::PC, 0x00000008);
+        reg.write(id::reg::PC, 0x00000004);
     }
 }
 
@@ -120,14 +120,14 @@ void INSTRUCTIONS::arm::misc::SWI() {
 void INSTRUCTIONS::arm::misc::BKPT() {
     const u32 CPSR = reg.read(id::reg::CPSR);
     reg.switch_mode(id::mode::ABORT);
-    reg.write(id::reg::R14_abt, reg.force_read(id::reg::PC));
+    reg.write(id::reg::R14_abt, reg.force_read(id::reg::PC) + 4);
     reg.write(id::reg::SPSR_abt, CPSR);
     reg.write(id::cpsr::T, false);
     reg.write(id::cpsr::I, true);
 
     if (coprocessor.read(id::cp15::R1_V)) {
-        reg.write(id::reg::PC, 0xFFFF000C);
+        reg.write(id::reg::PC, 0xFFFF0008);
     } else {
-        reg.write(id::reg::PC, 0x0000000C);
+        reg.write(id::reg::PC, 0x00000008);
     }
 }
