@@ -102,31 +102,31 @@ void REGISTERS::write(const id::cpsr cpsr_id, const u8 cpsr_value) {
 
         write(id::reg::R15, R15_copy);
         return;
-    } else {
-        switch (cpsr_id) {
-            case id::cpsr::M: llarm::util::swap_bits(CPSR, 0, 4, cpsr_value); return;
-            case id::cpsr::T: 
-                if (cpsr_value == true) {
-                    globals.instruction_set = id::instruction_sets::THUMB;
-                } else if (cpsr_value == false) {
-                    globals.instruction_set = id::instruction_sets::ARM;
-                }
-                llarm::util::modify_bit(CPSR, 5, cpsr_value);
-                return;
-            case id::cpsr::F: llarm::util::modify_bit(CPSR, 6, cpsr_value); return;
-            case id::cpsr::I: llarm::util::modify_bit(CPSR, 7, cpsr_value); return;
-            case id::cpsr::A: llarm::util::modify_bit(CPSR, 8, cpsr_value); return;
-            case id::cpsr::E: llarm::util::modify_bit(CPSR, 9, cpsr_value); return;
-            //case id::cpsr::IT: return; // TODO: think of a good exception
-            //case id::cpsr::GE: llarm::util::swap_bits(CPSR, 16, 19, value); return;
-            //case id::cpsr::DNM: llarm::util::swap_bits(CPSR, 20, 23, value); return;
-            //case id::cpsr::J: llarm::util::modify_bit(CPSR, 24, value); return;
-            case id::cpsr::Q: llarm::util::modify_bit(CPSR, 27, cpsr_value); return;
-            case id::cpsr::V: llarm::util::modify_bit(CPSR, 28, cpsr_value); return;
-            case id::cpsr::C: llarm::util::modify_bit(CPSR, 29, cpsr_value); return;
-            case id::cpsr::Z: llarm::util::modify_bit(CPSR, 30, cpsr_value); return;
-            case id::cpsr::N: llarm::util::modify_bit(CPSR, 31, cpsr_value); return;
-        }
+    }
+
+    switch (cpsr_id) {
+        case id::cpsr::M: llarm::util::swap_bits(CPSR, 0, 4, cpsr_value); return;
+        case id::cpsr::T: 
+            if (cpsr_value == true) {
+                globals.instruction_set = id::instruction_sets::THUMB;
+            } else if (cpsr_value == false) {
+                globals.instruction_set = id::instruction_sets::ARM;
+            }
+            llarm::util::modify_bit(CPSR, 5, cpsr_value);
+            return;
+        case id::cpsr::F: llarm::util::modify_bit(CPSR, 6, cpsr_value); return;
+        case id::cpsr::I: llarm::util::modify_bit(CPSR, 7, cpsr_value); return;
+        case id::cpsr::A: llarm::util::modify_bit(CPSR, 8, cpsr_value); return;
+        case id::cpsr::E: llarm::util::modify_bit(CPSR, 9, cpsr_value); return;
+        //case id::cpsr::IT: return; // TODO: think of a good exception
+        //case id::cpsr::GE: llarm::util::swap_bits(CPSR, 16, 19, value); return;
+        //case id::cpsr::DNM: llarm::util::swap_bits(CPSR, 20, 23, value); return;
+        //case id::cpsr::J: llarm::util::modify_bit(CPSR, 24, value); return;
+        case id::cpsr::Q: llarm::util::modify_bit(CPSR, 27, cpsr_value); return;
+        case id::cpsr::V: llarm::util::modify_bit(CPSR, 28, cpsr_value); return;
+        case id::cpsr::C: llarm::util::modify_bit(CPSR, 29, cpsr_value); return;
+        case id::cpsr::Z: llarm::util::modify_bit(CPSR, 30, cpsr_value); return;
+        case id::cpsr::N: llarm::util::modify_bit(CPSR, 31, cpsr_value); return;
     }
 }
 
@@ -154,7 +154,7 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
         case id::reg::R5: R5 = value; return;
         case id::reg::R6: R6 = value; return;
         case id::reg::R7: R7 = value; return;
-        case id::reg::R15: R15 = value; return;
+        case id::reg::R15: R15 = value - (read(id::cpsr::T) ? 2u : 4u); return;
         [[likely]] case id::reg::PC: write_PC(value); return;
         case id::reg::CPSR: 
             if (arch_26.is_only_26_arch()) {

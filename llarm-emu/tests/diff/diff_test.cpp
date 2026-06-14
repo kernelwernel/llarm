@@ -8,8 +8,20 @@
 #include <array>
 #include <cstdio>
 #include <cstdlib>
+#include <vector>
 
 static constexpr u32 CPSR_MASK = 0xF80F03FFU; // flags + mode + I/F/T
+
+struct mem_write {
+    u32 address;
+    u32 size;
+    u64 value;
+};
+
+static void on_mem_write(uc_engine* /*uc*/, uc_mem_type /*type*/, u64 address, int size, i64 value, void* user_data) {
+    auto* writes = static_cast<std::vector<mem_write>*>(user_data);
+    writes->push_back({ static_cast<u32>(address), static_cast<u32>(size), static_cast<u64>(value) });
+}
 
 struct reg_entry {
     llarm::emu::reg reg_id;
@@ -45,10 +57,7 @@ static void uc_must(uc_err err, const char* op) {
 }
 
 static void wait_for_execution(llarm::emu::cpu_blockstep& emu) {
-    // Phase 1: wait for execution_done to reset (CPU started new cycle)
-    while (emu.cpu.core.execution_done.load(std::memory_order_acquire)) {}
-    // Phase 2: wait for execution_done to set (CPU finished executing)
-    while (!emu.cpu.core.execution_done.load(std::memory_order_acquire)) {}
+    emu.wait_for_execution();
 }
 
 static void halt_and_exit(llarm::emu::cpu_blockstep& emu, int code) {
@@ -112,7 +121,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    const SETTINGS settings = linux_settings();
+    const SETTINGS settings = image_settings();
 
     llarm::emu::cpu_blockstep emu(binary_path, settings);
     emu.run();
@@ -120,14 +129,14 @@ int main(int argc, char* argv[]) {
     // Wait for the first instruction to finish executing
     while (!emu.cpu.core.execution_done.load(std::memory_order_acquire)) {}
 
-    // QEMU's boot stub initialises SP to the top of RAM before jumping to the kernel.
-    // The Linux decompressor computes its relocation target as (sp - image_size), so
-    // without this the subtraction underflows and the copy loop accesses ~0xFFFFFFE0.
-    // We patch SP here (after run() has finished its own register init) while the CPU is paused.
-    emu.write_reg(llarm::emu::reg_CPSR, 0xD3U); // ensure valid SVC mode for the SP dispatch
-    emu.write_reg(llarm::emu::reg_SP, static_cast<u32>(settings.memsize));
-
     uc_engine* uc = setup_unicorn(settings, emu.binary);
+
+    std::vector<mem_write> mem_writes;
+    uc_hook mem_hook = 0;
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+    uc_must(uc_hook_add(uc, &mem_hook, UC_HOOK_MEM_WRITE, reinterpret_cast<void*>(on_mem_write), &mem_writes, 1, 0), "add mem write hook");
+
+    u32 zero_run = 0;
 
     for (u32 step = 0; ; step++) {
         const u32 pc = emu.current_pc();
@@ -152,11 +161,27 @@ int main(int argc, char* argv[]) {
                 disasm.c_str());
         }
 
+        if (opcode == 0) {
+            zero_run++;
+            if (zero_run >= 8) {
+                fprintf(stderr, "[%u] 0x%08X  8 consecutive zero opcodes — CPU fell into zeroed memory\n", step, pc);
+                halt_and_exit(emu, 1);
+            }
+        } else {
+            zero_run = 0;
+        }
+
         const uc_err err = uc_emu_start(uc, pc, 0, 0, 1);
 
-        if (err != UC_ERR_OK) {
-            fprintf(stderr, "[%u] 0x%08X  op=0x%08X  id=%-30s  %s\n",
-                step, pc, opcode, id_str.c_str(), disasm.c_str());
+        if (err == UC_ERR_INSN_INVALID) {
+            // Architecturally UNPREDICTABLE instructions (e.g. SBO violations) may be rejected
+            // by Unicorn as invalid. Advance Unicorn's PC past the instruction so comparison
+            // can continue; any divergence in checked registers will surface naturally.
+            fprintf(stderr, "[%u] 0x%08X  op=0x%08X  unicorn INSN_INVALID — skipping\n", step, pc, opcode);
+            const u32 next_pc = pc + (thumb ? 2U : 4U);
+            uc_reg_write(uc, UC_ARM_REG_PC, &next_pc);
+        } else if (err != UC_ERR_OK) {
+            fprintf(stderr, "[%u] 0x%08X  op=0x%08X  id=%-30s  %s\n", step, pc, opcode, id_str.c_str(), disasm.c_str());
             fprintf(stderr, "\033[31m[%u] unicorn fault at PC=0x%08X: %s\033[0m\n", step, pc, uc_strerror(err));
             fprintf(stderr, "  register state at fault:\n");
 
@@ -171,12 +196,12 @@ int main(int argc, char* argv[]) {
 
         for (const auto& r : REG_MAP) {
             u32 llarm_val = emu.read_reg(r.reg_id);
-            u32 uc_val    = 0;
+            u32 uc_val = 0;
             uc_reg_read(uc, r.uc_reg_id, &uc_val);
 
             if (r.reg_id == llarm::emu::reg_CPSR) {
                 llarm_val &= CPSR_MASK;
-                uc_val    &= CPSR_MASK;
+                uc_val &= CPSR_MASK;
             }
 
             if (llarm_val != uc_val) {
@@ -188,6 +213,39 @@ int main(int argc, char* argv[]) {
                 fprintf(stderr, "  \033[31m%-4s  llarm=0x%08X  unicorn=0x%08X\033[0m\n", r.name, llarm_val, uc_val);
             }
         }
+
+        for (const auto& w : mem_writes) {
+            // Skip MMIO addresses, they're above RAM and handled by LLARM peripherals,
+            // not stored in physical memory, so read_physical_mem would return 0.
+            if (w.address >= static_cast<u32>(settings.memsize)) {
+                continue;
+            }
+
+            u64 llarm_val = 0;
+            switch (w.size) {
+                case 1: llarm_val = emu.read_physical_mem<u8>(w.address);  break;
+                case 2: llarm_val = emu.read_physical_mem<u16>(w.address); break;
+                case 4: llarm_val = emu.read_physical_mem<u32>(w.address); break;
+                case 8: llarm_val = emu.read_physical_mem<u64>(w.address); break;
+                default: break;
+            }
+
+            const u64 mask    = (w.size < 8) ? ((1ULL << (w.size * 8)) - 1ULL) : ~0ULL;
+            const u64 uc_val  = static_cast<u64>(w.value) & mask;
+            llarm_val        &= mask;
+
+            if (llarm_val != uc_val) {
+                if (!diverged) {
+                    fprintf(stderr, "[%u] 0x%08X  op=0x%08X  id=%-30s  %s\n", step, pc, opcode, id_str.c_str(), disasm.c_str());
+                    fprintf(stderr, "\033[31mDIVERGENCE\033[0m\n");
+                    diverged = true;
+                }
+                fprintf(stderr, "  \033[31mMEM[0x%08X] size=%u  llarm=0x%llX  unicorn=0x%llX\033[0m\n",
+                    w.address, w.size, (unsigned long long)llarm_val, (unsigned long long)uc_val);
+            }
+        }
+
+        mem_writes.clear();
 
         if (diverged) {
             halt_and_exit(emu, 1);

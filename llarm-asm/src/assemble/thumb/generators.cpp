@@ -325,8 +325,7 @@ u32 generators::thumb(const IR_thumb_struct& IR) {
         case thumb_id::SXTH: return Rd_Rm(0b1011'0010'0000'0000, operands);
         case thumb_id::UXTB: return Rd_Rm(0b1011'0010'1100'0000, operands);
         case thumb_id::UXTH: return Rd_Rm(0b1011'0010'1000'0000, operands);
-                break;
-        }
+    }
 
     return 0;
 }

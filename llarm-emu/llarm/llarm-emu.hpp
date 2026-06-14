@@ -145,13 +145,15 @@ namespace llarm::emu {
         }
 
         void next_instruction() {
-            cpu.core.continue_cycle = true;
+            // Pre-clear before releasing the CPU so wait_for_execution() never misses
+            // the transition: without this, the CPU can complete its new cycle before
+            // Phase 1 of the old two-phase wait even starts, causing an infinite spin.
+            cpu.core.execution_done.store(false, std::memory_order_relaxed);
+            cpu.core.continue_cycle.store(true, std::memory_order_release);
         }
 
-        // Call after next_instruction() to block until the next instruction finishes executing.
-        // Uses a two-phase wait on execution_done to avoid races with the cycle boundary.
+        // Call after next_instruction() to block until the next instruction finishes.
         void wait_for_execution() const {
-            while ( cpu.core.execution_done.load(std::memory_order_acquire)) {}
             while (!cpu.core.execution_done.load(std::memory_order_acquire)) {}
         }
 

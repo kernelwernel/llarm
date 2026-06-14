@@ -32,6 +32,7 @@ shifter_id ident::bin_shifters::load_store(const u32 code) {
     switch (shift_type) {
         case 0b010: return shifter_id::LS_IMM;
         case 0b011: return shifter_id::LS_IMM_PRE;
+        case 0b001: // post-index + W=1: LDRT/STRT (user-mode access)
         case 0b000: return shifter_id::LS_IMM_POST;
         case 0b110: 
             if (llarm::util::bit_range(code, 4, 11) == 0) {
@@ -71,7 +72,7 @@ shifter_id ident::bin_shifters::load_store(const u32 code) {
 
             break;
 
-        case 0b100: 
+        case 0b100:
             if (llarm::util::bit_range(code, 4, 11) == 0) {
                 return shifter_id::LS_REG_POST;
             } else if (bit_fetch(code, 4) == 0) {
@@ -87,7 +88,26 @@ shifter_id ident::bin_shifters::load_store(const u32 code) {
                         return shifter_id::LS_SCALED_POST_ROR;
                 }
             }
-            
+
+            break;
+
+        case 0b101: // register post-index + W=1: LDRT/STRT (user-mode access)
+            if (llarm::util::bit_range(code, 4, 11) == 0) {
+                return shifter_id::LS_REG_POST;
+            } else if (bit_fetch(code, 4) == 0) {
+                switch (shift_case) {
+                    case 0b00: return shifter_id::LS_SCALED_POST_LSL;
+                    case 0b01: return shifter_id::LS_SCALED_POST_LSR;
+                    case 0b10: return shifter_id::LS_SCALED_POST_ASR;
+                    case 0b11:
+                        if (shift_imm == 0) {
+                            return shifter_id::LS_SCALED_POST_RRX;
+                        }
+
+                        return shifter_id::LS_SCALED_POST_ROR;
+                }
+            }
+
             break;
     }
 

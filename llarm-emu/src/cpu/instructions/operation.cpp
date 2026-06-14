@@ -14,13 +14,12 @@ bool operation::carry_add(const u64 sum) {
 
 bool operation::carry_add(const u32 a, const u32 b) {
     constexpr u64 max = ((1ULL << 32) - 1);
-    return ((a + b) > max);
+    return ((static_cast<u64>(a) + b) > max);
 }
 
-// CHECK IF THIS WORKS TODO
 bool operation::carry_add(const u32 a, const u32 b, const u32 c) {
     constexpr u64 max = ((1ULL << 32) - 1);
-    return ((a + b + c) > max);
+    return ((static_cast<u64>(a) + b + c) > max);
 }
 
 // TODO: COMPLETE
@@ -40,11 +39,9 @@ bool operation::borrow_sub(const u32 a, const u32 b, const u32 c) {
 }
 
 bool operation::overflow_add(const u32 a, const u32 b) {
-    const i32 a_sign = static_cast<i32>(a);
-    const i32 b_sign = static_cast<i32>(b);
-
-    const i32 result = a_sign + b_sign;
-    return (a_sign > 0 && b_sign > 0 && result < 0);
+    const u32 result = a + b;
+    // Overflow when both operands have the same sign but the result has a different sign.
+    return static_cast<bool>(((a ^ result) & (b ^ result)) >> 31);
 }
 
 

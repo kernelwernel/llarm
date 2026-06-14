@@ -301,6 +301,29 @@ constexpr SETTINGS linux_settings() {
     tmp.has_random_replacement_cache_strategy = true; // bit 14 RR = 0 (random/default)
     tmp.r1_sbo_mask = (1U << 16) | (1U << 19); // ARM926EJ-S SBO bits per TRM
 
+    // ARM926EJ-S has a full MMU.  Enable it so that when the kernel writes to
+    // CP15 C1 (R1_M bit) to turn on the MMU, LLARM actually activates virtual →
+    // physical translation.  Without this the emulator ignores the MCR and keeps
+    // reading from raw physical addresses even after the kernel has jumped to
+    // virtual space (0xC0xxxxxx → 0x00xxxxxx).
+    // Use a unified TLB model for simplicity; real ARM926EJ-S has separate I/D
+    // TLBs, but the kernel's TLB-invalidation operations map cleanly onto the
+    // unified table the LLARM TLB implementation exposes.
+    tmp.is_mmu_enabled = true;
+    tmp.has_tlb = true;
+    tmp.is_tlb_unified = true;
+    tmp.unified_tlb_table_size = 64;
+    tmp.tlb_type = id::tlb_type::UNIFIED;
+
+    return tmp;
+}
+
+
+// Linux Image (uncompressed kernel) — load directly at the standard ARM physical entry point.
+// No decompressor involved; the kernel's head.S runs immediately from 0x8000.
+constexpr SETTINGS image_settings() {
+    SETTINGS tmp = linux_settings();
+    tmp.binary_load_address = 0x00008000U; // ARM Linux TEXT_OFFSET, physical entry point
     return tmp;
 }
 

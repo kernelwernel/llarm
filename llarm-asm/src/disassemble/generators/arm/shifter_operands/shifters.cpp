@@ -132,7 +132,8 @@ shifter_id shifters::identify_ls_shifter(const u32 code) {
             return shifter_id::LS_IMM_POST;
         }
 
-        llarm::out::error("No known load store immediate addressing shifter has been found");
+        // P=0, W=1: post-index with user-mode translation (LDRT/STRT)
+        return shifter_id::LS_IMM_POST;
     }
 
 
@@ -150,7 +151,8 @@ shifter_id shifters::identify_ls_shifter(const u32 code) {
             return shifter_id::LS_REG_POST;
         }
 
-        llarm::out::error("No known load store immediate addressing shifter has been found");
+        // P=0, W=1: post-index with user-mode translation (LDRT/STRT)
+        return shifter_id::LS_REG_POST;
     }
 
 
@@ -184,6 +186,12 @@ shifter_id shifters::identify_ls_shifter(const u32 code) {
             case 0b000100: return shifter_id::LS_SCALED_POST_ASR;
             case 0b000110: return shifter_id::LS_SCALED_POST_ROR;
             case 0b100110: return shifter_id::LS_SCALED_POST_RRX;
+            // T-variant (P=0, W=1): user-mode post-index, address computation identical to plain post-index
+            case 0b001000: return shifter_id::LS_SCALED_POST_LSL;
+            case 0b001010: return shifter_id::LS_SCALED_POST_LSR;
+            case 0b001100: return shifter_id::LS_SCALED_POST_ASR;
+            case 0b001110: return shifter_id::LS_SCALED_POST_ROR;
+            case 0b101110: return shifter_id::LS_SCALED_POST_RRX;
             default: llarm::out::error("No known load store scaled register addressing shifter has been found");
         }
     }

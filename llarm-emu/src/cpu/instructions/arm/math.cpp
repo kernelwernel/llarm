@@ -151,14 +151,14 @@ void INSTRUCTIONS::arm::math::SBC(const u32 code) {
  *     V Flag = OverflowFrom(shifter_operand - Rn)
  */ 
 void INSTRUCTIONS::arm::math::RSB(const u32 code) {
-    const u16 shifter_operand = llarm::util::bit_range<u16>(code, 0, 11);
-    
+    const data_struct shifter_operand = address_mode.data_processing(code);
+
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
 
     const bool S = llarm::util::bit_fetch(code, 20);
 
-    reg.write(Rd_id, (shifter_operand - Rn));
+    reg.write(Rd_id, (shifter_operand.value - Rn));
 
     if ((S == 1) && (Rd_id == id::reg::R15)) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
@@ -166,8 +166,8 @@ void INSTRUCTIONS::arm::math::RSB(const u32 code) {
         const u32 Rd = reg.read(Rd_id);
         reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
-        reg.write(id::cpsr::C, !operation::borrow_sub(shifter_operand, Rn));
-        reg.write(id::cpsr::V, operation::overflow_sub(shifter_operand, Rn));
+        reg.write(id::cpsr::C, !operation::borrow_sub(shifter_operand.value, Rn));
+        reg.write(id::cpsr::V, operation::overflow_sub(shifter_operand.value, Rn));
     }
 }
 
