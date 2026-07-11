@@ -108,9 +108,9 @@ translation_struct MMU::first_section(const u32 entry, const u32 virtual_address
         };
     }
 
-    const u32 section_base_address = 0;
+    const u32 section_base_address = llarm::util::bit_range(entry, 20, 31);
 
-    const u32 section_index = llarm::util::bit_range(virtual_address, 0, 12);
+    const u32 section_index = llarm::util::bit_range(virtual_address, 0, 19);
     const u32 physical_address = (section_base_address << 20) | section_index;
 
     return translation_struct {

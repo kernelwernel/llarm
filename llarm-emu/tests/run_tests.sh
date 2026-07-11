@@ -69,7 +69,7 @@ run_test() {
 }
 
 section() {
-    printf "\n-- %s\n" "$1"
+    printf "\n%s\n" "$1"
 }
 
 echo "llarm-emu integration tests"

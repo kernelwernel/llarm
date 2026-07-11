@@ -107,8 +107,16 @@ u32 COPROCESSOR::read(
         case id::cp::CP11:
         case id::cp::CP12:
         case id::cp::CP13:
-        case id::cp::CP14:
-        case id::cp::CP15: return cp15.read(cp15.identify(CRn, CRm, opcode_2));
+        case id::cp::CP14: llarm::out::dev_error("Currently unsupported coprocessor in read operation");
+        case id::cp::CP15: {
+            const id::cp15 cp15_id = cp15.identify(CRn, CRm, opcode_2);
+
+            if (cp15_id == id::cp15::R7_CACHE) {
+                return cache.read_status(CRm, opcode_2);
+            }
+
+            return cp15.read(cp15_id);
+        }
     }
 }
 

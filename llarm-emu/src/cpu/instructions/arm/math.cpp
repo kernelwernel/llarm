@@ -25,7 +25,9 @@ void INSTRUCTIONS::arm::math::ADC(const u32 code) {
 
     const bool S = llarm::util::bit_fetch(code, 20);
 
-    reg.write(Rd_id, (Rn + shifter_operand.value + reg.read(id::cpsr::C)));
+    const u32 carry_in = reg.read(id::cpsr::C);
+
+    reg.write(Rd_id, (Rn + shifter_operand.value + carry_in));
 
     const u32 Rd = reg.read(Rd_id);
 
@@ -34,8 +36,8 @@ void INSTRUCTIONS::arm::math::ADC(const u32 code) {
     } else if (S == 1) {
         reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
-        reg.write(id::cpsr::C, operation::carry_add(Rn, shifter_operand.value, reg.read(id::cpsr::C)));
-        reg.write(id::cpsr::V, operation::overflow_add(Rn, shifter_operand.value, reg.read(id::cpsr::C)));
+        reg.write(id::cpsr::C, operation::carry_add(Rn, shifter_operand.value, carry_in));
+        reg.write(id::cpsr::V, operation::overflow_add(Rn, shifter_operand.value, carry_in));
     }
 }
 
@@ -92,7 +94,9 @@ void INSTRUCTIONS::arm::math::RSC(const u32 code) {
 
     const bool S = llarm::util::bit_fetch(code, 20);
 
-    reg.write(Rd_id, (shifter_operand.value - Rn - !(reg.read(id::cpsr::C))));
+    const u32 not_carry_in = !(reg.read(id::cpsr::C));
+
+    reg.write(Rd_id, (shifter_operand.value - Rn - not_carry_in));
 
     if ((S == 1) && (Rd_id == id::reg::R15)) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
@@ -100,8 +104,8 @@ void INSTRUCTIONS::arm::math::RSC(const u32 code) {
         const u32 Rd = reg.read(Rd_id);
         reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
-        reg.write(id::cpsr::C, !operation::borrow_sub(shifter_operand.value, Rn, !(reg.read(id::cpsr::C))));
-        reg.write(id::cpsr::V, operation::overflow_sub(shifter_operand.value, Rn, !(reg.read(id::cpsr::C))));
+        reg.write(id::cpsr::C, !operation::borrow_sub(shifter_operand.value, Rn, not_carry_in));
+        reg.write(id::cpsr::V, operation::overflow_sub(shifter_operand.value, Rn, not_carry_in));
     }
 }
 
@@ -118,14 +122,18 @@ void INSTRUCTIONS::arm::math::RSC(const u32 code) {
  *     V Flag = OverflowFrom(Rn - shifter_operand - NOT(C Flag)
  */ 
 void INSTRUCTIONS::arm::math::SBC(const u32 code) {
-    const u16 shifter_operand = llarm::util::bit_range<u16>(code, 0, 11);
-    
+    const data_struct shifter_operand = address_mode.data_processing(code);
+
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
     const u32 Rn = reg.read(code, 16, 19);
 
     const bool S = llarm::util::bit_fetch(code, 20);
 
-    reg.write(Rd_id, (Rn - shifter_operand - !(reg.read(id::cpsr::C))));
+    // captured before Rd is written; see ADC for why this can't be a fresh
+    // reg.read(id::cpsr::C) below (the C flag gets overwritten by borrow-out first)
+    const u32 not_carry_in = !(reg.read(id::cpsr::C));
+
+    reg.write(Rd_id, (Rn - shifter_operand.value - not_carry_in));
 
     if ((S == 1) && (Rd_id == id::reg::R15)) {
         reg.write(id::reg::CPSR, id::reg::SPSR);
@@ -133,8 +141,8 @@ void INSTRUCTIONS::arm::math::SBC(const u32 code) {
         const u32 Rd = reg.read(Rd_id);
         reg.write(id::cpsr::N, (llarm::util::bit_fetch(Rd, 31)));
         reg.write(id::cpsr::Z, (Rd == 0));
-        reg.write(id::cpsr::C, !operation::borrow_sub(Rn, shifter_operand, !(reg.read(id::cpsr::C))));
-        reg.write(id::cpsr::V, operation::overflow_sub(Rn, shifter_operand, !(reg.read(id::cpsr::C))));
+        reg.write(id::cpsr::C, !operation::borrow_sub(Rn, shifter_operand.value, not_carry_in));
+        reg.write(id::cpsr::V, operation::overflow_sub(Rn, shifter_operand.value, not_carry_in));
     }
 }
 

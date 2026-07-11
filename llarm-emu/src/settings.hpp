@@ -305,7 +305,7 @@ constexpr SETTINGS linux_settings() {
     // CP15 C1 (R1_M bit) to turn on the MMU, LLARM actually activates virtual to
     // physical translation. Without this, the emulator ignores the MCR and keeps
     // reading from raw physical addresses even after the kernel has jumped to
-    // virtual space (0xC0xxxxxx → 0x00xxxxxx).
+    // virtual space (0xC0xxxxxx -> 0x00xxxxxx).
     // Use a unified TLB model for simplicity, real ARM926EJ-S has separate I/D
     // TLBs, but the kernel's TLB-invalidation operations map cleanly onto the
     // unified table the LLARM TLB implementation exposes.
@@ -314,6 +314,22 @@ constexpr SETTINGS linux_settings() {
     tmp.is_tlb_unified = true;
     tmp.unified_tlb_table_size = 64;
     tmp.tlb_type = id::tlb_type::UNIFIED;
+    tmp.has_cache = true;
+    tmp.cache_cannot_disable = false;
+    tmp.has_unified_cache = false;
+    tmp.has_separate_cache = true;
+    tmp.has_separate_inst_cache = true;
+    tmp.has_separate_data_cache = true;
+    tmp.instruction_cache_cannot_disable = false;
+    tmp.data_cache_cannot_disable = false;
+    tmp.cache_type = id::cache_type::WRITE_THROUGH;
+    tmp.cache_ctype_field = 0b0000; // write-through cache
+    tmp.data_cache_size = util::get_kb(16);
+    tmp.instruction_cache_size = util::get_kb(16);
+    tmp.data_cache_line_length_bytes = 32;
+    tmp.instruction_cache_line_length_bytes = 32;
+    tmp.data_cache_assoc_way = 4;
+    tmp.instruction_cache_assoc_way = 4;
 
     return tmp;
 }

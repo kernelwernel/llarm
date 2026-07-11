@@ -162,6 +162,7 @@ struct CACHE {
     u32 read_line_inst(const cache_line& line, const u32 pos) const;
 
     void function(const u8 CRm, const u8 opcode_2, const u32 data = 0);
+    u32 read_status(const u8 CRm, const u8 opcode_2) const;
 
     CACHE(
         SETTINGS& settings,

@@ -418,7 +418,7 @@ int main(int argc, char* argv[]) {
         std::printf("llarm-emu: loaded \"%s\" (%" PRIuMAX " bytes)\n", binary_path.c_str(), binary_size);
     }
 
-    const SETTINGS run_settings = arg_bitset.test(LINUX) ? linux_settings() : default_settings();
+    const SETTINGS run_settings = arg_bitset.test(LINUX) ? image_settings() : default_settings();
 
     // step mode
     if (arg_bitset.test(STEP)) {

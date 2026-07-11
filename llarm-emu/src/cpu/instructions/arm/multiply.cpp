@@ -71,7 +71,7 @@ void INSTRUCTIONS::arm::multiply::SMLAL(const u32 code) {
     const i32 Rm = static_cast<i32>(reg.read(code, 0, 3));
     const i32 Rs = static_cast<i32>(reg.read(code, 8, 11));
 
-    const i64 result = (static_cast<i64>(Rm * Rs));
+    const i64 result = static_cast<i64>(Rm) * static_cast<i64>(Rs);
 
     const u32 low_result = llarm::util::bit_range(result, 0, 31);
     const u32 high_result = llarm::util::bit_range(result, 32, 63);
@@ -106,7 +106,7 @@ void INSTRUCTIONS::arm::multiply::SMULL(const u32 code) {
     const i32 Rm = static_cast<i32>(reg.read(code, 0, 3));
     const i32 Rs = static_cast<i32>(reg.read(code, 8, 11));
 
-    const i64 result = (static_cast<i64>(Rm * Rs));
+    const i64 result = static_cast<i64>(Rm) * static_cast<i64>(Rs);
 
     const u32 RdLo = llarm::util::bit_range(result, 0, 31);
     const i32 RdHi = llarm::util::bit_range<i32>(result, 32, 63);
@@ -131,10 +131,10 @@ void INSTRUCTIONS::arm::multiply::SMULL(const u32 code) {
  *         V Flag = unaffected
  */
 void INSTRUCTIONS::arm::multiply::UMLAL(const u32 code) {
-    const i32 Rm = static_cast<i32>(reg.read(code, 0, 3));
-    const i32 Rs = static_cast<i32>(reg.read(code, 8, 11));
+    const u32 Rm = reg.read(code, 0, 3);
+    const u32 Rs = reg.read(code, 8, 11);
 
-    const i64 result = (static_cast<i64>(Rm * Rs));
+    const u64 result = static_cast<u64>(Rm) * static_cast<u64>(Rs);
 
     const u32 low_result = llarm::util::bit_range(result, 0, 31);
     const u32 high_result = llarm::util::bit_range(result, 32, 63);
@@ -166,10 +166,10 @@ void INSTRUCTIONS::arm::multiply::UMLAL(const u32 code) {
  *         V Flag = unaffected
  */
 void INSTRUCTIONS::arm::multiply::UMULL(const u32 code) {
-    const i32 Rm = static_cast<i32>(reg.read(code, 0, 3));
-    const i32 Rs = static_cast<i32>(reg.read(code, 8, 11));
+    const u32 Rm = reg.read(code, 0, 3);
+    const u32 Rs = reg.read(code, 8, 11);
 
-    const i64 result = (static_cast<i64>(Rm * Rs));
+    const u64 result = static_cast<u64>(Rm) * static_cast<u64>(Rs);
 
     const u32 RdLo = llarm::util::bit_range(result, 0, 31);
     const u32 RdHi = llarm::util::bit_range(result, 32, 63);

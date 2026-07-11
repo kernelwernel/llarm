@@ -153,7 +153,7 @@ id::cp15 CP15::identify(const u8 CRn, const u8 CRm, const u8 opcode_2) const {
         // amount of indentation if this was manually inlined here
         case 6: return identify_R6(CRm, opcode_2);
     
-        case 7: return id::cp15::R7;
+        case 7: return id::cp15::R7_CACHE;
         
         case 8: 
             if (settings.is_mpu_enabled) {
@@ -1446,18 +1446,9 @@ void CP15::setup_R1_control() {
     force_write(id::cp15::R1_A, settings.has_alignment_fault_checking);
 
     // C
-    if (settings.has_cache) {
-        if (
-            (settings.cache_cannot_disable || settings.has_unified_cache) || 
-            (settings.has_separate_data_cache && settings.has_separate_cache)
-        ) {
-            force_write(id::cp15::R1_C, true);
-        } else {
-            llarm::out::error("Invalid C bit configuration in R1 cache setup");
-        }
-    } else {
-        force_write(id::cp15::R1_C, false); // no cache present
-    }
+    // A cache always resets disabled, regardless of implementation shape, unless it's
+    // hardwired to be always-on. Software is responsible for enabling it later via MCR.
+    force_write(id::cp15::R1_C, (settings.has_cache && settings.cache_cannot_disable));
 
     // W
     force_write(id::cp15::R1_W, settings.has_write_buffer);
@@ -1522,7 +1513,9 @@ void CP15::setup_R1_control() {
     force_write(id::cp15::R1_Z, settings.has_branch_prediction);
 
     // I
-    force_write(id::cp15::R1_I, settings.has_separate_inst_cache);
+    // Like the C bit, the instruction cache always resets disabled unless it's
+    // hardwired to be always-on; software enables it later via MCR.
+    force_write(id::cp15::R1_I, (settings.has_separate_inst_cache && settings.instruction_cache_cannot_disable));
 
     // V
     force_write(id::cp15::R1_V, settings.has_high_vectors);

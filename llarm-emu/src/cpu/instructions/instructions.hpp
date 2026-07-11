@@ -95,8 +95,8 @@ struct INSTRUCTIONS {
             void B(const u32 code); // TODO
             void BL(const u32 code); // TODO
             void BX(const u32 code); // TODO
-            void BLX1(/*const u32 code*/); // TODO
-            void BLX2(/*const u32 code*/); // TODO
+            void BLX1(const u32 code);
+            void BLX2(const u32 code);
         } branching;
 
         struct coproc {

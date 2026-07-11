@@ -6,6 +6,7 @@
 #include <llarm/shared/out.hpp>
 
 #include <cmath>
+#include <iterator>
 
 void TLB::flush() {
     if (settings.tlb_type == id::tlb_type::UNIFIED) {
@@ -41,29 +42,20 @@ void TLB::invalidate(const u32 virtual_address, const id::tlb_type tlb_type) {
 void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, const u32 physical_address, const bool is_cacheable, const bool is_write_bufferable) {
     // random replacement strategy, i guess different strategies could be added in the future
 
-    auto generate_index = [this, tlb_type]() -> u16 {
-        const u64 r = random.generate();
-        u16 tlb_size = 0;
-
-        switch (tlb_type) {
-            case id::tlb_type::UNKNOWN: llarm::out::dev_error("Unknown TLB invalidation");
-            case id::tlb_type::SEPARATE: llarm::out::dev_error("Unsupported TLB invalidation for auto replacement");
-            case id::tlb_type::SEPARATE_INST: tlb_size = settings.inst_tlb_table_size; break;
-            case id::tlb_type::SEPARATE_DATA: tlb_size = settings.data_tlb_table_size; break;
-            case id::tlb_type::UNIFIED: tlb_size = settings.unified_tlb_table_size; break;
-        }
-
-        const u32 range = tlb_size + 1;
-
-        return static_cast<u16>(r % range);
+    // Tables are keyed by virtual address, so a random slot can't be looked up directly.
+    // Pick a random existing entry (the table is at capacity whenever this runs) and erase it by its key.
+    auto evict_random_entry = [this](tlb_table& table) {
+        auto it = table.begin();
+        std::advance(it, random.generate() % table.size());
+        table.erase(it);
     };
 
     const bool already_exists = is_translation_cached(virtual_address).is_found;
 
-    // this will work by deleting the previous entry in the TLB that occupied that random index,
-    // and then it'll insert that new entry. It's pretty simple, but if the virtual address being
-    // inserted already exists in the TLB, then that specific entry will be replaced instead of
-    // replacing a random index. This prevents duplicate entries for the same virtual address.
+    // this will work by deleting a random previous entry in the TLB, and then it'll insert that
+    // new entry. It's pretty simple, but if the virtual address being inserted already exists in
+    // the TLB, then that specific entry will be replaced instead of replacing a random entry.
+    // This prevents duplicate entries for the same virtual address.
 
     const tlb_entry_struct entry { physical_address, is_cacheable, is_write_bufferable };
 
@@ -76,8 +68,7 @@ void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, c
             if (already_exists) {
                 invalidate(virtual_address, tlb_type);
             } else {
-                const tlb_entry_struct inst_evict = inst_table.at(generate_index());
-                inst_table.erase(inst_evict.physical_address);
+                evict_random_entry(inst_table);
             }
 
             inst_table.insert({ virtual_address, entry });
@@ -88,8 +79,7 @@ void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, c
             if (already_exists) {
                 invalidate(virtual_address, tlb_type);
             } else {
-                const tlb_entry_struct data_evict = data_table.at(generate_index());
-                data_table.erase(data_evict.physical_address);
+                evict_random_entry(data_table);
             }
 
             data_table.insert({ virtual_address, entry });
@@ -100,8 +90,7 @@ void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, c
             if (already_exists) {
                 invalidate(virtual_address, tlb_type);
             } else {
-                const tlb_entry_struct unified_evict = unified_table.at(generate_index());
-                unified_table.erase(unified_evict.physical_address);
+                evict_random_entry(unified_table);
             }
 
             unified_table.insert({ virtual_address, entry });
@@ -225,6 +214,14 @@ void TLB::function(const u8 opcode_2, const u8 CRm, const u32 virtual_address) {
     constexpr u8 INVALIDATE_ENTIRE_DATA_TLB = 0b0000110;
     constexpr u8 INVALIDATE_ENTRY_DATA_TLB = 0b0010110;
 
+    // ARMv6 ASID-based invalidation (opcode_2 == 2). Individual TLB entries aren't tagged 
+    // with an ASID (CP15 c13 Context ID isn't tracked per-entry), so these conservatively 
+    // fall back to invalidating the whole corresponding table or something idk
+
+    constexpr u8 INVALIDATE_UNIFIED_TLB_BY_ASID = 0b0100111;
+    constexpr u8 INVALIDATE_INST_TLB_BY_ASID = 0b0100101;
+    constexpr u8 INVALIDATE_DATA_TLB_BY_ASID = 0b0100110;
+
     switch (bytecode) {
         case INVALIDATE_ENTIRE_UNIFIED_TLB: flush(); return;
         case INVALIDATE_ENTRY_UNIFIED_TLB: invalidate(virtual_address, id::tlb_type::UNIFIED); return;
@@ -232,7 +229,10 @@ void TLB::function(const u8 opcode_2, const u8 CRm, const u32 virtual_address) {
         case INVALIDATE_ENTRY_INST_TLB: invalidate(virtual_address, id::tlb_type::SEPARATE_INST); return;
         case INVALIDATE_ENTIRE_DATA_TLB: data_table.clear(); return;
         case INVALIDATE_ENTRY_DATA_TLB: invalidate(virtual_address, id::tlb_type::SEPARATE_DATA); return;
-        default: 
+        case INVALIDATE_UNIFIED_TLB_BY_ASID: unified_table.clear(); return;
+        case INVALIDATE_INST_TLB_BY_ASID: inst_table.clear(); return;
+        case INVALIDATE_DATA_TLB_BY_ASID: data_table.clear(); return;
+        default:
             llarm::out::unpredictable("Unknown TLB function, ignoring operation");
             return;
     }

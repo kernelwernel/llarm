@@ -5,6 +5,8 @@
 
 #include <llarm/llarm-asm.hpp>
 
+#include <cstdio>
+
 
 inline void CORE::arm_cycle_headless() {
     const arm_fetch_struct arm_code_access = fetch.arm_fetch();
@@ -142,7 +144,17 @@ inline void CORE::thumb_cycle_headless() {
 
 
 void CORE::headless_mode() {
+    u64 step = 0;
+
     while (true) {
+        if ((step % 1'000'000) == 0) {
+            fprintf(stderr, "[headless] step=%llu PC=0x%08X I=%d vic_irq=%d timer_irq=%d\n",
+                static_cast<unsigned long long>(step), reg.force_read(id::reg::R15),
+                reg.read(id::cpsr::I), vic.irq_pending(), timer.irq_pending());
+        }
+
+        ++step;
+
         if (is_halted) {
             if (is_terminated) {
                 return;

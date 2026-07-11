@@ -522,7 +522,21 @@ void CACHE::function(const u8 CRm, const u8 opcode_2, const u32 data) {
         case CLEAN_INVALIDATE_UNIFIED_CACHE_LINE_INDEX: clean_invalidate_data_entry_index(data); return;
         default: llarm::out::warning("Unknown cache function provided, ignoring");
     }
+}
 
-    // WARNING: be careful to not forget extra functions when adding more features to the 
-    // cache in the future, the default case will disable warnings for missing function keys
+
+u32 CACHE::read_status(const u8 CRm, const u8 opcode_2) const {
+    // this is kinda stupid, but i think more of these will be added so i'm designing it to be scalable
+    constexpr u8 TEST_CLEAN_DATA_CACHE = 103; // c10, opcode_2 = 3
+    constexpr u8 TEST_CLEAN_INVALIDATE_DATA_CACHE = 143; // c14, opcode_2 = 3
+
+    const u8 function_key = static_cast<u8>((CRm * 10) + opcode_2);
+
+    switch (function_key) {
+        case TEST_CLEAN_DATA_CACHE:
+        case TEST_CLEAN_INVALIDATE_DATA_CACHE: return (1U << 30);
+        default:
+            llarm::out::warning("Unknown cache status read, returning 0");
+            return 0;
+    }
 }

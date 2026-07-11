@@ -76,8 +76,8 @@ void EXECUTE::arm_execute(const arm_decode_struct &instruction) {
         case arm_id::STRH: instructions.arm.store.STRH(code); return;
         case arm_id::BX: instructions.arm.branching.BX(code); return;
         case arm_id::BKPT: instructions.arm.misc.BKPT(); return;
-        case arm_id::BLX1: instructions.arm.branching.BLX1(/*code*/); return; // TODO
-        case arm_id::BLX2: instructions.arm.branching.BLX2(/*code*/); return; // TODO
+        case arm_id::BLX1: instructions.arm.branching.BLX1(code); return;
+        case arm_id::BLX2: instructions.arm.branching.BLX2(code); return;
         case arm_id::CLZ: instructions.arm.logic.CLZ(code); return;
         case arm_id::CDP2: instructions.arm.coproc.CDP2(/*code*/); return; // TODO
         case arm_id::LDC2: instructions.arm.coproc.LDC2(/*code*/); return; // TODO

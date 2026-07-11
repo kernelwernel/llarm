@@ -112,11 +112,8 @@ bool operation::signed_overflow_add(const i32 a, const i32 b) {
 }
 
 
-bool operation::arithmetic_shift_right(u32 num, const u8 shift) {
-    const u32 sign = num & (1U << 31);
-    num >>= shift;
-    num |= sign;
-    return num;
+u32 operation::arithmetic_shift_right(u32 num, const u8 shift) {
+    return static_cast<u32>(static_cast<i32>(num) >> shift);
 }
 
 

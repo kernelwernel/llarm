@@ -9,7 +9,6 @@
 #include <cmath>
 
 // TODO work on exceptions, this might take a while
-// TODO finish all VFP instructions
 
 /**
  * if ConditionPassed(cond) then

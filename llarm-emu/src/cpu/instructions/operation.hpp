@@ -27,7 +27,7 @@ namespace operation {
     i32 signed_sat(const u32 x, const u32 n);
     bool signed_does_sat(const u32 x, const u32 n);
 
-    bool arithmetic_shift_right(u32 num, const u8 shift); // why is this not a reference? research more...
+    u32 arithmetic_shift_right(u32 num, const u8 shift);
 
     std::vector<id::reg> register_list(const u16 reg_list);
 };

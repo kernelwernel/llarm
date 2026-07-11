@@ -12,10 +12,12 @@ struct TLB {
     SETTINGS& settings;
 
     llarm::random random;
+    
+    using tlb_table = llarm::unordered_map<u32, tlb_entry_struct>; 
 
-    llarm::unordered_map<u32, tlb_entry_struct> unified_table;
-    llarm::unordered_map<u32, tlb_entry_struct> inst_table;
-    llarm::unordered_map<u32, tlb_entry_struct> data_table;
+    tlb_table unified_table;
+    tlb_table inst_table;
+    tlb_table data_table;
 
     // read B3-27 for more context
     u32 W_unified;

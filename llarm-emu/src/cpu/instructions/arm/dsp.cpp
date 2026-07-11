@@ -48,7 +48,7 @@ void INSTRUCTIONS::arm::dsp::LDRD(const u32 code) {
         }
 
         reg.write(Rd_bits, llarm::util::bit_range(access.value, 0, 31));
-        reg.write(Rd_bits + 1, llarm::util::bit_range(access2.value, 32, 63));
+        reg.write(Rd_bits + 1, llarm::util::bit_range(access2.value, 0, 31));
     } else {
         llarm::out::unpredictable("LDRD has unpredictable arguments");
     }

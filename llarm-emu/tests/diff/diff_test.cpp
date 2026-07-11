@@ -2,6 +2,8 @@
 #include <llarm/llarm-asm.hpp>
 #include "src/device-tree/dtb.hpp"
 #include "src/settings.hpp"
+#include "src/vic/vic.hpp"
+#include "src/peripherals/uart/uart.hpp"
 
 #include <unicorn/unicorn.h>
 
@@ -66,6 +68,20 @@ static void halt_and_exit(llarm::emu::cpu_blockstep& emu, int code) {
     exit(code);
 }
 
+// PrimeCell PeriphID0-3 / PCellID0-3 are fixed, read-only identification registers
+// (DDI0181/DDI0183, offsets 0xFE0-0xFFC). Unicorn has no VIC/UART device model, so
+// without this it reads back 0 there while LLARM's peripheral model reads the real
+// constant, producing a false-positive divergence. Seeding these known constants
+// into Unicorn's flat memory lets the two models agree on this narrow, static slice
+// of MMIO; stateful peripheral registers are out of scope for this diff test.
+static void seed_primecell_ids(uc_engine* uc, u32 base, const std::array<u32, 8>& ids) {
+    constexpr std::array<u16, 8> OFFSETS = {{ 0xFE0, 0xFE4, 0xFE8, 0xFEC, 0xFF0, 0xFF4, 0xFF8, 0xFFC }};
+
+    for (u8 i = 0; i < OFFSETS.size(); i++) {
+        uc_must(uc_mem_write(uc, base + OFFSETS.at(i), &ids.at(i), sizeof(u32)), "seed PrimeCell ID register");
+    }
+}
+
 static uc_engine* setup_unicorn(const SETTINGS& s, const std::vector<u8>& binary) {
     uc_engine* uc = nullptr;
     uc_must(uc_open(UC_ARCH_ARM, UC_MODE_ARM, &uc), "uc_open");
@@ -73,6 +89,9 @@ static uc_engine* setup_unicorn(const SETTINGS& s, const std::vector<u8>& binary
     // Map the full 32-bit address space so all reads return 0 for unmapped areas,
     // matching LLARM's RAM model which silently returns 0 for out-of-range accesses.
     uc_must(uc_mem_map(uc, 0, 0x100000000ULL, UC_PROT_ALL), "uc_mem_map");
+
+    seed_primecell_ids(uc, s.vic_base, {{ PERIPH_ID0, PERIPH_ID1, PERIPH_ID2, PERIPH_ID3, PCELL_ID0, PCELL_ID1, PCELL_ID2, PCELL_ID3 }});
+    seed_primecell_ids(uc, s.uart_base, {{ UART_PERIPHID0, UART_PERIPHID1, UART_PERIPHID2, UART_PERIPHID3, UART_PCELLID0, UART_PCELLID1, UART_PCELLID2, UART_PCELLID3 }});
 
     uc_must(uc_mem_write(uc, s.binary_load_address, binary.data(), binary.size()), "write binary");
     uc_must(uc_mem_write(uc, s.dtb_load_address, DTB::data.data(), DTB::data.size()), "write dtb");
@@ -138,8 +157,25 @@ int main(int argc, char* argv[]) {
 
     u32 zero_run = 0;
 
+    bool has_expected_next_pc = false;
+    u32 expected_next_pc = 0;
+    u32 prev_step_num = 0;
+    u32 prev_step_pc = 0;
+    u32 prev_step_opcode = 0;
+    std::string prev_step_id_str;
+    std::string prev_step_disasm;
+
     for (u32 step = 0; ; step++) {
         const u32 pc = emu.current_pc();
+
+        if (has_expected_next_pc && pc != expected_next_pc) {
+            fprintf(stderr, "[%u] 0x%08X  op=0x%08X  id=%-30s  %s\n",
+                prev_step_num, prev_step_pc, prev_step_opcode,
+                prev_step_id_str.c_str(), prev_step_disasm.c_str());
+            fprintf(stderr, "\033[31mDIVERGENCE\033[0m\n");
+            fprintf(stderr, "  \033[31mPC  llarm=0x%08X  unicorn=0x%08X\033[0m\n", pc, expected_next_pc);
+            halt_and_exit(emu, 1);
+        }
 
         const bool thumb = emu.is_thumb_mode();
         const u32 opcode = thumb ? emu.current_thumb_code() : emu.current_arm_code();
@@ -164,7 +200,7 @@ int main(int argc, char* argv[]) {
         if (opcode == 0) {
             zero_run++;
             if (zero_run >= 8) {
-                fprintf(stderr, "[%u] 0x%08X  8 consecutive zero opcodes — CPU fell into zeroed memory\n", step, pc);
+                fprintf(stderr, "[%u] 0x%08X  8 consecutive zero opcodes, CPU fell into zeroed memory\n", step, pc);
                 halt_and_exit(emu, 1);
             }
         } else {
@@ -177,7 +213,7 @@ int main(int argc, char* argv[]) {
             // Architecturally UNPREDICTABLE instructions (e.g. SBO violations) may be rejected
             // by Unicorn as invalid. Advance Unicorn's PC past the instruction so comparison
             // can continue; any divergence in checked registers will surface naturally.
-            fprintf(stderr, "[%u] 0x%08X  op=0x%08X  unicorn INSN_INVALID — skipping\n", step, pc, opcode);
+            fprintf(stderr, "[%u] 0x%08X  op=0x%08X  unicorn INSN_INVALID, skipping\n", step, pc, opcode);
             const u32 next_pc = pc + (thumb ? 2U : 4U);
             uc_reg_write(uc, UC_ARM_REG_PC, &next_pc);
         } else if (err != UC_ERR_OK) {
@@ -191,6 +227,9 @@ int main(int argc, char* argv[]) {
 
             halt_and_exit(emu, 1);
         }
+
+        uc_reg_read(uc, UC_ARM_REG_PC, &expected_next_pc);
+        has_expected_next_pc = true;
 
         bool diverged = false;
 
@@ -251,10 +290,16 @@ int main(int argc, char* argv[]) {
             halt_and_exit(emu, 1);
         }
 
-        if (step % 1000 == 0) {
+        if (step % 10000 == 0) {
             printf("[%u] PC=0x%08X  OK\n", step, pc);
             fflush(stdout);
         }
+
+        prev_step_num = step;
+        prev_step_pc = pc;
+        prev_step_opcode = opcode;
+        prev_step_id_str = id_str;
+        prev_step_disasm = disasm;
 
         emu.next_instruction();
         wait_for_execution(emu);
