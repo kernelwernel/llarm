@@ -246,6 +246,47 @@ void INSTRUCTIONS::arm::store::SWPB(const u32 code) {
         memory.manage_abort(write_access.abort_code);
         return;
     }
- 
+
     reg.write(code, 12, 15, temp);
+}
+
+
+/**
+ * MemoryAccess(B-bit, E-bit)
+ * if ConditionPassed(cond) then
+ *     physical_address = TLB(Rn)
+ *     if IsExclusiveLocal(physical_address, processor_id, 4) then
+ *         if Shared(Rn) == 1 then
+ *             if IsExclusiveGlobal(physical_address, processor_id, 4) then
+ *                 Memory[Rn,4] = Rm; Rd = 0; ClearExclusiveByAddress(physical_address,processor_id,4)
+ *             else
+ *                 Rd = 1
+ *         else
+ *             Memory[Rn,4] = Rm; Rd = 0
+ *     else
+ *         Rd = 1
+ *     ClearExclusiveLocal(processor_id)
+ */
+void INSTRUCTIONS::arm::store::STREX(const u32 code) {
+    const u32 Rn = reg.read(code, 16, 19);
+    const u32 physical_address = memory.resolve_physical_address(Rn);
+
+    if (!memory.is_exclusive_local(physical_address)) {
+        memory.clear_exclusive_local();
+        reg.write(code, 12, 15, 1);
+        return;
+    }
+
+    const u32 Rm = reg.read(code, 0, 3);
+
+    const mem_write_struct write_access = memory.write(Rn, Rm, 4);
+
+    memory.clear_exclusive_local();
+
+    if (write_access.has_failed) {
+        memory.manage_abort(write_access.abort_code);
+        return;
+    }
+
+    reg.write(code, 12, 15, 0);
 }

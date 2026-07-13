@@ -22,18 +22,14 @@ bool operation::carry_add(const u32 a, const u32 b, const u32 c) {
     return ((static_cast<u64>(a) + b + c) > max);
 }
 
-// TODO: COMPLETE
 bool operation::borrow_add(const u32 a, const u32 b) {
-    (void)a;
-    (void)b;
-    return true; // TODO: COMPLETE THIS SHIT
+    return !operation::carry_add(a, b);
 }
 
 bool operation::borrow_sub(const u32 a, const u32 b) {
     return (a < b);
 }
 
-// TODO CHECK IF THIS WORKS
 bool operation::borrow_sub(const u32 a, const u32 b, const u32 c) {
     return (a < b) || (a - b < c);
 }
@@ -45,70 +41,30 @@ bool operation::overflow_add(const u32 a, const u32 b) {
 
 
 bool operation::overflow_add(const u32 a, const u32 b, const u32 c) {
-    const i32 a_sign = static_cast<i32>(a);
-    const i32 b_sign = static_cast<i32>(b);
-    const i32 c_sign = static_cast<i32>(c);
-
-    const i32 intermediate_result = a_sign + b_sign;
-
-    if (
-        (a_sign > 0 && b_sign > 0 && intermediate_result < 0) || 
-        (a_sign < 0 && b_sign < 0 && intermediate_result > 0)
-    ) {
-        return true;
-    }
-
-    const i32 final_result = intermediate_result + c_sign;
-
-    if (
-        (intermediate_result > 0 && c_sign > 0 && final_result < 0) || 
-        (intermediate_result < 0 && c_sign < 0 && final_result > 0)
-    ) {
-        return true;
-    }
-
-    return false;
+    const u32 result = a + b + c;
+    return static_cast<bool>(((a ^ result) & (b ^ result)) >> 31);
 }
 
 
-// Subtraction causes an overflow if the operands have different signs, 
-// and the first operand and the result have different signs.
-// TODO: double check if this works manually
 bool operation::overflow_sub(const u32 a, const u32 b) {
-    const i32 a_sign = static_cast<i32>(a);
-    const i32 b_sign = static_cast<i32>(b);
-
-    const bool sign = (a_sign & (1 << 31)) ^ (b_sign & (1 << 31));
-    const i32 result = a_sign - b_sign;
-    return (sign && (a_sign & (1 << 31)) ^ (result & (1 << 31)));
+    const u32 result = a - b;
+    return static_cast<bool>(((a ^ b) & (a ^ result)) >> 31);
 }
 
 
-// Subtraction causes an overflow if the operands have different signs, 
-// and the first operand and the result have different signs.
-// TODO: double check if this works manually
 bool operation::overflow_sub(const u32 a, const u32 b, const u32 c) {
-    const i32 a_sign = static_cast<i32>(a);
-    const i32 b_sign = static_cast<i32>(b);
-    const i32 c_sign = static_cast<i32>(c);
-
-    const bool sign = ((a_sign & (1 << 31)) ^ (b_sign & (1 << 31))) ^ (c_sign & (1 << 31));
-    const i32 result = a_sign - b_sign - c_sign;
-    return (sign && (a_sign & (1 << 31)) ^ (result & (1 << 31)));
+    const u32 result = a - b - c;
+    return static_cast<bool>(((a ^ b) & (a ^ result)) >> 31);
 }
 
 
 bool operation::signed_overflow_sub(const i32 a, const i32 b) {
-    (void)a;
-    (void)b;
-    return false; // TODO
+    return operation::overflow_sub(static_cast<u32>(a), static_cast<u32>(b));
 }
 
 
 bool operation::signed_overflow_add(const i32 a, const i32 b) {
-    (void)a;
-    (void)b;
-    return false; // TODO
+    return operation::overflow_add(static_cast<u32>(a), static_cast<u32>(b));
 }
 
 

@@ -547,7 +547,8 @@ translation_struct MMU::page_walk(const u32 virtual_address, const id::access_ty
 translation_struct MMU::translate_address(const u32 virtual_address, const id::access_type access_type, const u8 access_size) {
     const tlb_fetch_struct tlb_fetch = tlb.is_translation_cached(virtual_address);
 
-    if (tlb_fetch.is_found) { // TLB hit
+    // TLB hit
+    if (tlb_fetch.is_found) {
         const tlb_entry_struct entry = tlb.fetch(virtual_address, tlb_fetch);
 
         return translation_struct {

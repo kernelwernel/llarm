@@ -50,7 +50,7 @@ struct MMU {
 
     translation_struct page_walk(const u32 address, const id::access_type access_type, const u8 access_size);
 
-    translation_struct translate_address(const u32 address, const id::access_type access_type, const u8 access_size);
+    translation_struct translate_address(const u32 address, const id::access_type access_type, const u8 access_size = 4);
 
     mem_write_struct write(const u32 address, const u64 value, const u8 access_size);
 

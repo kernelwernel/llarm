@@ -163,7 +163,7 @@ void EXECUTE::arm_execute(const arm_decode_struct &instruction) {
         case arm_id::FUITOD: instructions.arm.vfp.FUITOD(code); return;
         case arm_id::CPS: // TODO
         case arm_id::CPY: instructions.arm.movement.CPY(code); return;
-        case arm_id::LDREX: // TODO
+        case arm_id::LDREX: instructions.arm.load.LDREX(code); return;
         case arm_id::MCRR2: // TODO
         case arm_id::MRRC2: // TODO
         case arm_id::PKHBT: // TODO
@@ -204,7 +204,7 @@ void EXECUTE::arm_execute(const arm_decode_struct &instruction) {
         case arm_id::SSUB16: // TODO
         case arm_id::SSUB8: // TODO
         case arm_id::SSUBADDX: // TODO
-        case arm_id::STREX: // TODO
+        case arm_id::STREX: instructions.arm.store.STREX(code); return;
         case arm_id::SXTAB: // TODO
         case arm_id::SXTAB16: // TODO
         case arm_id::SXTAH: // TODO

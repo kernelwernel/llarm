@@ -176,7 +176,8 @@ struct INSTRUCTIONS {
             void LDRSB(const u32 code);
             void LDRSH(const u32 code);
             void LDRT(const u32 code);
-        } load; 
+            void LDREX(const u32 code);
+        } load;
 
         struct store {
             REGISTERS& reg;
@@ -202,6 +203,7 @@ struct INSTRUCTIONS {
             void STRT(const u32 code);
             void SWP(const u32 code);
             void SWPB(const u32 code);
+            void STREX(const u32 code);
         } store;
 
         struct dsp {

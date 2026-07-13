@@ -142,10 +142,45 @@ mem_read_struct MEMORY::read(
 }
 
 
+u32 MEMORY::resolve_physical_address(u32 address) {
+    if (fcse.is_fcse_enabled()) {
+        address = fcse.modify_address(address);
+    }
+
+    if (mmu.is_mmu_enabled()) {
+        const translation_struct translation = mmu.translate_address(address, id::access_type::READ);
+
+        if (!translation.has_failed) {
+            return translation.physical_address;
+        }
+    }
+
+    return address; // MPU or flat memory: physical address matches the virtual address
+}
+
+
+void MEMORY::mark_exclusive_local(const u32 physical_address) {
+    exclusive_valid = true;
+    exclusive_address = physical_address;
+}
+
+
+bool MEMORY::is_exclusive_local(const u32 physical_address) const {
+    return (exclusive_valid) && (exclusive_address == physical_address);
+}
+
+
+void MEMORY::clear_exclusive_local() {
+    exclusive_valid = false;
+}
+
+
 void MEMORY::reset() {
     if (mmu.is_mmu_enabled()) {
         mmu.reset(); // this also resets the TLB
     } else if (mpu.is_mpu_enabled()) {
         mpu.reset();
     }
+
+    clear_exclusive_local();
 }

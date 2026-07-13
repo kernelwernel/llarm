@@ -392,3 +392,28 @@ void INSTRUCTIONS::arm::load::LDM3(const u32 code) {
         llarm::out::error("LDM3 assert failed");
     }
 }
+
+
+/**
+ * MemoryAccess(B-bit, E-bit)
+ * if ConditionPassed(cond) then
+ *     Rd = Memory[Rn,4]
+ *     physical_address = TLB(Rn)
+ *     if Shared(Rn) == 1 then
+ *         MarkExclusiveGlobal(physical_address,processor_id,4)
+ *     MarkExclusiveLocal(physical_address,processor_id,4)
+ */
+void INSTRUCTIONS::arm::load::LDREX(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rn = reg.read(code, 16, 19);
+
+    const mem_read_struct access = memory.read(Rn, 4);
+
+    if (access.has_failed) {
+        memory.manage_abort(access.abort_code);
+        return;
+    }
+
+    memory.mark_exclusive_local(memory.resolve_physical_address(Rn));
+    reg.write(Rd_id, static_cast<u32>(access.value));
+}

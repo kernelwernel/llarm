@@ -57,7 +57,7 @@ void INSTRUCTIONS::arm::misc::PSR(const u32 code) {
         case 0b11: // addition
             alu_out = (reg.read(Rn_id) + shifter_operand.value);
             V = operation::overflow_add(reg.read(Rn_id), shifter_operand.value);
-            C = operation::borrow_add(reg.read(Rn_id), shifter_operand.value);
+            C = !operation::borrow_add(reg.read(Rn_id), shifter_operand.value);
             break;
     }
 

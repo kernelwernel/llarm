@@ -26,6 +26,9 @@ struct MEMORY {
     CACHE& cache;
     COPROCESSOR& coprocessor;
 
+    bool exclusive_valid = false;
+    u32 exclusive_address = 0;
+
     void manage_abort(const id::aborts abort_code);
 
     mem_write_struct write(u32 address, const u64 value, const u8 access_size);
@@ -35,6 +38,12 @@ struct MEMORY {
         u8 access_size,
         id::access_type access_type = id::access_type::READ
     );
+
+    u32 resolve_physical_address(u32 address);
+
+    void mark_exclusive_local(const u32 physical_address);
+    bool is_exclusive_local(const u32 physical_address) const;
+    void clear_exclusive_local();
 
     void reset();
 
