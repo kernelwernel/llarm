@@ -131,3 +131,57 @@ void INSTRUCTIONS::arm::misc::BKPT() {
         reg.write(id::reg::PC, 0x00000008);
     }
 }
+
+
+/**
+ * if InAPrivilegedMode() then
+ *   if imod[1] == 1 then
+ *     if A == 1 then CPSR[8] = imod[0]
+ *     if I == 1 then CPSR[7] = imod[0]
+ *     if F == 1 then CPSR[6] = imod[0]
+ *   // else no change to the mask
+ *   if mmod == 1 then
+ *     CPSR[4:0] = mode
+ */
+void INSTRUCTIONS::arm::misc::CPS(const u32 code) {
+    if (!reg.is_privileged()) {
+        return;
+    }
+
+    const u8 imod = llarm::util::bit_range<u8>(code, 18, 19);
+    const bool mmod = llarm::util::bit_fetch(code, 17);
+
+    const bool affect_A = llarm::util::bit_fetch(code, 8);
+    const bool affect_I = llarm::util::bit_fetch(code, 7);
+    const bool affect_F = llarm::util::bit_fetch(code, 6);
+
+    if (llarm::util::bit_fetch(imod, 1)) {
+        const bool disable = llarm::util::bit_fetch(imod, 0);
+
+        if (affect_A) {
+            reg.write(id::cpsr::A, disable);
+        }
+
+        if (affect_I) {
+            reg.write(id::cpsr::I, disable);
+        }
+
+        if (affect_F) {
+            reg.write(id::cpsr::F, disable);
+        }
+    }
+
+    if (mmod) {
+        const u8 mode = llarm::util::bit_range<u8>(code, 0, 4);
+        reg.write(id::cpsr::M, mode);
+    }
+}
+
+
+/**
+ * CPSR = CPSR with specified E bit modification
+ */
+void INSTRUCTIONS::arm::misc::SETEND(const u32 code) {
+    const bool E = llarm::util::bit_fetch(code, 9);
+    reg.write(id::cpsr::E, E);
+}

@@ -77,7 +77,7 @@ set_target_properties(${TARGET_LIB} PROPERTIES
 #)
 
 
-# Add include directories for dependencies built from source
+# add include directories for dependencies built from source
 target_include_directories(${TARGET_LIB}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/../llarm-asm
@@ -133,9 +133,6 @@ write_basic_package_version_file(
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion
 )
-
-
-# add_subdirectory(tests/diff)
 
 
 # installations

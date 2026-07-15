@@ -4,9 +4,11 @@
 #include "src/settings.hpp"
 #include "src/vic/vic.hpp"
 #include "src/peripherals/uart/uart.hpp"
+#include "src/peripherals/timer/timer.hpp"
 
 #include <unicorn/unicorn.h>
 
+#include <algorithm>
 #include <array>
 #include <cstdio>
 #include <cstdlib>
@@ -68,12 +70,6 @@ static void halt_and_exit(llarm::emu::cpu_blockstep& emu, int code) {
     exit(code);
 }
 
-// PrimeCell PeriphID0-3 / PCellID0-3 are fixed, read-only identification registers
-// (DDI0181/DDI0183, offsets 0xFE0-0xFFC). Unicorn has no VIC/UART device model, so
-// without this it reads back 0 there while LLARM's peripheral model reads the real
-// constant, producing a false-positive divergence. Seeding these known constants
-// into Unicorn's flat memory lets the two models agree on this narrow, static slice
-// of MMIO; stateful peripheral registers are out of scope for this diff test.
 static void seed_primecell_ids(uc_engine* uc, u32 base, const std::array<u32, 8>& ids) {
     constexpr std::array<u16, 8> OFFSETS = {{ 0xFE0, 0xFE4, 0xFE8, 0xFEC, 0xFF0, 0xFF4, 0xFF8, 0xFFC }};
 
@@ -82,12 +78,59 @@ static void seed_primecell_ids(uc_engine* uc, u32 base, const std::array<u32, 8>
     }
 }
 
+static void sync_live_timer_registers(uc_engine* uc, llarm::emu::cpu_blockstep& emu, const SETTINGS& s) {
+    constexpr std::array<u16, 6> LIVE_OFFSETS = {{
+        OFFSET_TIMER1VALUE, OFFSET_TIMER1RIS, OFFSET_TIMER1MIS,
+        OFFSET_TIMER2VALUE, OFFSET_TIMER2RIS, OFFSET_TIMER2MIS
+    }};
+
+    for (const u16 offset : LIVE_OFFSETS) {
+        const u32 address = s.timer_base + offset;
+        const u32 value = emu.read_physical_mem<u32>(address);
+        uc_must(uc_mem_write(uc, address, &value, sizeof(u32)), "sync live SP804 register");
+    }
+}
+
+
+static constexpr std::array<u32, 4> ASYNC_EXCEPTION_VECTORS = {{
+    0x00000018, 0xFFFF0018, // IRQ
+    0x0000001C, 0xFFFF001C  // FIQ
+}};
+
+static bool is_async_exception_vector(const u32 pc) {
+    return std::any_of(ASYNC_EXCEPTION_VECTORS.begin(), ASYNC_EXCEPTION_VECTORS.end(),
+        [pc](const u32 vector) { return pc == vector; });
+}
+
+
+// i really fucking hate this, basically just syncs the peripheral iommu devices to unicorn 
+// because it doesn't implement the SP804 and PL011. So llarm-emu has to babysit unicorn by
+// updating registers and memory regions based on what llarm-emu does with the devices so it
+// stays in sync. Same idea as sync_live_timer_registers()
+static void sync_full_state_to_unicorn(uc_engine* uc, llarm::emu::cpu_blockstep& emu, const u32 pc) {
+    const u32 cpsr = emu.read_reg(llarm::emu::reg_CPSR);
+    uc_must(uc_reg_write(uc, UC_ARM_REG_CPSR, &cpsr), "sync CPSR after exception entry");
+
+    const u32 spsr = emu.read_reg(llarm::emu::reg_SPSR);
+    uc_must(uc_reg_write(uc, UC_ARM_REG_SPSR, &spsr), "sync SPSR after exception entry");
+
+    for (const auto& r : REG_MAP) {
+        if (r.reg_id == llarm::emu::reg_CPSR) {
+            continue;
+        }
+
+        const u32 value = emu.read_reg(r.reg_id);
+        uc_must(uc_reg_write(uc, r.uc_reg_id, &value), "sync register after exception entry");
+    }
+
+    uc_must(uc_reg_write(uc, UC_ARM_REG_PC, &pc), "sync PC after exception entry");
+}
+
+
 static uc_engine* setup_unicorn(const SETTINGS& s, const std::vector<u8>& binary) {
     uc_engine* uc = nullptr;
     uc_must(uc_open(UC_ARCH_ARM, UC_MODE_ARM, &uc), "uc_open");
     uc_must(uc_ctl_set_cpu_model(uc, UC_CPU_ARM_926), "set cpu ARM926");
-    // Map the full 32-bit address space so all reads return 0 for unmapped areas,
-    // matching LLARM's RAM model which silently returns 0 for out-of-range accesses.
     uc_must(uc_mem_map(uc, 0, 0x100000000ULL, UC_PROT_ALL), "uc_mem_map");
 
     seed_primecell_ids(uc, s.vic_base, {{ PERIPH_ID0, PERIPH_ID1, PERIPH_ID2, PERIPH_ID3, PCELL_ID0, PCELL_ID1, PCELL_ID2, PCELL_ID3 }});
@@ -169,12 +212,17 @@ int main(int argc, char* argv[]) {
         const u32 pc = emu.current_pc();
 
         if (has_expected_next_pc && pc != expected_next_pc) {
-            fprintf(stderr, "[%u] 0x%08X  op=0x%08X  id=%-30s  %s\n",
-                prev_step_num, prev_step_pc, prev_step_opcode,
-                prev_step_id_str.c_str(), prev_step_disasm.c_str());
-            fprintf(stderr, "\033[31mDIVERGENCE\033[0m\n");
-            fprintf(stderr, "  \033[31mPC  llarm=0x%08X  unicorn=0x%08X\033[0m\n", pc, expected_next_pc);
-            halt_and_exit(emu, 1);
+            if (is_async_exception_vector(pc)) {
+                sync_full_state_to_unicorn(uc, emu, pc);
+                has_expected_next_pc = false;
+            } else {
+                fprintf(stderr, "[%u] 0x%08X  op=0x%08X  id=%-30s  %s\n",
+                    prev_step_num, prev_step_pc, prev_step_opcode,
+                    prev_step_id_str.c_str(), prev_step_disasm.c_str());
+                fprintf(stderr, "\033[31mDIVERGENCE\033[0m\n");
+                fprintf(stderr, "  \033[31mPC  llarm=0x%08X  unicorn=0x%08X\033[0m\n", pc, expected_next_pc);
+                halt_and_exit(emu, 1);
+            }
         }
 
         const bool thumb = emu.is_thumb_mode();
@@ -206,6 +254,8 @@ int main(int argc, char* argv[]) {
         } else {
             zero_run = 0;
         }
+
+        sync_live_timer_registers(uc, emu, settings);
 
         const uc_err err = uc_emu_start(uc, pc, 0, 0, 1);
 

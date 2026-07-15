@@ -31,7 +31,7 @@ namespace id {
         A,   // imprecise data abort disable bit
         E,   // data endianness bit
         //IT,  // if-then state bits
-        //GE, // greater-than-or-equal-to bits
+        GE,  // greater-than-or-equal-to bits (4 bits, [19:16])
         //DNM, // the "do not modify" bits
         //J = 26,   // Java state bit
         Q,   // sticky overflow bit

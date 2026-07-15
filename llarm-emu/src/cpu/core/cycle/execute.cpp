@@ -161,28 +161,28 @@ void EXECUTE::arm_execute(const arm_decode_struct &instruction) {
         case arm_id::FTOSID: instructions.arm.vfp.FTOSID(code); return;
         case arm_id::FTOUID: instructions.arm.vfp.FTOUID(code); return;
         case arm_id::FUITOD: instructions.arm.vfp.FUITOD(code); return;
-        case arm_id::CPS: // TODO
+        case arm_id::CPS: instructions.arm.misc.CPS(code); return;
         case arm_id::CPY: instructions.arm.movement.CPY(code); return;
         case arm_id::LDREX: instructions.arm.load.LDREX(code); return;
         case arm_id::MCRR2: // TODO
         case arm_id::MRRC2: // TODO
-        case arm_id::PKHBT: // TODO
-        case arm_id::PKHTB: // TODO
+        case arm_id::PKHBT: instructions.arm.logic.PKHBT(code); return;
+        case arm_id::PKHTB: instructions.arm.logic.PKHTB(code); return;
         case arm_id::QADD16: // TODO
         case arm_id::QADD8: // TODO
         case arm_id::QADDSUBX: // TODO
         case arm_id::QSUB16: // TODO
         case arm_id::QSUB8: // TODO
         case arm_id::QSUBADDX: // TODO
-        case arm_id::REV: // TODO
-        case arm_id::REV16: // TODO
-        case arm_id::REVSH: // TODO
+        case arm_id::REV: instructions.arm.logic.REV(code); return;
+        case arm_id::REV16: instructions.arm.logic.REV16(code); return;
+        case arm_id::REVSH: instructions.arm.logic.REVSH(code); return;
         case arm_id::RFE: // TODO
         case arm_id::SADD16: // TODO
         case arm_id::SADD8: // TODO
         case arm_id::SADDSUBX: // TODO
-        case arm_id::SEL: // TODO
-        case arm_id::SETEND: // TODO
+        case arm_id::SEL: instructions.arm.math.SEL(code); return;
+        case arm_id::SETEND: instructions.arm.misc.SETEND(code); return;
         case arm_id::SHADD16: // TODO
         case arm_id::SHADD8: // TODO
         case arm_id::SHADDSUBX: // TODO
@@ -199,18 +199,18 @@ void EXECUTE::arm_execute(const arm_decode_struct &instruction) {
         case arm_id::SMUAD: // TODO
         case arm_id::SMUSD: // TODO
         case arm_id::SRS: // TODO
-        case arm_id::SSAT: // TODO
-        case arm_id::SSAT16: // TODO
+        case arm_id::SSAT: instructions.arm.logic.SSAT(code); return;
+        case arm_id::SSAT16: instructions.arm.logic.SSAT16(code); return;
         case arm_id::SSUB16: // TODO
         case arm_id::SSUB8: // TODO
         case arm_id::SSUBADDX: // TODO
         case arm_id::STREX: instructions.arm.store.STREX(code); return;
-        case arm_id::SXTAB: // TODO
-        case arm_id::SXTAB16: // TODO
-        case arm_id::SXTAH: // TODO
-        case arm_id::SXTB: // TODO
-        case arm_id::SXTB16: // TODO
-        case arm_id::SXTH: // TODO
+        case arm_id::SXTAB: instructions.arm.math.SXTAB(code); return;
+        case arm_id::SXTAB16: instructions.arm.math.SXTAB16(code); return;
+        case arm_id::SXTAH: instructions.arm.math.SXTAH(code); return;
+        case arm_id::SXTB: instructions.arm.math.SXTB(code); return;
+        case arm_id::SXTB16: instructions.arm.math.SXTB16(code); return;
+        case arm_id::SXTH: instructions.arm.math.SXTH(code); return;
         case arm_id::UADD16: // TODO
         case arm_id::UADD8: // TODO
         case arm_id::UADDSUBX: // TODO
@@ -229,17 +229,17 @@ void EXECUTE::arm_execute(const arm_decode_struct &instruction) {
         case arm_id::UQSUBADDX: // TODO
         case arm_id::USAD8: // TODO
         case arm_id::USADA8: // TODO
-        case arm_id::USAT: // TODO
-        case arm_id::USAT16: // TODO
+        case arm_id::USAT: instructions.arm.logic.USAT(code); return;
+        case arm_id::USAT16: instructions.arm.logic.USAT16(code); return;
         case arm_id::USUB16: // TODO
         case arm_id::USUB8: // TODO
         case arm_id::USUBADDX: // TODO
-        case arm_id::UXTAB: // TODO
-        case arm_id::UXTAB16: // TODO
-        case arm_id::UXTAH: // TODO
-        case arm_id::UXTB: // TODO
-        case arm_id::UXTB16: // TODO
-        case arm_id::UXTH: // TODO
+        case arm_id::UXTAB: instructions.arm.math.UXTAB(code); return;
+        case arm_id::UXTAB16: instructions.arm.math.UXTAB16(code); return;
+        case arm_id::UXTAH: instructions.arm.math.UXTAH(code); return;
+        case arm_id::UXTB: instructions.arm.math.UXTB(code); return;
+        case arm_id::UXTB16: instructions.arm.math.UXTB16(code); return;
+        case arm_id::UXTH: instructions.arm.math.UXTH(code); return;
             llarm::out::warning(llarm::as::arm_id_to_string(id), " is unimplemented, skipped");
             break;
     }

@@ -26,6 +26,8 @@ namespace operation {
     i32 sign_extend(const u32 value, const u8 sign_index = 31);
     i32 signed_sat(const u32 x, const u32 n);
     bool signed_does_sat(const u32 x, const u32 n);
+    u32 unsigned_sat(const u32 x, const u32 n);
+    bool unsigned_does_sat(const u32 x, const u32 n);
 
     u32 arithmetic_shift_right(u32 num, const u8 shift);
 

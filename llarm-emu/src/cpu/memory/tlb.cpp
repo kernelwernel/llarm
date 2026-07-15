@@ -208,19 +208,16 @@ void TLB::function(const u8 opcode_2, const u8 CRm, const u32 virtual_address) {
     const u8 bytecode = static_cast<u8>((opcode_2 << 3) | CRm);
 
     constexpr u8 INVALIDATE_ENTIRE_UNIFIED_TLB = 0b0000111;
-    constexpr u8 INVALIDATE_ENTRY_UNIFIED_TLB = 0b0010111;
+    constexpr u8 INVALIDATE_ENTRY_UNIFIED_TLB = 0b0001111;
     constexpr u8 INVALIDATE_ENTIRE_INST_TLB = 0b0000101;
-    constexpr u8 INVALIDATE_ENTRY_INST_TLB = 0b0010101;
+    constexpr u8 INVALIDATE_ENTRY_INST_TLB = 0b0001101;
     constexpr u8 INVALIDATE_ENTIRE_DATA_TLB = 0b0000110;
-    constexpr u8 INVALIDATE_ENTRY_DATA_TLB = 0b0010110;
+    constexpr u8 INVALIDATE_ENTRY_DATA_TLB = 0b0001110;
 
-    // ARMv6 ASID-based invalidation (opcode_2 == 2). Individual TLB entries aren't tagged 
-    // with an ASID (CP15 c13 Context ID isn't tracked per-entry), so these conservatively 
     // fall back to invalidating the whole corresponding table or something idk
-
-    constexpr u8 INVALIDATE_UNIFIED_TLB_BY_ASID = 0b0100111;
-    constexpr u8 INVALIDATE_INST_TLB_BY_ASID = 0b0100101;
-    constexpr u8 INVALIDATE_DATA_TLB_BY_ASID = 0b0100110;
+    constexpr u8 INVALIDATE_UNIFIED_TLB_BY_ASID = 0b0010111;
+    constexpr u8 INVALIDATE_INST_TLB_BY_ASID = 0b0010101;
+    constexpr u8 INVALIDATE_DATA_TLB_BY_ASID = 0b0010110;
 
     switch (bytecode) {
         case INVALIDATE_ENTIRE_UNIFIED_TLB: flush(); return;
@@ -233,7 +230,7 @@ void TLB::function(const u8 opcode_2, const u8 CRm, const u32 virtual_address) {
         case INVALIDATE_INST_TLB_BY_ASID: inst_table.clear(); return;
         case INVALIDATE_DATA_TLB_BY_ASID: data_table.clear(); return;
         default:
-            llarm::out::unpredictable("Unknown TLB function, ignoring operation");
+            llarm::out::unpredictable("Unknown TLB function, ignoring operation (CRm = ", static_cast<u32>(CRm), ", opcode_2 = ", static_cast<u32>(opcode_2), ")");
             return;
     }
 }

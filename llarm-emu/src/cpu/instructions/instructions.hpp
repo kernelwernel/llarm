@@ -35,6 +35,19 @@ struct INSTRUCTIONS {
             void RSC(const u32 code); // TODO
             void SBC(const u32 code); // TODO
             void SUB(const u32 code); // TODO
+            void SXTB(const u32 code);
+            void SXTAB(const u32 code);
+            void SXTB16(const u32 code);
+            void SXTAB16(const u32 code);
+            void SXTH(const u32 code);
+            void SXTAH(const u32 code);
+            void UXTB(const u32 code);
+            void UXTAB(const u32 code);
+            void UXTB16(const u32 code);
+            void UXTAB16(const u32 code);
+            void UXTH(const u32 code);
+            void UXTAH(const u32 code);
+            void SEL(const u32 code);
         } math;
 
         struct logic {
@@ -55,6 +68,15 @@ struct INSTRUCTIONS {
             void BIC(const u32 code); // TODO
             void TEQ(const u32 code); // TODO
             void TST(const u32 code); // TODO
+            void REV(const u32 code);
+            void REV16(const u32 code);
+            void REVSH(const u32 code);
+            void PKHBT(const u32 code);
+            void PKHTB(const u32 code);
+            void SSAT(const u32 code);
+            void SSAT16(const u32 code);
+            void USAT(const u32 code);
+            void USAT16(const u32 code);
         } logic;
 
         struct movement {
@@ -147,6 +169,8 @@ struct INSTRUCTIONS {
             void PSR(const u32 code);
             void SWI();
             void BKPT();
+            void CPS(const u32 code);
+            void SETEND(const u32 code);
         } misc;
 
         struct load {

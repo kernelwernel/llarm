@@ -56,9 +56,9 @@ void EXCEPTION::undefined() {
         inc = 4;
     }
 
+    reg.force_write(id::reg::SPSR_und, reg.CPSR);
     reg.switch_mode(id::mode::UNDEFINED);
     reg.write(id::reg::R14_und, reg.read(id::reg::PC) + inc);
-    reg.write(id::reg::SPSR_und, reg.CPSR);
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
 
@@ -90,8 +90,8 @@ void EXCEPTION::swi() {
         inc = 4;
     }
 
-    reg.write(id::reg::R14_svc, reg.read(id::reg::PC) + inc);
-    reg.write(id::reg::SPSR_svc, reg.CPSR);
+    reg.force_write(id::reg::R14_svc, reg.read(id::reg::PC) + inc);
+    reg.force_write(id::reg::SPSR_svc, reg.CPSR);
     reg.switch_mode(id::mode::SUPERVISOR);
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
@@ -116,9 +116,9 @@ void EXCEPTION::swi() {
  *   PC = 0x0000000C
  */
 void EXCEPTION::prefetch_abort() {
+    reg.force_write(id::reg::SPSR_abt, reg.CPSR);
     reg.switch_mode(id::mode::ABORT);
     reg.write(id::reg::R14_abt, reg.read(id::reg::PC) + 4);
-    reg.write(id::reg::SPSR_abt, reg.CPSR);
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
 
@@ -142,9 +142,9 @@ void EXCEPTION::prefetch_abort() {
  *   PC = 0x00000010
  */ 
 void EXCEPTION::data_abort() {
+    reg.force_write(id::reg::SPSR_abt, reg.CPSR);
     reg.switch_mode(id::mode::ABORT);
     reg.write(id::reg::R14_abt, reg.read(id::reg::PC) + 8);
-    reg.write(id::reg::SPSR_abt, reg.CPSR);
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
 
@@ -168,9 +168,9 @@ void EXCEPTION::data_abort() {
  *   PC = 0x00000018
  */
 void EXCEPTION::irq() {
+    reg.force_write(id::reg::SPSR_irq, reg.CPSR);
     reg.switch_mode(id::mode::IRQ);
     reg.write(id::reg::R14_irq, reg.read(id::reg::PC) + 4);
-    reg.write(id::reg::SPSR_irq, reg.CPSR);
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
 
@@ -195,9 +195,9 @@ void EXCEPTION::irq() {
  *   PC = 0x0000001C
  */
 void EXCEPTION::fiq() {
+    reg.force_write(id::reg::SPSR_fiq, reg.CPSR);
     reg.switch_mode(id::mode::FIQ);
     reg.write(id::reg::R14_fiq, reg.read(id::reg::PC) + 4);
-    reg.write(id::reg::SPSR_fiq, reg.CPSR);
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::F, 1);
     reg.write(id::cpsr::I, 1);

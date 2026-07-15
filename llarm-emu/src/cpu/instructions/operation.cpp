@@ -119,6 +119,34 @@ bool operation::signed_does_sat(const u32 x, const u32 n) {
 }
 
 
+// source: Glossary-16
+u32 operation::unsigned_sat(const u32 x, const u32 n) {
+    const i32 x_sign = static_cast<i32>(x);
+
+    if (x_sign < 0) {
+        return 0;
+    }
+
+    const i64 pos_range = static_cast<i64>((1ULL << n) - 1); // 2^n - 1
+
+    if (x_sign > pos_range) {
+        return static_cast<u32>(pos_range);
+    }
+
+    return static_cast<u32>(x_sign);
+}
+
+
+// source: Glossary-16
+bool operation::unsigned_does_sat(const u32 x, const u32 n) {
+    const i32 x_sign = static_cast<i32>(x);
+
+    const i64 pos_range = static_cast<i64>((1ULL << n) - 1); // 2^n - 1
+
+    return (!(x_sign >= 0 && x_sign <= pos_range));
+}
+
+
 
 std::vector<id::reg> operation::register_list(const u16 reg_list) {
     std::vector<id::reg> tmp = {};

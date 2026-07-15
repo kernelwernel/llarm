@@ -231,7 +231,7 @@ void INSTRUCTIONS::arm::logic::TEQ(const u32 code) {
  */
 void INSTRUCTIONS::arm::logic::TST(const u32 code) {
     const data_struct shifter_operand = address_mode.data_processing(code);
-    
+
     const u32 Rn = reg.read(code, 16, 19);
 
     const u32 alu_out = (Rn & shifter_operand.value);
@@ -239,4 +239,252 @@ void INSTRUCTIONS::arm::logic::TST(const u32 code) {
     reg.write(id::cpsr::N, (llarm::util::bit_fetch(alu_out, 31)));
     reg.write(id::cpsr::Z, (alu_out == 0));
     reg.write(id::cpsr::C, shifter_operand.carry);
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   Rd[31:24] = Rm[ 7: 0]
+ *   Rd[23:16] = Rm[15: 8]
+ *   Rd[15: 8] = Rm[23:16]
+ *   Rd[ 7: 0] = Rm[31:24]
+ */
+void INSTRUCTIONS::arm::logic::REV(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rm = reg.read(code, 0, 3);
+
+    const u32 result = (
+        ((Rm & 0x000000FF) << 24) |
+        ((Rm & 0x0000FF00) << 8) |
+        ((Rm & 0x00FF0000) >> 8) |
+        ((Rm & 0xFF000000) >> 24)
+    );
+
+    reg.write(Rd_id, result);
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   Rd[15: 8] = Rm[ 7: 0]
+ *   Rd[ 7: 0] = Rm[15: 8]
+ *   Rd[31:24] = Rm[23:16]
+ *   Rd[23:16] = Rm[31:24]
+ */
+void INSTRUCTIONS::arm::logic::REV16(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rm = reg.read(code, 0, 3);
+
+    const u32 result = (
+        ((Rm & 0x00FF0000) << 8) |
+        ((Rm & 0xFF000000) >> 8) |
+        ((Rm & 0x000000FF) << 8) |
+        ((Rm & 0x0000FF00) >> 8)
+    );
+
+    reg.write(Rd_id, result);
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   Rd[15: 8] = Rm[ 7: 0]
+ *   Rd[ 7: 0] = Rm[15: 8]
+ *   if Rm[7] == 1 then
+ *     Rd[31:16] = 0xFFFF
+ *   else
+ *     Rd[31:16] = 0x0000
+ */
+void INSTRUCTIONS::arm::logic::REVSH(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rm = reg.read(code, 0, 3);
+
+    const u8 byte0 = static_cast<u8>(Rm & 0xFF);
+    const u8 byte1 = static_cast<u8>((Rm >> 8) & 0xFF);
+
+    reg.write(Rd_id, static_cast<u32>(operation::sign_extend(static_cast<u32>((byte0 << 8) | byte1), 15)));
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   Rd[15:0] = Rn[15:0]
+ *   Rd[31:16] = (Rm Logical_Shift_Left shift_imm)[31:16]
+ */
+void INSTRUCTIONS::arm::logic::PKHBT(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rn = reg.read(code, 16, 19);
+    const u32 Rm = reg.read(code, 0, 3);
+
+    const u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
+
+    const u32 result = (Rn & 0x0000FFFF) | ((Rm << shift_imm) & 0xFFFF0000);
+
+    reg.write(Rd_id, result);
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   if shift_imm == 0 then // ASR #32 case
+ *     if Rm[31] == 0 then Rd[15:0] = 0x0000 else Rd[15:0] = 0xFFFF
+ *   else
+ *     Rd[15:0] = (Rm Arithmetic_Shift_Right shift_imm)[15:0]
+ *   Rd[31:16] = Rn[31:16]
+ */
+void INSTRUCTIONS::arm::logic::PKHTB(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rn = reg.read(code, 16, 19);
+    const u32 Rm = reg.read(code, 0, 3);
+
+    const u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
+
+    const u32 lower_half = [Rm, shift_imm]() -> u32 {
+        if (shift_imm == 0) { // ASR #32 case
+            return llarm::util::bit_fetch(Rm, 31) ? 0x0000FFFF : 0x00000000;
+        }
+
+        return operation::arithmetic_shift_right(Rm, shift_imm) & 0x0000FFFF;
+    }();
+
+    reg.write(Rd_id, lower_half | (Rn & 0xFFFF0000));
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   if shift == 1 then
+ *     if shift_imm == 0 then
+ *       operand = (Rm Arithmetic_Shift_Right 32)[31:0]
+ *     else
+ *       operand = (Rm Arithmetic_Shift_Right shift_imm)[31:0]
+ *   else
+ *     operand = (Rm Logical_Shift_Left shift_imm)[31:0]
+ *   Rd = SignedSat(operand, sat_imm + 1)
+ *   if SignedDoesSat(operand, sat_imm + 1) then
+ *     Q Flag = 1
+ */
+void INSTRUCTIONS::arm::logic::SSAT(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rm = reg.read(code, 0, 3);
+
+    const u8 sat_imm = llarm::util::bit_range<u8>(code, 16, 20);
+    const u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
+    const bool sh = llarm::util::bit_fetch(code, 6);
+
+    const u32 operand = [Rm, shift_imm, sh]() -> u32 {
+        if (!sh) {
+            return Rm << shift_imm;
+        }
+
+        if (shift_imm == 0) { // ASR #32 case
+            return llarm::util::bit_fetch(Rm, 31) ? 0xFFFFFFFF : 0x00000000;
+        }
+
+        return operation::arithmetic_shift_right(Rm, shift_imm);
+    }();
+
+    const u32 n = static_cast<u32>(sat_imm) + 1;
+
+    reg.write(Rd_id, static_cast<u32>(operation::signed_sat(operand, n)));
+
+    if (operation::signed_does_sat(operand, n)) {
+        reg.write(id::cpsr::Q, true);
+    }
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   Rd[15:0] = SignedSat(Rm[15:0], sat_imm + 1)
+ *   Rd[31:16] = SignedSat(Rm[31:16], sat_imm + 1)
+ *   if SignedDoesSat(Rm[15:0], sat_imm + 1) OR SignedDoesSat(Rm[31:16], sat_imm + 1) then
+ *     Q Flag = 1
+ */
+void INSTRUCTIONS::arm::logic::SSAT16(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rm = reg.read(code, 0, 3);
+
+    const u8 sat_imm = llarm::util::bit_range<u8>(code, 16, 19);
+    const u32 n = static_cast<u32>(sat_imm) + 1;
+
+    const u32 low_operand = static_cast<u32>(operation::sign_extend(Rm & 0xFFFF, 15));
+    const u32 high_operand = static_cast<u32>(operation::sign_extend((Rm >> 16) & 0xFFFF, 15));
+
+    const u32 low = static_cast<u32>(operation::signed_sat(low_operand, n)) & 0xFFFF;
+    const u32 high = static_cast<u32>(operation::signed_sat(high_operand, n)) & 0xFFFF;
+
+    reg.write(Rd_id, low | (high << 16));
+
+    if (operation::signed_does_sat(low_operand, n) || operation::signed_does_sat(high_operand, n)) {
+        reg.write(id::cpsr::Q, true);
+    }
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   if shift == 1 then
+ *     if shift_imm == 0 then
+ *       operand = (Rm Arithmetic_Shift_Right 32)[31:0]
+ *     else
+ *       operand = (Rm Arithmetic_Shift_Right shift_imm)[31:0]
+ *   else
+ *     operand = (Rm Logical_Shift_Left shift_imm)[31:0]
+ *   Rd = UnsignedSat(operand, sat_imm) // operand treated as signed
+ *   if UnsignedDoesSat(operand, sat_imm) then
+ *     Q Flag = 1
+ */
+void INSTRUCTIONS::arm::logic::USAT(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rm = reg.read(code, 0, 3);
+
+    const u8 sat_imm = llarm::util::bit_range<u8>(code, 16, 20);
+    const u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
+    const bool sh = llarm::util::bit_fetch(code, 6);
+
+    const u32 operand = [Rm, shift_imm, sh]() -> u32 {
+        if (!sh) {
+            return Rm << shift_imm;
+        }
+
+        if (shift_imm == 0) { // ASR #32 case
+            return llarm::util::bit_fetch(Rm, 31) ? 0xFFFFFFFF : 0x00000000;
+        }
+
+        return operation::arithmetic_shift_right(Rm, shift_imm);
+    }();
+
+    reg.write(Rd_id, operation::unsigned_sat(operand, sat_imm));
+
+    if (operation::unsigned_does_sat(operand, sat_imm)) {
+        reg.write(id::cpsr::Q, true);
+    }
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   Rd[15:0] = UnsignedSat(Rm[15:0], sat_imm) // Rm[15:0] treated as signed
+ *   Rd[31:16] = UnsignedSat(Rm[31:16], sat_imm) // Rm[31:16] treated as signed
+ *   if UnsignedDoesSat(Rm[15:0], sat_imm) OR UnsignedDoesSat(Rm[31:16], sat_imm) then
+ *     Q Flag = 1
+ */
+void INSTRUCTIONS::arm::logic::USAT16(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rm = reg.read(code, 0, 3);
+
+    const u8 sat_imm = llarm::util::bit_range<u8>(code, 16, 19);
+
+    const u32 low_operand = static_cast<u32>(operation::sign_extend(Rm & 0xFFFF, 15));
+    const u32 high_operand = static_cast<u32>(operation::sign_extend((Rm >> 16) & 0xFFFF, 15));
+
+    const u32 low = operation::unsigned_sat(low_operand, sat_imm) & 0xFFFF;
+    const u32 high = operation::unsigned_sat(high_operand, sat_imm) & 0xFFFF;
+
+    reg.write(Rd_id, low | (high << 16));
+
+    if (operation::unsigned_does_sat(low_operand, sat_imm) || operation::unsigned_does_sat(high_operand, sat_imm)) {
+        reg.write(id::cpsr::Q, true);
+    }
 }

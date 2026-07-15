@@ -211,3 +211,232 @@ void INSTRUCTIONS::arm::math::SUB(const u32 code) {
         reg.write(id::cpsr::V, operation::overflow_sub(Rn, shifter_operand.value));
     }
 }
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   operand2 = Rm Rotate_Right(8 * rotate)
+ *   Rd[31:0] = SignExtend(operand2[7:0])
+ */
+void INSTRUCTIONS::arm::math::SXTB(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rm = reg.read(code, 0, 3);
+    const u8 rotate = llarm::util::bit_range<u8>(code, 10, 11);
+
+    const u32 operand2 = llarm::util::rotr(Rm, static_cast<u8>(rotate * 8));
+
+    reg.write(Rd_id, static_cast<u32>(operation::sign_extend(operand2 & 0xFF, 7)));
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   operand2 = Rm Rotate_Right(8 * rotate)
+ *   Rd = Rn + SignExtend(operand2[7:0])
+ */
+void INSTRUCTIONS::arm::math::SXTAB(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rn = reg.read(code, 16, 19);
+    const u32 Rm = reg.read(code, 0, 3);
+    const u8 rotate = llarm::util::bit_range<u8>(code, 10, 11);
+
+    const u32 operand2 = llarm::util::rotr(Rm, static_cast<u8>(rotate * 8));
+
+    reg.write(Rd_id, Rn + static_cast<u32>(operation::sign_extend(operand2 & 0xFF, 7)));
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   operand2 = Rm Rotate_Right(8 * rotate)
+ *   Rd[15:0] = SignExtend(operand2[7:0])
+ *   Rd[31:16] = SignExtend(operand2[23:16])
+ */
+void INSTRUCTIONS::arm::math::SXTB16(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rm = reg.read(code, 0, 3);
+    const u8 rotate = llarm::util::bit_range<u8>(code, 10, 11);
+
+    const u32 operand2 = llarm::util::rotr(Rm, static_cast<u8>(rotate * 8));
+
+    const u32 low = static_cast<u32>(operation::sign_extend(operand2 & 0xFF, 7)) & 0xFFFF;
+    const u32 high = static_cast<u32>(operation::sign_extend((operand2 >> 16) & 0xFF, 7)) & 0xFFFF;
+
+    reg.write(Rd_id, low | (high << 16));
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   operand2 = Rm Rotate_Right(8 * rotate)
+ *   Rd[15:0] = Rn[15:0] + SignExtend(operand2[7:0])
+ *   Rd[31:16] = Rn[31:16] + SignExtend(operand2[23:16])
+ */
+void INSTRUCTIONS::arm::math::SXTAB16(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rn = reg.read(code, 16, 19);
+    const u32 Rm = reg.read(code, 0, 3);
+    const u8 rotate = llarm::util::bit_range<u8>(code, 10, 11);
+
+    const u32 operand2 = llarm::util::rotr(Rm, static_cast<u8>(rotate * 8));
+
+    const u32 low = ((Rn & 0xFFFF) + static_cast<u32>(operation::sign_extend(operand2 & 0xFF, 7))) & 0xFFFF;
+    const u32 high = (((Rn >> 16) & 0xFFFF) + static_cast<u32>(operation::sign_extend((operand2 >> 16) & 0xFF, 7))) & 0xFFFF;
+
+    reg.write(Rd_id, low | (high << 16));
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   operand2 = Rm Rotate_Right(8 * rotate)
+ *   Rd[31:0] = SignExtend(operand2[15:0])
+ */
+void INSTRUCTIONS::arm::math::SXTH(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rm = reg.read(code, 0, 3);
+    const u8 rotate = llarm::util::bit_range<u8>(code, 10, 11);
+
+    const u32 operand2 = llarm::util::rotr(Rm, static_cast<u8>(rotate * 8));
+
+    reg.write(Rd_id, static_cast<u32>(operation::sign_extend(operand2 & 0xFFFF, 15)));
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   operand2 = Rm Rotate_Right(8 * rotate)
+ *   Rd = Rn + SignExtend(operand2[15:0])
+ */
+void INSTRUCTIONS::arm::math::SXTAH(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rn = reg.read(code, 16, 19);
+    const u32 Rm = reg.read(code, 0, 3);
+    const u8 rotate = llarm::util::bit_range<u8>(code, 10, 11);
+
+    const u32 operand2 = llarm::util::rotr(Rm, static_cast<u8>(rotate * 8));
+
+    reg.write(Rd_id, Rn + static_cast<u32>(operation::sign_extend(operand2 & 0xFFFF, 15)));
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   Rd[31:0] = (Rm Rotate_Right(8 * rotate)) AND 0x000000ff
+ */
+void INSTRUCTIONS::arm::math::UXTB(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rm = reg.read(code, 0, 3);
+    const u8 rotate = llarm::util::bit_range<u8>(code, 10, 11);
+
+    reg.write(Rd_id, llarm::util::rotr(Rm, static_cast<u8>(rotate * 8)) & 0x000000FF);
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   operand2 = (Rm Rotate_Right(8 * rotate)) AND 0x000000ff
+ *   Rd = Rn + operand2
+ */
+void INSTRUCTIONS::arm::math::UXTAB(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rn = reg.read(code, 16, 19);
+    const u32 Rm = reg.read(code, 0, 3);
+    const u8 rotate = llarm::util::bit_range<u8>(code, 10, 11);
+
+    const u32 operand2 = llarm::util::rotr(Rm, static_cast<u8>(rotate * 8)) & 0x000000FF;
+
+    reg.write(Rd_id, Rn + operand2);
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   Rd[31:0] = (Rm Rotate_Right(8 * rotate)) AND 0x00ff00ff
+ */
+void INSTRUCTIONS::arm::math::UXTB16(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rm = reg.read(code, 0, 3);
+    const u8 rotate = llarm::util::bit_range<u8>(code, 10, 11);
+
+    reg.write(Rd_id, llarm::util::rotr(Rm, static_cast<u8>(rotate * 8)) & 0x00FF00FF);
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   operand2 = (Rm Rotate_Right(8 * rotate)) AND 0x00ff00ff
+ *   Rd[15:0] = Rn[15:0] + operand2[15:0]
+ *   Rd[31:16] = Rn[31:16] + operand2[23:16]
+ */
+void INSTRUCTIONS::arm::math::UXTAB16(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rn = reg.read(code, 16, 19);
+    const u32 Rm = reg.read(code, 0, 3);
+    const u8 rotate = llarm::util::bit_range<u8>(code, 10, 11);
+
+    const u32 operand2 = llarm::util::rotr(Rm, static_cast<u8>(rotate * 8)) & 0x00FF00FF;
+
+    const u32 low = ((Rn & 0xFFFF) + (operand2 & 0xFFFF)) & 0xFFFF;
+    const u32 high = (((Rn >> 16) & 0xFFFF) + ((operand2 >> 16) & 0xFFFF)) & 0xFFFF;
+
+    reg.write(Rd_id, low | (high << 16));
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   Rd[31:0] = (Rm Rotate_Right(8 * rotate)) AND 0x0000ffff
+ */
+void INSTRUCTIONS::arm::math::UXTH(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rm = reg.read(code, 0, 3);
+    const u8 rotate = llarm::util::bit_range<u8>(code, 10, 11);
+
+    reg.write(Rd_id, llarm::util::rotr(Rm, static_cast<u8>(rotate * 8)) & 0x0000FFFF);
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   operand2 = (Rm Rotate_Right(8 * rotate)) AND 0x0000ffff
+ *   Rd = Rn + operand2
+ */
+void INSTRUCTIONS::arm::math::UXTAH(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rn = reg.read(code, 16, 19);
+    const u32 Rm = reg.read(code, 0, 3);
+    const u8 rotate = llarm::util::bit_range<u8>(code, 10, 11);
+
+    const u32 operand2 = llarm::util::rotr(Rm, static_cast<u8>(rotate * 8)) & 0x0000FFFF;
+
+    reg.write(Rd_id, Rn + operand2);
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *   Rd[7:0]   = if GE[0] == 1 then Rn[7:0]   else Rm[7:0]
+ *   Rd[15:8]  = if GE[1] == 1 then Rn[15:8]  else Rm[15:8]
+ *   Rd[23:16] = if GE[2] == 1 then Rn[23:16] else Rm[23:16]
+ *   Rd[31:24] = if GE[3] == 1 then Rn[31:24] else Rm[31:24]
+ */
+void INSTRUCTIONS::arm::math::SEL(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
+    const u32 Rn = reg.read(code, 16, 19);
+    const u32 Rm = reg.read(code, 0, 3);
+
+    const u8 GE = reg.read(id::cpsr::GE);
+
+    u32 result = 0;
+
+    for (u8 byte_index = 0; byte_index < 4; byte_index++) {
+        const u8 shift = static_cast<u8>(byte_index * 8);
+        const u32 byte_mask = (0xFFu << shift);
+        const u32 source = llarm::util::bit_fetch(GE, byte_index) ? Rn : Rm;
+
+        result |= (source & byte_mask);
+    }
+
+    reg.write(Rd_id, result);
+}

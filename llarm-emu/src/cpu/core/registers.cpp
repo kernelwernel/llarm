@@ -41,6 +41,7 @@ bool REGISTERS::is_privileged() const {
     ));
 }
 
+
 bool REGISTERS::is_exception() const {
     const id::mode mode = read_mode();
     
@@ -51,14 +52,14 @@ bool REGISTERS::is_exception() const {
     ));
 }
 
+
 bool REGISTERS::current_mode_has_SPSR() const {
     const id::mode mode = read_mode();
 
     switch (mode) {
         case id::mode::USER:
         case id::mode::USER_26:
-        case id::mode::SUPERVISOR:
-        case id::mode::SUPERVISOR_26: return false;
+        case id::mode::SYSTEM: return false;
         default: return true;
     }
 }
@@ -67,6 +68,7 @@ bool REGISTERS::current_mode_has_SPSR() const {
 void REGISTERS::write(const id::reg destination_reg_id, const id::reg source_reg_id) {
     write(destination_reg_id, read(source_reg_id));
 }
+
 
 void REGISTERS::write(const id::cpsr cpsr_id, const u8 cpsr_value) {
 
@@ -119,7 +121,7 @@ void REGISTERS::write(const id::cpsr cpsr_id, const u8 cpsr_value) {
         case id::cpsr::A: llarm::util::modify_bit(CPSR, 8, cpsr_value); return;
         case id::cpsr::E: llarm::util::modify_bit(CPSR, 9, cpsr_value); return;
         //case id::cpsr::IT: return; // TODO: think of a good exception
-        //case id::cpsr::GE: llarm::util::swap_bits(CPSR, 16, 19, value); return;
+        case id::cpsr::GE: llarm::util::swap_bits(CPSR, 16, 19, cpsr_value); return;
         //case id::cpsr::DNM: llarm::util::swap_bits(CPSR, 20, 23, value); return;
         //case id::cpsr::J: llarm::util::modify_bit(CPSR, 24, value); return;
         case id::cpsr::Q: llarm::util::modify_bit(CPSR, 27, cpsr_value); return;
@@ -359,6 +361,7 @@ u8 REGISTERS::read(const id::cpsr cpsr_id) const {
             case id::cpsr::I: return llarm::util::bit_fetch(CPSR, 7);
             case id::cpsr::A: return llarm::util::bit_fetch(CPSR, 8);
             case id::cpsr::E: return llarm::util::bit_fetch(CPSR, 9);
+            case id::cpsr::GE: return llarm::util::bit_range<u8>(CPSR, 16, 19);
             case id::cpsr::Q: return llarm::util::bit_fetch(CPSR, 27);
             case id::cpsr::V: return llarm::util::bit_fetch(CPSR, 28);
             case id::cpsr::C: return llarm::util::bit_fetch(CPSR, 29);
