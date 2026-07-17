@@ -6,6 +6,9 @@ cmake_minimum_required(VERSION 3.25)
 project(llarm-difftest)
 
 include("${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/dependencies.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/build_type.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/target_flags.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/linker_flags.cmake")
 
 get_filename_component(LLARM_EMU_DIR "${CMAKE_CURRENT_SOURCE_DIR}/.." ABSOLUTE)
 get_filename_component(LLARM_REPO_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../.." ABSOLUTE)
@@ -39,6 +42,10 @@ target_include_directories(llarm-difftest PRIVATE
 
 target_link_libraries(llarm-difftest PRIVATE ${LLARM_EMU_TARGET} ${UNICORN_LIBRARIES})
 
+configure_target_flags(llarm-difftest)
+configure_linker_flags(llarm-difftest)
+
+# must come after configure_target_flags() so these overrides win
 target_compile_options(llarm-difftest PRIVATE
     -Wno-old-style-cast
     -Wno-sign-conversion
@@ -60,3 +67,6 @@ target_link_libraries(llarm-uart
     PRIVATE
         ${LLARM_EMU_TARGET}
 )
+
+configure_target_flags(llarm-uart)
+configure_linker_flags(llarm-uart)

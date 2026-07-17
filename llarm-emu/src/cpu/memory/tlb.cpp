@@ -21,6 +21,20 @@ void TLB::flush() {
 
 
 void TLB::invalidate(const u32 virtual_address, const id::tlb_type tlb_type) {
+    // a unified TLB still receives separate I-side/D-side invalidate-by-VA 
+    // ops from the kernel, both just hit the one underlying table
+    if (settings.tlb_type == id::tlb_type::UNIFIED) {
+        switch (tlb_type) {
+            case id::tlb_type::UNKNOWN: llarm::out::dev_error("Unknown TLB invalidation");
+            case id::tlb_type::SEPARATE: llarm::out::dev_error("Unsupported TLB invalidation");
+            case id::tlb_type::SEPARATE_INST:
+            case id::tlb_type::SEPARATE_DATA:
+            case id::tlb_type::UNIFIED:
+                unified_table.erase(virtual_address);
+                return;
+        }
+    }
+
     if (is_type_invalid(tlb_type)) {
         llarm::out::unpredictable("Invalid TLB type mismatch between settings and implementation for TLB entry invalidation, defaulting to entry invalidation in all TLB types");
         unified_table.erase(virtual_address);
@@ -42,8 +56,6 @@ void TLB::invalidate(const u32 virtual_address, const id::tlb_type tlb_type) {
 void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, const u32 physical_address, const bool is_cacheable, const bool is_write_bufferable) {
     // random replacement strategy, i guess different strategies could be added in the future
 
-    // Tables are keyed by virtual address, so a random slot can't be looked up directly.
-    // Pick a random existing entry (the table is at capacity whenever this runs) and erase it by its key.
     auto evict_random_entry = [this](tlb_table& table) {
         auto it = table.begin();
         std::advance(it, random.generate() % table.size());
@@ -57,7 +69,11 @@ void TLB::auto_replace(const id::tlb_type tlb_type, const u32 virtual_address, c
     // the TLB, then that specific entry will be replaced instead of replacing a random entry.
     // This prevents duplicate entries for the same virtual address.
 
-    const tlb_entry_struct entry { physical_address, is_cacheable, is_write_bufferable };
+    const tlb_entry_struct entry { 
+        physical_address, 
+        is_cacheable, 
+        is_write_bufferable 
+    };
 
     switch (tlb_type) {
         case id::tlb_type::UNKNOWN: llarm::out::dev_error("Unknown TLB invalidation");

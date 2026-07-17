@@ -30,7 +30,7 @@ namespace llarm::util {
         }
 
         if (value) {
-            original |= (static_cast<u64>(1) << index);
+            original |= static_cast<T>(static_cast<u64>(1) << index);
         } else {
             original &= static_cast<T>(~(1U << index));
         }

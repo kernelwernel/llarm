@@ -304,7 +304,7 @@ translation_struct MMU::second_large(
     // the subpages are 1KB each
     const u8 subpage_index = static_cast<u8>(page_index / util::get_kb(16));
 
-    const u8 AP = subpage_index;
+    const u8 AP = fetch_subpage_AP(subpage_index, entry);
     const id::access_domain domain = fetch_domain(domain_bits);
     const id::aborts AP_abort = check_block_access(AP, access_type, domain, id::memory_type::PAGE);
     const bool AP_failed = (AP_abort != id::aborts::NO_ABORT);
@@ -327,7 +327,7 @@ translation_struct MMU::second_large(
 
         if (subpage_crossed) {
             // same as above but for the second AP this time, assuming a subpage-crossing occurred
-            const u8 second_AP = subpage_index + 1;
+            const u8 second_AP = fetch_subpage_AP(static_cast<u8>(subpage_index + 1), entry);
             const id::aborts second_AP_abort = check_block_access(second_AP, access_type, domain, id::memory_type::PAGE);
             const bool second_AP_failed = (second_AP_abort != id::aborts::NO_ABORT);
 

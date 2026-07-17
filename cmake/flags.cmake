@@ -99,7 +99,6 @@ set(LINUX_EMBEDDED_CXX_FLAGS
 set(LINUX_DEBUG_CXX_FLAGS
     -g
     -O0
-    #-fsanitize=address,undefined,nullability
 
     # for prototyping purposes, should be removed one day
     -Wno-return-type
@@ -107,6 +106,18 @@ set(LINUX_DEBUG_CXX_FLAGS
     -Wno-unused-variable
     -Wno-unused-function
     -Wno-old-style-cast
+)
+
+
+set(LINUX_DEBUG_ASAN_CXX_FLAGS
+    -fsanitize=address,undefined
+    -fno-omit-frame-pointer
+)
+
+
+set(LINUX_DEBUG_TSAN_CXX_FLAGS
+    -fsanitize=thread,undefined
+    -fno-omit-frame-pointer
 )
 
 

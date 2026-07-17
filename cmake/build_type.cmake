@@ -1,4 +1,6 @@
 # fetch and set build type
+option(LLARM_USE_TSAN "Use ThreadSanitizer instead of AddressSanitizer in Debug builds" OFF)
+
 set(available_build_types Debug Release)
 if(NOT CMAKE_BUILD_TYPE)
     # default to using the debug type, this is just for dev purposes

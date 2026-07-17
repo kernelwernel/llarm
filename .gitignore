@@ -28,3 +28,6 @@ docs/development_docs.md
 scripts/switch.sh
 **/*.bin
 CLAUDE.md
+.claude/
+**/build_asan/
+**/build_tsan/

@@ -188,8 +188,8 @@ int main(int argc, char* argv[]) {
     llarm::emu::cpu_blockstep emu(binary_path, settings);
     emu.run();
 
-    // Wait for the first instruction to finish executing
-    while (!emu.cpu.core.execution_done.load(std::memory_order_acquire)) {}
+    // wait for the first instruction to finish executing
+    emu.wait_for_first_execution();
 
     uc_engine* uc = setup_unicorn(settings, emu.binary);
 
@@ -304,7 +304,7 @@ int main(int argc, char* argv[]) {
         }
 
         for (const auto& w : mem_writes) {
-            // Skip MMIO addresses, they're above RAM and handled by LLARM peripherals,
+            // skip MMIO addresses, they're above RAM and handled by LLARM peripherals,
             // not stored in physical memory, so read_physical_mem would return 0.
             if (w.address >= static_cast<u32>(settings.memsize)) {
                 continue;

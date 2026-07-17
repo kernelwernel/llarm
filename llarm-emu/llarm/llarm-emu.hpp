@@ -79,6 +79,10 @@ namespace llarm::emu {
         CPU cpu;
         std::thread cpu_thread;
 
+        // sequence value that wait_for_execution() should block on; only ever
+        // touched by the controller thread, so it needs no synchronization.
+        u64 expected_exec_seq = 0;
+
         explicit cpu_blockstep(
             const std::filesystem::path &kernel_path,
             const SETTINGS &settings = default_settings()
@@ -136,7 +140,7 @@ namespace llarm::emu {
 
         template <typename T>
         T read_virtual_mem(const u32 address) {
-            return static_cast<T>(cpu.core.memory.read(address, sizeof(T)));
+            return static_cast<T>(cpu.core.memory.read(address, sizeof(T)).value);
         }
 
         template <typename T>
@@ -145,21 +149,18 @@ namespace llarm::emu {
         }
 
         void next_instruction() {
-            // Pre-clear before releasing the CPU so wait_for_execution() never misses
-            // the transition: without this, the CPU can complete its new cycle before
-            // Phase 1 of the old two-phase wait even starts, causing an infinite spin.
-            cpu.core.execution_done.store(false, std::memory_order_relaxed);
-            cpu.core.continue_cycle.store(true, std::memory_order_release);
+            expected_exec_seq = cpu.core.exec_seq.load(std::memory_order_acquire) + 1;
+            cpu.core.go_seq.fetch_add(1, std::memory_order_release);
         }
 
         // Call after next_instruction() to block until the next instruction finishes.
         void wait_for_execution() const {
-            while (!cpu.core.execution_done.load(std::memory_order_acquire)) {}
+            while (cpu.core.exec_seq.load(std::memory_order_acquire) < expected_exec_seq) {}
         }
 
         // Block until the first instruction has finished executing after run().
         void wait_for_first_execution() const {
-            while (!cpu.core.execution_done.load(std::memory_order_acquire)) {}
+            while (cpu.core.exec_seq.load(std::memory_order_acquire) < 1) {}
         }
     };
 
@@ -174,6 +175,16 @@ namespace llarm::emu {
             const SETTINGS &settings = default_settings()
         ) : binary(load_binary(kernel_path)),
             cpu(binary, settings) {}
+
+        template <typename T>
+        T read_physical_mem(const u32 address) {
+            return static_cast<T>(cpu.ram.read(address, sizeof(T)));
+        }
+
+        template <typename T>
+        void write_physical_mem(const u32 address, const u64 value) {
+            cpu.ram.write(address, value, sizeof(T));
+        }
 
         void run() {
             cpu.run(HEADLESS);

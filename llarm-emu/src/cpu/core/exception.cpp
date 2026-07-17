@@ -48,6 +48,8 @@ void EXCEPTION::reset() {
  * PC = 0x00000004
  */
 void EXCEPTION::undefined() {
+    reg.exception_taken = true;
+
     u8 inc = 0;
 
     if (reg.read(id::cpsr::T)) { // is in thumb mode
@@ -82,6 +84,8 @@ void EXCEPTION::undefined() {
  *   PC = 0x00000008
  */
 void EXCEPTION::swi() {
+    reg.exception_taken = true;
+
     u8 inc = 0;
 
     if (reg.read(id::cpsr::T)) { // is in thumb mode
@@ -116,6 +120,8 @@ void EXCEPTION::swi() {
  *   PC = 0x0000000C
  */
 void EXCEPTION::prefetch_abort() {
+    reg.exception_taken = true;
+
     reg.force_write(id::reg::SPSR_abt, reg.CPSR);
     reg.switch_mode(id::mode::ABORT);
     reg.write(id::reg::R14_abt, reg.read(id::reg::PC) + 4);
@@ -142,6 +148,8 @@ void EXCEPTION::prefetch_abort() {
  *   PC = 0x00000010
  */ 
 void EXCEPTION::data_abort() {
+    reg.exception_taken = true;
+
     reg.force_write(id::reg::SPSR_abt, reg.CPSR);
     reg.switch_mode(id::mode::ABORT);
     reg.write(id::reg::R14_abt, reg.read(id::reg::PC) + 8);

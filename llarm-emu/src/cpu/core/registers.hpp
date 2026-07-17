@@ -13,6 +13,9 @@ struct REGISTERS {
     ARCH_26& arch_26;
     SETTINGS& settings;
 
+    // set by EXCEPTION::undefined()/swi()/prefetch_abort()/data_abort()
+    bool exception_taken = false;
+
     // unbanked
     u32 R0 = 0;
     u32 R1 = 0;

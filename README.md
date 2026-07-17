@@ -90,9 +90,10 @@ See [`llarm-asm/docs/`](llarm-asm/docs/) for the full API reference.
 
 A modular ARM emulation framework targeting ARMv5 and earlier. Every hardware component is exposed and configurable: registers, memory, coprocessors, MMU/MPU, TLB, VFP and much more, making it suitable for debuggers, device emulation, program tracing, and embedded systems work. 
 
-> [!WARNING]
-> Currently only supports ARMv5, but support for successor versions are planned or in development.
-
+> [!IMPORTANT]
+> Emulating the Linux kernel is currently under progress! Here are the first kernel logs ever produced. (15/07/26)
+>
+> ![llarm-emu](assets/image.webp)
 
 **Quick start**
 ```cpp

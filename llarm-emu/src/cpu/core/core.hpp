@@ -83,10 +83,10 @@ struct CORE {
     u32 current_arm_code = 0;
     u16 current_thumb_code = 0;
     u32 current_pc = 0;
-    std::atomic<bool> continue_cycle{false};
-    std::atomic<bool> execution_done{false};
+    std::atomic<u64> exec_seq{0};
+    std::atomic<u64> go_seq{0};
 
-    CORE(const SETTINGS& init_settings, RAM &ram, VIC& vic, UART& uart, TIMER& timer) :
+    CORE(const SETTINGS& init_settings, RAM& ram, VIC& vic, UART& uart, TIMER& timer) :
         settings(init_settings),
         globals(),
         tlb(settings),

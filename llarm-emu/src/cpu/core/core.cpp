@@ -5,8 +5,6 @@
 
 #include <llarm/llarm-asm.hpp>
 
-#include <cstdio>
-
 
 inline void CORE::arm_cycle_headless() {
     const arm_fetch_struct arm_code_access = fetch.arm_fetch();
@@ -30,13 +28,19 @@ inline void CORE::arm_cycle_headless() {
     if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
     if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
 
+    // a synchronous exception (undefined/swi/prefetch_abort/data_abort) raised
+    // mid-execute() already wrote the vector PC, so incrementing it here would
+    // clobber it, same as it would for the irq()/fiq() cases returned above.
+    if (reg.exception_taken) {
+        reg.exception_taken = false;
+        return;
+    }
+
     reg.arm_increment_PC();
 }
 
 
 inline void CORE::arm_cycle_step() {
-    continue_cycle = false;
-    execution_done = false;
     current_pc = reg.force_read(id::reg::R15);
 
     const arm_fetch_struct arm_code_access = fetch.arm_fetch();
@@ -53,13 +57,11 @@ inline void CORE::arm_cycle_step() {
 
     execute.arm_execute(instruction);
 
-    execution_done = true;
+    const u64 my_seq = exec_seq.fetch_add(1, std::memory_order_acq_rel) + 1;
 
-    while (!continue_cycle.load()) {
-        // wait till continue_cycle variable is true
+    while (go_seq.load(std::memory_order_acquire) < my_seq) {
+        // wait till the controller has released this cycle
     }
-
-    //std::cout << "reached end of cycle\n";
 
     timer.tick();
 
@@ -68,17 +70,20 @@ inline void CORE::arm_cycle_step() {
     } else { 
         vic.clear_irq(settings.timer_irq_source);
     }
-     
+
     if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
     if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
+
+    if (reg.exception_taken) {
+        reg.exception_taken = false;
+        return;
+    }
 
     reg.arm_increment_PC();
 }
 
 
 inline void CORE::thumb_cycle_step() {
-    continue_cycle = false;
-    execution_done = false;
     current_pc = reg.force_read(id::reg::R15);
 
     const thumb_fetch_struct thumb_code_access = fetch.thumb_fetch();
@@ -94,12 +99,10 @@ inline void CORE::thumb_cycle_step() {
 
     execute.thumb_execute(instruction);
 
-    execution_done = true;
+    const u64 my_seq = exec_seq.fetch_add(1, std::memory_order_acq_rel) + 1;
 
-    while (true) {
-        if (continue_cycle == true) {
-            break;
-        }
+    while (go_seq.load(std::memory_order_acquire) < my_seq) {
+        // wait till the controller has released this cycle
     }
 
     timer.tick();
@@ -112,6 +115,11 @@ inline void CORE::thumb_cycle_step() {
 
     if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
     if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
+
+    if (reg.exception_taken) {
+        reg.exception_taken = false;
+        return;
+    }
 
     reg.thumb_increment_PC();
 }
@@ -139,22 +147,17 @@ inline void CORE::thumb_cycle_headless() {
     if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
     if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
 
+    if (reg.exception_taken) {
+        reg.exception_taken = false;
+        return;
+    }
+
     reg.thumb_increment_PC();
 }
 
 
 void CORE::headless_mode() {
-    u64 step = 0;
-
     while (true) {
-        if ((step % 1'000'000) == 0) {
-            fprintf(stderr, "[headless] step=%llu PC=0x%08X I=%d vic_irq=%d timer_irq=%d\n",
-                static_cast<unsigned long long>(step), reg.force_read(id::reg::R15),
-                reg.read(id::cpsr::I), vic.irq_pending(), timer.irq_pending());
-        }
-
-        ++step;
-
         if (is_halted) {
             if (is_terminated) {
                 return;
