@@ -74,7 +74,8 @@ void EXECUTE::arm_execute(const arm_decode_struct &instruction) {
         case arm_id::LDRSB: instructions.arm.load.LDRSB(code); return;
         case arm_id::LDRSH: instructions.arm.load.LDRSH(code); return;
         case arm_id::STRH: instructions.arm.store.STRH(code); return;
-        case arm_id::BX: instructions.arm.branching.BX(code); return;
+        case arm_id::BX:
+        case arm_id::BXJ: instructions.arm.branching.BX(code); return; // NOTE: BXJ falls back to BX since we're not implementing Jazelle (at least for now)
         case arm_id::BKPT: instructions.arm.misc.BKPT(); return;
         case arm_id::BLX1: instructions.arm.branching.BLX1(code); return;
         case arm_id::BLX2: instructions.arm.branching.BLX2(code); return;

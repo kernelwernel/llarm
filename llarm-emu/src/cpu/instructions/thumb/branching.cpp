@@ -15,7 +15,8 @@ void INSTRUCTIONS::thumb::branching::B1(const u16 code) {
     const id::cond cond = reg.fetch_cond_id(llarm::util::bit_range<u8>(code, 8, 11));
 
     if (reg.is_cond_valid(cond)) {
-        reg.write(id::reg::PC, reg.force_read(id::reg::PC) + 2 + static_cast<u32>(operation::sign_extend(signed_immed_8, 7) << 1));
+        reg.write(id::reg::PC, reg.force_read(id::reg::PC) + 4 + static_cast<u32>(operation::sign_extend(signed_immed_8, 7) << 1));
+        reg.pc_finalised = true;
     }
 }
 
@@ -26,7 +27,8 @@ void INSTRUCTIONS::thumb::branching::B1(const u16 code) {
 void INSTRUCTIONS::thumb::branching::B2(const u16 code) {
     const u16 signed_immed_10 = llarm::util::bit_range<u16>(code, 0, 10);
 
-    reg.write(id::reg::PC, reg.force_read(id::reg::PC) + 2 + static_cast<u32>(operation::sign_extend(signed_immed_10, 10) << 1));
+    reg.write(id::reg::PC, reg.force_read(id::reg::PC) + 4 + static_cast<u32>(operation::sign_extend(signed_immed_10, 10) << 1));
+    reg.pc_finalised = true;
 }
 
 
@@ -117,7 +119,8 @@ void INSTRUCTIONS::thumb::branching::BLX2(const u16 code) {
 
     reg.write(id::reg::LR, (next_instruction_address | 1));
     reg.write(id::cpsr::T, (Rm & 1));
-    reg.write(id::reg::PC, (llarm::util::bit_range(Rm, 1, 31) << 1) - 2);
+    reg.write(id::reg::PC, (llarm::util::bit_range(Rm, 1, 31) << 1));
+    reg.pc_finalised = true;
 }
 
 
@@ -129,5 +132,6 @@ void INSTRUCTIONS::thumb::branching::BX(const u16 code) {
     const u32 Rm = reg.read(code, 3, 6);
 
     reg.write(id::cpsr::T, (Rm & 1));
-    reg.write(id::reg::PC, (llarm::util::bit_range(Rm, 1, 31) << 1) - 2);
+    reg.write(id::reg::PC, (llarm::util::bit_range(Rm, 1, 31) << 1));
+    reg.pc_finalised = true;
 }

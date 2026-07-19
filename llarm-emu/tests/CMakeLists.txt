@@ -1,6 +1,8 @@
 # cmake for test programs specifically for the emulator:
 #  - llarm-diff: basically just a comparison between unicorn emulator and llarm-emu to check for divergences
 #  - llarm-uart: just runs the linux kernel but in non-headless mode, meaning it has an output (yippee!)
+#  - virtmem: software watchpoint tool for llarm-emu, single-instruction lockstep with a
+#    resolvable trigger PC/register+offset or absolute-address watch mode
 
 cmake_minimum_required(VERSION 3.25)
 project(llarm-difftest)
@@ -70,3 +72,22 @@ target_link_libraries(llarm-uart
 
 configure_target_flags(llarm-uart)
 configure_linker_flags(llarm-uart)
+
+
+add_executable(virtmem virtmem/main.cpp)
+
+target_include_directories(virtmem
+    PRIVATE
+        ${LLARM_EMU_DIR}
+        ${LLARM_EMU_DIR}/src
+        ${LLARM_REPO_ROOT}/shared/include
+        ${LLARM_REPO_ROOT}/llarm-asm
+)
+
+target_link_libraries(virtmem
+    PRIVATE
+        ${LLARM_EMU_TARGET}
+)
+
+configure_target_flags(virtmem)
+configure_linker_flags(virtmem)

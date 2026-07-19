@@ -4,6 +4,7 @@
 
 #include <llarm/shared/types.hpp>
 
+#include <mutex>
 #include <queue>
 
 // this UART model is based on the PL011, full docs can be seen in the manuals folder
@@ -93,9 +94,18 @@ struct UART {
     u32 read(const u32 address);
     void write(const u32 address, const u32 value);
 
-    // inject a byte into the RX FIFO (called by host or external device)
-    // error_flags: bits [3:0] map to OE/BE/PE/FE
     void receive(const u8 data, const u8 error_flags = 0);
+
+    // called from a separate host-input thread (e.g. a stdin reader) to hand
+    // off a raw byte for later injection into the RX FIFO.
+    void push_host_input(const u8 data);
+
+    // called from the CPU loop's own thread to drain any bytes handed off via
+    // push_host_input() and inject them into the RX FIFO via receive().
+    void drain_host_input();
+
+    std::mutex host_input_mutex;
+    std::queue<u8> host_input_queue;
 
     // pop one byte from the TX FIFO; returns false if the FIFO is empty
     bool transmit(u8& data);

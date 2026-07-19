@@ -124,6 +124,7 @@ namespace internal::generators {
             std::string B(const u32 code, const u32 PC, const settings& settings);
             std::string BL(const u32 code, const u32 PC, const settings& settings);
             std::string BX(const u32 code, const settings& settings);
+            std::string BXJ(const u32 code, const settings& settings);
             std::string BLX1(const u32 code, const u32 PC, const settings& settings);
             std::string BLX2(const u32 code, const settings& settings);
         }

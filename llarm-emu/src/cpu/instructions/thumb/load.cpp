@@ -390,6 +390,8 @@ void INSTRUCTIONS::thumb::load::POP(const u16 code) {
             reg.write(id::cpsr::T, (value & 1));
         }
 
+        reg.pc_finalised = true;
+
         address += 4;
     }
 

@@ -27,7 +27,12 @@ arm_id ident::bin_arm::misc_instructions(const u32 code) {
                 return arm_id::BX;
             }
             break;
-            
+
+        case 0b0010:
+            if (second_half == 0b10010) {
+                return arm_id::BXJ;
+            }
+            break;
 
         case 0b0011:
             if (second_half == 0b10010) {
@@ -188,7 +193,7 @@ arm_id ident::bin_arm::unconditional(const u32 code) {
             (llarm::util::bit_range(code, 16, 27) == 0b0001'0000'0001) &&
             (llarm::util::bit_range(code, 4, 7) == 0b0000)
         ) {
-
+            return arm_id::SETEND;
         }
 
         return arm_id::UNDEFINED;
@@ -616,7 +621,7 @@ arm_id ident::bin_arm::pack_and_saturates(const u32 code) {
     const u8 upper_part = llarm::util::bit_range<u8>(code, 20, 24);
     const u8 lower_part = llarm::util::bit_range<u8>(code, 4, 7);
 
-    const u16 full_snippet = static_cast<u16>(upper_part << 5 | lower_part);
+    const u16 full_snippet = static_cast<u16>(upper_part << 4 | lower_part);
 
     switch (full_snippet) {
         case 0b0'1000'1001:
@@ -625,10 +630,9 @@ arm_id ident::bin_arm::pack_and_saturates(const u32 code) {
         case 0b0'1000'0101: return arm_id::PKHTB;
         case 0b0'1000'1011: return arm_id::SEL;
 
-
         case 0b0'0010'0001: return arm_id::QADD16;
         case 0b0'0010'1001: return arm_id::QADD8;
-        case 0b0'0010'0011: return arm_id::QADD8;
+        case 0b0'0010'0011: return arm_id::QADDSUBX;
         case 0b0'0010'0111: return arm_id::QSUB16;
         case 0b0'0010'1111: return arm_id::QSUB8;
         case 0b0'0010'0101: return arm_id::QSUBADDX;

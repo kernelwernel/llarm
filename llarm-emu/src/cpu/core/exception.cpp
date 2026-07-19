@@ -48,7 +48,7 @@ void EXCEPTION::reset() {
  * PC = 0x00000004
  */
 void EXCEPTION::undefined() {
-    reg.exception_taken = true;
+    reg.pc_finalised = true;
 
     u8 inc = 0;
 
@@ -60,7 +60,8 @@ void EXCEPTION::undefined() {
 
     reg.force_write(id::reg::SPSR_und, reg.CPSR);
     reg.switch_mode(id::mode::UNDEFINED);
-    reg.write(id::reg::R14_und, reg.read(id::reg::PC) + inc);
+
+    reg.write(id::reg::R14_und, reg.force_read(id::reg::R15) + inc);
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
 
@@ -84,7 +85,7 @@ void EXCEPTION::undefined() {
  *   PC = 0x00000008
  */
 void EXCEPTION::swi() {
-    reg.exception_taken = true;
+    reg.pc_finalised = true;
 
     u8 inc = 0;
 
@@ -94,7 +95,7 @@ void EXCEPTION::swi() {
         inc = 4;
     }
 
-    reg.force_write(id::reg::R14_svc, reg.read(id::reg::PC) + inc);
+    reg.force_write(id::reg::R14_svc, reg.force_read(id::reg::R15) + inc);
     reg.force_write(id::reg::SPSR_svc, reg.CPSR);
     reg.switch_mode(id::mode::SUPERVISOR);
     reg.write(id::cpsr::T, 0);
@@ -120,11 +121,12 @@ void EXCEPTION::swi() {
  *   PC = 0x0000000C
  */
 void EXCEPTION::prefetch_abort() {
-    reg.exception_taken = true;
+    reg.pc_finalised = true;
 
     reg.force_write(id::reg::SPSR_abt, reg.CPSR);
     reg.switch_mode(id::mode::ABORT);
-    reg.write(id::reg::R14_abt, reg.read(id::reg::PC) + 4);
+
+    reg.write(id::reg::R14_abt, reg.force_read(id::reg::R15) + 4);
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
 
@@ -148,11 +150,12 @@ void EXCEPTION::prefetch_abort() {
  *   PC = 0x00000010
  */ 
 void EXCEPTION::data_abort() {
-    reg.exception_taken = true;
+    reg.pc_finalised = true;
 
     reg.force_write(id::reg::SPSR_abt, reg.CPSR);
     reg.switch_mode(id::mode::ABORT);
-    reg.write(id::reg::R14_abt, reg.read(id::reg::PC) + 8);
+
+    reg.write(id::reg::R14_abt, reg.force_read(id::reg::R15) + 8);
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
 
@@ -178,7 +181,10 @@ void EXCEPTION::data_abort() {
 void EXCEPTION::irq() {
     reg.force_write(id::reg::SPSR_irq, reg.CPSR);
     reg.switch_mode(id::mode::IRQ);
-    reg.write(id::reg::R14_irq, reg.read(id::reg::PC) + 4);
+
+    const u32 base = reg.force_read(id::reg::R15);
+    reg.write(id::reg::R14_irq, reg.pc_finalised ? (base + 4) : (base + 8)); // hard to explain why this is needed
+    reg.pc_finalised = false;
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::I, 1);
 
@@ -205,7 +211,10 @@ void EXCEPTION::irq() {
 void EXCEPTION::fiq() {
     reg.force_write(id::reg::SPSR_fiq, reg.CPSR);
     reg.switch_mode(id::mode::FIQ);
-    reg.write(id::reg::R14_fiq, reg.read(id::reg::PC) + 4);
+
+    const u32 base = reg.force_read(id::reg::R15);
+    reg.write(id::reg::R14_fiq, reg.pc_finalised ? (base + 4) : (base + 8));
+    reg.pc_finalised = false;
     reg.write(id::cpsr::T, 0);
     reg.write(id::cpsr::F, 1);
     reg.write(id::cpsr::I, 1);

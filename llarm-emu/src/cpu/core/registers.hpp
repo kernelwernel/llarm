@@ -13,8 +13,11 @@ struct REGISTERS {
     ARCH_26& arch_26;
     SETTINGS& settings;
 
-    // set by EXCEPTION::undefined()/swi()/prefetch_abort()/data_abort()
-    bool exception_taken = false;
+    // some instructions (especially branching and exception related) require specialised
+    // modifications to the PC after the execution of those instructions, kinda hard to explain
+    // why this is needed but it's basically just an edgecase check for certain situations.
+    // This also applies to thumb as well
+    bool pc_finalised = false;
 
     // unbanked
     u32 R0 = 0;

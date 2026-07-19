@@ -67,6 +67,8 @@ struct SETTINGS {
     u32 dtb_load_address = 0;
     u32 machine_type = 0;
     u32 binary_load_address = 0;
+    u32 initrd_load_address = 0;
+    u32 initrd_size = 0; // must match the DTB's linux,initrd-start/end range
 
     // /**/ = "not sure what to do with this, todo"
 
@@ -340,6 +342,9 @@ constexpr SETTINGS linux_settings() {
 constexpr SETTINGS image_settings() {
     SETTINGS tmp = linux_settings();
     tmp.binary_load_address = 0x00008000U; // ARM Linux TEXT_OFFSET, physical entry point
+    tmp.initrd_load_address = 0x02000000U;
+    tmp.initrd_size = 0x00180000U; // 1.5 MiB budget, rounded up from the current rootfs.cpio size
+
     return tmp;
 }
 

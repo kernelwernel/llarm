@@ -138,6 +138,16 @@ namespace llarm::emu {
             cpu.ram.write(address, value, sizeof(T));
         }
 
+        void load_initrd(const std::filesystem::path &initrd_path) {
+            std::vector<u8> data = load_binary(initrd_path);
+
+            if (data.size() > cpu.settings.initrd_size) {
+                llarm::out::error("initrd image is larger than settings.initrd_size (regenerate the DTB)");
+            }
+
+            cpu.ram.write(cpu.settings.initrd_load_address, data);
+        }
+
         template <typename T>
         T read_virtual_mem(const u32 address) {
             return static_cast<T>(cpu.core.memory.read(address, sizeof(T)).value);
@@ -186,8 +196,26 @@ namespace llarm::emu {
             cpu.ram.write(address, value, sizeof(T));
         }
 
+        // see cpu_blockstep::load_initrd() above for details. Call before run().
+        void load_initrd(const std::filesystem::path &initrd_path) {
+            std::vector<u8> data = load_binary(initrd_path);
+
+            if (data.size() > cpu.settings.initrd_size) {
+                llarm::out::error("initrd image is larger than settings.initrd_size (regenerate the DTB)");
+            }
+
+            cpu.ram.write(cpu.settings.initrd_load_address, data);
+        }
+
         void run() {
             cpu.run(HEADLESS);
+        }
+
+        // safe to call from a different thread than the one blocked in run(),
+        // e.g. to break out of a headless boot from an external signal/input
+        // handler. Breaks out of headless_mode()'s loop on its next cycle.
+        void stop() {
+            cpu.core.stop_requested.store(true, std::memory_order_relaxed);
         }
     };
 }

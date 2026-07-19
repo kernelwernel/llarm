@@ -20,11 +20,13 @@ void INSTRUCTIONS::arm::branching::B(const u32 code) {
     }
 
     const u32 offset = static_cast<u32>(operation::sign_extend(static_cast<u32>(signed_immed_24), 23) << 2);
-    const u32 address = reg.read(id::reg::PC) + offset - 4;
 
-    // All 32 bits are stored in the Link register (R14) after a Branch with Link instruction or an exception entry.
+    const u32 address = reg.read(id::reg::PC) + offset;
+
+    // all 32 bits are stored in the Link register (R14) after a BL instruction or an exception entry.
 
     reg.write(id::reg::PC, address);
+    reg.pc_finalised = true;
 }
 
 
@@ -47,7 +49,8 @@ void INSTRUCTIONS::arm::branching::BX(const u32 code) {
 
     reg.write(id::cpsr::T, (Rm & 1));
 
-    reg.write(id::reg::PC, (Rm & 0xFFFFFFFE) - 4);
+    reg.write(id::reg::PC, (Rm & 0xFFFFFFFE));
+    reg.pc_finalised = true;
 }
 
 
@@ -63,10 +66,11 @@ void INSTRUCTIONS::arm::branching::BLX1(const u32 code) {
     reg.write(id::reg::LR, reg.read(id::reg::PC) - 4);
 
     const u32 offset = static_cast<u32>(operation::sign_extend(static_cast<u32>(signed_immed_24), 23) << 2);
-    const u32 address = reg.read(id::reg::PC) + offset - 4 + (H ? 2U : 0U);
+    const u32 address = reg.read(id::reg::PC) + offset + (H ? 2U : 0U);
 
     reg.write(id::cpsr::T, true);
     reg.write(id::reg::PC, address);
+    reg.pc_finalised = true;
 }
 
 
@@ -81,5 +85,6 @@ void INSTRUCTIONS::arm::branching::BLX2(const u32 code) {
 
     reg.write(id::reg::LR, reg.read(id::reg::PC) - 4);
     reg.write(id::cpsr::T, (Rm & 1));
-    reg.write(id::reg::PC, (Rm & 0xFFFFFFFE) - 4);
+    reg.write(id::reg::PC, (Rm & 0xFFFFFFFE));
+    reg.pc_finalised = true;
 }

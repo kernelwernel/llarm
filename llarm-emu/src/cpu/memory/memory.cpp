@@ -10,7 +10,7 @@
 #include <llarm/shared/types.hpp>
 
 
-void MEMORY::manage_abort(const id::aborts abort_code) {
+void MEMORY::manage_abort(const id::aborts abort_code, const id::access_type access_type) {
     switch (abort_code) {
         case id::aborts::NO_ABORT: return;
         case id::aborts::ALIGNMENT:
@@ -23,7 +23,13 @@ void MEMORY::manage_abort(const id::aborts abort_code) {
         case id::aborts::PAGE_DOMAIN:
         case id::aborts::SUB_PAGE_PERMISSION:
         case id::aborts::SECTION_DOMAIN:
-        case id::aborts::SECTION_PERMISSION: exception.data_abort(); return;
+        case id::aborts::SECTION_PERMISSION:
+            if (access_type == id::access_type::INSTRUCTION_FETCH) {
+                exception.prefetch_abort();
+            } else {
+                exception.data_abort();
+            }
+            return;
         case id::aborts::PREFETCH_ABORT: exception.prefetch_abort(); return;
     }
 }

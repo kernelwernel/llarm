@@ -67,7 +67,20 @@ struct CORE {
     bool is_halted = false;
     bool is_terminated = false;
 
+    // set from an external thread (e.g. cpu_headless::stop()) to break out of
+    // headless_mode()'s loop; unlike is_terminated, this is checked unconditionally
+    // every cycle, not just while halted, and is safe to set cross-thread.
+    std::atomic<bool> stop_requested{false};
+
+    enum class sync_enum : u8 {
+        NONE,
+        IRQ,
+        FIQ,
+        PC
+    };
+
     void initialise(const bool is_headless = false);
+    sync_enum synchronise();
 
     void arm_cycle_headless();
     void arm_cycle_step();

@@ -164,7 +164,8 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
         case arm_id::BLX1: return generators::arm::branching::BLX1(code, PC, settings);
         case arm_id::BLX2: return generators::arm::branching::BLX2(code, settings);
         case arm_id::CLZ: return generators::arm::logic::CLZ(code, settings);
-        case arm_id::BX: return generators::arm::branching::BX(code, settings); 
+        case arm_id::BX: return generators::arm::branching::BX(code, settings);
+        case arm_id::BXJ: return generators::arm::branching::BXJ(code, settings);
         case arm_id::SMLAL: return generators::arm::multiply::SMLAL(code, settings);
         case arm_id::SMULL: return generators::arm::multiply::SMULL(code, settings);
         case arm_id::UMLAL: return generators::arm::multiply::UMLAL(code, settings);
@@ -505,7 +506,8 @@ std::string disassemble::arm_id_to_string(const arm_id id) {
         case arm_id::BLX1: return "BLX1"; 
         case arm_id::BLX2: return "BLX2"; 
         case arm_id::CLZ: return "CLZ"; 
-        case arm_id::BX: return "BX"; 
+        case arm_id::BX: return "BX";
+        case arm_id::BXJ: return "BXJ";
         case arm_id::SMLAL: return "SMLAL"; 
         case arm_id::SMULL: return "SMULL"; 
         case arm_id::UMLAL: return "UMLAL"; 

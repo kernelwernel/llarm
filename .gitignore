@@ -31,3 +31,4 @@ CLAUDE.md
 .claude/
 **/build_asan/
 **/build_tsan/
+**/virtmem/

@@ -282,6 +282,16 @@ u32 generators::bx(const operand_struct& args) {
 }
 
 
+u32 generators::bxj(const operand_struct& args) {
+    u32 binary = bx(args);
+
+    llarm::util::modify_bit(binary, 4, false);
+    llarm::util::modify_bit(binary, 5, true);
+
+    return binary;
+}
+
+
 u32 generators::mcrr(const operand_struct& args, const bool is_mcrr2) {
     u32 binary = 0b0000'1100'0100'0000'0000'0000'0000'0000;
 

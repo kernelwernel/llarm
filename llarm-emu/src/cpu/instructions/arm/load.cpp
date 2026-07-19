@@ -62,11 +62,13 @@ void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
         const u32 value = llarm::util::bit_range<u32>(access.value, 0, 31);
 
         if (settings.arch >= id::arch::ARMv5) {
-            reg.write(id::reg::PC, (value & 0xFFFFFFFE) - 4);
+            reg.write(id::reg::PC, (value & 0xFFFFFFFE));
             reg.write(id::cpsr::T, (value & 1));
         } else {
-            reg.write(id::reg::PC, (value & 0xFFFFFFFC) - 4);
+            reg.write(id::reg::PC, (value & 0xFFFFFFFC));
         }
+
+        reg.pc_finalised = true;
 
         address += 4;
     }
@@ -123,11 +125,13 @@ void INSTRUCTIONS::arm::load::LDR(const u32 code) {
 
     if (reg.fetch_reg_id(code, 12, 15) == id::reg::R15) {
         if (settings.arch >= id::arch::ARMv5) {
-            reg.write(id::reg::PC, (value & 0xFFFFFFFE) - 4);
+            reg.write(id::reg::PC, (value & 0xFFFFFFFE));
             reg.write(id::cpsr::T, (value & 1));
         } else {
-            reg.write(id::reg::PC, (value & 0xFFFFFFFC) - 4);
+            reg.write(id::reg::PC, (value & 0xFFFFFFFC));
         }
+
+        reg.pc_finalised = true;
     } else {
         reg.write(code, 12, 15, value);
     }
@@ -315,7 +319,10 @@ void INSTRUCTIONS::arm::load::LDM2(const u32 code) {
             return;
         }
     
-        reg.write(reg_id, llarm::util::bit_range(access.value, 0, 31));
+        // LDM2 always targets the unbanked user-mode registers, regardless of
+        // the current mode, so this must bypass write()'s current-mode register
+        // banking (e.g. writing R13 while in SVC mode must not land in R13_svc).
+        reg.force_write(reg_id, llarm::util::bit_range(access.value, 0, 31));
         address += 4;
     }
 
@@ -381,10 +388,12 @@ void INSTRUCTIONS::arm::load::LDM3(const u32 code) {
         (settings.specific_arch >= id::specific_arch::ARMv4T) &&
         (reg.read(id::cpsr::T) == true)
     ) {
-        reg.write(id::reg::PC, (value & 0xFFFFFFFE) - 4);
+        reg.write(id::reg::PC, (value & 0xFFFFFFFE));
     } else {
-        reg.write(id::reg::PC, (value & 0xFFFFFFFC) - 4);
+        reg.write(id::reg::PC, (value & 0xFFFFFFFC));
     }
+
+    reg.pc_finalised = true;
 
     address += 4;
 

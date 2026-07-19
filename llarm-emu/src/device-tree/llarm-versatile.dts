@@ -9,6 +9,8 @@
 	chosen {
 		bootargs = "console=ttyAMA0 earlyprintk";
 		stdout-path = &uart0;
+		linux,initrd-start = <0x02000000>;
+		linux,initrd-end = <0x02180000>;
 	};
 
 	memory@0 {

@@ -71,7 +71,6 @@ void REGISTERS::write(const id::reg destination_reg_id, const id::reg source_reg
 
 
 void REGISTERS::write(const id::cpsr cpsr_id, const u8 cpsr_value) {
-
     // 26-bit mode uses bits in R15 as its version of the 32-bit mode CPSR, we're knee deep in some real funky shit here.
     if (arch_26.is_26_arch_program()) [[unlikely]] {
         u32 R15_copy = read(id::reg::R15);
@@ -92,7 +91,11 @@ void REGISTERS::write(const id::cpsr cpsr_id, const u8 cpsr_value) {
                     default: break;
                 }
 
-                llarm::util::swap_bits(R15_copy, 0, 1, cpsr_value); break;
+                llarm::util::swap_bits(R15_copy, 0, 1, cpsr_value);
+                write(id::reg::R15, R15_copy);
+                globals.is_privileged = is_privileged();
+                return;
+
             case id::cpsr::N: llarm::util::modify_bit(R15_copy, 31, cpsr_value); break;
             case id::cpsr::Z: llarm::util::modify_bit(R15_copy, 30, cpsr_value); break;
             case id::cpsr::C: llarm::util::modify_bit(R15_copy, 29, cpsr_value); break;
@@ -107,7 +110,11 @@ void REGISTERS::write(const id::cpsr cpsr_id, const u8 cpsr_value) {
     }
 
     switch (cpsr_id) {
-        case id::cpsr::M: llarm::util::swap_bits(CPSR, 0, 4, cpsr_value); return;
+        case id::cpsr::M:
+            llarm::util::swap_bits(CPSR, 0, 4, cpsr_value);
+            globals.is_privileged = is_privileged();
+            return;
+
         case id::cpsr::T: 
             if (cpsr_value == true) {
                 globals.instruction_set = id::instruction_sets::THUMB;
@@ -116,6 +123,7 @@ void REGISTERS::write(const id::cpsr cpsr_id, const u8 cpsr_value) {
             }
             llarm::util::modify_bit(CPSR, 5, cpsr_value);
             return;
+
         case id::cpsr::F: llarm::util::modify_bit(CPSR, 6, cpsr_value); return;
         case id::cpsr::I: llarm::util::modify_bit(CPSR, 7, cpsr_value); return;
         case id::cpsr::A: llarm::util::modify_bit(CPSR, 8, cpsr_value); return;
@@ -158,12 +166,14 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
         case id::reg::R7: R7 = value; return;
         case id::reg::R15: R15 = value - (read(id::cpsr::T) ? 2u : 4u); return;
         [[likely]] case id::reg::PC: write_PC(value); return;
-        case id::reg::CPSR: 
+        case id::reg::CPSR:
             if (arch_26.is_only_26_arch()) {
                 llarm::out::error("CPSR does not exist in pure 26-bit architecture");
             }
             CPSR = value;
+            globals.is_privileged = is_privileged();
             return;
+
         default: break;
     }
 
@@ -193,8 +203,8 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
         case id::mode::USER:
         case id::mode::USER_26:
             switch (register_id) {
-                case id::reg::R8:  R8 = value; return;
-                case id::reg::R9:  R9 = value; return;
+                case id::reg::R8: R8 = value; return;
+                case id::reg::R9: R9 = value; return;
                 case id::reg::R10: R10 = value; return;
                 case id::reg::R11: R11 = value; return;
                 case id::reg::R12: R12 = value; return;
@@ -208,9 +218,9 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
         case id::mode::FIQ_26:
             switch (register_id) {
                 case id::reg::R8:
-                case id::reg::R8_fiq:  R8_fiq = value; return;
+                case id::reg::R8_fiq: R8_fiq = value; return;
                 case id::reg::R9:
-                case id::reg::R9_fiq:  R9_fiq = value; return;
+                case id::reg::R9_fiq: R9_fiq = value; return;
                 case id::reg::R10:
                 case id::reg::R10_fiq: R10_fiq = value; return;
                 case id::reg::R11:
@@ -229,15 +239,15 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
         case id::mode::IRQ:
         case id::mode::IRQ_26:
             switch (register_id) {
-                case id::reg::R8:  R8 = value; return;
-                case id::reg::R9:  R9 = value; return;
+                case id::reg::R8: R8 = value; return;
+                case id::reg::R9: R9 = value; return;
                 case id::reg::R10: R10 = value; return;
                 case id::reg::R11: R11 = value; return;
                 case id::reg::R12: R12 = value; return;
                 case id::reg::R13:
-                case id::reg::R13_irq:  R13_irq = value; return;
+                case id::reg::R13_irq: R13_irq = value; return;
                 case id::reg::R14:
-                case id::reg::R14_irq:  R14_irq = value; return;
+                case id::reg::R14_irq: R14_irq = value; return;
                 case id::reg::SPSR_irq: SPSR_irq = value; return;
                 default: break;
             }
@@ -246,15 +256,15 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
         case id::mode::SUPERVISOR:
         case id::mode::SUPERVISOR_26:
             switch (register_id) {
-                case id::reg::R8:  R8 = value; return;
-                case id::reg::R9:  R9 = value; return;
+                case id::reg::R8: R8 = value; return;
+                case id::reg::R9: R9 = value; return;
                 case id::reg::R10: R10 = value; return;
                 case id::reg::R11: R11 = value; return;
                 case id::reg::R12: R12 = value; return;
                 case id::reg::R13:
-                case id::reg::R13_svc:  R13_svc = value; return;
+                case id::reg::R13_svc: R13_svc = value; return;
                 case id::reg::R14:
-                case id::reg::R14_svc:  R14_svc = value; return;
+                case id::reg::R14_svc: R14_svc = value; return;
                 case id::reg::SPSR_svc: SPSR_svc = value; return;
                 default: break;
             }
@@ -262,15 +272,15 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
 
         case id::mode::ABORT:
             switch (register_id) {
-                case id::reg::R8:  R8 = value; return;
-                case id::reg::R9:  R9 = value; return;
+                case id::reg::R8: R8 = value; return;
+                case id::reg::R9: R9 = value; return;
                 case id::reg::R10: R10 = value; return;
                 case id::reg::R11: R11 = value; return;
                 case id::reg::R12: R12 = value; return;
                 case id::reg::R13:
-                case id::reg::R13_abt:  R13_abt = value; return;
+                case id::reg::R13_abt: R13_abt = value; return;
                 case id::reg::R14:
-                case id::reg::R14_abt:  R14_abt = value; return;
+                case id::reg::R14_abt: R14_abt = value; return;
                 case id::reg::SPSR_abt: SPSR_abt = value; return;
                 default: break;
             }
@@ -278,15 +288,15 @@ void REGISTERS::write(const id::reg register_id, const u32 value) {
 
         case id::mode::UNDEFINED:
             switch (register_id) {
-                case id::reg::R8:  R8 = value; return;
-                case id::reg::R9:  R9 = value; return;
+                case id::reg::R8: R8 = value; return;
+                case id::reg::R9: R9 = value; return;
                 case id::reg::R10: R10 = value; return;
                 case id::reg::R11: R11 = value; return;
                 case id::reg::R12: R12 = value; return;
                 case id::reg::R13:
-                case id::reg::R13_und:  R13_und = value; return;
+                case id::reg::R13_und: R13_und = value; return;
                 case id::reg::R14:
-                case id::reg::R14_und:  R14_und = value; return;
+                case id::reg::R14_und: R14_und = value; return;
                 case id::reg::SPSR_und: SPSR_und = value; return;
                 default: break;
             }
@@ -307,30 +317,30 @@ void REGISTERS::force_write(const id::reg register_id, const u32 value) {
         case id::reg::R7: R7 = value; return;
         case id::reg::R15: R15 = value; return;
         case id::reg::PC: write_PC(value); return;
-        case id::reg::CPSR: CPSR = value; return;
-        case id::reg::R8:  R8 = value; return;
-        case id::reg::R9:  R9 = value; return;
+        case id::reg::CPSR: CPSR = value; globals.is_privileged = is_privileged(); return;
+        case id::reg::R8: R8 = value; return;
+        case id::reg::R9: R9 = value; return;
         case id::reg::R10: R10 = value; return;
         case id::reg::R11: R11 = value; return;
         case id::reg::R12: R12 = value; return;
         case id::reg::R13: R13 = value; return;
         case id::reg::R14: R14 = value; return;
-        case id::reg::R8_fiq:  R8_fiq = value; return;
-        case id::reg::R9_fiq:  R9_fiq = value; return;
+        case id::reg::R8_fiq: R8_fiq = value; return;
+        case id::reg::R9_fiq: R9_fiq = value; return;
         case id::reg::R10_fiq: R10_fiq = value; return;
         case id::reg::R11_fiq: R11_fiq = value; return;
         case id::reg::R12_fiq: R12_fiq = value; return;
         case id::reg::R13_fiq: R13_fiq = value; return;
         case id::reg::R14_fiq: R14_fiq = value; return;
         case id::reg::SPSR_fiq: SPSR_fiq = value; return;
-        case id::reg::R13_irq:  R13_irq = value; return;
-        case id::reg::R14_irq:  R14_irq = value; return;
+        case id::reg::R13_irq: R13_irq = value; return;
+        case id::reg::R14_irq: R14_irq = value; return;
         case id::reg::SPSR_irq: SPSR_irq = value; return; 
-        case id::reg::R13_svc:  R13_svc = value; return;
-        case id::reg::R14_svc:  R14_svc = value; return;
+        case id::reg::R13_svc: R13_svc = value; return;
+        case id::reg::R14_svc: R14_svc = value; return;
         case id::reg::SPSR_svc: SPSR_svc = value; return; 
-        case id::reg::R13_abt:  R13_abt = value; return;
-        case id::reg::R14_abt:  R14_abt = value; return;
+        case id::reg::R13_abt: R13_abt = value; return;
+        case id::reg::R14_abt: R14_abt = value; return;
         case id::reg::SPSR_abt: SPSR_abt = value; return; 
         case id::reg::R13_und: R13_und = value; return;
         case id::reg::R14_und: R14_und = value; return;
@@ -465,8 +475,8 @@ u32 REGISTERS::read(const id::reg reg_id) const {
         case id::mode::USER:
         case id::mode::USER_26:
             switch (reg_id) {
-                case id::reg::R8:  return R8;
-                case id::reg::R9:  return R9;
+                case id::reg::R8: return R8;
+                case id::reg::R9: return R9;
                 case id::reg::R10: return R10;
                 case id::reg::R11: return R11;
                 case id::reg::R12: return R12;
@@ -480,9 +490,9 @@ u32 REGISTERS::read(const id::reg reg_id) const {
         case id::mode::FIQ_26:
             switch (reg_id) {
                 case id::reg::R8:
-                case id::reg::R8_fiq:  return R8_fiq;
+                case id::reg::R8_fiq: return R8_fiq;
                 case id::reg::R9:
-                case id::reg::R9_fiq:  return R9_fiq;
+                case id::reg::R9_fiq: return R9_fiq;
                 case id::reg::R10:
                 case id::reg::R10_fiq: return R10_fiq;
                 case id::reg::R11:
@@ -501,15 +511,15 @@ u32 REGISTERS::read(const id::reg reg_id) const {
         case id::mode::IRQ:
         case id::mode::IRQ_26:
             switch (reg_id) {
-                case id::reg::R8:  return R8;
-                case id::reg::R9:  return R9;
+                case id::reg::R8: return R8;
+                case id::reg::R9: return R9;
                 case id::reg::R10: return R10;
                 case id::reg::R11: return R11;
                 case id::reg::R12: return R12;
                 case id::reg::R13:
-                case id::reg::R13_irq:  return R13_irq;
+                case id::reg::R13_irq: return R13_irq;
                 case id::reg::R14:
-                case id::reg::R14_irq:  return R14_irq;
+                case id::reg::R14_irq: return R14_irq;
                 case id::reg::SPSR_irq: return SPSR_irq;
                 default: break;
             }
@@ -518,15 +528,15 @@ u32 REGISTERS::read(const id::reg reg_id) const {
         case id::mode::SUPERVISOR:
         case id::mode::SUPERVISOR_26:
             switch (reg_id) {
-                case id::reg::R8:  return R8;
-                case id::reg::R9:  return R9;
+                case id::reg::R8: return R8;
+                case id::reg::R9: return R9;
                 case id::reg::R10: return R10;
                 case id::reg::R11: return R11;
                 case id::reg::R12: return R12;
                 case id::reg::R13:
-                case id::reg::R13_svc:  return R13_svc;
+                case id::reg::R13_svc: return R13_svc;
                 case id::reg::R14:
-                case id::reg::R14_svc:  return R14_svc;
+                case id::reg::R14_svc: return R14_svc;
                 case id::reg::SPSR_svc: return SPSR_svc;
                 default: break;
             }
@@ -534,15 +544,15 @@ u32 REGISTERS::read(const id::reg reg_id) const {
 
         case id::mode::ABORT:
             switch (reg_id) {
-                case id::reg::R8:  return R8;
-                case id::reg::R9:  return R9;
+                case id::reg::R8: return R8;
+                case id::reg::R9: return R9;
                 case id::reg::R10: return R10;
                 case id::reg::R11: return R11;
                 case id::reg::R12: return R12;
                 case id::reg::R13:
-                case id::reg::R13_abt:  return R13_abt;
+                case id::reg::R13_abt: return R13_abt;
                 case id::reg::R14:
-                case id::reg::R14_abt:  return R14_abt;
+                case id::reg::R14_abt: return R14_abt;
                 case id::reg::SPSR_abt: return SPSR_abt;
                 default: break;
             }
@@ -550,15 +560,15 @@ u32 REGISTERS::read(const id::reg reg_id) const {
 
         case id::mode::UNDEFINED:
             switch (reg_id) {
-                case id::reg::R8:  return R8;
-                case id::reg::R9:  return R9;
+                case id::reg::R8: return R8;
+                case id::reg::R9: return R9;
                 case id::reg::R10: return R10;
                 case id::reg::R11: return R11;
                 case id::reg::R12: return R12;
                 case id::reg::R13:
-                case id::reg::R13_und:  return R13_und;
+                case id::reg::R13_und: return R13_und;
                 case id::reg::R14:
-                case id::reg::R14_und:  return R14_und;
+                case id::reg::R14_und: return R14_und;
                 case id::reg::SPSR_und: return SPSR_und;
                 default: break;
             }
@@ -777,17 +787,17 @@ bool REGISTERS::is_cond_valid(const id::cond cond) const {
 
 void REGISTERS::switch_mode(const id::mode mode_id) {
     switch (mode_id) {
-        case id::mode::USER:          write(id::cpsr::M, constants::mode::USER); return;
-        case id::mode::SUPERVISOR:    write(id::cpsr::M, constants::mode::SUPERVISOR); return;
-        case id::mode::ABORT:         write(id::cpsr::M, constants::mode::ABORT); return;
-        case id::mode::UNDEFINED:     write(id::cpsr::M, constants::mode::UNDEFINED); return;
-        case id::mode::FIQ:           write(id::cpsr::M, constants::mode::FIQ); return;
-        case id::mode::IRQ:           write(id::cpsr::M, constants::mode::IRQ); return;
-        case id::mode::SYSTEM:        write(id::cpsr::M, constants::mode::SYSTEM); return;
-        case id::mode::FIQ_26:        write(id::cpsr::M, constants::mode::FIQ_26); return;
-        case id::mode::IRQ_26:        write(id::cpsr::M, constants::mode::IRQ_26); return;
-        case id::mode::SUPERVISOR_26: write(id::cpsr::M, constants::mode::SUPERVISOR_26); return;
-        case id::mode::USER_26:       write(id::cpsr::M, constants::mode::USER_26); return;
+        case id::mode::USER:           write(id::cpsr::M, constants::mode::USER); return;
+        case id::mode::SUPERVISOR:     write(id::cpsr::M, constants::mode::SUPERVISOR); return;
+        case id::mode::ABORT:          write(id::cpsr::M, constants::mode::ABORT); return;
+        case id::mode::UNDEFINED:      write(id::cpsr::M, constants::mode::UNDEFINED); return;
+        case id::mode::FIQ:            write(id::cpsr::M, constants::mode::FIQ); return;
+        case id::mode::IRQ:            write(id::cpsr::M, constants::mode::IRQ); return;
+        case id::mode::SYSTEM:         write(id::cpsr::M, constants::mode::SYSTEM); return;
+        case id::mode::FIQ_26:         write(id::cpsr::M, constants::mode::FIQ_26); return;
+        case id::mode::IRQ_26:         write(id::cpsr::M, constants::mode::IRQ_26); return;
+        case id::mode::SUPERVISOR_26:  write(id::cpsr::M, constants::mode::SUPERVISOR_26); return;
+        case id::mode::USER_26:        write(id::cpsr::M, constants::mode::USER_26); return;
     }
 }
 

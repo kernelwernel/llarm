@@ -30,28 +30,28 @@ void INSTRUCTIONS::arm::dsp::LDRD(const u32 code) {
     const u32 address = address_mode.load_store_misc(code);
 
     if (
-        (llarm::util::bit_range(address, 0, 2) == 0b000) &&
-        (Rd_bits != 14)
+        (llarm::util::bit_range(address, 0, 2) != 0b000) ||
+        (Rd_bits == 14)
     ) {
-        const mem_read_struct access = memory.read(address, 4);
-
-        if (access.has_failed) {
-            memory.manage_abort(access.abort_code);
-            return;
-        }
-
-        const mem_read_struct access2 = memory.read(address + 4, 4);
-
-        if (access2.has_failed) {
-            memory.manage_abort(access2.abort_code);
-            return;
-        }
-
-        reg.write(Rd_bits, llarm::util::bit_range(access.value, 0, 31));
-        reg.write(Rd_bits + 1, llarm::util::bit_range(access2.value, 0, 31));
-    } else {
         llarm::out::unpredictable("LDRD has unpredictable arguments");
     }
+
+    const mem_read_struct access = memory.read(address, 4);
+
+    if (access.has_failed) {
+        memory.manage_abort(access.abort_code);
+        return;
+    }
+
+    const mem_read_struct access2 = memory.read(address + 4, 4);
+
+    if (access2.has_failed) {
+        memory.manage_abort(access2.abort_code);
+        return;
+    }
+
+    reg.write(Rd_bits, llarm::util::bit_range(access.value, 0, 31));
+    reg.write(Rd_bits + 1, llarm::util::bit_range(access2.value, 0, 31));
 }
 
 
@@ -417,26 +417,30 @@ void INSTRUCTIONS::arm::dsp::STRD(const u32 code) {
     const u32 address = address_mode.load_store_misc(code);
 
     if (
-        (llarm::util::bit_range(address, 0, 2) == 0b000) &&
-        (Rd_bits != 14)
+        (llarm::util::bit_range(address, 0, 2) != 0b000) ||
+        (Rd_bits == 14)
     ) {
-        const u64 value = reg.read(Rd_bits);
-        const u32 value2 = reg.read(Rd_bits + 1);
-
-        const mem_write_struct access = memory.write(address, value, 4);
-
-        if (access.has_failed) {
-            memory.manage_abort(access.abort_code);
-            return;
-        }
-        
-        const mem_write_struct access2 = memory.write(address + 4, value2, 4);
-
-        if (access2.has_failed) {
-            memory.manage_abort(access2.abort_code);
-            return;
-        }
-    } else {
+        // architecturally UNPREDICTABLE (doubleword-misaligned address, or Rd == R14),
+        // but real ARM926EJ-S silicon still performs both word transfers rather than
+        // dropping the access, and guest code (e.g. musl's memcpy/memset, which only
+        // guarantees word alignment) relies on that. Warn, but still carry it out.
         llarm::out::unpredictable("STRD has unpredictable arguments");
+    }
+
+    const u64 value = reg.read(Rd_bits);
+    const u32 value2 = reg.read(Rd_bits + 1);
+
+    const mem_write_struct access = memory.write(address, value, 4);
+
+    if (access.has_failed) {
+        memory.manage_abort(access.abort_code);
+        return;
+    }
+
+    const mem_write_struct access2 = memory.write(address + 4, value2, 4);
+
+    if (access2.has_failed) {
+        memory.manage_abort(access2.abort_code);
+        return;
     }
 }

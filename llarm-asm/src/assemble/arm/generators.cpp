@@ -79,6 +79,7 @@ u32 generators::arm(const IR_arm_struct& IR) {
         case arm_id::BLX2: return blx2(operands);
         case arm_id::CLZ: return clz(operands);
         case arm_id::BX: return bx(operands);
+        case arm_id::BXJ: return bxj(operands);
         case arm_id::SMLAL: return mul_instructions(id, operands);
         case arm_id::SMULL: return mul_instructions(id, operands);
         case arm_id::UMLAL: return mul_instructions(id, operands);

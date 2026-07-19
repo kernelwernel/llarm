@@ -78,6 +78,24 @@ static void seed_primecell_ids(uc_engine* uc, u32 base, const std::array<u32, 8>
     }
 }
 
+static void sync_live_uart_registers(uc_engine* uc, llarm::emu::cpu_blockstep& emu, const SETTINGS& s) {
+    const u32 address = s.uart_base + OFFSET_UARTFR;
+    const u32 value = emu.read_physical_mem<u32>(address);
+    uc_must(uc_mem_write(uc, address, &value, sizeof(u32)), "sync live PL011 UARTFR register");
+}
+
+static void sync_live_vic_registers(uc_engine* uc, llarm::emu::cpu_blockstep& emu, const SETTINGS& s) {
+    constexpr std::array<u16, 3> LIVE_OFFSETS = {{
+        OFFSET_VICIRQSTATUS, OFFSET_VICFIQSTATUS, OFFSET_VICRAWINTR
+    }};
+
+    for (const u16 offset : LIVE_OFFSETS) {
+        const u32 address = s.vic_base + offset;
+        const u32 value = emu.read_physical_mem<u32>(address);
+        uc_must(uc_mem_write(uc, address, &value, sizeof(u32)), "sync live PL190 VIC register");
+    }
+}
+
 static void sync_live_timer_registers(uc_engine* uc, llarm::emu::cpu_blockstep& emu, const SETTINGS& s) {
     constexpr std::array<u16, 6> LIVE_OFFSETS = {{
         OFFSET_TIMER1VALUE, OFFSET_TIMER1RIS, OFFSET_TIMER1MIS,
@@ -256,6 +274,8 @@ int main(int argc, char* argv[]) {
         }
 
         sync_live_timer_registers(uc, emu, settings);
+        sync_live_uart_registers(uc, emu, settings);
+        sync_live_vic_registers(uc, emu, settings);
 
         const uc_err err = uc_emu_start(uc, pc, 0, 0, 1);
 
@@ -319,9 +339,9 @@ int main(int argc, char* argv[]) {
                 default: break;
             }
 
-            const u64 mask    = (w.size < 8) ? ((1ULL << (w.size * 8)) - 1ULL) : ~0ULL;
-            const u64 uc_val  = static_cast<u64>(w.value) & mask;
-            llarm_val        &= mask;
+            const u64 mask = (w.size < 8) ? ((1ULL << (w.size * 8)) - 1ULL) : ~0ULL;
+            const u64 uc_val = static_cast<u64>(w.value) & mask;
+            llarm_val &= mask;
 
             if (llarm_val != uc_val) {
                 if (!diverged) {

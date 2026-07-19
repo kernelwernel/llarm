@@ -154,11 +154,11 @@ u32 MMU::first_fine(const u32 entry, const u32 virtual_address) {
 
 
 bool MMU::is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type) const {
-    // since all the AP bits that aren't 0 WITH privileged permissions 
+    // since all the AP bits that aren't 0 WITH privileged permissions
     // are all read/write, we're doing a small shortcut here to avoid
     // the costlier option of further investigating if the access is valid.
     if ((raw_AP_bits != 0) && globals.is_privileged) {
-        return true;
+        return false;
     }
 
     // the AP == 0 is added because the S and R bits are irrelevant if the AP is anything other than 00
@@ -227,21 +227,12 @@ bool MMU::is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type)
     }
 
     switch (AP_id) {
-        case id::access_perm::READ_WRITE: 
-            return (
-                (access_type == id::access_type::READ_WRITE) ||
-                (access_type == id::access_type::READ) ||
-                (access_type == id::access_type::WRITE)
-            );
+        case id::access_perm::READ_WRITE: return false;
+        case id::access_perm::NO_ACCESS: return true;
+        case id::access_perm::READ_ONLY:
+            return (access_type == id::access_type::WRITE) || (access_type == id::access_type::READ_WRITE);
 
-        case id::access_perm::READ_ONLY: 
-            return (
-                (access_type == id::access_type::READ_WRITE) ||
-                (access_type == id::access_type::READ)
-            );
-
-        case id::access_perm::NO_ACCESS: return false;
-        case id::access_perm::UNPREDICTABLE: 
+        case id::access_perm::UNPREDICTABLE:
             llarm::out::unpredictable("MMU access permission ID is unpredictable");
             return true;
     }
@@ -325,7 +316,10 @@ translation_struct MMU::second_large(
 
         const bool subpage_crossed = (subpage_index != (end_address / util::get_kb(16)));
 
-        if (subpage_crossed) {
+        // crossing out of subpage 3 leaves this page entirely and needs a fresh
+        // page-table walk, which this single-entry check can't perform, only the
+        // in-entry crossings (subpgae 0-2 into the next subpage) are handled here
+        if (subpage_crossed && (subpage_index < 3)) {
             // same as above but for the second AP this time, assuming a subpage-crossing occurred
             const u8 second_AP = fetch_subpage_AP(static_cast<u8>(subpage_index + 1), entry);
             const id::aborts second_AP_abort = check_block_access(second_AP, access_type, domain, id::memory_type::PAGE);
@@ -373,7 +367,7 @@ translation_struct MMU::second_small(
     // the subpages are 1KB each
     const u8 subpage_index = static_cast<u8>(page_index / util::get_kb(1));
 
-    const u8 AP = subpage_index;
+    const u8 AP = fetch_subpage_AP(subpage_index, entry);
     const id::access_domain domain = fetch_domain(domain_bits);
     const id::aborts AP_abort = check_block_access(AP, access_type, domain, id::memory_type::PAGE);
     const bool AP_failed = (AP_abort != id::aborts::NO_ABORT);
@@ -393,9 +387,9 @@ translation_struct MMU::second_small(
         const u32 end_address = (virtual_address + access_size);
         const bool subpage_crossed = (subpage_index != (end_address / util::get_kb(1)));
 
-        if (subpage_crossed) {
+        if (subpage_crossed && (subpage_index < 3)) {
             // same as above but for the second AP this time, assuming a subpage-crossing occurred
-            const u8 second_AP = subpage_index + 1;
+            const u8 second_AP = fetch_subpage_AP(static_cast<u8>(subpage_index + 1), entry);
             const id::aborts second_AP_abort = check_block_access(second_AP, access_type, domain, id::memory_type::PAGE);
             const bool second_AP_failed = (second_AP_abort != id::aborts::NO_ABORT);
 

@@ -50,6 +50,7 @@ namespace internal::mnemonic_arm {
         { "BKPT", arm_id::BKPT },
         { "BL", arm_id::BL },
         { "BX", arm_id::BX },
+        { "BXJ", arm_id::BXJ },
         { "CDP", arm_id::CDP },
         { "CDP2", arm_id::CDP2 },
         { "CLZ", arm_id::CLZ },

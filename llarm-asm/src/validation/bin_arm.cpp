@@ -170,6 +170,7 @@ bool validation::bin_arm::is_arm_instruction_valid(const u32 code) {
         case arm_id::MSR_IMM:
         case arm_id::MSR_REG:
         case arm_id::BX:
+        case arm_id::BXJ:
         case arm_id::BKPT:
         case arm_id::BLX1:
         case arm_id::BLX2:

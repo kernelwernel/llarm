@@ -106,6 +106,7 @@ namespace internal {
         SMULWY,
 
         // ARMv6:
+        BXJ,
         CPS,
         CPY,
         LDREX,

@@ -35,6 +35,7 @@ namespace internal::generators {
     u32 blx1(const operand_struct& args);
     u32 blx2(const operand_struct& args);
     u32 bx(const operand_struct& args);
+    u32 bxj(const operand_struct& args);
     u32 mcrr(const operand_struct& args, const bool is_mcrr2 = false);
     u32 mrrc(const operand_struct& args, const bool is_mrrc2 = false);
     u32 cps(const operand_struct& args);

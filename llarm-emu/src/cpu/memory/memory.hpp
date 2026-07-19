@@ -29,7 +29,7 @@ struct MEMORY {
     bool exclusive_valid = false;
     u32 exclusive_address = 0;
 
-    void manage_abort(const id::aborts abort_code);
+    void manage_abort(const id::aborts abort_code, const id::access_type access_type = id::access_type::READ);
 
     mem_write_struct write(u32 address, const u64 value, const u8 access_size);
 

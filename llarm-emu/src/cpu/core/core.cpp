@@ -17,22 +17,9 @@ inline void CORE::arm_cycle_headless() {
 
     execute.arm_execute(instruction);
 
-    timer.tick();
+    const sync_enum sync_code = synchronise();
 
-    if (timer.irq_pending()) { 
-        vic.raise_irq(settings.timer_irq_source);
-    } else { 
-        vic.clear_irq(settings.timer_irq_source);
-    }
-     
-    if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
-    if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
-
-    // a synchronous exception (undefined/swi/prefetch_abort/data_abort) raised
-    // mid-execute() already wrote the vector PC, so incrementing it here would
-    // clobber it, same as it would for the irq()/fiq() cases returned above.
-    if (reg.exception_taken) {
-        reg.exception_taken = false;
+    if (sync_code != sync_enum::NONE) {
         return;
     }
 
@@ -63,19 +50,9 @@ inline void CORE::arm_cycle_step() {
         // wait till the controller has released this cycle
     }
 
-    timer.tick();
+    const sync_enum sync_code = synchronise();
 
-    if (timer.irq_pending()) { 
-        vic.raise_irq(settings.timer_irq_source);
-    } else { 
-        vic.clear_irq(settings.timer_irq_source);
-    }
-
-    if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
-    if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
-
-    if (reg.exception_taken) {
-        reg.exception_taken = false;
+    if (sync_code != sync_enum::NONE) {
         return;
     }
 
@@ -105,19 +82,9 @@ inline void CORE::thumb_cycle_step() {
         // wait till the controller has released this cycle
     }
 
-    timer.tick();
+    const sync_enum sync_code = synchronise();
 
-    if (timer.irq_pending()) { 
-        vic.raise_irq(settings.timer_irq_source);
-    } else { 
-        vic.clear_irq(settings.timer_irq_source);
-    }
-
-    if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
-    if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
-
-    if (reg.exception_taken) {
-        reg.exception_taken = false;
+    if (sync_code != sync_enum::NONE) {
         return;
     }
 
@@ -136,19 +103,9 @@ inline void CORE::thumb_cycle_headless() {
 
     execute.thumb_execute(instruction);
 
-    timer.tick();
+    const sync_enum sync_code = synchronise();
 
-    if (timer.irq_pending()) { 
-        vic.raise_irq(settings.timer_irq_source); 
-    } else { 
-        vic.clear_irq(settings.timer_irq_source); 
-    }
-
-    if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { exception.fiq(); return; }
-    if (vic.irq_pending() && !reg.read(id::cpsr::I)) { exception.irq(); return; }
-
-    if (reg.exception_taken) {
-        reg.exception_taken = false;
+    if (sync_code != sync_enum::NONE) {
         return;
     }
 
@@ -157,35 +114,42 @@ inline void CORE::thumb_cycle_headless() {
 
 
 void CORE::headless_mode() {
+    // draining host input every single instruction would mean millions of mutex
+    // locks per second for no benefit, since keystrokes arrive at human speed
+    constexpr u32 HOST_INPUT_POLL_INTERVAL = 100000;
+    u32 host_input_poll_counter = 0;
+
     while (true) {
+        if (stop_requested.load(std::memory_order_relaxed)) {
+            return;
+        }
+
         if (is_halted) {
             if (is_terminated) {
                 return;
             }
 
-            timer.tick();
+            const sync_enum sync_code = synchronise();
 
-            if (timer.irq_pending()) {
-                vic.raise_irq(settings.timer_irq_source);
-            } else {
-                vic.clear_irq(settings.timer_irq_source);
+            switch (sync_code) {
+                case sync_enum::IRQ:
+                case sync_enum::FIQ: is_halted = false; continue;
+                case sync_enum::NONE:
+                case sync_enum::PC: continue;
             }
-
-            if (vic.fiq_pending() && !reg.read(id::cpsr::F)) {
-                is_halted = false;
-                exception.fiq();
-            } else if (vic.irq_pending() && !reg.read(id::cpsr::I)) {
-                is_halted = false;
-                exception.irq();
-            }
-
-            continue;
         }
 
         if (globals.instruction_set == id::instruction_sets::ARM) {
             arm_cycle_headless();
         } else {
             thumb_cycle_headless();
+        }
+
+        ++host_input_poll_counter;
+
+        if (host_input_poll_counter >= HOST_INPUT_POLL_INTERVAL) {
+            host_input_poll_counter = 0;
+            uart.drain_host_input();
         }
     }
 }
@@ -194,23 +158,14 @@ void CORE::headless_mode() {
 void CORE::step_mode() {
     while (true) {
         if (is_halted) {
-            timer.tick();
+            const sync_enum sync_code = synchronise();
 
-            if (timer.irq_pending()) {
-                vic.raise_irq(settings.timer_irq_source);
-            } else {
-                vic.clear_irq(settings.timer_irq_source);
+            switch (sync_code) {
+                case sync_enum::IRQ:
+                case sync_enum::FIQ: is_halted = false; continue;
+                case sync_enum::NONE: 
+                case sync_enum::PC: continue;
             }
-
-            if (vic.fiq_pending() && !reg.read(id::cpsr::F)) {
-                is_halted = false;
-                exception.fiq();
-            } else if (vic.irq_pending() && !reg.read(id::cpsr::I)) {
-                is_halted = false;
-                exception.irq();
-            }
-
-            continue;
         }
 
         if (globals.instruction_set == id::instruction_sets::ARM) {
@@ -255,4 +210,35 @@ void CORE::initialise(const bool is_headless) {
     }
 
     step_mode();
+}
+
+
+CORE::sync_enum CORE::synchronise() {
+    timer.tick();
+
+    if (timer.irq_pending()) { 
+        vic.raise_irq(settings.timer_irq_source); 
+    } else { 
+        vic.clear_irq(settings.timer_irq_source); 
+    }
+
+    if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { 
+        exception.fiq(); 
+        return sync_enum::FIQ;
+    }
+
+    if (vic.irq_pending() && !reg.read(id::cpsr::I)) { 
+        exception.irq(); 
+        return sync_enum::IRQ; 
+    }
+
+    // incrementing the PC can clobber it under certain conditions
+    // (like exception handingling, branching, etc) so we're avoiding
+    // this by letting the core know we shouldn't increment the PC 
+    if (reg.pc_finalised) {
+        reg.pc_finalised = false;
+        return sync_enum::PC;
+    }
+
+    return sync_enum::NONE;
 }

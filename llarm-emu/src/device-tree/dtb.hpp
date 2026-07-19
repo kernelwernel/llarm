@@ -7,7 +7,7 @@
 #include <array>
 
 struct DTB {
-    static const std::array<u8, 1385> data;
+    static const std::array<u8, 1453> data;
 
     void load(RAM& ram, const u32 address) const;
 };

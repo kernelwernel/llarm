@@ -568,6 +568,7 @@ mnemonic_struct_arm mnemonic_arm::fetch_mnemonic_args(const arm_id id, sv mnemon
         case arm_id::CLZ:
         case arm_id::CMN:
         case arm_id::CMP:
+        case arm_id::BXJ:
         case arm_id::BLX2:
         case arm_id::MSR_IMM:
         case arm_id::MSR_REG:
@@ -625,7 +626,7 @@ mnemonic_struct_arm mnemonic_arm::fetch_mnemonic_args(const arm_id id, sv mnemon
             if (mnemonic.size() >= 2) {
                 mnemonic.remove_prefix(2); // remove cond
             }
-            
+
             if (mnemonic.size() == 1) { // remaining L
                 args.has_L = (mnemonic.back() == 'L');
             }

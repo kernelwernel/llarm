@@ -56,7 +56,7 @@ void INSTRUCTIONS::arm::store::STM2(const u32 code) {
     const std::vector<id::reg> reg_list = operation::register_list(list);
 
     for (const auto reg_id : reg_list) {
-        const u32 value = reg.read(reg_id);
+        const u32 value = reg.force_read(reg_id);
         const mem_write_struct access = memory.write(address, value, 4);
 
         if (access.has_failed) {

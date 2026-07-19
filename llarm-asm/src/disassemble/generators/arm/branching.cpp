@@ -66,6 +66,23 @@ std::string generators::arm::branching::BX(const u32 code, const settings& setti
 
 
 /**
+ * BXJ{<cond>} <Rm>
+ * where:
+ * <cond> Is the condition under which the instruction is executed. The conditions are defined in The
+ *        condition field on page A3-5. If <cond> is omitted, the AL (always) condition is used.
+ * <Rm>   Holds the value of the branch target address for use if Jazelle state is not available. Bit[0]
+ *        of Rm is 0 to select a target ARM instruction, or 1 to select a target Thumb instruction.
+ *
+ * reference: A4-21
+ */
+std::string generators::arm::branching::BXJ(const u32 code, const settings& settings) {
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
+
+    return util::make_string("BXJ", util::cond(code, settings), " ", Rm);
+}
+
+
+/**
  * BLX <target_addr>
  * where:
  * <target_addr> 

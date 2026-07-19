@@ -8,7 +8,9 @@ TESTS_DIR="$(cd "$(dirname "$0")" && pwd)"
 BUILD_DIR="$TESTS_DIR/build"
 
 DEFAULT_KERNEL_IMAGE="/home/kernel/rep/linux/linux-6.6.138/arch/arm/boot/Image"
+DEFAULT_INITRD_IMAGE="$TESTS_DIR/../kernels/busybox-rootfs.cpio"
 KERNEL_IMAGE="${1:-$DEFAULT_KERNEL_IMAGE}"
+INITRD_IMAGE="${2:-$DEFAULT_INITRD_IMAGE}"
 TIMEOUT="${TIMEOUT:-300}"
 BUILD_TYPE="${BUILD_TYPE:-Release}"
 
@@ -19,13 +21,26 @@ RESET='\033[0m'
 
 if [ ! -f "$KERNEL_IMAGE" ]; then
     echo "error: kernel image not found at $KERNEL_IMAGE"
-    echo "usage: $(basename "$0") [path-to-uncompressed-kernel-Image]"
+    echo "usage: $(basename "$0") [path-to-uncompressed-kernel-Image] [path-to-initrd-cpio]"
     exit 1
+fi
+
+if [ -n "$INITRD_IMAGE" ] && [ ! -f "$INITRD_IMAGE" ]; then
+    if [ "$INITRD_IMAGE" = "$DEFAULT_INITRD_IMAGE" ]; then
+        echo "note: default initrd not found at $INITRD_IMAGE, booting without one"
+        INITRD_IMAGE=""
+    else
+        echo "error: initrd image not found at $INITRD_IMAGE"
+        exit 1
+    fi
 fi
 
 echo "llarm-uart standalone kernel run"
 echo "==============================="
 echo "kernel image: $KERNEL_IMAGE"
+if [ -n "$INITRD_IMAGE" ]; then
+    echo "initrd image: $INITRD_IMAGE"
+fi
 
 echo "configuring tests project (${BUILD_TYPE})..."
 cmake -S "$TESTS_DIR" -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE="$BUILD_TYPE" >/dev/null
@@ -45,7 +60,7 @@ fi
 LOG_FILE="$(mktemp)"
 echo "running (timeout ${TIMEOUT}s)..."
 
-timeout --foreground "$TIMEOUT" "$EMU_BIN" "$KERNEL_IMAGE" 2>&1 | tee "$LOG_FILE"
+timeout --foreground "$TIMEOUT" "$EMU_BIN" "$KERNEL_IMAGE" $INITRD_IMAGE 2>&1 | tee "$LOG_FILE"
 RC="${PIPESTATUS[0]}"
 
 echo ""

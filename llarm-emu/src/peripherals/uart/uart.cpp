@@ -232,6 +232,27 @@ void UART::receive(const u8 data, const u8 error_flags) {
 }
 
 
+void UART::push_host_input(const u8 data) {
+    const std::lock_guard<std::mutex> lock(host_input_mutex);
+    host_input_queue.push(data);
+}
+
+
+void UART::drain_host_input() {
+    std::queue<u8> pending;
+
+    {
+        const std::lock_guard<std::mutex> lock(host_input_mutex);
+        std::swap(pending, host_input_queue);
+    }
+
+    while (!pending.empty()) {
+        receive(pending.front());
+        pending.pop();
+    }
+}
+
+
 bool UART::transmit(u8& data) {
     if (tx_fifo.empty()) {
         return false;

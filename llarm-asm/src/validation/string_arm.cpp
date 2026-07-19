@@ -141,6 +141,7 @@ bool validation::string_arm::is_arm_instruction_valid(const IR_arm_struct& IR) {
         case arm_id::MSR_REG: return true; 
         case arm_id::BKPT: return verify_lexemes(make_lexemes(immed(16)), lexemes);
         case arm_id::BLX1:
+        case arm_id::BXJ:
         case arm_id::BX: return verify_lexemes(make_lexemes(reg()), lexemes);
         case arm_id::BLX2: return verify_lexemes(make_lexemes(reg()), lexemes);
         case arm_id::UXTB:
