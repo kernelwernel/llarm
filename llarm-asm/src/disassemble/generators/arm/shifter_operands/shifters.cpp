@@ -44,7 +44,7 @@ std::string shifters::ls_coproc(const u32 code, const settings& settings) {
 
 
 std::string shifters::vfp_ls_mul(const u32 code, const settings& settings) {
-    const shifter_id id = identify_ls_mul_shifter(code);
+    const shifter_id id = identify_vfp_ls_mul_shifter(code);
     return shifter_to_string(id, code, settings);
 }
 
@@ -175,22 +175,30 @@ shifter_id shifters::identify_ls_shifter(const u32 code) {
             case 0b010010: return shifter_id::LS_SCALED_LSR;
             case 0b010100: return shifter_id::LS_SCALED_ASR;
             case 0b010110: return shifter_id::LS_SCALED_ROR;
+            case 0b110010: return shifter_id::LS_SCALED_LSR32;
+            case 0b110100: return shifter_id::LS_SCALED_ASR32;
             case 0b110110: return shifter_id::LS_SCALED_RRX;
             case 0b011000: return shifter_id::LS_SCALED_PRE_LSL;
             case 0b011010: return shifter_id::LS_SCALED_PRE_LSR;
             case 0b011100: return shifter_id::LS_SCALED_PRE_ASR;
             case 0b011110: return shifter_id::LS_SCALED_PRE_ROR;
+            case 0b111010: return shifter_id::LS_SCALED_PRE_LSR32;
+            case 0b111100: return shifter_id::LS_SCALED_PRE_ASR32;
             case 0b111110: return shifter_id::LS_SCALED_PRE_RRX;
             case 0b000000: return shifter_id::LS_SCALED_POST_LSL;
             case 0b000010: return shifter_id::LS_SCALED_POST_LSR;
             case 0b000100: return shifter_id::LS_SCALED_POST_ASR;
             case 0b000110: return shifter_id::LS_SCALED_POST_ROR;
+            case 0b100010: return shifter_id::LS_SCALED_POST_LSR32;
+            case 0b100100: return shifter_id::LS_SCALED_POST_ASR32;
             case 0b100110: return shifter_id::LS_SCALED_POST_RRX;
             // T-variant (P=0, W=1): user-mode post-index, address computation identical to plain post-index
             case 0b001000: return shifter_id::LS_SCALED_POST_LSL;
             case 0b001010: return shifter_id::LS_SCALED_POST_LSR;
             case 0b001100: return shifter_id::LS_SCALED_POST_ASR;
             case 0b001110: return shifter_id::LS_SCALED_POST_ROR;
+            case 0b101010: return shifter_id::LS_SCALED_POST_LSR32;
+            case 0b101100: return shifter_id::LS_SCALED_POST_ASR32;
             case 0b101110: return shifter_id::LS_SCALED_POST_RRX;
             default: llarm::out::error("No known load store scaled register addressing shifter has been found");
         }
@@ -299,7 +307,7 @@ shifter_id shifters::identify_vfp_ls_mul_shifter(const u32 code) {
         case 0b010: return shifter_id::VFP_LS_MUL_UNINDEXED;
         case 0b011: return shifter_id::VFP_LS_MUL_INC;
         case 0b101: return shifter_id::VFP_LS_MUL_DEC;
-        default: llarm::out::error("No known VFP load store multiple addressing shifter has been found");
+        default: return shifter_id::UNKNOWN;
     }
 }
 
@@ -328,16 +336,22 @@ std::string shifters::shifter_to_string(const shifter_id shifter, const u32 code
         case shifter_id::LS_SCALED_LSR: return ls_reg_scaled(code, "LSR", settings);
         case shifter_id::LS_SCALED_ASR: return ls_reg_scaled(code, "ASR", settings);
         case shifter_id::LS_SCALED_ROR: return ls_reg_scaled(code, "ROR", settings);
+        case shifter_id::LS_SCALED_LSR32: return ls_reg_scaled_32(code, "LSR", settings);
+        case shifter_id::LS_SCALED_ASR32: return ls_reg_scaled_32(code, "ASR", settings);
         case shifter_id::LS_SCALED_RRX: return ls_reg_scaled_rrx(code, settings);
         case shifter_id::LS_SCALED_PRE_LSL: return ls_reg_scaled_pre(code, "LSL", settings);
         case shifter_id::LS_SCALED_PRE_LSR: return ls_reg_scaled_pre(code, "LSR", settings);
         case shifter_id::LS_SCALED_PRE_ASR: return ls_reg_scaled_pre(code, "ASR", settings);
         case shifter_id::LS_SCALED_PRE_ROR: return ls_reg_scaled_pre(code, "ROR", settings);
+        case shifter_id::LS_SCALED_PRE_LSR32: return ls_reg_scaled_pre_32(code, "LSR", settings);
+        case shifter_id::LS_SCALED_PRE_ASR32: return ls_reg_scaled_pre_32(code, "ASR", settings);
         case shifter_id::LS_SCALED_PRE_RRX: return ls_reg_scaled_pre_rrx(code, settings);
         case shifter_id::LS_SCALED_POST_LSL: return ls_reg_scaled_post(code, "LSL", settings);
         case shifter_id::LS_SCALED_POST_LSR: return ls_reg_scaled_post(code, "LSR", settings);
         case shifter_id::LS_SCALED_POST_ASR: return ls_reg_scaled_post(code, "ASR", settings);
         case shifter_id::LS_SCALED_POST_ROR: return ls_reg_scaled_post(code, "ROR", settings);
+        case shifter_id::LS_SCALED_POST_LSR32: return ls_reg_scaled_post_32(code, "LSR", settings);
+        case shifter_id::LS_SCALED_POST_ASR32: return ls_reg_scaled_post_32(code, "ASR", settings);
         case shifter_id::LS_SCALED_POST_RRX: return ls_reg_scaled_post_rrx(code, settings);
         case shifter_id::LS_MISC_IMM: return ls_misc_imm(code, settings);
         case shifter_id::LS_MISC_IMM_PRE: return ls_misc_imm_pre(code, settings);

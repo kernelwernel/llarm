@@ -127,7 +127,7 @@ std::string generators::arm::store::STRB(const u32 code, const settings& setting
 
     const std::string addressing_mode = shifters::ls(code, settings);
 
-    return util::make_string("STR", util::cond(code, settings), "B ", Rd, ", ", addressing_mode);
+    return util::make_string("STRB", util::cond(code, settings), " ", Rd, ", ", addressing_mode);
 }
 
 
@@ -160,6 +160,8 @@ std::string generators::arm::store::STRBT(const u32 code, const settings& settin
         case shifter_id::LS_SCALED_POST_LSR:
         case shifter_id::LS_SCALED_POST_ASR:
         case shifter_id::LS_SCALED_POST_ROR:
+        case shifter_id::LS_SCALED_POST_LSR32:
+        case shifter_id::LS_SCALED_POST_ASR32:
         case shifter_id::LS_SCALED_POST_RRX: break;
         default: llarm::out::error("Only post-indexed addressing modes are allowed for STRBT");
     }
@@ -168,7 +170,7 @@ std::string generators::arm::store::STRBT(const u32 code, const settings& settin
 
     const std::string post_indexed_addressing_mode = shifters::shifter_to_string(mode_id, code, settings);
 
-    return util::make_string("STR", util::cond(code, settings), "BT ", Rd, post_indexed_addressing_mode);
+    return util::make_string("STRBT", util::cond(code, settings), " ", Rd, ", ", post_indexed_addressing_mode);
 }
 
 
@@ -233,6 +235,8 @@ std::string generators::arm::store::STRT(const u32 code, const settings& setting
         case shifter_id::LS_SCALED_POST_LSR:
         case shifter_id::LS_SCALED_POST_ASR:
         case shifter_id::LS_SCALED_POST_ROR:
+        case shifter_id::LS_SCALED_POST_LSR32:
+        case shifter_id::LS_SCALED_POST_ASR32:
         case shifter_id::LS_SCALED_POST_RRX: break;
         default: llarm::out::error("Only post-indexed addressing modes are allowed for STRBT");
     }
@@ -241,7 +245,7 @@ std::string generators::arm::store::STRT(const u32 code, const settings& setting
 
     const std::string post_indexed_addressing_mode = shifters::shifter_to_string(mode_id, code, settings);
 
-    return util::make_string("STR", util::cond(code, settings), "T ", Rd, ", ", post_indexed_addressing_mode);
+    return util::make_string("STRT", util::cond(code, settings), " ", Rd, ", ", post_indexed_addressing_mode);
 }
 
 

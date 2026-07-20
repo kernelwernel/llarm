@@ -47,6 +47,9 @@ namespace internal::shifters {
     std::string ls_reg_scaled_rrx(const u32 code, const settings& settings);
     std::string ls_reg_scaled_pre_rrx(const u32 code, const settings& settings);
     std::string ls_reg_scaled_post_rrx(const u32 code, const settings& settings);
+    std::string ls_reg_scaled_32(const u32 code, const std::string& mode, const settings& settings);
+    std::string ls_reg_scaled_pre_32(const u32 code, const std::string& mode, const settings& settings);
+    std::string ls_reg_scaled_post_32(const u32 code, const std::string& mode, const settings& settings);
 
     // defined in modes/ls_misc.cpp
     std::string ls_misc_imm(const u32 code, const settings& settings);

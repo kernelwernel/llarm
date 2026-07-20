@@ -129,7 +129,7 @@ std::string patterns::Rd_Rm(const u32 code, const std::string& instruction, cons
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
     return util::make_string(
-        instruction, util::cond(code, settings), ", ", Rd, ", ", Rm
+        instruction, util::cond(code, settings), " ", Rd, ", ", Rm
     );
 }
 
@@ -141,12 +141,12 @@ std::string patterns::Rd_Rn_Rm_rotate(const u32 code, const std::string& instruc
 
     const u8 rotate = llarm::util::bit_range<u8>(code, 10, 11);
 
-    const std::string rotation = [=, &settings]() -> std::string {
+    const std::string rotation = [=]() -> std::string {
         if (rotate == 0) {
             return "";
         }
 
-        return util::make_string(", ROR #", util::hex(static_cast<u8>(rotate * 8), settings));
+        return util::make_string(", ROR #", std::to_string(rotate * 8));
     }();
 
     return util::make_string(instruction, util::cond(code, settings), " ", Rd, ", ", Rn, ", ", Rm, rotation);
@@ -159,12 +159,12 @@ std::string patterns::Rd_Rm_rotate(const u32 code, const std::string& instructio
 
     const u8 rotate = llarm::util::bit_range<u8>(code, 10, 11);
 
-    const std::string rotation = [=, &settings]() -> std::string {
+    const std::string rotation = [=]() -> std::string {
         if (rotate == 0) {
             return "";
         }
 
-        return util::make_string(", ROR #", util::hex(static_cast<u8>(rotate * 8), settings));
+        return util::make_string(", ROR #", std::to_string(rotate * 8));
     }();
 
     return util::make_string(instruction, util::cond(code, settings), " ", Rd, ", ", Rm, rotation);

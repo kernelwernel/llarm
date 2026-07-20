@@ -295,7 +295,7 @@ std::string disassemble::arm_generate(const u32 code, const u32 PC, const settin
         case arm_id::SXTAB16: return generators::arm::math::SXTAB16(code, settings);
         case arm_id::SXTAH: return generators::arm::math::SXTAH(code, settings);
         case arm_id::SXTB: return generators::arm::math::SXTB(code, settings);
-        case arm_id::SXTB16: return generators::arm::math::SXTB(code, settings);
+        case arm_id::SXTB16: return generators::arm::math::SXTB16(code, settings);
         case arm_id::SXTH: return generators::arm::math::SXTH(code, settings);
         case arm_id::UADD16: return generators::arm::math::UADD16(code, settings);
         case arm_id::UADD8: return generators::arm::math::UADD8(code, settings);

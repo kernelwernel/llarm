@@ -291,7 +291,7 @@ std::string generators::arm::logic::PKHBT(const u32 code, const settings& settin
         return util::make_string(", LSL #", util::hex(shift_imm, settings));
     }();
 
-    return util::make_string("PKHBT", util::cond(code, settings), ", ", Rd, ", ", Rn, ", ", Rm, suffix);
+    return util::make_string("PKHBT", util::cond(code, settings), " ", Rd, ", ", Rn, ", ", Rm, suffix);
 }
 
 
@@ -319,15 +319,17 @@ std::string generators::arm::logic::PKHTB(const u32 code, const settings& settin
 
     const u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
 
-    const std::string suffix = [=, &settings]() -> std::string {
+    // shift_imm == 0 means "ASR #32" for PKHTB, not "no shift" (PKHTB always shifts,
+    // unlike PKHBT's LSL, where shift_imm == 0 legitimately means no shift at all).
+    const std::string suffix = [=]() -> std::string {
         if (shift_imm == 0) {
-            return "";
+            return ", ASR #32";
         }
 
-        return util::make_string(", ASR #", util::hex(shift_imm, settings));
+        return util::make_string(", ASR #", std::to_string(shift_imm));
     }();
 
-    return util::make_string("PKHTB", util::cond(code, settings), ", ", Rd, ", ", Rn, ", ", Rm, suffix);
+    return util::make_string("PKHTB", util::cond(code, settings), " ", Rd, ", ", Rn, ", ", Rm, suffix);
 }
 
 
@@ -447,12 +449,27 @@ std::string generators::arm::logic::SSAT16(const u32 code, const settings& setti
  * If <shift> is omitted, LSL #0 is used.
  */
 std::string generators::arm::logic::USAT(const u32 code, const settings& settings) {
-    const std::string Rd = util::reg_string(code, 16, 19, settings);
+    const u8 sat_imm = llarm::util::bit_range<u8>(code, 16, 20);
+    const std::string Rd = util::reg_string(code, 12, 15, settings);
+    const u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
+    const bool sh = llarm::util::bit_fetch(code, 6);
     const std::string Rm = util::reg_string(code, 0, 3, settings);
-    const std::string Rs = util::reg_string(code, 8, 11, settings);
-    const std::string Rn = util::reg_string(code, 12, 15, settings);
 
-    return util::make_string("USADA8", util::cond(code, settings), " ", Rd, ", ", Rm, ", ", Rs, ", ", Rn);
+    const std::string shift = [=, &settings]() -> std::string {
+        if (!sh && shift_imm == 0) {
+            return "";
+        }
+
+        if (!sh) {
+            return util::make_string(", LSL #", util::hex(shift_imm, settings));
+        }
+
+        const u8 n = (shift_imm == 0) ? 32 : shift_imm;
+
+        return util::make_string(", ASR #", util::hex(n, settings));
+    }();
+
+    return util::make_string("USAT", util::cond(code, settings), " ", Rd, ", #", util::hex(sat_imm, settings), ", ", Rm, shift);
 }
 
 

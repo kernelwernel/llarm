@@ -40,8 +40,8 @@ shifter_id ident::bin_shifters::load_store(const u32 code) {
             } else if (bit_fetch(code, 4) == 0) {
                 switch (shift_case) {
                     case 0b00: return shifter_id::LS_SCALED_LSL;
-                    case 0b01: return shifter_id::LS_SCALED_LSR;
-                    case 0b10: return shifter_id::LS_SCALED_ASR;
+                    case 0b01: return (shift_imm == 0) ? shifter_id::LS_SCALED_LSR32 : shifter_id::LS_SCALED_LSR;
+                    case 0b10: return (shift_imm == 0) ? shifter_id::LS_SCALED_ASR32 : shifter_id::LS_SCALED_ASR;
                     case 0b11:
                         if (shift_imm == 0) {
                             return shifter_id::LS_SCALED_RRX;
@@ -59,8 +59,8 @@ shifter_id ident::bin_shifters::load_store(const u32 code) {
             } else if (bit_fetch(code, 4) == 0) {
                 switch (shift_case) {
                     case 0b00: return shifter_id::LS_SCALED_PRE_LSL;
-                    case 0b01: return shifter_id::LS_SCALED_PRE_LSR;
-                    case 0b10: return shifter_id::LS_SCALED_PRE_ASR;
+                    case 0b01: return (shift_imm == 0) ? shifter_id::LS_SCALED_PRE_LSR32 : shifter_id::LS_SCALED_PRE_LSR;
+                    case 0b10: return (shift_imm == 0) ? shifter_id::LS_SCALED_PRE_ASR32 : shifter_id::LS_SCALED_PRE_ASR;
                     case 0b11:
                         if (shift_imm == 0) {
                             return shifter_id::LS_SCALED_PRE_RRX;
@@ -78,8 +78,8 @@ shifter_id ident::bin_shifters::load_store(const u32 code) {
             } else if (bit_fetch(code, 4) == 0) {
                 switch (shift_case) {
                     case 0b00: return shifter_id::LS_SCALED_POST_LSL;
-                    case 0b01: return shifter_id::LS_SCALED_POST_LSR;
-                    case 0b10: return shifter_id::LS_SCALED_POST_ASR;
+                    case 0b01: return (shift_imm == 0) ? shifter_id::LS_SCALED_POST_LSR32 : shifter_id::LS_SCALED_POST_LSR;
+                    case 0b10: return (shift_imm == 0) ? shifter_id::LS_SCALED_POST_ASR32 : shifter_id::LS_SCALED_POST_ASR;
                     case 0b11:
                         if (shift_imm == 0) {
                             return shifter_id::LS_SCALED_POST_RRX;
@@ -97,8 +97,8 @@ shifter_id ident::bin_shifters::load_store(const u32 code) {
             } else if (bit_fetch(code, 4) == 0) {
                 switch (shift_case) {
                     case 0b00: return shifter_id::LS_SCALED_POST_LSL;
-                    case 0b01: return shifter_id::LS_SCALED_POST_LSR;
-                    case 0b10: return shifter_id::LS_SCALED_POST_ASR;
+                    case 0b01: return (shift_imm == 0) ? shifter_id::LS_SCALED_POST_LSR32 : shifter_id::LS_SCALED_POST_LSR;
+                    case 0b10: return (shift_imm == 0) ? shifter_id::LS_SCALED_POST_ASR32 : shifter_id::LS_SCALED_POST_ASR;
                     case 0b11:
                         if (shift_imm == 0) {
                             return shifter_id::LS_SCALED_POST_RRX;
@@ -502,16 +502,22 @@ std::string ident::bin_shifters::shifter_id_to_string(const shifter_id id) {
         case shifter_id::LS_SCALED_LSR: return "LS_SCALED_LSR";
         case shifter_id::LS_SCALED_ASR: return "LS_SCALED_ASR";
         case shifter_id::LS_SCALED_ROR: return "LS_SCALED_ROR";
+        case shifter_id::LS_SCALED_LSR32: return "LS_SCALED_LSR32";
+        case shifter_id::LS_SCALED_ASR32: return "LS_SCALED_ASR32";
         case shifter_id::LS_SCALED_RRX: return "LS_SCALED_RRX";
         case shifter_id::LS_SCALED_PRE_LSL: return "LS_SCALED_PRE_LSL";
         case shifter_id::LS_SCALED_PRE_LSR: return "LS_SCALED_PRE_LSR";
         case shifter_id::LS_SCALED_PRE_ASR: return "LS_SCALED_PRE_ASR";
         case shifter_id::LS_SCALED_PRE_ROR: return "LS_SCALED_PRE_ROR";
+        case shifter_id::LS_SCALED_PRE_LSR32: return "LS_SCALED_PRE_LSR32";
+        case shifter_id::LS_SCALED_PRE_ASR32: return "LS_SCALED_PRE_ASR32";
         case shifter_id::LS_SCALED_PRE_RRX: return "LS_SCALED_PRE_RRX";
         case shifter_id::LS_SCALED_POST_LSL: return "LS_SCALED_POST_LSL";
         case shifter_id::LS_SCALED_POST_LSR: return "LS_SCALED_POST_LSR";
         case shifter_id::LS_SCALED_POST_ASR: return "LS_SCALED_POST_ASR";
         case shifter_id::LS_SCALED_POST_ROR: return "LS_SCALED_POST_ROR";
+        case shifter_id::LS_SCALED_POST_LSR32: return "LS_SCALED_POST_LSR32";
+        case shifter_id::LS_SCALED_POST_ASR32: return "LS_SCALED_POST_ASR32";
         case shifter_id::LS_SCALED_POST_RRX: return "LS_SCALED_POST_RRX";
         case shifter_id::LS_MISC_IMM: return "LS_MISC_IMM";
         case shifter_id::LS_MISC_IMM_PRE: return "LS_MISC_IMM_PRE";

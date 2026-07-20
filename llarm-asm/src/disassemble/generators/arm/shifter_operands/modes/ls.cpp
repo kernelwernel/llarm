@@ -81,7 +81,9 @@ std::string shifters::ls_reg_scaled(const u32 code, const std::string&mode, cons
         return util::make_string("[", Rn, ", ", op, Rm, "]");
     }
 
-    return util::make_string("[", Rn, ", ", op, Rm, ", ", mode, " #", util::hex(shift_imm, settings), "]");
+    // shift counts are conventionally shown in decimal regardless of settings.hex,
+    // matching real-world disassemblers (e.g. "lsl #10", never "lsl #0xa")
+    return util::make_string("[", Rn, ", ", op, Rm, ", ", mode, " #", std::to_string(shift_imm), "]");
 }
 
 
@@ -102,7 +104,9 @@ std::string shifters::ls_reg_scaled_post(const u32 code, const std::string&mode,
         return util::make_string("[", Rn, "], ", op, Rm);
     }
 
-    return util::make_string("[", Rn, "], ", op, Rm, ", ", mode, " #", util::hex(shift_imm, settings));
+    // shift counts are conventionally shown in decimal regardless of settings.hex,
+    // matching real-world disassemblers (e.g. "lsl #10", never "lsl #0xa")
+    return util::make_string("[", Rn, "], ", op, Rm, ", ", mode, " #", std::to_string(shift_imm));
 }
 
 
@@ -128,4 +132,29 @@ std::string shifters::ls_reg_scaled_post_rrx(const u32 code, const settings& set
     const char* op = ((llarm::util::bit_fetch(code, 23) == 0) ? "-" : "");
 
     return util::make_string("[", Rn, "], ", op, Rm, ", RRX");
+}
+
+
+std::string shifters::ls_reg_scaled_32(const u32 code, const std::string& mode, const settings& settings) {
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
+
+    const char* op = ((llarm::util::bit_fetch(code, 23) == 0) ? "-" : "");
+
+    return util::make_string("[", Rn, ", ", op, Rm, ", ", mode, " #32]");
+}
+
+
+std::string shifters::ls_reg_scaled_pre_32(const u32 code, const std::string& mode, const settings& settings) {
+    return (ls_reg_scaled_32(code, mode, settings) + "!");
+}
+
+
+std::string shifters::ls_reg_scaled_post_32(const u32 code, const std::string& mode, const settings& settings) {
+    const std::string Rn = util::reg_string(code, 16, 19, settings);
+    const std::string Rm = util::reg_string(code, 0, 3, settings);
+
+    const char* op = ((llarm::util::bit_fetch(code, 23) == 0) ? "-" : "");
+
+    return util::make_string("[", Rn, "], ", op, Rm, ", ", mode, " #32");
 }

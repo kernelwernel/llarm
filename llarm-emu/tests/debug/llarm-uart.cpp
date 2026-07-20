@@ -48,6 +48,26 @@ struct raw_tty_guard {
 
     raw_tty_guard(const raw_tty_guard&) = delete;
     raw_tty_guard& operator=(const raw_tty_guard&) = delete;
+
+    raw_tty_guard(raw_tty_guard&& other) noexcept : original(other.original), is_active(other.is_active) {
+        other.is_active = false;
+    }
+
+    raw_tty_guard& operator=(raw_tty_guard&& other) noexcept {
+        if (this == &other) {
+            return *this;
+        }
+
+        if (is_active) {
+            tcsetattr(STDIN_FILENO, TCSANOW, &original);
+        }
+
+        original = other.original;
+        is_active = other.is_active;
+        other.is_active = false;
+
+        return *this;
+    }
 };
 #endif
 

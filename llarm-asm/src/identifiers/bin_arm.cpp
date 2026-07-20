@@ -298,8 +298,26 @@ arm_id ident::bin_arm::data_processing(const u32 code) {
 
 
 arm_id ident::bin_arm::load_store(const u32 code) {
+    const bool bit_24 = llarm::util::bit_fetch(code, 24);
     const bool bit_22 = llarm::util::bit_fetch(code, 22);
+    const bool bit_21 = llarm::util::bit_fetch(code, 21);
     const bool bit_20 = llarm::util::bit_fetch(code, 20);
+
+    // the T-variant (user-mode/unprivileged access) requires post-indexed addressing
+    // (P=0) with W=1; W is otherwise ignored/reserved when post-indexed, so P=0,W=1 is
+    // what actually distinguishes STRT/LDRT/STRBT/LDRBT from plain STR/LDR/STRB/LDRB.
+    // this must be checked first: a switch on bit22/bit20 alone is already exhaustive
+    // over all 4 outcomes and would always return before this is ever reached.
+    if (!bit_24 && bit_21) {
+        const u8 bytecode2 = static_cast<u8>((bit_22 << 1) | bit_20);
+
+        switch (bytecode2) {
+            case 0b00: return arm_id::STRT;
+            case 0b01: return arm_id::LDRT;
+            case 0b10: return arm_id::STRBT;
+            case 0b11: return arm_id::LDRBT;
+        }
+    }
 
     const u8 bytecode = (static_cast<u8>(bit_22 << 1) | bit_20);
 
@@ -308,18 +326,6 @@ arm_id ident::bin_arm::load_store(const u32 code) {
         case 0b01: return arm_id::LDR;
         case 0b10: return arm_id::STRB;
         case 0b11: return arm_id::LDRB;
-    }
-
-    const bool bit_24 = llarm::util::bit_fetch(code, 24);
-    const bool bit_21 = llarm::util::bit_fetch(code, 21);
-
-    const u8 bytecode2 = static_cast<u8>((bit_24 << 3) | (bit_22 << 2) | (bit_21 << 1) | bit_20);
-
-    switch (bytecode2) {
-        case 0b0010: return arm_id::STRT;
-        case 0b0011: return arm_id::LDRT;
-        case 0b0110: return arm_id::STRBT;
-        case 0b0111: return arm_id::LDRBT;
     }
 
     return arm_id::UNDEFINED;
@@ -606,14 +612,16 @@ arm_id ident::bin_arm::vfp_double(const u32 code) {
 
 arm_id ident::bin_arm::pack_and_saturates(const u32 code) {
     {
+        // SSAT/USAT's fixed field is bits[5:4] == 0b01 (bit4=1, bit5=0); bit6 is the
+        // independent, variable "sh" bit and isn't part of the identifying pattern.
         const u8 small_upper_part = llarm::util::bit_range<u8>(code, 21, 24);
-        const u8 small_lower_part = llarm::util::bit_range<u8>(code, 5, 6);
+        const u8 small_lower_part = llarm::util::bit_range<u8>(code, 4, 5);
 
-        if ((small_upper_part == 0b0101) && (small_lower_part == 0b01 || small_lower_part == 0b11)) {
+        if ((small_upper_part == 0b0101) && (small_lower_part == 0b01)) {
             return arm_id::SSAT;
         }
 
-        if ((small_upper_part == 0b0111) && (small_lower_part == 0b01 || small_lower_part == 0b11)) {
+        if ((small_upper_part == 0b0111) && (small_lower_part == 0b01)) {
             return arm_id::USAT;
         }
     }
@@ -701,7 +709,7 @@ arm_id ident::bin_arm::pack_and_saturates(const u32 code) {
             return arm_id::UXTAB16;
 
         case 0b0'0011'0001: return arm_id::SHADD16;
-        case 0b0'0011'1011: return arm_id::SHADD8;
+        case 0b0'0011'1001: return arm_id::SHADD8;
         case 0b0'0011'0011: return arm_id::SHADDSUBX;
         case 0b0'0011'0111: return arm_id::SHSUB16;
         case 0b0'0011'1111: return arm_id::SHSUB8;
@@ -732,15 +740,15 @@ arm_id ident::bin_arm::pack_and_saturates(const u32 code) {
         case 0b1'0100'0001:
         case 0b1'0100'0011: return arm_id::SMLALD;
         case 0b1'0000'0101:
-        case 0b1'0000'0111: return arm_id::SMLSD;
-
-        case 0b1'0100'0101:
-        case 0b1'0100'0111: 
+        case 0b1'0000'0111:
             if (llarm::util::bit_range(code, 12, 15) == 0b1111) {
                 return arm_id::SMUSD;
             }
 
-            return arm_id::SMLSLD;
+            return arm_id::SMLSD;
+
+        case 0b1'0100'0101:
+        case 0b1'0100'0111: return arm_id::SMLSLD;
 
         case 0b1'0101'0001:
         case 0b1'0101'0011: 
@@ -901,7 +909,8 @@ arm_id ident::bin_arm::arm(const u32 code) {
 
             if (
                 (llarm::util::bit_range(code, 20, 27) == 0b00011010) &&
-                (llarm::util::bit_range(code, 4, 11) == 0)
+                (llarm::util::bit_range(code, 4, 11) == 0) &&
+                (llarm::util::bit_range(code, 16, 19) == 0) // Rn is SBZ for MOV/CPY's opcode
             ) {
                 return arm_id::CPY;
             }

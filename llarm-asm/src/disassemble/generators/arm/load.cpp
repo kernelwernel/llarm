@@ -187,7 +187,7 @@ std::string generators::arm::load::LDRB(const u32 code, const settings& settings
 
     const std::string Rd = util::reg_string(code, 12, 15, settings);
 
-    return util::make_string("LDR", util::cond(code, settings), "B ", Rd, ", ", addressing_mode);
+    return util::make_string("LDRB", util::cond(code, settings), " ", Rd, ", ", addressing_mode);
 }
 
 
@@ -221,6 +221,8 @@ std::string generators::arm::load::LDRBT(const u32 code, const settings& setting
         case shifter_id::LS_SCALED_POST_LSR:
         case shifter_id::LS_SCALED_POST_ASR:
         case shifter_id::LS_SCALED_POST_ROR:
+        case shifter_id::LS_SCALED_POST_LSR32:
+        case shifter_id::LS_SCALED_POST_ASR32:
         case shifter_id::LS_SCALED_POST_RRX: break;
         default: llarm::out::error("Only post-indexed addressing modes are allowed for LDRBT");
     }
@@ -229,7 +231,7 @@ std::string generators::arm::load::LDRBT(const u32 code, const settings& setting
 
     const std::string post_indexed_addressing_mode = shifters::shifter_to_string(mode_id, code, settings);
 
-    return util::make_string("LDR", util::cond(code, settings), "BT ", Rd, ", ", post_indexed_addressing_mode);
+    return util::make_string("LDRBT", util::cond(code, settings), " ", Rd, ", ", post_indexed_addressing_mode);
 }
 
 
@@ -346,13 +348,15 @@ std::string generators::arm::load::LDRT(const u32 code, const settings& settings
         case shifter_id::LS_SCALED_POST_LSR:
         case shifter_id::LS_SCALED_POST_ASR:
         case shifter_id::LS_SCALED_POST_ROR:
+        case shifter_id::LS_SCALED_POST_LSR32:
+        case shifter_id::LS_SCALED_POST_ASR32:
         case shifter_id::LS_SCALED_POST_RRX: break;
         default: llarm::out::error("Only post-indexed addressing modes are allowed for LDRBT");
     }
 
     const std::string post_indexed_addressing_mode = shifters::shifter_to_string(mode_id, code, settings);
 
-    return util::make_string("LDR", util::cond(code, settings), "T ", Rd, ", ", post_indexed_addressing_mode);
+    return util::make_string("LDRT", util::cond(code, settings), " ", Rd, ", ", post_indexed_addressing_mode);
 }
 
 
