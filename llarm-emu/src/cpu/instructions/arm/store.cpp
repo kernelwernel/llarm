@@ -14,6 +14,9 @@
  *     assert end_address == address - 4
  */
 void INSTRUCTIONS::arm::store::STM1(const u32 code) {
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
     const address_struct addresses = address_mode.load_store_multiple(code);
 
     u32 address = addresses.start;
@@ -26,6 +29,7 @@ void INSTRUCTIONS::arm::store::STM1(const u32 code) {
         const mem_write_struct access = memory.write(address, reg.read(reg_id), 4);
 
         if (access.has_failed) {
+            reg.write(Rn_id, original_Rn);
             memory.manage_abort(access.abort_code);
             return;
         }
@@ -47,6 +51,9 @@ void INSTRUCTIONS::arm::store::STM1(const u32 code) {
  *     assert end_address == address - 4
  */
 void INSTRUCTIONS::arm::store::STM2(const u32 code) {
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
     const address_struct addresses = address_mode.load_store_multiple(code);
 
     u32 address = addresses.start;
@@ -60,6 +67,7 @@ void INSTRUCTIONS::arm::store::STM2(const u32 code) {
         const mem_write_struct access = memory.write(address, value, 4);
 
         if (access.has_failed) {
+            reg.write(Rn_id, original_Rn);
             memory.manage_abort(access.abort_code);
             return;
         }
@@ -74,13 +82,17 @@ void INSTRUCTIONS::arm::store::STM2(const u32 code) {
  *     Memory[address,4] = Rd
  */
 void INSTRUCTIONS::arm::store::STR(const u32 code) {
-    const u32 address = address_mode.load_store(code); 
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
+    const u32 address = address_mode.load_store(code);
 
     const u32 value = reg.read(code, 12, 15);
 
     const mem_write_struct access = memory.write(address, value, 4);
 
     if (access.has_failed) {
+        reg.write(Rn_id, original_Rn);
         memory.manage_abort(access.abort_code);
         return;
     }
@@ -92,7 +104,10 @@ void INSTRUCTIONS::arm::store::STR(const u32 code) {
  *     Memory[address,1] = Rd[7:0]
  */
 void INSTRUCTIONS::arm::store::STRB(const u32 code) {
-    const u32 address = address_mode.load_store(code); 
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
+    const u32 address = address_mode.load_store(code);
 
     const u32 Rd = reg.read(code, 12, 15);
     const u8 value = llarm::util::bit_range<u8>(Rd, 0, 7);
@@ -100,6 +115,7 @@ void INSTRUCTIONS::arm::store::STRB(const u32 code) {
     const mem_write_struct access = memory.write(address, value, 1);
 
     if (access.has_failed) {
+        reg.write(Rn_id, original_Rn);
         memory.manage_abort(access.abort_code);
         return;
     }
@@ -111,7 +127,10 @@ void INSTRUCTIONS::arm::store::STRB(const u32 code) {
  *     Memory[address,1] = Rd[7:0]
  */
 void INSTRUCTIONS::arm::store::STRBT(const u32 code) {
-    const u32 address = address_mode.load_store(code); 
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
+    const u32 address = address_mode.load_store(code);
 
     const u32 Rd = reg.read(code, 12, 15);
     const u8 value = llarm::util::bit_range<u8>(Rd, 0, 7);
@@ -119,6 +138,7 @@ void INSTRUCTIONS::arm::store::STRBT(const u32 code) {
     const mem_write_struct access = memory.write(address, value, 1);
 
     if (access.has_failed) {
+        reg.write(Rn_id, original_Rn);
         memory.manage_abort(access.abort_code);
         return;
     }
@@ -134,6 +154,9 @@ void INSTRUCTIONS::arm::store::STRBT(const u32 code) {
  *     Memory[address,2] = data
  */
 void INSTRUCTIONS::arm::store::STRH(const u32 code) {
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
     const u32 address = address_mode.load_store_misc(code);
 
     u32 data = 0;
@@ -148,6 +171,7 @@ void INSTRUCTIONS::arm::store::STRH(const u32 code) {
     const mem_write_struct access = memory.write(address, data, 2);
 
     if (access.has_failed) {
+        reg.write(Rn_id, original_Rn);
         memory.manage_abort(access.abort_code);
         return;
     }
@@ -159,6 +183,9 @@ void INSTRUCTIONS::arm::store::STRH(const u32 code) {
  *     Memory[address,4] = Rd
  */
 void INSTRUCTIONS::arm::store::STRT(const u32 code) {
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
     const u32 address = address_mode.load_store(code);
 
     const u32 Rd = reg.read(code, 12, 15);
@@ -166,6 +193,7 @@ void INSTRUCTIONS::arm::store::STRT(const u32 code) {
     const mem_write_struct access = memory.write(address, Rd, 4);
 
     if (access.has_failed) {
+        reg.write(Rn_id, original_Rn);
         memory.manage_abort(access.abort_code);
         return;
     }

@@ -117,6 +117,89 @@ bool DECODE::is_arm_instruction_unsupported(const llarm::as::arm_id id) const {
             case arm_id::SMLAWY:
             case arm_id::SMULXY:
             case arm_id::SMULWY: return id::specific_arch::ARMv5TExP;
+
+            // ARMv6:
+            case arm_id::BXJ:
+            case arm_id::CPS:
+            case arm_id::CPY:
+            case arm_id::LDREX:
+            case arm_id::MCRR2:
+            case arm_id::MRRC2:
+            case arm_id::PKHBT:
+            case arm_id::PKHTB:
+            case arm_id::QADD16:
+            case arm_id::QADD8:
+            case arm_id::QADDSUBX:
+            case arm_id::QSUB16:
+            case arm_id::QSUB8:
+            case arm_id::QSUBADDX:
+            case arm_id::REV:
+            case arm_id::REV16: 
+            case arm_id::REVSH:
+            case arm_id::RFE:
+            case arm_id::SADD16:
+            case arm_id::SADD8:
+            case arm_id::SADDSUBX:
+            case arm_id::SEL:
+            case arm_id::SETEND:
+            case arm_id::SHADD16:
+            case arm_id::SHADD8:
+            case arm_id::SHADDSUBX:
+            case arm_id::SHSUB16:
+            case arm_id::SHSUB8:
+            case arm_id::SHSUBADDX:
+            case arm_id::SMLAD:
+            case arm_id::SMLALD:
+            case arm_id::SMLSD:
+            case arm_id::SMLSLD:
+            case arm_id::SMMLA:
+            case arm_id::SMMLS:
+            case arm_id::SMMUL:
+            case arm_id::SMUAD:
+            case arm_id::SMUSD:
+            case arm_id::SRS:
+            case arm_id::SSAT:
+            case arm_id::SSAT16:
+            case arm_id::SSUB16:
+            case arm_id::SSUB8:
+            case arm_id::SSUBADDX:
+            case arm_id::STREX:
+            case arm_id::SXTAB:
+            case arm_id::SXTAB16:
+            case arm_id::SXTAH:
+            case arm_id::SXTB:
+            case arm_id::SXTB16:
+            case arm_id::SXTH:
+            case arm_id::UADD16:
+            case arm_id::UADD8:
+            case arm_id::UADDSUBX:
+            case arm_id::UHADD16:
+            case arm_id::UHADD8:
+            case arm_id::UHADDSUBX:
+            case arm_id::UHSUB16:
+            case arm_id::UHSUB8:
+            case arm_id::UHSUBADDX:
+            case arm_id::UMAAL:
+            case arm_id::UQADD16:
+            case arm_id::UQADD8:
+            case arm_id::UQADDSUBX:
+            case arm_id::UQSUB16:
+            case arm_id::UQSUB8:
+            case arm_id::UQSUBADDX:
+            case arm_id::USAD8:
+            case arm_id::USADA8:
+            case arm_id::USAT:
+            case arm_id::USAT16:
+            case arm_id::USUB16:
+            case arm_id::USUB8:
+            case arm_id::USUBADDX:
+            case arm_id::UXTAB:
+            case arm_id::UXTAB16:
+            case arm_id::UXTAH:
+            case arm_id::UXTB:
+            case arm_id::UXTB16:
+            case arm_id::UXTH: return id::specific_arch::ARMv6;
+
             default: return id::specific_arch::UNKNOWN;
         }
     }();

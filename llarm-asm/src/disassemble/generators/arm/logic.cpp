@@ -319,8 +319,6 @@ std::string generators::arm::logic::PKHTB(const u32 code, const settings& settin
 
     const u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
 
-    // shift_imm == 0 means "ASR #32" for PKHTB, not "no shift" (PKHTB always shifts,
-    // unlike PKHBT's LSL, where shift_imm == 0 legitimately means no shift at all).
     const std::string suffix = [=]() -> std::string {
         if (shift_imm == 0) {
             return ", ASR #32";

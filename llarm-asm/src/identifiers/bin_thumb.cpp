@@ -159,13 +159,30 @@ thumb_id ident::bin_thumb::bits_101(const u32 code) {
         case 0b01: return thumb_id::ADD6;
         case 0b10: {
             const u8 tmp = llarm::util::bit_range<u8>(code, 7, 10);
-            
+
             if (tmp == 0b0000) {
                 return thumb_id::ADD7;
             }
-            
+
             if (tmp == 0b0001) {
                 return thumb_id::SUB4;
+            }
+
+            if ((tmp == 0b0100) || (tmp == 0b0101)) {
+                switch (llarm::util::bit_range<u8>(code, 6, 7)) {
+                    case 0b00: return thumb_id::SXTH;
+                    case 0b01: return thumb_id::SXTB;
+                    case 0b10: return thumb_id::UXTH;
+                    case 0b11: return thumb_id::UXTB;
+                }
+            }
+
+            if (tmp == 0b1100) {
+                if (llarm::util::bit_fetch(code, 5)) {
+                    return thumb_id::CPS;
+                }
+
+                return thumb_id::SETEND;
             }
 
             if (llarm::util::bit_range(code, 9, 10) == 0b10) {
@@ -176,13 +193,21 @@ thumb_id ident::bin_thumb::bits_101(const u32 code) {
 
         case 0b11: {
             const u8 tmp2 = llarm::util::bit_range<u8>(code, 8, 10);
-            
+
             if (tmp2 == 0b110) {
                 return thumb_id::BKPT;
             }
 
             if (tmp2 == 0b100 || tmp2 == 0b101) {
                 return thumb_id::POP;
+            }
+
+            if (tmp2 == 0b010) {
+                switch (llarm::util::bit_range<u8>(code, 6, 7)) {
+                    case 0b00: return thumb_id::REV;
+                    case 0b01: return thumb_id::REV16;
+                    case 0b11: return thumb_id::REVSH;
+                }
             }
         }
     }

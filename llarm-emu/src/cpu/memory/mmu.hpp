@@ -26,8 +26,11 @@ struct MMU {
     TLB& tlb;
     CACHE& cache;
 
-    id::first_level get_first_level_id(const u32 entry);
-    id::second_level get_second_level_id(const u32 entry);
+    // this is important enough of a distinction that i think it's appropriate to have this here
+    bool is_armv6 = false;
+
+    id::first_level get_first_level_id(const u32 entry) const;
+    id::second_level get_second_level_id(const u32 entry) const;
     
     u32 first_level_fetch(const u32 key);
     u32 second_level_fetch(const u32 key, const id::first_level first_level_type);
@@ -35,8 +38,11 @@ struct MMU {
     id::access_domain fetch_domain(const u8 domain_bits) const;
     u8 fetch_subpage_AP(const u8 subpage, const u32 entry);
 
-    bool is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type) const;
-    id::aborts check_block_access(const u8 AP_bits, const id::access_type access_type, const id::access_domain domain, const id::memory_type memory_type) const;
+    region_attributes_struct resolve_region_attributes(const u8 TEX, const bool C, const bool B) const;
+    bool is_execute_invalid(const bool XN, const id::access_type access_type) const;
+
+    bool is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type, const bool APX = false) const;
+    id::aborts check_block_access(const u8 AP_bits, const id::access_type access_type, const id::access_domain domain, const id::memory_type memory_type, const bool APX = false) const;
 
     translation_struct first_section(const u32 entry, const u32 address, const id::access_type access);
     u32 first_coarse(const u32 entry, const u32 address); // B3-9
@@ -74,8 +80,9 @@ struct MMU {
         coprocessor(coprocessor),
         settings(settings),
         tlb(tlb),
-        cache(cache)
+        cache(cache), 
+        is_armv6(settings.arch >= id::arch::ARMv6)
     {
-
+        
     }
 };

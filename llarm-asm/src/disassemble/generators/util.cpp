@@ -432,19 +432,12 @@ std::string util::reg_string_bits(const u32 code, const u8 start, const u8 end, 
 
 
 std::string util::vfp_register_list(const u8 first_reg, const u8 offset, const settings settings, util::prefix prefix) {
-    // offset directly encodes the register count for single-precision (S) lists, where odd
-    // values are valid; it's only required to be even for double-precision (D) lists, where
-    // it encodes 2x the register count.
     if ((prefix != util::prefix::S) && (offset & 1)) {
         llarm::out::error("VFP register offset list should not be an odd number");
     }
 
     const u8 reg_count = (offset >> (prefix == util::prefix::S ? 0 : 1));
 
-    // exclusive upper bound; using offset directly here (instead of first_reg + reg_count)
-    // was wrong for any first_reg > 0 (the loop below would never run at all), and needs
-    // clamping to the hardware register limit to avoid an out-of-range index: 32 single-
-    // precision (S0-S31), or 16 double-precision (D0-D15, this project targets VFPv2).
     const u8 max_reg = (prefix == util::prefix::S) ? 32 : 16;
     const u8 last_reg = std::min<u8>(static_cast<u8>(first_reg + reg_count), max_reg);
 

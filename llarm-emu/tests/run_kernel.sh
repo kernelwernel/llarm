@@ -46,7 +46,9 @@ echo "configuring tests project (${BUILD_TYPE})..."
 cmake -S "$TESTS_DIR" -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE="$BUILD_TYPE" >/dev/null
 
 echo "building llarm-uart..."
-if ! cmake --build "$BUILD_DIR" --target llarm-uart --parallel >/tmp/llarm-emu-build.log 2>&1; then
+cmake --build "$BUILD_DIR" --target llarm-uart --parallel 2>&1 | tee /tmp/llarm-emu-build.log
+BUILD_RC="${PIPESTATUS[0]}"
+if [ "$BUILD_RC" -ne 0 ]; then
     echo -e "${RED}FAIL${RESET} (llarm-uart build error), see /tmp/llarm-emu-build.log"
     exit 1
 fi

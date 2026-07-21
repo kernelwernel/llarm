@@ -87,6 +87,7 @@ std::string disassemble::thumb_generate(const u32 code, const u32 PC, const sett
         case thumb_id::NOP: llarm::out::error("NOP instruction encountered for thumb disassembly");
         case thumb_id::CPY: // TODO
         case thumb_id::CPS: // TODO
+        case thumb_id::REV: // TODO
         case thumb_id::REV16: // TODO
         case thumb_id::REVSH: // TODO
         case thumb_id::SETEND: // TODO
@@ -430,6 +431,7 @@ std::string disassemble::thumb_id_to_string(const thumb_id id) {
         case thumb_id::STRH2: return "STRH2";
         case thumb_id::CPS: return "CPS";
         case thumb_id::CPY: return "CPY";
+        case thumb_id::REV: return "REV";
         case thumb_id::REV16: return "REV16";
         case thumb_id::REVSH: return "REVSH";
         case thumb_id::SETEND: return "SETEND";

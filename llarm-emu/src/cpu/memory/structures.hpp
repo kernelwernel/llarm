@@ -23,12 +23,16 @@ struct mem_read_struct {
 
 
 // specific to the MMU
+struct region_attributes_struct {
+    bool is_cacheable = false;
+    bool is_write_bufferable = false;
+};
+
 struct translation_struct {
-    bool has_failed;
-    id::aborts abort_code;
-    u32 physical_address;
-    bool is_cacheable;
-    bool is_write_bufferable;
+    bool has_failed{};
+    id::aborts abort_code = id::aborts::NO_ABORT;
+    u32 physical_address{};
+    region_attributes_struct attributes{};
 };
 
 

@@ -32,9 +32,6 @@ namespace internal {
         LS_SCALED_ASR,
         LS_SCALED_ROR,
         LS_SCALED_RRX,
-        // shift_imm == 0 for LSR/ASR means "shift by 32", not "no shift" (unlike LSL,
-        // where shift_imm == 0 really does mean no shift). Same special-case shape as
-        // RRX (ROR's own shift_imm == 0 meaning), just for LSR/ASR instead of ROR.
         LS_SCALED_LSR32,
         LS_SCALED_ASR32,
         LS_SCALED_PRE_LSL,

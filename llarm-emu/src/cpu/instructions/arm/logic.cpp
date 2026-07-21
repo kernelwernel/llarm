@@ -6,6 +6,8 @@
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
 
+#include <cstdlib>
+
 
 /*
  * if ConditionPassed(cond) then
@@ -41,10 +43,11 @@ void INSTRUCTIONS::arm::logic::AND(const u32 code) {
 
 
 /*
- * if Rm == 0
- *   Rd = 32
- * else
- *   Rd = 31 - (bit position of most significant ’1’ in Rm)
+ * if ConditionPassed(cond) then
+ *   if Rm == 0
+ *     Rd = 32
+ *   else
+ *     Rd = 31 - (bit position of most significant ’1’ in Rm)
  */
 void INSTRUCTIONS::arm::logic::CLZ(const u32 code) {
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15);
@@ -487,4 +490,85 @@ void INSTRUCTIONS::arm::logic::USAT16(const u32 code) {
     if (operation::unsigned_does_sat(low_operand, sat_imm) || operation::unsigned_does_sat(high_operand, sat_imm)) {
         reg.write(id::cpsr::Q, true);
     }
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *
+ *     if Rm[7:0] < Rs[7:0] then // Unsigned comparison
+ *          diff1 = Rs[7:0] - Rm[7:0]
+ *     else
+ *          diff1 = Rm[7:0] - Rs[7:0]
+ *
+ *     if Rm[15:8] < Rs[15:8] then // Unsigned comparison
+ *          diff2 = Rs[15:8] - Rm[15:8]
+ *     else
+ *          diff2 = Rm[15:8] - Rs[15:8]
+ *
+ *     if Rm[23:16] < Rs[23:16] then // Unsigned comparison
+ *          diff3 = Rs[23:16] - Rm[23:16]
+ *     else
+ *          diff3 = Rm[23:16] - Rs[23:16]
+ *
+ *     if Rm[31:24] < Rs[31:24] then // Unsigned comparison
+ *          diff4 = Rs[31:24] - Rm[31:24]
+ *     else
+ *          diff4 = Rm[31:24] - Rs[31:24]
+ *
+ *     Rd = ZeroExtend(diff1) + ZeroExtend(diff2)
+ *                            + ZeroExtend(diff3) + ZeroExtend(diff4]
+ */
+void INSTRUCTIONS::arm::logic::USAD8(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 Rm = reg.read(code, 0, 3);
+    const u32 Rs = reg.read(code, 8, 11);
+
+    const u32 diff1 = static_cast<u32>(std::abs(static_cast<i32>((Rm & 0xFF)) - static_cast<i32>(Rs & 0xFF)));
+    const u32 diff2 = static_cast<u32>(std::abs(static_cast<i32>((Rm >> 8) & 0xFF) - static_cast<i32>((Rs >> 8) & 0xFF)));
+    const u32 diff3 = static_cast<u32>(std::abs(static_cast<i32>((Rm >> 16) & 0xFF) - static_cast<i32>((Rs >> 16) & 0xFF)));
+    const u32 diff4 = static_cast<u32>(std::abs(static_cast<i32>((Rm >> 24) & 0xFF) - static_cast<i32>((Rs >> 24) & 0xFF)));
+
+    reg.write(Rd_id, diff1 + diff2 + diff3 + diff4);
+}
+
+
+/**
+ * if ConditionPassed(cond) then
+ *
+ *     if Rm[7:0] < Rs[7:0] then // Unsigned comparison
+ *          diff1 = Rs[7:0] - Rm[7:0]
+ *     else
+ *          diff1 = Rm[7:0] - Rs[7:0]
+ *
+ *     if Rm[15:8] < Rs[15:8] then // Unsigned comparison
+ *          diff2 = Rs[15:8] - Rm[15:8]
+ *     else
+ *          diff2 = Rm[15:8] - Rs[15:8]
+ *
+ *     if Rm[23:16] < Rs[23:16] then // Unsigned comparison
+ *          diff3 = Rs[23:16] - Rm[23:16]
+ *     else
+ *          diff3 = Rm[23:16] - Rs[23:16]
+ *
+ *     if Rm[31:24] < Rs[31:24] then // Unsigned comparison
+ *          diff4 = Rs[31:24] - Rm[31:24]
+ *     else
+ *          diff4 = Rm[31:24] - Rs[31:24]
+ *
+ *     Rd = Rn + ZeroExtend(diff1) + ZeroExtend(diff2)
+ *                                 + ZeroExtend(diff3) + ZeroExtend(diff4]
+ */
+void INSTRUCTIONS::arm::logic::USADA8(const u32 code) {
+    const id::reg Rd_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 Rn = reg.read(code, 12, 15);
+    const u32 Rm = reg.read(code, 0, 3);
+    const u32 Rs = reg.read(code, 8, 11);
+
+    const u32 diff1 = static_cast<u32>(std::abs(static_cast<i32>((Rm & 0xFF)) - static_cast<i32>(Rs & 0xFF)));
+    const u32 diff2 = static_cast<u32>(std::abs(static_cast<i32>((Rm >> 8) & 0xFF) - static_cast<i32>((Rs >> 8) & 0xFF)));
+    const u32 diff3 = static_cast<u32>(std::abs(static_cast<i32>((Rm >> 16) & 0xFF) - static_cast<i32>((Rs >> 16) & 0xFF)));
+    const u32 diff4 = static_cast<u32>(std::abs(static_cast<i32>((Rm >> 24) & 0xFF) - static_cast<i32>((Rs >> 24) & 0xFF)));
+
+    reg.write(Rd_id, Rn + diff1 + diff2 + diff3 + diff4);
 }

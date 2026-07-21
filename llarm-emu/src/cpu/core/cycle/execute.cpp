@@ -74,7 +74,7 @@ void EXECUTE::arm_execute(const arm_decode_struct &instruction) {
         case arm_id::LDRSB: instructions.arm.load.LDRSB(code); return;
         case arm_id::LDRSH: instructions.arm.load.LDRSH(code); return;
         case arm_id::STRH: instructions.arm.store.STRH(code); return;
-        case arm_id::BX:
+        case arm_id::BX: instructions.arm.branching.BX(code); return;
         case arm_id::BXJ: instructions.arm.branching.BX(code); return; // NOTE: BXJ falls back to BX since we're not implementing Jazelle (at least for now)
         case arm_id::BKPT: instructions.arm.misc.BKPT(); return;
         case arm_id::BLX1: instructions.arm.branching.BLX1(code); return;
@@ -165,46 +165,46 @@ void EXECUTE::arm_execute(const arm_decode_struct &instruction) {
         case arm_id::CPS: instructions.arm.misc.CPS(code); return;
         case arm_id::CPY: instructions.arm.movement.CPY(code); return;
         case arm_id::LDREX: instructions.arm.load.LDREX(code); return;
-        case arm_id::MCRR2: // TODO
-        case arm_id::MRRC2: // TODO
+        case arm_id::MCRR2: instructions.arm.dsp.MCRR2(code); return;
+        case arm_id::MRRC2: instructions.arm.dsp.MRRC2(code); return;
         case arm_id::PKHBT: instructions.arm.logic.PKHBT(code); return;
         case arm_id::PKHTB: instructions.arm.logic.PKHTB(code); return;
-        case arm_id::QADD16: // TODO
-        case arm_id::QADD8: // TODO
-        case arm_id::QADDSUBX: // TODO
-        case arm_id::QSUB16: // TODO
-        case arm_id::QSUB8: // TODO
-        case arm_id::QSUBADDX: // TODO
+        case arm_id::QADD16: instructions.arm.simd.QADD16(code); return;
+        case arm_id::QADD8: instructions.arm.simd.QADD8(code); return;
+        case arm_id::QADDSUBX: instructions.arm.simd.QADDSUBX(code); return;
+        case arm_id::QSUB16: instructions.arm.simd.QSUB16(code); return;
+        case arm_id::QSUB8: instructions.arm.simd.QSUB8(code); return;
+        case arm_id::QSUBADDX: instructions.arm.simd.QSUBADDX(code); return;
         case arm_id::REV: instructions.arm.logic.REV(code); return;
         case arm_id::REV16: instructions.arm.logic.REV16(code); return;
         case arm_id::REVSH: instructions.arm.logic.REVSH(code); return;
-        case arm_id::RFE: // TODO
-        case arm_id::SADD16: // TODO
-        case arm_id::SADD8: // TODO
-        case arm_id::SADDSUBX: // TODO
+        case arm_id::RFE: instructions.arm.misc.RFE(code); return;
+        case arm_id::SADD16: instructions.arm.simd.SADD16(code); return;
+        case arm_id::SADD8: instructions.arm.simd.SADD8(code); return;
+        case arm_id::SADDSUBX: instructions.arm.simd.SADDSUBX(code); return;
         case arm_id::SEL: instructions.arm.math.SEL(code); return;
         case arm_id::SETEND: instructions.arm.misc.SETEND(code); return;
-        case arm_id::SHADD16: // TODO
-        case arm_id::SHADD8: // TODO
-        case arm_id::SHADDSUBX: // TODO
-        case arm_id::SHSUB16: // TODO
-        case arm_id::SHSUB8: // TODO
-        case arm_id::SHSUBADDX: // TODO
-        case arm_id::SMLAD: // TODO
-        case arm_id::SMLALD: // TODO
-        case arm_id::SMLSD: // TODO
-        case arm_id::SMLSLD: // TODO
-        case arm_id::SMMLA: // TODO
-        case arm_id::SMMLS: // TODO
-        case arm_id::SMMUL: // TODO
-        case arm_id::SMUAD: // TODO
-        case arm_id::SMUSD: // TODO
-        case arm_id::SRS: // TODO
+        case arm_id::SHADD16: instructions.arm.simd.SHADD16(code); return;
+        case arm_id::SHADD8: instructions.arm.simd.SHADD8(code); return;
+        case arm_id::SHADDSUBX: instructions.arm.simd.SHADDSUBX(code); return;
+        case arm_id::SHSUB16: instructions.arm.simd.SHSUB16(code); return;
+        case arm_id::SHSUB8: instructions.arm.simd.SHSUB8(code); return;
+        case arm_id::SHSUBADDX: instructions.arm.simd.SHSUBADDX(code); return;
+        case arm_id::SMLAD: instructions.arm.multiply.SMLAD(code); return;
+        case arm_id::SMLALD: instructions.arm.multiply.SMLALD(code); return;
+        case arm_id::SMLSD: instructions.arm.multiply.SMLSD(code); return;
+        case arm_id::SMLSLD: instructions.arm.multiply.SMLSLD(code); return;
+        case arm_id::SMMLA: instructions.arm.multiply.SMMLA(code); return;
+        case arm_id::SMMLS: instructions.arm.multiply.SMMLS(code); return;
+        case arm_id::SMMUL: instructions.arm.multiply.SMMUL(code); return;
+        case arm_id::SMUAD: instructions.arm.multiply.SMUAD(code); return;
+        case arm_id::SMUSD: instructions.arm.multiply.SMUSD(code); return;
+        case arm_id::SRS: instructions.arm.misc.SRS(code); return;
         case arm_id::SSAT: instructions.arm.logic.SSAT(code); return;
         case arm_id::SSAT16: instructions.arm.logic.SSAT16(code); return;
-        case arm_id::SSUB16: // TODO
-        case arm_id::SSUB8: // TODO
-        case arm_id::SSUBADDX: // TODO
+        case arm_id::SSUB16: instructions.arm.simd.SSUB16(code); return;
+        case arm_id::SSUB8: instructions.arm.simd.SSUB8(code); return;
+        case arm_id::SSUBADDX: instructions.arm.simd.SSUBADDX(code); return;
         case arm_id::STREX: instructions.arm.store.STREX(code); return;
         case arm_id::SXTAB: instructions.arm.math.SXTAB(code); return;
         case arm_id::SXTAB16: instructions.arm.math.SXTAB16(code); return;
@@ -212,37 +212,35 @@ void EXECUTE::arm_execute(const arm_decode_struct &instruction) {
         case arm_id::SXTB: instructions.arm.math.SXTB(code); return;
         case arm_id::SXTB16: instructions.arm.math.SXTB16(code); return;
         case arm_id::SXTH: instructions.arm.math.SXTH(code); return;
-        case arm_id::UADD16: // TODO
-        case arm_id::UADD8: // TODO
-        case arm_id::UADDSUBX: // TODO
-        case arm_id::UHADD16: // TODO
-        case arm_id::UHADD8: // TODO
-        case arm_id::UHADDSUBX: // TODO
-        case arm_id::UHSUB16: // TODO
-        case arm_id::UHSUB8: // TODO
-        case arm_id::UHSUBADDX: // TODO
-        case arm_id::UMAAL: // TODO
-        case arm_id::UQADD16: // TODO
-        case arm_id::UQADD8: // TODO
-        case arm_id::UQADDSUBX: // TODO
-        case arm_id::UQSUB16: // TODO
-        case arm_id::UQSUB8: // TODO
-        case arm_id::UQSUBADDX: // TODO
-        case arm_id::USAD8: // TODO
-        case arm_id::USADA8: // TODO
+        case arm_id::UADD16: instructions.arm.simd.UADD16(code); return;
+        case arm_id::UADD8: instructions.arm.simd.UADD8(code); return;
+        case arm_id::UADDSUBX: instructions.arm.simd.UADDSUBX(code); return;
+        case arm_id::UHADD16: instructions.arm.simd.UHADD16(code); return;
+        case arm_id::UHADD8: instructions.arm.simd.UHADD8(code); return;
+        case arm_id::UHADDSUBX: instructions.arm.simd.UHADDSUBX(code); return;
+        case arm_id::UHSUB16: instructions.arm.simd.UHSUB16(code); return;
+        case arm_id::UHSUB8: instructions.arm.simd.UHSUB8(code); return;
+        case arm_id::UHSUBADDX: instructions.arm.simd.UHSUBADDX(code); return;
+        case arm_id::UMAAL: instructions.arm.multiply.UMAAL(code); return;
+        case arm_id::UQADD16: instructions.arm.simd.UQADD16(code); return;
+        case arm_id::UQADD8: instructions.arm.simd.UQADD8(code); return;
+        case arm_id::UQADDSUBX: instructions.arm.simd.UQADDSUBX(code); return;
+        case arm_id::UQSUB16: instructions.arm.simd.UQSUB16(code); return;
+        case arm_id::UQSUB8: instructions.arm.simd.UQSUB8(code); return;
+        case arm_id::UQSUBADDX: instructions.arm.simd.UQSUBADDX(code); return;
+        case arm_id::USAD8: instructions.arm.logic.USAD8(code); return;
+        case arm_id::USADA8: instructions.arm.logic.USADA8(code); return;
         case arm_id::USAT: instructions.arm.logic.USAT(code); return;
         case arm_id::USAT16: instructions.arm.logic.USAT16(code); return;
-        case arm_id::USUB16: // TODO
-        case arm_id::USUB8: // TODO
-        case arm_id::USUBADDX: // TODO
+        case arm_id::USUB16: instructions.arm.simd.USUB16(code); return;
+        case arm_id::USUB8: instructions.arm.simd.USUB8(code); return;
+        case arm_id::USUBADDX: instructions.arm.simd.USUBADDX(code); return;
         case arm_id::UXTAB: instructions.arm.math.UXTAB(code); return;
         case arm_id::UXTAB16: instructions.arm.math.UXTAB16(code); return;
         case arm_id::UXTAH: instructions.arm.math.UXTAH(code); return;
         case arm_id::UXTB: instructions.arm.math.UXTB(code); return;
         case arm_id::UXTB16: instructions.arm.math.UXTB16(code); return;
         case arm_id::UXTH: instructions.arm.math.UXTH(code); return;
-            llarm::out::warning(llarm::as::arm_id_to_string(id), " is unimplemented, skipped");
-            break;
     }
 }
 
@@ -323,6 +321,7 @@ void EXECUTE::thumb_execute(const thumb_decode_struct &instruction) {
         case thumb_id::STRH2: instructions.thumb.store.STRH2(code); return;
         case thumb_id::CPS: instructions.thumb.misc.CPS(code); return;
         case thumb_id::CPY: instructions.thumb.movement.CPY(code); return;
+        case thumb_id::REV: instructions.thumb.logic.REV(code); return;
         case thumb_id::REV16: instructions.thumb.logic.REV16(code); return;
         case thumb_id::REVSH: instructions.thumb.logic.REVSH(code); return;
         case thumb_id::SETEND: instructions.thumb.misc.SETEND(code); return;

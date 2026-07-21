@@ -129,6 +129,7 @@ bool validation::string_thumb::is_thumb_instruction_valid(const IR_thumb_struct&
         case thumb_id::PUSH: return verify_lexemes(make_lexemes(reg_list_thumb_optional_LR()), lexemes);
         case thumb_id::CPS: // TODO
         case thumb_id::CPY: // TODO
+        case thumb_id::REV: // TODO
         case thumb_id::REV16: // TODO
         case thumb_id::REVSH: // TODO
         case thumb_id::SETEND: // TODO

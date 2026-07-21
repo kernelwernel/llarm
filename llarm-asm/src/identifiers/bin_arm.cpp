@@ -303,11 +303,6 @@ arm_id ident::bin_arm::load_store(const u32 code) {
     const bool bit_21 = llarm::util::bit_fetch(code, 21);
     const bool bit_20 = llarm::util::bit_fetch(code, 20);
 
-    // the T-variant (user-mode/unprivileged access) requires post-indexed addressing
-    // (P=0) with W=1; W is otherwise ignored/reserved when post-indexed, so P=0,W=1 is
-    // what actually distinguishes STRT/LDRT/STRBT/LDRBT from plain STR/LDR/STRB/LDRB.
-    // this must be checked first: a switch on bit22/bit20 alone is already exhaustive
-    // over all 4 outcomes and would always return before this is ever reached.
     if (!bit_24 && bit_21) {
         const u8 bytecode2 = static_cast<u8>((bit_22 << 1) | bit_20);
 
@@ -612,8 +607,6 @@ arm_id ident::bin_arm::vfp_double(const u32 code) {
 
 arm_id ident::bin_arm::pack_and_saturates(const u32 code) {
     {
-        // SSAT/USAT's fixed field is bits[5:4] == 0b01 (bit4=1, bit5=0); bit6 is the
-        // independent, variable "sh" bit and isn't part of the identifying pattern.
         const u8 small_upper_part = llarm::util::bit_range<u8>(code, 21, 24);
         const u8 small_lower_part = llarm::util::bit_range<u8>(code, 4, 5);
 
@@ -910,7 +903,7 @@ arm_id ident::bin_arm::arm(const u32 code) {
             if (
                 (llarm::util::bit_range(code, 20, 27) == 0b00011010) &&
                 (llarm::util::bit_range(code, 4, 11) == 0) &&
-                (llarm::util::bit_range(code, 16, 19) == 0) // Rn is SBZ for MOV/CPY's opcode
+                (llarm::util::bit_range(code, 16, 19) == 0)
             ) {
                 return arm_id::CPY;
             }

@@ -379,6 +379,27 @@ void INSTRUCTIONS::thumb::logic::ROR(const u16 code) {
 
 
 /*
+ * Rd[31:24] = Rm[7:0]
+ * Rd[23:16] = Rm[15:8]
+ * Rd[15:8]  = Rm[23:16]
+ * Rd[7:0]   = Rm[31:24]
+ */
+void INSTRUCTIONS::thumb::logic::REV(const u16 code) {
+    const id::reg Rd_id = reg.thumb_fetch_reg_id(code, 0, 2);
+    const u32 Rm = reg.read(code, 3, 5);
+
+    const u32 result = (
+        ((Rm & 0x000000FF) << 24) |
+        ((Rm & 0x0000FF00) << 8) |
+        ((Rm & 0x00FF0000) >> 8) |
+        ((Rm & 0xFF000000) >> 24)
+    );
+
+    reg.write(Rd_id, result);
+}
+
+
+/*
  * Rd[31:24] = Rm[23:16]
  * Rd[23:16] = Rm[31:24]
  * Rd[15:8]  = Rm[7:0]

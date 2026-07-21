@@ -2,6 +2,7 @@
 #include "../instructions.hpp"
 #include "../operation.hpp"
 
+#include <llarm/shared/out.hpp>
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
 
@@ -69,7 +70,7 @@ void INSTRUCTIONS::arm::misc::PSR(const u32 code) {
     if ((reg.read(id::reg::R15) & 0b11) == 0b00) { // user mode
         return; // all the flag bit updates are done
     }
-    
+
     // privileged
     reg.write(id::cpsr::I, 0);// TODO
     reg.write(id::cpsr::F, 0);// TODO
@@ -184,4 +185,164 @@ void INSTRUCTIONS::arm::misc::CPS(const u32 code) {
 void INSTRUCTIONS::arm::misc::SETEND(const u32 code) {
     const bool E = llarm::util::bit_fetch(code, 9);
     reg.write(id::cpsr::E, E);
+}
+
+
+/**
+ * address = start_address
+ * value = Memory[address,4]
+ * if InAPrivilegedMode() then
+ *     CPSR = Memory[address+4,4]
+ * else
+ *     UNPREDICTABLE
+ * PC = value
+ *
+ * assert end_address == address + 8
+ */
+void INSTRUCTIONS::arm::misc::RFE(const u32 code) {
+    const bool P = llarm::util::bit_fetch(code, 24);
+    const bool U = llarm::util::bit_fetch(code, 23);
+    const bool W = llarm::util::bit_fetch(code, 21);
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+
+    const u32 base = reg.read(Rn_id);
+
+    u32 start_address = 0;
+
+    if (!P && U) {
+        start_address = base;
+    } else if (P && U) {
+        start_address = base + 4;
+    } else if (!P && !U) {
+        start_address = base - 4;
+    } else {
+        start_address = base - 8;
+    }
+
+    if (W) {
+        reg.write(Rn_id, U ? (base + 8) : (base - 8));
+    }
+
+    if (!reg.is_privileged()) {
+        llarm::out::unpredictable("RFE executed outside a privileged mode");
+    }
+
+    const mem_read_struct pc_access = memory.read(start_address, 4);
+
+    if (pc_access.has_failed) {
+        memory.manage_abort(pc_access.abort_code);
+        return;
+    }
+
+    const mem_read_struct cpsr_access = memory.read(start_address + 4, 4);
+
+    if (cpsr_access.has_failed) {
+        memory.manage_abort(cpsr_access.abort_code);
+        return;
+    }
+
+    reg.write(id::reg::CPSR, static_cast<u32>(cpsr_access.value));
+    reg.write(id::reg::PC, static_cast<u32>(pc_access.value));
+}
+
+
+/**
+ * MemoryAccess(B-bit, E-bit)
+ * processor_id = ExecutingProcessor()
+ * address = start_address
+ * Memory[address,4] = R14
+ * if Shared(address) then // from ARMv6
+ *      physical_address = TLB(address)
+ *      ClearExclusiveByAddress(physical_address,processor_id,4)
+ * if CurrentModeHasSPSR() then
+ *      Memory[address+4,4] = SPSR
+ *      if Shared(address+4) then // from ARMv6
+ *          physical_address = TLB(address+4)
+ *          ClearExclusiveByAddress(physical_address,processor_id,4)
+ * else
+ *      UNPREDICTABLE
+ * assert end_address == address + 8
+ */
+void INSTRUCTIONS::arm::misc::SRS(const u32 code) {
+    const bool P = llarm::util::bit_fetch(code, 24);
+    const bool U = llarm::util::bit_fetch(code, 23);
+    const bool W = llarm::util::bit_fetch(code, 21);
+    const u8 mode_bits = llarm::util::bit_range<u8>(code, 0, 4);
+
+    const id::mode target_mode = reg.fetch_mode_id(mode_bits);
+
+    id::reg R13_id = id::reg::R13;
+    id::reg R14_id = id::reg::R14;
+    id::reg SPSR_id = id::reg::SPSR;
+
+    switch (target_mode) {
+        case id::mode::FIQ:
+        case id::mode::FIQ_26:
+            R13_id = id::reg::R13_fiq;
+            R14_id = id::reg::R14_fiq;
+            SPSR_id = id::reg::SPSR_fiq;
+            break;
+
+        case id::mode::IRQ:
+        case id::mode::IRQ_26:
+            R13_id = id::reg::R13_irq;
+            R14_id = id::reg::R14_irq;
+            SPSR_id = id::reg::SPSR_irq;
+            break;
+
+        case id::mode::SUPERVISOR:
+        case id::mode::SUPERVISOR_26:
+            R13_id = id::reg::R13_svc;
+            R14_id = id::reg::R14_svc;
+            SPSR_id = id::reg::SPSR_svc;
+            break;
+
+        case id::mode::ABORT:
+            R13_id = id::reg::R13_abt;
+            R14_id = id::reg::R14_abt;
+            SPSR_id = id::reg::SPSR_abt;
+            break;
+
+        case id::mode::UNDEFINED:
+            R13_id = id::reg::R13_und;
+            R14_id = id::reg::R14_und;
+            SPSR_id = id::reg::SPSR_und;
+            break;
+
+        default:
+            llarm::out::unpredictable("SRS specified a mode with no banked SPSR");
+            return;
+    }
+
+    const u32 base = reg.read(R13_id);
+
+    u32 start_address = 0;
+
+    if (!P && U) {
+        start_address = base;
+    } else if (P && U) {
+        start_address = base + 4;
+    } else if (!P && !U) {
+        start_address = base - 4;
+    } else {
+        start_address = base - 8;
+    }
+
+    if (W) {
+        reg.write(R13_id, U ? (base + 8) : (base - 8));
+    }
+
+    const mem_write_struct r14_access = memory.write(start_address, reg.read(R14_id), 4);
+
+    if (r14_access.has_failed) {
+        memory.manage_abort(r14_access.abort_code);
+        return;
+    }
+
+    const mem_write_struct spsr_access = memory.write(start_address + 4, reg.read(SPSR_id), 4);
+
+    if (spsr_access.has_failed) {
+        memory.manage_abort(spsr_access.abort_code);
+        return;
+    }
 }

@@ -205,6 +205,7 @@ namespace id {
         R1_V, // high vectors
         R1_RR, // cache strategy
         R1_L4, // ARMv5+ backwards compatibility
+        R1_U, // ARMv6 unaligned data access support
 
         R2,
         R2_MMU,

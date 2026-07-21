@@ -272,6 +272,7 @@ u32 CP15::read(const id::cp15 reg) const {
         case id::cp15::R1_V: return llarm::util::bit_fetch(R1, 13);
         case id::cp15::R1_RR: return llarm::util::bit_fetch(R1, 14);
         case id::cp15::R1_L4: return llarm::util::bit_fetch(R1, 15);
+        case id::cp15::R1_U: return llarm::util::bit_fetch(R1, 22);
         case id::cp15::R2: return R2;
         case id::cp15::R2_MMU: return R2;
         case id::cp15::R2_MMU_TRANSLATION_BASE: return llarm::util::bit_range(R2, 14, 31);
@@ -769,6 +770,18 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
                 llarm::util::modify_bit(R1, 15, value);
             }
 
+            return;
+
+        case id::cp15::R1_U:
+            // On ARM processors prior to ARMv6, this bit is unimplemented and reads as 0, ignoring writes.
+            // Consumed directly by LDRD/STRD (llarm-emu/src/cpu/instructions/arm/dsp.cpp) to decide whether
+            // a word-aligned-but-not-doubleword-aligned address faults (U clear) or is permitted (U set),
+            // per ARMv6's Data Access Behavior table (A2-10).
+            if ((settings.arch < id::arch::ARMv6) && !forced) {
+                return;
+            }
+
+            llarm::util::modify_bit(R1, 22, value);
             return;
 
         case id::cp15::R2_MMU: R2 = value; return;

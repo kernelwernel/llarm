@@ -27,18 +27,49 @@ void INSTRUCTIONS::arm::dsp::LDRD(const u32 code) {
         return;
     }
 
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
     const u32 address = address_mode.load_store_misc(code);
 
+    const u8 address_low3 = llarm::util::bit_range<u8>(address, 0, 2);
+    const bool is_misaligned = (address_low3 != 0b000);
+
+    // ARMv6's Data Access Behavior table (A2-10) formalizes Two-word (LDRD/STRD) alignment
+    // faulting: with the A bit set, a word-aligned-but-not-doubleword-aligned address
+    // (address_low3 == 0b100) only faults when the U bit (unaligned data access support) is
+    // clear; any other misalignment always faults. This rule is ARMv6-specific (prior to
+    // ARMv6 this is simply UNPREDICTABLE, which real silicon such as ARM926EJ-S (ARMv5TE)
+    // handles by performing both word transfers regardless, per the note below), so it must
+    // not apply to earlier architectures.
     if (
-        (llarm::util::bit_range(address, 0, 2) != 0b000) ||
-        (Rd_bits == 14)
+        (memory.settings.arch >= id::arch::ARMv6) &&
+        (memory.settings.has_alignment_fault_checking) &&
+        (coprocessor.read(id::cp15::R1_A))
     ) {
+        const bool word_aligned_only = (address_low3 == 0b100);
+        const bool permitted = word_aligned_only && coprocessor.read(id::cp15::R1_U);
+
+        if (is_misaligned && !permitted) {
+            reg.write(Rn_id, original_Rn);
+
+            if (memory.mmu.is_mmu_enabled()) {
+                memory.mmu.manage_abort(id::aborts::ALIGNMENT, address);
+            }
+
+            memory.manage_abort(id::aborts::ALIGNMENT);
+            return;
+        }
+    }
+
+    if (is_misaligned || (Rd_bits == 14)) {
         llarm::out::unpredictable("LDRD has unpredictable arguments");
     }
 
     const mem_read_struct access = memory.read(address, 4);
 
     if (access.has_failed) {
+        reg.write(Rn_id, original_Rn);
         memory.manage_abort(access.abort_code);
         return;
     }
@@ -46,6 +77,7 @@ void INSTRUCTIONS::arm::dsp::LDRD(const u32 code) {
     const mem_read_struct access2 = memory.read(address + 4, 4);
 
     if (access2.has_failed) {
+        reg.write(Rn_id, original_Rn);
         memory.manage_abort(access2.abort_code);
         return;
     }
@@ -87,6 +119,16 @@ void INSTRUCTIONS::arm::dsp::MRRC(const u32 code) {
     const u64 value = static_cast<u64>(coprocessor.read(cp_num, 0, CRm, opcode));
     reg.write(Rd_bits, static_cast<u32>(value));
     reg.write(Rn_bits, static_cast<u32>(value >> 32));
+}
+
+
+void INSTRUCTIONS::arm::dsp::MCRR2(const u32 code) {
+    MCRR(code);
+}
+
+
+void INSTRUCTIONS::arm::dsp::MRRC2(const u32 code) {
+    MRRC(code);
 }
 
 
@@ -414,10 +456,43 @@ void INSTRUCTIONS::arm::dsp::STRD(const u32 code) {
         return;
     }
 
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
     const u32 address = address_mode.load_store_misc(code);
 
+    const u8 address_low3 = llarm::util::bit_range<u8>(address, 0, 2);
+    const bool is_misaligned = (address_low3 != 0b000);
+
+    // ARMv6's Data Access Behavior table (A2-10) formalizes Two-word (LDRD/STRD) alignment
+    // faulting: with the A bit set, a word-aligned-but-not-doubleword-aligned address
+    // (address_low3 == 0b100) only faults when the U bit (unaligned data access support) is
+    // clear; any other misalignment always faults. This rule is ARMv6-specific (prior to
+    // ARMv6 this is simply UNPREDICTABLE, which real silicon such as ARM926EJ-S (ARMv5TE)
+    // handles by performing both word transfers regardless, per the note below), so it must
+    // not apply to earlier architectures.
     if (
-        (llarm::util::bit_range(address, 0, 2) != 0b000) ||
+        (memory.settings.arch >= id::arch::ARMv6) &&
+        (memory.settings.has_alignment_fault_checking) &&
+        (coprocessor.read(id::cp15::R1_A))
+    ) {
+        const bool word_aligned_only = (address_low3 == 0b100);
+        const bool permitted = word_aligned_only && coprocessor.read(id::cp15::R1_U);
+
+        if (is_misaligned && !permitted) {
+            reg.write(Rn_id, original_Rn);
+
+            if (memory.mmu.is_mmu_enabled()) {
+                memory.mmu.manage_abort(id::aborts::ALIGNMENT, address);
+            }
+
+            memory.manage_abort(id::aborts::ALIGNMENT);
+            return;
+        }
+    }
+
+    if (
+        is_misaligned ||
         (Rd_bits == 14)
     ) {
         // architecturally UNPREDICTABLE (doubleword-misaligned address, or Rd == R14),
@@ -433,6 +508,7 @@ void INSTRUCTIONS::arm::dsp::STRD(const u32 code) {
     const mem_write_struct access = memory.write(address, value, 4);
 
     if (access.has_failed) {
+        reg.write(Rn_id, original_Rn);
         memory.manage_abort(access.abort_code);
         return;
     }
@@ -440,6 +516,7 @@ void INSTRUCTIONS::arm::dsp::STRD(const u32 code) {
     const mem_write_struct access2 = memory.write(address + 4, value2, 4);
 
     if (access2.has_failed) {
+        reg.write(Rn_id, original_Rn);
         memory.manage_abort(access2.abort_code);
         return;
     }

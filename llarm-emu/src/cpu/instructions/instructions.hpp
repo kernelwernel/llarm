@@ -77,6 +77,8 @@ struct INSTRUCTIONS {
             void SSAT16(const u32 code);
             void USAT(const u32 code);
             void USAT16(const u32 code);
+            void USAD8(const u32 code);
+            void USADA8(const u32 code);
         } logic;
 
         struct movement {
@@ -87,7 +89,7 @@ struct INSTRUCTIONS {
                 REGISTERS& reg,
                 ADDRESSING_MODE& address_mode
             ) : reg(reg), address_mode(address_mode) {}
-    
+
             void MOV(const u32 code); // TODO
             void MVN(const u32 code); // TODO
             void CPY(const u32 code);
@@ -95,6 +97,49 @@ struct INSTRUCTIONS {
             void MSR_IMM(const u32 code);
             void MSR_REG(const u32 code);
         } movement;
+
+        struct simd {
+            REGISTERS& reg;
+
+            simd(REGISTERS& reg) : reg(reg) {}
+
+            void SADD16(const u32 code);
+            void SADD8(const u32 code);
+            void SADDSUBX(const u32 code);
+            void SSUB16(const u32 code);
+            void SSUB8(const u32 code);
+            void SSUBADDX(const u32 code);
+            void SHADD16(const u32 code);
+            void SHADD8(const u32 code);
+            void SHADDSUBX(const u32 code);
+            void SHSUB16(const u32 code);
+            void SHSUB8(const u32 code);
+            void SHSUBADDX(const u32 code);
+            void QADD16(const u32 code);
+            void QADD8(const u32 code);
+            void QADDSUBX(const u32 code);
+            void QSUB16(const u32 code);
+            void QSUB8(const u32 code);
+            void QSUBADDX(const u32 code);
+            void UADD16(const u32 code);
+            void UADD8(const u32 code);
+            void UADDSUBX(const u32 code);
+            void USUB16(const u32 code);
+            void USUB8(const u32 code);
+            void USUBADDX(const u32 code);
+            void UHADD16(const u32 code);
+            void UHADD8(const u32 code);
+            void UHADDSUBX(const u32 code);
+            void UHSUB16(const u32 code);
+            void UHSUB8(const u32 code);
+            void UHSUBADDX(const u32 code);
+            void UQADD16(const u32 code);
+            void UQADD8(const u32 code);
+            void UQADDSUBX(const u32 code);
+            void UQSUB16(const u32 code);
+            void UQSUB8(const u32 code);
+            void UQSUBADDX(const u32 code);
+        } simd;
 
         struct multiply {
             REGISTERS& reg;
@@ -107,6 +152,16 @@ struct INSTRUCTIONS {
             void SMULL(const u32 code); // TODO
             void UMLAL(const u32 code); // TODO
             void UMULL(const u32 code); // TODO
+            void SMLAD(const u32 code);
+            void SMLALD(const u32 code);
+            void SMLSD(const u32 code);
+            void SMLSLD(const u32 code);
+            void SMMLA(const u32 code);
+            void SMMLS(const u32 code);
+            void SMMUL(const u32 code);
+            void SMUAD(const u32 code);
+            void SMUSD(const u32 code);
+            void UMAAL(const u32 code);
         } multiply;
 
         struct branching {
@@ -148,18 +203,21 @@ struct INSTRUCTIONS {
             REGISTERS& reg;
             ADDRESSING_MODE& address_mode;
             COPROCESSOR& coprocessor;
+            MEMORY& memory;
             bool& is_halted;
             bool& is_terminated;
 
             misc(
-                REGISTERS& reg, 
+                REGISTERS& reg,
                 ADDRESSING_MODE& address_mode,
                 COPROCESSOR& coprocessor,
+                MEMORY& memory,
                 bool& is_halted,
                 bool& is_terminated
-            ) : reg(reg), 
-                address_mode(address_mode), 
+            ) : reg(reg),
+                address_mode(address_mode),
                 coprocessor(coprocessor),
+                memory(memory),
                 is_halted(is_halted),
                 is_terminated(is_terminated)
             {}
@@ -171,6 +229,8 @@ struct INSTRUCTIONS {
             void BKPT();
             void CPS(const u32 code);
             void SETEND(const u32 code);
+            void RFE(const u32 code);
+            void SRS(const u32 code);
         } misc;
 
         struct load {
@@ -255,6 +315,8 @@ struct INSTRUCTIONS {
             void LDRD(const u32 code); // TODO
             void MCRR(const u32 code); // TODO
             void MRRC(const u32 code);
+            void MCRR2(const u32 code);
+            void MRRC2(const u32 code);
             void PLD(/*const u32 code*/); // TODO
             void QADD(const u32 code); // TODO
             void QDADD(const u32 code); // TODO
@@ -374,10 +436,11 @@ struct INSTRUCTIONS {
         ) : math(reg, address_mode),
             logic(reg, address_mode),
             movement(reg, address_mode),
+            simd(reg),
             multiply(reg),
             branching(reg),
             coproc(reg, address_mode, coprocessor),
-            misc(reg, address_mode, coprocessor, is_halted, is_terminated),
+            misc(reg, address_mode, coprocessor, memory, is_halted, is_terminated),
             load(reg, memory, address_mode, settings),
             store(reg, memory, address_mode),
             dsp(reg, memory, address_mode, exception, coprocessor),
@@ -386,7 +449,6 @@ struct INSTRUCTIONS {
 
         }
     } arm;
-
 
 
     struct thumb {
@@ -427,6 +489,7 @@ struct INSTRUCTIONS {
             void LSR2(const u16 code);
             void NEG(const u16 code); // NOTE: OVERFLOW_SUB MIGHT LEAD TO ERROR
             void ORR(const u16 code);
+            void REV(const u16 code);
             void REV16(const u16 code);
             void REVSH(const u16 code);
             void ROR(const u16 code);

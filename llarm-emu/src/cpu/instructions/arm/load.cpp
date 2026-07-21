@@ -33,6 +33,9 @@
 void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
     const u16 list = llarm::util::bit_range<u16>(code, 0, 15);
 
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
     const address_struct addresses = address_mode.load_store_multiple(code);
 
     u32 address = addresses.start;
@@ -43,6 +46,7 @@ void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
         const mem_read_struct access = memory.read(address, 4);
 
         if (access.has_failed) {
+            reg.write(Rn_id, original_Rn);
             memory.manage_abort(access.abort_code);
             return;
         }
@@ -53,8 +57,9 @@ void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
 
     if (llarm::util::bit_fetch(list, 15) == true) {
         const mem_read_struct access = memory.read(address, 4);
-    
+
         if (access.has_failed) {
+            reg.write(Rn_id, original_Rn);
             memory.manage_abort(access.abort_code);
             return;
         }
@@ -101,13 +106,18 @@ void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
  *         Rd = value
  */
 void INSTRUCTIONS::arm::load::LDR(const u32 code) {
+    // ARMv6's Base Restored Abort Model: restore Rn if this instruction aborts
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
     const u32 address = address_mode.load_store(code);
 
     const u8 type = llarm::util::bit_range<u8>(address, 0, 1);
 
     const mem_read_struct access = memory.read(address, 4);
-    
+
     if (access.has_failed) {
+        reg.write(Rn_id, original_Rn);
         memory.manage_abort(access.abort_code);
         return;
     }
@@ -143,11 +153,15 @@ void INSTRUCTIONS::arm::load::LDR(const u32 code) {
  *     Rd = Memory[address,1]
  */
 void INSTRUCTIONS::arm::load::LDRB(const u32 code) {
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
     const u32 address = address_mode.load_store(code);
 
     const mem_read_struct access = memory.read(address, 1);
-    
+
     if (access.has_failed) {
+        reg.write(Rn_id, original_Rn);
         memory.manage_abort(access.abort_code);
         return;
     }
@@ -161,11 +175,15 @@ void INSTRUCTIONS::arm::load::LDRB(const u32 code) {
  *     Rd = Memory[address,1]
  */
 void INSTRUCTIONS::arm::load::LDRBT(const u32 code) {
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
     const u32 address = address_mode.load_store(code);
 
     const mem_read_struct access = memory.read(address, 1);
-    
+
     if (access.has_failed) {
+        reg.write(Rn_id, original_Rn);
         memory.manage_abort(access.abort_code);
         return;
     }
@@ -183,14 +201,18 @@ void INSTRUCTIONS::arm::load::LDRBT(const u32 code) {
  *     Rd = data
  */
 void INSTRUCTIONS::arm::load::LDRH(const u32 code) {
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
     const u32 address = address_mode.load_store_misc(code);
 
     u16 data = 0;
 
     if ((address & 1) == 0) {
         const mem_read_struct access = memory.read(address, 2);
-        
+
         if (access.has_failed) {
+            reg.write(Rn_id, original_Rn);
             memory.manage_abort(access.abort_code);
             return;
         }
@@ -210,11 +232,15 @@ void INSTRUCTIONS::arm::load::LDRH(const u32 code) {
  *     Rd = SignExtend(data)
  */
 void INSTRUCTIONS::arm::load::LDRSB(const u32 code) {
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
     const u32 address = address_mode.load_store_misc(code);
 
     const mem_read_struct access = memory.read(address, 1);
-        
+
     if (access.has_failed) {
+        reg.write(Rn_id, original_Rn);
         memory.manage_abort(access.abort_code);
         return;
     }
@@ -234,6 +260,9 @@ void INSTRUCTIONS::arm::load::LDRSB(const u32 code) {
  *     Rd = SignExtend(data)
  */
 void INSTRUCTIONS::arm::load::LDRSH(const u32 code) {
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
     const u32 address = address_mode.load_store_misc(code);
 
     u16 data = 0;
@@ -242,6 +271,7 @@ void INSTRUCTIONS::arm::load::LDRSH(const u32 code) {
         const mem_read_struct access = memory.read(address, 2);
 
         if (access.has_failed) {
+            reg.write(Rn_id, original_Rn);
             memory.manage_abort(access.abort_code);
             return;
         }
@@ -267,11 +297,15 @@ void INSTRUCTIONS::arm::load::LDRSH(const u32 code) {
  *         Rd = Memory[address,4] Rotate_Right 24
  */
 void INSTRUCTIONS::arm::load::LDRT(const u32 code) {
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
     const u32 address = address_mode.load_store(code);
-    
+
     const mem_read_struct access = memory.read(address, 4);
 
     if (access.has_failed) {
+        reg.write(Rn_id, original_Rn);
         memory.manage_abort(access.abort_code);
         return;
     }
@@ -303,6 +337,9 @@ void INSTRUCTIONS::arm::load::LDRT(const u32 code) {
  *     assert end_address == address - 4
  */
 void INSTRUCTIONS::arm::load::LDM2(const u32 code) {
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
     const address_struct addresses = address_mode.load_store_multiple(code);
 
     u32 address = addresses.start;
@@ -315,6 +352,7 @@ void INSTRUCTIONS::arm::load::LDM2(const u32 code) {
         const mem_read_struct access = memory.read(address, 4);
 
         if (access.has_failed) {
+            reg.write(Rn_id, original_Rn);
             memory.manage_abort(access.abort_code);
             return;
         }
@@ -353,6 +391,9 @@ void INSTRUCTIONS::arm::load::LDM2(const u32 code) {
  *     assert end_address = address - 4
  */
 void INSTRUCTIONS::arm::load::LDM3(const u32 code) {
+    const id::reg Rn_id = reg.fetch_reg_id(code, 16, 19);
+    const u32 original_Rn = reg.read(Rn_id);
+
     const address_struct addresses = address_mode.load_store_multiple(code);
 
     u32 address = addresses.start;
@@ -365,10 +406,11 @@ void INSTRUCTIONS::arm::load::LDM3(const u32 code) {
         const mem_read_struct access = memory.read(address, 4);
 
         if (access.has_failed) {
+            reg.write(Rn_id, original_Rn);
             memory.manage_abort(access.abort_code);
             return;
         }
-    
+
         reg.write(reg_id, llarm::util::bit_range(access.value, 0, 31));
         address += 4;
     }
@@ -378,6 +420,7 @@ void INSTRUCTIONS::arm::load::LDM3(const u32 code) {
     const mem_read_struct access = memory.read(address, 4);
 
     if (access.has_failed) {
+        reg.write(Rn_id, original_Rn);
         memory.manage_abort(access.abort_code);
         return;
     }

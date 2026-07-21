@@ -18,19 +18,34 @@
  *   AP = access permission
  */
 
-
-id::first_level MMU::get_first_level_id(const u32 entry) {
+id::first_level MMU::get_first_level_id(const u32 entry) const {
     switch (entry & 0b11) {
         case 0b00: return id::first_level::FAULT;
         case 0b01: return id::first_level::COARSE;
         case 0b10: return id::first_level::SECTION;
-        case 0b11: return id::first_level::FINE;
+        case 0b11:
+            // fine page tables (and the tiny pages they hold) are RESERVED in ARMv6,
+            // and are read back as a translation fault instead
+            if (settings.arch >= id::arch::ARMv6) {
+                return id::first_level::FAULT;
+            }
+
+            return id::first_level::FINE;
+
         default: llarm::out::dev_error("Impossible first level ID fetch in MMU");
     }
 }
 
 
-id::second_level MMU::get_second_level_id(const u32 entry) {
+id::second_level MMU::get_second_level_id(const u32 entry) const {
+    if (settings.arch >= id::arch::ARMv6) {
+        switch (llarm::util::bit_range<u8>(entry, 0, 1)) {
+            case 0b00: return id::second_level::FAULT;
+            case 0b01: return id::second_level::LARGE;
+            default: return id::second_level::SMALL;
+        }
+    }
+
     switch (entry & 0b11) {
         case 0b00: return id::second_level::FAULT;
         case 0b01: return id::second_level::LARGE;
@@ -38,6 +53,72 @@ id::second_level MMU::get_second_level_id(const u32 entry) {
         case 0b11: return id::second_level::TINY;
         default: llarm::out::dev_error("Impossible second level ID fetch in MMU");
     }
+}
+
+
+region_attributes_struct MMU::resolve_region_attributes(const u8 TEX, const bool C, const bool B) const {
+    region_attributes_struct attributes {
+        /* is_cacheable */ false, 
+        /* is_write_bufferable */ false
+    };
+
+    if (llarm::util::bit_fetch(TEX, 2)) {
+        attributes.is_cacheable = true;
+        attributes.is_write_bufferable = B;
+        return attributes;
+    }
+
+    switch (TEX) {
+        case 0b000:
+            // strongly ordered
+            if (!C && !B) { 
+                return attributes;
+            }
+
+            // shared device    
+            if (!C && B) { 
+                attributes.is_write_bufferable = true;
+                return attributes; 
+            }
+
+            // normal, write-through or write-back
+            attributes.is_cacheable = true;
+            attributes.is_write_bufferable = B;
+            return attributes;
+
+        case 0b001:
+            // outer/inner non-cacheable
+            if (!C && !B) { 
+                return attributes;
+            }
+
+            // write-back, write-allocate
+            if (C && B) { 
+                attributes.is_cacheable = true;
+                attributes.is_write_bufferable = true;
+                return attributes;
+            }
+
+            // RESERVED/IMPLEMENTATION DEFINED, best-effort pass-through
+            attributes.is_cacheable = C;
+            attributes.is_write_bufferable = B;
+            return attributes;
+
+        case 0b010: 
+            // non-shared device
+            return attributes;
+
+        default: 
+            // RESERVED, best-effort pass-through
+            attributes.is_cacheable = C;
+            attributes.is_write_bufferable = B;
+            return attributes;
+    }
+}
+
+
+bool MMU::is_execute_invalid(const bool XN, const id::access_type access_type) const {
+    return (XN && (access_type == id::access_type::INSTRUCTION_FETCH));
 }
 
 
@@ -90,7 +171,15 @@ translation_struct MMU::first_section(const u32 entry, const u32 virtual_address
 
     const u8 AP = llarm::util::bit_range<u8>(entry, 10, 11);
 
-    const id::aborts abort_code = check_block_access(AP, access_type, domain, id::memory_type::SECTION);
+    const bool APX = is_armv6 && llarm::util::bit_fetch(entry, 15);
+    const bool XN = is_armv6 && llarm::util::bit_fetch(entry, 4);
+    const u8 TEX = is_armv6 ? llarm::util::bit_range<u8>(entry, 12, 14) : 0;
+
+    id::aborts abort_code = check_block_access(AP, access_type, domain, id::memory_type::SECTION, APX);
+
+    if ((abort_code == id::aborts::NO_ABORT) && is_execute_invalid(XN, access_type)) {
+        abort_code = id::aborts::SECTION_PERMISSION;
+    }
 
     const bool has_failed = (abort_code != id::aborts::NO_ABORT);
 
@@ -103,8 +192,7 @@ translation_struct MMU::first_section(const u32 entry, const u32 virtual_address
             /* has_failed */ true,
             /* abort_code */ abort_code,
             /* physical_address */ 0,
-            /* is_cacheable */ false,
-            /* is_write_bufferable */ false
+            /* attributes */ region_attributes_struct{}
         };
     }
 
@@ -113,12 +201,13 @@ translation_struct MMU::first_section(const u32 entry, const u32 virtual_address
     const u32 section_index = llarm::util::bit_range(virtual_address, 0, 19);
     const u32 physical_address = (section_base_address << 20) | section_index;
 
+    const region_attributes_struct attributes = resolve_region_attributes(TEX, C, B);
+
     return translation_struct {
         /* has_failed */       false,
         /* abort_code */       id::aborts::NO_ABORT,
         /* physical_address */ physical_address,
-        /* is_cacheable */        C,
-        /* is_write_bufferable */ B
+        /* attributes */ attributes
     };
 }
 
@@ -153,7 +242,20 @@ u32 MMU::first_fine(const u32 entry, const u32 virtual_address) {
 }
 
 
-bool MMU::is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type) const {
+bool MMU::is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type, const bool APX) const {
+    if (APX) {
+        const bool privileged = globals.is_privileged;
+        const bool wants_write = ((access_type == id::access_type::WRITE) || (access_type == id::access_type::READ_WRITE));
+
+        switch (raw_AP_bits) {
+            case 0b00: return true; // RESERVED
+            case 0b01: return (!privileged) || wants_write; // privileged read-only, no user access
+            case 0b10: return wants_write; // privileged/user read-only
+            case 0b11: return true; // RESERVED
+            default: llarm::out::dev_error("Impossible APX/AP combination in MMU");
+        }
+    }
+
     // since all the AP bits that aren't 0 WITH privileged permissions
     // are all read/write, we're doing a small shortcut here to avoid
     // the costlier option of further investigating if the access is valid.
@@ -241,21 +343,22 @@ bool MMU::is_AP_invalid(const u8 raw_AP_bits, const id::access_type access_type)
 
 id::aborts MMU::check_block_access(
     const u8 AP,
-    const id::access_type access_type, 
+    const id::access_type access_type,
     const id::access_domain domain,
-    const id::memory_type memory_type
+    const id::memory_type memory_type,
+    const bool APX
 ) const {
     const bool section_access = (memory_type == id::memory_type::SECTION);
 
     switch (domain) {
         case id::access_domain::MANAGER: return id::aborts::NO_ABORT;
         case id::access_domain::CLIENT: {
-            if (is_AP_invalid(AP, access_type)) {
+            if (is_AP_invalid(AP, access_type, APX)) {
                 // section
                 if (section_access) {
                     return id::aborts::SECTION_PERMISSION;
                 }
-                
+
                 // page
                 return id::aborts::SUB_PAGE_PERMISSION;
             }
@@ -292,26 +395,32 @@ translation_struct MMU::second_large(
 
     const u16 page_index = llarm::util::bit_range<u16>(virtual_address, 0, 15);
 
-    // the subpages are 1KB each
+    const bool APX = is_armv6 && llarm::util::bit_fetch(entry, 9);
+    const bool XN = is_armv6 && llarm::util::bit_fetch(entry, 15);
+    const u8 TEX = is_armv6 ? llarm::util::bit_range<u8>(entry, 12, 14) : 0;
+
     const u8 subpage_index = static_cast<u8>(page_index / util::get_kb(16));
+    const u8 AP = is_armv6 ? llarm::util::bit_range<u8>(entry, 4, 5) : fetch_subpage_AP(subpage_index, entry);
 
-    const u8 AP = fetch_subpage_AP(subpage_index, entry);
     const id::access_domain domain = fetch_domain(domain_bits);
-    const id::aborts AP_abort = check_block_access(AP, access_type, domain, id::memory_type::PAGE);
-    const bool AP_failed = (AP_abort != id::aborts::NO_ABORT);
+    id::aborts abort_code = check_block_access(AP, access_type, domain, id::memory_type::PAGE, APX);
 
-    if (AP_failed) {
-        manage_abort(AP_abort, virtual_address, domain_bits);
+    if ((abort_code == id::aborts::NO_ABORT) && is_execute_invalid(XN, access_type)) {
+        abort_code = id::aborts::SUB_PAGE_PERMISSION;
+    }
+
+    if (abort_code != id::aborts::NO_ABORT) {
+        manage_abort(abort_code, virtual_address, domain_bits);
         return translation_struct {
             /* has_failed */ true,
-            /* abort_code */ AP_abort,
+            /* abort_code */ abort_code,
             /* physical_address */ 0,
-            /* is_cacheable */ false,
-            /* is_write_bufferable */ false
+            /* attributes */ region_attributes_struct{}
         };
     }
 
-    if (alignment.is_disabled()) {
+    // subpages (and thus subpage-crossing checks) no longer exist in ARMv6
+    if ((!is_armv6) && alignment.is_disabled()) {
         const u32 end_address = (virtual_address + access_size);
 
         const bool subpage_crossed = (subpage_index != (end_address / util::get_kb(16)));
@@ -331,8 +440,7 @@ translation_struct MMU::second_large(
                     /* has_failed */ true,
                     /* abort_code */ second_AP_abort,
                     /* physical_address */ 0,
-                    /* is_cacheable */ false,
-                    /* is_write_bufferable */ false
+                    /* attributes */ region_attributes_struct{}
                 };
             }
         }
@@ -342,12 +450,13 @@ translation_struct MMU::second_large(
 
     const u32 physical_address = ((large_page_base_address << 16) | page_index);
 
+    const region_attributes_struct attributes = resolve_region_attributes(TEX, C, B);
+
     return translation_struct {
         /* has_failed */ false,
         /* abort_code */ id::aborts::NO_ABORT,
         /* physical_address */ physical_address,
-        /* is_cacheable */ C,
-        /* is_write_bufferable */ B
+        /* attributes */ attributes
     };
 }
 
@@ -364,26 +473,32 @@ translation_struct MMU::second_small(
 
     const u16 page_index = llarm::util::bit_range<u16>(virtual_address, 0, 11);
 
-    // the subpages are 1KB each
+    const bool APX = is_armv6 && llarm::util::bit_fetch(entry, 9);
+    const bool XN = is_armv6 && llarm::util::bit_fetch(entry, 0);
+    const u8 TEX = is_armv6 ? llarm::util::bit_range<u8>(entry, 6, 8) : 0;
+
     const u8 subpage_index = static_cast<u8>(page_index / util::get_kb(1));
+    const u8 AP = is_armv6 ? llarm::util::bit_range<u8>(entry, 4, 5) : fetch_subpage_AP(subpage_index, entry);
 
-    const u8 AP = fetch_subpage_AP(subpage_index, entry);
     const id::access_domain domain = fetch_domain(domain_bits);
-    const id::aborts AP_abort = check_block_access(AP, access_type, domain, id::memory_type::PAGE);
-    const bool AP_failed = (AP_abort != id::aborts::NO_ABORT);
+    id::aborts abort_code = check_block_access(AP, access_type, domain, id::memory_type::PAGE, APX);
 
-    if (AP_failed) {
-        manage_abort(AP_abort, virtual_address, domain_bits);
+    if ((abort_code == id::aborts::NO_ABORT) && is_execute_invalid(XN, access_type)) {
+        abort_code = id::aborts::SUB_PAGE_PERMISSION;
+    }
+
+    if (abort_code != id::aborts::NO_ABORT) {
+        manage_abort(abort_code, virtual_address, domain_bits);
         return translation_struct {
             /* has_failed */ true,
-            /* abort_code */ AP_abort,
+            /* abort_code */ abort_code,
             /* physical_address */ 0,
-            /* is_cacheable */ false,
-            /* is_write_bufferable */ false
+            /* attributes */ region_attributes_struct{}
         };
     }
 
-    if (alignment.is_disabled()) {
+    // subpages (and thus subpage-crossing checks) no longer exist in ARMv6
+    if ((!is_armv6) && alignment.is_disabled()) {
         const u32 end_address = (virtual_address + access_size);
         const bool subpage_crossed = (subpage_index != (end_address / util::get_kb(1)));
 
@@ -399,8 +514,7 @@ translation_struct MMU::second_small(
                     /* has_failed */ true,
                     /* abort_code */ second_AP_abort,
                     /* physical_address */ 0,
-                    /* is_cacheable */ false,
-                    /* is_write_bufferable */ false
+                    /* attributes */ region_attributes_struct{}
                 };
             }
         }
@@ -410,12 +524,13 @@ translation_struct MMU::second_small(
 
     const u32 physical_address = ((small_page_base_address << 12) | page_index);
 
+    const region_attributes_struct attributes = resolve_region_attributes(TEX, C, B);
+
     return translation_struct {
         /* has_failed */ false,
         /* abort_code */ id::aborts::NO_ABORT,
         /* physical_address */ physical_address,
-        /* is_cacheable */ C,
-        /* is_write_bufferable */ B
+        /* attributes */ attributes
     };
 }
 
@@ -442,8 +557,7 @@ translation_struct MMU::second_tiny(
             /* has_failed */ true,
             /* abort_code */ abort_code,
             /* physical_address */ 0,
-            /* is_cacheable */ false,
-            /* is_write_bufferable */ false
+            /* attributes */ region_attributes_struct{}
         };
     }
 
@@ -456,8 +570,7 @@ translation_struct MMU::second_tiny(
         /* has_failed */ false,
         /* abort_code */ id::aborts::NO_ABORT,
         /* physical_address */ physical_address,
-        /* is_cacheable */ C,
-        /* is_write_bufferable */ B
+        /* attributes */ region_attributes_struct{ C, B }
     };
 }
 
@@ -481,8 +594,7 @@ translation_struct MMU::page_walk(const u32 virtual_address, const id::access_ty
                 /* has_failed */ true,
                 /* abort_code */ id::aborts::ALIGNMENT,
                 /* physical_address */ 0,
-                /* is_cacheable */ false,
-                /* is_write_bufferable */ false
+                /* attributes */ region_attributes_struct{}
             };
         }
     }
@@ -510,8 +622,7 @@ translation_struct MMU::page_walk(const u32 virtual_address, const id::access_ty
                 /* has_failed */ true,
                 /* abort_code */ id::aborts::SECTION_TRANSLATION,
                 /* physical_address */ 0,
-                /* is_cacheable */ false,
-                /* is_write_bufferable */ false
+                /* attributes */ region_attributes_struct{}
             };
     };
 
@@ -531,8 +642,7 @@ translation_struct MMU::page_walk(const u32 virtual_address, const id::access_ty
                 /* has_failed */ true,
                 /* abort_code */ id::aborts::PAGE_TRANSLATION,
                 /* physical_address */ 0,
-                /* is_cacheable */ false,
-                /* is_write_bufferable */ false
+                /* attributes */ region_attributes_struct{}
             };
     }
 }
@@ -545,12 +655,16 @@ translation_struct MMU::translate_address(const u32 virtual_address, const id::a
     if (tlb_fetch.is_found) {
         const tlb_entry_struct entry = tlb.fetch(virtual_address, tlb_fetch);
 
-        return translation_struct {
-            /* has_failed          */ false,
-            /* abort_code          */ id::aborts::NO_ABORT,
-            /* physical_address    */ entry.physical_address,
+        const region_attributes_struct attributes {
             /* is_cacheable        */ entry.is_cacheable,
             /* is_write_bufferable */ entry.is_write_bufferable
+        };
+
+        return translation_struct {
+            /* has_failed */ false,
+            /* abort_code */ id::aborts::NO_ABORT,
+            /* physical_address */ entry.physical_address,
+            /* attributes */ attributes
         };
     }
 
@@ -570,7 +684,13 @@ translation_struct MMU::translate_address(const u32 virtual_address, const id::a
     }
 
     // a TLB store can now be made. If it already exists then it'll just replace the old physical address.
-    tlb.insert(virtual_address, translation.physical_address, settings.tlb_type, translation.is_cacheable, translation.is_write_bufferable);
+    tlb.insert(
+        virtual_address, 
+        translation.physical_address, 
+        settings.tlb_type, 
+        translation.attributes.is_cacheable, 
+        translation.attributes.is_write_bufferable
+    );
 
     return translation;
 }
@@ -586,13 +706,13 @@ mem_write_struct MMU::write(const u32 virtual_address, const u64 value, const u8
         };
     }
 
-    if (settings.has_cache && translation.is_cacheable && coprocessor.read(id::cp15::R1_C)) {
+    if (settings.has_cache && translation.attributes.is_cacheable && coprocessor.read(id::cp15::R1_C)) {
         cache.write(
             virtual_address,
             translation.physical_address,
             static_cast<u32>(value),
             access_size,
-            translation.is_write_bufferable
+            translation.attributes.is_write_bufferable
         );
     } else {
         ram.write(translation.physical_address, value, access_size);
@@ -624,7 +744,7 @@ mem_read_struct MMU::read(const u32 virtual_address, const u8 access_size, const
             ? coprocessor.read(id::cp15::R1_C)
             : coprocessor.read(id::cp15::R1_I);
 
-        if (settings.has_cache && translation.is_cacheable && inst_cache_on) {
+        if (settings.has_cache && translation.attributes.is_cacheable && inst_cache_on) {
             return mem_read_struct {
                 /* has_failed  */ false,
                 /* abort_code  */ id::aborts::NO_ABORT,
@@ -633,12 +753,12 @@ mem_read_struct MMU::read(const u32 virtual_address, const u8 access_size, const
             };
         }
     } else {
-        if (settings.has_cache && translation.is_cacheable && coprocessor.read(id::cp15::R1_C)) {
+        if (settings.has_cache && translation.attributes.is_cacheable && coprocessor.read(id::cp15::R1_C)) {
             return mem_read_struct {
                 /* has_failed  */ false,
                 /* abort_code  */ id::aborts::NO_ABORT,
                 /* access_size */ access_size,
-                /* value       */ cache.read(virtual_address, translation.physical_address, translation.is_write_bufferable)
+                /* value       */ cache.read(virtual_address, translation.physical_address, translation.attributes.is_write_bufferable)
             };
         }
     }
