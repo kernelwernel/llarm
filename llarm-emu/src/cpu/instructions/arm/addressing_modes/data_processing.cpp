@@ -168,15 +168,12 @@ data_struct ADDRESSING_MODE::data_process_arithmetic_shift_right_immediate(const
 data_struct ADDRESSING_MODE::data_process_rotate_right_immediate(const u32 code) {
     data_struct data = {};
 
+    // shift_imm being 0 is identified as DATA_RRX and never dispatched here
     const u8 shift_imm = llarm::util::bit_range<u8>(code, 7, 11);
     const u32 Rm = reg.read(code, 0, 3);
 
-    if (shift_imm == 0) {
-        // TODO
-    } else {
-        data.value = llarm::util::rotr(Rm, shift_imm);
-        data.carry = (llarm::util::bit_fetch(Rm, (shift_imm - 1)));
-    }
+    data.value = llarm::util::rotr(Rm, shift_imm);
+    data.carry = (llarm::util::bit_fetch(Rm, (shift_imm - 1)));
 
     return data;
 }

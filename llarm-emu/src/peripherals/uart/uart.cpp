@@ -58,6 +58,7 @@ void UART::update_tx_interrupt() {
 void UART::update_rx_interrupt() {
     if (!llarm::util::bit_fetch(cr, UARTCR_BIT_UARTEN)) {
         llarm::util::modify_bit(ris, UART_INT_RX, false);
+        llarm::util::modify_bit(ris, UART_INT_RT, false);
         return;
     }
 
@@ -66,6 +67,14 @@ void UART::update_rx_interrupt() {
     const bool triggered = static_cast<u8>(rx_fifo.size()) >= threshold;
 
     llarm::util::modify_bit(ris, UART_INT_RX, triggered);
+
+    // UARTRTINTR: FIFO holds data that hasn't reached the trigger level, so a
+    // level-triggered RX interrupt alone would never fire for it (see
+    // manuals/PL011_UART.pdf 2.8.4). Since host bytes only arrive in bursts
+    // drained between polls, once a burst settles below the trigger level no
+    // more data is coming for a while, so it's safe to assert immediately.
+    const bool timeout_triggered = !rx_fifo.empty() && !triggered;
+    llarm::util::modify_bit(ris, UART_INT_RT, timeout_triggered);
 }
 
 

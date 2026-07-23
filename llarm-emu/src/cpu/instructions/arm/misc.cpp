@@ -17,7 +17,7 @@ void INSTRUCTIONS::arm::misc::HALT() {
 }
 
 
-/** TODO, this part needs to be extensively analysed (A2-9)
+/**
  * if ConditionPassed(<cond>) then
  *    case <opc> of
  *        0b00 // TSTP
@@ -71,10 +71,9 @@ void INSTRUCTIONS::arm::misc::PSR(const u32 code) {
         return; // all the flag bit updates are done
     }
 
-    // privileged
-    reg.write(id::cpsr::I, 0);// TODO
-    reg.write(id::cpsr::F, 0);// TODO
-    reg.write(id::cpsr::M, 0);// TODO
+    reg.write(id::cpsr::I, (llarm::util::bit_fetch(alu_out, 27)));
+    reg.write(id::cpsr::F, (llarm::util::bit_fetch(alu_out, 26)));
+    reg.write(id::cpsr::M, (llarm::util::bit_range<u8>(alu_out, 0, 1)));
 }
 
 

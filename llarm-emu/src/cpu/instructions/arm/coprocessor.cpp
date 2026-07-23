@@ -38,18 +38,28 @@ void INSTRUCTIONS::arm::coproc::LDC(/*const u32 code*/) {
  *   send Rd value to Coprocessor[cp_num]
  */
 void INSTRUCTIONS::arm::coproc::MCR(const u32 code) {
-    if (reg.is_privileged() == false) {
-        // TODO: UNDEFINED INSTRUCTION EXCEPTION
+    const u8 cp_num = llarm::util::bit_range<u8>(code, 8, 11);
+
+    // "If no coprocessors indicate that they can execute the instruction, 
+    // an Undefined Instruction exception is generated." (A4-62 ARMv6)
+    if (!coprocessor.is_present(cp_num)) {
+        exception.undefined();
+        return;
+    }
+
+    // cp15 (system control coprocessor) registers are only accessible in a privileged mode
+    if ((coprocessor.fetch_cp_id(cp_num) == id::cp::CP15) && !reg.is_privileged()) {
+        exception.undefined();
+        return;
     }
 
     //const u8 opcode_1 = llarm::util::bit_range<u8>(code, 21, 23);
     const u8 opcode_2 = llarm::util::bit_range<u8>(code, 5, 7);
     const u8 CRm = llarm::util::bit_range<u8>(code, 0, 3);
     const u8 CRn = llarm::util::bit_range<u8>(code, 16, 19);
-    const u8 cp_num = llarm::util::bit_range<u8>(code, 8, 11);
     const u32 Rd = reg.read(code, 12, 15);
 
-    coprocessor.write(cp_num, CRn, CRm, /*opcode_1,*/ opcode_2, Rd); // TODO
+    coprocessor.write(cp_num, CRn, CRm, /*opcode_1,*/ opcode_2, Rd);
 }
 
 
@@ -65,18 +75,27 @@ void INSTRUCTIONS::arm::coproc::MCR(const u32 code) {
  *     Rd = data
  */
 void INSTRUCTIONS::arm::coproc::MRC(const u32 code) {
-    if (reg.is_privileged() == false) {
-        // TODO: UNDEFINED INSTRUCTION EXCEPTION
+    const u8 cp_num = llarm::util::bit_range<u8>(code, 8, 11); // cp id
+
+    // same as MCR comment above
+    if (!coprocessor.is_present(cp_num)) {
+        exception.undefined();
+        return;
+    }
+
+    // cp15 (system control coprocessor) registers are only accessible in a privileged mode
+    if ((coprocessor.fetch_cp_id(cp_num) == id::cp::CP15) && !reg.is_privileged()) {
+        exception.undefined();
+        return;
     }
 
     const u8 CRm = llarm::util::bit_range<u8>(code, 0, 3); // cp register type
     const u8 opcode_2 = llarm::util::bit_range<u8>(code, 5, 7); // extra
-    const u8 cp_num = llarm::util::bit_range<u8>(code, 8, 11); // cp id
     const id::reg Rd_id = reg.fetch_reg_id(code, 12, 15); // transfer arm register
     const u8 CRn = llarm::util::bit_range<u8>(code, 16, 19); // cp register
     //const u8 opcode_1 = llarm::util::bit_range<u8>(code, 21, 23); // cp opcode (?)
 
-    const u32 data = coprocessor.read(cp_num, CRn, CRm, /*opcode_1,*/ opcode_2); // TODO UNCOMMENT
+    const u32 data = coprocessor.read(cp_num, CRn, CRm, /*opcode_1,*/ opcode_2);
 
     if (Rd_id == id::reg::R15) {
         reg.write(id::cpsr::N, llarm::util::bit_fetch(data, 31));

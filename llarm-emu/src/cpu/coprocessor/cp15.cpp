@@ -699,9 +699,6 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             return; 
 
         case id::cp15::R1_Z: 
-            // If branch prediction cannot be disabled, this bit reads as 1 
-            // and ignores writes. On ARM processors that do not support 
-            // branch prediction, this bit reads as 0 and ignores writes
             if (settings.branch_prediction_cannot_disable && !forced) {
                 return;
             }
@@ -713,10 +710,6 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             return;
 
         case id::cp15::R1_I: 
-            // If a unified cache is used or the instruction cache is not 
-            // implemented, this bit reads as 0 and ignores writes. If the 
-            // instruction cache cannot be disabled, this bit reads as 1 
-            // and ignores writes.
             if (
                 (
                     (settings.has_separate_inst_cache == false) ||
@@ -734,8 +727,6 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             return;
 
         case id::cp15::R1_V: 
-            // On ARM processors that do not support high vectors, 
-            // this bit reads as 0 and ignores writes.
             if (settings.has_high_vectors || forced) {
                 llarm::util::modify_bit(R1, 13, value); 
             }
@@ -743,10 +734,6 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             return;
 
         case id::cp15::R1_RR:    
-            // If the cache does not allow a choice of replacement 
-            // strategy this bit should ignore writes, and read as 
-            // 0 or 1 according to whether the replacement strategy 
-            // has a reasonably easily predictable worst-case performance.
             if (!settings.has_cache && !forced) {
                 return;
             }
@@ -758,10 +745,6 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             return;
 
         case id::cp15::R1_L4: 
-            // For some ARM processors that support architecture 
-            // version 5 or above, this bit controls a backwards-
-            // compatibility feature with previous versions of 
-            // the architecture.
             if ((settings.arch >= id::arch::ARMv5) && !forced) {
                 return;
             }
@@ -773,10 +756,6 @@ void CP15::write(const id::cp15 reg, const u32 value, const u8 opcode_2, const u
             return;
 
         case id::cp15::R1_U:
-            // On ARM processors prior to ARMv6, this bit is unimplemented and reads as 0, ignoring writes.
-            // Consumed directly by LDRD/STRD (llarm-emu/src/cpu/instructions/arm/dsp.cpp) to decide whether
-            // a word-aligned-but-not-doubleword-aligned address faults (U clear) or is permitted (U set),
-            // per ARMv6's Data Access Behavior table (A2-10).
             if ((settings.arch < id::arch::ARMv6) && !forced) {
                 return;
             }

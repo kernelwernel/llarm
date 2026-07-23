@@ -35,13 +35,8 @@ void INSTRUCTIONS::arm::dsp::LDRD(const u32 code) {
     const u8 address_low3 = llarm::util::bit_range<u8>(address, 0, 2);
     const bool is_misaligned = (address_low3 != 0b000);
 
-    // ARMv6's Data Access Behavior table (A2-10) formalizes Two-word (LDRD/STRD) alignment
-    // faulting: with the A bit set, a word-aligned-but-not-doubleword-aligned address
-    // (address_low3 == 0b100) only faults when the U bit (unaligned data access support) is
-    // clear; any other misalignment always faults. This rule is ARMv6-specific (prior to
-    // ARMv6 this is simply UNPREDICTABLE, which real silicon such as ARM926EJ-S (ARMv5TE)
-    // handles by performing both word transfers regardless, per the note below), so it must
-    // not apply to earlier architectures.
+    // this is just some fucky alignment stuff that's new 
+    // to ARMv6, it doesn't appear on previous versions
     if (
         (memory.settings.arch >= id::arch::ARMv6) &&
         (memory.settings.has_alignment_fault_checking) &&
@@ -464,13 +459,8 @@ void INSTRUCTIONS::arm::dsp::STRD(const u32 code) {
     const u8 address_low3 = llarm::util::bit_range<u8>(address, 0, 2);
     const bool is_misaligned = (address_low3 != 0b000);
 
-    // ARMv6's Data Access Behavior table (A2-10) formalizes Two-word (LDRD/STRD) alignment
-    // faulting: with the A bit set, a word-aligned-but-not-doubleword-aligned address
-    // (address_low3 == 0b100) only faults when the U bit (unaligned data access support) is
-    // clear; any other misalignment always faults. This rule is ARMv6-specific (prior to
-    // ARMv6 this is simply UNPREDICTABLE, which real silicon such as ARM926EJ-S (ARMv5TE)
-    // handles by performing both word transfers regardless, per the note below), so it must
-    // not apply to earlier architectures.
+    // this is just some fucky alignment stuff that's new to ARMv6, 
+    // it doesn't appear on previous versions
     if (
         (memory.settings.arch >= id::arch::ARMv6) &&
         (memory.settings.has_alignment_fault_checking) &&
@@ -495,10 +485,6 @@ void INSTRUCTIONS::arm::dsp::STRD(const u32 code) {
         is_misaligned ||
         (Rd_bits == 14)
     ) {
-        // architecturally UNPREDICTABLE (doubleword-misaligned address, or Rd == R14),
-        // but real ARM926EJ-S silicon still performs both word transfers rather than
-        // dropping the access, and guest code (e.g. musl's memcpy/memset, which only
-        // guarantees word alignment) relies on that. Warn, but still carry it out.
         llarm::out::unpredictable("STRD has unpredictable arguments");
     }
 

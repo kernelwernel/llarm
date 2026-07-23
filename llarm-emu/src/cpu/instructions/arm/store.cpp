@@ -1,6 +1,7 @@
 #include "../instructions.hpp"
 #include "../operation.hpp"
 
+#include <llarm/shared/out.hpp>
 #include <llarm/shared/types.hpp>
 #include <llarm/shared/util.hpp>
 
@@ -37,7 +38,9 @@ void INSTRUCTIONS::arm::store::STM1(const u32 code) {
         address += 4;
     }
 
-    // TODO assert
+    if (addresses.end != (address - 4)) {
+        llarm::out::error("STM1 assert failed");
+    }
 }
 
 
@@ -165,7 +168,7 @@ void INSTRUCTIONS::arm::store::STRH(const u32 code) {
         const u32 Rd = reg.read(code, 12, 15);
         data = llarm::util::bit_range(Rd, 0, 15);
     } else {
-        // TODO UNPREDICTABLE
+        llarm::out::unpredictable("STRH executed with a misaligned address");
     }
 
     const mem_write_struct access = memory.write(address, data, 2);

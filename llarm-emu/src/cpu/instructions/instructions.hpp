@@ -29,12 +29,12 @@ struct INSTRUCTIONS {
                 ADDRESSING_MODE& address_mode
             ) : reg(reg), address_mode(address_mode) {}
     
-            void ADC(const u32 code); // TODO, NOTE: MUST TEST CARRY AND OVERFLOW
-            void ADD(const u32 code); // same
-            void RSB(const u32 code); // TODO
-            void RSC(const u32 code); // TODO
-            void SBC(const u32 code); // TODO
-            void SUB(const u32 code); // TODO
+            void ADC(const u32 code);
+            void ADD(const u32 code);
+            void RSB(const u32 code);
+            void RSC(const u32 code);
+            void SBC(const u32 code);
+            void SUB(const u32 code);
             void SXTB(const u32 code);
             void SXTAB(const u32 code);
             void SXTB16(const u32 code);
@@ -59,15 +59,15 @@ struct INSTRUCTIONS {
                 ADDRESSING_MODE& address_mode
             ) : reg(reg), address_mode(address_mode) {}
     
-            void CMN(const u32 code); // TODO
-            void AND(const u32 code); // TODO
-            void CMP(const u32 code); // TODO
+            void CMN(const u32 code);
+            void AND(const u32 code);
+            void CMP(const u32 code);
             void CLZ(const u32 code); // (test if this works, manually)
-            void EOR(const u32 code); // TODO
-            void ORR(const u32 code); // TODO
-            void BIC(const u32 code); // TODO
-            void TEQ(const u32 code); // TODO
-            void TST(const u32 code); // TODO
+            void EOR(const u32 code);
+            void ORR(const u32 code);
+            void BIC(const u32 code);
+            void TEQ(const u32 code);
+            void TST(const u32 code);
             void REV(const u32 code);
             void REV16(const u32 code);
             void REVSH(const u32 code);
@@ -90,8 +90,8 @@ struct INSTRUCTIONS {
                 ADDRESSING_MODE& address_mode
             ) : reg(reg), address_mode(address_mode) {}
 
-            void MOV(const u32 code); // TODO
-            void MVN(const u32 code); // TODO
+            void MOV(const u32 code);
+            void MVN(const u32 code);
             void CPY(const u32 code);
             void MRS(const u32 code);
             void MSR_IMM(const u32 code);
@@ -146,12 +146,12 @@ struct INSTRUCTIONS {
 
             multiply(REGISTERS& reg) : reg(reg) {}
     
-            void MLA(const u32 code); // TODO
-            void MUL(const u32 code); // TODO
-            void SMLAL(const u32 code); // TODO
-            void SMULL(const u32 code); // TODO
-            void UMLAL(const u32 code); // TODO
-            void UMULL(const u32 code); // TODO
+            void MLA(const u32 code);
+            void MUL(const u32 code);
+            void SMLAL(const u32 code);
+            void SMULL(const u32 code);
+            void UMLAL(const u32 code);
+            void UMULL(const u32 code);
             void SMLAD(const u32 code);
             void SMLALD(const u32 code);
             void SMLSD(const u32 code);
@@ -169,9 +169,9 @@ struct INSTRUCTIONS {
 
             branching(REGISTERS& reg) : reg(reg) {}
     
-            void B(const u32 code); // TODO
-            void BL(const u32 code); // TODO
-            void BX(const u32 code); // TODO
+            void B(const u32 code);
+            void BL(const u32 code);
+            void BX(const u32 code);
             void BLX1(const u32 code);
             void BLX2(const u32 code);
         } branching;
@@ -180,23 +180,25 @@ struct INSTRUCTIONS {
             REGISTERS& reg;
             ADDRESSING_MODE& address_mode;
             COPROCESSOR& coprocessor;
+            EXCEPTION& exception;
 
             coproc(
-                REGISTERS& reg, 
+                REGISTERS& reg,
                 ADDRESSING_MODE& address_mode,
-                COPROCESSOR& coprocessor
-            ) : reg(reg), address_mode(address_mode), coprocessor(coprocessor) {}
+                COPROCESSOR& coprocessor,
+                EXCEPTION& exception
+            ) : reg(reg), address_mode(address_mode), coprocessor(coprocessor), exception(exception) {}
     
             void CDP(/*const u32 code*/); // TODO
             void LDC(/*const u32 code*/); // TODO
-            void MCR(const u32 code); // TODO
-            void MRC(const u32 code); // TODO
+            void MCR(const u32 code);
+            void MRC(const u32 code);
             void STC(/*const u32 code*/); // TODO
-            void CDP2(/*const u32 code*/); // TODO
-            void LDC2(/*const u32 code*/); // TODO
-            void MCR2(const u32 code); // TODO
-            void MRC2(const u32 code); // TODO
-            void STC2(/*const u32 code*/); // TODO
+            void CDP2(/*const u32 code*/);
+            void LDC2(/*const u32 code*/);
+            void MCR2(const u32 code);
+            void MRC2(const u32 code);
+            void STC2(/*const u32 code*/);
         } coproc;
 
         struct misc {
@@ -238,22 +240,25 @@ struct INSTRUCTIONS {
             MEMORY& memory;
             ADDRESSING_MODE& address_mode;
             SETTINGS& settings;
+            COPROCESSOR& coprocessor;
 
             load(
                 REGISTERS& reg,
                 MEMORY& memory,
                 ADDRESSING_MODE& address_mode,
-                SETTINGS& settings
-            ) : reg(reg), 
-                memory(memory), 
-                address_mode(address_mode), 
-                settings(settings) 
+                SETTINGS& settings,
+                COPROCESSOR& coprocessor
+            ) : reg(reg),
+                memory(memory),
+                address_mode(address_mode),
+                settings(settings),
+                coprocessor(coprocessor)
             {}
-    
-            void LDM1(const u32 code); // TODO, ADD CHECK FOR L4 BIT
+
+            void LDM1(const u32 code);
             void LDM2(const u32 code);
             void LDM3(const u32 code);
-            void LDR(const u32 code); // TODO, ADD CHECK FOR L4 BIT
+            void LDR(const u32 code);
             void LDRB(const u32 code);
             void LDRBT(const u32 code);
             void LDRH(const u32 code);
@@ -312,22 +317,22 @@ struct INSTRUCTIONS {
 
             }
     
-            void LDRD(const u32 code); // TODO
-            void MCRR(const u32 code); // TODO
+            void LDRD(const u32 code);
+            void MCRR(const u32 code);
             void MRRC(const u32 code);
             void MCRR2(const u32 code);
             void MRRC2(const u32 code);
             void PLD(/*const u32 code*/); // TODO
-            void QADD(const u32 code); // TODO
-            void QDADD(const u32 code); // TODO
-            void QDSUB(const u32 code); // TODO
-            void QSUB(const u32 code); // TODO
-            void SMLAXY(const u32 code); // TODO
-            void SMLALXY(const u32 code); // TODO
-            void SMLAWY(const u32 code); // TODO
-            void SMULXY(const u32 code); // TODO
-            void SMULWY(const u32 code); // TODO
-            void STRD(const u32 code); // TODO
+            void QADD(const u32 code);
+            void QDADD(const u32 code);
+            void QDSUB(const u32 code);
+            void QSUB(const u32 code);
+            void SMLAXY(const u32 code);
+            void SMLALXY(const u32 code);
+            void SMLAWY(const u32 code);
+            void SMULXY(const u32 code);
+            void SMULWY(const u32 code);
+            void STRD(const u32 code);
         } dsp;
 
         struct vfp {
@@ -355,69 +360,69 @@ struct INSTRUCTIONS {
 
             }
     
-            void FABSD(const u32 code); // TODO, D
-            void FABSS(const u32 code); // TODO
-            void FADDD(const u32 code); // TODO, D
-            void FADDS(const u32 code); // TODO
-            void FCMPD(const u32 code); // TODO, D
-            void FCMPED(const u32 code); // TODO, D
-            void FCMPES(const u32 code); // TODO
-            void FCMPEZD(const u32 code); // TODO, D
-            void FCMPEZS(const u32 code); // TODO
-            void FCMPS(const u32 code); // TODO
-            void FCMPZD(const u32 code); // TODO, D
-            void FCMPZS(const u32 code); // TODO
-            void FCPYD(const u32 code); // TODO, D
-            void FCPYS(const u32 code); // TODO
-            void FCVTDS(const u32 code); // TODO, D
-            void FCVTSD(const u32 code); // TODO, D
-            void FDIVD(const u32 code); // TODO, D
-            void FDIVS(const u32 code); // TODO
-            void FLDD(const u32 code); // TODO, D
-            void FLDMD(const u32 code); // TODO, D
-            void FLDMS(const u32 code); // TODO
-            void FLDMX(const u32 code); // TODO
-            void FLDS(const u32 code); // TODO
-            void FMACD(const u32 code); // TODO, D
-            void FMACS(const u32 code); // TODO
-            void FMDHR(const u32 code); // TODO, D
-            void FMDLR(const u32 code); // TODO, D
-            void FMRDH(const u32 code); // TODO, D
-            void FMRDL(const u32 code); // TODO, D
-            void FMRS(const u32 code); // TODO
-            void FMRX(const u32 code); // TODO 
-            void FMSCD(const u32 code); // TODO, D
-            void FMSCS(const u32 code); // TODO
-            void FMSR(const u32 code); // TODO
-            void FMSTAT(); // TODO
-            void FMULD(const u32 code); // TODO, D
-            void FMULS(const u32 code); // TODO
-            void FMXR(const u32 code); // TODO
-            void FNEGD(const u32 code); // TODO, D
-            void FNEGS(const u32 code); // TODO
-            void FNMACD(const u32 code); // TODO, D
-            void FNMACS(const u32 code); // TODO
-            void FNMSCD(const u32 code); // TODO, D
-            void FNMSCS(const u32 code); // TODO
-            void FNMULD(const u32 code); // TODO, D
-            void FNMULS(const u32 code); // TODO
-            void FSITOD(const u32 code); // TODO, D
-            void FSITOS(const u32 code); // TODO
-            void FSQRTD(const u32 code); // TODO, D
-            void FSQRTS(const u32 code); // TODO
-            void FSTD(const u32 code); // TODO, D
-            void FSTMD(const u32 code); // TODO, D
-            void FSTMS(const u32 code); // TODO
-            void FSTMX(const u32 code); // TODO
-            void FSTS(const u32 code); // TODO
-            void FSUBD(const u32 code); // TODO, D
-            void FSUBS(const u32 code); // TODO
-            void FTOSID(const u32 code); // TODO, D
-            void FTOSIS(const u32 code); // TODO
-            void FTOUID(const u32 code); // TODO, D
-            void FTOUIS(const u32 code); // TODO
-            void FUITOD(const u32 code); // TODO, D
-            void FUITOS(const u32 code); // TODO
+            void FABSD(const u32 code);
+            void FABSS(const u32 code);
+            void FADDD(const u32 code);
+            void FADDS(const u32 code);
+            void FCMPD(const u32 code);
+            void FCMPED(const u32 code);
+            void FCMPES(const u32 code);
+            void FCMPEZD(const u32 code);
+            void FCMPEZS(const u32 code);
+            void FCMPS(const u32 code);
+            void FCMPZD(const u32 code);
+            void FCMPZS(const u32 code);
+            void FCPYD(const u32 code);
+            void FCPYS(const u32 code);
+            void FCVTDS(const u32 code);
+            void FCVTSD(const u32 code);
+            void FDIVD(const u32 code);
+            void FDIVS(const u32 code);
+            void FLDD(const u32 code);
+            void FLDMD(const u32 code);
+            void FLDMS(const u32 code);
+            void FLDMX(const u32 code);
+            void FLDS(const u32 code);
+            void FMACD(const u32 code);
+            void FMACS(const u32 code);
+            void FMDHR(const u32 code);
+            void FMDLR(const u32 code);
+            void FMRDH(const u32 code);
+            void FMRDL(const u32 code);
+            void FMRS(const u32 code);
+            void FMRX(const u32 code);
+            void FMSCD(const u32 code);
+            void FMSCS(const u32 code);
+            void FMSR(const u32 code);
+            void FMSTAT();
+            void FMULD(const u32 code);
+            void FMULS(const u32 code);
+            void FMXR(const u32 code);
+            void FNEGD(const u32 code);
+            void FNEGS(const u32 code);
+            void FNMACD(const u32 code);
+            void FNMACS(const u32 code);
+            void FNMSCD(const u32 code);
+            void FNMSCS(const u32 code);
+            void FNMULD(const u32 code);
+            void FNMULS(const u32 code);
+            void FSITOD(const u32 code);
+            void FSITOS(const u32 code);
+            void FSQRTD(const u32 code);
+            void FSQRTS(const u32 code);
+            void FSTD(const u32 code);
+            void FSTMD(const u32 code);
+            void FSTMS(const u32 code);
+            void FSTMX(const u32 code);
+            void FSTS(const u32 code);
+            void FSUBD(const u32 code);
+            void FSUBS(const u32 code);
+            void FTOSID(const u32 code);
+            void FTOSIS(const u32 code);
+            void FTOUID(const u32 code);
+            void FTOUIS(const u32 code);
+            void FUITOD(const u32 code);
+            void FUITOS(const u32 code);
         } vfp;
 
         arm(
@@ -439,9 +444,9 @@ struct INSTRUCTIONS {
             simd(reg),
             multiply(reg),
             branching(reg),
-            coproc(reg, address_mode, coprocessor),
+            coproc(reg, address_mode, coprocessor, exception),
             misc(reg, address_mode, coprocessor, memory, is_halted, is_terminated),
-            load(reg, memory, address_mode, settings),
+            load(reg, memory, address_mode, settings, coprocessor),
             store(reg, memory, address_mode),
             dsp(reg, memory, address_mode, exception, coprocessor),
             vfp(reg, coprocessor, memory, vfp_reg, vfp_exception, vfp_addressing_mode)
@@ -465,7 +470,7 @@ struct INSTRUCTIONS {
             void ADD5(const u16 code);
             void ADD6(const u16 code);
             void ADD7(const u16 code);
-            void SBC(const u16 code); // NOTE: BORROW_SUB (TRIPLE) AND OVERFLOW_SUB (TRIPLE) MIGHT HAVE WRONG IMPL
+            void SBC(const u16 code);
             void SUB1(const u16 code);
             void SUB2(const u16 code);
             void SUB3(const u16 code);
@@ -505,7 +510,7 @@ struct INSTRUCTIONS {
 
             compare(REGISTERS& reg) : reg(reg) {}
 
-            void CMN(const u16 code); // NOTE: BORROW_FROM MIGHT LEAD TO ERROR
+            void CMN(const u16 code);
             void CMP1(const u16 code); // NOTE: OVERFLOW_SUB MIGHT LEAD TO ERROR
             void CMP2(const u16 code); // NOTE: OVERFLOW_SUB MIGHT LEAD TO ERROR
             void CMP3(const u16 code);
@@ -534,7 +539,7 @@ struct INSTRUCTIONS {
             void BLX1(const u16 code); // (v5, idk if thumb2)
             void BL_BLX1_PREFIX(const u16 code);
             void BLX2(const u16 code); // (v5, idk if thumb2), and double check
-            void BX(const u16 code); // double check
+            void BX(const u16 code);
         } branching;
 
         struct misc {
@@ -561,18 +566,18 @@ struct INSTRUCTIONS {
                 SETTINGS& settings
             ) : reg(reg), memory(memory), settings(settings) {}
 
-            void LDMIA(const u16 code); // TODO
-            void LDR1(const u16 code); // TODO
-            void LDR2(const u16 code); // TODO
-            void LDR3(const u16 code); // TODO
-            void LDR4(const u16 code); // TODO
-            void LDRB1(const u16 code); // TODO
-            void LDRB2(const u16 code); // TODO
-            void LDRH1(const u16 code); // TODO
-            void LDRH2(const u16 code); // TODO
-            void LDRSB(const u16 code); // TODO
-            void LDRSH(const u16 code); // TODO
-            void POP(const u16 code); // TODO, ADD CHECK FOR L4 BIT
+            void LDMIA(const u16 code);
+            void LDR1(const u16 code);
+            void LDR2(const u16 code);
+            void LDR3(const u16 code);
+            void LDR4(const u16 code);
+            void LDRB1(const u16 code);
+            void LDRB2(const u16 code);
+            void LDRH1(const u16 code);
+            void LDRH2(const u16 code);
+            void LDRSB(const u16 code);
+            void LDRSH(const u16 code);
+            void POP(const u16 code);
         } load;
 
         struct store {
@@ -585,15 +590,15 @@ struct INSTRUCTIONS {
                 MEMORY& memory
             ) : reg(reg), memory(memory) {}
 
-            void STMIA(const u16 code); // TODO
-            void STR1(const u16 code); // TODO
-            void STR2(const u16 code); // TODO
-            void STR3(const u16 code); // TODO
-            void STRB1(const u16 code); // TODO
-            void STRB2(const u16 code); // TODO
-            void STRH1(const u16 code); // TODO
-            void STRH2(const u16 code); // TODO
-            void PUSH(const u16 code); // TODO
+            void STMIA(const u16 code);
+            void STR1(const u16 code);
+            void STR2(const u16 code);
+            void STR3(const u16 code);
+            void STRB1(const u16 code);
+            void STRB2(const u16 code);
+            void STRH1(const u16 code);
+            void STRH2(const u16 code);
+            void PUSH(const u16 code);
         } store;
 
         thumb(

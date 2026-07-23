@@ -21,7 +21,7 @@
  * MMU = memory management unit
  * MPU = memory protection unit
  * 
- * The registers in CP15 are very wonky and confusing to conceptually understand.
+ * The registers in cp15 are very wonky and confusing to conceptually understand.
  * A lot of them have shared functionalities where their usage depends on whether
  * the memory system is an MMU or an MPU, which both are non-homogenous and can't 
  * work together at the same time. For example, the R2 register has different 

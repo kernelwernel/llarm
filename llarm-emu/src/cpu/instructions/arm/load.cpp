@@ -10,7 +10,6 @@
 #include <llarm/shared/util.hpp>
 
 
-// TODO, ADD CHECK FOR L4 BIT
 /**
  * if ConditionPassed(cond) then
  *   address = start_address
@@ -66,7 +65,7 @@ void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
 
         const u32 value = llarm::util::bit_range<u32>(access.value, 0, 31);
 
-        if (settings.arch >= id::arch::ARMv5) {
+        if ((settings.arch >= id::arch::ARMv5) && !coprocessor.read(id::cp15::R1_L4)) {
             reg.write(id::reg::PC, (value & 0xFFFFFFFE));
             reg.write(id::cpsr::T, (value & 1));
         } else {
@@ -84,7 +83,6 @@ void INSTRUCTIONS::arm::load::LDM1(const u32 code) {
 }
 
 
-// TODO, ADD CHECK FOR L4 BIT
 /**
  * if ConditionPassed(cond) then
  *     if address[1:0] == 0b00 then
@@ -134,7 +132,7 @@ void INSTRUCTIONS::arm::load::LDR(const u32 code) {
     }
 
     if (reg.fetch_reg_id(code, 12, 15) == id::reg::R15) {
-        if (settings.arch >= id::arch::ARMv5) {
+        if ((settings.arch >= id::arch::ARMv5) && !coprocessor.read(id::cp15::R1_L4)) {
             reg.write(id::reg::PC, (value & 0xFFFFFFFE));
             reg.write(id::cpsr::T, (value & 1));
         } else {

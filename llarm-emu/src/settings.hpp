@@ -94,6 +94,7 @@ struct SETTINGS {
     /**/ u32 uart_base = 0;  // PL011: register base address
     /**/ u32 timer_base = 0; // SP804: register base address
     /**/ u8 timer_irq_source = 0; // VIC source line for TIMINTC
+    /**/ u8 uart_irq_source = 0; // VIC source line for UARTINTR
 
     /**/ id::vfp_version vfp_version = id::vfp_version::UNKNOWN;
     /**/ id::vfp_format vfp_format = id::vfp_format::NON_STANDARD;
@@ -273,6 +274,7 @@ constexpr SETTINGS default_settings() {
     tmp.has_timer = true;
     tmp.timer_base = 0x101E2000; // VersatilePB SP804 Timer0/1
     tmp.timer_irq_source = 4;    // VersatilePB VIC source 4
+    tmp.uart_irq_source = 12;    // VersatilePB VIC source 12 (UART0)
 
     tmp.sanitize();
 
@@ -302,15 +304,6 @@ constexpr SETTINGS linux_settings() {
     tmp.has_round_robin_replacement_cache_strategy = false;
     tmp.has_random_replacement_cache_strategy = true; // bit 14 RR = 0 (random/default)
     tmp.r1_sbo_mask = (1U << 16) | (1U << 19); // ARM926EJ-S SBO bits per TRM
-
-    // ARM926EJ-S has a full MMU. Enable it so that when the kernel writes to
-    // CP15 C1 (R1_M bit) to turn on the MMU, LLARM actually activates virtual to
-    // physical translation. Without this, the emulator ignores the MCR and keeps
-    // reading from raw physical addresses even after the kernel has jumped to
-    // virtual space (0xC0xxxxxx -> 0x00xxxxxx).
-    // Use a unified TLB model for simplicity, real ARM926EJ-S has separate I/D
-    // TLBs, but the kernel's TLB-invalidation operations map cleanly onto the
-    // unified table the LLARM TLB implementation exposes.
     tmp.is_mmu_enabled = true;
     tmp.has_tlb = true;
     tmp.is_tlb_unified = true;

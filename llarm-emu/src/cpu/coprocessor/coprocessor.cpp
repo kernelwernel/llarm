@@ -39,8 +39,15 @@ id::cp COPROCESSOR::fetch_cp_id(const u8 raw_cp_num) {
 }
 
 
+bool COPROCESSOR::is_present(const u8 raw_cp_num) {
+    // only cp15 (system control) is currently modelled, every other coprocessor
+    // number is unclaimed and generates an Undefined Instruction exception
+    return (fetch_cp_id(raw_cp_num) == id::cp::CP15);
+}
+
+
 void COPROCESSOR::write(
-    const u8 cp_id_bits, 
+    const u8 cp_id_bits,
     const u8 CRn, 
     const u8 CRm,
     //const u8 opcode_1, 

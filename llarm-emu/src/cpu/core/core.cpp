@@ -216,10 +216,16 @@ void CORE::initialise(const bool is_headless) {
 CORE::sync_enum CORE::synchronise() {
     timer.tick();
 
-    if (timer.irq_pending()) { 
-        vic.raise_irq(settings.timer_irq_source); 
-    } else { 
-        vic.clear_irq(settings.timer_irq_source); 
+    if (timer.irq_pending()) {
+        vic.raise_irq(settings.timer_irq_source);
+    } else {
+        vic.clear_irq(settings.timer_irq_source);
+    }
+
+    if (uart.irq_pending()) {
+        vic.raise_irq(settings.uart_irq_source);
+    } else {
+        vic.clear_irq(settings.uart_irq_source);
     }
 
     if (vic.fiq_pending() && !reg.read(id::cpsr::F)) { 

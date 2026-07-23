@@ -538,25 +538,56 @@ void INSTRUCTIONS::arm::vfp::FLDMS(const u32 code) {
  *     Load registers D(d) to D(d+(offset-3)/2) from memory words Memory[start_address,4] through to Memory[end_address-4,4]
  */
 void INSTRUCTIONS::arm::vfp::FLDMX(const u32 code) {
-    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
-
-    //const u8 d = llarm::util::bit_range<u8>(code, 12, 15);
-
     const vfp_address_struct addresses = vfp_addressing_mode.vfp_load_multiple(code);
 
-    const u32 address = addresses.start;
+    u32 address = addresses.start;
+    const u8 offset = llarm::util::bit_range<u8>(code, 0, 7);
+    const u8 num_regs = static_cast<u8>((offset - 1) / 2);
+    const u8 d = llarm::util::bit_range<u8>(code, 12, 15);
 
-    for (u8 i = 0; i <= (offset - 3) / 2; i++) {
-
+    for (u8 i = 0; i < num_regs; i++) {
         const mem_read_struct access = memory.read(address, 4);
 
         if (access.has_failed) {
             memory.manage_abort(access.abort_code);
             return;
         }
+
+        const mem_read_struct access2 = memory.read(address + 4, 4);
+
+        if (access2.has_failed) {
+            memory.manage_abort(access2.abort_code);
+            return;
+        }
+
+        u64 value = 0;
+
+        // is big endian
+        if (coprocessor.read(id::cp15::R1_B)) {
+            value = (access.value << 32 | access2.value);
+        } else {
+            value = (access2.value << 32 | access.value);
+        }
+
+        const id::vfp_reg Dd_id = vfp_reg.fetch_double_reg_id(d + i);
+
+        vfp_reg.write(Dd_id, value);
+
+        address += 8;
     }
 
-    // TODO, idk how the fuck i'm supposed to implement this
+    const mem_read_struct extra = memory.read(address, 4);
+
+    if (extra.has_failed) {
+        memory.manage_abort(extra.abort_code);
+        return;
+    }
+
+    address += 4;
+
+    if (addresses.end != (address - 4)) {
+        llarm::out::error("Assertion failed for FLDMX instruction");
+    }
 }
 
 
@@ -879,8 +910,7 @@ void INSTRUCTIONS::arm::vfp::FNEGS(const u32 code) {
  *       Dd[i] = -(Dn[i] * Dm[i]) + Dd[i]
  */
 void INSTRUCTIONS::arm::vfp::FNMACD(const u32 code) {
-    // Dn is not part of the addressing mode, there's definitely a bug here TODO
-    const double_encoding_struct encoding = vfp_addressing_mode.double_precision_monadic(code);
+    const double_encoding_struct encoding = vfp_addressing_mode.double_precision(code);
 
     for (const auto regs : encoding.vec_regs) {
         const double Dm = vfp_reg.read_double(regs.Dm_id);
